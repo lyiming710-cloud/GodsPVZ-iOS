@@ -1,0 +1,24 @@
+name: Build method index dumper
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - 'Tools/MethodIndexDump/**'
+      - '.github/workflows/build-method-index-dump.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet publish Tools/MethodIndexDump/MethodIndexDump.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
+      - run: ./out/MethodIndexDump || test $? -eq 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-MethodIndexDump-linux-x64
+          path: out/MethodIndexDump
