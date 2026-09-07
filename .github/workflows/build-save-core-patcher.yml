@@ -1,0 +1,61 @@
+name: Build save core patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/SaveCorePatch/**'
+      - '.github/workflows/build-save-core-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Normalize plant-list IL body
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('Tools/SaveCorePatch/Program.cs')
+          s=p.read_text(encoding='utf-8')
+          pattern=r'''void PatchInitializeNewPlantSaveList\(MethodDefinition method\)\n\{.*?\n\}\n\nvoid PatchInitializeNewPropSaveList'''
+          repl='''void PatchInitializeNewPlantSaveList(MethodDefinition method)
+          {
+              var body = Fresh(method, true);
+              var plant = new VariableDefinition(plantSave);
+              body.Variables.Add(plant);
+              var il = body.GetILProcessor();
+              var done = Instruction.Create(OpCodes.Ret);
+              E(il, OpCodes.Ldarg_1); E(il, OpCodes.Ldfld, fPlantSaves); E(il, OpCodes.Callvirt, listPlantClear);
+              E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Call, initializeNewPlant); E(il, OpCodes.Stloc, plant);
+              E(il, OpCodes.Ldloc, plant); E(il, OpCodes.Brfalse, done);
+              E(il, OpCodes.Ldarg_1); E(il, OpCodes.Ldfld, fPlantSaves); E(il, OpCodes.Ldloc, plant); E(il, OpCodes.Callvirt, listPlantAdd);
+              il.Append(done);
+              Console.WriteLine("PATCH SavesManager.InitializeNewPlantSaveList: Clear + Add(initial plant)");
+          }
+
+          void PatchInitializeNewPropSaveList'''.replace('\n          ','\n')
+          s2,n=re.subn(pattern,repl,s,flags=re.S)
+          if n!=1: raise SystemExit(f'plant-list replacement count={n}')
+          p.write_text(s2,encoding='utf-8')
+          PY
+      - name: Publish
+        run: dotnet publish Tools/SaveCorePatch/SaveCorePatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/save-core
+      - name: Smoke test
+        run: |
+          chmod +x publish/save-core/GodsPVZ.SaveCorePatch
+          set +e
+          publish/save-core/GodsPVZ.SaveCorePatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-SaveCorePatch-linux-x64
+          path: publish/save-core/GodsPVZ.SaveCorePatch
+          if-no-files-found: error
