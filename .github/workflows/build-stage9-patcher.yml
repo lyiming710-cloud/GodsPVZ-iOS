@@ -17,7 +17,7 @@ jobs:
         shell: bash
         run: |
           sed -n '1,/OpCodes.Ble,setZero);/p' Tools/Stage9Patch/Program.cs.part1 > Tools/Stage9Patch/Program.cs
-          cat Tools/Stage9Patch/Program.cs.part2 Tools/Stage9Patch/Program.cs.part3 Tools/Stage9Patch/Program.cs.part4 Tools/Stage9Patch/Program.cs.part5 >> Tools/Stage9Patch/Program.cs
+          cat Tools/Stage9Patch/Program.cs.part2 Tools/Stage9Patch/Program.cs.part3 Tools/Stage9Patch/Program.cs.part4 Tools/Stage9Patch/Program.cs.part5 Tools/Stage9Patch/Program.cs.part6 >> Tools/Stage9Patch/Program.cs
           python3 Tools/Stage9Patch/source_patches.py
       - name: Publish
         run: dotnet publish Tools/Stage9Patch/Stage9Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
