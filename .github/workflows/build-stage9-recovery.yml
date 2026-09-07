@@ -15,7 +15,9 @@ jobs:
       - name: Assemble and normalize Stage 9 source
         shell: bash
         run: |
-          cat Tools/Stage9Patch/Program.cs.part1 Tools/Stage9Patch/Program.cs.part2 Tools/Stage9Patch/Program.cs.part3 Tools/Stage9Patch/Program.cs.part4 Tools/Stage9Patch/Program.cs.part5 Tools/Stage9Patch/Program.cs.part6 > Tools/Stage9Patch/Program.cs
+          sed -n '1,/OpCodes.Ble,setZero);/p' Tools/Stage9Patch/Program.cs.part1 > Tools/Stage9Patch/Program.cs
+          cat Tools/Stage9Patch/Program.cs.part2 Tools/Stage9Patch/Program.cs.part3 Tools/Stage9Patch/Program.cs.part4 Tools/Stage9Patch/Program.cs.part5 Tools/Stage9Patch/Program.cs.part6 >> Tools/Stage9Patch/Program.cs
+          python3 Tools/Stage9Patch/source_patches.py
           python3 <<'PY'
           from pathlib import Path
           p=Path('Tools/Stage9Patch/Program.cs')
