@@ -1,0 +1,146 @@
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+
+if (args.Length != 2) {
+    Console.Error.WriteLine("Usage: GodsPVZ.BootPathPatch <input.dll> <output.dll>");
+    return 2;
+}
+
+var input = Path.GetFullPath(args[0]);
+var output = Path.GetFullPath(args[1]);
+using var module = ModuleDefinition.ReadModule(input, new ReaderParameters { InMemory = true, ReadSymbols = false });
+
+TypeDefinition T(string name) => AllTypes(module.Types).Single(t => t.Name == name || t.FullName == name);
+FieldDefinition F(TypeDefinition t, string name) => t.Fields.Single(f => f.Name == name);
+MethodDefinition M(TypeDefinition t, string name, int pc) {
+    var xs = t.Methods.Where(m => m.Name == name && m.Parameters.Count == pc).ToList();
+    return xs.Count == 1 ? xs[0] : throw new InvalidOperationException($"Expected one {t.Name}.{name}/{pc}, got {xs.Count}");
+}
+
+var prepare = T("PrepareUIController");
+var seed = T("SeedChooserScreen");
+var team = T("Team");
+var save = T("Save");
+var plantSave = T("PlantSave");
+var boardManager = T("BoardManager");
+var board = T("Board");
+var banks = T("Banks");
+var card = T("Card");
+var resource = T("ResourceManager");
+
+// Capture external/generic references BEFORE replacing original method bodies.
+var oldLoadBoards = M(resource, "Load_boardPrefabs", 0);
+var pathCombine2 = FindCall(oldLoadBoards, "System.IO.Path", "Combine", 2);
+var loadBoardGeneric = FindGenericCall(oldLoadBoards, "InternalResourceLoader", "Load", "Board");
+var oldLoadBoard = M(boardManager, "LoadBoard", 0);
+var instantiateBoard = FindGenericCall(oldLoadBoard, "UnityEngine.Object", "Instantiate", "Board");
+var oldSeedBankInit = M(seed, "SeedBankInitialize", 1);
+var instantiateCard = FindGenericCall(oldSeedBankInit, "UnityEngine.Object", "Instantiate", "Card");
+
+// Fields.
+var fPreparePlayerSave = F(prepare, "playerSave");
+var fPrepareCurrentTeam = F(prepare, "currentTeam");
+var fPrepareTeamId = F(prepare, "teamID");
+var fPrepareTeamList = F(prepare, "teamList");
+var fPrepareSeed = F(prepare, "seedChooserScreen");
+var fSaveDefaultTeam = F(save, "defaultTeamID");
+var fSaveTeams = F(save, "teams");
+var fSavePlants = F(save, "plantSaves");
+var fTeamId = F(team, "id");
+var fTeamPlantIds = F(team, "ID");
+var fPlantId = F(plantSave, "ID");
+
+var fSeedPrepare = F(seed, "prepareUIController");
+var fBoardBanks = F(board, "banks");
+var fBanksCards = F(banks, "cardList");
+var fBanksCardNum = F(banks, "cardNum");
+var fBanksCardPage = F(banks, "cardPage");
+var fBanksCardMaxPage = F(banks, "cardMaxPage");
+var fCardBoard = F(card, "board");
+var fCardOnBank = F(card, "isOnBank");
+var fCardOrdinal = F(card, "ordinalOnbank");
+var fPrefabCard = F(resource, "prefab_Card");
+var fBoardPrefabsStatic = F(resource, "boardPrefabs");
+
+var fBmPrefabList = F(boardManager, "boardPrefabList");
+var fBmBoard = F(boardManager, "board");
+var fBmBoardConfig = F(boardManager, "boardConfig");
+var fBmChallenge = F(boardManager, "challengeType");
+var fBmLevel = F(boardManager, "level");
+var fBmMouse = F(boardManager, "mouseManager");
+var fBmSeed = F(boardManager, "seedChooserScreen");
+var fBoardConfig = F(board, "boardConfig");
+var fBoardChallenge = F(board, "challengeType");
+var fBoardLevel = F(board, "level");
+var fBoardMouse = F(board, "mouseManager");
+var mouse = T("MouseManager");
+var fMouseOnBoard = F(mouse, "onBoard");
+var fMouseBoard = F(mouse, "board");
+
+var cardInitPlant = M(card, "Initialize_PlantSave", 1);
+var banksInitialize = M(banks, "Initialize", 0);
+var seedBankInitialize = M(seed, "SeedBankInitialize", 1);
+var setDefault = M(prepare, "SetDefaultChooseList", 0);
+var foldTeam = M(prepare, "Fold_TeamList", 0);
+var unfoldTeam = M(prepare, "Unfold_TeamList", 0);
+
+PatchPrepareStart(M(prepare, "Start", 0));
+PatchGetCardBankLength(M(prepare, "GetCardBankLenth", 0));
+PatchLoadTeam(M(prepare, "LoadTeam", 1));
+PatchSelectTeam(M(prepare, "SelectTeam", 1));
+PatchSetDefault(M(prepare, "SetDefaultChooseList", 0));
+PatchSetTeams(M(prepare, "SetTeams", 0));
+PatchTeamListToggle(M(prepare, "ClickTeamListButton", 0));
+PatchFold(M(prepare, "Fold_TeamList", 0), false);
+PatchFold(M(prepare, "Unfold_TeamList", 0), true);
+PatchLoadBoardPrefabs(oldLoadBoards);
+PatchSeedBankInitialize(oldSeedBankInit);
+PatchBanksInitialize(banksInitialize);
+PatchBoardManagerLoadBoard(oldLoadBoard);
+
+Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+module.Write(output, new WriterParameters { WriteSymbols = false });
+
+using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { InMemory = true, ReadSymbols = false })) {
+    foreach (var spec in new[] {
+        ("PrepareUIController","Start",0), ("PrepareUIController","GetCardBankLenth",0),
+        ("PrepareUIController","SelectTeam",1), ("PrepareUIController","SetDefaultChooseList",0),
+        ("ResourceManager","Load_boardPrefabs",0), ("SeedChooserScreen","SeedBankInitialize",1),
+        ("Banks","Initialize",0), ("BoardManager","LoadBoard",0)
+    }) {
+        var mm = AllTypes(verify.Types).Single(t => t.Name == spec.Item1).Methods.Single(m => m.Name == spec.Item2 && m.Parameters.Count == spec.Item3);
+        if (!mm.HasBody || mm.Body.Instructions.Count < 3) throw new InvalidOperationException($"Trivial body after write: {spec}");
+        Console.WriteLine($"VERIFY {spec.Item1}.{spec.Item2}: {mm.Body.Instructions.Count} IL instructions");
+    }
+}
+Console.WriteLine($"WROTE {output} ({new FileInfo(output).Length} bytes)");
+return 0;
+
+void PatchPrepareStart(MethodDefinition m) {
+    var il = Fresh(m).GetILProcessor();
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, setDefault); E(il, OpCodes.Ret);
+    Console.WriteLine("PATCH PrepareUIController.Start: default team only; defer props/UI decoration");
+}
+
+void PatchGetCardBankLength(MethodDefinition m) {
+    var fLen = F(save, "lenthOfSeedBank");
+    var il = Fresh(m).GetILProcessor();
+    var fallback = Instruction.Create(OpCodes.Ldc_I4_8);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Brfalse, fallback);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fLen); E(il, OpCodes.Ret);
+    il.Append(fallback); E(il, OpCodes.Ret);
+    Console.WriteLine("PATCH PrepareUIController.GetCardBankLenth: safe managed fallback");
+}
+
+void PatchLoadTeam(MethodDefinition m) {
+    var il = Fresh(m).GetILProcessor();
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldarg_1); E(il, OpCodes.Stfld, fPrepareCurrentTeam);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldarga, m.Parameters[0]); E(il, OpCodes.Ldfld, fTeamId); E(il, OpCodes.Stfld, fPrepareTeamId);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, foldTeam); E(il, OpCodes.Ret);
+    Console.WriteLine("PATCH PrepareUIController.LoadTeam: managed team state; props deferred");
+}
+
+void PatchSelectTeam(MethodDefinition m) {
+    var teamsType = (GenericInstanceType)fSaveTeams.FieldType;
+    var count = ListMethod(teamsType, "get_Count", module.TypeSystem.Int32);
+    var item = ListMethod(teamsType, "get_Item", team, module.TypeSystem.Int32);
