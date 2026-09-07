@@ -1,0 +1,12 @@
+
+void PatchPlantFrameLoop(){
+ var update=M(plant,"Update",0);var fixedUpdate=M(plant,"FixedUpdate",0);var fDied=F(plant,"isDied");var fHealth=F(plant,"healthPoint");var fActive=F(plant,"active");var fOnField=F(plant,"isOnField");var fBoard=F(plant,"board");var fFinished=F(board,"isFinished");var fLiving=F(plant,"livingTime");var fRate=F(plant,"updateRate");var fSelected=F(plant,"selected_Bright");var die=M(plant,"PlantDie",0);var getDt=AnyCall("UnityEngine.Time","get_deltaTime",0);
+ var b=Fresh(update);var il=b.GetILProcessor();var ret=Instruction.Create(OpCodes.Ret);var alive=Instruction.Create(OpCodes.Nop);var afterTime=Instruction.Create(OpCodes.Nop);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fDied);E(il,OpCodes.Brtrue,ret);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fHealth);E(il,OpCodes.Ldc_R4,0f);E(il,OpCodes.Bgt,alive);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Call,die);E(il,OpCodes.Br,ret);
+ il.Append(alive);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldc_I4_0);E(il,OpCodes.Stfld,fSelected);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fActive);E(il,OpCodes.Brfalse,ret);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fOnField);E(il,OpCodes.Brfalse,ret);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fBoard);E(il,OpCodes.Brfalse,ret);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fBoard);E(il,OpCodes.Ldfld,fFinished);E(il,OpCodes.Brtrue,ret);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fLiving);E(il,OpCodes.Call,getDt);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fRate);E(il,OpCodes.Mul);E(il,OpCodes.Add);E(il,OpCodes.Stfld,fLiving);il.Append(ret);
+ var fb=Fresh(fixedUpdate);fb.GetILProcessor().Append(Instruction.Create(OpCodes.Ret));
+ Console.WriteLine("PATCH Plant.Update/FixedUpdate: stable planted-plant baseline; combat loop deferred");
+}
