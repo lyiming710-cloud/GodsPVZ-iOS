@@ -1,0 +1,80 @@
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+if (args.Length != 2) { Console.Error.WriteLine("Usage: GodsPVZ.Stage9Patch <input.dll> <output.dll>"); return 2; }
+var input = Path.GetFullPath(args[0]); var output = Path.GetFullPath(args[1]);
+using var module = ModuleDefinition.ReadModule(input, new ReaderParameters { InMemory = true, ReadSymbols = false });
+IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots){ foreach(var t in roots){ yield return t; foreach(var n in All(t.NestedTypes)) yield return n; } }
+TypeDefinition T(string n)=>All(module.Types).Single(x=>x.Name==n||x.FullName==n);
+FieldDefinition F(TypeDefinition t,string n)=>t.Fields.Single(x=>x.Name==n);
+MethodDefinition M(TypeDefinition t,string n,int pc){ var q=t.Methods.Where(x=>x.Name==n&&x.Parameters.Count==pc).ToList(); return q.Count==1?q[0]:throw new Exception($"Expected one {t.FullName}.{n}/{pc}, got {q.Count}"); }
+MethodBody Fresh(MethodDefinition m,bool init=false){ var b=new MethodBody(m){InitLocals=init,MaxStackSize=64};m.Body=b;return b; }
+void E(ILProcessor il,OpCode op,object? v=null){Instruction x=v switch{null=>Instruction.Create(op),string s=>Instruction.Create(op,s),int i=>Instruction.Create(op,i),float f=>Instruction.Create(op,f),MethodReference mr=>Instruction.Create(op,mr),FieldReference fr=>Instruction.Create(op,fr),TypeReference tr=>Instruction.Create(op,tr),ParameterDefinition pd=>Instruction.Create(op,pd),VariableDefinition vd=>Instruction.Create(op,vd),Instruction ins=>Instruction.Create(op,ins),_=>throw new NotSupportedException(v.GetType().FullName)};il.Append(x);}
+MethodReference ListMethod(GenericInstanceType list,string name,TypeReference ret,params TypeReference[] ps){var mr=new MethodReference(name,ret,list){HasThis=true};foreach(var p in ps)mr.Parameters.Add(new ParameterDefinition(p));return mr;}
+IEnumerable<MethodReference> AllRefs()=>All(module.Types).SelectMany(t=>t.Methods).Where(m=>m.HasBody).SelectMany(m=>m.Body.Instructions).Select(i=>i.Operand).OfType<MethodReference>();
+MethodReference AnyCall(string decl,string name,int pc)=>AllRefs().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
+GenericInstanceMethod AnyGeneric(string decl,string name,string ga)=>AllRefs().OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+
+var plant=T("Plant"); var mouse=T("MouseManager"); var card=T("Card"); var board=T("Board"); var boardConfig=T("BoardConfig"); var plantManager=T("PlantManager"); var grid=T("Grid"); var sunManager=T("SunManager"); var skill=T("Skill");
+var cardPlantData=card.NestedTypes.Single(x=>x.Name=="PlantData");
+
+PatchPlantLoopAndLifecycle();
+PatchPlantNumerics();
+PatchPlantTransformsAndStates();
+PatchBoardGridCore();
+PatchPlanting();
+PatchPlantManagerAdd();
+PatchMousePreview();
+PatchMouseAcquirePlant();
+PatchMouseClick();
+PatchMouseUpdateClickDispatch();
+PatchCardInputAndState();
+PatchPlantDie();
+
+Directory.CreateDirectory(Path.GetDirectoryName(output)!); module.Write(output,new WriterParameters{WriteSymbols=false});
+using(var verify=ModuleDefinition.ReadModule(output,new ReaderParameters{InMemory=true,ReadSymbols=false})){
+ var specs=new[]{
+  ("Plant","Awake",0),("Plant","Start",0),("Plant","LoopAddAnimation",1),("Plant","NumericalInitialize_FromCard",0),("Plant","SetTransformPosition",1),("Plant","SetLayer",0),("Plant","SetPrefabState_onHand",2),("Plant","SetPrefabState_previewOnField",1),("Plant","Planting",2),("Plant","PlantDie",0),
+  ("MouseManager","Update_PlantPrefabOnField",0),("MouseManager","GetPlantFromCardbank",1),("MouseManager","MouseDownUpdate",0),("MouseManager","Update",0),
+  ("Card","CardOnClick",0),("Card","CardOfBankPlanting",0),("Card","Update",0)
+ };
+ foreach(var s in specs){var tt=All(verify.Types).Single(t=>t.Name==s.Item1||t.FullName==s.Item1);var mm=tt.Methods.Single(m=>m.Name==s.Item2&&m.Parameters.Count==s.Item3);if(!mm.HasBody||mm.Body.Instructions.Count<2)throw new Exception($"Bad body {s}");Console.WriteLine($"VERIFY {s.Item1}.{s.Item2}: {mm.Body.Instructions.Count} IL");}
+}
+Console.WriteLine($"WROTE {output} ({new FileInfo(output).Length} bytes)"); return 0;
+
+void PatchPlantLoopAndLifecycle(){
+ var fAnimGroup=F(plant,"animationGroup"); var fAniPart=F(plant,"ani_aniPart"); var fAnimator=F(plant,"animator"); var fSprites=F(plant,"animationSprites"); var fBoard=F(plant,"board"); var fPM=F(plant,"plantManager"); var fProd=F(plant,"produce_Brightness"); var fFlash=F(plant,"flash_Brightness");
+ var list=(GenericInstanceType)fSprites.FieldType; var listCtor=new MethodReference(".ctor",module.TypeSystem.Void,list){HasThis=true}; var clear=ListMethod(list,"Clear",module.TypeSystem.Void); var add=ListMethod(list,"Add",module.TypeSystem.Void,TRef("UnityEngine.GameObject"));
+ var awake=M(plant,"Awake",0); var getAnimator=AnyGeneric("UnityEngine.Component","GetComponent","Animator"); var getTransform=AnyCall("UnityEngine.Component","get_transform",0); var loop=M(plant,"LoopAddAnimation",1);
+ var b=Fresh(awake); var il=b.GetILProcessor(); var haveList=Instruction.Create(OpCodes.Nop), noPart=Instruction.Create(OpCodes.Ret);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fAnimGroup);E(il,OpCodes.Brfalse,noPart);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fAnimGroup);E(il,OpCodes.Callvirt,getAnimator);E(il,OpCodes.Stfld,fAnimator);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fSprites);E(il,OpCodes.Brtrue,haveList);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Newobj,listCtor);E(il,OpCodes.Stfld,fSprites);il.Append(haveList);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fSprites);E(il,OpCodes.Callvirt,clear);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fAniPart);E(il,OpCodes.Brfalse,noPart);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fAniPart);E(il,OpCodes.Callvirt,getTransform);E(il,OpCodes.Call,loop);il.Append(noPart);
+
+ var l=Fresh(loop,true); il=l.GetILProcessor(); var parent=loop.Parameters[0]; var i=new VariableDefinition(module.TypeSystem.Int32);var child=new VariableDefinition(parent.ParameterType);l.Variables.Add(i);l.Variables.Add(child);var ret=Instruction.Create(OpCodes.Ret), afterSprite=Instruction.Create(OpCodes.Nop), chk=Instruction.Create(OpCodes.Nop), body=Instruction.Create(OpCodes.Nop);
+ var getSR=AnyGeneric("UnityEngine.Component","GetComponent","SpriteRenderer"); var getGO=AnyCall("UnityEngine.Component","get_gameObject",0); var childCount=AnyCall("UnityEngine.Transform","get_childCount",0); var getChild=AnyCall("UnityEngine.Transform","GetChild",1);
+ E(il,OpCodes.Ldarg_1);E(il,OpCodes.Brfalse,ret);E(il,OpCodes.Ldarg_1);E(il,OpCodes.Callvirt,getSR);E(il,OpCodes.Brfalse,afterSprite);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fSprites);E(il,OpCodes.Ldarg_1);E(il,OpCodes.Callvirt,getGO);E(il,OpCodes.Callvirt,add);il.Append(afterSprite);E(il,OpCodes.Ldc_I4_0);E(il,OpCodes.Stloc,i);E(il,OpCodes.Br,chk);il.Append(body);E(il,OpCodes.Ldarg_1);E(il,OpCodes.Ldloc,i);E(il,OpCodes.Callvirt,getChild);E(il,OpCodes.Stloc,child);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldloc,child);E(il,OpCodes.Call,loop);E(il,OpCodes.Ldloc,i);E(il,OpCodes.Ldc_I4_1);E(il,OpCodes.Add);E(il,OpCodes.Stloc,i);il.Append(chk);E(il,OpCodes.Ldloc,i);E(il,OpCodes.Ldarg_1);E(il,OpCodes.Callvirt,childCount);E(il,OpCodes.Blt,body);il.Append(ret);
+
+ var start=M(plant,"Start",0); b=Fresh(start);il=b.GetILProcessor();var noBoard=Instruction.Create(OpCodes.Nop);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldc_R4,1f);E(il,OpCodes.Stfld,fProd);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldc_R4,1f);E(il,OpCodes.Stfld,fFlash);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fBoard);E(il,OpCodes.Brfalse,noBoard);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fBoard);E(il,OpCodes.Ldfld,F(board,"plantManager"));E(il,OpCodes.Stfld,fPM);il.Append(noBoard);E(il,OpCodes.Ret);
+ Console.WriteLine("PATCH Plant Awake/LoopAddAnimation/Start: public collection APIs + stable minimal lifecycle");
+ TypeReference TRef(string full)=>fAnimGroup.FieldType.Module.GetType(full)??AnyRefsType(full);
+}
+
+TypeReference AnyRefsType(string full){
+ foreach(var r in AllRefs()){if(r.ReturnType.FullName==full)return r.ReturnType;foreach(var p in r.Parameters)if(p.ParameterType.FullName==full)return p.ParameterType;if(r.DeclaringType.FullName==full)return r.DeclaringType;}
+ foreach(var t in All(module.Types))if(t.FullName==full)return t;
+ throw new Exception("Type ref not found: "+full);
+}
+
+void PatchPlantNumerics(){
+ var m=M(plant,"NumericalInitialize_FromCard",0);var fCard=F(plant,"cardOnBank");var fCardPD=F(card,"plantData");var fCardType=F(card,"cardPlantType");var copy=M(skill,"Copy",0);
+ var map=new[]{("plantName","name"),("characteristicText","characteristicText"),("talentNames","talentNames"),("talents","talents"),("stars","stars"),("ID","plantID"),("order","levelOrder"),("level","level"),("armorPoint","armorPoint"),("defensePoint","defensePoint"),("healthPoint","healthPoint"),("maxHealthPoint","maxHealthPoint"),("attackInterval","attackInterva"),("attackPoint","attackPoint"),("characteristicTicking","characteristicTicking"),("characteristicMaxTicking","characteristicMaxTicking")};
+ var fSkillPlant=F(plant,"skill");var fSkillPD=F(cardPlantData,"skill");var fAtk=F(plant,"attackable");var fCountdown=F(plant,"attackIntervalCountdown");
+ var b=Fresh(m,true);var il=b.GetILProcessor();var pd=new VariableDefinition(cardPlantData);b.Variables.Add(pd);var ret=Instruction.Create(OpCodes.Ret), noSkill=Instruction.Create(OpCodes.Nop), setZero=Instruction.Create(OpCodes.Nop), doneCd=Instruction.Create(OpCodes.Nop);
+ E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fCard);E(il,OpCodes.Brfalse,ret);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fCard);E(il,OpCodes.Ldfld,fCardPD);E(il,OpCodes.Stloc,pd);E(il,OpCodes.Ldloc,pd);E(il,OpCodes.Brfalse,ret);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldfld,fCard);E(il,OpCodes.Ldfld,fCardType);E(il,OpCodes.Stfld,F(plant,"plantType"));
+ foreach(var (pf,df) in map){E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldloc,pd);E(il,OpCodes.Ldfld,F(cardPlantData,df));E(il,OpCodes.Stfld,F(plant,pf));}
+ E(il,OpCodes.Ldloc,pd);E(il,OpCodes.Ldfld,fSkillPD);E(il,OpCodes.Brfalse,noSkill);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldloc,pd);E(il,OpCodes.Ldfld,fSkillPD);E(il,OpCodes.Callvirt,copy);E(il,OpCodes.Stfld,fSkillPlant);il.Append(noSkill);E(il,OpCodes.Ldarg_0);E(il,OpCodes.Ldc_I4_0);E(il,OpCodes.Stfld,fAtk);
