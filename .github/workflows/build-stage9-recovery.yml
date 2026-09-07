@@ -1,0 +1,81 @@
+name: Build Stage 9 recovery
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-stage9-recovery.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assemble and normalize Stage 9 source
+        shell: bash
+        run: |
+          cat Tools/Stage9Patch/Program.cs.part1 Tools/Stage9Patch/Program.cs.part2 Tools/Stage9Patch/Program.cs.part3 Tools/Stage9Patch/Program.cs.part4 Tools/Stage9Patch/Program.cs.part5 Tools/Stage9Patch/Program.cs.part6 > Tools/Stage9Patch/Program.cs
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('Tools/Stage9Patch/Program.cs')
+          s=p.read_text(encoding='utf-8')
+          old='''MethodReference AnyCall(string decl,string name,int pc)=>AllRefs().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
+          GenericInstanceMethod AnyGeneric(string decl,string name,string ga)=>AllRefs().OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));'''.replace('\n          ','\n')
+          new='''TypeReference Ext(string asm,string ns,string name){var scope=module.AssemblyReferences.Single(a=>a.Name==asm);return new TypeReference(ns,name,module,scope);}
+          MethodReference AnyCall(string decl,string name,int pc){
+          var found=AllRefs().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
+          if(found is not null)return found;
+          TypeReference d;TypeReference ret;TypeReference[] ps;bool hasThis=true;
+          if(decl.Contains("UnityEngine.Component")&&name=="get_transform"){d=Ext("UnityEngine.CoreModule","UnityEngine","Component");ret=Ext("UnityEngine.CoreModule","UnityEngine","Transform");ps=[];}
+          else if(decl.Contains("UnityEngine.Component")&&name=="get_gameObject"){d=Ext("UnityEngine.CoreModule","UnityEngine","Component");ret=Ext("UnityEngine.CoreModule","UnityEngine","GameObject");ps=[];}
+          else if(decl.Contains("UnityEngine.Transform")&&name=="get_childCount"){d=Ext("UnityEngine.CoreModule","UnityEngine","Transform");ret=module.TypeSystem.Int32;ps=[];}
+          else if(decl.Contains("UnityEngine.Transform")&&name=="GetChild"){d=Ext("UnityEngine.CoreModule","UnityEngine","Transform");ret=d;ps=[module.TypeSystem.Int32];}
+          else if(decl.Contains("UnityEngine.Transform")&&name=="set_position"){d=Ext("UnityEngine.CoreModule","UnityEngine","Transform");ret=module.TypeSystem.Void;ps=[Ext("UnityEngine.CoreModule","UnityEngine","Vector3")];}
+          else if(decl.Contains("UnityEngine.Transform")&&name=="SetParent"){d=Ext("UnityEngine.CoreModule","UnityEngine","Transform");ret=module.TypeSystem.Void;ps=[d,module.TypeSystem.Boolean];}
+          else if(decl.Contains("UnityEngine.GameObject")&&name=="SetActive"){d=Ext("UnityEngine.CoreModule","UnityEngine","GameObject");ret=module.TypeSystem.Void;ps=[module.TypeSystem.Boolean];}
+          else if(decl.Contains("UnityEngine.Rendering.SortingGroup")&&name=="set_sortingLayerName"){d=Ext("UnityEngine.CoreModule","UnityEngine.Rendering","SortingGroup");ret=module.TypeSystem.Void;ps=[module.TypeSystem.String];}
+          else if(decl.Contains("UnityEngine.Rendering.SortingGroup")&&name=="set_sortingOrder"){d=Ext("UnityEngine.CoreModule","UnityEngine.Rendering","SortingGroup");ret=module.TypeSystem.Void;ps=[module.TypeSystem.Int32];}
+          else if(decl.Contains("UnityEngine.Animator")&&name=="SetFloat"){d=Ext("UnityEngine.AnimationModule","UnityEngine","Animator");ret=module.TypeSystem.Void;ps=[module.TypeSystem.String,module.TypeSystem.Single];}
+          else if(decl.Contains("UnityEngine.Object")&&name=="Destroy"){d=Ext("UnityEngine.CoreModule","UnityEngine","Object");ret=module.TypeSystem.Void;ps=[d];hasThis=false;}
+          else if(decl.Contains("UnityEngine.Camera")&&name=="get_main"){d=Ext("UnityEngine.CoreModule","UnityEngine","Camera");ret=d;ps=[];hasThis=false;}
+          else if(decl.Contains("UnityEngine.Camera")&&name=="ScreenToWorldPoint"){d=Ext("UnityEngine.CoreModule","UnityEngine","Camera");ret=Ext("UnityEngine.CoreModule","UnityEngine","Vector3");ps=[ret];}
+          else if(decl.Contains("UnityEngine.Input")&&name=="get_mousePosition"){d=Ext("UnityEngine.InputLegacyModule","UnityEngine","Input");ret=Ext("UnityEngine.CoreModule","UnityEngine","Vector3");ps=[];hasThis=false;}
+          else if(decl.Contains("UnityEngine.Input")&&name=="GetMouseButtonDown"){d=Ext("UnityEngine.InputLegacyModule","UnityEngine","Input");ret=module.TypeSystem.Boolean;ps=[module.TypeSystem.Int32];hasThis=false;}
+          else if(decl.Contains("UnityEngine.Time")&&name=="get_deltaTime"){d=Ext("UnityEngine.CoreModule","UnityEngine","Time");ret=module.TypeSystem.Single;ps=[];hasThis=false;}
+          else throw new InvalidOperationException($"Unresolved call ref: {decl}::{name}/{pc}");
+          if(ps.Length!=pc)throw new InvalidOperationException($"Recovery signature parameter mismatch: {decl}::{name}/{pc}");
+          var mr=new MethodReference(name,ret,d){HasThis=hasThis};foreach(var pt in ps)mr.Parameters.Add(new ParameterDefinition(pt));
+          Console.WriteLine($"RECOVER explicit call ref: {decl}::{name}/{pc}");return mr;
+          }
+          GenericInstanceMethod AnyGeneric(string decl,string name,string ga){
+          var found=AllRefs().OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+          if(found is not null)return found;
+          TypeReference wanted=ga switch{
+          "Animator"=>Ext("UnityEngine.AnimationModule","UnityEngine","Animator"),
+          "SpriteRenderer"=>Ext("UnityEngine.CoreModule","UnityEngine","SpriteRenderer"),
+          "SortingGroup"=>Ext("UnityEngine.CoreModule","UnityEngine.Rendering","SortingGroup"),
+          "Plant"=>T("Plant"),
+          _=>throw new InvalidOperationException($"Unresolved generic type: {ga}")};
+          MethodReference open;
+          if(decl.Contains("UnityEngine.Component")&&name=="GetComponent"){
+          var d=Ext("UnityEngine.CoreModule","UnityEngine","Component");open=new MethodReference("GetComponent",module.TypeSystem.Object,d){HasThis=true};var gp=new GenericParameter("T",open);open.GenericParameters.Add(gp);open.ReturnType=gp;
+          }else if(decl.Contains("UnityEngine.GameObject")&&name=="AddComponent"){
+          var d=Ext("UnityEngine.CoreModule","UnityEngine","GameObject");open=new MethodReference("AddComponent",module.TypeSystem.Object,d){HasThis=true};var gp=new GenericParameter("T",open);open.GenericParameters.Add(gp);open.ReturnType=gp;
+          }else if(decl.Contains("UnityEngine.Object")&&name=="Instantiate"){
+          var d=Ext("UnityEngine.CoreModule","UnityEngine","Object");open=new MethodReference("Instantiate",module.TypeSystem.Object,d){HasThis=false};var gp=new GenericParameter("T",open);open.GenericParameters.Add(gp);open.ReturnType=gp;open.Parameters.Add(new ParameterDefinition(gp));
+          }else throw new InvalidOperationException($"Unresolved generic ref: {decl}::{name}<{ga}>");
+          var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: {decl}::{name}<{ga}>");return gi;
+          }'''.replace('\n          ','\n')
+          if old not in s: raise SystemExit('AnyCall/AnyGeneric helper block not found')
+          p.write_text(s.replace(old,new),encoding='utf-8')
+          PY
+      - name: Publish
+        run: dotnet publish Tools/Stage9Patch/Stage9Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
+      - name: Smoke test
+        run: ./out/Stage9Patch || test $? -eq 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9Recovery-linux-x64
+          path: out/Stage9Patch
+          if-no-files-found: error
