@@ -1,0 +1,78 @@
+    Console.WriteLine("PATCH ResourceManager.Load_boardPrefabs: explicit managed board prefab paths");
+}
+
+void PatchSeedBankInitialize(MethodDefinition m) {
+    var plantListType = (GenericInstanceType)fSavePlants.FieldType;
+    var plantCount = ListMethod(plantListType, "get_Count", module.TypeSystem.Int32);
+    var plantItem = ListMethod(plantListType, "get_Item", plantSave, module.TypeSystem.Int32);
+    var intListType = (GenericInstanceType)fTeamPlantIds.FieldType;
+    var idCount = ListMethod(intListType, "get_Count", module.TypeSystem.Int32);
+    var idItem = ListMethod(intListType, "get_Item", module.TypeSystem.Int32, module.TypeSystem.Int32);
+    var cardListType = (GenericInstanceType)fBanksCards.FieldType;
+    var cardClear = ListMethod(cardListType, "Clear", module.TypeSystem.Void);
+    var cardAdd = ListMethod(cardListType, "Add", module.TypeSystem.Void, card);
+
+    var body = Fresh(m, true); var il = body.GetILProcessor();
+    var teamVar = new VariableDefinition(team); body.Variables.Add(teamVar);
+    var ids = new VariableDefinition(intListType); body.Variables.Add(ids);
+    var idIndex = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(idIndex);
+    var wantedId = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(wantedId);
+    var pIndex = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(pIndex);
+    var ps = new VariableDefinition(plantSave); body.Variables.Add(ps);
+    var bank = new VariableDefinition(banks); body.Variables.Add(bank);
+    var newCard = new VariableDefinition(card); body.Variables.Add(newCard);
+    var done = Instruction.Create(OpCodes.Ret);
+    var idLoop = Instruction.Create(OpCodes.Nop); var nextId = Instruction.Create(OpCodes.Nop); var plantLoop = Instruction.Create(OpCodes.Nop); var nextPlant = Instruction.Create(OpCodes.Nop); var found = Instruction.Create(OpCodes.Nop); var afterIds = Instruction.Create(OpCodes.Nop);
+
+    E(il, OpCodes.Ldarg_1); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_1); E(il, OpCodes.Ldfld, fBoardBanks); E(il, OpCodes.Stloc, bank);
+    E(il, OpCodes.Ldloc, bank); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldloc, bank); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldloc, bank); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Callvirt, cardClear);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fSeedPrepare); E(il, OpCodes.Brfalse, afterIds);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fSeedPrepare); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Brfalse, afterIds);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fSeedPrepare); E(il, OpCodes.Ldfld, fPrepareCurrentTeam); E(il, OpCodes.Stloc, teamVar);
+    E(il, OpCodes.Ldloca, teamVar); E(il, OpCodes.Ldfld, fTeamPlantIds); E(il, OpCodes.Stloc, ids);
+    E(il, OpCodes.Ldloc, ids); E(il, OpCodes.Brfalse, afterIds);
+    E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, idIndex);
+    il.Append(idLoop);
+    E(il, OpCodes.Ldloc, idIndex); E(il, OpCodes.Ldloc, ids); E(il, OpCodes.Callvirt, idCount); E(il, OpCodes.Bge, afterIds);
+    E(il, OpCodes.Ldloc, ids); E(il, OpCodes.Ldloc, idIndex); E(il, OpCodes.Callvirt, idItem); E(il, OpCodes.Stloc, wantedId);
+    E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, pIndex);
+    il.Append(plantLoop);
+    E(il, OpCodes.Ldloc, pIndex); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fSeedPrepare); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSavePlants); E(il, OpCodes.Callvirt, plantCount); E(il, OpCodes.Bge, nextId);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fSeedPrepare); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSavePlants); E(il, OpCodes.Ldloc, pIndex); E(il, OpCodes.Callvirt, plantItem); E(il, OpCodes.Stloc, ps);
+    E(il, OpCodes.Ldloc, ps); E(il, OpCodes.Brfalse, nextPlant);
+    E(il, OpCodes.Ldloc, ps); E(il, OpCodes.Ldfld, fPlantId); E(il, OpCodes.Ldloc, wantedId); E(il, OpCodes.Beq, found);
+    il.Append(nextPlant); E(il, OpCodes.Ldloc, pIndex); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Add); E(il, OpCodes.Stloc, pIndex); E(il, OpCodes.Br, plantLoop);
+    il.Append(found);
+    E(il, OpCodes.Ldsfld, fPrefabCard); E(il, OpCodes.Call, instantiateCard); E(il, OpCodes.Stloc, newCard);
+    E(il, OpCodes.Ldloc, newCard); E(il, OpCodes.Brfalse, nextId);
+    E(il, OpCodes.Ldloc, bank); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Ldloc, newCard); E(il, OpCodes.Callvirt, cardAdd);
+    E(il, OpCodes.Ldloc, newCard); E(il, OpCodes.Ldarg_1); E(il, OpCodes.Stfld, fCardBoard);
+    E(il, OpCodes.Ldloc, newCard); E(il, OpCodes.Ldloc, ps); E(il, OpCodes.Callvirt, cardInitPlant);
+    E(il, OpCodes.Ldloc, newCard); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Stfld, fCardOnBank);
+    il.Append(nextId); E(il, OpCodes.Ldloc, idIndex); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Add); E(il, OpCodes.Stloc, idIndex); E(il, OpCodes.Br, idLoop);
+    il.Append(afterIds); E(il, OpCodes.Ldloc, bank); E(il, OpCodes.Callvirt, banksInitialize); E(il, OpCodes.Ret);
+    il.Append(done);
+    Console.WriteLine("PATCH SeedChooserScreen.SeedBankInitialize: build bank directly from current Team IDs");
+}
+
+void PatchBanksInitialize(MethodDefinition m) {
+    var listType = (GenericInstanceType)fBanksCards.FieldType;
+    var count = ListMethod(listType, "get_Count", module.TypeSystem.Int32);
+    var item = ListMethod(listType, "get_Item", card, module.TypeSystem.Int32);
+    var body = Fresh(m, true); var il = body.GetILProcessor();
+    var i = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(i);
+    var cv = new VariableDefinition(card); body.Variables.Add(cv);
+    var done = Instruction.Create(OpCodes.Ret); var loop = Instruction.Create(OpCodes.Nop); var next = Instruction.Create(OpCodes.Nop);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Stfld, fBanksCardNum);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stfld, fBanksCardPage);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Stfld, fBanksCardMaxPage);
+    E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, i);
+    il.Append(loop); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Bge, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBanksCards); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Callvirt, item); E(il, OpCodes.Stloc, cv);
+    E(il, OpCodes.Ldloc, cv); E(il, OpCodes.Brfalse, next);
+    E(il, OpCodes.Ldloc, cv); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Add); E(il, OpCodes.Stfld, fCardOrdinal);
+    E(il, OpCodes.Ldloc, cv); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Stfld, fCardOnBank);
