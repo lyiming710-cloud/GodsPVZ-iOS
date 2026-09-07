@@ -7,4 +7,7 @@ s = s.replace(
 s = s.replace(
 '''GenericInstanceMethod AnyGeneric(string decl,string name,string ga)=>AllRefs().OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));''',
 '''GenericInstanceMethod AnyGeneric(string decl,string name,string ga){var q=AllRefs().OfType<GenericInstanceMethod>().Where(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga)).ToList();if(q.Count==0)throw new Exception($"Missing Generic MethodRef {decl}.{name}<{ga}>");return q[0];}''')
+s = s.replace(
+'''var childCount=AnyCall("UnityEngine.Transform","get_childCount",0); var getChild=AnyCall("UnityEngine.Transform","GetChild",1);''',
+'''var transformType=AnyRefsType("UnityEngine.Transform"); var childCount=new MethodReference("get_childCount",module.TypeSystem.Int32,transformType){HasThis=true}; var getChild=new MethodReference("GetChild",transformType,transformType){HasThis=true}; getChild.Parameters.Add(new ParameterDefinition(module.TypeSystem.Int32));''')
 p.write_text(s)
