@@ -1,0 +1,63 @@
+name: Build MainMenu recovery patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-mainmenu-recovery.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assemble and normalize MainMenu source
+        shell: bash
+        run: |
+          cat Tools/MainMenuPatch/Program.cs.part1 Tools/MainMenuPatch/Program.cs.part2 Tools/MainMenuPatch/Program.cs.part3 Tools/MainMenuPatch/Program.cs.part4 > Tools/MainMenuPatch/Program.cs
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('Tools/MainMenuPatch/Program.cs')
+          s=p.read_text(encoding='utf-8')
+          old='''GenericInstanceMethod FindGeneric(MethodDefinition m,string decl,string name,string ga)=>m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));'''
+          new='''GenericInstanceMethod FindGeneric(MethodDefinition m,string decl,string name,string ga){
+ var wanted=T(ga);
+ var local=m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+ if(local is not null)return local;
+ var global=All(module.Types).SelectMany(t=>t.Methods).Where(x=>x.HasBody).SelectMany(x=>x.Body.Instructions).Select(i=>i.Operand).OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+ if(global is not null){Console.WriteLine($"RECOVER generic ref globally: {decl}::{name}<{ga}>");return global;}
+ if(decl.Contains("InternalResourceLoader",StringComparison.Ordinal)&&name=="Load"){
+  var loader=T("InternalResourceLoader");
+  var open=loader.Methods.FirstOrDefault(x=>x.Name=="Load"&&x.HasGenericParameters&&x.GenericParameters.Count==1&&x.Parameters.Count==1)??throw new InvalidOperationException("Open InternalResourceLoader.Load<T>/1 not found");
+  var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: InternalResourceLoader.Load<{ga}>");return gi;
+ }
+ if(decl.Contains("UnityEngine.JsonUtility",StringComparison.Ordinal)&&name=="FromJson"){
+  var scope=module.AssemblyReferences.Single(a=>a.Name=="UnityEngine.JSONSerializeModule");
+  var jt=new TypeReference("UnityEngine","JsonUtility",module,scope);
+  var open=new MethodReference("FromJson",module.TypeSystem.Object,jt){HasThis=false};
+  var gp=new GenericParameter("T",open);open.GenericParameters.Add(gp);open.ReturnType=gp;open.Parameters.Add(new ParameterDefinition(module.TypeSystem.String));
+  var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: JsonUtility.FromJson<{ga}>");return gi;
+ }
+ throw new InvalidOperationException($"Generic ref not found: {decl}::{name}<{ga}>");
+}'''
+          if old not in s: raise SystemExit('FindGeneric block not found')
+          p.write_text(s.replace(old,new),encoding='utf-8')
+          PY
+      - name: Publish
+        run: dotnet publish Tools/MainMenuPatch/MainMenuPatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/main-menu-recovery
+      - name: Smoke test
+        run: |
+          chmod +x publish/main-menu-recovery/GodsPVZ.MainMenuPatch
+          set +e
+          publish/main-menu-recovery/GodsPVZ.MainMenuPatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-MainMenuRecovery-linux-x64
+          path: publish/main-menu-recovery/GodsPVZ.MainMenuPatch
+          if-no-files-found: error
