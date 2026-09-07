@@ -22,9 +22,9 @@ jobs:
           from pathlib import Path
           p=Path('Tools/Stage9Patch/Program.cs')
           s=p.read_text(encoding='utf-8')
-          old='''MethodReference AnyCall(string decl,string name,int pc)=>AllRefs().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
-          GenericInstanceMethod AnyGeneric(string decl,string name,string ga)=>AllRefs().OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));'''.replace('\n          ','\n')
-          new='''TypeReference Ext(string asm,string ns,string name){var scope=module.AssemblyReferences.Single(a=>a.Name==asm);return new TypeReference(ns,name,module,scope);}
+          old_call='''MethodReference AnyCall(string decl,string name,int pc){var q=AllRefs().Where(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc).ToList();if(q.Count==0)throw new Exception($"Missing MethodRef {decl}.{name}/{pc}");return q[0];}'''
+          old_generic='''GenericInstanceMethod AnyGeneric(string decl,string name,string ga){var q=AllRefs().OfType<GenericInstanceMethod>().Where(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga)).ToList();if(q.Count==0)throw new Exception($"Missing Generic MethodRef {decl}.{name}<{ga}>");return q[0];}'''
+          new_call='''TypeReference Ext(string asm,string ns,string name){var scope=module.AssemblyReferences.Single(a=>a.Name==asm);return new TypeReference(ns,name,module,scope);}
           MethodReference AnyCall(string decl,string name,int pc){
           var found=AllRefs().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
           if(found is not null)return found;
@@ -49,8 +49,8 @@ jobs:
           if(ps.Length!=pc)throw new InvalidOperationException($"Recovery signature parameter mismatch: {decl}::{name}/{pc}");
           var mr=new MethodReference(name,ret,d){HasThis=hasThis};foreach(var pt in ps)mr.Parameters.Add(new ParameterDefinition(pt));
           Console.WriteLine($"RECOVER explicit call ref: {decl}::{name}/{pc}");return mr;
-          }
-          GenericInstanceMethod AnyGeneric(string decl,string name,string ga){
+          }'''.replace('\n          ','\n')
+          new_generic='''GenericInstanceMethod AnyGeneric(string decl,string name,string ga){
           var found=AllRefs().OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
           if(found is not null)return found;
           TypeReference wanted=ga switch{
@@ -69,8 +69,10 @@ jobs:
           }else throw new InvalidOperationException($"Unresolved generic ref: {decl}::{name}<{ga}>");
           var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: {decl}::{name}<{ga}>");return gi;
           }'''.replace('\n          ','\n')
-          if old not in s: raise SystemExit('AnyCall/AnyGeneric helper block not found')
-          p.write_text(s.replace(old,new),encoding='utf-8')
+          if old_call not in s: raise SystemExit('post-source-patches AnyCall block not found')
+          if old_generic not in s: raise SystemExit('post-source-patches AnyGeneric block not found')
+          s=s.replace(old_call,new_call).replace(old_generic,new_generic)
+          p.write_text(s,encoding='utf-8')
           PY
       - name: Publish
         run: dotnet publish Tools/Stage9Patch/Stage9Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
