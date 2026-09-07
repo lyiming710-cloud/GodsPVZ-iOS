@@ -1,0 +1,84 @@
+    var body = Fresh(m, true); var il = body.GetILProcessor();
+    var i = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(i);
+    var tv = new VariableDefinition(team); body.Variables.Add(tv);
+    var loop = Instruction.Create(OpCodes.Nop); var next = Instruction.Create(OpCodes.Nop); var done = Instruction.Create(OpCodes.Ret);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, i);
+    il.Append(loop);
+    E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Bge, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Callvirt, item); E(il, OpCodes.Stloc, tv);
+    E(il, OpCodes.Ldloca, tv); E(il, OpCodes.Ldfld, fTeamId); E(il, OpCodes.Ldarg_1); E(il, OpCodes.Bne_Un, next);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldloc, tv); E(il, OpCodes.Stfld, fPrepareCurrentTeam);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldarg_1); E(il, OpCodes.Stfld, fPrepareTeamId);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldarg_1); E(il, OpCodes.Stfld, fSaveDefaultTeam);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, foldTeam); E(il, OpCodes.Ret);
+    il.Append(next); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Add); E(il, OpCodes.Stloc, i); E(il, OpCodes.Br, loop);
+    il.Append(done);
+    Console.WriteLine("PATCH PrepareUIController.SelectTeam: indexed managed Team lookup");
+}
+
+void PatchSetDefault(MethodDefinition m) {
+    var teamsType = (GenericInstanceType)fSaveTeams.FieldType;
+    var count = ListMethod(teamsType, "get_Count", module.TypeSystem.Int32);
+    var item = ListMethod(teamsType, "get_Item", team, module.TypeSystem.Int32);
+    var body = Fresh(m, true); var il = body.GetILProcessor();
+    var i = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(i);
+    var tv = new VariableDefinition(team); body.Variables.Add(tv);
+    var desired = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(desired);
+    var loop = Instruction.Create(OpCodes.Nop); var next = Instruction.Create(OpCodes.Nop); var done = Instruction.Create(OpCodes.Ret); var useFirst = Instruction.Create(OpCodes.Nop);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Ble, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveDefaultTeam); E(il, OpCodes.Stloc, desired);
+    E(il, OpCodes.Ldloc, desired); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Blt, useFirst);
+    E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, i); E(il, OpCodes.Br, loop);
+    il.Append(useFirst); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Stloc, desired); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, i);
+    il.Append(loop);
+    E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Bge, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldfld, fSaveTeams); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Callvirt, item); E(il, OpCodes.Stloc, tv);
+    E(il, OpCodes.Ldloca, tv); E(il, OpCodes.Ldfld, fTeamId); E(il, OpCodes.Ldloc, desired); E(il, OpCodes.Bne_Un, next);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldloc, tv); E(il, OpCodes.Stfld, fPrepareCurrentTeam);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldloc, desired); E(il, OpCodes.Stfld, fPrepareTeamId);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPreparePlayerSave); E(il, OpCodes.Ldloc, desired); E(il, OpCodes.Stfld, fSaveDefaultTeam);
+    E(il, OpCodes.Ret);
+    il.Append(next); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Add); E(il, OpCodes.Stloc, i); E(il, OpCodes.Br, loop);
+    il.Append(done);
+    Console.WriteLine("PATCH PrepareUIController.SetDefaultChooseList: choose saved Team without broken enumerator");
+}
+
+void PatchSetTeams(MethodDefinition m) {
+    var il = Fresh(m).GetILProcessor(); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, setDefault); E(il, OpCodes.Ret);
+    Console.WriteLine("PATCH PrepareUIController.SetTeams: functional state only; labels deferred");
+}
+
+void PatchTeamListToggle(MethodDefinition m) {
+    var il = Fresh(m).GetILProcessor(); var unfold = Instruction.Create(OpCodes.Nop);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fPrepareTeamList); E(il, OpCodes.Brfalse, unfold);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, foldTeam); E(il, OpCodes.Ret);
+    il.Append(unfold); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, unfoldTeam); E(il, OpCodes.Ret);
+    Console.WriteLine("PATCH PrepareUIController.ClickTeamListButton: safe toggle");
+}
+
+void PatchFold(MethodDefinition m, bool state) {
+    var il = Fresh(m).GetILProcessor(); E(il, OpCodes.Ldarg_0); E(il, state ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0); E(il, OpCodes.Stfld, fPrepareTeamList); E(il, OpCodes.Ret);
+    Console.WriteLine($"PATCH PrepareUIController.{m.Name}: state={state}");
+}
+
+void PatchLoadBoardPrefabs(MethodDefinition m) {
+    var listType = (GenericInstanceType)fBoardPrefabsStatic.FieldType;
+    var clear = ListMethod(listType, "Clear", module.TypeSystem.Void);
+    var add = ListMethod(listType, "Add", module.TypeSystem.Void, board);
+    var body = Fresh(m, true); var il = body.GetILProcessor();
+    var path = new VariableDefinition(module.TypeSystem.String); body.Variables.Add(path);
+    var prefab = new VariableDefinition(board); body.Variables.Add(prefab);
+    E(il, OpCodes.Ldsfld, fBoardPrefabsStatic); E(il, OpCodes.Callvirt, clear);
+    foreach (var name in new[] { "Adventure", "Rescue", "HardAdventure", "Branch" }) {
+        var skip = Instruction.Create(OpCodes.Nop);
+        E(il, OpCodes.Ldstr, "prefabs"); E(il, OpCodes.Ldstr, "Board"); E(il, OpCodes.Call, pathCombine2); E(il, OpCodes.Ldstr, name); E(il, OpCodes.Call, pathCombine2); E(il, OpCodes.Stloc, path);
+        E(il, OpCodes.Ldloc, path); E(il, OpCodes.Call, loadBoardGeneric); E(il, OpCodes.Stloc, prefab);
+        E(il, OpCodes.Ldloc, prefab); E(il, OpCodes.Brfalse, skip);
+        E(il, OpCodes.Ldsfld, fBoardPrefabsStatic); E(il, OpCodes.Ldloc, prefab); E(il, OpCodes.Callvirt, add);
+        il.Append(skip);
+    }
+    E(il, OpCodes.Ldsfld, fBoardPrefabsStatic); E(il, OpCodes.Ret);
