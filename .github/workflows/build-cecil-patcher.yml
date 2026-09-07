@@ -1,0 +1,36 @@
+name: Build Cecil patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/CecilPatch/**'
+      - '.github/workflows/build-cecil-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish self-contained patcher
+        run: >-
+          dotnet publish Tools/CecilPatch/CecilPatch.csproj
+          -c Release
+          -r linux-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishTrimmed=false
+          -o publish/cecil-patch
+      - name: Smoke test executable
+        run: |
+          chmod +x publish/cecil-patch/GodsPVZ.CecilPatch
+          publish/cecil-patch/GodsPVZ.CecilPatch || test $? -eq 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-CecilPatch-linux-x64
+          path: publish/cecil-patch/GodsPVZ.CecilPatch
+          if-no-files-found: error
+          retention-days: 7
