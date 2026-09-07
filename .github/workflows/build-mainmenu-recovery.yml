@@ -24,25 +24,25 @@ jobs:
           s=p.read_text(encoding='utf-8')
           old='''GenericInstanceMethod FindGeneric(MethodDefinition m,string decl,string name,string ga)=>m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));'''
           new='''GenericInstanceMethod FindGeneric(MethodDefinition m,string decl,string name,string ga){
- var wanted=T(ga);
- var local=m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
- if(local is not null)return local;
- var global=All(module.Types).SelectMany(t=>t.Methods).Where(x=>x.HasBody).SelectMany(x=>x.Body.Instructions).Select(i=>i.Operand).OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
- if(global is not null){Console.WriteLine($"RECOVER generic ref globally: {decl}::{name}<{ga}>");return global;}
- if(decl.Contains("InternalResourceLoader",StringComparison.Ordinal)&&name=="Load"){
-  var loader=T("InternalResourceLoader");
-  var open=loader.Methods.FirstOrDefault(x=>x.Name=="Load"&&x.HasGenericParameters&&x.GenericParameters.Count==1&&x.Parameters.Count==1)??throw new InvalidOperationException("Open InternalResourceLoader.Load<T>/1 not found");
-  var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: InternalResourceLoader.Load<{ga}>");return gi;
- }
- if(decl.Contains("UnityEngine.JsonUtility",StringComparison.Ordinal)&&name=="FromJson"){
-  var scope=module.AssemblyReferences.Single(a=>a.Name=="UnityEngine.JSONSerializeModule");
-  var jt=new TypeReference("UnityEngine","JsonUtility",module,scope);
-  var open=new MethodReference("FromJson",module.TypeSystem.Object,jt){HasThis=false};
-  var gp=new GenericParameter("T",open);open.GenericParameters.Add(gp);open.ReturnType=gp;open.Parameters.Add(new ParameterDefinition(module.TypeSystem.String));
-  var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: JsonUtility.FromJson<{ga}>");return gi;
- }
- throw new InvalidOperationException($"Generic ref not found: {decl}::{name}<{ga}>");
-}'''
+          var wanted=T(ga);
+          var local=m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+          if(local is not null)return local;
+          var global=All(module.Types).SelectMany(t=>t.Methods).Where(x=>x.HasBody).SelectMany(x=>x.Body.Instructions).Select(i=>i.Operand).OfType<GenericInstanceMethod>().FirstOrDefault(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+          if(global is not null){Console.WriteLine($"RECOVER generic ref globally: {decl}::{name}<{ga}>");return global;}
+          if(decl.Contains("InternalResourceLoader",StringComparison.Ordinal)&&name=="Load"){
+          var loader=T("InternalResourceLoader");
+          var open=loader.Methods.FirstOrDefault(x=>x.Name=="Load"&&x.HasGenericParameters&&x.GenericParameters.Count==1&&x.Parameters.Count==1)??throw new InvalidOperationException("Open InternalResourceLoader.Load<T>/1 not found");
+          var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: InternalResourceLoader.Load<{ga}>");return gi;
+          }
+          if(decl.Contains("UnityEngine.JsonUtility",StringComparison.Ordinal)&&name=="FromJson"){
+          var scope=module.AssemblyReferences.Single(a=>a.Name=="UnityEngine.JSONSerializeModule");
+          var jt=new TypeReference("UnityEngine","JsonUtility",module,scope);
+          var open=new MethodReference("FromJson",module.TypeSystem.Object,jt){HasThis=false};
+          var gp=new GenericParameter("T",open);open.GenericParameters.Add(gp);open.ReturnType=gp;open.Parameters.Add(new ParameterDefinition(module.TypeSystem.String));
+          var gi=new GenericInstanceMethod(open);gi.GenericArguments.Add(wanted);Console.WriteLine($"RECOVER explicit generic ref: JsonUtility.FromJson<{ga}>");return gi;
+          }
+          throw new InvalidOperationException($"Generic ref not found: {decl}::{name}<{ga}>");
+          }'''.replace('\n          ','\n')
           if old not in s: raise SystemExit('FindGeneric block not found')
           p.write_text(s.replace(old,new),encoding='utf-8')
           PY
