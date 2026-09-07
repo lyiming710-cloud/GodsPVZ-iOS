@@ -1,0 +1,47 @@
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+
+if (args.Length != 2) { Console.Error.WriteLine("Usage: GodsPVZ.RuntimeBaselinePatch <input.dll> <output.dll>"); return 2; }
+var input = Path.GetFullPath(args[0]); var output = Path.GetFullPath(args[1]);
+using var module = ModuleDefinition.ReadModule(input, new ReaderParameters { InMemory = true, ReadSymbols = false });
+
+IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots) { foreach (var t in roots) { yield return t; foreach (var n in All(t.NestedTypes)) yield return n; } }
+TypeDefinition T(string n) => All(module.Types).Single(x => x.Name == n || x.FullName == n);
+FieldDefinition F(TypeDefinition t,string n)=>t.Fields.Single(x=>x.Name==n);
+MethodDefinition M(TypeDefinition t,string n,int pc){var q=t.Methods.Where(x=>x.Name==n&&x.Parameters.Count==pc).ToList();return q.Count==1?q[0]:throw new Exception($"Expected one {t.FullName}.{n}/{pc}, got {q.Count}");}
+MethodBody Fresh(MethodDefinition m,bool init=false){var b=new MethodBody(m){InitLocals=init,MaxStackSize=16};m.Body=b;return b;}
+void E(ILProcessor il,OpCode op,object? v=null){Instruction x=v switch{null=>Instruction.Create(op),string s=>Instruction.Create(op,s),int i=>Instruction.Create(op,i),float f=>Instruction.Create(op,f),MethodReference mr=>Instruction.Create(op,mr),FieldReference fr=>Instruction.Create(op,fr),TypeReference tr=>Instruction.Create(op,tr),ParameterDefinition pd=>Instruction.Create(op,pd),VariableDefinition vd=>Instruction.Create(op,vd),Instruction ins=>Instruction.Create(op,ins),_=>throw new NotSupportedException(v.GetType().FullName)};il.Append(x);}
+MethodReference ListMethod(GenericInstanceType list,string name,TypeReference ret,params TypeReference[] ps){var mr=new MethodReference(name,ret,list){HasThis=true};foreach(var p in ps)mr.Parameters.Add(new ParameterDefinition(p));return mr;}
+MethodReference FindCall(MethodDefinition m,string decl,string name,int pc)=>m.Body.Instructions.Select(i=>i.Operand).OfType<MethodReference>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
+GenericInstanceMethod FindGeneric(MethodDefinition m,string decl,string name,string ga)=>m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+
+var resource=T("ResourceManager"); var plant=T("Plant"); var zombie=T("Zombie"); var device=T("Device"); var project=T("Project");
+var plantType=T("PlantType"); var zombieType=T("ZombieType"); var deviceType=T("DeviceType"); var projectType=T("ProjectType");
+var fPlantPrefabs=F(resource,"plantPrefabs"); var fZombiePrefabs=F(resource,"zombiePrefabs"); var fDevicePrefabs=F(resource,"devicePrefabs"); var fProjectPrefabs=F(resource,"projectPrefabs");
+var oldPlantLoader=M(resource,"Load_plantPrefabs",0); var oldZombieLoader=M(resource,"Load_zombiePrefabs",0); var oldDeviceLoader=M(resource,"Load_devicePrefabs",0); var oldProjectLoader=M(resource,"Load_projectPrefabs",0);
+var combine2=FindCall(M(resource,"Load_boardPrefabs",0),"System.IO.Path","Combine",2);
+var loadPlant=FindGeneric(oldPlantLoader,"InternalResourceLoader","Load","Plant"); var loadZombie=FindGeneric(oldZombieLoader,"InternalResourceLoader","Load","Zombie"); var loadDevice=FindGeneric(oldDeviceLoader,"InternalResourceLoader","Load","Device"); var loadProject=FindGeneric(oldProjectLoader,"InternalResourceLoader","Load","Project");
+PatchEnumLoader(oldPlantLoader,plant,fPlantPrefabs,plantType,loadPlant,"Plant"); PatchEnumLoader(oldZombieLoader,zombie,fZombiePrefabs,zombieType,loadZombie,"Zombie"); PatchEnumLoader(oldDeviceLoader,device,fDevicePrefabs,deviceType,loadDevice,"Device"); PatchEnumLoader(oldProjectLoader,project,fProjectPrefabs,projectType,loadProject,"Project");
+
+var board=T("Board"); var boardConfig=T("BoardConfig"); var map=T("Map"); var mouse=T("MouseManager"); var sun=T("SunManager"); var banks=T("Banks"); var card=T("Card");
+var oldBoardStart=M(board,"Start",0); var oldBoardUpdate=M(board,"Update",0); var oldGameStart=M(board,"GameStartOnBoard",0);
+var cameraGet=FindCall(oldBoardStart,"UnityEngine.Camera","get_main",0); var cameraSet=FindCall(oldBoardStart,"UnityEngine.Camera","set_orthographicSize",1); var loadSprite=FindGeneric(oldBoardStart,"InternalResourceLoader","Load","Sprite");
+var spriteSetter=oldBoardStart.Body.Instructions.Select(i=>i.Operand).OfType<MethodReference>().First(x=>x.Name=="set_sprite");
+var deltaGet=FindCall(oldBoardUpdate,"UnityEngine.Time","get_deltaTime",0); var setActive=FindCall(oldGameStart,"UnityEngine.GameObject","SetActive",1);
+var fBoardMouse=F(board,"mouseManager"); var fBoardConfig=F(board,"boardConfig"); var fBoardMap=F(board,"map"); var fBoardSun=F(board,"sunManager"); var fBoardBackground=F(board,"background"); var fBoardGameStart=F(board,"gameStart"); var fBoardCountdown=F(board,"gameStartCountdown"); var fBoardButtons=F(board,"buttomButtons"); var fBoardBanks=F(board,"banks");
+var fConfigBaseSun=F(boardConfig,"baseSunPoint"); var fMapCamera=F(map,"cameraSize"); var fMapScenario=F(map,"senarioState"); var fSunPoint=F(sun,"sunPoint");
+var resetMouse=M(mouse,"ResetStart",0); var createMap=M(boardConfig,"CreateMap",0); var bgPath=M(resource,"GetBoardBackgroundSpritePath",1); var bankStart=M(banks,"BankStart",0); var gameStartOnBoard=M(board,"GameStartOnBoard",0);
+PatchBoardStart(oldBoardStart); PatchBoardUpdate(oldBoardUpdate); PatchGameStart(oldGameStart); PatchBankStart(bankStart);
+
+var plantMgr=T("PlantManager"); var zombieMgr=T("ZombieManager"); var deviceMgr=T("DeviceManager"); var projectMgr=T("ProjectManager");
+PatchManagerStartWithLoader(M(plantMgr,"Start",0),F(plantMgr,"plantPrefabList"),M(resource,"Load_plantPrefabs",0));
+Noop(M(zombieMgr,"Start",0),"ZombieManager.Start: waves deferred"); Noop(M(zombieMgr,"Update",0),"ZombieManager.Update: waves deferred");
+Noop(M(deviceMgr,"Start",0),"DeviceManager.Start: pre-devices deferred"); Noop(M(deviceMgr,"Update",0),"DeviceManager.Update: pre-devices deferred");
+Noop(M(projectMgr,"Start",0),"ProjectManager.Start: project simulation deferred"); Noop(M(projectMgr,"Update",0),"ProjectManager.Update: project simulation deferred");
+Noop(M(sun,"Start",0),"SunManager.Start: runtime sun loop deferred"); Noop(M(sun,"Update",0),"SunManager.Update: pointer recovery removed");
+
+PatchCardData(card); Noop(M(card,"Update",0),"Card.Update: state-machine recovery deferred");
+
+Directory.CreateDirectory(Path.GetDirectoryName(output)!); module.Write(output,new WriterParameters{WriteSymbols=false});
+using(var verify=ModuleDefinition.ReadModule(output,new ReaderParameters{InMemory=true,ReadSymbols=false})){
+ foreach(var s in new[]{("ResourceManager","Load_plantPrefabs",0),("Board","Start",0),("Board","Update",0),("Board","GameStartOnBoard",0),("Banks","BankStart",0),("Card","Initialize_PlantSave",1),("Card/PlantData","LoadData",2)}){
