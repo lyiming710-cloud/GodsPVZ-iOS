@@ -1,0 +1,25 @@
+name: Build Stage 9 patcher
+on:
+  push:
+    paths:
+      - 'Tools/Stage9Patch/**'
+      - '.github/workflows/build-stage9-patcher.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assemble source
+        run: cat Tools/Stage9Patch/Program.cs.part1 Tools/Stage9Patch/Program.cs.part2 Tools/Stage9Patch/Program.cs.part3 Tools/Stage9Patch/Program.cs.part4 Tools/Stage9Patch/Program.cs.part5 > Tools/Stage9Patch/Program.cs
+      - name: Publish
+        run: dotnet publish Tools/Stage9Patch/Stage9Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
+      - name: Smoke test
+        run: ./out/Stage9Patch || test $? -eq 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9Patch-linux-x64
+          path: out/Stage9Patch
