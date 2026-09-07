@@ -1,0 +1,64 @@
+    il.Append(next); E(il, OpCodes.Ldloc, i); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Add); E(il, OpCodes.Stloc, i); E(il, OpCodes.Br, loop);
+    il.Append(done);
+    Console.WriteLine("PATCH Banks.Initialize: stable list bookkeeping; visual layout deferred");
+}
+
+void PatchBoardManagerLoadBoard(MethodDefinition m) {
+    var listType = (GenericInstanceType)fBmPrefabList.FieldType;
+    var count = ListMethod(listType, "get_Count", module.TypeSystem.Int32);
+    var item = ListMethod(listType, "get_Item", board, module.TypeSystem.Int32);
+    var body = Fresh(m, true); var il = body.GetILProcessor();
+    var index = new VariableDefinition(module.TypeSystem.Int32); body.Variables.Add(index);
+    var prefab = new VariableDefinition(board); body.Variables.Add(prefab);
+    var instance = new VariableDefinition(board); body.Variables.Add(instance);
+    var done = Instruction.Create(OpCodes.Ret); var useZero = Instruction.Create(OpCodes.Nop); var indexOk = Instruction.Create(OpCodes.Nop); var noMouse = Instruction.Create(OpCodes.Nop); var noSeed = Instruction.Create(OpCodes.Nop);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmPrefabList); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmPrefabList); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Ble, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmChallenge); E(il, OpCodes.Stloc, index);
+    E(il, OpCodes.Ldloc, index); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Blt, useZero);
+    E(il, OpCodes.Ldloc, index); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmPrefabList); E(il, OpCodes.Callvirt, count); E(il, OpCodes.Blt, indexOk);
+    il.Append(useZero); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Stloc, index);
+    il.Append(indexOk);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmPrefabList); E(il, OpCodes.Ldloc, index); E(il, OpCodes.Callvirt, item); E(il, OpCodes.Stloc, prefab);
+    E(il, OpCodes.Ldloc, prefab); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldloc, prefab); E(il, OpCodes.Call, instantiateBoard); E(il, OpCodes.Stloc, instance);
+    E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Brfalse, done);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Stfld, fBmBoard);
+    E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmBoardConfig); E(il, OpCodes.Stfld, fBoardConfig);
+    E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmChallenge); E(il, OpCodes.Stfld, fBoardChallenge);
+    E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmLevel); E(il, OpCodes.Stfld, fBoardLevel);
+    E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmMouse); E(il, OpCodes.Stfld, fBoardMouse);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmMouse); E(il, OpCodes.Brfalse, noMouse);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmMouse); E(il, OpCodes.Ldc_I4_1); E(il, OpCodes.Stfld, fMouseOnBoard);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmMouse); E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Stfld, fMouseBoard);
+    il.Append(noMouse);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmSeed); E(il, OpCodes.Brfalse, noSeed);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBmSeed); E(il, OpCodes.Ldloc, instance); E(il, OpCodes.Callvirt, seedBankInitialize);
+    il.Append(noSeed); E(il, OpCodes.Ret);
+    il.Append(done);
+    Console.WriteLine("PATCH BoardManager.LoadBoard: managed prefab instantiate + SeedBank; props deferred");
+}
+
+MethodBody Fresh(MethodDefinition m, bool initLocals = false) {
+    var b = new MethodBody(m) { InitLocals = initLocals, MaxStackSize = 16 }; m.Body = b; return b;
+}
+void E(ILProcessor il, OpCode op, object? v = null) {
+    Instruction x = v switch {
+        null => Instruction.Create(op), string s => Instruction.Create(op, s), int i => Instruction.Create(op, i),
+        MethodReference mr => Instruction.Create(op, mr), FieldReference fr => Instruction.Create(op, fr), TypeReference tr => Instruction.Create(op, tr),
+        ParameterDefinition pd => Instruction.Create(op, pd), VariableDefinition vd => Instruction.Create(op, vd), Instruction ins => Instruction.Create(op, ins),
+        _ => throw new NotSupportedException($"Unsupported IL operand {v.GetType().FullName}")
+    }; il.Append(x);
+}
+MethodReference ListMethod(GenericInstanceType list, string name, TypeReference ret, params TypeReference[] ps) {
+    var mr = new MethodReference(name, ret, list) { HasThis = true };
+    foreach (var p in ps) mr.Parameters.Add(new ParameterDefinition(p));
+    return mr;
+}
+MethodReference FindCall(MethodDefinition m, string declaring, string name, int pc) =>
+    m.Body.Instructions.Select(i => i.Operand).OfType<MethodReference>().First(x => x.DeclaringType.FullName.Contains(declaring) && x.Name == name && x.Parameters.Count == pc);
+GenericInstanceMethod FindGenericCall(MethodDefinition m, string declaring, string name, string genericType) =>
+    m.Body.Instructions.Select(i => i.Operand).OfType<GenericInstanceMethod>().First(x => x.DeclaringType.FullName.Contains(declaring) && x.Name == name && x.GenericArguments.Any(a => a.Name == genericType || a.FullName == genericType));
+static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots) {
+    foreach (var t in roots) { yield return t; foreach (var n in AllTypes(t.NestedTypes)) yield return n; }
+}
