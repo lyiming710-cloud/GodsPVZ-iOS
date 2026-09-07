@@ -1,0 +1,32 @@
+name: Build IL risk audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/ILRiskAudit/**'
+      - '.github/workflows/build-il-risk-audit.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish
+        run: dotnet publish Tools/ILRiskAudit/ILRiskAudit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/il-risk-audit
+      - name: Smoke test
+        run: |
+          chmod +x publish/il-risk-audit/GodsPVZ.ILRiskAudit
+          set +e
+          publish/il-risk-audit/GodsPVZ.ILRiskAudit
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-ILRiskAudit-linux-x64
+          path: publish/il-risk-audit/GodsPVZ.ILRiskAudit
+          if-no-files-found: error
