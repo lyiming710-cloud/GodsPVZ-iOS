@@ -1,0 +1,36 @@
+name: Build runtime baseline patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/RuntimeBaselinePatch/**'
+      - '.github/workflows/build-runtime-baseline-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assemble source
+        shell: bash
+        run: cat Tools/RuntimeBaselinePatch/Program.cs.part* > Tools/RuntimeBaselinePatch/Program.cs
+      - name: Publish
+        run: dotnet publish Tools/RuntimeBaselinePatch/RuntimeBaselinePatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/runtime-baseline
+      - name: Smoke test
+        shell: bash
+        run: |
+          chmod +x publish/runtime-baseline/GodsPVZ.RuntimeBaselinePatch
+          set +e
+          publish/runtime-baseline/GodsPVZ.RuntimeBaselinePatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-RuntimeBaselinePatch-linux-x64
+          path: publish/runtime-baseline/GodsPVZ.RuntimeBaselinePatch
+          if-no-files-found: error
