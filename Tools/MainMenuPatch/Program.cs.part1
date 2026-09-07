@@ -1,0 +1,40 @@
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+
+if (args.Length != 2) { Console.Error.WriteLine("Usage: GodsPVZ.MainMenuPatch <input.dll> <output.dll>"); return 2; }
+var input=Path.GetFullPath(args[0]); var output=Path.GetFullPath(args[1]);
+using var module=ModuleDefinition.ReadModule(input,new ReaderParameters{InMemory=true,ReadSymbols=false});
+IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots){foreach(var t in roots){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+TypeDefinition T(string n)=>All(module.Types).Single(x=>x.Name==n||x.FullName==n);
+FieldDefinition F(TypeDefinition t,string n)=>t.Fields.Single(x=>x.Name==n);
+MethodDefinition M(TypeDefinition t,string n,int pc){var q=t.Methods.Where(x=>x.Name==n&&x.Parameters.Count==pc).ToList();return q.Count==1?q[0]:throw new Exception($"Expected one {t.FullName}.{n}/{pc}, got {q.Count}");}
+MethodBody Fresh(MethodDefinition m,bool init=false){var b=new MethodBody(m){InitLocals=init,MaxStackSize=16};m.Body=b;return b;}
+void E(ILProcessor il,OpCode op,object? v=null){Instruction x=v switch{null=>Instruction.Create(op),string s=>Instruction.Create(op,s),int i=>Instruction.Create(op,i),float f=>Instruction.Create(op,f),MethodReference mr=>Instruction.Create(op,mr),FieldReference fr=>Instruction.Create(op,fr),TypeReference tr=>Instruction.Create(op,tr),ParameterDefinition pd=>Instruction.Create(op,pd),VariableDefinition vd=>Instruction.Create(op,vd),Instruction ins=>Instruction.Create(op,ins),_=>throw new NotSupportedException(v.GetType().FullName)};il.Append(x);}
+MethodReference ListMethod(GenericInstanceType list,string name,TypeReference ret,params TypeReference[] ps){var mr=new MethodReference(name,ret,list){HasThis=true};foreach(var p in ps)mr.Parameters.Add(new ParameterDefinition(p));return mr;}
+MethodReference FindCall(MethodDefinition m,string decl,string name,int pc)=>m.Body.Instructions.Select(i=>i.Operand).OfType<MethodReference>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.Parameters.Count==pc);
+GenericInstanceMethod FindGeneric(MethodDefinition m,string decl,string name,string ga)=>m.Body.Instructions.Select(i=>i.Operand).OfType<GenericInstanceMethod>().First(x=>x.DeclaringType.FullName.Contains(decl)&&x.Name==name&&x.GenericArguments.Any(a=>a.Name==ga||a.FullName==ga));
+
+var resource=T("ResourceManager"); var main=T("MainUIController"); var savesUi=T("SavesUIController"); var save=T("Save"); var savesMgr=T("SavesManager");
+var oldStart=M(resource,"Start",0); var oldAudio=M(resource,"LoadAudioClips",0);
+var loadAudio=FindGeneric(oldAudio,"InternalResourceLoader","Load","AudioClip");
+var audioClip=loadAudio.GenericArguments[0];
+var fLoaded=F(resource,"loaded"); var fBGMs=F(resource,"BGMs"); var fButtons=F(resource,"buttonClips"); var fSupplies=F(resource,"suppliesInitialValue"); var fCharreds=F(resource,"zombie_Charreds");
+var getSuppliesPath=M(resource,"GetSuppliesInitialValuePath",0);
+var readJson=FindCall(oldStart,"InternalResourceLoader","ReadJson_StreamingAssets",1);
+var fromSupplies=FindGeneric(oldStart,"UnityEngine.JsonUtility","FromJson","SuppliesInitialValue");
+var isNullOrEmpty=FindCall(oldStart,"System.String","IsNullOrEmpty",1);
+PatchResourceStart(); PatchAudio();
+
+PatchMainUI(); PatchSavesUI();
+
+Directory.CreateDirectory(Path.GetDirectoryName(output)!); module.Write(output,new WriterParameters{WriteSymbols=false});
+using(var verify=ModuleDefinition.ReadModule(output,new ReaderParameters{InMemory=true,ReadSymbols=false})){
+ foreach(var s in new[]{("ResourceManager","Start",0),("ResourceManager","LoadAudioClips",0),("MainUIController","LoadData",0),("MainUIController","AdventureButtonOnClick",0),("MainUIController","PlayBGM",1),("MainUIController","ButtonDownPlayClip",1),("MainUIController","SetGloveButtons",0),("SavesUIController","LoadData",1)}){
+  var tt=All(verify.Types).Single(t=>t.Name==s.Item1||t.FullName==s.Item1); var mm=tt.Methods.Single(m=>m.Name==s.Item2&&m.Parameters.Count==s.Item3); if(!mm.HasBody||mm.Body.Instructions.Count<2)throw new Exception($"Bad body {s}"); Console.WriteLine($"VERIFY {s.Item1}.{s.Item2}: {mm.Body.Instructions.Count} IL");
+ }
+}
+Console.WriteLine($"WROTE {output} ({new FileInfo(output).Length} bytes)"); return 0;
+
+void PatchResourceStart(){
+ var suppliesType=T("SuppliesInitialValue"); var charredType=T("Zombie_charred"); var listChar=(GenericInstanceType)fCharreds.FieldType; var clearChar=ListMethod(listChar,"Clear",module.TypeSystem.Void); var addChar=ListMethod(listChar,"Add",module.TypeSystem.Void,charredType);
+ var loadChar=FindGeneric(oldStart,"InternalResourceLoader","Load","Zombie_charred");
