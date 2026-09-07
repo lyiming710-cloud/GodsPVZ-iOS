@@ -10,4 +10,5 @@ s = s.replace(
 s = s.replace(
 '''var childCount=AnyCall("UnityEngine.Transform","get_childCount",0); var getChild=AnyCall("UnityEngine.Transform","GetChild",1);''',
 '''var transformType=AnyRefsType("UnityEngine.Transform"); var childCount=new MethodReference("get_childCount",module.TypeSystem.Int32,transformType){HasThis=true}; var getChild=new MethodReference("GetChild",transformType,transformType){HasThis=true}; getChild.Parameters.Add(new ParameterDefinition(module.TypeSystem.Int32));''')
+s = s.replace('PatchPlantDie();', 'PatchPlantFrameLoop();\nPatchPlantDie();', 1)
 p.write_text(s)
