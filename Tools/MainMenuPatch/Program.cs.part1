@@ -37,4 +37,4 @@ Console.WriteLine($"WROTE {output} ({new FileInfo(output).Length} bytes)"); retu
 
 void PatchResourceStart(){
  var suppliesType=T("SuppliesInitialValue"); var charredType=T("Zombie_charred"); var listChar=(GenericInstanceType)fCharreds.FieldType; var clearChar=ListMethod(listChar,"Clear",module.TypeSystem.Void); var addChar=ListMethod(listChar,"Add",module.TypeSystem.Void,charredType);
- var loadChar=FindGeneric(oldStart,"InternalResourceLoader","Load","Zombie_charred");
+ var loadChar=new GenericInstanceMethod(loadAudio.ElementMethod); loadChar.GenericArguments.Add(charredType);
