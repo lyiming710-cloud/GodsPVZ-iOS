@@ -38,17 +38,53 @@ jobs:
               return global;
           }
           GenericInstanceMethod FindGenericCall(MethodDefinition m, string declaring, string name, string genericType) {
+              var wantedType = T(genericType);
               var local = m.Body.Instructions.Select(i => i.Operand).OfType<GenericInstanceMethod>()
                   .FirstOrDefault(x => x.DeclaringType.FullName.Contains(declaring) && x.Name == name && x.GenericArguments.Any(a => a.Name == genericType || a.FullName == genericType));
               if (local is not null) return local;
               var global = AllTypes(module.Types).SelectMany(t => t.Methods).Where(x => x.HasBody)
                   .SelectMany(x => x.Body.Instructions).Select(i => i.Operand).OfType<GenericInstanceMethod>()
                   .FirstOrDefault(x => x.DeclaringType.FullName.Contains(declaring) && x.Name == name && x.GenericArguments.Any(a => a.Name == genericType || a.FullName == genericType));
-              if (global is null) throw new InvalidOperationException($"Generic call ref not found: {declaring}::{name}<{genericType}>");
-              Console.WriteLine($"RECOVER generic call ref globally: {declaring}::{name}<{genericType}>");
-              return global;
+              if (global is not null) {
+                  Console.WriteLine($"RECOVER generic call ref globally: {declaring}::{name}<{genericType}>");
+                  return global;
+              }
+
+              if (declaring.Contains("InternalResourceLoader", StringComparison.Ordinal) && name == "Load") {
+                  var loader = T("InternalResourceLoader");
+                  var open = loader.Methods.FirstOrDefault(x => x.Name == "Load" && x.HasGenericParameters && x.GenericParameters.Count == 1 && x.Parameters.Count == 1)
+                      ?? throw new InvalidOperationException("Open InternalResourceLoader.Load<T>/1 definition not found");
+                  var gi = new GenericInstanceMethod(open);
+                  gi.GenericArguments.Add(wantedType);
+                  Console.WriteLine($"RECOVER explicit generic ref: InternalResourceLoader.Load<{genericType}>");
+                  return gi;
+              }
+
+              if (declaring.Contains("UnityEngine.Object", StringComparison.Ordinal) && name == "Instantiate") {
+                  var anyInstantiate = AllTypes(module.Types).SelectMany(t => t.Methods).Where(x => x.HasBody)
+                      .SelectMany(x => x.Body.Instructions).Select(i => i.Operand).OfType<GenericInstanceMethod>()
+                      .FirstOrDefault(x => x.DeclaringType.FullName.Contains("UnityEngine.Object", StringComparison.Ordinal) && x.Name == "Instantiate" && x.GenericArguments.Count == 1 && x.Parameters.Count == 1);
+                  MethodReference open;
+                  if (anyInstantiate is not null) {
+                      open = anyInstantiate.ElementMethod;
+                  } else {
+                      var core = module.AssemblyReferences.First(a => a.Name == "UnityEngine.CoreModule");
+                      var obj = new TypeReference("UnityEngine", "Object", module, core);
+                      open = new MethodReference("Instantiate", module.TypeSystem.Object, obj) { HasThis = false };
+                      var gp = new GenericParameter("T", open);
+                      open.GenericParameters.Add(gp);
+                      open.ReturnType = gp;
+                      open.Parameters.Add(new ParameterDefinition(gp));
+                  }
+                  var gi = new GenericInstanceMethod(open);
+                  gi.GenericArguments.Add(wantedType);
+                  Console.WriteLine($"RECOVER explicit generic ref: UnityEngine.Object.Instantiate<{genericType}>");
+                  return gi;
+              }
+
+              throw new InvalidOperationException($"Generic call ref not found: {declaring}::{name}<{genericType}>");
           }'''.replace('\n          ','\n')
-          if old not in s: raise SystemExit('expected FindCall/FindGenericCall block not found')
+          if old not in s: raise SystemExit('expected original FindCall/FindGenericCall block not found')
           p.write_text(s.replace(old,new),encoding='utf-8')
           PY
       - name: Publish
