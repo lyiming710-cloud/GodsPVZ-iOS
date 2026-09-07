@@ -15,40 +15,44 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Normalize local Emit helper
-        shell: python
+        shell: bash
         run: |
+          python3 <<'PY'
           from pathlib import Path
           p = Path('Tools/SemanticPatch/Program.cs')
           s = p.read_text(encoding='utf-8')
           old = '''static void Emit(ILProcessor il, OpCode code) => il.Append(Instruction.Create(code));
-static void Emit(ILProcessor il, OpCode code, string value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, int value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, MethodReference value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, TypeReference value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, FieldReference value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, ParameterDefinition value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, VariableDefinition value) => il.Append(Instruction.Create(code, value));
-static void Emit(ILProcessor il, OpCode code, Instruction value) => il.Append(Instruction.Create(code, value));'''
+          static void Emit(ILProcessor il, OpCode code, string value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, int value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, MethodReference value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, TypeReference value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, FieldReference value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, ParameterDefinition value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, VariableDefinition value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, Instruction value) => il.Append(Instruction.Create(code, value));'''
+          old = old.replace('\n          ', '\n')
           new = '''static void Emit(ILProcessor il, OpCode code, object? value = null)
-{
-    Instruction ins = value switch
-    {
-        null => Instruction.Create(code),
-        string v => Instruction.Create(code, v),
-        int v => Instruction.Create(code, v),
-        MethodReference v => Instruction.Create(code, v),
-        TypeReference v => Instruction.Create(code, v),
-        FieldReference v => Instruction.Create(code, v),
-        ParameterDefinition v => Instruction.Create(code, v),
-        VariableDefinition v => Instruction.Create(code, v),
-        Instruction v => Instruction.Create(code, v),
-        _ => throw new NotSupportedException($"Unsupported Emit operand: {value.GetType().FullName}")
-    };
-    il.Append(ins);
-}'''
+          {
+              Instruction ins = value switch
+              {
+                  null => Instruction.Create(code),
+                  string v => Instruction.Create(code, v),
+                  int v => Instruction.Create(code, v),
+                  MethodReference v => Instruction.Create(code, v),
+                  TypeReference v => Instruction.Create(code, v),
+                  FieldReference v => Instruction.Create(code, v),
+                  ParameterDefinition v => Instruction.Create(code, v),
+                  VariableDefinition v => Instruction.Create(code, v),
+                  Instruction v => Instruction.Create(code, v),
+                  _ => throw new NotSupportedException($"Unsupported Emit operand: {value.GetType().FullName}")
+              };
+              il.Append(ins);
+          }'''
+          new = new.replace('\n          ', '\n')
           if old not in s:
               raise SystemExit('expected Emit block not found')
           p.write_text(s.replace(old, new), encoding='utf-8')
+          PY
       - name: Publish semantic patcher
         run: dotnet publish Tools/SemanticPatch/SemanticPatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/semantic-patch
       - name: Smoke test executable
