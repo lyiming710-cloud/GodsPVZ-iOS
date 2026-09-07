@@ -1,0 +1,25 @@
+ var b=Fresh(oldStart,true); var il=b.GetILProcessor(); var text=new VariableDefinition(module.TypeSystem.String); var sv=new VariableDefinition(suppliesType); var ch=new VariableDefinition(charredType); b.Variables.Add(text);b.Variables.Add(sv);b.Variables.Add(ch);
+ var ret=Instruction.Create(OpCodes.Ret); var afterSupplies=Instruction.Create(OpCodes.Nop); var skipChar=Instruction.Create(OpCodes.Nop);
+ E(il,OpCodes.Ldsfld,fLoaded);E(il,OpCodes.Brtrue,ret);E(il,OpCodes.Ldc_I4_1);E(il,OpCodes.Stsfld,fLoaded);
+ E(il,OpCodes.Call,getSuppliesPath);E(il,OpCodes.Call,readJson);E(il,OpCodes.Stloc,text);E(il,OpCodes.Ldloc,text);E(il,OpCodes.Call,isNullOrEmpty);E(il,OpCodes.Brtrue,afterSupplies);E(il,OpCodes.Ldloc,text);E(il,OpCodes.Call,fromSupplies);E(il,OpCodes.Stloc,sv);E(il,OpCodes.Ldloc,sv);E(il,OpCodes.Stsfld,fSupplies);il.Append(afterSupplies);
+ E(il,OpCodes.Ldsfld,fCharreds);E(il,OpCodes.Callvirt,clearChar);E(il,OpCodes.Ldstr,"prefabs/Charred/Zombie_charred");E(il,OpCodes.Call,loadChar);E(il,OpCodes.Stloc,ch);E(il,OpCodes.Ldloc,ch);E(il,OpCodes.Brfalse,skipChar);E(il,OpCodes.Ldsfld,fCharreds);E(il,OpCodes.Ldloc,ch);E(il,OpCodes.Callvirt,addChar);il.Append(skipChar);
+ E(il,OpCodes.Call,M(resource,"LoadAudioClips",0));
+ foreach(var spec in new[]{
+  ("prefab_Card","Card","prefabs/Card/CardTemplate"),("prefab_Card_Choose","Card_Choose","prefabs/Card_Choose/Card_Choose"),("prefab_SuppliesItem","SuppliesItem","prefabs/Supplies/SuppliesItem"),("zombie_SelectPrefab","Zombie_Select","prefabs/UI/SmallObjects/Zombie_Select"),("prefab_Projectile","Projectile","prefabs/Projectile/Projectile"),("prefab_DamageText","DamageText","prefabs/UI/OnBoard/Damage"),("prefab_Window_Q","Window_Q","prefabs/UI/Window_Q"),("prefab_Window_T","Window_T","prefabs/UI/Window_T"),("prefab_Window_I","Window_I","prefabs/UI/Window_I"),("prefab_Popup","Popup","prefabs/UI/Popup"),("prefab_BoardPreview","BoardPreview","prefabs/Board/BoardPreview/BoardPreview"),("prefab_Almanac","AlmanacUIController","prefabs/UI/Almanac"),("prefab_Warehouse","WarehouseUIController","prefabs/UI/Warehouse"),("prefab_Almanac_ZombieWindow","Almanac_ZombieWindow","prefabs/UI/SmallObjects/ZombieWindow"),("prefab_Almanac_DeviceWindow","Almanac_DeviceWindow","prefabs/UI/SmallObjects/DeviceWindow"),("prefab_Admin_GridConfig","GridConfig_A","prefabs/UI/SmallObjects/GridConfig"),("prefab_HugeWave","GameObject","prefabs/UI/OnBoard/Approaching"),("prefab_FightReady","GameObject","prefabs/UI/OnBoard/FightReady"),("prefab_FlagMeter","FlagMeter","prefabs/UI/OnBoard/FlagMeter"),("prefab_FlagMeter_Flag","GameObject","prefabs/UI/OnBoard/FlagMeter_Flag")}){
+   var field=F(resource,spec.Item1); var load=FindGeneric(oldStart,"InternalResourceLoader","Load",spec.Item2); E(il,OpCodes.Ldstr,spec.Item3);E(il,OpCodes.Call,load);E(il,OpCodes.Stsfld,field);
+ }
+ il.Append(ret); Console.WriteLine("PATCH ResourceManager.Start: managed minimal resource/prefab bootstrap; sprite bulk load deferred");
+}
+
+void PatchAudio(){
+ var bgList=(GenericInstanceType)fBGMs.FieldType; var btnList=(GenericInstanceType)fButtons.FieldType; var bgClear=ListMethod(bgList,"Clear",module.TypeSystem.Void); var bgAdd=ListMethod(bgList,"Add",module.TypeSystem.Void,audioClip); var btnClear=ListMethod(btnList,"Clear",module.TypeSystem.Void); var btnAdd=ListMethod(btnList,"Add",module.TypeSystem.Void,audioClip);
+ var il=Fresh(oldAudio).GetILProcessor();
+ E(il,OpCodes.Ldsfld,fBGMs);E(il,OpCodes.Callvirt,bgClear); foreach(var n in new[]{"MainMenu","Prepare0"}){E(il,OpCodes.Ldsfld,fBGMs);E(il,OpCodes.Ldstr,$"audioClips/BGM/{n}");E(il,OpCodes.Call,loadAudio);E(il,OpCodes.Callvirt,bgAdd);}
+ E(il,OpCodes.Ldsfld,fButtons);E(il,OpCodes.Callvirt,btnClear); foreach(var n in new[]{"bleep","buttonclick","buzzer","ceramic","gravebutton","pause","seedlift","tap","tap2"}){E(il,OpCodes.Ldsfld,fButtons);E(il,OpCodes.Ldstr,$"audioClips/Button/{n}");E(il,OpCodes.Call,loadAudio);E(il,OpCodes.Callvirt,btnAdd);}
+ E(il,OpCodes.Ret); Console.WriteLine("PATCH ResourceManager.LoadAudioClips: MainMenu/Prepare + 9 button clips via List<T>.Add");
+}
+
+void PatchMainUI(){
+ var fSaves=F(main,"savesManager"); var fSavesUi=F(main,"savesUIController"); var fHelpPc=F(main,"text_Help_PC"); var fHelpMobile=F(main,"text_Help_Android"); var fAdventure=F(main,"adventure"); var fBgm=F(main,"BGM"); var fLevel=F(main,"adventureLevelText");
+ var fPlayer=F(savesMgr,"playerSave"); var fPlayerName=F(save,"playerName"); var fAdvLevel=F(save,"adventureLevel");
+ var goSetActive=main.Methods.SelectMany(m=>m.Body?.Instructions??Enumerable.Empty<Instruction>()).Select(i=>i.Operand).OfType<MethodReference>().First(x=>x.DeclaringType.FullName=="UnityEngine.GameObject"&&x.Name=="SetActive"&&x.Parameters.Count==1);
