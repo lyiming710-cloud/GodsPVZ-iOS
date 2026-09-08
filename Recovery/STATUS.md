@@ -12,7 +12,8 @@ Use the PC x86-64 IL2CPP build as the primary gameplay-logic source because Cpp2
 - PC CodeRegistration / MetadataRegistration: `0x1815E88C0` / `0x1818C6D00`
 - Initial PC Cpp2IL recovery: `2318 / 2319` methods; the only full method-level failure was `Zombie::InjuryStatusUpdate_Body`.
 - That missing method is now recovered in HF3 directly from PC native x86-64 at `0x1803652B0`, independently Cecil/ILSpy audited, and classified `Exact`. Final HF3 SHA-256: `23014656af797490bc35d9feb8f78950bcfa79a167c6a1de3303e1d30251c32f`.
-- HF1/HF2/HF3 are cumulative high-fidelity managed recovery stages. HF3 modifies exactly one managed method relative to the audited HF2 after normalizing physical RVA/data-placement shifts.
+- HF4 restores `Zombie.Awake()` directly from PC native x86-64 at `0x18035DAD0`. The six armor initialization tables, enum default behavior, field identities, and native write order are independently Cecil/ILSpy audited and classified `Exact`. Final HF4 SHA-256: `2abbc9eb02b93bcd0178091bbc38ca450b6162875df9dcb55e874d5b9af9f0a6`.
+- HF1/HF2/HF3/HF4 are cumulative high-fidelity managed recovery stages. After normalizing physical RVA/data-placement shifts, HF3 changes exactly one managed method relative to audited HF2, and HF4 changes exactly one managed method (`Zombie.Awake`) relative to audited HF3.
 - Android/ARM64 ILSpy output: 15,946 `Cpp2ILHelpers.NoteDecompilerIssue` calls.
 - PC/x86-64 ILSpy output: 4,304 `Cpp2ILHelpers.NoteDecompilerIssue` calls, a ~73% reduction.
 - Critical scene transition `GlobalStaticVars.EnterBoard()` is correctly recovered on PC as `SceneManager.LoadScene("Board")`; the Android recovery lost that string through an unresolved unmanaged-memory load.
@@ -48,7 +49,7 @@ Serialized package script references cover 67 distinct types: 19 UGUI, 9 TMP, 32
 
 ## Remaining blockers before claiming a working IPA
 
-1. Continue native-backed recovery of critical gameplay paths that still contain `NoteDecompilerIssue`, invalid-IL artifacts, or previously introduced stability/behavior-equivalent implementations. Do not replace them with guessed gameplay logic.
+1. Continue native-backed recovery of critical gameplay paths that still contain `NoteDecompilerIssue`, invalid-IL artifacts, or previously introduced stability/behavior-equivalent implementations. Do not replace them with guessed gameplay logic. The next Zombie lifecycle targets are `Start` and `Update`, followed by high-centrality damage/death paths as needed.
 2. Import the reconstructed project in Unity `2022.3.44f1c1` and let Package Manager restore the exact packages.
 3. Run/verify the package-reference migration (67/67 types must resolve).
 4. Verify the cumulative high-fidelity game DLL is accepted by Unity and can be converted by IL2CPP for iOS.
