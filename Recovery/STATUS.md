@@ -2,7 +2,7 @@
 
 ## Current strategy
 
-Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android native as the second reference, then original metadata/assets/JSON, with Cpp2IL/ILSpy used for attribution and managed reconstruction support. Do not replace native-backed gameplay with rescue-route approximations.
+Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android native as the second reference, then original metadata/assets/JSON, with Cpp2IL/ILSpy used for attribution and managed reconstruction support. Do not replace native-backed gameplay with rescue-route approximations. Do not begin IPA packaging until the native-backed runtime recovery gate is sufficiently closed.
 
 ## Fixed original baseline
 
@@ -11,6 +11,8 @@ Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android nat
 - PC CodeRegistration / MetadataRegistration: `0x1815E88C0` / `0x1818C6D00`.
 - Android CodeRegistration / MetadataRegistration: `0x2772B68` / `0x285F870`.
 - Original PC ZIP SHA-256: `2f08b4e2243e2bd296f3db694b4a2c9656252d76202c80167bdf3340b9f65b48`.
+- PC GameAssembly SHA-256: `9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d`.
+- PC global-metadata.dat SHA-256: `ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9`.
 - Original Android APK SHA-256: `428e0ba2e46645a905fb9fbb00cfde42406727a3ddfce9a7df1e0875889a739f`.
 - Cpp2IL authoritative source commit: `5fb20304df698ffd3d0e664b2a698cd911dc9d57`.
 - Reproduced PC Cpp2IL baseline: `2318 / 2319`; sole full failure `Zombie::InjuryStatusUpdate_Body`, already closed in HF3.
@@ -19,7 +21,7 @@ Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android nat
 ## Final cumulative HF chain
 
 - HF1 — `31e6f6a781c6350a99a7317cade6cebc11cacd562a4c129961eef2d53af1d471`.
-- HF2 audited — `a21c9e1d1e6994eb559694a51123d33b8a1eb3b262bda6d372f97bbf51523633`. Old HF2 `d445395f...` is superseded.
+- HF2 audited — `a21c9e1d1e6994eb559694a51123d33b8a1eb3b262bda6d372f97bbf51523633`; old `d445395f...` superseded.
 - HF3 `Zombie.InjuryStatusUpdate_Body` — Exact — `23014656af797490bc35d9feb8f78950bcfa79a167c6a1de3303e1d30251c32f`.
 - HF4 `Zombie.Awake` — Exact — `2abbc9eb02b93bcd0178091bbc38ca450b6162875df9dcb55e874d5b9af9f0a6`.
 - HF5 `Zombie.Start` + `LoopAddAnimation` — Exact — `58fe2001b6d9df986a08a930e60ea936fbf9392d82532f2e815bda63557d5e3a`.
@@ -33,99 +35,81 @@ Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android nat
 - HF13 `Buff.Start<T>` + `Buff.End<T>` — Exact managed-observable — `a389fcf0f6a97b4ace5cc580fb9704fa9830dbeba9b50edc4c5cad90489ebac3`.
 - HF14 `StatsIncreased.Start_stats<T>` + `End_stats<T>` — Exact managed-observable — `cbe30c99a973f41bbf4bb0f0f56f62d37e1c752c0723159cc07feeb3d2a0efe7`.
 - HF15 `Bleed.Bleeding<T>` — Exact managed-observable — `87c74aea233372a5a7af28c0df244a18873af111c0230b54d9acf82e68ef9ec1`.
-- **HF16 `AttackRange.TestInRange<T>` — Exact managed-observable — `57100e6b9296f5a6c1ff4710cc2859810dcfff9992a27ea5238000729c3888c3`.**
+- HF16 `AttackRange.TestInRange<T>` — Exact managed-observable — `57100e6b9296f5a6c1ff4710cc2859810dcfff9992a27ea5238000729c3888c3`.
+- **HF17 `Buff.Awake(bool)` + `Hide.Awake_Hide()` + `Hide.Updata_Hide()` + `Hide.End_Hide()` — Exact managed-observable — `0eb0eba10cb27c5cff61e1a75947f146f5213ec036ff2ca3f95cf7d406ff1a67`.**
 
-HF3 through HF16 are cumulative. Whole-assembly semantic isolation confirms each stage changes only its declared target MethodDef(s): HF13->HF14 has exactly two target hunks; HF14->HF15 has exactly one hunk ending at `Bleed::Bleeding`; HF15->HF16 has exactly one hunk ending at `AttackRange::TestInRange`.
+HF3 through HF17 are cumulative. Whole-assembly semantic isolation confirms each stage changes only its declared target MethodDef(s). HF16->HF17 changes exactly four declared MethodDefs: one physical hunk for `Buff::Awake` and one physical hunk containing only the three adjacent Hide methods; no fifth method changes.
 
-## HF14 final archive
+## HF17 technical result
 
-HF14 is fully closed, including the Drive gate.
+Targets and original PC bodies:
 
-- Drive directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF14-StatsIncreased`.
-- Folder ID: `1-WOW4iCvmUAX9k6DAwxoXpc3frcCxCef`.
-- Post-upload listing verified 13 final files.
+- `Buff.Awake(bool child)` — RID 240, token `0x060000F0`, `0x180310710–0x18031097B`.
+- `Hide.Awake_Hide()` — RID 254, token `0x060000FE`, `0x18031C530–0x18031C61C`.
+- `Hide.Updata_Hide()` — RID 255, token `0x060000FF`, logical `0x18031C730–0x18031C8F4`.
+- `Hide.End_Hide()` — RID 256, token `0x06000100`, `0x18031C620–0x18031C728`.
 
-## HF15 final archive
+Why `Buff.Awake` is included: the PC native `Buff.Awake` carries the Hide-start behavior inline. Restoring only `Updata_Hide` / `End_Hide` would leave Hide initialization incomplete.
 
-HF15 is fully closed.
+Native-backed lifecycle:
 
-- Drive directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF15-Bleed`.
-- Folder ID: `1y7WGFVI7q1RGZjedzqj2hIWpT-58GhbV`.
-- Post-upload listing verified 15 final files.
-
-## HF16 technical result
-
-Target: `AttackRange.TestInRange<T>(T target)` — original RID `216`, token `0x060000D8`, direct generic-definition pointer `0`.
-
-Shared PC generic body:
-- logical native range `0x180426DD0–0x180427102`, fixed by three `.pdata` runtime-function entries;
-- full executable-section `E8 rel32` scan finds 18 direct xrefs, including `Damage.AreaDamage_*`, `Device.EnemySeeking_Zombie`, multiple `Plant.EnemySeeking*` paths, `SkillManager.Updata10`, shared generic code, and two xrefs from the HF12-native-backed `Buff.Update<T>` body. This establishes a widely reused shared generic definition rather than one host specialization.
-
-Original native-backed geometry and host gates:
-- null target returns false immediately;
-- independent Device -> Plant -> Projectile -> Zombie gates;
-- Plant gate uniquely performs `Debug.Log("检测植物是否在范围内")` before geometry reads;
-- each matched host constructs managed-observably equivalent geometry:
-  - `Rect(fX - fW * 0.5f, fY - fD * 0.5f, fW, fD)`;
-  - `Vector3(fX, fY, 0f)`;
-- native reads `fX`, `fY`, `fW`, `fD` exactly twice per matched host and never reads `fZ` or `fH`; the second size axis is `fD`, not `fH`;
-- a non-null unsupported generic host does not return early: zero-initialized Rect/Vector3 continue into range dispatch.
-
-Original `RangeType` values and routing:
-- `Null=0` -> false;
-- `Rects=1` -> `TestInRects_Rect(Rect)`;
-- `Circles=2` -> `TestInCircles_Position(Vector3)`;
-- `Mixed=3` -> Rect OR Circle with Rect short-circuit;
-- `Unlimitied=4` -> true (original spelling);
-- any other value -> false.
-
-Direct original native call mapping:
-- `0x1803000A0` -> `AttackRange.TestInRects_Rect(Rect)` token `0x060000D7`;
-- `0x1802FFAE0` -> `AttackRange.TestInCircles_Position(Vector3)` token `0x060000D4`;
-- `0x1812E68F0` -> `UnityEngine.Debug.Log(object)` token `0x06000209`.
-
-Using `Rect(float,float,float,float)` and `Vector3(float,float,float)` constructors is native-equivalent: their original CoreModule PC bodies are respectively four direct float stores and three direct float stores, with no extra observable behavior.
+- `Hide.Awake_Hide`: hide mode sets `Zombie.invincible=true` and `Zombie.hide=true`; visible mode enables Renderer if truthy, clears `Zombie.hide`, and writes `waitingTime=0.02f`.
+- `Hide.Updata_Hide`: derives `t` from doubled `duration`, preserves native ordered float clamp behavior, computes the exact grayscale/alpha formulas, clamps alpha through `System.Math.Clamp(float,float,float)`, constructs `Color`, and calls `Zombie.SetColor(Color)`.
+- `Hide.End_Hide`: visible mode clears invincibility; hide mode disables Renderer if truthy and moves the Zombie to `Vector3(fX,fY,1000)`.
+- `Buff.Awake`: when not a child, enumerates `childBuffs`, preserves null-child `NullReferenceException` and Enumerator finally/Dispose, calls `child.Awake(true)`, then dispatches Hide instances to the independently native-backed `Awake_Hide()`.
 
 Validation:
-- HF16 patcher workflow `34214727867` — success; artifact SHA-256 `88ddb21de04ab82a14cc9f69ed8c6eab2abdea04b3b748d13fbd5825fb6dddd2`.
-- Formal HF15 input hash was rechecked immediately before patching.
-- Actual patch + repeat are byte-identical.
-- Patcher reopen: `250 IL / 971 bytes / 0 EH`.
-- Permanent RecoveryAudit workflow `34214966294` — success; actual OPEN1/OPEN2 pass HF3–HF16 and end in `RECOVERY_AUDIT_OK`.
-- ILSpyCmd `11.0.0.9375` with the full 56-assembly reference directory regenerated from exact Cpp2IL source commit `5fb20304...`: member and full-type stderr `0`, with clean strongly typed readback.
-- Whole-assembly HF15->HF16 semantic isolation: exactly one target hunk ending at `AttackRange::TestInRange`.
 
-HF16 Drive archive is complete and independently listed:
-- directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF16-AttackRange`;
-- folder ID: `1sFxLFILZj2hLBn4VQ22NTxS6K52nCzPM`;
-- final DLL Drive ID: `1AVIqB82No7M3U_Y2eKLwOBbBZYDToRIQ`;
-- post-upload listing verified 13 final files, including final DLL, CI patcher, native disassembly, metadata/xref and constructor-native evidence, ILSpy/Cecil, semantic diff, logs, provenance and SHA256SUMS.
+- corrected HF17 patcher source commit `693c87be6f639cbbf507f787710fa348d7606c2c`;
+- corrected patcher CI run `34217812188` — success;
+- artifact SHA-256 `97f63e050ce1356ff73dec6f1f4a25ea0245f6475315fd55e869de6ca13fd046`;
+- formal HF16 input re-fetched from Drive and re-hashed before patching;
+- actual patch + repeat are byte-identical;
+- reopen: `Buff.Awake 39 IL / 129 bytes / 1 finally`; Hide methods `33/110`, `66/234`, `37/134`, all `0 EH`;
+- permanent RecoveryAudit commit `3ff0a81c1944988d5eab132840678aa76d61b23d`, workflow `34218022069` — success; OPEN1/OPEN2 cumulative chain ends `RECOVERY_AUDIT_OK`;
+- ILSpyCmd `11.0.0.9375` with full fresh fixed-Cpp2IL reference set: Hide, Buff.Awake, and whole-assembly stderr `0`;
+- normalized HF16->HF17 semantic diff SHA-256 `e669dddcb73c075906e0e5470025229deb7b28508b701c101d517f6f658b8606`.
+
+HF17 Drive archive is complete and independently listed:
+
+- directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF17-Hide-Lifecycle`;
+- folder ID: `1gMPlCp0xtHXYK2hZaxTp2sb_CIX95HAE`;
+- final DLL Drive ID: `1RVb5I23-C0LJ3EXCXCnP4KBn9Vuon6vS`;
+- corrected patcher Drive ID: `1C8aub5egyJAkMOZljem8yT0qefH9LVBS`;
+- independent post-upload listing verified 16 final files.
+
+## Earlier final archives
+
+- HF14: `HF14-StatsIncreased`, folder `1-WOW4iCvmUAX9k6DAwxoXpc3frcCxCef`, 13 files.
+- HF15: `HF15-Bleed`, folder `1y7WGFVI7q1RGZjedzqj2hIWpT-58GhbV`, 15 files.
+- HF16: `HF16-AttackRange`, folder `1sFxLFILZj2hLBn4VQ22NTxS6K52nCzPM`, 13 files; final DLL `1AVIqB82No7M3U_Y2eKLwOBbBZYDToRIQ`.
 
 ## Unity reconstruction state
 
 - AssetRipper export: about 3,149 Unity objects; reconstructed project about 6,783 files.
-- 173 serialized game script types migrated to recovered `Assembly-CSharp.dll` local file IDs; PC DLL replacement still matches 173/173.
+- 173 serialized game script types migrated to recovered `Assembly-CSharp.dll` local file IDs; PC DLL replacement matches 173/173.
 - 263 game-script references across 114 serialized assets migrated.
 - Restored scenes: `Assets/Scenes/MainMenu.unity`, `Assets/Scenes/Board.unity`.
-- Exact package versions remain fixed: UGUI 1.0.0, TMP 3.0.6, RenderPipelines Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4.
-- Serialized package references cover 67 package script types and must still be validated 67/67 in Unity.
+- Fixed package versions: UGUI 1.0.0, TMP 3.0.6, RenderPipelines Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4.
+- Serialized package references cover 67 package script types and still require 67/67 Unity validation.
 
 ## Remaining blockers before iOS/IPA
 
-Do not begin IPA packaging yet. Continue native-backed runtime recovery by call centrality.
+Immediate next action is **HF18 call-centrality rescan**, not a preselected patch. Rescan original native/metadata against the active Plant/Zombie/Buff/Board paths and rank remaining damaged or unreliable methods in path helpers, Device, Element, Projectile, Skill, and Plant specialized combat logic.
 
-Immediate next priority:
-1. `Hide.Updata_Hide()` / `Hide.End_Hide()` and any shared/generic Hide path directly required by HF12/HF13.
-2. Then rescan native call centrality for path helpers, Device, Element, Projectile, Skill and remaining Plant specialized combat logic.
-3. If that rescan shows no further critical damaged methods in the active Plant/Zombie/Buff/Board chains, stop adding HF stages and move to Unity import/IL2CPP validation rather than recovering low-centrality code for its own sake.
+Decision gate after rescan:
 
-After core recovery is sufficiently closed:
+1. If one or more high-centrality active-path methods are materially damaged/untrustworthy, recover only those as HF18+ with the same native-evidence/formal-input/CI/Cecil/ILSpy/Drive gates.
+2. If no critical damaged methods remain in the active Plant/Zombie/Buff/Board chains, **stop adding HF stages** and move to Unity import/IL2CPP validation instead of recovering low-centrality code for its own sake.
+
+After managed recovery closes:
+
 1. import in Unity `2022.3.44f1c1`;
 2. restore exact packages;
 3. verify 67/67 package script migration;
-4. verify final recovered Assembly-CSharp is accepted and Unity IL2CPP converts it;
+4. verify the final recovered Assembly-CSharp is accepted and Unity IL2CPP converts it;
 5. add only minimal iOS adaptation;
 6. export Xcode project, unsigned build, package IPA;
 7. true-device validation through a complete level.
 
-The project remains high-fidelity-first; candidate stages must not be called final until native evidence, CI, formal-input patch, reopen, Cecil, ILSpy, semantic isolation, Evidence, STATUS, Drive archive and fixed SHA are all complete.
+The project remains high-fidelity-first. A candidate stage is not final until native evidence, CI, formal-input patch, reopen, permanent Cecil, ILSpy with full refs, whole-assembly semantic isolation, GitHub Evidence/STATUS, Drive archive, and fixed SHA all pass.
