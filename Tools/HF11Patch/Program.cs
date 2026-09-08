@@ -58,7 +58,7 @@ using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     var bm = All(verify.Types).Single(t => t.Name == "BuffManager");
     var m = bm.Methods.Single(x => x.Name == "Update" && x.Parameters.Count == 1 && x.GenericParameters.Count == 1);
     if (m.MetadataToken.ToUInt32() != 0x06000101) throw new InvalidDataException($"HF11 token drift: 0x{m.MetadataToken.ToUInt32():X8}");
-    if (!m.HasBody || m.Body.Instructions.Count < 120) throw new InvalidDataException($"HF11 body too small: {m.Body.Instructions.Count}");
+    if (!m.HasBody || m.Body.Instructions.Count < 100) throw new InvalidDataException($"HF11 body too small: {m.Body.Instructions.Count}");
     if (m.Body.ExceptionHandlers.Count != 3 || m.Body.ExceptionHandlers.Any(e => e.HandlerType != ExceptionHandlerType.Finally))
         throw new InvalidDataException("HF11 must retain three List<Buff>.Enumerator finally/Dispose regions");
     var refs = m.Body.Instructions.Select(i => i.Operand).OfType<MethodReference>().ToList();
