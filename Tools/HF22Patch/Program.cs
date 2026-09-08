@@ -167,7 +167,7 @@ void CloneBody(MethodDefinition src, MethodDefinition dst)
 {
     if (!src.HasBody) throw new InvalidDataException($"Template missing body {src.FullName}");
     var sb = src.Body;
-    var db = new MethodBody(dst) { InitLocals = sb.InitLocals, MaxStackSize = Math.Max(sb.MaxStackSize, 8) };
+    var db = new Mono.Cecil.Cil.MethodBody(dst) { InitLocals = sb.InitLocals, MaxStackSize = Math.Max(sb.MaxStackSize, 8) };
     dst.Body = db;
     var vars = new Dictionary<VariableDefinition,VariableDefinition>();
     foreach (var v in sb.Variables)
