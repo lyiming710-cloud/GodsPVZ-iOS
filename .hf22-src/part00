@@ -1,0 +1,104 @@
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+using System.Reflection;
+
+if (args.Length != 2)
+{
+    Console.Error.WriteLine("Usage: GodsPVZ.HF22Patch <input.dll> <output.dll>");
+    return 2;
+}
+
+var input = Path.GetFullPath(args[0]);
+var output = Path.GetFullPath(args[1]);
+var self = typeof(Template.Damage).Assembly.Location;
+if (string.IsNullOrEmpty(self) || !File.Exists(self))
+    throw new InvalidOperationException("HF22 requires a multi-file publish so the template assembly is readable.");
+
+using var target = ModuleDefinition.ReadModule(input, new ReaderParameters { InMemory = true, ReadSymbols = false });
+using var template = ModuleDefinition.ReadModule(self, new ReaderParameters { InMemory = true, ReadSymbols = false });
+
+static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
+{
+    foreach (var t in roots)
+    {
+        yield return t;
+        foreach (var n in AllTypes(t.NestedTypes)) yield return n;
+    }
+}
+
+var targetTypes = AllTypes(target.Types).ToList();
+var targetDefs = targetTypes.ToDictionary(t => t.FullName, StringComparer.Ordinal);
+var targetTypeRefs = target.GetTypeReferences().GroupBy(t => t.FullName).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+var targetMethodRefs = targetTypes.SelectMany(t => t.Methods).Where(m => m.HasBody)
+    .SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<MethodReference>().ToList();
+
+string TargetName(string fullName) => fullName.StartsWith("Template.", StringComparison.Ordinal) ? fullName[9..] : fullName;
+
+TypeReference MapType(TypeReference t, MethodDefinition? targetMethod = null)
+{
+    if (t is GenericParameter gp)
+    {
+        if (targetMethod != null && gp.Type == GenericParameterType.Method && gp.Position < targetMethod.GenericParameters.Count)
+            return targetMethod.GenericParameters[gp.Position];
+        throw new InvalidDataException($"Unsupported generic parameter {gp.FullName}");
+    }
+    if (t is ByReferenceType br) return new ByReferenceType(MapType(br.ElementType, targetMethod));
+    if (t is PointerType pt) return new PointerType(MapType(pt.ElementType, targetMethod));
+    if (t is ArrayType at) return new ArrayType(MapType(at.ElementType, targetMethod), at.Rank);
+    if (t is GenericInstanceType git)
+    {
+        var x = new GenericInstanceType(MapType(git.ElementType, targetMethod));
+        foreach (var a in git.GenericArguments) x.GenericArguments.Add(MapType(a, targetMethod));
+        return x;
+    }
+    if (t is OptionalModifierType omt) return new OptionalModifierType(MapType(omt.ModifierType, targetMethod), MapType(omt.ElementType, targetMethod));
+    if (t is RequiredModifierType rmt) return new RequiredModifierType(MapType(rmt.ModifierType, targetMethod), MapType(rmt.ElementType, targetMethod));
+    if (t is PinnedType pin) return new PinnedType(MapType(pin.ElementType, targetMethod));
+
+    var name = TargetName(t.FullName);
+    if (targetDefs.TryGetValue(name, out var def)) return def;
+    if (targetTypeRefs.TryGetValue(name, out var tr)) return tr;
+    return name switch
+    {
+        "System.Void" => target.TypeSystem.Void,
+        "System.Boolean" => target.TypeSystem.Boolean,
+        "System.Byte" => target.TypeSystem.Byte,
+        "System.SByte" => target.TypeSystem.SByte,
+        "System.Int16" => target.TypeSystem.Int16,
+        "System.UInt16" => target.TypeSystem.UInt16,
+        "System.Int32" => target.TypeSystem.Int32,
+        "System.UInt32" => target.TypeSystem.UInt32,
+        "System.Int64" => target.TypeSystem.Int64,
+        "System.UInt64" => target.TypeSystem.UInt64,
+        "System.Single" => target.TypeSystem.Single,
+        "System.Double" => target.TypeSystem.Double,
+        "System.Char" => target.TypeSystem.Char,
+        "System.String" => target.TypeSystem.String,
+        "System.Object" => target.TypeSystem.Object,
+        _ => throw new InvalidDataException($"HF22 cannot map type {t.FullName} -> {name}")
+    };
+}
+
+string Sig(TypeReference t) => TargetName(t.FullName);
+
+FieldReference MapField(FieldReference f, MethodDefinition targetMethod)
+{
+    var declName = TargetName(f.DeclaringType.FullName);
+    if (!targetDefs.TryGetValue(declName, out var td)) throw new InvalidDataException($"HF22 field declaring type missing {declName}");
+    var q = td.Fields.Where(x => x.Name == f.Name).ToList();
+    if (q.Count != 1) throw new InvalidDataException($"HF22 field {declName}.{f.Name} count={q.Count}");
+    return q[0];
+}
+
+MethodReference ConstructMethod(MethodReference m, MethodDefinition targetMethod)
+{
+    var decl = MapType(m.DeclaringType, targetMethod);
+    var ret = MapType(m.ReturnType, targetMethod);
+    var x = new MethodReference(m.Name, ret, decl)
+    {
+        HasThis = m.HasThis,
+        ExplicitThis = m.ExplicitThis,
+        CallingConvention = m.CallingConvention
+    };
+    for (int i = 0; i < m.GenericParameters.Count; i++) x.GenericParameters.Add(new GenericParameter(m.GenericParameters[i].Name, x));
+    foreach (var p in m.Parameters) x.Parameters.Add(new ParameterDefinition(MapType(p.Parameter
