@@ -35,37 +35,44 @@ Use PC x86-64 IL2CPP as primary gameplay source, Android native second, then ori
 - HF16 `57100e6b9296f5a6c1ff4710cc2859810dcfff9992a27ea5238000729c3888c3`.
 - HF17 `0eb0eba10cb27c5cff61e1a75947f146f5213ec036ff2ca3f95cf7d406ff1a67`.
 - HF18 Buff infrastructure `0e1b1acffa3329b3f98d2b61fb346c3f6647bee84e38bfab1d067a7aa17d58ed`.
-- **HF19 `Zombie.IsDisabled` + `IsNormalZombie` + `IsPlantZombie` — Exact managed-observable — `e6e303c660b0351611370ebe29746954c5535344160c6e580d9314405b67f720`.**
+- HF19 Zombie predicates `e6e303c660b0351611370ebe29746954c5535344160c6e580d9314405b67f720`.
+- **HF20 Plant damage pipeline — Exact managed-observable — `b16b3b89fad8f8081d86611a732696c56db6bd2dbab6302b6cef7fa94e141b3e`.**
 
-## HF19 technical result
+## HF20 technical result
 
-HF19 restores original Zombie ID classification/disabled predicates from PC jump tables:
+HF20 restores exactly seven MethodDefs from PC native:
 
-- `IsDisabled` RID1124 token `0x06000464` PC `0x1803659E0`;
-- `IsNormalZombie` RID1126 token `0x06000466` PC `0x180365AB0`;
-- `IsPlantZombie` RID1127 token `0x06000467` PC `0x180365B00`.
+- `AttackRange.NewCircleRange<T>(T, Transform, float)` token `0x060000CF`, shared PC `0x180426380`;
+- `AttackRange.NewCircleRange<T>(T, Transform, float, Vector3)` token `0x060000D0`, shared PC `0x180426070`;
+- `Damage.AddElement(Element)` token `0x0600010B`, PC `0x180310DC0`;
+- `Element::.ctor(ElementType,float,Damage,bool)` token `0x0600011C`, PC `0x180316940`;
+- `Plant.GetATK()` token `0x06000367`, PC `0x180350310`;
+- `Plant.GetDamage(Projectile,int,int)` token `0x0600036D`, PC `0x180350E40`;
+- `Plant.GetDamageRange(Damage,Projectile,int,int)` token `0x06000371`, PC `0x1803508A0`.
 
-Native truth sets: normal `{0,2,4,5,14,15}`; plant-zombie `{6,7,8,9,11,12,19,20,21,22}`. `IsDisabled` returns true for `isDied` or `ashes`; otherwise the native-listed Zombie ID classes return `isDying`, all other IDs false. Original fields are `ID +0x60`, `isDying +0xB7`, `isDied +0xB8`, `ashes +0xB9`.
+Recovered behavior includes the Circles AttackRange builders and host gates; exact Element merge/constructor semantics; `MathF.Round` in Plant ATK; native range radii `80/155/160/195/225`; actual `specialType` forwarding; two Plant damage jump tables; native damage flags/multipliers; and ID5 Element creation with `shuttle_able=true`.
 
 Validation:
 
-- corrected patcher source commit `4994778de21b3403f0a54c82879a07d4e05e77b1`;
-- corrected patcher CI run `34224218252` success; artifact SHA-256 `2ed8f8fed6f62cf7f581e5ef1be774858862579a5c077be0fa85072579dcc076`;
-- formal HF18 re-fetched from Drive and re-hashed before patching; two outputs byte-identical;
-- reopen `IsDisabled 52 IL/208 bytes`, `IsNormalZombie 25/98`, `IsPlantZombie 37/154`, all 0 EH;
-- permanent RecoveryAudit commit `e14cf3cb918a99aafc7e946c031b2f45dc798dc4`, workflow `34224367146` success; OPEN1/OPEN2 end `RECOVERY_AUDIT_OK`;
-- ILSpyCmd `11.0.0.9375`, full fresh fixed-Cpp2IL refs: Zombie and whole-assembly stderr 0;
-- HF18->HF19 semantic isolation changes exactly three declared MethodDefs, no fourth; diff SHA-256 `a90fbb0a5cc96c2a341bbd19dfce6e4e97aff4d4330863e76fb4bf3625595631`.
+- first compiled patcher produced no candidate because an existing `Vector3.op_Subtraction` MemberRef was required;
+- source repaired in commit `a2a38eb8f0b943e28534bfb4ab0b31f935fd0be2` to construct the static MethodRef explicitly;
+- corrected CI run `34235308941` success; artifact SHA-256 `38275ef0a2831c5e1498155558b48ba4ca2151da3f67ec877c801e5b2bb3caed`;
+- formal HF19 re-fetched from Drive and re-hashed; two HF20 outputs byte-identical;
+- permanent RecoveryAudit commit `ca3bad1e0669d3019646125cbee726dbbb8828e7`, workflow `34235553691` success; OPEN1/OPEN2 `RECOVERY_AUDIT_OK`;
+- ILSpyCmd `11.0.0.9375` with full reproduced fixed-Cpp2IL refs: all seven target and whole-assembly readbacks stderr 0;
+- HF19->HF20 semantic isolation changes exactly the seven declared MethodDefs, no eighth; diff SHA-256 `5094a498d6998ae8a60040ffb3791f909ec2e5987428ebdbdccee42ef5b1e358`.
 
-HF19 Drive archive is complete and independently listed:
+HF20 Drive archive is accepted:
 
-- folder `1-PpX9-cAmJ7Sx_eUdC0QOSh5GSgGvZSo`;
-- final DLL `1kxSsPudimmcq9o_evxLqSIVTavoF4DZ9`;
-- corrected patcher `1R2BSes6C-p08B741i7375XhKKlnXWM_w`;
-- SHA256SUMS `1f2BqIp0vAH1qE0qaPK0HiHSjjtGBl6xW`;
-- 17 final files verified.
+- folder `15ZPNk4Zb5LuSdZ8RrueUGpYowmo9AFGP`;
+- final DLL `1VmdyyZzfA4rmjZHeMrttHXYfgXPqnDBZ`;
+- corrected patcher `1N9_ExWfDO8JD_GoVfz_xAB4UHEtom69p`;
+- authoritative Evidence-FINAL `1T52CgV39NdDPo3V2QLJMzxWAy6TVUTIF`;
+- authoritative SHA256SUMS-FINAL `1uppHfrvURT0S5rqqc-iBygcvL5eSr0iC`.
 
-GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF19-Zombie-Predicates.md`.
+Drive ordinary-file overwrite was unavailable, so the two initial closure files are retained as explicitly superseded immutable drafts. Final provider listing verified 29 expected files: 25 payloads + 2 superseded closure drafts + 2 authoritative FINAL closure files.
+
+GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF20-Plant-Damage-Pipeline.md`.
 
 ## Unity reconstruction state
 
@@ -73,9 +80,9 @@ AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script 
 
 ## Current decision gate
 
-Run one final unique-pointer/active-path rescan from HF19. Previously visible next candidates include `Plant.GetDamage`, `ProjectileManager.CrateNewProjectile`, and `Damage.AreaDamage`; do not automatically patch them. Audit whether any remaining helper/unknown IL materially affects the active Plant/Zombie/Projectile/Board combat chain.
+Audit the remaining ProjectileManager core before opening another HF stage. Primary suspects are `ProjectileManager.CrateNewProjectile(int)`, `Start()`, and `SetFloatScale()`: prior Cpp2IL evidence shows material damage, but exact PC native scope must close first.
 
-- If a coherent critical damaged cluster remains, recover only it as HF20+ with the same native/formal/CI/Cecil/ILSpy/Drive gates.
-- If no critical cluster remains, **stop adding HF stages** and move to Unity `2022.3.44f1c1` import, package restoration, 67/67 package-script validation, and recovered Assembly-CSharp IL2CPP conversion.
+- If ProjectileManager forms a coherent critical active-path damaged cluster, recover only that cluster as HF21 with the same native/formal/CI/Cecil/ILSpy/Drive gates.
+- If the ProjectileManager audit shows no remaining critical active-path loss, **stop adding HF stages** and move to Unity `2022.3.44f1c1` import, package restoration, 67/67 package-script validation, and recovered Assembly-CSharp IL2CPP conversion.
 
 High-fidelity-first remains mandatory.
