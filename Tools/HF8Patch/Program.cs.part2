@@ -1,0 +1,128 @@
+    var cross = new VariableDefinition(vec3);
+    var turn = new VariableDefinition(vec3);
+    var tmp = new VariableDefinition(vec3);
+    var factor = new VariableDefinition(module.TypeSystem.Single);
+    var mag = new VariableDefinition(module.TypeSystem.Single);
+    var buff = new VariableDefinition(T("Buff"));
+    var stats = new VariableDefinition(statsType);
+    var transformTarget = new VariableDefinition(componentGetTransform.ReturnType);
+    foreach (var v in new[] { signDir, signScale, scale, step, accel, cross, turn, tmp, factor, mag, buff, stats, transformTarget }) b.Variables.Add(v);
+
+    var direction = m.Parameters[0];
+
+    void LoadArg(FieldReference c) { E(il, OpCodes.Ldarga, direction); E(il, OpCodes.Ldfld, c); }
+    void LoadField(FieldDefinition f, FieldReference c) { E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldflda, f); E(il, OpCodes.Ldfld, c); }
+    void LoadLocal(VariableDefinition v, FieldReference c) { E(il, OpCodes.Ldloca, v); E(il, OpCodes.Ldfld, c); }
+    void SetLocalComp(VariableDefinition v, FieldReference c, Action emitValue) { E(il, OpCodes.Ldloca, v); emitValue(); E(il, OpCodes.Stfld, c); }
+    void ZeroLocal(VariableDefinition v) { E(il, OpCodes.Ldloca, v); E(il, OpCodes.Initobj, vec3); }
+    void StoreFieldFromLocal(FieldDefinition f, VariableDefinition v) { E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldloc, v); E(il, OpCodes.Stfld, f); }
+    void CopyArgToField(FieldDefinition f) { E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldarg, direction); E(il, OpCodes.Stfld, f); }
+
+    void EmitSqrArg()
+    {
+        LoadArg(vecX); LoadArg(vecX); E(il, OpCodes.Mul);
+        LoadArg(vecY); LoadArg(vecY); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+        LoadArg(vecZ); LoadArg(vecZ); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+    }
+    void EmitSqrField(FieldDefinition f)
+    {
+        LoadField(f, vecX); LoadField(f, vecX); E(il, OpCodes.Mul);
+        LoadField(f, vecY); LoadField(f, vecY); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+        LoadField(f, vecZ); LoadField(f, vecZ); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+    }
+    void EmitSqrLocal(VariableDefinition v)
+    {
+        LoadLocal(v, vecX); LoadLocal(v, vecX); E(il, OpCodes.Mul);
+        LoadLocal(v, vecY); LoadLocal(v, vecY); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+        LoadLocal(v, vecZ); LoadLocal(v, vecZ); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+    }
+    void EmitMagnitudeField(FieldDefinition f)
+    {
+        EmitSqrField(f); E(il, OpCodes.Conv_R8); E(il, OpCodes.Call, mathSqrt); E(il, OpCodes.Conv_R4);
+    }
+    void EmitMagnitudeLocal(VariableDefinition v)
+    {
+        EmitSqrLocal(v); E(il, OpCodes.Conv_R8); E(il, OpCodes.Call, mathSqrt); E(il, OpCodes.Conv_R4);
+    }
+    void ScaleLocal(VariableDefinition v, float target)
+    {
+        EmitMagnitudeLocal(v); E(il, OpCodes.Stloc, mag);
+        E(il, OpCodes.Ldc_R4, target); E(il, OpCodes.Ldloc, mag); E(il, OpCodes.Div); E(il, OpCodes.Stloc, factor);
+        foreach (var c in new[] { vecX, vecY, vecZ })
+            SetLocalComp(v, c, () => { LoadLocal(v, c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); });
+    }
+    void MakeDecelStep()
+    {
+        ZeroLocal(step);
+        foreach (var c in new[] { vecX, vecY, vecZ })
+            SetLocalComp(step, c, () => { LoadField(fRDirection, c); E(il, OpCodes.Ldc_R4, -1f); E(il, OpCodes.Mul); });
+        ScaleLocal(step, 0.35f);
+    }
+    void AddLocalTimesFreshDeltaToField(VariableDefinition v, FieldDefinition f)
+    {
+        E(il, OpCodes.Call, deltaTime); E(il, OpCodes.Stloc, factor);
+        foreach (var c in new[] { vecX, vecY, vecZ })
+        {
+            E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldflda, f);
+            E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldflda, f); E(il, OpCodes.Ldfld, c);
+            LoadLocal(v, c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+            E(il, OpCodes.Stfld, c);
+        }
+    }
+    void AddLocalTimesDeltaToFieldWithOneCall(VariableDefinition v, FieldDefinition f)
+    {
+        E(il, OpCodes.Call, deltaTime); E(il, OpCodes.Stloc, factor);
+        foreach (var c in new[] { vecX, vecY, vecZ })
+        {
+            E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldflda, f);
+            E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldflda, f); E(il, OpCodes.Ldfld, c);
+            LoadLocal(v, c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); E(il, OpCodes.Add);
+            E(il, OpCodes.Stfld, c);
+        }
+    }
+    void SetRDirectionZero() { ZeroLocal(tmp); StoreFieldFromLocal(fRDirection, tmp); }
+
+    var id17 = Instruction.Create(OpCodes.Nop);
+    var id13 = Instruction.Create(OpCodes.Nop);
+    var genericTail = Instruction.Create(OpCodes.Nop);
+    var afterPrepass = Instruction.Create(OpCodes.Nop);
+    var prepassUpdate = Instruction.Create(OpCodes.Nop);
+    var prepassDone = Instruction.Create(OpCodes.Nop);
+    var prepassSkipStant = Instruction.Create(OpCodes.Nop);
+    var mainDirectionZero = Instruction.Create(OpCodes.Nop);
+    var mainSteering = Instruction.Create(OpCodes.Nop);
+    var snowBuff = Instruction.Create(OpCodes.Nop);
+    var decelUpdate = Instruction.Create(OpCodes.Nop);
+    var accelReady = Instruction.Create(OpCodes.Nop);
+    var turnReady = Instruction.Create(OpCodes.Nop);
+    var noClamp = Instruction.Create(OpCodes.Nop);
+    var noFlip = Instruction.Create(OpCodes.Nop);
+
+    // Native entry: sign(direction.x), then sign(this.transform.localScale.x), before any ID branch.
+    LoadArg(vecX); E(il, OpCodes.Call, mathSign); E(il, OpCodes.Stloc, signDir);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, componentGetTransform); E(il, OpCodes.Callvirt, transformGetLocalScale); E(il, OpCodes.Stloc, scale);
+    LoadLocal(scale, vecX); E(il, OpCodes.Call, mathSign); E(il, OpCodes.Stloc, signScale);
+
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fID); E(il, OpCodes.Ldc_I4, 17); E(il, OpCodes.Beq, id17);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fID); E(il, OpCodes.Ldc_I4, 13); E(il, OpCodes.Beq, id13);
+    CopyArgToField(fRDirection);
+    E(il, OpCodes.Br, genericTail);
+
+    // ID 13 Snowbeast.
+    il.Append(id13);
+    var prepassEntry = Instruction.Create(OpCodes.Nop);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fRest); E(il, OpCodes.Brtrue, prepassEntry);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fStant); E(il, OpCodes.Brfalse, afterPrepass);
+    il.Append(prepassEntry);
+    EmitSqrField(fRDirection); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, afterPrepass);
+    MakeDecelStep();
+    EmitMagnitudeLocal(step); E(il, OpCodes.Call, deltaTime); E(il, OpCodes.Mul); EmitMagnitudeField(fRDirection); E(il, OpCodes.Blt_Un, prepassUpdate);
+    SetRDirectionZero();
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fRest); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Ceq);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fStant); E(il, OpCodes.Bne_Un, prepassSkipStant);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldc_R4, 9999f); E(il, OpCodes.Call, tranToStant);
+    il.Append(prepassSkipStant);
+    E(il, OpCodes.Br, afterPrepass);
+    il.Append(prepassUpdate);
+    AddLocalTimesFreshDeltaToField(step, fRDirection);
+    E(il, OpCodes.Br, afterPrepass);
