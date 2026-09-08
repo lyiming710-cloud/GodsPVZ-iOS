@@ -64,6 +64,9 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("BuffManager", "FindBuff", 1, 35),
     ("BuffManager", "FindStatsIncreased", 1, 5),
     ("BuffManager", ".ctor", 0, 12),
+    ("Zombie", "IsDisabled", 0, 50),
+    ("Zombie", "IsNormalZombie", 0, 25),
+    ("Zombie", "IsPlantZombie", 0, 35),
 };
 
 void AuditOnce(string label)
