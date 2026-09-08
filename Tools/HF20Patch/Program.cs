@@ -128,7 +128,7 @@ var getPosition=R("UnityEngine.Transform","get_position");
 var objImplicit=R("UnityEngine.Object","op_Implicit","UnityEngine.Object");
 var objEquality=R("UnityEngine.Object","op_Equality","UnityEngine.Object","UnityEngine.Object");
 var objInequality=R("UnityEngine.Object","op_Inequality","UnityEngine.Object","UnityEngine.Object");
-var vecSub=R("UnityEngine.Vector3","op_Subtraction","UnityEngine.Vector3","UnityEngine.Vector3");
+var vector3Type=getPosition.ReturnType; var vecSub=new MethodReference("op_Subtraction",vector3Type,vector3Type){HasThis=false}; vecSub.Parameters.Add(new ParameterDefinition(vector3Type)); vecSub.Parameters.Add(new ParameterDefinition(vector3Type));
 var mathMax=R("System.Math","Max","System.Single","System.Single");
 var mathFType=new TypeReference("System","MathF",module,module.TypeSystem.CoreLibrary,false);
 var mathFRound=new MethodReference("Round",module.TypeSystem.Single,mathFType){HasThis=false}; mathFRound.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
