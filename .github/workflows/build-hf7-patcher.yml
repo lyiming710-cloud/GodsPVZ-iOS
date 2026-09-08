@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - name: Normalize HF7 source
+        run: python3 Tools/HF7Patch/source_cleanup.py
       - name: Publish HF7 patcher
         run: dotnet publish Tools/HF7Patch/HF7Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out
       - name: Smoke test usage
