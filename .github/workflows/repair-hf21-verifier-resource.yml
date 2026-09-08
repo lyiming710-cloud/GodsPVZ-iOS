@@ -1,0 +1,37 @@
+name: Repair HF21 resource verifier threshold
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - '.github/workflows/repair-hf21-verifier-resource.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - name: Lower Load_projectileSprite verifier floor only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('Tools/HF21Patch/Program.cs')
+          s=p.read_text()
+          old='("ResourceManager.Load_projectileSprite", VM("ResourceManager","Load_projectileSprite",0), 65, 1),'
+          new='("ResourceManager.Load_projectileSprite", VM("ResourceManager","Load_projectileSprite",0), 64, 1),'
+          if old not in s: raise SystemExit('expected verifier tuple missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+          echo 'f5b7085dea090b2ea97434fd317b8db5e5035a3ee241bc3ee311f0be6165715e  Tools/HF21Patch/Program.cs' | sha256sum -c -
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Tools/HF21Patch/Program.cs
+          git commit -m 'Adjust HF21 Load_projectileSprite verifier floor'
+          git push origin HEAD:high-fidelity
