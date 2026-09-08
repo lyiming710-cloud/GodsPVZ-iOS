@@ -1,0 +1,36 @@
+name: Build HF5 Zombie Start patcher
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - 'Tools/HF5Patch/**'
+      - '.github/workflows/build-hf5-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Normalize HF5 source
+        run: python3 Tools/HF5Patch/source_cleanup.py
+      - name: Publish HF5 patcher
+        run: dotnet publish Tools/HF5Patch/HF5Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf5
+      - name: Smoke test usage
+        shell: bash
+        run: |
+          chmod +x out/hf5/GodsPVZ.HF5Patch
+          set +e
+          out/hf5/GodsPVZ.HF5Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF5Patch-linux-x64
+          path: out/hf5/GodsPVZ.HF5Patch
+          if-no-files-found: error
