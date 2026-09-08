@@ -67,6 +67,13 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "IsDisabled", 0, 50),
     ("Zombie", "IsNormalZombie", 0, 25),
     ("Zombie", "IsPlantZombie", 0, 35),
+    ("AttackRange", "NewCircleRange", 3, 8),
+    ("AttackRange", "NewCircleRange", 4, 55),
+    ("Element", ".ctor", 4, 15),
+    ("Damage", "AddElement", 1, 45),
+    ("Plant", "GetATK", 0, 13),
+    ("Plant", "GetDamageRange", 4, 170),
+    ("Plant", "GetDamage", 3, 420),
 };
 
 void AuditOnce(string label)
