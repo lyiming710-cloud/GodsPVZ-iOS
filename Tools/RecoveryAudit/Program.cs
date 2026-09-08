@@ -47,6 +47,8 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "InjuryStatusUpdate_Body", 1, 200),
     ("BuffManager", "Update", 1, 100),
     ("Buff", "Update", 3, 160),
+    ("Buff", "Start", 2, 40),
+    ("Buff", "End", 2, 55),
 };
 
 void AuditOnce(string label)
