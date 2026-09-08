@@ -186,6 +186,7 @@ var startData = M(projectile, "StartData", 1);
 
 var nreCtor = R("System.NullReferenceException", ".ctor");
 var getTransform = R("UnityEngine.Component", "get_transform");
+var gameGetTransform = R("UnityEngine.GameObject", "get_transform");
 var getGameObject = R("UnityEngine.Component", "get_gameObject");
 var setParent = R("UnityEngine.Transform", "SetParent", "UnityEngine.Transform", "System.Boolean");
 var gameSetActive = R("UnityEngine.GameObject", "SetActive", "System.Boolean");
@@ -521,12 +522,12 @@ void PatchProjectileResetData()
 
     var afterSpriteRotation = Instruction.Create(OpCodes.Nop);
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileSprite); E(il, OpCodes.Call, objectImplicit); E(il, OpCodes.Brfalse, afterSpriteRotation);
-    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileSprite); E(il, OpCodes.Call, getTransform); E(il, OpCodes.Ldloc, zero); E(il, OpCodes.Callvirt, transformSetLocalEuler);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileSprite); E(il, OpCodes.Call, gameGetTransform); E(il, OpCodes.Ldloc, zero); E(il, OpCodes.Callvirt, transformSetLocalEuler);
     il.Append(afterSpriteRotation);
 
     var afterAnimRotation = Instruction.Create(OpCodes.Nop);
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileAnimation); E(il, OpCodes.Call, objectImplicit); E(il, OpCodes.Brfalse, afterAnimRotation);
-    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileAnimation); E(il, OpCodes.Call, getTransform); E(il, OpCodes.Ldloc, zero); E(il, OpCodes.Callvirt, transformSetLocalEuler);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileAnimation); E(il, OpCodes.Call, gameGetTransform); E(il, OpCodes.Ldloc, zero); E(il, OpCodes.Callvirt, transformSetLocalEuler);
     il.Append(afterAnimRotation);
 
     SetF(pAngularSpeed, 0f); SetF(pAngularAcceleration, 0f);
@@ -571,11 +572,11 @@ void PatchProjectileBindTrack()
 
     E(il, OpCodes.Ldsfld, partInstance); E(il, OpCodes.Ldloc, state); E(il, OpCodes.Callvirt, particlesCreate); E(il, OpCodes.Stloc, go);
 
-    E(il, OpCodes.Ldloc, go); E(il, OpCodes.Call, getTransform);
-    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileSprite); E(il, OpCodes.Call, getTransform); E(il, OpCodes.Callvirt, transformGetPosition);
+    E(il, OpCodes.Ldloc, go); E(il, OpCodes.Call, gameGetTransform);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, pProjectileSprite); E(il, OpCodes.Call, gameGetTransform); E(il, OpCodes.Callvirt, transformGetPosition);
     E(il, OpCodes.Callvirt, transformSetPosition);
 
-    E(il, OpCodes.Ldloc, go); E(il, OpCodes.Call, getTransform);
+    E(il, OpCodes.Ldloc, go); E(il, OpCodes.Call, gameGetTransform);
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, getTransform);
     E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Callvirt, setParent);
 
@@ -656,7 +657,7 @@ void PatchParticlesCreate()
     E(il, OpCodes.Callvirt, dictTryGet); E(il, OpCodes.Pop);
 
     var found = Instruction.Create(OpCodes.Nop);
-    E(il, OpCodes.Ldloc, value); E(il, OpCodes.Ldnull); E(il, OpCodes.Call, objectInequality); E(il, OpCodes.Brtrue, found);
+    E(il, OpCodes.Ldloc, value); E(il, OpCodes.Call, objectImplicit); E(il, OpCodes.Brtrue, found);
     E(il, OpCodes.Ldstr, "该特效不存在"); E(il, OpCodes.Call, monoPrint);
     E(il, OpCodes.Ldnull); E(il, OpCodes.Ret);
 
