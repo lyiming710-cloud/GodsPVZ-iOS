@@ -1,0 +1,32 @@
+name: Build HF17 Hide patcher
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - 'Tools/HF17Patch/**'
+      - '.github/workflows/build-hf17-patcher.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF17 patcher
+        run: dotnet publish Tools/HF17Patch/HF17Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o out
+      - name: Smoke test usage
+        run: |
+          set +e
+          ./out/GodsPVZ.HF17Patch >/tmp/hf17.out 2>/tmp/hf17.err
+          code=$?
+          set -e
+          test "$code" -eq 2
+          grep -q 'Usage: GodsPVZ.HF17Patch' /tmp/hf17.err
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF17Patch-linux-x64
+          path: out/GodsPVZ.HF17Patch
