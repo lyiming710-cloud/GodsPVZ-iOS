@@ -52,6 +52,7 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("StatsIncreased", "Start_stats", 1, 35),
     ("StatsIncreased", "End_stats", 1, 35),
     ("Bleed", "Bleeding", 1, 85),
+    ("AttackRange", "TestInRange", 1, 220),
 };
 
 void AuditOnce(string label)
