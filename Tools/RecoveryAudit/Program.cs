@@ -74,6 +74,14 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Plant", "GetATK", 0, 13),
     ("Plant", "GetDamageRange", 4, 170),
     ("Plant", "GetDamage", 3, 420),
+    ("ProjectileManager", "Start", 0, 54),
+    ("ProjectileManager", "SetFloatScale", 0, 271),
+    ("ProjectileManager", "CrateNewProjectile", 1, 36),
+    ("Projectile", "ResetData", 0, 101),
+    ("Projectile", "BindTrack", 0, 50),
+    ("ParticlesManager", "Start", 0, 58),
+    ("ParticlesManager", "CreatNewParticle", 1, 20),
+    ("ResourceManager", "Load_projectileSprite", 0, 64),
 };
 
 void AuditOnce(string label)
