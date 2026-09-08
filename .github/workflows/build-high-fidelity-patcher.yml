@@ -20,6 +20,7 @@ jobs:
         run: |
           python3 Tools/HighFidelityPatch/hf2_source_patch.py
           python3 Tools/HighFidelityPatch/hf2_cleanup.py
+          python3 Tools/HighFidelityPatch/hf2_validation_fix.py
       - name: Publish
         run: dotnet publish Tools/HighFidelityPatch/HighFidelityPatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
       - name: Smoke test
