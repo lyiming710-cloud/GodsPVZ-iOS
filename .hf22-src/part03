@@ -1,0 +1,133 @@
+{
+                UnityEngine.Debug.Log("Board不存在，尝试获取Board");
+                if (sourcePlant) board = sourcePlant.board;
+                if (sourceZombie) board = sourceZombie.board;
+                if (sourceDevice) board = sourceDevice.board;
+                if (!board)
+                {
+                    UnityEngine.Debug.Log("Board获取失败");
+                    return false;
+                }
+            }
+            return camp switch
+            {
+                Camp.none => AreaDamage_Zombie() | AreaDamage_Plant() | AreaDamage_Device(camp),
+                Camp.plant => AreaDamage_Zombie() | AreaDamage_Device(camp),
+                Camp.zombie => AreaDamage_Plant() | AreaDamage_Device(camp),
+                _ => false,
+            };
+        }
+
+        private bool AreaDamage_Device(Camp camp)
+        {
+            var hits = new List<Device>();
+            foreach (var device in board.deviceManager.deviceList)
+            {
+                if (device == null) continue;
+                if (camp != Camp.none && device.camp == camp) continue;
+                if (!device.CanAttacked(this)) continue;
+                if (!attackRange.TestInRange(device)) continue;
+                hits.Add(device);
+            }
+            bool result = hits.Count > 0;
+            foreach (var device in hits)
+            {
+                float old = damagePoint;
+                if (device == null) throw new NullReferenceException();
+                device.TakeDamage(this, null!);
+                damagePoint = old;
+            }
+            return result;
+        }
+
+        private bool AreaDamage_Plant()
+        {
+            var hits = new List<Plant>();
+            foreach (var plant in board.plantManager.plants)
+            {
+                if (plant == null) throw new NullReferenceException();
+                if (!plant.CanAttacked()) continue;
+                if (!attackRange.TestInRange(plant)) continue;
+                hits.Add(plant);
+            }
+            bool result = hits.Count > 0;
+            foreach (var plant in hits)
+            {
+                float old = damagePoint;
+                if (plant == null) throw new NullReferenceException();
+                plant.TakeDamage(this, null!);
+                damagePoint = old;
+            }
+            return result;
+        }
+
+        private bool AreaDamage_Zombie()
+        {
+            var hits = new List<Zombie>();
+            foreach (var zombie in board.zombieManager.zombieList)
+            {
+                if (zombie == null) throw new NullReferenceException();
+                if (!zombie.CanAttacked()) continue;
+                if (!attackRange.TestInRange(zombie)) continue;
+                hits.Add(zombie);
+            }
+            bool result = hits.Count > 0;
+            foreach (var zombie in hits)
+            {
+                float old = damagePoint;
+                if (zombie == null) throw new NullReferenceException();
+                zombie.TakeDamage(this, null!);
+                damagePoint = old;
+            }
+            return result;
+        }
+    }
+
+    public class Device : UnityEngine.MonoBehaviour
+    {
+        public Board board=null!;
+        public Camp camp;
+        public int ID;
+        public float healthPoint;
+        public float defensePoint;
+        public int brokenLevel;
+        public float icePoint;
+        public float maxIcePoint;
+        public bool broken;
+        public Zombie targetZombie=null!;
+        public float brightEffectTime;
+        public float brightTime;
+        public float brightIntensity;
+        public ICEUIController iceUIController=null!;
+        public HPUIController hpUIController=null!;
+
+        public class ICEUIController { public void Update(float icePoint,float maxIcePoint,Device device,bool destructive){} }
+        public class HPUIController { public void RecordingHP(Device device){} }
+
+        public bool CanAttacked(Damage damage)
+        {
+            if (ID == 2 || ID == 7 || ID == 8 || ID == 12 || ID == 14) return false;
+            if (ID == 11)
+            {
+                if (damage == null) throw new NullReferenceException();
+                return damage.damageAttribute == DamageAttribute.ashes;
+            }
+            return !broken;
+        }
+
+        public void TakeDamage(Damage damage, Projectile projectile)
+        {
+            if (broken || ID == 2 || ID == 7 || ID == 8 || ID == 12 || ID == 14) return;
+            if (ID == 11)
+            {
+                if (damage == null) throw new NullReferenceException();
+                if (damage.damageAttribute != DamageAttribute.ashes) return;
+            }
+            brightEffectTime = 0.2f;
+            brightTime = 0.2f;
+            brightIntensity = 4f;
+            if (damage == null) throw new NullReferenceException();
+            float point = damage.damagePoint;
+            if (icePoint > 0f)
+            {
+                if (damage.elements == null) throw new NullReferenceExceptio
