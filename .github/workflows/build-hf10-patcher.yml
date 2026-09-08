@@ -1,0 +1,30 @@
+name: Build HF10 Zombie Update_Characteristic patcher
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF10Patch/**'
+      - '.github/workflows/build-hf10-patcher.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF10 patcher
+        run: dotnet publish Tools/HF10Patch/HF10Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf10
+      - name: Smoke test usage
+        run: |
+          chmod +x out/hf10/GodsPVZ.HF10Patch
+          set +e
+          out/hf10/GodsPVZ.HF10Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF10Patch-linux-x64
+          path: out/hf10/GodsPVZ.HF10Patch
+          if-no-files-found: error
