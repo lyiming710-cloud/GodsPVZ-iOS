@@ -1,0 +1,111 @@
+s) x.Parameters.Add(new ParameterDefinition(MapType(p.ParameterType, targetMethod)));
+    return x;
+}
+
+MethodReference MapMethod(MethodReference m, MethodDefinition targetMethod)
+{
+    if (m is GenericInstanceMethod gim)
+    {
+        var e = MapMethod(gim.ElementMethod, targetMethod);
+        var g = new GenericInstanceMethod(e);
+        foreach (var a in gim.GenericArguments) g.GenericArguments.Add(MapType(a, targetMethod));
+        return g;
+    }
+
+    var declName = TargetName(m.DeclaringType.FullName);
+    var wantParams = m.Parameters.Select(p => Sig(MapType(p.ParameterType, targetMethod))).ToArray();
+    if (targetDefs.TryGetValue(declName, out var td))
+    {
+        var q = td.Methods.Where(x => x.Name == m.Name && x.Parameters.Count == wantParams.Length)
+            .Where(x => x.Parameters.Select(p => Sig(p.ParameterType)).SequenceEqual(wantParams)).ToList();
+        if (q.Count == 1) return q[0];
+        if (q.Count > 1)
+        {
+            var retName = Sig(MapType(m.ReturnType, targetMethod));
+            var r = q.Where(x => Sig(x.ReturnType) == retName).ToList();
+            if (r.Count == 1) return r[0];
+        }
+        throw new InvalidDataException($"HF22 custom MethodRef {declName}::{m.Name}({string.Join(',', wantParams)}) count={q.Count}");
+    }
+
+    var ext = targetMethodRefs.Where(x => x.DeclaringType.FullName == declName && x.Name == m.Name && x.Parameters.Count == wantParams.Length)
+        .Where(x => x.Parameters.Select(p => Sig(p.ParameterType)).SequenceEqual(wantParams)).ToList();
+    if (ext.Count > 0) return ext[0];
+    return ConstructMethod(m, targetMethod);
+}
+
+Instruction NewInstruction(Instruction old, MethodDefinition targetMethod, Dictionary<VariableDefinition,VariableDefinition> vars)
+{
+    var op = old.OpCode;
+    var v = old.Operand;
+    if (v == null) return Instruction.Create(op);
+    return v switch
+    {
+        sbyte x => Instruction.Create(op, x),
+        byte x => Instruction.Create(op, (sbyte)x),
+        int x => Instruction.Create(op, x),
+        long x => Instruction.Create(op, x),
+        float x => Instruction.Create(op, x),
+        double x => Instruction.Create(op, x),
+        string x => Instruction.Create(op, x),
+        FieldReference x => Instruction.Create(op, MapField(x, targetMethod)),
+        MethodReference x => Instruction.Create(op, MapMethod(x, targetMethod)),
+        TypeReference x => Instruction.Create(op, MapType(x, targetMethod)),
+        VariableDefinition x => Instruction.Create(op, vars[x]),
+        ParameterDefinition x => Instruction.Create(op, targetMethod.Parameters[x.Index]),
+        Instruction x => Instruction.Create(op, x),
+        Instruction[] x => Instruction.Create(op, x),
+        CallSite x => throw new NotSupportedException($"HF22 CallSite operand {x}"),
+        _ => throw new NotSupportedException($"HF22 operand {v.GetType().FullName} at {old}")
+    };
+}
+
+void CloneBody(MethodDefinition src, MethodDefinition dst)
+{
+    if (!src.HasBody) throw new InvalidDataException($"Template missing body {src.FullName}");
+    var sb = src.Body;
+    var db = new MethodBody(dst) { InitLocals = sb.InitLocals, MaxStackSize = Math.Max(sb.MaxStackSize, 8) };
+    dst.Body = db;
+    var vars = new Dictionary<VariableDefinition,VariableDefinition>();
+    foreach (var v in sb.Variables)
+    {
+        var nv = new VariableDefinition(MapType(v.VariableType, dst));
+        db.Variables.Add(nv); vars[v] = nv;
+    }
+    var imap = new Dictionary<Instruction,Instruction>();
+    foreach (var i in sb.Instructions)
+    {
+        var ni = NewInstruction(i, dst, vars);
+        db.Instructions.Add(ni); imap[i] = ni;
+    }
+    foreach (var i in sb.Instructions)
+    {
+        var ni = imap[i];
+        if (i.Operand is Instruction b) ni.Operand = imap[b];
+        else if (i.Operand is Instruction[] sw) ni.Operand = sw.Select(x => imap[x]).ToArray();
+    }
+    foreach (var eh in sb.ExceptionHandlers)
+    {
+        db.ExceptionHandlers.Add(new ExceptionHandler(eh.HandlerType)
+        {
+            CatchType = eh.CatchType == null ? null : MapType(eh.CatchType, dst),
+            TryStart = eh.TryStart == null ? null : imap[eh.TryStart],
+            TryEnd = eh.TryEnd == null ? null : imap[eh.TryEnd],
+            HandlerStart = eh.HandlerStart == null ? null : imap[eh.HandlerStart],
+            HandlerEnd = eh.HandlerEnd == null ? null : imap[eh.HandlerEnd],
+            FilterStart = eh.FilterStart == null ? null : imap[eh.FilterStart]
+        });
+    }
+}
+
+var pairs = new (uint token, string type, string method, int parameters)[]
+{
+    (0x0600010C, "Damage", "AreaDamage", 0),
+    (0x0600010D, "Damage", "AreaDamage_Device", 1),
+    (0x0600010E, "Damage", "AreaDamage_Plant", 0),
+    (0x0600010F, "Damage", "AreaDamage_Zombie", 0),
+    (0x06000124, "ElementManager", "ToEffect", 1),
+    (0x06000127, "ElementManager", "GetElement", 1),
+    (0x06000310, "Device", "CanAttacked", 1),
+    (0x06000336, "Device", "TakeDamage", 2),
+    (0x060003B3, "Plant", "TakeDamage", 
