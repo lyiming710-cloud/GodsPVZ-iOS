@@ -1,0 +1,115 @@
+n();
+                foreach (var element in damage.elements)
+                {
+                    if (element == null) throw new NullReferenceException();
+                    if (element.type != ElementType.fire_ice) continue;
+                    icePoint = Math.Min(Math.Max(icePoint + element.point * 0.2f, 0f), maxIcePoint);
+                }
+                if (icePoint < point)
+                {
+                    point -= icePoint;
+                    icePoint = 0f;
+                    if (iceUIController == null) throw new NullReferenceException();
+                    iceUIController.Update(icePoint, maxIcePoint, this, true);
+                }
+                else
+                {
+                    icePoint -= point;
+                    if (iceUIController == null) throw new NullReferenceException();
+                    iceUIController.Update(icePoint, maxIcePoint, this, true);
+                    if (hpUIController == null) throw new NullReferenceException();
+                    hpUIController.RecordingHP(this);
+                    return;
+                }
+            }
+            float reduction = Math.Min(Math.Max(1f - ((point * 3f - defensePoint * 2f) / (defensePoint * 2f + point * 2f)), 0f), 0.9f);
+            float actual = (1f - reduction) * point;
+            if (ID == 13 && targetZombie && targetZombie.brokenLevel >= 3)
+            {
+                if (board && targetZombie) targetZombie.healthPoint -= actual * 0.3f;
+                actual = 0f;
+            }
+            healthPoint -= actual;
+            if (hpUIController == null) throw new NullReferenceException();
+            hpUIController.RecordingHP(this);
+            TakeDamage_AudioParticle(damage, projectile);
+            InjuryStatusUpdate();
+        }
+        private void TakeDamage_AudioParticle(Damage damage, Projectile projectile) { }
+        private void InjuryStatusUpdate() { }
+    }
+
+    public class Plant : UnityEngine.MonoBehaviour
+    {
+        public Board board=null!;
+        public int ID;
+        public int order;
+        public float healthPoint;
+        public bool isDied;
+        public bool skillOngoing;
+        private float defensePoint;
+        public float flash_Brightness;
+        public float flash_Time;
+        public ElementManager elementManager=null!;
+        public BuffManager buffManager=null!;
+
+        public bool CanAttacked() => !isDied;
+        public void KillEvent(Zombie zombie) { }
+        public void TakeDamage(Damage damage, Projectile projectile)
+        {
+            float def = Math.Max(MathF.Round(buffManager.GetIncrement(defensePoint, "Def") + defensePoint), 0f);
+            float reduction = Math.Min(Math.Max(1f - ((damage.damagePoint * 3f - def * 2f) / (damage.damagePoint * 2f + def * 2f)), 0f), 0.9f);
+            float actual = (1f - reduction) * damage.damagePoint;
+            if (ID == 49 && !skillOngoing && order > 0) actual *= 0.7f;
+            healthPoint -= actual;
+            flash_Time = 0.2f;
+            flash_Brightness = 4f;
+            foreach (var element in damage.elements)
+            {
+                if (elementManager == null) throw new NullReferenceException();
+                elementManager.ToEffect(element);
+            }
+        }
+    }
+
+    public class HPUIController_Zombie : UnityEngine.MonoBehaviour { public void RecordingHP(){} }
+
+    public class Zombie : UnityEngine.MonoBehaviour
+    {
+        public Board board=null!;
+        public int ID;
+        private float attackPoint;
+        public float healthPoint;
+        public int brokenLevel;
+        public bool isDied;
+        public bool ashes;
+        public bool invincible;
+        public bool poleZombie_jump;
+        public bool immune_stiff;
+        public ElementManager elementManager=null!;
+        public Plant targetPlant=null!;
+        public float stiffnessTime;
+        public HPUIController_Zombie hpUIController=null!;
+        public BuffManager buffManager=null!;
+
+        public bool CanAttacked()
+        {
+            var go = gameObject;
+            if (go == null) throw new NullReferenceException();
+            if (!go.activeSelf || invincible || isDied || ashes) return false;
+            if (ID == 3 || ID == 23) return !poleZombie_jump;
+            return ID != 13;
+        }
+        public float GetATK() => Math.Max(MathF.Round(buffManager.GetIncrement(attackPoint, "Atk") + attackPoint), 0f);
+        public bool IsDisabled()=>false;
+        private bool Hurt_Normal(Damage d,Projectile p)=>false;
+        private bool Hurt_Throughout(Damage d,Projectile p)=>false;
+        private bool Hurt_Artillery(Damage d,Projectile p)=>false;
+        private bool Hurt_Ashes(Damage d,Projectile p)=>false;
+        private bool Hurt_Real(Damage d,Projectile p)=>false;
+        public void ZC_ArmoredFlagWakeUpZombies(){}
+
+        public void TakeDamage(Damage damage, Projectile projectile)
+        {
+            if (damage == null) throw new NullReferenceException();
+            if (damage.buffs_additiona
