@@ -1,0 +1,57 @@
+l != null)
+            {
+                foreach (var buff in damage.buffs_additional)
+                {
+                    if (buffManager == null) throw new NullReferenceException();
+                    buffManager.AddBuff(buff);
+                }
+            }
+            if (damage.stiffnessTime > 0f)
+            {
+                if (!immune_stiff)
+                {
+                    if (stiffnessTime <= damage.stiffnessTime) stiffnessTime = damage.stiffnessTime;
+                }
+                else stiffnessTime = 0f;
+            }
+            var go = gameObject;
+            if (go == null) throw new NullReferenceException();
+            if (!go.activeSelf || invincible || isDied || ashes) return;
+            if (ID == 3 || ID == 23)
+            {
+                if (poleZombie_jump) return;
+            }
+            else if (ID == 13) return;
+
+            bool wasDisabled = IsDisabled();
+            bool hurt = damage.damageAttribute switch
+            {
+                DamageAttribute.normal => Hurt_Normal(damage, projectile),
+                DamageAttribute.throughout => Hurt_Throughout(damage, projectile),
+                DamageAttribute.artillery => Hurt_Artillery(damage, projectile),
+                DamageAttribute.ashes => Hurt_Ashes(damage, projectile),
+                DamageAttribute.real => Hurt_Real(damage, projectile),
+                _ => false,
+            };
+
+            if (damage.elements == null) throw new NullReferenceException();
+            foreach (var element in damage.elements)
+            {
+                if (element == null) throw new NullReferenceException();
+                if (element.type == ElementType.fire_ice) continue;
+                if (elementManager == null) throw new NullReferenceException();
+                elementManager.ToEffect(element);
+            }
+            if (hurt && !wasDisabled)
+            {
+                if (damage.sourcePlant) damage.sourcePlant.KillEvent(this);
+            }
+            else if (ID == 10)
+            {
+                ZC_ArmoredFlagWakeUpZombies();
+            }
+            if (!hpUIController) return;
+            hpUIController.RecordingHP();
+        }
+    }
+}
