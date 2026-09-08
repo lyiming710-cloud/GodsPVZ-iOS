@@ -1,0 +1,32 @@
+name: Build HF7 Zombie GetMoveDirection patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF7Patch/**'
+      - '.github/workflows/build-hf7-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF7 patcher
+        run: dotnet publish Tools/HF7Patch/HF7Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out
+      - name: Smoke test usage
+        run: |
+          chmod +x out/GodsPVZ.HF7Patch
+          set +e
+          out/GodsPVZ.HF7Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF7Patch-linux-x64
+          path: out/GodsPVZ.HF7Patch
+          if-no-files-found: error
