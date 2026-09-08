@@ -277,7 +277,7 @@ using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     {
         ("ProjectileManager.Start", VM("ProjectileManager","Start",0), 45, 0),
         ("ProjectileManager.SetFloatScale", VM("ProjectileManager","SetFloatScale",0), 200, 0),
-        ("ProjectileManager.CrateNewProjectile", VM("ProjectileManager","CrateNewProjectile",1), 45, 1),
+        ("ProjectileManager.CrateNewProjectile", VM("ProjectileManager","CrateNewProjectile",1), 35, 1),
         ("Projectile.ResetData", VM("Projectile","ResetData",0), 75, 0),
         ("Projectile.BindTrack", VM("Projectile","BindTrack",0), 35, 0),
         ("ParticlesManager.Start", VM("ParticlesManager","Start",0), 55, 1),
