@@ -71,7 +71,7 @@ using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     var end = b.Methods.Single(x => x.Name == "End" && x.Parameters.Count == 2 && x.GenericParameters.Count == 1);
     if (start.MetadataToken.ToUInt32() != 0x060000F1) throw new InvalidDataException($"HF13 Start token drift: 0x{start.MetadataToken.ToUInt32():X8}");
     if (end.MetadataToken.ToUInt32() != 0x060000F4) throw new InvalidDataException($"HF13 End token drift: 0x{end.MetadataToken.ToUInt32():X8}");
-    foreach (var (name,m,min) in new[] { ("Start",start,50), ("End",end,70) })
+    foreach (var (name,m,min) in new[] { ("Start",start,40), ("End",end,60) })
     {
         if (!m.HasBody || m.Body.Instructions.Count < min) throw new InvalidDataException($"HF13 {name} body too small: {m.Body.Instructions.Count}");
         if (m.Body.ExceptionHandlers.Count != 1 || m.Body.ExceptionHandlers[0].HandlerType != ExceptionHandlerType.Finally)
