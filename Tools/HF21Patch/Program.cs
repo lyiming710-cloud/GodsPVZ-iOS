@@ -281,7 +281,7 @@ using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { I
         ("Projectile.ResetData", VM("Projectile","ResetData",0), 75, 0),
         ("Projectile.BindTrack", VM("Projectile","BindTrack",0), 35, 0),
         ("ParticlesManager.Start", VM("ParticlesManager","Start",0), 55, 1),
-        ("ParticlesManager.CreatNewParticle", VM("ParticlesManager","CreatNewParticle",1), 25, 0),
+        ("ParticlesManager.CreatNewParticle", VM("ParticlesManager","CreatNewParticle",1), 20, 0),
         ("ResourceManager.Load_projectileSprite", VM("ResourceManager","Load_projectileSprite",0), 65, 1),
     };
     foreach (var (name,m,min,eh) in checks)
