@@ -88,8 +88,15 @@ var objectImplicit = Ref("UnityEngine.Object", "op_Implicit", "UnityEngine.Objec
 var rendererSetEnabled = Ref("UnityEngine.Renderer", "set_enabled", "System.Boolean");
 var getTransform = Ref("UnityEngine.Component", "get_transform");
 var setPosition = Ref("UnityEngine.Transform", "set_position", "UnityEngine.Vector3");
-var colorCtor = Ref("UnityEngine.Color", ".ctor", "System.Single", "System.Single", "System.Single", "System.Single");
-var vector3Ctor = Ref("UnityEngine.Vector3", ".ctor", "System.Single", "System.Single", "System.Single");
+var colorCtor = new MethodReference(".ctor", module.TypeSystem.Void, colorType) { HasThis = true };
+colorCtor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+colorCtor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+colorCtor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+colorCtor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+var vector3Ctor = new MethodReference(".ctor", module.TypeSystem.Void, vector3Type) { HasThis = true };
+vector3Ctor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+vector3Ctor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+vector3Ctor.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
 var setColor = M(zombie, "SetColor", 1);
 var nreCtor = AllRefs().FirstOrDefault(r => r.DeclaringType.FullName == "System.NullReferenceException" && r.Name == ".ctor" && r.Parameters.Count == 0)
     ?? throw new InvalidDataException("HF17 missing NullReferenceException::.ctor");
