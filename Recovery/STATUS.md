@@ -10,7 +10,9 @@ Use the PC x86-64 IL2CPP build as the primary gameplay-logic source because Cpp2
 - IL2CPP metadata: `31.1`
 - Android CodeRegistration / MetadataRegistration: `0x2772B68` / `0x285F870`
 - PC CodeRegistration / MetadataRegistration: `0x1815E88C0` / `0x1818C6D00`
-- PC Cpp2IL recovery: `2318 / 2319` methods; only `Zombie::InjuryStatusUpdate_Body` was reported as a method-level decompilation failure.
+- Initial PC Cpp2IL recovery: `2318 / 2319` methods; the only full method-level failure was `Zombie::InjuryStatusUpdate_Body`.
+- That missing method is now recovered in HF3 directly from PC native x86-64 at `0x1803652B0`, independently Cecil/ILSpy audited, and classified `Exact`. Final HF3 SHA-256: `23014656af797490bc35d9feb8f78950bcfa79a167c6a1de3303e1d30251c32f`.
+- HF1/HF2/HF3 are cumulative high-fidelity managed recovery stages. HF3 modifies exactly one managed method relative to the audited HF2 after normalizing physical RVA/data-placement shifts.
 - Android/ARM64 ILSpy output: 15,946 `Cpp2ILHelpers.NoteDecompilerIssue` calls.
 - PC/x86-64 ILSpy output: 4,304 `Cpp2ILHelpers.NoteDecompilerIssue` calls, a ~73% reduction.
 - Critical scene transition `GlobalStaticVars.EnterBoard()` is correctly recovered on PC as `SceneManager.LoadScene("Board")`; the Android recovery lost that string through an unresolved unmanaged-memory load.
@@ -46,11 +48,11 @@ Serialized package script references cover 67 distinct types: 19 UGUI, 9 TMP, 32
 
 ## Remaining blockers before claiming a working IPA
 
-1. Import the reconstructed project in Unity `2022.3.44f1c1` and let Package Manager restore the exact packages.
-2. Run/verify the package-reference migration (67/67 types must resolve).
-3. Verify the recovered PC game DLL is accepted by Unity and can be converted by IL2CPP for iOS.
-4. Repair the remaining semantic recovery defects, starting with the single failed method and critical gameplay paths that still contain `NoteDecompilerIssue`/invalid-IL artifacts.
-5. Export the iOS Xcode project and compile it with code signing disabled, then package `Payload/*.app` into an unsigned IPA.
+1. Continue native-backed recovery of critical gameplay paths that still contain `NoteDecompilerIssue`, invalid-IL artifacts, or previously introduced stability/behavior-equivalent implementations. Do not replace them with guessed gameplay logic.
+2. Import the reconstructed project in Unity `2022.3.44f1c1` and let Package Manager restore the exact packages.
+3. Run/verify the package-reference migration (67/67 types must resolve).
+4. Verify the cumulative high-fidelity game DLL is accepted by Unity and can be converted by IL2CPP for iOS.
+5. Only after core recovery is sufficiently complete, add the minimal iOS adaptation layer, export the iOS Xcode project, compile with code signing disabled, and package `Payload/*.app` into an unsigned IPA.
 6. Install on a signed/sideload-capable test device and validate startup, menu -> Board transition, touch placement, dragging, pause/time-slow controls, save/load, and a full level.
 
 The repository intentionally does not mark the port complete until those runtime checks pass.
