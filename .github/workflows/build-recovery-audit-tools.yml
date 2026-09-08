@@ -1,0 +1,47 @@
+name: Build recovery audit tools
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/RecoveryAudit/**'
+      - '.github/workflows/build-recovery-audit-tools.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish Cecil auditor
+        run: dotnet publish Tools/RecoveryAudit/RecoveryAudit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/audit
+      - name: Smoke test Cecil auditor
+        run: |
+          chmod +x out/audit/GodsPVZ.RecoveryAudit
+          set +e
+          out/audit/GodsPVZ.RecoveryAudit
+          code=$?
+          set -e
+          test "$code" = "2"
+      - name: Install ILSpyCmd bundle
+        shell: bash
+        run: |
+          mkdir -p out/ilspy-runtime out/ilspy-tool
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh
+          bash /tmp/dotnet-install.sh --runtime dotnet --version 10.0.11 --install-dir "$PWD/out/ilspy-runtime"
+          "$PWD/out/ilspy-runtime/dotnet" tool install ilspycmd --version 11.0.0.9375 --tool-path "$PWD/out/ilspy-tool"
+          DOTNET_ROOT="$PWD/out/ilspy-runtime" PATH="$PWD/out/ilspy-runtime:$PWD/out/ilspy-tool:$PATH" ilspycmd --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-RecoveryAudit-linux-x64
+          path: out/audit/GodsPVZ.RecoveryAudit
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-ILSpyCmd-linux-x64
+          path: |
+            out/ilspy-runtime
+            out/ilspy-tool
+          if-no-files-found: error
