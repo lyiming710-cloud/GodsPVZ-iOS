@@ -57,6 +57,13 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Hide", "Awake_Hide", 0, 30),
     ("Hide", "Updata_Hide", 0, 60),
     ("Hide", "End_Hide", 0, 35),
+    ("Buff", "ComputingIncrement", 2, 60),
+    ("Buff", ".ctor", 0, 14),
+    ("BuffManager", "GetIncrement", 2, 35),
+    ("BuffManager", "EndAll", 1, 35),
+    ("BuffManager", "FindBuff", 1, 35),
+    ("BuffManager", "FindStatsIncreased", 1, 5),
+    ("BuffManager", ".ctor", 0, 12),
 };
 
 void AuditOnce(string label)
