@@ -71,7 +71,7 @@ using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     var z = All(verify.Types).Single(t => t.Name == "Zombie");
     var targets = new[]
     {
-        ("IsDisabled", z.Methods.Single(m => m.Name == "IsDisabled" && m.Parameters.Count == 0), 55),
+        ("IsDisabled", z.Methods.Single(m => m.Name == "IsDisabled" && m.Parameters.Count == 0), 50),
         ("IsNormalZombie", z.Methods.Single(m => m.Name == "IsNormalZombie" && m.Parameters.Count == 0), 25),
         ("IsPlantZombie", z.Methods.Single(m => m.Name == "IsPlantZombie" && m.Parameters.Count == 0), 35),
     };
