@@ -2,68 +2,113 @@
 
 ## Current strategy
 
-Use the PC x86-64 IL2CPP build as the primary gameplay-logic source because Cpp2IL recovers it substantially more accurately, while retaining the Android/mobile asset export and using the Android build as the reference for touch/mobile-specific behavior.
+Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android native as the second reference, then original metadata/assets/JSON, with Cpp2IL/ILSpy used for attribution and managed reconstruction support. Do not replace native-backed gameplay with rescue-route approximations.
 
-## Reverse-engineering results
+## Fixed original baseline
 
-- Unity editor version: `2022.3.44f1c1`
-- IL2CPP metadata: `31.1`
-- Android CodeRegistration / MetadataRegistration: `0x2772B68` / `0x285F870`
-- PC CodeRegistration / MetadataRegistration: `0x1815E88C0` / `0x1818C6D00`
-- Initial PC Cpp2IL recovery: `2318 / 2319` methods; the only full method-level failure was `Zombie::InjuryStatusUpdate_Body`.
-- That missing method is now recovered in HF3 directly from PC native x86-64 at `0x1803652B0`, independently Cecil/ILSpy audited, and classified `Exact`. Final HF3 SHA-256: `23014656af797490bc35d9feb8f78950bcfa79a167c6a1de3303e1d30251c32f`.
-- HF4 restores `Zombie.Awake()` directly from PC native x86-64 at `0x18035DAD0`. The six armor initialization tables, enum default behavior, field identities, and native write order are independently Cecil/ILSpy audited and classified `Exact`. Final HF4 SHA-256: `2abbc9eb02b93bcd0178091bbc38ca450b6162875df9dcb55e874d5b9af9f0a6`.
-- HF5 restores `Zombie.Start()` at `0x1803695F0` and its direct recursive dependency `Zombie.LoopAddAnimation(Transform)` at `0x180365BA0`. Native call ordering, exact Group-ID set, animation speed setup, independent transform-position reads, previous-position write order, BoardEntry scaling, pre-path initialization, recursive child enumeration, and IEnumerator finally/Dispose semantics are independently audited and classified `Exact`. Final HF5 SHA-256: `58fe2001b6d9df986a08a930e60ea936fbf9392d82532f2e815bda63557d5e3a`.
-- HF6 restores `Zombie.Update()` directly from PC native x86-64 at `0x18036CD60` (RID 1057, token `0x06000421`). The update-rate formula and NaN behavior, eight independent `Time.deltaTime` calls, rSpeed movement, Transform writes, path state machine, SortingGroup order, buff/combat/element/injury ordering, brightness/previous-position tail, and destroy countdown are independently Cecil/ILSpy audited and classified `Exact`. Final HF6 SHA-256: `e6395652d0d413fbb496dc9cae8f2712d6a65bcfad109d160818983cde234e75`.
-- HF7 restores `Zombie.GetMoveDirection()` directly from PC native x86-64 at `0x180361440` (RID 1103, token `0x0600044F`). It retains the real `List<EnemyPath>.Enumerator` plus finally/Dispose shape, first-unarrived-node selection, ordered x deadzone behavior, native `1e-5f` normalization epsilon, float/double sqrt path, and distinct signed-zero return paths. Cecil/ILSpy and whole-assembly semantic isolation classify it `Exact`. Final HF7 SHA-256: `ed01e0aa7dac968e8203131e6274a4da718ebe5fdcd0dcb3d3bc41d3b0f60ea4`.
-- HF8 restores `Zombie.SetrSpeed(Vector3)` directly from PC native x86-64 at `0x180368280` (RID 1145, token `0x06000479`). It preserves the ID 17 tail, generic direction/localScale sign handling, Snowbeast stop/deceleration/pre-pass/steering path, `GetMS()` scaling, double-cross-product steering, native 1.5 magnitude clamp, six independent `Time.deltaTime` reads, the exact metadata-backed `"Snowbeast.speed"` lookup, `StatsIncreased.value = |rDirection| - 1`, localScale flip read order, and final animation-frame speed multiplication. Cecil/ILSpy and whole-assembly semantic isolation classify it `Exact`. Final HF8 SHA-256: `4dc9b2486ae41b2d9c340293dada22e74ee6877290e0e79f456b770b92bb4688`.
-- HF9 restores `Zombie.Update_Attack()` directly from PC native x86-64 at `0x18036ADC0` (RID 1058, token `0x06000422`). It preserves the shooting-ID/timer path, exact animator strings, Unity Object comparison semantics, PC-native inlined attack/walk transitions, generic melee block/unblock behavior, ID 17/18/13 special routing, Snowbeast seek/device logic, exact `EnemyPath(..., 9999f, ...)` construction, `waitingTime = 0.02f`, and two independent `Time.deltaTime` reads. Cecil/ILSpy and whole-assembly semantic isolation classify it `Exact`. Final HF9 SHA-256: `c3e1716bbd598a8b2d2af3b1b5907869cc581271645ccc2a9e81595dfac07ec2`.
-- HF10 restores `Zombie.Update_Characteristic()` directly from PC native x86-64 at `0x18036B960` (RID 1060, token `0x06000424`). The exact metadata-backed strings `PoleCommander.speed`, `JumpTrigger`, `rest`, and `PlaceTrigger`, the Pole Commander buff-null early exit, Snowbeast and ladder countdown/NaN behavior, ID23 jump/passable checks, and three independent `Time.deltaTime` reads are independently audited and classified `Exact`. Final HF10 SHA-256: `0684c52733afd5dd1d45e455ede8ec5355d8b53bb65875506cb97f9a29f07b8a`.
-- HF11 restores the shared generic `BuffManager.Update<T>(T host)` from the PC generic native instance at `0x180429970`–`0x180429D93` (managed token `0x06000101`). Direct PC xref scanning finds the same native instance called from both the Plant combat-update path (`0x18035C155`) and `Zombie.Update` (`0x18036D23D`), confirming that the open generic definition rather than a Zombie-only specialization should be recovered. The three List<Buff> enumerations, three finally/Dispose regions, add/update/remove/clear ordering, and `Buff.Start<T>/Update<T>/End<T>` host binding are independently audited and classified `Exact` for managed-observable behavior. Final HF11 SHA-256: `c990a8be0a615cbd1aed15b08251ae892889c056badc3e4070d7c6c24a6cb07f`.
-- HF12 restores the shared generic `Buff.Update<T>(T host, bool child, BuffManager buffManager)` from the PC generic native instance at `0x18042AF00`–`0x18042B472` (RID 242, token `0x060000F2`). It preserves Bleed/Hide specialized dispatch, the child-only early return, recursive `childBuffs` enumeration with a real finally/Dispose, Unity Object source-lifetime checks, Zombie/Projectile range gates and VFX following, Routine duration with native unordered/NaN retention semantics, Skill lifetime against `originalPlant.skillOngoing`, and the shared RemoveBuff tail. ILSpy with the regenerated same-Cpp2IL reference set, permanent Cecil OPEN1/OPEN2, and whole-assembly semantic isolation classify it `Exact`. Final HF12 SHA-256: `963f24a8323025e424c2e392d4f90ab1d7d48a8f5aa0b671775ac64402788930`.
-- HF13 restores the shared generic lifecycle pair `Buff.Start<T>(T host, bool child)` and `Buff.End<T>(T host, bool child)` from PC native instances `0x18042A660`–`0x18042A7F1` and `0x18042A110`–`0x18042A37A` (tokens `0x060000F1` and `0x060000F4`). Start preserves reference-host null exit, `StatsIncreased.Start_stats<T>`, recursive child start, and real Enumerator finally/Dispose. End preserves the exact metadata-backed `结束buff` log, Unity Object VFX destruction, `StatsIncreased.End_stats<T>`, `Hide.End_Hide()`, recursive child end, and real Enumerator finally/Dispose. The incoming `child` parameter is intentionally unused in both PC native bodies. Independent ILSpy, permanent Cecil OPEN1/OPEN2, byte-identity across threshold calibration, and whole-assembly two-method isolation classify both methods `Exact`. Final HF13 SHA-256: `a389fcf0f6a97b4ace5cc580fb9704fa9830dbeba9b50edc4c5cad90489ebac3`.
-- HF14 restores `StatsIncreased.Start_stats<T>(T host)` and `StatsIncreased.End_stats<T>(T host)` from the shared PC generic bodies at logical `.pdata` ranges `0x1804ACA50`–`0x1804ACBB7` and `0x1804AC8E0`–`0x1804ACA47` (original RID 247/249, tokens `0x060000F7`/`0x060000F9`; direct definition pointers are zero). The native bodies are managed-observably identical: null host exits; Zombie hosts use the metadata-backed `valueName` field at `+0x58`, comparing exact strings `"As"` then `"Ms"` to reset attack/move speed; Plant hosts are independently tested and a fresh `valueName` read compares `"As"` before resetting attack speed. Original metadata plus MetadataRegistration fixes `valueName:System.String` at `+0x58`; metadata-usage decoding independently resolves the Zombie/Plant type gates and exact strings. The mscorlib target `0x180B76170` is shared by `String.Equals(string,string)` and `String.op_Equality(string,string)`; HF14 uses canonical `op_Equality` and records that native alias explicitly. Patcher CI, actual formal-HF13 application and byte-identical repeat, permanent Cecil OPEN1/OPEN2, ILSpyCmd 11 member readback with zero stderr, and whole-assembly isolation with exactly two target-method hunks classify HF14 `Exact` for managed-observable behavior. Final HF14 SHA-256: `cbe30c99a973f41bbf4bb0f0f56f62d37e1c752c0723159cc07feeb3d2a0efe7`.
-- HF1 through HF14 are cumulative high-fidelity managed recovery stages. After normalizing physical RVA/data-placement shifts, HF3 changes exactly one managed method relative to audited HF2, HF4 changes exactly one managed method (`Zombie.Awake`) relative to HF3, HF5 changes exactly two managed methods (`Zombie.Start`, `Zombie.LoopAddAnimation`) relative to HF4, HF6 changes exactly one managed method (`Zombie.Update`) relative to HF5, HF7 changes exactly one managed method (`Zombie.GetMoveDirection`) relative to HF6, HF8 changes exactly one managed method (`Zombie.SetrSpeed`) relative to HF7, HF9 changes exactly one managed method (`Zombie.Update_Attack`) relative to HF8, HF10 changes exactly one managed method (`Zombie.Update_Characteristic`) relative to HF9, HF11 changes exactly one managed method (`BuffManager.Update<T>`) relative to HF10, HF12 changes exactly one managed method (`Buff.Update<T>`) relative to HF11, HF13 changes exactly two managed methods (`Buff.Start<T>`, `Buff.End<T>`) relative to HF12, and HF14 changes exactly two managed methods (`StatsIncreased.Start_stats<T>`, `StatsIncreased.End_stats<T>`) relative to HF13.
-- Android/ARM64 ILSpy output: 15,946 `Cpp2ILHelpers.NoteDecompilerIssue` calls.
-- PC/x86-64 ILSpy output: 4,304 `Cpp2ILHelpers.NoteDecompilerIssue` calls, a ~73% reduction.
-- Critical scene transition `GlobalStaticVars.EnterBoard()` is correctly recovered on PC as `SceneManager.LoadScene("Board")`; the Android recovery lost that string through an unresolved unmanaged-memory load.
-- The PC build still contains touch APIs (`Input.GetTouch`, `touchCount`) in the same gameplay classes, so mobile input was not wholly compiled out of the PC build.
+- Unity editor: `2022.3.44f1c1`.
+- IL2CPP metadata: `31.1`.
+- PC CodeRegistration / MetadataRegistration: `0x1815E88C0` / `0x1818C6D00`.
+- Android CodeRegistration / MetadataRegistration: `0x2772B68` / `0x285F870`.
+- Original PC ZIP SHA-256: `2f08b4e2243e2bd296f3db694b4a2c9656252d76202c80167bdf3340b9f65b48`.
+- Original Android APK SHA-256: `428e0ba2e46645a905fb9fbb00cfde42406727a3ddfce9a7df1e0875889a739f`.
+- Cpp2IL authoritative source commit: `5fb20304df698ffd3d0e664b2a698cd911dc9d57`.
+- Reproduced PC Cpp2IL baseline: `2318 / 2319`; sole full failure `Zombie::InjuryStatusUpdate_Body`, already closed in HF3.
+- Original Assembly-CSharp MethodDef -> native attribution remains `original RID - 1 -> Assembly-CSharp CodeGenModule.methodPointers[index]`; do not use Cpp2IL-rewritten RID.
 
-## Unity reconstruction
+## Final cumulative HF chain
 
-- 3,149 Unity asset objects were exported with AssetRipper.
-- The recovered project contains roughly 6,783 files.
-- 173 serialized game script types were moved from individual AssetRipper `.cs` GUIDs to the recovered `Assembly-CSharp.dll` local file IDs.
-- After replacing the Android-recovered game DLL with the PC-recovered game DLL, those 173 type/fileID pairs still match 173/173.
-- 263 game-script references across 114 serialized assets were previously migrated to the recovered game DLL.
-- Original scene names recovered from `globalgamemanagers` are restored as `Assets/Scenes/MainMenu.unity` and `Assets/Scenes/Board.unity` in that build order.
+- HF1 — `31e6f6a781c6350a99a7317cade6cebc11cacd562a4c129961eef2d53af1d471`.
+- HF2 audited — `a21c9e1d1e6994eb559694a51123d33b8a1eb3b262bda6d372f97bbf51523633`. Old HF2 `d445395f...` is superseded.
+- HF3 `Zombie.InjuryStatusUpdate_Body` — Exact — `23014656af797490bc35d9feb8f78950bcfa79a167c6a1de3303e1d30251c32f`.
+- HF4 `Zombie.Awake` — Exact — `2abbc9eb02b93bcd0178091bbc38ca450b6162875df9dcb55e874d5b9af9f0a6`.
+- HF5 `Zombie.Start` + `LoopAddAnimation` — Exact — `58fe2001b6d9df986a08a930e60ea936fbf9392d82532f2e815bda63557d5e3a`.
+- HF6 `Zombie.Update` — Exact — `e6395652d0d413fbb496dc9cae8f2712d6a65bcfad109d160818983cde234e75`.
+- HF7 `Zombie.GetMoveDirection` — Exact — `ed01e0aa7dac968e8203131e6274a4da718ebe5fdcd0dcb3d3bc41d3b0f60ea4`.
+- HF8 `Zombie.SetrSpeed` — Exact — `4dc9b2486ae41b2d9c340293dada22e74ee6877290e0e79f456b770b92bb4688`.
+- HF9 `Zombie.Update_Attack` — Exact — `c3e1716bbd598a8b2d2af3b1b5907869cc581271645ccc2a9e81595dfac07ec2`.
+- HF10 `Zombie.Update_Characteristic` — Exact — `0684c52733afd5dd1d45e455ede8ec5355d8b53bb65875506cb97f9a29f07b8a`.
+- HF11 `BuffManager.Update<T>` — Exact managed-observable — `c990a8be0a615cbd1aed15b08251ae892889c056badc3e4070d7c6c24a6cb07f`.
+- HF12 `Buff.Update<T>` — Exact managed-observable — `963f24a8323025e424c2e392d4f90ab1d7d48a8f5aa0b671775ac64402788930`.
+- HF13 `Buff.Start<T>` + `Buff.End<T>` — Exact managed-observable — `a389fcf0f6a97b4ace5cc580fb9704fa9830dbeba9b50edc4c5cad90489ebac3`.
+- HF14 `StatsIncreased.Start_stats<T>` + `End_stats<T>` — Exact managed-observable — `cbe30c99a973f41bbf4bb0f0f56f62d37e1c752c0723159cc07feeb3d2a0efe7`.
+- **HF15 `Bleed.Bleeding<T>` — Exact managed-observable — `87c74aea233372a5a7af28c0df244a18873af111c0230b54d9acf82e68ef9ec1`.**
 
-## Unity package restoration
+HF3 through HF15 are cumulative. Whole-assembly semantic isolation confirms that each stage changes only its declared target MethodDef(s): HF13->HF14 has exactly two target hunks; HF14->HF15 has exactly one hunk ending at `Bleed::Bleeding`.
 
-Cpp2IL-produced copies of package/runtime assemblies are not trusted as runtime implementations. The project now restores the exact package versions embedded in original build paths and removes the recovered package DLLs that would shadow the real packages.
+## HF14 final archive
 
-Exact package versions:
+HF14 is fully closed, including the previously pending Drive gate.
 
-- `com.unity.ugui@1.0.0`
-- `com.unity.textmeshpro@3.0.6`
-- `com.unity.render-pipelines.core@14.0.11`
-- `com.unity.render-pipelines.universal@14.0.11`
-- `com.unity.2d.animation@9.1.1`
-- `com.unity.2d.tilemap.extras@3.1.2`
-- `com.unity.burst@1.8.17`
-- `com.unity.collections@1.2.4`
-- `com.unity.mathematics@1.2.6`
-- `com.unity.visualscripting@1.9.4`
+- Drive directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF14-StatsIncreased`.
+- Folder ID: `1-WOW4iCvmUAX9k6DAwxoXpc3frcCxCef`.
+- Post-upload listing verified 13 final files.
 
-Serialized package script references cover 67 distinct types: 19 UGUI, 9 TMP, 32 RenderPipeline Core debug-UI types, 5 URP types, and 2 2D Animation types. `GodsPVZPackageReferenceMigrator.cs` resolves the actual `MonoScript` GUIDs from installed official packages inside Unity and rewrites the old recovered-DLL references automatically.
+## HF15 technical result
 
-## Remaining blockers before claiming a working IPA
+Target: `Bleed.Bleeding<T>(T target)` — original RID `251`, token `0x060000FB`, direct generic-definition pointer `0`.
 
-1. Continue native-backed recovery of remaining critical runtime dependencies called by the now-Exact Plant/Zombie/Buff chains, prioritizing the still-damaged specialized Buff hooks such as `Bleed.Bleeding<T>`, `AttackRange.TestInRange<T>`, `Hide.Update_Hide<T>/End_Hide`, then path/device/element helpers according to native call centrality and current CIL damage. Do not replace them with guessed gameplay logic.
-2. Import the reconstructed project in Unity `2022.3.44f1c1` and let Package Manager restore the exact packages.
-3. Run/verify the package-reference migration (67/67 types must resolve).
-4. Verify the cumulative high-fidelity game DLL is accepted by Unity and can be converted by IL2CPP for iOS.
-5. Only after core recovery is sufficiently complete, add the minimal iOS adaptation layer, export the iOS Xcode project, compile with code signing disabled, and package `Payload/*.app` into an unsigned IPA.
-6. Install on a signed/sideload-capable test device and validate startup, menu -> Board transition, touch placement, dragging, pause/time-slow controls, save/load, and a full level.
+PC shared generic body:
+- HF12 direct callsite `0x18042B02E -> 0x180428C90`.
+- logical native range `0x180428C90–0x180428E64` fixed by four `.pdata` runtime-function entries.
+- full executable-section E8 scan finds exactly one direct xref to the body.
 
-The repository intentionally does not mark the port complete until those runtime checks pass.
+Native-backed behavior:
+- null reference host returns;
+- independent `Zombie`, `Plant`, `Device` gates;
+- `multi == false`: rate = `value`;
+- `multi == true`: rate = `host.maxHealthPoint * value`;
+- each matched host independently reads current `healthPoint`, calls `Time.get_deltaTime()`, subtracts `deltaTime * rate`, and writes `healthPoint`;
+- `Bleed.minHealthPoint` exists at `+0x5C` but is not read by this PC native body.
+
+Original field offsets used by native:
+- Bleed `value +0x58`, `minHealthPoint +0x5C`, `multi +0x60`;
+- Zombie `healthPoint/maxHealthPoint +0x70/+0x74`;
+- Plant `+0x94/+0x98`;
+- Device `+0x74/+0x78`.
+
+Original UnityEngine.CoreModule mapping resolves PC call target `0x18132C2F0` to `Time.get_deltaTime()` RID `2370`, token `0x06000942`.
+
+Validation:
+- HF15 patcher workflow `34201832021` — success.
+- Formal HF14 actual patch + repeat are byte-identical.
+- Patcher reopen: `93 IL / 317 bytes / 0 EH`.
+- Permanent RecoveryAudit workflow `34201989968` — success; actual OPEN1/OPEN2 pass HF3–HF15, `RECOVERY_AUDIT_OK`.
+- Exact Cpp2IL source-rebuild workflow `34202655285` — success; source SHA verified as `5fb20304...`.
+- Fresh PC reference regeneration: 56 DLLs, `2318/2319`, sole old HF3 failure only.
+- ILSpyCmd `11.0.0.9375` with full regenerated references: member stderr `0`; whole HF14/HF15 stderr `0`.
+- Whole-assembly HF14->HF15 semantic isolation: exactly one target hunk.
+
+HF15 Drive archive is complete and independently listed:
+- directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF15-Bleed`;
+- folder ID: `1y7WGFVI7q1RGZjedzqj2hIWpT-58GhbV`;
+- 15 final files, including final DLL, patcher, native/metadata evidence, ILSpy/Cecil, semantic diff, fixed Cpp2IL tool/reference set, logs and SHA256SUMS.
+
+## Unity reconstruction state
+
+- AssetRipper export: about 3,149 Unity objects; reconstructed project about 6,783 files.
+- 173 serialized game script types migrated to recovered `Assembly-CSharp.dll` local file IDs; PC DLL replacement still matches 173/173.
+- 263 game-script references across 114 serialized assets migrated.
+- Restored scenes: `Assets/Scenes/MainMenu.unity`, `Assets/Scenes/Board.unity`.
+- Exact package versions remain fixed: UGUI 1.0.0, TMP 3.0.6, RenderPipelines Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4.
+- Serialized package references cover 67 package script types and must still be validated 67/67 in Unity.
+
+## Remaining blockers before iOS/IPA
+
+Do not begin IPA packaging yet. Continue native-backed runtime recovery by call centrality.
+
+Immediate next priority:
+1. `AttackRange.TestInRange<T>` — direct HF12 dependency for Zombie/Projectile range buffs.
+2. `Hide.Updata_Hide()` / `Hide.End_Hide()` — HF12/HF13 specialized lifecycle dependencies.
+3. Then rescan native call centrality for path helpers, Device, Element, Projectile, Skill and remaining Plant specialized combat logic.
+
+After core recovery is sufficiently closed:
+1. import in Unity `2022.3.44f1c1`;
+2. restore exact packages;
+3. verify 67/67 package script migration;
+4. verify final recovered Assembly-CSharp is accepted and Unity IL2CPP converts it;
+5. add only minimal iOS adaptation;
+6. export Xcode project, unsigned build, package IPA;
+7. true-device validation through a complete level.
+
+The project remains high-fidelity-first; candidate stages must not be called final until native evidence, CI, formal-input patch, reopen, Cecil, ILSpy, semantic isolation, Evidence, STATUS, Drive archive and fixed SHA are all complete.
