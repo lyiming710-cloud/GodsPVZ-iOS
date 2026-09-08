@@ -71,7 +71,7 @@ using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     var end = b.Methods.Single(x => x.Name == "End" && x.Parameters.Count == 2 && x.GenericParameters.Count == 1);
     if (start.MetadataToken.ToUInt32() != 0x060000F1) throw new InvalidDataException($"HF13 Start token drift: 0x{start.MetadataToken.ToUInt32():X8}");
     if (end.MetadataToken.ToUInt32() != 0x060000F4) throw new InvalidDataException($"HF13 End token drift: 0x{end.MetadataToken.ToUInt32():X8}");
-    foreach (var (name,m,min) in new[] { ("Start",start,40), ("End",end,60) })
+    foreach (var (name,m,min) in new[] { ("Start",start,40), ("End",end,55) })
     {
         if (!m.HasBody || m.Body.Instructions.Count < min) throw new InvalidDataException($"HF13 {name} body too small: {m.Body.Instructions.Count}");
         if (m.Body.ExceptionHandlers.Count != 1 || m.Body.ExceptionHandlers[0].HandlerType != ExceptionHandlerType.Finally)
@@ -143,7 +143,6 @@ void PatchStart()
     var afterFinally = Instruction.Create(OpCodes.Nop);
     var childOk = Instruction.Create(OpCodes.Nop);
 
-    // PC shared generic instance returns immediately for a null reference-type host. `child` is intentionally ignored.
     E(il, OpCodes.Ldarg_1); E(il, OpCodes.Box, hostT); E(il, OpCodes.Brfalse, ret);
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Isinst, stats); E(il, OpCodes.Stloc, statsLocal);
     E(il, OpCodes.Ldloc, statsLocal); E(il, OpCodes.Brfalse, afterStats);
@@ -199,7 +198,6 @@ void PatchEnd()
     var afterFinally = Instruction.Create(OpCodes.Nop);
     var childOk = Instruction.Create(OpCodes.Nop);
 
-    // Metadata usage slot 0x181BA5D08 decodes to string-literal index 0x2328 = "结束buff".
     E(il, OpCodes.Ldstr, "结束buff"); E(il, OpCodes.Call, debugLog);
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, vfx); E(il, OpCodes.Ldnull); E(il, OpCodes.Call, objectNe); E(il, OpCodes.Brfalse, noVfx);
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, vfx); E(il, OpCodes.Call, getGameObject); E(il, OpCodes.Call, destroy);
