@@ -34,26 +34,28 @@ var targetMethodRefs = targetTypes.SelectMany(t => t.Methods).Where(m => m.HasBo
 
 string TargetName(string fullName) => fullName.StartsWith("Template.", StringComparison.Ordinal) ? fullName[9..] : fullName;
 
-TypeReference MapType(TypeReference t, MethodDefinition? targetMethod = null)
+TypeReference MapType(TypeReference t, MethodDefinition? targetMethod = null, GenericInstanceType? typeContext = null)
 {
     if (t is GenericParameter gp)
     {
+        if (gp.Type == GenericParameterType.Type && typeContext != null && gp.Position < typeContext.GenericArguments.Count)
+            return MapType(typeContext.GenericArguments[gp.Position], targetMethod);
         if (targetMethod != null && gp.Type == GenericParameterType.Method && gp.Position < targetMethod.GenericParameters.Count)
             return targetMethod.GenericParameters[gp.Position];
-        throw new InvalidDataException($"Unsupported generic parameter {gp.FullName}");
+        throw new InvalidDataException($"Unsupported generic parameter {gp.FullName} owner={gp.Owner} context={typeContext}");
     }
-    if (t is ByReferenceType br) return new ByReferenceType(MapType(br.ElementType, targetMethod));
-    if (t is PointerType pt) return new PointerType(MapType(pt.ElementType, targetMethod));
-    if (t is ArrayType at) return new ArrayType(MapType(at.ElementType, targetMethod), at.Rank);
+    if (t is ByReferenceType br) return new ByReferenceType(MapType(br.ElementType, targetMethod, typeContext));
+    if (t is PointerType pt) return new PointerType(MapType(pt.ElementType, targetMethod, typeContext));
+    if (t is ArrayType at) return new ArrayType(MapType(at.ElementType, targetMethod, typeContext), at.Rank);
     if (t is GenericInstanceType git)
     {
-        var x = new GenericInstanceType(MapType(git.ElementType, targetMethod));
-        foreach (var a in git.GenericArguments) x.GenericArguments.Add(MapType(a, targetMethod));
+        var x = new GenericInstanceType(MapType(git.ElementType, targetMethod, typeContext));
+        foreach (var a in git.GenericArguments) x.GenericArguments.Add(MapType(a, targetMethod, typeContext));
         return x;
     }
-    if (t is OptionalModifierType omt) return new OptionalModifierType(MapType(omt.ModifierType, targetMethod), MapType(omt.ElementType, targetMethod));
-    if (t is RequiredModifierType rmt) return new RequiredModifierType(MapType(rmt.ModifierType, targetMethod), MapType(rmt.ElementType, targetMethod));
-    if (t is PinnedType pin) return new PinnedType(MapType(pin.ElementType, targetMethod));
+    if (t is OptionalModifierType omt) return new OptionalModifierType(MapType(omt.ModifierType, targetMethod, typeContext), MapType(omt.ElementType, targetMethod, typeContext));
+    if (t is RequiredModifierType rmt) return new RequiredModifierType(MapType(rmt.ModifierType, targetMethod, typeContext), MapType(rmt.ElementType, targetMethod, typeContext));
+    if (t is PinnedType pin) return new PinnedType(MapType(pin.ElementType, targetMethod, typeContext));
 
     var name = TargetName(t.FullName);
     if (targetDefs.TryGetValue(name, out var def)) return def;
@@ -92,8 +94,9 @@ FieldReference MapField(FieldReference f, MethodDefinition targetMethod)
 
 MethodReference ConstructMethod(MethodReference m, MethodDefinition targetMethod)
 {
+    var typeContext = m.DeclaringType as GenericInstanceType;
     var decl = MapType(m.DeclaringType, targetMethod);
-    var ret = MapType(m.ReturnType, targetMethod);
+    var ret = MapType(m.ReturnType, targetMethod, typeContext);
     var x = new MethodReference(m.Name, ret, decl)
     {
         HasThis = m.HasThis,
@@ -101,7 +104,7 @@ MethodReference ConstructMethod(MethodReference m, MethodDefinition targetMethod
         CallingConvention = m.CallingConvention
     };
     for (int i = 0; i < m.GenericParameters.Count; i++) x.GenericParameters.Add(new GenericParameter(m.GenericParameters[i].Name, x));
-    foreach (var p in m.Parameters) x.Parameters.Add(new ParameterDefinition(MapType(p.ParameterType, targetMethod)));
+    foreach (var p in m.Parameters) x.Parameters.Add(new ParameterDefinition(MapType(p.ParameterType, targetMethod, typeContext)));
     return x;
 }
 
@@ -115,24 +118,29 @@ MethodReference MapMethod(MethodReference m, MethodDefinition targetMethod)
         return g;
     }
 
-    var declName = TargetName(m.DeclaringType.FullName);
-    var wantParams = m.Parameters.Select(p => Sig(MapType(p.ParameterType, targetMethod))).ToArray();
-    if (targetDefs.TryGetValue(declName, out var td))
+    var customDeclName = TargetName(m.DeclaringType.FullName);
+    if (targetDefs.TryGetValue(customDeclName, out var td))
     {
-        var q = td.Methods.Where(x => x.Name == m.Name && x.Parameters.Count == wantParams.Length)
-            .Where(x => x.Parameters.Select(p => Sig(p.ParameterType)).SequenceEqual(wantParams)).ToList();
+        var q = td.Methods.Where(x => x.Name == m.Name && x.Parameters.Count == m.Parameters.Count
+            && x.GenericParameters.Count == m.GenericParameters.Count).ToList();
         if (q.Count == 1) return q[0];
-        if (q.Count > 1)
-        {
-            var retName = Sig(MapType(m.ReturnType, targetMethod));
-            var r = q.Where(x => Sig(x.ReturnType) == retName).ToList();
-            if (r.Count == 1) return r[0];
-        }
-        throw new InvalidDataException($"HF22 custom MethodRef {declName}::{m.Name}({string.Join(',', wantParams)}) count={q.Count}");
+
+        var wantParams = m.Parameters.Select(p =>
+            p.ParameterType is GenericParameter ? $"GP:{((GenericParameter)p.ParameterType).Type}:{((GenericParameter)p.ParameterType).Position}"
+            : Sig(MapType(p.ParameterType, targetMethod))).ToArray();
+        var r = q.Where(x => x.Parameters.Select(p =>
+            p.ParameterType is GenericParameter ? $"GP:{((GenericParameter)p.ParameterType).Type}:{((GenericParameter)p.ParameterType).Position}"
+            : Sig(p.ParameterType)).SequenceEqual(wantParams)).ToList();
+        if (r.Count == 1) return r[0];
+        throw new InvalidDataException($"HF22 custom MethodRef {customDeclName}::{m.Name}/{m.Parameters.Count} count={q.Count} matched={r.Count}");
     }
 
-    var ext = targetMethodRefs.Where(x => x.DeclaringType.FullName == declName && x.Name == m.Name && x.Parameters.Count == wantParams.Length)
-        .Where(x => x.Parameters.Select(p => Sig(p.ParameterType)).SequenceEqual(wantParams)).ToList();
+    var typeContext = m.DeclaringType as GenericInstanceType;
+    var mappedDecl = MapType(m.DeclaringType, targetMethod);
+    var declName = mappedDecl.FullName;
+    var wantParamsExternal = m.Parameters.Select(p => Sig(MapType(p.ParameterType, targetMethod, typeContext))).ToArray();
+    var ext = targetMethodRefs.Where(x => x.DeclaringType.FullName == declName && x.Name == m.Name && x.Parameters.Count == wantParamsExternal.Length)
+        .Where(x => x.Parameters.Select(p => Sig(p.ParameterType)).SequenceEqual(wantParamsExternal)).ToList();
     if (ext.Count > 0) return ext[0];
     return ConstructMethod(m, targetMethod);
 }
