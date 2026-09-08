@@ -1,0 +1,38 @@
+name: Repair HF20 Vector3 MethodRef
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - '.github/workflows/repair-hf20-vector3-ref.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - name: Replace missing Vector3 operator lookup with explicit MemberRef
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('Tools/HF20Patch/Program.cs')
+          s = p.read_text()
+          old = 'var vecSub=R("UnityEngine.Vector3","op_Subtraction","UnityEngine.Vector3","UnityEngine.Vector3");'
+          new = 'var vector3Type=getPosition.ReturnType; var vecSub=new MethodReference("op_Subtraction",vector3Type,vector3Type){HasThis=false}; vecSub.Parameters.Add(new ParameterDefinition(vector3Type)); vecSub.Parameters.Add(new ParameterDefinition(vector3Type));'
+          if old not in s:
+              raise SystemExit('expected HF20 vecSub line not found')
+          if new in s:
+              raise SystemExit('HF20 vecSub replacement already present')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Tools/HF20Patch/Program.cs
+          git commit -m 'Fix HF20 Vector3 subtraction MethodRef construction'
+          git push origin HEAD:high-fidelity
