@@ -1,0 +1,80 @@
+name: Assemble HF22 source once
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - '.github/workflows/assemble-hf22-source.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - name: Assemble fixed HF22 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p Tools/HF22Patch
+          cat .hf22-src/part00 .hf22-src/part01 .hf22-src/part02 .hf22-src/part03 .hf22-src/part04 .hf22-src/part05 > Tools/HF22Patch/Program.cs
+          echo '9789186cfdd248d9c53ff7aac6518d41beee1179597750cf305617e900eab10e  Tools/HF22Patch/Program.cs' | sha256sum -c -
+          cat > Tools/HF22Patch/HF22Patch.csproj <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net10.0</TargetFramework>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <Nullable>enable</Nullable>
+              <AssemblyName>GodsPVZ.HF22Patch</AssemblyName>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="Mono.Cecil" Version="0.11.6" />
+            </ItemGroup>
+          </Project>
+          EOF
+          cat > .github/workflows/build-hf22-patcher.yml <<'EOF'
+          name: Build HF22 damage dispatch patcher
+
+          on:
+            push:
+              branches: [ high-fidelity ]
+              paths:
+                - 'Tools/HF22Patch/**'
+                - '.github/workflows/build-hf22-patcher.yml'
+            workflow_dispatch:
+
+          jobs:
+            build:
+              runs-on: ubuntu-latest
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-dotnet@v4
+                  with:
+                    dotnet-version: '10.0.x'
+                - name: Publish HF22 patcher
+                  run: dotnet publish Tools/HF22Patch/HF22Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out
+                - name: Smoke test usage
+                  run: |
+                    set +e
+                    ./out/GodsPVZ.HF22Patch >/tmp/hf22.out 2>/tmp/hf22.err
+                    code=$?
+                    set -e
+                    test "$code" -eq 2
+                    grep -q 'Usage: GodsPVZ.HF22Patch' /tmp/hf22.err
+                    test -f out/GodsPVZ.HF22Patch.dll
+                - uses: actions/upload-artifact@v4
+                  with:
+                    name: GodsPVZ-HF22Patch-linux-x64
+                    path: out
+                    if-no-files-found: error
+          EOF
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Tools/HF22Patch .github/workflows/build-hf22-patcher.yml
+          git commit -m 'Add HF22 damage dispatch patcher'
+          git push origin HEAD:high-fidelity
