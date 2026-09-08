@@ -1,0 +1,90 @@
+    il.Append(afterPrepass);
+    EmitSqrField(fRDirection); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, prepassDone);
+    EmitSqrArg(); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, mainDirectionZero);
+    E(il, OpCodes.Br, mainSteering);
+
+    il.Append(prepassDone);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, getMS); E(il, OpCodes.Stloc, factor);
+    ZeroLocal(tmp);
+    foreach (var c in new[] { vecX, vecY, vecZ }) SetLocalComp(tmp, c, () => { LoadArg(c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); });
+    E(il, OpCodes.Ldloc, tmp); E(il, OpCodes.Stfld, fRDirection);
+    E(il, OpCodes.Br, snowBuff);
+
+    il.Append(mainDirectionZero);
+    EmitSqrField(fRDirection); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, snowBuff);
+    MakeDecelStep();
+    EmitMagnitudeLocal(step); E(il, OpCodes.Call, deltaTime); E(il, OpCodes.Mul); EmitMagnitudeField(fRDirection); E(il, OpCodes.Blt_Un, decelUpdate);
+    SetRDirectionZero();
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldc_R4, 9999f); E(il, OpCodes.Call, tranToStant);
+    E(il, OpCodes.Br, snowBuff);
+    il.Append(decelUpdate);
+    AddLocalTimesFreshDeltaToField(step, fRDirection);
+    E(il, OpCodes.Br, snowBuff);
+
+    il.Append(mainSteering);
+    ZeroLocal(accel);
+    foreach (var c in new[] { vecX, vecY, vecZ })
+        SetLocalComp(accel, c, () => { LoadArg(c); E(il, OpCodes.Ldc_R4, 1.5f); E(il, OpCodes.Mul); LoadField(fRDirection, c); E(il, OpCodes.Sub); });
+    EmitSqrLocal(accel); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, accelReady);
+    ScaleLocal(accel, 0.25f);
+    il.Append(accelReady);
+
+    ZeroLocal(cross);
+    SetLocalComp(cross, vecX, () => { LoadField(fRDirection, vecY); LoadArg(vecZ); E(il, OpCodes.Mul); LoadField(fRDirection, vecZ); LoadArg(vecY); E(il, OpCodes.Mul); E(il, OpCodes.Sub); });
+    SetLocalComp(cross, vecY, () => { LoadField(fRDirection, vecZ); LoadArg(vecX); E(il, OpCodes.Mul); LoadField(fRDirection, vecX); LoadArg(vecZ); E(il, OpCodes.Mul); E(il, OpCodes.Sub); });
+    SetLocalComp(cross, vecZ, () => { LoadField(fRDirection, vecX); LoadArg(vecY); E(il, OpCodes.Mul); LoadField(fRDirection, vecY); LoadArg(vecX); E(il, OpCodes.Mul); E(il, OpCodes.Sub); });
+    ZeroLocal(turn);
+    SetLocalComp(turn, vecX, () => { LoadLocal(cross, vecY); LoadField(fRDirection, vecZ); E(il, OpCodes.Mul); LoadLocal(cross, vecZ); LoadField(fRDirection, vecY); E(il, OpCodes.Mul); E(il, OpCodes.Sub); });
+    SetLocalComp(turn, vecY, () => { LoadLocal(cross, vecZ); LoadField(fRDirection, vecX); E(il, OpCodes.Mul); LoadLocal(cross, vecX); LoadField(fRDirection, vecZ); E(il, OpCodes.Mul); E(il, OpCodes.Sub); });
+    SetLocalComp(turn, vecZ, () => { LoadLocal(cross, vecX); LoadField(fRDirection, vecY); E(il, OpCodes.Mul); LoadLocal(cross, vecY); LoadField(fRDirection, vecX); E(il, OpCodes.Mul); E(il, OpCodes.Sub); });
+    EmitSqrLocal(turn); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, turnReady);
+    ScaleLocal(turn, 1.5f);
+    il.Append(turnReady);
+
+    AddLocalTimesDeltaToFieldWithOneCall(accel, fRDirection);
+    AddLocalTimesDeltaToFieldWithOneCall(turn, fRDirection);
+    EmitMagnitudeField(fRDirection); E(il, OpCodes.Ldc_R4, 1.5f); E(il, OpCodes.Ble_Un, noClamp);
+    EmitSqrField(fRDirection); E(il, OpCodes.Ldc_R4, 9.9999994E-11f); E(il, OpCodes.Blt, noClamp);
+    EmitMagnitudeField(fRDirection); E(il, OpCodes.Stloc, mag);
+    E(il, OpCodes.Ldc_R4, 1.5f); E(il, OpCodes.Ldloc, mag); E(il, OpCodes.Div); E(il, OpCodes.Stloc, factor);
+    ZeroLocal(tmp);
+    foreach (var c in new[] { vecX, vecY, vecZ }) SetLocalComp(tmp, c, () => { LoadField(fRDirection, c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); });
+    StoreFieldFromLocal(fRDirection, tmp);
+    il.Append(noClamp);
+
+    il.Append(snowBuff);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fBuffManager); E(il, OpCodes.Ldstr, "Snowbeast.speed"); E(il, OpCodes.Callvirt, findBuff); E(il, OpCodes.Stloc, buff);
+    E(il, OpCodes.Ldloc, buff); E(il, OpCodes.Isinst, statsType); E(il, OpCodes.Stloc, stats);
+    E(il, OpCodes.Ldloc, stats); E(il, OpCodes.Brfalse, genericTail);
+    E(il, OpCodes.Ldloc, stats); EmitMagnitudeField(fRDirection); E(il, OpCodes.Ldc_R4, 1f); E(il, OpCodes.Sub); E(il, OpCodes.Stfld, fStatsValue);
+    E(il, OpCodes.Br, genericTail);
+
+    il.Append(genericTail);
+    E(il, OpCodes.Ldloc, signDir); E(il, OpCodes.Brfalse, noFlip);
+    E(il, OpCodes.Ldloc, signDir); E(il, OpCodes.Ldloc, signScale); E(il, OpCodes.Beq, noFlip);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, componentGetTransform); E(il, OpCodes.Stloc, transformTarget);
+    ZeroLocal(tmp);
+    SetLocalComp(tmp, vecX, () => { E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, componentGetTransform); E(il, OpCodes.Callvirt, transformGetLocalScale); E(il, OpCodes.Stloc, scale); LoadLocal(scale, vecX); E(il, OpCodes.Neg); });
+    SetLocalComp(tmp, vecY, () => { E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, componentGetTransform); E(il, OpCodes.Callvirt, transformGetLocalScale); E(il, OpCodes.Stloc, scale); LoadLocal(scale, vecY); });
+    SetLocalComp(tmp, vecZ, () => { E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, componentGetTransform); E(il, OpCodes.Callvirt, transformGetLocalScale); E(il, OpCodes.Stloc, scale); LoadLocal(scale, vecZ); });
+    E(il, OpCodes.Ldloc, transformTarget); E(il, OpCodes.Ldloc, tmp); E(il, OpCodes.Callvirt, transformSetLocalScale);
+
+    il.Append(noFlip);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, getAnimSpeed); E(il, OpCodes.Stloc, factor);
+    E(il, OpCodes.Ldloc, signScale); E(il, OpCodes.Conv_R4); E(il, OpCodes.Stloc, mag);
+    ZeroLocal(tmp);
+    foreach (var c in new[] { vecX, vecY, vecZ })
+        SetLocalComp(tmp, c, () => { LoadField(fRDirection, c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); E(il, OpCodes.Ldloc, mag); E(il, OpCodes.Mul); });
+    StoreFieldFromLocal(fRSpeed, tmp);
+    E(il, OpCodes.Ret);
+
+    il.Append(id17);
+    CopyArgToField(fRDirection);
+    E(il, OpCodes.Ldarg_0); E(il, OpCodes.Call, getAnimSpeed); E(il, OpCodes.Stloc, factor);
+    E(il, OpCodes.Ldloc, signDir); E(il, OpCodes.Conv_R4); E(il, OpCodes.Stloc, mag);
+    ZeroLocal(tmp);
+    foreach (var c in new[] { vecX, vecY, vecZ })
+        SetLocalComp(tmp, c, () => { LoadArg(c); E(il, OpCodes.Ldloc, factor); E(il, OpCodes.Mul); E(il, OpCodes.Ldloc, mag); E(il, OpCodes.Mul); });
+    StoreFieldFromLocal(fRSpeed, tmp);
+    E(il, OpCodes.Ret);
+}
