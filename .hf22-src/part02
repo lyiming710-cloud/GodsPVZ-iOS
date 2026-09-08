@@ -1,0 +1,104 @@
+ 2),
+    (0x06000431, "Zombie", "CanAttacked", 0),
+    (0x06000441, "Zombie", "GetATK", 0),
+    (0x0600047F, "Zombie", "TakeDamage", 2),
+};
+
+var templateTypes = AllTypes(template.Types).ToDictionary(t => t.FullName, StringComparer.Ordinal);
+foreach (var p in pairs)
+{
+    var dst = target.LookupToken(new MetadataToken(TokenType.Method, (int)(p.token & 0x00FFFFFF))) as MethodDefinition
+        ?? throw new InvalidDataException($"HF22 target token missing 0x{p.token:X8}");
+    if (dst.DeclaringType.FullName != p.type || dst.Name != p.method || dst.Parameters.Count != p.parameters)
+        throw new InvalidDataException($"HF22 token drift 0x{p.token:X8}: {dst.FullName}");
+    var st = templateTypes[$"Template.{p.type}"];
+    var srcs = st.Methods.Where(m => m.Name == p.method && m.Parameters.Count == p.parameters).ToList();
+    if (srcs.Count != 1) throw new InvalidDataException($"HF22 template {p.type}.{p.method}/{p.parameters} count={srcs.Count}");
+    CloneBody(srcs[0], dst);
+    Console.WriteLine($"PATCH 0x{p.token:X8} {p.type}.{p.method}/{p.parameters} il={dst.Body.Instructions.Count} bytes={dst.Body.CodeSize} eh={dst.Body.ExceptionHandlers.Count}");
+}
+
+target.Write(output);
+
+using (var reopen = ModuleDefinition.ReadModule(output, new ReaderParameters { InMemory = true, ReadSymbols = false }))
+{
+    foreach (var p in pairs)
+    {
+        var m = reopen.LookupToken(new MetadataToken(TokenType.Method, (int)(p.token & 0x00FFFFFF))) as MethodDefinition
+            ?? throw new InvalidDataException($"HF22 reopen missing 0x{p.token:X8}");
+        if (!m.HasBody || m.Body.Instructions.Count < 5) throw new InvalidDataException($"HF22 reopen invalid {m.FullName}");
+        var helper = m.Body.Instructions.Any(i => i.Operand is MethodReference mr && mr.DeclaringType.FullName.Contains("Cpp2IL", StringComparison.Ordinal));
+        if (helper) throw new InvalidDataException($"HF22 Cpp2IL helper remained in {m.FullName}");
+        Console.WriteLine($"REOPEN 0x{p.token:X8} il={m.Body.Instructions.Count} bytes={m.Body.CodeSize} eh={m.Body.ExceptionHandlers.Count}");
+    }
+}
+return 0;
+
+namespace UnityEngine
+{
+    public class Object
+    {
+        public static bool operator ==(Object? a, Object? b) => ReferenceEquals(a,b);
+        public static bool operator !=(Object? a, Object? b) => !ReferenceEquals(a,b);
+        public static implicit operator bool(Object? a) => a != null;
+        public override bool Equals(object? obj) => base.Equals(obj);
+        public override int GetHashCode() => base.GetHashCode();
+    }
+    public class GameObject : Object { public bool activeSelf { get; set; } }
+    public class Component : Object { public GameObject gameObject { get; } = null!; }
+    public class MonoBehaviour : Component { }
+    public static class Debug { public static void Log(object message) { } }
+}
+
+namespace Template
+{
+    public enum Camp { none, plant, zombie }
+    public enum DamageAttribute { normal, throughout, artillery, ashes, real }
+    public enum ElementType { fire_ice }
+
+    public class Buff { }
+    public class Projectile { }
+    public class AttackRange { public bool TestInRange<T>(T target) => false; }
+    public class Board : UnityEngine.MonoBehaviour { public PlantManager plantManager=null!; public ZombieManager zombieManager=null!; public DeviceManager deviceManager=null!; }
+    public class PlantManager { public List<Plant> plants=null!; }
+    public class ZombieManager { public List<Zombie> zombieList=null!; }
+    public class DeviceManager { public List<Device> deviceList=null!; }
+    public class BuffManager { public float GetIncrement(float value,string name)=>0; public void AddBuff(Buff buff){} }
+
+    public class Element { public ElementType type; public float point; }
+    public class ElementManager
+    {
+        public List<Element> elements=null!;
+        public List<Element> elements_toEffect=null!;
+        public void ToEffect(Element element) => elements_toEffect.Add(element);
+        public Element? GetElement(ElementType elementType)
+        {
+            foreach (var element in elements)
+            {
+                if (element == null) throw new NullReferenceException();
+                if (element.type == elementType) return element;
+            }
+            return null;
+        }
+    }
+
+    public class Damage
+    {
+        public float damagePoint;
+        public Camp camp;
+        public DamageAttribute damageAttribute;
+        public AttackRange attackRange=null!;
+        public List<Element> elements=null!;
+        public Plant sourcePlant=null!;
+        public Zombie sourceZombie=null!;
+        public Device sourceDevice=null!;
+        public Board board=null!;
+        public List<Buff> buffs_additional=null!;
+        public float stiffnessTime;
+
+        public bool AreaDamage()
+        {
+            if (attackRange == null) return false;
+            UnityEngine.Debug.Log("进行范围伤害，伤害类型为" + damageAttribute.ToString());
+            if (!board)
+            
