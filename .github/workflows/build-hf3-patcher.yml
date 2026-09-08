@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - name: Apply native-order validation fixes
+        run: python3 Tools/HF3Patch/hf3_validation_fix.py
       - name: Publish HF3 patcher
         run: dotnet publish Tools/HF3Patch/HF3Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf3
       - name: Smoke test usage
