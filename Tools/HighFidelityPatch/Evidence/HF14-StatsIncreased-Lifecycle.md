@@ -108,5 +108,12 @@ the HF13 -> HF14 unified diff contains exactly **two** semantic hunks. They term
 
 No third managed method changes semantically.
 
+## Drive archive
+Final archive directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF14-StatsIncreased`.
+
+Drive folder ID: `1-WOW4iCvmUAX9k6DAwxoXpc3frcCxCef`.
+
+The folder was independently listed after upload and contains 13 final items: audited DLL, CI patcher, Start/End native disassembly, Evidence, Start/End ILSpy readback, Cecil log, HF13->HF14 semantic diff, metadata/xref evidence, patcher-run log, ILSpy zero-stderr record, and SHA256SUMS.
+
 ## Final classification
 HF14 is **Exact for managed-observable behavior**. Field identity/offset, host type gates, string constants, branch order, `valueName` read multiplicity, and reset-method call targets are native-backed. The only MethodDef-level attribution ambiguity is the explicitly documented mscorlib `String.Equals`/`String.op_Equality` native alias; both map to the exact same native function and semantics.
