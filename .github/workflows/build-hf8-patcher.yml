@@ -1,0 +1,34 @@
+name: Build HF8 Zombie SetrSpeed patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF8Patch/**'
+      - '.github/workflows/build-hf8-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assemble HF8 source
+        run: cat Tools/HF8Patch/Program.cs.part1 Tools/HF8Patch/Program.cs.part2 Tools/HF8Patch/Program.cs.part3 > Tools/HF8Patch/Program.cs
+      - name: Publish HF8 patcher
+        run: dotnet publish Tools/HF8Patch/HF8Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out
+      - name: Smoke test usage
+        run: |
+          chmod +x out/GodsPVZ.HF8Patch
+          set +e
+          out/GodsPVZ.HF8Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF8Patch-linux-x64
+          path: out/GodsPVZ.HF8Patch
+          if-no-files-found: error
