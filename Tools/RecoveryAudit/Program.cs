@@ -82,6 +82,18 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("ParticlesManager", "Start", 0, 58),
     ("ParticlesManager", "CreatNewParticle", 1, 20),
     ("ResourceManager", "Load_projectileSprite", 0, 64),
+    ("Damage", "AreaDamage", 0, 90),
+    ("Damage", "AreaDamage_Device", 1, 75),
+    ("Damage", "AreaDamage_Plant", 0, 70),
+    ("Damage", "AreaDamage_Zombie", 0, 70),
+    ("ElementManager", "ToEffect", 1, 5),
+    ("ElementManager", "GetElement", 1, 30),
+    ("Device", "CanAttacked", 1, 40),
+    ("Device", "TakeDamage", 2, 235),
+    ("Plant", "TakeDamage", 2, 95),
+    ("Zombie", "CanAttacked", 0, 40),
+    ("Zombie", "GetATK", 0, 13),
+    ("Zombie", "TakeDamage", 2, 195),
 };
 
 void AuditOnce(string label)
