@@ -1,0 +1,135 @@
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+if (args.Length != 2)
+{
+    Console.Error.WriteLine("Usage: GodsPVZ.HF8Patch <input.dll> <output.dll>");
+    return 2;
+}
+
+var input = Path.GetFullPath(args[0]);
+var output = Path.GetFullPath(args[1]);
+using var module = ModuleDefinition.ReadModule(input, new ReaderParameters { InMemory = true, ReadSymbols = false });
+
+IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots)
+{
+    foreach (var t in roots)
+    {
+        yield return t;
+        foreach (var n in All(t.NestedTypes)) yield return n;
+    }
+}
+TypeDefinition T(string n) => All(module.Types).Single(t => t.Name == n || t.FullName == n);
+FieldDefinition F(TypeDefinition t, string n) => t.Fields.Single(f => f.Name == n);
+MethodDefinition M(TypeDefinition t, string n, int pc)
+{
+    var q = t.Methods.Where(m => m.Name == n && m.Parameters.Count == pc).ToList();
+    return q.Count == 1 ? q[0] : throw new InvalidDataException($"Expected one {t.FullName}.{n}/{pc}, got {q.Count}");
+}
+IEnumerable<MethodReference> AllRefs() => All(module.Types).SelectMany(t => t.Methods).Where(m => m.HasBody).SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<MethodReference>();
+MethodReference Ref(string decl, string name, params string[] ps)
+{
+    var q = AllRefs().Where(r => r.DeclaringType.FullName == decl && r.Name == name && r.Parameters.Count == ps.Length)
+        .Where(r => r.Parameters.Select(p => p.ParameterType.FullName).SequenceEqual(ps)).ToList();
+    if (q.Count == 0) throw new InvalidDataException($"Missing MethodRef {decl}::{name}({string.Join(',', ps)})");
+    return q[0];
+}
+void E(ILProcessor il, OpCode op, object? value = null)
+{
+    var ins = value switch
+    {
+        null => Instruction.Create(op),
+        string s => Instruction.Create(op, s),
+        int i => Instruction.Create(op, i),
+        float f => Instruction.Create(op, f),
+        double d => Instruction.Create(op, d),
+        MethodReference mr => Instruction.Create(op, mr),
+        FieldReference fr => Instruction.Create(op, fr),
+        TypeReference tr => Instruction.Create(op, tr),
+        VariableDefinition vd => Instruction.Create(op, vd),
+        ParameterDefinition pd => Instruction.Create(op, pd),
+        Instruction target => Instruction.Create(op, target),
+        _ => throw new NotSupportedException(value.GetType().FullName)
+    };
+    il.Append(ins);
+}
+
+var zombie = T("Zombie");
+var buffManagerType = T("BuffManager");
+var statsType = T("StatsIncreased");
+PatchSetrSpeed();
+
+Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+module.Write(output, new WriterParameters { WriteSymbols = false });
+
+using (var verify = ModuleDefinition.ReadModule(output, new ReaderParameters { InMemory = true, ReadSymbols = false }))
+{
+    var z = All(verify.Types).Single(t => t.Name == "Zombie");
+    var m = z.Methods.Single(x => x.Name == "SetrSpeed" && x.Parameters.Count == 1);
+    if (m.MetadataToken.ToUInt32() != 0x06000479) throw new InvalidDataException("HF8 Zombie.SetrSpeed token drift");
+    if (!m.HasBody || m.Body.Instructions.Count < 500) throw new InvalidDataException($"HF8 Zombie.SetrSpeed too small: {m.Body.Instructions.Count}");
+    if (m.Body.Instructions.Select(i => i.Operand).OfType<MethodReference>().Any(r => r.DeclaringType.FullName.Contains("Cpp2ILHelpers", StringComparison.Ordinal)))
+        throw new InvalidDataException("HF8 Zombie.SetrSpeed still contains Cpp2IL helper calls");
+    var strings = m.Body.Instructions.Where(i => i.OpCode == OpCodes.Ldstr).Select(i => (string)i.Operand).ToList();
+    if (strings.Count(s => s == "Snowbeast.speed") != 1) throw new InvalidDataException("HF8 Snowbeast.speed literal mismatch");
+    var refs = m.Body.Instructions.Select(i => i.Operand).OfType<MethodReference>().ToList();
+    foreach (var name in new[] { "Sign", "get_transform", "get_localScale", "set_localScale", "get_deltaTime", "TranToStant", "GetMS", "FindBuff", "GetAnimationFrameXSpeed", "Sqrt" })
+        if (!refs.Any(r => r.Name == name)) throw new InvalidDataException($"HF8 missing native call/reference {name}");
+    var deltaCount = refs.Count(r => r.DeclaringType.FullName == "UnityEngine.Time" && r.Name == "get_deltaTime");
+    if (deltaCount != 6) throw new InvalidDataException($"HF8 expected 6 Time.deltaTime call sites, got {deltaCount}");
+    foreach (var c in new[] { 9.9999994E-11f, 9999f, 0.35f, -1f, 1.5f, 0.25f, 1f })
+        if (!m.Body.Instructions.Any(i => i.OpCode == OpCodes.Ldc_R4 && i.Operand is float f && f == c))
+            throw new InvalidDataException($"HF8 missing native float constant {c:R}");
+    Console.WriteLine($"VERIFY Zombie.SetrSpeed: {m.Body.Instructions.Count} IL, {m.Body.CodeSize} bytes, deltaTimeCalls={deltaCount}");
+}
+
+Console.WriteLine("HF8 Zombie.SetrSpeed @0x180368280 restored from PC native x86-64");
+Console.WriteLine($"WROTE {output} ({new FileInfo(output).Length} bytes)");
+return 0;
+
+void PatchSetrSpeed()
+{
+    var m = M(zombie, "SetrSpeed", 1);
+    if (m.MetadataToken.ToUInt32() != 0x06000479) throw new InvalidDataException("Unexpected Zombie.SetrSpeed token");
+
+    var fID = F(zombie, "ID");
+    var fStant = F(zombie, "isStant");
+    var fRest = F(zombie, "snowbeast_isRest");
+    var fRSpeed = F(zombie, "rSpeed");
+    var fRDirection = F(zombie, "rDirection");
+    var fBuffManager = F(zombie, "buffManager");
+    var fStatsValue = F(statsType, "value");
+    var vec3 = fRDirection.FieldType;
+    var vecX = new FieldReference("x", module.TypeSystem.Single, vec3);
+    var vecY = new FieldReference("y", module.TypeSystem.Single, vec3);
+    var vecZ = new FieldReference("z", module.TypeSystem.Single, vec3);
+
+    var componentGetTransform = Ref("UnityEngine.Component", "get_transform");
+    var transformGetLocalScale = Ref("UnityEngine.Transform", "get_localScale");
+    var transformSetLocalScale = Ref("UnityEngine.Transform", "set_localScale", "UnityEngine.Vector3");
+    var deltaTime = Ref("UnityEngine.Time", "get_deltaTime");
+    var tranToStant = M(zombie, "TranToStant", 1);
+    var getMS = M(zombie, "GetMS", 0);
+    var getAnimSpeed = M(zombie, "GetAnimationFrameXSpeed", 0);
+    var findBuff = M(buffManagerType, "FindBuff", 1);
+
+    var corlib = module.TypeSystem.Object.Scope;
+    var mathType = new TypeReference("System", "Math", module, corlib);
+    var mathSign = new MethodReference("Sign", module.TypeSystem.Int32, mathType) { HasThis = false };
+    mathSign.Parameters.Add(new ParameterDefinition(module.TypeSystem.Single));
+    var mathSqrt = new MethodReference("Sqrt", module.TypeSystem.Double, mathType) { HasThis = false };
+    mathSqrt.Parameters.Add(new ParameterDefinition(module.TypeSystem.Double));
+
+    var b = new MethodBody(m) { InitLocals = true, MaxStackSize = 16 };
+    m.Body = b;
+    var il = b.GetILProcessor();
+
+    var signDir = new VariableDefinition(module.TypeSystem.Int32);
+    var signScale = new VariableDefinition(module.TypeSystem.Int32);
+    var scale = new VariableDefinition(vec3);
+    var step = new VariableDefinition(vec3);
+    var accel = new VariableDefinition(vec3);
