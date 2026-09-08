@@ -32,57 +32,74 @@ Use the PC x86-64 IL2CPP build as the primary gameplay-logic source, Android nat
 - HF12 `Buff.Update<T>` — Exact managed-observable — `963f24a8323025e424c2e392d4f90ab1d7d48a8f5aa0b671775ac64402788930`.
 - HF13 `Buff.Start<T>` + `Buff.End<T>` — Exact managed-observable — `a389fcf0f6a97b4ace5cc580fb9704fa9830dbeba9b50edc4c5cad90489ebac3`.
 - HF14 `StatsIncreased.Start_stats<T>` + `End_stats<T>` — Exact managed-observable — `cbe30c99a973f41bbf4bb0f0f56f62d37e1c752c0723159cc07feeb3d2a0efe7`.
-- **HF15 `Bleed.Bleeding<T>` — Exact managed-observable — `87c74aea233372a5a7af28c0df244a18873af111c0230b54d9acf82e68ef9ec1`.**
+- HF15 `Bleed.Bleeding<T>` — Exact managed-observable — `87c74aea233372a5a7af28c0df244a18873af111c0230b54d9acf82e68ef9ec1`.
+- **HF16 `AttackRange.TestInRange<T>` — Exact managed-observable — `57100e6b9296f5a6c1ff4710cc2859810dcfff9992a27ea5238000729c3888c3`.**
 
-HF3 through HF15 are cumulative. Whole-assembly semantic isolation confirms that each stage changes only its declared target MethodDef(s): HF13->HF14 has exactly two target hunks; HF14->HF15 has exactly one hunk ending at `Bleed::Bleeding`.
+HF3 through HF16 are cumulative. Whole-assembly semantic isolation confirms each stage changes only its declared target MethodDef(s): HF13->HF14 has exactly two target hunks; HF14->HF15 has exactly one hunk ending at `Bleed::Bleeding`; HF15->HF16 has exactly one hunk ending at `AttackRange::TestInRange`.
 
 ## HF14 final archive
 
-HF14 is fully closed, including the previously pending Drive gate.
+HF14 is fully closed, including the Drive gate.
 
 - Drive directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF14-StatsIncreased`.
 - Folder ID: `1-WOW4iCvmUAX9k6DAwxoXpc3frcCxCef`.
 - Post-upload listing verified 13 final files.
 
-## HF15 technical result
+## HF15 final archive
 
-Target: `Bleed.Bleeding<T>(T target)` — original RID `251`, token `0x060000FB`, direct generic-definition pointer `0`.
+HF15 is fully closed.
 
-PC shared generic body:
-- HF12 direct callsite `0x18042B02E -> 0x180428C90`.
-- logical native range `0x180428C90–0x180428E64` fixed by four `.pdata` runtime-function entries.
-- full executable-section E8 scan finds exactly one direct xref to the body.
+- Drive directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF15-Bleed`.
+- Folder ID: `1y7WGFVI7q1RGZjedzqj2hIWpT-58GhbV`.
+- Post-upload listing verified 15 final files.
 
-Native-backed behavior:
-- null reference host returns;
-- independent `Zombie`, `Plant`, `Device` gates;
-- `multi == false`: rate = `value`;
-- `multi == true`: rate = `host.maxHealthPoint * value`;
-- each matched host independently reads current `healthPoint`, calls `Time.get_deltaTime()`, subtracts `deltaTime * rate`, and writes `healthPoint`;
-- `Bleed.minHealthPoint` exists at `+0x5C` but is not read by this PC native body.
+## HF16 technical result
 
-Original field offsets used by native:
-- Bleed `value +0x58`, `minHealthPoint +0x5C`, `multi +0x60`;
-- Zombie `healthPoint/maxHealthPoint +0x70/+0x74`;
-- Plant `+0x94/+0x98`;
-- Device `+0x74/+0x78`.
+Target: `AttackRange.TestInRange<T>(T target)` — original RID `216`, token `0x060000D8`, direct generic-definition pointer `0`.
 
-Original UnityEngine.CoreModule mapping resolves PC call target `0x18132C2F0` to `Time.get_deltaTime()` RID `2370`, token `0x06000942`.
+Shared PC generic body:
+- logical native range `0x180426DD0–0x180427102`, fixed by three `.pdata` runtime-function entries;
+- full executable-section `E8 rel32` scan finds 18 direct xrefs, including `Damage.AreaDamage_*`, `Device.EnemySeeking_Zombie`, multiple `Plant.EnemySeeking*` paths, `SkillManager.Updata10`, shared generic code, and two xrefs from the HF12-native-backed `Buff.Update<T>` body. This establishes a widely reused shared generic definition rather than one host specialization.
+
+Original native-backed geometry and host gates:
+- null target returns false immediately;
+- independent Device -> Plant -> Projectile -> Zombie gates;
+- Plant gate uniquely performs `Debug.Log("检测植物是否在范围内")` before geometry reads;
+- each matched host constructs managed-observably equivalent geometry:
+  - `Rect(fX - fW * 0.5f, fY - fD * 0.5f, fW, fD)`;
+  - `Vector3(fX, fY, 0f)`;
+- native reads `fX`, `fY`, `fW`, `fD` exactly twice per matched host and never reads `fZ` or `fH`; the second size axis is `fD`, not `fH`;
+- a non-null unsupported generic host does not return early: zero-initialized Rect/Vector3 continue into range dispatch.
+
+Original `RangeType` values and routing:
+- `Null=0` -> false;
+- `Rects=1` -> `TestInRects_Rect(Rect)`;
+- `Circles=2` -> `TestInCircles_Position(Vector3)`;
+- `Mixed=3` -> Rect OR Circle with Rect short-circuit;
+- `Unlimitied=4` -> true (original spelling);
+- any other value -> false.
+
+Direct original native call mapping:
+- `0x1803000A0` -> `AttackRange.TestInRects_Rect(Rect)` token `0x060000D7`;
+- `0x1802FFAE0` -> `AttackRange.TestInCircles_Position(Vector3)` token `0x060000D4`;
+- `0x1812E68F0` -> `UnityEngine.Debug.Log(object)` token `0x06000209`.
+
+Using `Rect(float,float,float,float)` and `Vector3(float,float,float)` constructors is native-equivalent: their original CoreModule PC bodies are respectively four direct float stores and three direct float stores, with no extra observable behavior.
 
 Validation:
-- HF15 patcher workflow `34201832021` — success.
-- Formal HF14 actual patch + repeat are byte-identical.
-- Patcher reopen: `93 IL / 317 bytes / 0 EH`.
-- Permanent RecoveryAudit workflow `34201989968` — success; actual OPEN1/OPEN2 pass HF3–HF15, `RECOVERY_AUDIT_OK`.
-- Exact Cpp2IL source-rebuild workflow `34202655285` — success; source SHA verified as `5fb20304...`.
-- Fresh PC reference regeneration: 56 DLLs, `2318/2319`, sole old HF3 failure only.
-- ILSpyCmd `11.0.0.9375` with full regenerated references: member stderr `0`; whole HF14/HF15 stderr `0`.
-- Whole-assembly HF14->HF15 semantic isolation: exactly one target hunk.
+- HF16 patcher workflow `34214727867` — success; artifact SHA-256 `88ddb21de04ab82a14cc9f69ed8c6eab2abdea04b3b748d13fbd5825fb6dddd2`.
+- Formal HF15 input hash was rechecked immediately before patching.
+- Actual patch + repeat are byte-identical.
+- Patcher reopen: `250 IL / 971 bytes / 0 EH`.
+- Permanent RecoveryAudit workflow `34214966294` — success; actual OPEN1/OPEN2 pass HF3–HF16 and end in `RECOVERY_AUDIT_OK`.
+- ILSpyCmd `11.0.0.9375` with the full 56-assembly reference directory regenerated from exact Cpp2IL source commit `5fb20304...`: member and full-type stderr `0`, with clean strongly typed readback.
+- Whole-assembly HF15->HF16 semantic isolation: exactly one target hunk ending at `AttackRange::TestInRange`.
 
-HF15 Drive archive is complete and independently listed:
-- directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF15-Bleed`;
-- folder ID: `1y7WGFVI7q1RGZjedzqj2hIWpT-58GhbV`;
-- 15 final files, including final DLL, patcher, native/metadata evidence, ILSpy/Cecil, semantic diff, fixed Cpp2IL tool/reference set, logs and SHA256SUMS.
+HF16 Drive archive is complete and independently listed:
+- directory: `PVZ GOD/HighFidelity-Recovery-2026-09-08/HF16-AttackRange`;
+- folder ID: `1sFxLFILZj2hLBn4VQ22NTxS6K52nCzPM`;
+- final DLL Drive ID: `1AVIqB82No7M3U_Y2eKLwOBbBZYDToRIQ`;
+- post-upload listing verified 13 final files, including final DLL, CI patcher, native disassembly, metadata/xref and constructor-native evidence, ILSpy/Cecil, semantic diff, logs, provenance and SHA256SUMS.
 
 ## Unity reconstruction state
 
@@ -98,9 +115,9 @@ HF15 Drive archive is complete and independently listed:
 Do not begin IPA packaging yet. Continue native-backed runtime recovery by call centrality.
 
 Immediate next priority:
-1. `AttackRange.TestInRange<T>` — direct HF12 dependency for Zombie/Projectile range buffs.
-2. `Hide.Updata_Hide()` / `Hide.End_Hide()` — HF12/HF13 specialized lifecycle dependencies.
-3. Then rescan native call centrality for path helpers, Device, Element, Projectile, Skill and remaining Plant specialized combat logic.
+1. `Hide.Updata_Hide()` / `Hide.End_Hide()` and any shared/generic Hide path directly required by HF12/HF13.
+2. Then rescan native call centrality for path helpers, Device, Element, Projectile, Skill and remaining Plant specialized combat logic.
+3. If that rescan shows no further critical damaged methods in the active Plant/Zombie/Buff/Board chains, stop adding HF stages and move to Unity import/IL2CPP validation rather than recovering low-centrality code for its own sake.
 
 After core recovery is sufficiently closed:
 1. import in Unity `2022.3.44f1c1`;
