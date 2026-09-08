@@ -1,0 +1,31 @@
+name: Assemble HF21 patcher source
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - '.github/workflows/assemble-hf21-source.yml'
+      - '.hf21-src-gz/**'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - name: Reconstruct and verify HF21 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .hf21-src-gz/part00 .hf21-src-gz/part01 | base64 -d | gzip -d > Tools/HF21Patch/Program.cs
+          echo '79303f92e2ffd622a5dd777424f0bef50f33e2c24a4269872ce170b23e161d45  Tools/HF21Patch/Program.cs' | sha256sum -c -
+          test "$(wc -c < Tools/HF21Patch/Program.cs)" -eq 35351
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Tools/HF21Patch/Program.cs
+          git commit -m 'Add HF21 projectile cluster patcher source'
+          git push origin HEAD:high-fidelity
