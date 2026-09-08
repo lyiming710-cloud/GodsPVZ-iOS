@@ -39,6 +39,7 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "Awake", 0, 100),
     ("Zombie", "Start", 0, 200),
     ("Zombie", "LoopAddAnimation", 1, 35),
+    ("Zombie", "Update", 0, 250),
     ("Zombie", "InjuryStatusUpdate_Body", 1, 200),
 };
 
