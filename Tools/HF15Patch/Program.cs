@@ -145,7 +145,6 @@ void PatchBleeding(MethodDefinition m)
     EmitHost(zombie, z, zHealth, zMaxHealth, plantGate);
     EmitHost(plant, p, pHealth, pMaxHealth, deviceGate);
     EmitHost(device, d, dHealth, dMaxHealth, ret);
-    il.Append(ret);
 
     void EmitHost(TypeDefinition hostType, VariableDefinition hostLocal, FieldDefinition health, FieldDefinition maxHealth, Instruction nextGate)
     {
