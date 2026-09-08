@@ -90,7 +90,6 @@ void PatchUpdateGeneric()
     if (fBuffs.FieldType is not GenericInstanceType listType || listType.GenericArguments.Count != 1 || listType.GenericArguments[0].FullName != buff.FullName)
         throw new InvalidDataException("HF11 expected List<Buff> fields");
 
-    // Rebuild List<Buff>.Enumerator from the damaged Cpp2IL method's mscorlib enumerator shape.
     var oldMoveNext = m.Body.Instructions.Select(i => i.Operand).OfType<MethodReference>()
         .FirstOrDefault(r => r.Name == "MoveNext" && r.DeclaringType.FullName.Contains("System.Collections.Generic.List`1/Enumerator", StringComparison.Ordinal))
         ?? throw new InvalidDataException("HF11 could not recover List<T>.Enumerator shape");
@@ -125,8 +124,9 @@ void PatchUpdateGeneric()
     var update = Bind(updateDef);
     var end = Bind(endDef);
 
-    var nre = T("System.NullReferenceException");
-    var nreCtor = nre.Methods.Single(x => x.IsConstructor && x.Parameters.Count == 0);
+    var nreCtor = m.Body.Instructions.Select(i => i.Operand).OfType<MethodReference>()
+        .FirstOrDefault(r => r.DeclaringType.FullName == "System.NullReferenceException" && r.Name == ".ctor" && r.Parameters.Count == 0)
+        ?? throw new InvalidDataException("HF11 could not recover System.NullReferenceException::.ctor reference");
 
     var b = new MethodBody(m) { InitLocals = true, MaxStackSize = 6 };
     m.Body = b;
@@ -138,8 +138,6 @@ void PatchUpdateGeneric()
     var current = new VariableDefinition(buff);
     foreach (var v in new[] { enAdd, enBuffs, enRemove, current }) b.Variables.Add(v);
 
-    // foreach (Buff item in buffs_toAdd) { buffs.Add(item); item.Start<T>(host,false); }
-    // buffs_toAdd.Clear();
     var try1 = Instruction.Create(OpCodes.Nop);
     var loop1 = Instruction.Create(OpCodes.Nop);
     var body1 = Instruction.Create(OpCodes.Nop);
@@ -158,7 +156,6 @@ void PatchUpdateGeneric()
     b.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally) { TryStart = try1, TryEnd = finally1, HandlerStart = finally1, HandlerEnd = after1 });
     E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldfld, fAdd); E(il, OpCodes.Callvirt, clear);
 
-    // foreach (Buff item in buffs) item.Update<T>(host,false,this);
     var try2 = Instruction.Create(OpCodes.Nop);
     var loop2 = Instruction.Create(OpCodes.Nop);
     var body2 = Instruction.Create(OpCodes.Nop);
@@ -175,8 +172,6 @@ void PatchUpdateGeneric()
     il.Append(after2);
     b.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally) { TryStart = try2, TryEnd = finally2, HandlerStart = finally2, HandlerEnd = after2 });
 
-    // foreach (Buff item in buffs_toRemove) { buffs.Remove(item); item.End<T>(host,false); }
-    // buffs_toRemove.Clear();
     var try3 = Instruction.Create(OpCodes.Nop);
     var loop3 = Instruction.Create(OpCodes.Nop);
     var body3 = Instruction.Create(OpCodes.Nop);
