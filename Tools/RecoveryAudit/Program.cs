@@ -116,6 +116,10 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Projectile", "Update_Tracking", 0, 55),
     ("Projectile", "Aim", 1, 31),
     ("Projectile", "SetEulerAngles", 2, 118),
+    ("GlobalStaticVars", "CreateAudioAtPoint", 4, 55),
+    ("Projectile", "Update_Time", 0, 81),
+    ("Projectile", "Update_MoveTrack7", 0, 67),
+    ("Zombie", "GetPredictedPosition", 1, 36),
 };
 
 void AuditOnce(string label)
