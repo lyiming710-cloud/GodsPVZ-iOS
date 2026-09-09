@@ -49,13 +49,14 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF27 `18d9efebdcfcccbbe6c805a9276c4427b4e6baa33673fb71b96a04245bb0e8de`
 - HF28 `8e342bcf856b638d551e286034a5acf32d46a8a07e35e48333f480499bd705dd`
 - HF29 `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`
-- **HF30 Projectile Device Collision Detector — native-backed formal final — `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`.**
+- HF30 `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`
+- **HF31 Projectile Rotating Runtime Core — native-backed formal final — `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`.**
 
 ## Recent retained results
 
 ### HF23 — Zombie Hurt Core
 
-Restores exactly `0x06000456–0x0600045E` Hurt_Armor1/2, Artillery, Ashes, Body, FinalDamageReduction, Normal, Real, Throughout. Accepted semantics include native armor/body DEF, non-real 0.1 floor, real bypass, `MathF.Round`, PoleCommander cap 0.95, iceCube fire_ice 0.2, throughout truncation and correct armor/body side effects.
+Restores exactly `0x06000456–0x0600045E` Hurt_Armor1/2, Artillery, Ashes, Body, FinalDamageReduction, Normal, Real, Throughout with native armor/body DEF, non-real 0.1 floor, real bypass, `MathF.Round`, PoleCommander cap 0.95, iceCube fire_ice 0.2 and throughout truncation.
 
 ### HF24 — Projectile Runtime Core
 
@@ -63,58 +64,65 @@ Restores exactly `0x060003D2 Projectile.Update()`: sorting-order truncation, pau
 
 ### HF25–HF30 — Projectile collision chain
 
-- HF25 restores `0x060003E0 CollisionDetect()` and `0x060003E2 CollisionDetect_Ground()`.
-- HF26 restores `0x060003EB Collision_AudioParticle()`.
-- HF27 restores `0x060003E6 Collision_Device(Device)` and `0x060003EA Collision_Zombie(Zombie)`.
-- HF28 restores `0x060003E3 CollisionDetect_Plant(bool sameCamp)`.
-- HF29 restores `0x060003E4 CollisionDetect_Zombie(bool sameCamp)`.
-- HF30 restores `0x060003E1 CollisionDetect_Device(bool sameCamp)` — RID 993 — PC `0x180379180`.
+HF25–HF30 formally restore `CollisionDetect`, Ground, AudioParticle, Device/Zombie resolution, and Plant/Zombie/Device detectors. The recovered collision dispatcher path is now closed end-to-end into damage and hit post-processing.
 
-HF30 accepted ordinary Device collision semantics: enumerate `board.deviceManager.deviceList` with disposal, `CanAttacked(damage)`, camp/sameCamp gate, ordered X/Y AABB and Z/H overlap, then first-match `Collision_Device` dispatch. IDs 19/23 retain the native two-phase new-contact path using `device.transform.position` for current contact and projectile `previousPosition` for persistent-contact suppression, collect new contacts before resolution, then inline AreaDamage/Device.TakeDamage -> Collision_AudioParticle with the `gameObject.activeSelf` break gate.
+### HF31 — Projectile Rotating Runtime Core
 
-HF30 formal validation:
+Restores exactly `0x060003F6 Projectile.Rotating()` — PC `0x18037BE20`.
 
-- formal HF29 re-fetched and SHA-verified `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`;
-- patcher workflow `34362687707` PASS, artifact SHA `970255e57dbcf414c06fc3dd36303d2a4db12e2b930f669510c9571d930313b6`;
-- deterministic double patch -> final SHA `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`;
-- Cecil reopen E1 `311 IL / 904 bytes / 3 EH`;
+Accepted behavior:
+
+- real `Projectile.speed` field is `UnityEngine.Vector3`; native reads `speed.x`;
+- negative or NaN/unordered `speed.x` selects Y local Euler `180f`, otherwise `0f`;
+- `angularAcceleration != 0` integrates `angularSpeed += Time.deltaTime * angularAcceleration`;
+- non-zero angular speed rotates `projectileSprite` and `projectileAnimation` around Z/forward in `Space.World`.
+
+HF31 formal validation:
+
+- formal HF30 re-fetched and SHA-verified `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`;
+- two earlier candidate outputs were rejected by fixed ILSpy and never propagated;
+- final patcher workflow `34371494005` PASS, artifact SHA `9433d5beb14d9f7f38731d52b269def671533dff414d008585f49d0feafaa150`;
+- deterministic double patch -> final SHA `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`;
+- Cecil reopen Rotating `81 IL / 277 bytes / 0 EH`;
 - fixed ILSpy 11.0.0.9375 member readback PASS;
-- HF29 whole IL reproduced exactly; HF30 whole IL SHA `4fe6bb80fe5de582c67c3e14427b526c244ab5f6dc9cba7cad0ce28970f2136e`;
-- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly E1 changed;
-- semantic diff SHA `59b9b5b2a1d7fcaf098b9185eea13ca8bb977183fcf4a8b8da25f2384d4735ba`;
-- RecoveryAudit commit `917087166a26893fce6ede5afefb02924206f44d`, workflow `34364225011` PASS, artifact SHA `d6157d9ff1fb7c139fd989d217f929f38b0b07017de94f03d99d8ab6499101db`;
-- OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, E1 `311/904`, `RECOVERY_AUDIT_OK`.
+- HF30 whole IL reproduced exactly; HF31 whole IL SHA `cef4f8e34d87fb1409488b9e915eb8df39b1d4e699612032192e4be83be810ee`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly `0x060003F6` changed;
+- semantic diff SHA `673a14dcd0b0e3bfa6b1b16bcaa09fed4d5d435b744f04ca406534125fc26638`;
+- RecoveryAudit commit `15799da87b106b2679ac6a402ae671adfb74f5f7`, workflow `34372146093` PASS, artifact SHA `6eaab051eb29d3a47360cfa0436af05642090ee07164a4ec951d25331721fa65`;
+- OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Rotating `81/277`, `RECOVERY_AUDIT_OK`.
 
-HF30 Drive archive:
+HF31 Drive archive:
 
-- folder `1JXbnqb-JQ7ofCyL26NpieGgIVkp1AUdF`;
-- cumulative audited DLL `1sjYzcOCDcRu7adJ-paQUKb95uHeMdTac`;
-- patcher `1uPEcJcnx_tvfzrUFp8MYO4-WukwkiYHZ`;
-- RecoveryAudit `1Li2VnNyhHisScOfvGhsTymoPDbtgD1MB`;
-- fixed ILSpy `1Z1l7hSzuByFFPLD_ZlnYYVJ6fup0yjAZ`;
-- native evidence `137zp1Wp15xZqMMApJ_TWILvnvi10eBzs`;
-- payload manifest `1tn28Q06XCIOZV6obByGMjIwMY8ov79Lu`, SHA `edd247bfbfe66bd6c1333a03e35988c649ad82e7f6a3e80437fab484ff916663`;
-- Evidence-FINAL `1XGdnMedJ9VCP4xRJNZARZJJze5-OepCx`, SHA `8ede9b565fa0e18fc43ad023c481715326d32936dd645ec5fba7388f681ed951`;
-- SHA256SUMS-FINAL `1Gu2xYzt0B_jC7VJD7spznywlE_D6pG83`, SHA `e5fa7dd034e1358680eb65450c2a669421b5426ba39aec1ecb8fd7561c649afe`;
+- folder `1yJ8yC_nn7DdCPEgvhnnLBwcPY01HWvSm`;
+- cumulative audited DLL `18fn9_hdgHdKXQRMJfIcf0lfDkbwuZdam`;
+- patcher `1Z1o2wWJsVXN356OcxZ9eBIe46loBTRCO`;
+- RecoveryAudit `1UzPYxEIWpuQY8Gi3oi__gT8trjEG7enS`;
+- fixed ILSpy `1D_KEu4afQ03cXftXyi9EPc-u3oXGj9uU`;
+- native evidence `1kAYoWXZ-Zp0JKzWb19G4jJwg3TECqXCR`;
+- payload manifest `1_CWYlvylVsd76foHRN1vaT6_zhbomfIe`, SHA `dc6bc000da460c94af069361bd8682c58b40d05e70edafab4a4196c9f18ee4c8`;
+- Evidence-FINAL `1wMiI37IqCcp-IYN8IspFl1l4_kvUC_Gw`, SHA `e971903841c245052b66cc37d265948f4c3b5c535d25baa55271f3260a8ca50d`;
+- SHA256SUMS-FINAL `1Ikzx_u7IfS1y88uhqq9KEkhA75Ph6-Az`, SHA `94fa970a0a175ad9546529aff1246d0fa66e924f9c5e592be8d1ccb10b008556`;
 - provider final readback `has_more=false`, exactly 22 files = 20 payloads + 2 closure files.
 
-Evidence: `Tools/HighFidelityPatch/Evidence/HF30-Projectile-Device-Collision-Detector.md`.
+Evidence: `Tools/HighFidelityPatch/Evidence/HF31-Projectile-Rotating-Runtime-Core.md`.
 
-**HF30 formal acceptance: PASS. HF30 is the only allowed formal input for any later cumulative HF stage.**
+**HF31 formal acceptance: PASS. HF31 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF31
+## Current decision gate — do not auto-open HF32
 
-HF30 closes the final unrecovered direct target of the recovered `Projectile.CollisionDetect()` dispatcher. Re-run a broad remaining native-vs-managed active-path scan rather than continuing by warning count.
+HF31 closes `Projectile.Rotating()` but not all remaining runtime helpers. Re-run native-vs-managed active-path scanning on methods actually reached by recovered runtime code, prioritizing:
 
-Open another HF stage only when both are true:
+- `Projectile.Update_Tracking`;
+- `Projectile.SetEulerAngles`;
+- `Projectile.Aim` and any creation/aim helper proven active.
+
+Open HF32 only when both are true:
 
 1. original PC native/metadata proves concrete managed loss or mis-reconstruction; and
 2. the method is materially active in gameplay.
 
-Priority scan targets include remaining methods actually called by the recovered projectile runtime (`Update_Tracking`, `Rotating`, `SetEulerAngles`, and any creation/aim helpers proven active), plus other gameplay-critical managed methods with independent native bodies. Shared-stub xref centrality and isolated Cpp2IL warnings are insufficient.
-
-If no remaining candidate passes both gates, stop HF recovery and proceed to 67/67 Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
+Do not open a stage from warning count, MethodDef adjacency or shared-stub xref centrality alone. If no remaining candidate passes both gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
