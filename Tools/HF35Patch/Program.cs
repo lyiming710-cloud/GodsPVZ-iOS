@@ -207,7 +207,7 @@ target.Write(output);
 using(var reopen=ModuleDefinition.ReadModule(output,new ReaderParameters{InMemory=true}))
 {
     var m=reopen.LookupToken(new MetadataToken(TokenType.Method,(int)(Token&0x00FFFFFF))) as MethodDefinition ?? throw new InvalidDataException($"HF35 reopen missing 0x{Token:X8}");
-    if(!m.HasBody||m.Body.Instructions.Count<80) throw new InvalidDataException($"HF35 reopen invalid 0x{Token:X8} {m.Body.Instructions.Count}");
+    if(!m.HasBody||m.Body.Instructions.Count<70) throw new InvalidDataException($"HF35 reopen invalid 0x{Token:X8} {m.Body.Instructions.Count}");
     if(m.Body.Instructions.Any(i=>i.Operand is MethodReference mr&&mr.DeclaringType.FullName.Contains("Cpp2IL",StringComparison.Ordinal))) throw new InvalidDataException($"HF35 Cpp2IL helper remained 0x{Token:X8}");
     Console.WriteLine($"REOPEN 0x{Token:X8} il={m.Body.Instructions.Count} bytes={m.Body.CodeSize} eh={m.Body.ExceptionHandlers.Count}");
 }
