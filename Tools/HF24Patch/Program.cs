@@ -36,7 +36,8 @@ var targetTypes = AllTypes(target.Types).ToList();
 var targetDefs = targetTypes.ToDictionary(t => t.FullName, StringComparer.Ordinal);
 var targetTypeRefs = target.GetTypeReferences().GroupBy(t => t.FullName).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
 var targetMethodRefs = targetTypes.SelectMany(t => t.Methods).Where(m => m.HasBody)
-    .SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<MethodReference>().ToList();
+    .SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<MethodReference>()
+    .Select(m => m is GenericInstanceMethod gim ? gim.ElementMethod : m).ToList();
 var targetFieldRefs = targetTypes.SelectMany(t => t.Methods).Where(m => m.HasBody)
     .SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<FieldReference>().ToList();
 
