@@ -10,7 +10,7 @@ Formal HF29 input SHA-256:
 
 `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`
 
-HF30 cumulative candidate/final payload SHA-256:
+HF30 cumulative final SHA-256:
 
 `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`
 
@@ -93,7 +93,7 @@ Member readback: exit 0, stderr 0, zero Cpp2IL refs, zero issue markers.
 
 The comparison implementation first reproduced accepted HF28->HF29 semantic diff SHA `86f00e9e65ae591a29dd63f0c796bca08bec29e887f14fb8f3ced56e239e3052` byte-for-byte.
 
-## Drive pre-closure acceptance
+## Drive formal closure
 
 Folder `HF30-Projectile-Device-Collision-Detector`, ID `1JXbnqb-JQ7ofCyL26NpieGgIVkp1AUdF`.
 
@@ -109,11 +109,13 @@ Key payload IDs:
 - semantic isolation `1XZvVKZH0HJttU8kOfaEARyNe-gnwjxzh`;
 - MethodDef table `1QYRjli3z6GUYsaSjamk2UdfAuwIsS1wF`;
 - RecoveryAudit log `1m7eJsSgfEkQjWiTbM4_I5xDRVnEyh5e5`;
-- payload manifest `1tn28Q06XCIOZV6obByGMjIwMY8ov79Lu`, SHA-256 `edd247bfbfe66bd6c1333a03e35988c649ad82e7f6a3e80437fab484ff916663`.
+- payload manifest `1tn28Q06XCIOZV6obByGMjIwMY8ov79Lu`, SHA-256 `edd247bfbfe66bd6c1333a03e35988c649ad82e7f6a3e80437fab484ff916663`;
+- Evidence-FINAL `1XGdnMedJ9VCP4xRJNZARZJJze5-OepCx`, SHA-256 `8ede9b565fa0e18fc43ad023c481715326d32936dd645ec5fba7388f681ed951`;
+- SHA256SUMS-FINAL `1Gu2xYzt0B_jC7VJD7spznywlE_D6pG83`, SHA-256 `e5fa7dd034e1358680eb65450c2a669421b5426ba39aec1ecb8fd7561c649afe`.
 
-Provider pre-closure readback verifies exactly 20 payload files with `has_more=false`.
+Provider final readback verifies exactly `22 files = 20 payloads + 2 closure files`, `has_more=false`.
 
-Closure IDs/hashes are appended after final Drive closure.
+**HF30 formal acceptance: PASS.**
 
 ## Next decision gate
 
