@@ -113,6 +113,7 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Projectile", "CollisionDetect_Plant", 1, 127),
     ("Projectile", "CollisionDetect_Zombie", 1, 252),
     ("Projectile", "Rotating", 0, 81),
+    ("Projectile", "Update_Tracking", 0, 55),
 };
 
 void AuditOnce(string label)
