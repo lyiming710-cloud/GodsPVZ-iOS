@@ -109,6 +109,7 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Projectile", "Collision_AudioParticle", 0, 392),
     ("Projectile", "Collision_Device", 1, 43),
     ("Projectile", "Collision_Zombie", 1, 55),
+    ("Projectile", "CollisionDetect_Device", 1, 311),
     ("Projectile", "CollisionDetect_Plant", 1, 127),
     ("Projectile", "CollisionDetect_Zombie", 1, 252),
 };
