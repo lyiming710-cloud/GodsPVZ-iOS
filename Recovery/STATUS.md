@@ -50,7 +50,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF28 `8e342bcf856b638d551e286034a5acf32d46a8a07e35e48333f480499bd705dd`
 - HF29 `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`
 - HF30 `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`
-- **HF31 Projectile Rotating Runtime Core — native-backed formal final — `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`.**
+- HF31 `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`
+- **HF32 Projectile Tracking Runtime Core — native-backed formal final — `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`.**
 
 ## Recent retained results
 
@@ -106,23 +107,71 @@ HF31 Drive archive:
 
 Evidence: `Tools/HighFidelityPatch/Evidence/HF31-Projectile-Rotating-Runtime-Core.md`.
 
-**HF31 formal acceptance: PASS. HF31 is now the only allowed formal input for any later cumulative HF stage.**
+**HF31 formal acceptance: PASS. HF31 is retained as the accepted direct input to HF32.**
+
+### HF32 — Projectile Tracking Runtime Core
+
+Restores exactly `0x060003D8 Projectile.Update_Tracking()` — original RID `984`, PC `0x18037D4D0`.
+
+Accepted behavior:
+
+- initializes `target = null` and `minX = 2147483648f`;
+- iterates `board.zombieManager.zombieList`;
+- skips `IsDisabled()` zombies;
+- requires `CanAttacked()` and retains the attackable zombie with minimum `fX`;
+- preserves foreach `Enumerator.Dispose/finally`;
+- if a target exists, calls `Aim(new Vector3(target.fX - fX, target.fY - fY, 0f))`.
+
+Active-path proof is retained from accepted HF24 PC native `Projectile.Update()` evidence, which directly calls `0x18037D4D0`.
+
+HF32 formal validation:
+
+- accepted HF31 Drive final `18fn9_hdgHdKXQRMJfIcf0lfDkbwuZdam` re-fetched and SHA-verified `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`;
+- patcher workflow `34374542786` PASS, artifact ID `10113295189`, SHA `1ca0b96f6c71dfaefc99642ba9bcc2a7cbf84f5c1c81405a3cd2a754535244cc`;
+- deterministic independent patch x2 -> byte-identical final SHA `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`;
+- Cecil reopen Update_Tracking `55 IL / 150 bytes / 1 EH`;
+- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL member readback PASS, stderr 0, Cpp2IL refs 0, issue markers 0;
+- HF31 whole IL reproduced exactly at `cef4f8e34d87fb1409488b9e915eb8df39b1d4e699612032192e4be83be810ee`;
+- HF32 whole IL SHA `e81d4db126c25a9d3f593c0535017d4a0d24e3cca04e24635ea4bfe0b1769c89`;
+- accepted HF30->HF31 semantic algorithm reproduced byte-for-byte first at `673a14dcd0b0e3bfa6b1b16bcaa09fed4d5d435b744f04ca406534125fc26638`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly `0x060003D8` changed;
+- HF31->HF32 semantic diff SHA `2c5caa7d12a898c3897ee123d0ab0e6400d1a2a482381a96ec0e8f6f1a09807a`;
+- RecoveryAudit commit `f63ea5fef9ccc27d67bebb153ebb8a7708f8b298`, workflow `34375192695` PASS, artifact ID `10113566262`, SHA `6c48118b5cbbee81d67b61cdbd3b6a0616f2dc979f861e3a70b9001c3d3d1cde`;
+- published RecoveryAudit closure run: OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Update_Tracking `55/150`, `RECOVERY_AUDIT_OK`.
+
+HF32 Drive archive:
+
+- folder `1Uww_2PvbJIX3IUvyQRlWIHjqZQ1YHtkO`;
+- cumulative audited DLL `1SS6-gWmohn9JqU772ZAJ8vkCB4t4QWwP`;
+- patcher `1Y4BDC7HoddK277GwwBSZ7PyADuqL_ZN5`;
+- RecoveryAudit `1qmjxGZxhq7Uw-OaOtiOA74-faQ6e7lU_`;
+- fixed ILSpy `1fFGsPZVVePwXf3rJwRrl6SLZg_JzirPw`;
+- native evidence `1nG12zMQQhBn5wQaDGC9C5bc57i8Mde-M`;
+- semantic diff `1NEJ86pFbZNWCg_avqtbSA--eSQxmVQZh`;
+- payload manifest `1c00Jhu-CpQ9vxU3e0XZeA01ZpDA7sZrM`, SHA `b145349724c3dde98d31e997ebbaeee590af7eb3082bb93efb1308bbf06ca49a`;
+- Evidence-FINAL `1zLbA9750_l7o2a990G31tWyJGe5S78Ca`, SHA `6a3219741cf3e1554f68eff38ee4b37e95bbc6c944c62dedbebadba24b387064`;
+- SHA256SUMS-FINAL `1CGLcxBhQ0EFT4sNBCWPRLGT-MSI7Ct1n`, SHA `f8f5c81141253fd5912415c0045def78c39b98c7e17209c6e9762653a6d3872e`;
+- provider final readback: exactly 22 files = 20 payloads + 2 closure files.
+
+Evidence: `Tools/HighFidelityPatch/Evidence/HF32-Projectile-Tracking-Runtime-Core.md`, commit `7c60e79ea38d5100830168e2a4e6eb94ebfcb993`.
+
+**HF32 formal acceptance: PASS. HF32 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF32
+## Current decision gate — do not auto-open HF33
 
-HF31 closes `Projectile.Rotating()` but not all remaining runtime helpers. Re-run native-vs-managed active-path scanning on methods actually reached by recovered runtime code, prioritizing:
+HF32 closes `Projectile.Update_Tracking()` but does not authorize another HF stage automatically. Re-run original-native-vs-managed active-path scanning on methods actually reached by recovered runtime code, prioritizing:
 
-- `Projectile.Update_Tracking`;
 - `Projectile.SetEulerAngles`;
-- `Projectile.Aim` and any creation/aim helper proven active.
+- `Projectile.Aim`;
+- any creation/aim helper proven materially active by the recovered runtime path.
 
-Open HF32 only when both are true:
+Open HF33 only when both are true:
 
 1. original PC native/metadata proves concrete managed loss or mis-reconstruction; and
 2. the method is materially active in gameplay.
 
-Do not open a stage from warning count, MethodDef adjacency or shared-stub xref centrality alone. If no remaining candidate passes both gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
+Do not open a stage from Cpp2IL warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic managed-output quality alone. If no remaining candidate passes both gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
