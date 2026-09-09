@@ -16,7 +16,7 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Publish HF24 patcher
-        run: dotnet publish Tools/HF24Patch/HF24Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf24
+        run: dotnet publish Tools/HF24Patch/HF24Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf24
       - name: Smoke test
         run: |
           chmod +x out/hf24/GodsPVZ.HF24Patch
@@ -25,8 +25,11 @@ jobs:
           code=$?
           set -e
           test "$code" = "2"
+      - name: Verify template assembly is readable
+        run: test -f out/hf24/GodsPVZ.HF24Patch.dll
       - uses: actions/upload-artifact@v4
         with:
           name: GodsPVZ-HF24Patch-linux-x64
-          path: out/hf24/GodsPVZ.HF24Patch
+          path: out/hf24/
+          include-hidden-files: true
           if-no-files-found: error
