@@ -168,7 +168,14 @@ namespace Template
                 return null!;
 
             UnityEngine.GameObject go = new UnityEngine.GameObject("One shot audio");
-            go.transform.position = position;
+            if ((object)go == null)
+                throw new System.NullReferenceException();
+
+            UnityEngine.Transform transform = go.transform;
+            if ((object)transform == null)
+                throw new System.NullReferenceException();
+            transform.position = position;
+
             UnityEngine.AudioSource source = go.AddComponent<UnityEngine.AudioSource>();
             if ((object)source == null)
                 throw new System.NullReferenceException();
