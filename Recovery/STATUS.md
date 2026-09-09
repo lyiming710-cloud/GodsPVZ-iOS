@@ -51,7 +51,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF29 `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`
 - HF30 `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`
 - HF31 `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`
-- **HF32 Projectile Tracking Runtime Core — native-backed formal final — `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`.**
+- HF32 `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`
+- **HF33 Projectile Aim / Euler Runtime Core — native-backed formal final — `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`.**
 
 ## Recent retained results
 
@@ -65,7 +66,7 @@ Restores exactly `0x060003D2 Projectile.Update()`: sorting-order truncation, pau
 
 ### HF25–HF30 — Projectile collision chain
 
-HF25–HF30 formally restore `CollisionDetect`, Ground, AudioParticle, Device/Zombie resolution, and Plant/Zombie/Device detectors. The recovered collision dispatcher path is now closed end-to-end into damage and hit post-processing.
+HF25–HF30 formally restore `CollisionDetect`, Ground, AudioParticle, Device/Zombie resolution, and Plant/Zombie/Device detectors. The recovered collision dispatcher path is closed end-to-end into damage and hit post-processing.
 
 ### HF31 — Projectile Rotating Runtime Core
 
@@ -78,40 +79,11 @@ Accepted behavior:
 - `angularAcceleration != 0` integrates `angularSpeed += Time.deltaTime * angularAcceleration`;
 - non-zero angular speed rotates `projectileSprite` and `projectileAnimation` around Z/forward in `Space.World`.
 
-HF31 formal validation:
-
-- formal HF30 re-fetched and SHA-verified `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`;
-- two earlier candidate outputs were rejected by fixed ILSpy and never propagated;
-- final patcher workflow `34371494005` PASS, artifact SHA `9433d5beb14d9f7f38731d52b269def671533dff414d008585f49d0feafaa150`;
-- deterministic double patch -> final SHA `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`;
-- Cecil reopen Rotating `81 IL / 277 bytes / 0 EH`;
-- fixed ILSpy 11.0.0.9375 member readback PASS;
-- HF30 whole IL reproduced exactly; HF31 whole IL SHA `cef4f8e34d87fb1409488b9e915eb8df39b1d4e699612032192e4be83be810ee`;
-- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly `0x060003F6` changed;
-- semantic diff SHA `673a14dcd0b0e3bfa6b1b16bcaa09fed4d5d435b744f04ca406534125fc26638`;
-- RecoveryAudit commit `15799da87b106b2679ac6a402ae671adfb74f5f7`, workflow `34372146093` PASS, artifact SHA `6eaab051eb29d3a47360cfa0436af05642090ee07164a4ec951d25331721fa65`;
-- OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Rotating `81/277`, `RECOVERY_AUDIT_OK`.
-
-HF31 Drive archive:
-
-- folder `1yJ8yC_nn7DdCPEgvhnnLBwcPY01HWvSm`;
-- cumulative audited DLL `18fn9_hdgHdKXQRMJfIcf0lfDkbwuZdam`;
-- patcher `1Z1o2wWJsVXN356OcxZ9eBIe46loBTRCO`;
-- RecoveryAudit `1UzPYxEIWpuQY8Gi3oi__gT8trjEG7enS`;
-- fixed ILSpy `1D_KEu4afQ03cXftXyi9EPc-u3oXGj9uU`;
-- native evidence `1kAYoWXZ-Zp0JKzWb19G4jJwg3TECqXCR`;
-- payload manifest `1_CWYlvylVsd76foHRN1vaT6_zhbomfIe`, SHA `dc6bc000da460c94af069361bd8682c58b40d05e70edafab4a4196c9f18ee4c8`;
-- Evidence-FINAL `1wMiI37IqCcp-IYN8IspFl1l4_kvUC_Gw`, SHA `e971903841c245052b66cc37d265948f4c3b5c535d25baa55271f3260a8ca50d`;
-- SHA256SUMS-FINAL `1Ikzx_u7IfS1y88uhqq9KEkhA75Ph6-Az`, SHA `94fa970a0a175ad9546529aff1246d0fa66e924f9c5e592be8d1ccb10b008556`;
-- provider final readback `has_more=false`, exactly 22 files = 20 payloads + 2 closure files.
-
-Evidence: `Tools/HighFidelityPatch/Evidence/HF31-Projectile-Rotating-Runtime-Core.md`.
-
-**HF31 formal acceptance: PASS. HF31 is retained as the accepted direct input to HF32.**
+HF31 final SHA `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`; fixed ILSpy, whole-assembly semantic isolation, permanent RecoveryAudit and 20+2 Drive closure all passed. HF31 is retained as the accepted direct input to HF32.
 
 ### HF32 — Projectile Tracking Runtime Core
 
-Restores exactly `0x060003D8 Projectile.Update_Tracking()` — original RID `984`, PC `0x18037D4D0`.
+Restores exactly `0x060003D8 Projectile.Update_Tracking()` — RID `984`, PC `0x18037D4D0`.
 
 Accepted behavior:
 
@@ -122,56 +94,95 @@ Accepted behavior:
 - preserves foreach `Enumerator.Dispose/finally`;
 - if a target exists, calls `Aim(new Vector3(target.fX - fX, target.fY - fY, 0f))`.
 
-Active-path proof is retained from accepted HF24 PC native `Projectile.Update()` evidence, which directly calls `0x18037D4D0`.
-
 HF32 formal validation:
 
-- accepted HF31 Drive final `18fn9_hdgHdKXQRMJfIcf0lfDkbwuZdam` re-fetched and SHA-verified `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`;
-- patcher workflow `34374542786` PASS, artifact ID `10113295189`, SHA `1ca0b96f6c71dfaefc99642ba9bcc2a7cbf84f5c1c81405a3cd2a754535244cc`;
-- deterministic independent patch x2 -> byte-identical final SHA `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`;
-- Cecil reopen Update_Tracking `55 IL / 150 bytes / 1 EH`;
-- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL member readback PASS, stderr 0, Cpp2IL refs 0, issue markers 0;
-- HF31 whole IL reproduced exactly at `cef4f8e34d87fb1409488b9e915eb8df39b1d4e699612032192e4be83be810ee`;
-- HF32 whole IL SHA `e81d4db126c25a9d3f593c0535017d4a0d24e3cca04e24635ea4bfe0b1769c89`;
-- accepted HF30->HF31 semantic algorithm reproduced byte-for-byte first at `673a14dcd0b0e3bfa6b1b16bcaa09fed4d5d435b744f04ca406534125fc26638`;
+- formal HF31 input re-fetched and SHA-verified;
+- patcher workflow `34374542786` PASS, artifact ID `10113295189`;
+- deterministic double patch -> `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`;
+- Cecil reopen `55 IL / 150 bytes / 1 EH`;
+- fixed ILSpy member gate PASS;
+- HF31 whole IL reproduced exactly; HF32 whole IL `e81d4db126c25a9d3f593c0535017d4a0d24e3cca04e24635ea4bfe0b1769c89`;
 - MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly `0x060003D8` changed;
-- HF31->HF32 semantic diff SHA `2c5caa7d12a898c3897ee123d0ab0e6400d1a2a482381a96ec0e8f6f1a09807a`;
-- RecoveryAudit commit `f63ea5fef9ccc27d67bebb153ebb8a7708f8b298`, workflow `34375192695` PASS, artifact ID `10113566262`, SHA `6c48118b5cbbee81d67b61cdbd3b6a0616f2dc979f861e3a70b9001c3d3d1cde`;
-- published RecoveryAudit closure run: OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Update_Tracking `55/150`, `RECOVERY_AUDIT_OK`.
+- semantic diff `2c5caa7d12a898c3897ee123d0ab0e6400d1a2a482381a96ec0e8f6f1a09807a`;
+- published RecoveryAudit OPEN1/OPEN2 PASS and `RECOVERY_AUDIT_OK`;
+- Drive folder `1Uww_2PvbJIX3IUvyQRlWIHjqZQ1YHtkO`, final DLL `1SS6-gWmohn9JqU772ZAJ8vkCB4t4QWwP`, final readback exactly 22 files.
 
-HF32 Drive archive:
+Evidence: `Tools/HighFidelityPatch/Evidence/HF32-Projectile-Tracking-Runtime-Core.md`.
 
-- folder `1Uww_2PvbJIX3IUvyQRlWIHjqZQ1YHtkO`;
-- cumulative audited DLL `1SS6-gWmohn9JqU772ZAJ8vkCB4t4QWwP`;
-- patcher `1Y4BDC7HoddK277GwwBSZ7PyADuqL_ZN5`;
-- RecoveryAudit `1qmjxGZxhq7Uw-OaOtiOA74-faQ6e7lU_`;
-- fixed ILSpy `1fFGsPZVVePwXf3rJwRrl6SLZg_JzirPw`;
-- native evidence `1nG12zMQQhBn5wQaDGC9C5bc57i8Mde-M`;
-- semantic diff `1NEJ86pFbZNWCg_avqtbSA--eSQxmVQZh`;
-- payload manifest `1c00Jhu-CpQ9vxU3e0XZeA01ZpDA7sZrM`, SHA `b145349724c3dde98d31e997ebbaeee590af7eb3082bb93efb1308bbf06ca49a`;
-- Evidence-FINAL `1zLbA9750_l7o2a990G31tWyJGe5S78Ca`, SHA `6a3219741cf3e1554f68eff38ee4b37e95bbc6c944c62dedbebadba24b387064`;
-- SHA256SUMS-FINAL `1CGLcxBhQ0EFT4sNBCWPRLGT-MSI7Ct1n`, SHA `f8f5c81141253fd5912415c0045def78c39b98c7e17209c6e9762653a6d3872e`;
-- provider final readback: exactly 22 files = 20 payloads + 2 closure files.
+**HF32 formal acceptance: PASS. HF32 is retained as the accepted direct input to HF33.**
 
-Evidence: `Tools/HighFidelityPatch/Evidence/HF32-Projectile-Tracking-Runtime-Core.md`, commit `7c60e79ea38d5100830168e2a4e6eb94ebfcb993`.
+### HF33 — Projectile Aim / Euler Runtime Core
 
-**HF32 formal acceptance: PASS. HF32 is now the only allowed formal input for any later cumulative HF stage.**
+Restores exactly:
+
+- `0x060003DC Projectile.Aim(Vector3)` — RID `988`, PC `0x180378D50`;
+- `0x060003F8 Projectile.SetEulerAngles(float,float)` — RID `1016`, PC `0x18037C120`.
+
+The original PC Windows release was re-fetched from the archived game package and the fixed GameAssembly/global-metadata hashes were re-verified before behavioral closure.
+
+Accepted `Aim` behavior:
+
+- `angle = Mathf.Atan2(distant.y, distant.x) * 57.29578f`;
+- ordered-negative `speed.x` applies `180f - angle`; unordered/NaN does not take that negative branch;
+- normalize `distant` with Unity Vector3 semantics;
+- preserve the current three-component `speed` magnitude and redirect `speed` along normalized `distant`;
+- call `SetEulerAngles(angle, 0f)`.
+
+Accepted `SetEulerAngles` behavior:
+
+- stores original `angular` and `zAngular` arguments in fields immediately;
+- local effective z becomes `angular` for zero/Approximately cases, otherwise uses Abs-selected `Mathf.Lerp(angular,zAngular,selected/(angular+zAngular))`;
+- sprite and animation preserve x/y and receive effective z;
+- shadow preserves x/y and receives original `angular`;
+- track preserves the original native behavior of sourcing x/y from `projectileSprite` and using effective z;
+- local effective z is not written back into the `zAngular` field.
+
+HF33 formal validation:
+
+- formal HF32 Drive final re-fetched and SHA-verified `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`;
+- patcher workflow `34381241262` PASS;
+- patcher artifact ID `10115939120`, SHA `3b53a4e2a22d9efc41918c87f6648911018bdd9a0a1b7c075c864d0fd262db53`;
+- independent double patch -> byte-identical `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`;
+- Cecil reopen Aim `31 IL / 93 bytes / 0 EH`, SetEulerAngles `118 IL / 386 bytes / 0 EH`;
+- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL member readback PASS, stderr 0, Cpp2IL refs 0, issue markers 0;
+- HF32 whole IL reproduced exactly `e81d4db126c25a9d3f593c0535017d4a0d24e3cca04e24635ea4bfe0b1769c89`;
+- HF33 whole IL SHA `36f84c63dc8906ab33424da6a67246569a7e103e5b2ffbf35ca757d698698450`;
+- accepted HF31->HF32 semantic diff reproduced byte-for-byte first at `2c5caa7d12a898c3897ee123d0ab0e6400d1a2a482381a96ec0e8f6f1a09807a`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, changed exactly `0x060003DC` and `0x060003F8`;
+- HF32->HF33 semantic diff SHA `59d5f0c92d7115c54bc4f5ee69881c5b120d1a99dabc640e7ce180dbfdc3ceae`;
+- permanent RecoveryAudit commit `2d57910889988b590f1dd07cdcc34ee12897b952`;
+- RecoveryAudit workflow `34381940381` PASS, artifact ID `10116213345`, SHA `3685e1d9fd17d8b277a64a8bd4cc05c293eaff87869bd07d81caa36f1cf51139`;
+- published auditor OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Aim `31/93`, SetEulerAngles `118/386`, `RECOVERY_AUDIT_OK`.
+
+HF33 Drive archive:
+
+- folder `1jGlVm6aPkLamhOSRuCPZezPqwC-zcQmT`;
+- cumulative audited DLL `1Ogbe_UWDSdux7n9ROWyRr5e6dU1Nk5Vm`;
+- patcher `1MbL4joVSYGeIMUJS4FO8qhWbDZ-3DUFZ`;
+- RecoveryAudit `1kj41inhhOifAmMlcUL2ZGgHYP4g_KKrc`;
+- fixed ILSpy `1bmEgTCcHue3J_xYaM3q2tqV0HdRvukOk`;
+- native evidence `1aFA43x3zI2G1UdyXmKj1GeKPLFAFV_5F`;
+- semantic diff `1WUOWoHmMJagr1N0WBuBHboKGL7YzAfUw`;
+- payload manifest `1T5JqgT-axJVHjcKn2CKXfsgrbdNm4uDg`, SHA `bc6ae57092ea8d9e8ddec228b4f0070f5b3658c279a04cccebfab773ef45e84c`;
+- Evidence-FINAL `1J2V5wEhjPWoSh_WnxiHCozcJ9q0fy2U4`, SHA `781eca6bd6fe245bdcdbca77c1efbf950728fb978641785c0865609b196d25d2`;
+- SHA256SUMS-FINAL `1Q23ybMl2Boh2USLJPz4HYTm2m9ues4RZ`, SHA `bfbf169153ec1d9cc7821ec2fe74e4b6507ee333450c98d8d4b9a5880877c4d7`;
+- final provider readback: exactly 22 files = 20 payloads + 2 closure files.
+
+Evidence: `Tools/HighFidelityPatch/Evidence/HF33-Projectile-Aim-Euler-Runtime-Core.md`, commit `7d8b45d9dd7d410d9ea2f07fee17ff0310ef78e9`.
+
+**HF33 formal acceptance: PASS. HF33 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF33
+## Current decision gate — do not auto-open HF34
 
-HF32 closes `Projectile.Update_Tracking()` but does not authorize another HF stage automatically. Re-run original-native-vs-managed active-path scanning on methods actually reached by recovered runtime code, prioritizing:
+HF33 closes the active `Update_Tracking -> Aim -> SetEulerAngles` tracking/orientation chain. Do not create HF34 merely because other methods still contain Cpp2IL warnings or unattractive recovered IL.
 
-- `Projectile.SetEulerAngles`;
-- `Projectile.Aim`;
-- any creation/aim helper proven materially active by the recovered runtime path.
+Open HF34 only when both are independently proven:
 
-Open HF33 only when both are true:
+1. original PC native/metadata demonstrates concrete managed loss or mis-reconstruction; and
+2. the method is materially active in gameplay on a path not already semantically closed by HF1–HF33.
 
-1. original PC native/metadata proves concrete managed loss or mis-reconstruction; and
-2. the method is materially active in gameplay.
-
-Do not open a stage from Cpp2IL warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic managed-output quality alone. If no remaining candidate passes both gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
+Do not use warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality as a gate. If no remaining candidate satisfies both conditions, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF33 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
