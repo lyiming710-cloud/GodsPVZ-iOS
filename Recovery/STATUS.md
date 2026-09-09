@@ -2,9 +2,9 @@
 
 ## Current strategy
 
-Use PC x86-64 IL2CPP as the primary gameplay source, Android native second, then original metadata/assets/JSON; use Cpp2IL/ILSpy for attribution and managed reconstruction support. Do not substitute rescue-route approximations for native-backed gameplay.
+Use PC x86-64 IL2CPP as the primary gameplay source, Android native second, then original metadata/assets/JSON; use Cpp2IL/ILSpy only for attribution and managed reconstruction support. Do not substitute rescue-route approximations for native-backed gameplay.
 
-High-fidelity-first remains mandatory: a recovered stage is not final until native attribution, deterministic formal-input patching, permanent Cecil audit, fixed-version ILSpy readback, whole-assembly semantic isolation, GitHub evidence, and Google Drive provider acceptance all close.
+High-fidelity-first remains mandatory: a stage is not final until original native attribution, formal-input SHA validation, deterministic independent patching, Cecil reopen, permanent RecoveryAudit OPEN1/OPEN2, fixed ILSpy readback, whole-assembly semantic isolation, GitHub Evidence, Google Drive archive, provider readback, and STATUS closure all pass.
 
 ## Fixed original baseline
 
@@ -14,8 +14,8 @@ High-fidelity-first remains mandatory: a recovered stage is not final until nati
 - PC GameAssembly SHA-256 `9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d`.
 - PC metadata SHA-256 `ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9`.
 - Android APK SHA-256 `428e0ba2e46645a905fb9fbb00cfde42406727a3ddfce9a7df1e0875889a739f`.
-- Cpp2IL source commit `5fb20304df698ffd3d0e664b2a698cd911dc9d57`; reproduced PC baseline `2318/2319`, sole full failure closed in HF3.
-- Native attribution: original RID-1 -> Assembly-CSharp CodeGenModule methodPointers index.
+- Fixed Cpp2IL source commit `5fb20304df698ffd3d0e664b2a698cd911dc9d57`; reproduced PC baseline `2318/2319`, sole full failure closed in HF3.
+- Native attribution rule: original MethodDef RID-1 -> Assembly-CSharp CodeGenModule methodPointers index.
 - Fixed ILSpyCmd / ICSharpCode.Decompiler `11.0.0.9375` with the reproduced 56-DLL fixed-Cpp2IL reference set.
 
 ## Final cumulative HF chain
@@ -43,97 +43,128 @@ High-fidelity-first remains mandatory: a recovered stage is not final until nati
 - HF21 Projectile / Resource cluster `888cab48b5e488ca05ed8ec58a11503c9f9a8ce0bac23a60c933f8628834e8f0`.
 - HF22 Damage Dispatch / Area Core `502d6d61c18c17e29acb2f96451e9e41f98a403d8f8e915a76285c5b51f04997`.
 - HF23 Zombie Hurt Core `35d13b0d7fc5f82e04b837b812fab501a933b00e21f3431b2f6759c8e0c2b39c`.
-- **HF24 Projectile Runtime Core — native-backed formal final — `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`.**
+- HF24 Projectile Runtime Core `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`.
+- **HF25 Projectile Collision Dispatch / Ground — native-backed formal final — `eb0823deff8289d152af52ab89b91672b64bb786701d31d4871ebfcdbe9f9b71`.**
 
 ## HF23 retained result
 
-HF23 restores exactly nine directly dispatched Zombie lower-damage MethodDefs `0x06000456` through `0x0600045E`: Hurt_Armor1, Hurt_Armor2, Hurt_Artillery, Hurt_Ashes, Hurt_Body, Hurt_FinalDamageReduction, Hurt_Normal, Hurt_Real, and Hurt_Throughout.
+HF23 restores the nine directly dispatched Zombie lower-damage MethodDefs `0x06000456` through `0x0600045E`: Hurt_Armor1, Hurt_Armor2, Hurt_Artillery, Hurt_Ashes, Hurt_Body, Hurt_FinalDamageReduction, Hurt_Normal, Hurt_Real, and Hurt_Throughout.
 
-Key accepted semantics include native Zombie armor/body defense with the 0.1 non-real damage floor, real bypass, `MathF.Round`, PoleCommander.speed cap 0.95, iceCube fire_ice coefficient 0.2, throughout truncating penetration, distinct Artillery/Real armor-return handling, Ashes behavior, Armor hit presentation/audio, body large-damage text, and restoration of `Damage.damagePoint` after successful throughout body damage.
+Accepted semantics include native Zombie armor/body defense with the 0.1 non-real damage floor, real bypass, `MathF.Round`, PoleCommander.speed cap 0.95, iceCube fire_ice coefficient 0.2, throughout truncating penetration, distinct Artillery/Real armor-return handling, Ashes behavior, armor presentation/audio, body large-damage text, and restoration of `Damage.damagePoint` after successful throughout body damage.
 
-HF23 remains fully archived under Drive folder `1nvim2033w3T_GnmaDHlSf8rVyF6CT-0K`; its final audited DLL is `1qcGGHQZuVe5s60jje-dIJFzHVH-gkD7M`.
+HF23 Drive folder: `1nvim2033w3T_GnmaDHlSf8rVyF6CT-0K`; final DLL `1qcGGHQZuVe5s60jje-dIJFzHVH-gkD7M`.
 
-## HF24 technical result
+## HF24 retained result — Projectile Runtime Core
 
-HF24 was opened only after the post-HF23 decision scan proved both concrete native-vs-managed loss and active-path importance in Unity's per-frame `Projectile.Update`.
+HF24 was opened only after the post-HF23 decision scan proved both native-vs-managed loss and active-path importance in per-frame `Projectile.Update`.
 
-HF24 restores exactly one MethodDef:
+HF24 restores exactly:
 
-- `0x060003D2 Projectile.Update()` — RID `978` — PC native `0x18037D710`, logical native function end `0x18037DF0C`.
+- `0x060003D2 Projectile.Update()` — RID `978` — PC `0x18037D710`, logical native end `0x18037DF0C`.
 
-Restored runtime behavior includes:
+Key restored behavior includes SortingGroup/sorting-order truncation, board/gameStart/gamePause gating, movement tracks 3/4/5/6/7, native-order `Time.deltaTime` integration, shadow synchronization, out-of-map destruction, active-frame `CollisionDetect`, track following, rotation, LightSaber orphan cleanup, and previousPosition update.
 
-- SortingGroup creation/initialization, sorting layer `Entity`, and sorting order using native float multiplication + `cvttss2si` truncation;
-- board/gameStart/gamePause runtime gate;
-- movement tracks 3/4/5/6/7, including the native track-4 `log(10)` trajectory and track-5 high-arc snap/descent;
-- repeated native-order `Time.deltaTime` observations for fX/fY/speed/fZ/zSpeed integration;
-- `Moving_SetNewPosition`;
-- shadow scale and `fZ_shadow` synchronization;
-- out-of-map destroy followed by `CollisionDetect` on active frames;
-- track-following, `Rotating`, LightSaber orphan self-destruction, and previousPosition update.
+HF24 formal validation:
 
-HF24 intentionally excludes collision detector/resolution and aim/helper bodies; scope is exactly `Projectile.Update`.
+- formal HF23 input Drive ID `1qcGGHQZuVe5s60jje-dIJFzHVH-gkD7M`, SHA `35d13b0d7fc5f82e04b837b812fab501a933b00e21f3431b2f6759c8e0c2b39c`;
+- final patcher workflow `34306586359`, artifact SHA `fc7a62398efc3c3a9b3eddfc6cda43ba517f7938699904571a19fb86c0bb38be`;
+- deterministic double patch, final SHA `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`;
+- Cecil reopen `335 IL / 1047 bytes / 0 EH`;
+- permanent RecoveryAudit commit `2470b3872e7be15b1fd662cdcae430b481b1fc20`, workflow `34306849398`, artifact SHA `bdfb83c9ce5dd5d74db4ec8988fc75cb1f666cab31e15c2a4fc73637452bffdd`, OPEN1/OPEN2 -> `RECOVERY_AUDIT_OK`;
+- fixed ILSpy whole HF23 SHA `7ea1f0c41035d87165b72ee462828a8c5b1c176e42db608c4f3dd72dcb54aa51`, whole HF24 SHA `32e11c3eb33f19b357f34ef22f0dfb96eb91181cd4ff0f5d50ecf742ffd18d21`;
+- MethodDef `2317 -> 2317`, non-method skeleton identical, only `0x060003D2` changed; semantic diff SHA `ac64cb323d71f4b8a2e7f8aab93da05aed6fa75de6627cd14963b9d976665d0b`.
 
-## HF24 validation and acceptance
-
-- formal HF23 input was re-fetched from accepted Drive ID `1qcGGHQZuVe5s60jje-dIJFzHVH-gkD7M` and re-hashed `35d13b0d7fc5f82e04b837b812fab501a933b00e21f3431b2f6759c8e0c2b39c`;
-- final patcher source head `7c4da1c0c14d916fc9a526f526298f9bd44d8c2d`, workflow `34306586359` success, artifact SHA-256 `fc7a62398efc3c3a9b3eddfc6cda43ba517f7938699904571a19fb86c0bb38be`;
-- earlier runs `34306195447` and `34306382755` were tool-only failures before output and produced no candidate;
-- final patcher applied twice independently to the same formal HF23 input, outputs byte-identical at HF24 SHA `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`;
-- Cecil reopen both runs: `Projectile.Update` = 335 IL / 1047 bytes / 0 EH, with no Cpp2IL helper;
-- permanent RecoveryAudit extension commit `2470b3872e7be15b1fd662cdcae430b481b1fc20`, workflow `34306849398` success, published artifact SHA-256 `bdfb83c9ce5dd5d74db4ec8988fc75cb1f666cab31e15c2a4fc73637452bffdd`;
-- published auditor OPEN1/OPEN2 each report 320 types, 2317 methods, 2297 bodies; `Projectile.Update` is 335 IL / 1047 bytes on both opens; final `RECOVERY_AUDIT_OK`;
-- fixed ILSpy 11.0.0.9375 member readback exit 0 / stderr 0, zero Cpp2IL refs and zero issue markers; whole readback stderr 0;
-- HF23 whole IL SHA `7ea1f0c41035d87165b72ee462828a8c5b1c176e42db608c4f3dd72dcb54aa51`;
-- HF24 whole IL SHA `32e11c3eb33f19b357f34ef22f0dfb96eb91181cd4ff0f5d50ecf742ffd18d21`;
-- MethodDef count `2317 -> 2317`; normalized non-method skeleton byte-identical; exactly `0x060003D2 Projectile.Update` changes;
-- semantic diff SHA-256 `ac64cb323d71f4b8a2e7f8aab93da05aed6fa75de6627cd14963b9d976665d0b`.
-
-HF24 Drive archive is accepted:
+HF24 Drive acceptance:
 
 - folder `1jWriDX2NiJsO2hWhLwnebVtL4d2j5N37`;
-- cumulative audited DLL `1UIzsJRqKwT0R-xCSaWqCG6CtenvPj2he`;
-- patcher `14j-vZPT1pbMx9GDOao1OUuijVA4tQjZj`;
-- published RecoveryAudit `12n8Q5LfxPI4c_vHcQlPmPr-EBF4VD2Mk`;
-- fixed ILSpy bundle `1UkLFLjtwjzuI8bg2HoekYSk7a1fl1xIR`;
-- native evidence `15hgH1xBLjhxAtNFbJV2eGykwlBlMCvpz`;
-- patch source `1otAgdL6uKWC-PTKE7jb0dkmqGS9Bt2n4`;
-- semantic diff `1G35WUYlxsh0CrAKTV7lRrxV0cZMlbE-7`;
-- semantic isolation `153b0_cW_caCxfsUEjsALFdJhsBbaWam_`;
-- MethodDef table `1djCIKX1gReUwDm7Ma5t-J73bqDxEBGZj`;
-- RecoveryAudit log `1oqk2t-J8wm72E-EdDzCHIvKNOkcOTRny`;
-- payload SHA manifest `1sWwMxyt1k3CGv_pR2nmgrrlOaYLcRjNt`;
-- authoritative Evidence-FINAL `1nApSKSXQLiqqcezHhaa96n0KvSh8EvUF`, SHA-256 `a6c83eff67a2ceb86e7ad44b2a111abed0bab7fee465ef4f19623b2b1aebc0ab`;
-- authoritative SHA256SUMS-FINAL `14BTnOQrQdD5AkgxQN16TYgqIjW1ZNYRL`, SHA-256 `bcca6a22804573053733ca5420a94efaa8121e69f1fe73d17777327aa01365c4`.
-
-Provider final readback has no next page and verifies exactly **22 files = 20 payloads + 2 closure files**.
+- final DLL `1UIzsJRqKwT0R-xCSaWqCG6CtenvPj2he`;
+- Evidence-FINAL `1nApSKSXQLiqqcezHhaa96n0KvSh8EvUF`, SHA `a6c83eff67a2ceb86e7ad44b2a111abed0bab7fee465ef4f19623b2b1aebc0ab`;
+- SHA256SUMS-FINAL `14BTnOQrQdD5AkgxQN16TYgqIjW1ZNYRL`, SHA `bcca6a22804573053733ca5420a94efaa8121e69f1fe73d17777327aa01365c4`;
+- provider final readback exactly 22 files = 20 payloads + 2 closure files.
 
 GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF24-Projectile-Runtime-Core.md`.
 
-**HF24 formal acceptance: PASS. HF24 is now the only allowed formal input for any later cumulative HF stage.**
+## HF25 technical result — Projectile Collision Dispatch / Ground
+
+The post-HF24 decision scan proved the dispatcher itself remained materially damaged. HF24 `Projectile.Update` calls `CollisionDetect()` every active projectile frame, so this is a direct runtime path rather than warning-only cleanup.
+
+HF25 restores exactly two MethodDefs:
+
+- `0x060003E0 Projectile.CollisionDetect()` — RID `992` — PC `0x18037A2D0`, logical native end `0x18037A410`;
+- `0x060003E2 Projectile.CollisionDetect_Ground()` — RID `994` — PC `0x180379930`, logical native end `0x1803799B0`.
+
+Original Projectile metadata closure used TypeDef index `5212` and field offsets `ID +0x24`, `camp +0x28`, `damage +0x30`, `fZ +0x4C`, `fZ_shadow +0x50`, `hitType +0x70`.
+
+Accepted native behavior:
+
+- `CollisionDetect` performs four-way `hitType` 0/1/2/3 routing with native camp gates and detector short-circuit order; unsupported values return;
+- hitType 0 routes to ground only;
+- hitType 1 routes opposite-camp detectors then ground fallback;
+- hitType 2 routes same-camp detectors under the native camp gates then ground fallback, with unsupported camp returning;
+- hitType 3 runs opposite-camp then same-camp detector chains before ground fallback;
+- ground threshold is `240f` only for IDs 29/30, otherwise `0f`;
+- native `COMISS threshold,diff; JB return` unordered/NaN behavior is preserved by `if (!(threshold >= diff)) return;`;
+- ground `AreaDamage` IDs are `9-11`, `15`, and `26-32`;
+- an accepted ground hit then always calls `Collision_AudioParticle()` and `DestroyProjectile()`.
+
+A deterministic earlier candidate was rejected before formal acceptance because an ordinary `<` comparison did not preserve PC `COMISS/JB` unordered semantics. It was never used as a cumulative formal input. The final candidate was rebuilt and every formal gate rerun from accepted HF24.
+
+## HF25 validation and acceptance
+
+- formal HF24 was re-fetched from Drive ID `1UIzsJRqKwT0R-xCSaWqCG6CtenvPj2he` and re-hashed `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`;
+- final patcher source head `37cc9c3cc82e3fb3244a70747219cb4fe4cc4257`, workflow `34309550102` success, artifact SHA `9e4c863c1b3e5d6d01b297b05561e82d15657d864f440579c9cfe3680a39f2a9`;
+- final patcher applied twice independently to the same formal HF24 input; outputs byte-identical at HF25 SHA `eb0823deff8289d152af52ab89b91672b64bb786701d31d4871ebfcdbe9f9b71`;
+- Cecil reopen both runs: E0 `105 IL / 245 bytes / 0 EH`, E2 `49 IL / 125 bytes / 0 EH`, no Cpp2IL helper;
+- permanent RecoveryAudit final extension commit `529f457a30dcc4f7e4d9c330fa7cc74e403ea75a`, Program blob `e4780fb52131ad1c1c34f002a0cd8d976926c274`, workflow `34309694411` success, artifact SHA `565d69d2cd816cd552303eff3c521e525687b5d26eb8ec6125aa12c72f4ec769`;
+- published auditor OPEN1/OPEN2 each report `320 types / 2317 methods / 2297 bodies`; E0 `105 / 245`, E2 `49 / 125`; final `RECOVERY_AUDIT_OK`;
+- fixed ILSpy 11.0.0.9375 member readbacks both exit 0 / stderr 0 / zero Cpp2IL refs / zero issue markers;
+- HF24 whole IL SHA `32e11c3eb33f19b357f34ef22f0dfb96eb91181cd4ff0f5d50ecf742ffd18d21` reproduced in the HF25 environment;
+- HF25 whole IL SHA `9fc5f9d317d6469ba8e24ad09ff22e8480e562e81b5595f1e4ae3d1a50f10722`;
+- MethodDef `2317 -> 2317`; normalized non-method skeleton identical; exactly E0/E2 changed;
+- semantic diff SHA `e64591dafd6297de6c3193683eef80078cc27490a849ce92206250f450cea2a2`.
+
+HF25 Drive archive is accepted:
+
+- folder `1DfwwokTD0k8_-J2Z5virKxrHocc9Pszf`;
+- cumulative audited DLL `1ENIzUe4qD4qdSBGXACyzQ2CmMIwja2i5`;
+- patcher `1jgkTsMxW4hzA8RWJnQ6NChywVELofePR`;
+- published RecoveryAudit `1g9k62ovG6p7WqdkrIcJKteEnR8ChEia4`;
+- fixed ILSpy `1IkJOZR2RmqSNBPKfEkp8CglBO65V99IL`;
+- native evidence `1-Y6_ef9PiMhmDL1wj9nK1U7f6XlfMCyN`;
+- patch source `1jXupJAr18EHQNJPrBrxPKdMrjZhd_gJF`;
+- semantic diff `1adHN8Dk4QhgiH0BnIPsCIpCOd76ljblX`;
+- semantic isolation `1_JGXxwQgit-_1tiC64P4Cqx8sinLkJ0b`;
+- MethodDef table `12CskzYPviPBWWlgMKIBrgBxrcOUl2dE3`;
+- RecoveryAudit log `1Yl5XVgWANf_PMuHCq4gp4-hLehizKm-R`;
+- payload SHA manifest `1roFxlfQPAA4XEiT9zjPmAzC56hkxQolV`, SHA `b3d9636c802d12f598f644c0d1a929acb4ecd8272c498f188efa2c9ef6bec8be`;
+- Evidence-FINAL `1jUEhU_du7mcS7wUM9irOtJdMWeqPIdWm`, SHA `dfbea12528de6330880e8aa689f773045c638c510f72d044f33fd45bb321dadd`;
+- SHA256SUMS-FINAL `1doFw5vN-WNwScQwaBPxJjk9bcMekSGky`, SHA `5124d43007890c53e10bf933a5dcc30b9d9d8777005b3627af7ab6aa28ff0d19`.
+
+Provider final readback has `has_more=false` and verifies exactly **22 files = 20 payloads + 2 closure files**.
+
+GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF25-Projectile-Collision-Dispatch-Ground.md`.
+
+**HF25 formal acceptance: PASS. HF25 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set: UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF25
+## Current decision gate — do not auto-open HF26
 
-HF24 closes the damaged per-frame Projectile runtime dispatcher. Do **not** create HF25 merely because the surrounding Projectile methods contain Cpp2IL warnings.
+HF25 closes the collision dispatcher and ground-hit path. Do **not** open HF26 merely because adjacent Projectile methods contain Cpp2IL warnings or sit next to the recovered MethodDefs.
 
-Rerun the remaining managed-damage / active-path decision scan over the HF24 final, focusing on the collision/aim cluster already identified from PC native evidence:
+Rerun the remaining native-vs-managed active-path scan over the target detectors and their true direct business dependencies, beginning with:
 
-- `Projectile.CollisionDetect_Device` `0x060003E1` PC `0x180379180`;
-- `Projectile.CollisionDetect_Plant` `0x060003E3` PC `0x1803799B0`;
-- `Projectile.CollisionDetect_Zombie` `0x060003E4` PC `0x180379D00`;
-- `Projectile.Collision_AudioParticle` `0x060003EB` PC `0x18037A410`;
-- `Projectile.Collision_Zombie` `0x060003EA` PC `0x18037B170`;
-- `Projectile.Aim` `0x060003DC` PC `0x180378D50`;
-- `Projectile.Update_Tracking` `0x060003D8` PC `0x18037D4D0`;
-- `Projectile.SetEulerAngles` `0x060003F8` PC `0x18037C120`.
+- `Projectile.CollisionDetect_Device` `0x060003E1` — PC `0x180379180`;
+- `Projectile.CollisionDetect_Plant` `0x060003E3` — PC `0x1803799B0`;
+- `Projectile.CollisionDetect_Zombie` `0x060003E4` — PC `0x180379D00`.
+
+Then include a resolution/helper method only if direct native call evidence proves it belongs to the detector's business path and its managed body has concrete loss. Existing candidates such as `Collision_Device`, `Collision_Zombie`, `Collision_AudioParticle`, `Aim`, `Update_Tracking`, and `SetEulerAngles` must each independently pass the same gate.
 
 A later HF stage is allowed only when both conditions hold:
 
 1. concrete managed loss/mis-reconstruction is proven from original PC native/metadata evidence; and
-2. the affected method is materially active in the gameplay path.
+2. the affected method is materially active in gameplay.
 
-If the collision/aim decision scan does not identify a new blocker that satisfies both gates, stop HF recovery and proceed to Unity `2022.3.44f1c1`, package restoration, 67/67 package-script validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation, then necessary iOS platform adaptation.
+If no detector/helper cluster satisfies both conditions, stop HF recovery and proceed to Unity `2022.3.44f1c1`, package restoration, 67/67 package-script validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation, then necessary iOS platform adaptation.
