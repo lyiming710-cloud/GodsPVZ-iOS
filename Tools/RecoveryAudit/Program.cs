@@ -94,6 +94,15 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "CanAttacked", 0, 40),
     ("Zombie", "GetATK", 0, 13),
     ("Zombie", "TakeDamage", 2, 195),
+    ("Zombie", "Hurt_Armor1", 2, 241),
+    ("Zombie", "Hurt_Armor2", 2, 203),
+    ("Zombie", "Hurt_Artillery", 2, 70),
+    ("Zombie", "Hurt_Ashes", 2, 97),
+    ("Zombie", "Hurt_Body", 2, 143),
+    ("Zombie", "Hurt_FinalDamageReduction", 2, 47),
+    ("Zombie", "Hurt_Normal", 2, 73),
+    ("Zombie", "Hurt_Real", 2, 59),
+    ("Zombie", "Hurt_Throughout", 2, 78),
 };
 
 void AuditOnce(string label)
