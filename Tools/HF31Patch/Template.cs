@@ -25,7 +25,7 @@ namespace Template
 {
     public class Projectile : UnityEngine.MonoBehaviour
     {
-        public float speed;
+        public UnityEngine.Vector3 speed;
         public float angularSpeed;
         public float angularAcceleration;
         public UnityEngine.GameObject projectileSprite = null!;
@@ -33,7 +33,7 @@ namespace Template
 
         private void Rotating()
         {
-            bool reverse = speed < 0f || float.IsNaN(speed);
+            bool reverse = speed.x < 0f || float.IsNaN(speed.x);
             transform.localEulerAngles = new UnityEngine.Vector3(
                 transform.localEulerAngles.x,
                 reverse ? 180f : 0f,
