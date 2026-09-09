@@ -45,110 +45,87 @@ High-fidelity-first remains mandatory: a stage is not final until original nativ
 - HF23 Zombie Hurt Core `35d13b0d7fc5f82e04b837b812fab501a933b00e21f3431b2f6759c8e0c2b39c`.
 - HF24 Projectile Runtime Core `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`.
 - HF25 Projectile Collision Dispatch / Ground `eb0823deff8289d152af52ab89b91672b64bb786701d31d4871ebfcdbe9f9b71`.
-- **HF26 Projectile Collision Audio / Particle — native-backed formal final — `afa0e052902139c09cee9c715fe9a75c6f124af3af8a5647c799dc6b457fefac`.**
+- HF26 Projectile Collision Audio / Particle `afa0e052902139c09cee9c715fe9a75c6f124af3af8a5647c799dc6b457fefac`.
+- **HF27 Projectile Collision Resolution Core — native-backed formal final — `18d9efebdcfcccbbe6c805a9276c4427b4e6baa33673fb71b96a04245bb0e8de`.**
 
-## HF23 retained result — Zombie Hurt Core
+## Retained recent recovery results
 
-HF23 restores exactly nine directly dispatched Zombie lower-damage MethodDefs `0x06000456` through `0x0600045E`: Hurt_Armor1, Hurt_Armor2, Hurt_Artillery, Hurt_Ashes, Hurt_Body, Hurt_FinalDamageReduction, Hurt_Normal, Hurt_Real, and Hurt_Throughout.
+### HF23 — Zombie Hurt Core
 
-Accepted semantics include native Zombie armor/body defense with the 0.1 non-real damage floor, real bypass, `MathF.Round`, PoleCommander.speed cap 0.95, iceCube fire_ice coefficient 0.2, throughout truncating penetration, distinct Artillery/Real armor-return handling, Ashes behavior, armor presentation/audio, body large-damage text, and restoration of `Damage.damagePoint` after successful throughout body damage.
+Restores exactly `0x06000456` through `0x0600045E`: Hurt_Armor1, Hurt_Armor2, Hurt_Artillery, Hurt_Ashes, Hurt_Body, Hurt_FinalDamageReduction, Hurt_Normal, Hurt_Real, Hurt_Throughout. Accepted semantics include native armor/body defense, 0.1 non-real floor, real bypass, `MathF.Round`, PoleCommander.speed cap 0.95, iceCube fire_ice 0.2, throughout truncation, Artillery/Real distinctions, Ashes lethal behavior, armor presentation/audio and Body damage text. Drive final DLL `1qcGGHQZuVe5s60jje-dIJFzHVH-gkD7M`.
 
-HF23 Drive folder `1nvim2033w3T_GnmaDHlSf8rVyF6CT-0K`; final DLL `1qcGGHQZuVe5s60jje-dIJFzHVH-gkD7M`.
+### HF24 — Projectile Runtime Core
 
-## HF24 retained result — Projectile Runtime Core
+Restores exactly `0x060003D2 Projectile.Update()` from PC `0x18037D710`. Accepted behavior includes sorting-order truncation, board/pause gates, movement tracks 3/4/5/6/7, native-order `Time.deltaTime` integration, shadow synchronization, out-of-map destruction, active-frame `CollisionDetect`, tracking/rotation, LightSaber cleanup and previousPosition update. Drive final DLL `1UIzsJRqKwT0R-xCSaWqCG6CtenvPj2he`.
 
-HF24 restores exactly `0x060003D2 Projectile.Update()` from PC `0x18037D710` through logical native end `0x18037DF0C`. Accepted behavior includes SortingGroup/sorting-order truncation, board/gameStart/gamePause gates, movement tracks 3/4/5/6/7, native-order `Time.deltaTime` integration, shadow synchronization, out-of-map destruction, active-frame `CollisionDetect`, tracking/rotation, LightSaber orphan cleanup and previousPosition update.
+### HF25 — Projectile Collision Dispatch / Ground
 
-HF24 final SHA `bdf1c0802685fa56a43602c7a8e45a30b48593b2903e99715a260473f5a09577`; Drive final DLL `1UIzsJRqKwT0R-xCSaWqCG6CtenvPj2he`. Provider final readback verified 22 files = 20 payloads + 2 closure files. GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF24-Projectile-Runtime-Core.md`.
+Restores exactly `0x060003E0 CollisionDetect()` and `0x060003E2 CollisionDetect_Ground()`. Accepted behavior includes native hitType 0/1/2/3 routing/camp gates, ground threshold 240 only for IDs 29/30, native unordered/NaN comparison semantics, ground AreaDamage IDs `9-11,15,26-32`, then `Collision_AudioParticle()` + `DestroyProjectile()`. Drive final DLL `1ENIzUe4qD4qdSBGXACyzQ2CmMIwja2i5`.
 
-## HF25 retained result — Projectile Collision Dispatch / Ground
+### HF26 — Projectile Collision Audio / Particle
 
-HF25 restores exactly:
+Restores exactly `0x060003EB Collision_AudioParticle()` from PC `0x18037A410`. Accepted behavior includes native particle/audio ID switches, particle positions/scales/shakes/sorting layer, ID30 Animator type, native audio clip indices/volume/pitch, ID0/1 RNG ordering and ID30 two separate audio calls. Drive final DLL `1yc82VM4pK5DdIlu7-qS9VLdcGDsy-ti_`. Provider final readback verified 22 files = 20 payloads + 2 closure files. Evidence: `Tools/HighFidelityPatch/Evidence/HF26-Projectile-Collision-Audio-Particle.md`.
 
-- `0x060003E0 Projectile.CollisionDetect()` — RID 992 — PC `0x18037A2D0`;
-- `0x060003E2 Projectile.CollisionDetect_Ground()` — RID 994 — PC `0x180379930`.
+### HF27 — Projectile Collision Resolution Core
 
-Accepted behavior includes native hitType 0/1/2/3 routing, camp gates and detector short-circuit order; ground threshold `240f` only for IDs 29/30; preservation of native `COMISS/JB` unordered/NaN semantics; ground `AreaDamage` IDs `9-11`, `15`, `26-32`; and unconditional `Collision_AudioParticle()` + `DestroyProjectile()` after an accepted ground hit.
+HF27 restores exactly:
 
-HF25 final SHA `eb0823deff8289d152af52ab89b91672b64bb786701d31d4871ebfcdbe9f9b71`; Drive folder `1DfwwokTD0k8_-J2Z5virKxrHocc9Pszf`; final DLL `1ENIzUe4qD4qdSBGXACyzQ2CmMIwja2i5`. Provider final readback verified 22 files = 20 payloads + 2 closure files. GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF25-Projectile-Collision-Dispatch-Ground.md`.
+- `0x060003E6 Projectile.Collision_Device(Device)` — RID 998 — PC `0x18037B010`;
+- `0x060003EA Projectile.Collision_Zombie(Zombie)` — RID 1002 — PC `0x18037B170`.
 
-## HF26 technical result — Projectile Collision Audio / Particle
+Accepted E6 behavior: IDs `{10,11,15,26-32}` use `damage.AreaDamage()`, otherwise `device.TakeDamage(damage,this)`; then `Collision_AudioParticle()`; IDs 19/23 preserve the projectile, all others destroy it.
 
-HF26 was opened only after HF25 proved an accepted ground hit directly enters `Collision_AudioParticle()` while the HF25 managed body still contained concrete Cpp2IL indirect-jump/unmanaged-memory/object-conversion loss.
+Accepted EA behavior: IDs `{10,11,15,26,27,28,31,32}` use `damage.AreaDamage()`, otherwise `zombie.TakeDamage(damage,this)`; then `Collision_AudioParticle()`; IDs 19/23 preserve the projectile, all others destroy it.
 
-HF26 restores exactly one MethodDef:
+HF27 formal validation:
 
-- `0x060003EB Projectile.Collision_AudioParticle()` — RID `1003` — PC `0x18037A410`.
+- formal HF26 re-fetched from Drive and SHA-verified `afa0e052902139c09cee9c715fe9a75c6f124af3af8a5647c799dc6b457fefac`;
+- patcher workflow `34323560548` PASS, artifact SHA `9fc93909009beafa088f17504fc0e78288bb2432be41d878bbb574a76ba38479`;
+- deterministic double patch -> final SHA `18d9efebdcfcccbbe6c805a9276c4427b4e6baa33673fb71b96a04245bb0e8de`;
+- Cecil reopen E6 `43 IL / 110 bytes / 0 EH`, EA `55 IL / 140 bytes / 0 EH`;
+- fixed ILSpy 11.0.0.9375 member readback 2/2 PASS;
+- HF26 whole IL reproduced, HF27 whole IL SHA `33260b8a10a7b51ccf19366420ef50bd3fd24c10dee91628db98107902f5b993`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly E6/EA changed;
+- semantic diff SHA `7238e4a4873917787a976c3e9255ec2bb11176591dcc940ffc01e2374c10676f`;
+- permanent RecoveryAudit commit `b4d96066aecc5a1fb5f29d13ff3380530b163d72`, workflow `34324427275` PASS, artifact SHA `17d60177a8b82bc3ecd162813bc9f414dc21798c0990ad5c1da74c6fc6155c61`;
+- OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, E6 `43/110`, EA `55/140`, `RECOVERY_AUDIT_OK`.
 
-Original Projectile field evidence used by the body includes `ID +0x24`, `fX +0x44`, `fY +0x48`, `fZ +0x4C`, `index +0x74`, `board +0xE8`.
+HF27 Drive archive:
 
-Accepted native-observable behavior includes:
+- folder `13_2KR3QSuTAjthqiMyd3scOL-oOMOawN`;
+- cumulative audited DLL `1eS4hAmbRZKOO6oVzS8Tj7n1arpbconP6`;
+- patcher `1EBcpQCvSI3qi-xgiZczTkyS3HdkSjqFU`;
+- RecoveryAudit `1Q7faENFReWN8wmP307DIq1jdBtjRnWTM`;
+- fixed ILSpy `1uEKA74lshuJqLO7mTLmasBLN-ANZ6zo5`;
+- native evidence `1Je7MYXbmxs5L2N8NCt6JecBPcW5S9MlD`;
+- payload manifest `1sFinNdM1CAxvpD0f2AxBdZIG0sGyhKk6`, SHA `4b80595844a198abe372732fd433708224dd9502df8f2d9042d0a49c9f061351`;
+- Evidence-FINAL `1H7HgEQBfg2QKZKTnH03mu2tYMu6OWKIA`, SHA `05f883018b5031ff55d4da29b3d142b1d387977cb0db89f8ebdf27e7ef32d98f`;
+- SHA256SUMS-FINAL `1CHAe372DCQGHft1VFEyHAARamw_eRuB6`, SHA `332fb1fbc9d835cc8c5b427d4c3baec3d109ad411f44ed58fa235e58ae7e7691`;
+- provider final readback `has_more=false`, exactly 22 files = 20 payloads + 2 closure files.
 
-- particle ID routing for PeaSlapt, SnowPeaSlapt, CherryBoom, PotatoBoom, IcicleSlapt, SPHBombing and LightSaberDoom;
-- original per-ID particle y offsets, component-wise scale factors and Board.Shake parameters;
-- created particles placed at `(fX, particleY, 0)` and assigned SortingGroup layer `Particles`;
-- ID30 Animator integer `"type"=index`;
-- native audio clip indices, per-ID volume multipliers and pitch `Random.Range(0.9f,1.1f)`;
-- ID0/1 preserve float-pitch RNG before int clip-index RNG;
-- ID30 preserves two separate audio calls: `zombieClips[10]` then `particleClips[22]`, with separate camera-position reads.
+GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF27-Projectile-Collision-Resolution-Core.md`.
 
-## HF26 validation and acceptance
-
-- formal HF25 input was re-fetched from accepted Drive ID `1ENIzUe4qD4qdSBGXACyzQ2CmMIwja2i5` and re-hashed `eb0823deff8289d152af52ab89b91672b64bb786701d31d4871ebfcdbe9f9b71`;
-- patcher source head `85b73cdc82cd697cc8b4bd3df8bee2eb896db24d`, workflow `34319860392` success, artifact SHA `981d2945a73e436a6e7710c0d904c88f6b3df603c471853697d3c56de16e3a90`;
-- patcher applied twice independently to the same formal HF25 input; outputs byte-identical at HF26 SHA `afa0e052902139c09cee9c715fe9a75c6f124af3af8a5647c799dc6b457fefac`;
-- Cecil reopen both runs: EB `392 IL / 1379 bytes / 0 EH`, no Cpp2IL helper;
-- permanent RecoveryAudit extension commit `6148f8d036c6d0a64aeb4efb661ff342dc5784b6`, Program blob `fdd8775f4422fbf937f2c9ca6000b708fb737aba`, workflow `34320757146` success, artifact SHA `8274ba48f23aacceb0ee0e1bed9548d88f5396f1cdd4a33fb6f5756f6d439b29`;
-- published auditor OPEN1/OPEN2 each report `320 types / 2317 methods / 2297 bodies`; EB `392 / 1379`; final `RECOVERY_AUDIT_OK`;
-- fixed ILSpy 11.0.0.9375 member readback exit 0 / stderr 0 / zero Cpp2IL refs / zero issue markers;
-- HF25 whole IL SHA `9fc5f9d317d6469ba8e24ad09ff22e8480e562e81b5595f1e4ae3d1a50f10722` reproduced exactly in the HF26 environment;
-- HF26 whole IL SHA `4e3d8039a6a1a07e02b8e9d998be057e1eee95d4bdf139d91ac832dd144f1714`;
-- MethodDef `2317 -> 2317`; normalized non-method skeleton identical; exactly `0x060003EB` changed;
-- semantic diff SHA `08c012c242a50c97d26fb773dddf9f48eabf541b07b465e4c1f4c560178de0f9`;
-- the semantic normalization implementation was first proven by byte-identically reproducing accepted HF24->HF25 semantic diff SHA `e64591dafd6297de6c3193683eef80078cc27490a849ce92206250f450cea2a2`.
-
-HF26 Drive archive is accepted:
-
-- folder `1mPZ-qZ5WBdjfBzPpR4nKxiufPvLbK-TH`;
-- cumulative audited DLL `1yc82VM4pK5DdIlu7-qS9VLdcGDsy-ti_`;
-- patcher `1OMV__8C5FwuPyrtyZeQ1WgMzZh_UBJcg`;
-- published RecoveryAudit `1-V7BOEo5P2lKVQ83BZZQwFSJ5vFWBG0w`;
-- fixed ILSpy `1DMN2tq_QZI3qlpRgfRI-VWQba9C9MT5F`;
-- native evidence `1j6fZZcIN4NYkYLenLyMy25ImfnIJYCYp`;
-- patch source `1tUo0A9fs6lgwgkSeJcxiJ4yxfg1ecq58`;
-- semantic diff `1S9sijFx7gg4tnvmBQSe8eMKFqtNq90Sn`;
-- semantic isolation `1pCt00yAEI7bqcY772nG7cRDgaRDEKUwB`;
-- MethodDef table `1iRV-EdQA-35OJZ3v0aZHFtI7B9gAOljv`;
-- RecoveryAudit log `1vwxGm00hsoATQe-omWcynVSTLIRFZtxB`;
-- payload SHA manifest `1h7P7OUC_-tQuoip3wEZSDK_rNvitXWQr`, SHA `b5fedf16e09450c1494414910d7d8af5523ab817d46e6fb028cb40f02027503d`;
-- Evidence-FINAL `1cMvaPfip_Pg5zHIOHfqNWdjcOned6hBX`, SHA `6355726fe788f5124fd75d3fa842e12f5b517b22af16a881b4af399adecd5ab7`;
-- SHA256SUMS-FINAL `1ZhXT2lU60PVs6ob0F2zL2slGRfupeBE4`, SHA `0c8c724f972e089e77dd540c922bccec28b6f43524cbe5b14ee53d50be92c657`.
-
-Provider final readback has `has_more=false` and verifies exactly **22 files = 20 payloads + 2 closure files**.
-
-GitHub Evidence: `Tools/HighFidelityPatch/Evidence/HF26-Projectile-Collision-Audio-Particle.md`, final Evidence commit `f9becdeeebcc58d1db8128549c59111a7e3c8203`.
-
-**HF26 formal acceptance: PASS. HF26 is now the only allowed formal input for any later cumulative HF stage.**
+**HF27 formal acceptance: PASS. HF27 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set: UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF27
+## Current decision gate — do not auto-open HF28
 
-HF26 closes collision hit audio/particle post-processing for the already restored ground-hit path. Do **not** open HF27 because detector methods are adjacent or carry warnings.
+HF27 closes target-resolution handlers E6/EA. Do **not** open HF28 merely because adjacent Projectile methods contain Cpp2IL warnings or because they are MethodDef neighbors.
 
-Rerun native-vs-managed active-path closure over:
+Rerun the remaining native-vs-managed active-path scan over:
 
 - `Projectile.CollisionDetect_Device` `0x060003E1` — PC `0x180379180`;
 - `Projectile.CollisionDetect_Plant` `0x060003E3` — PC `0x1803799B0`;
 - `Projectile.CollisionDetect_Zombie` `0x060003E4` — PC `0x180379D00`.
 
-Include resolution/helper methods only when direct original-native call evidence proves the dependency belongs to the detector's active business path and its managed body has concrete loss. Known dependency candidates include `Collision_Device` (`0x060003E6`, PC `0x18037B010`) and `Collision_Zombie` (`0x060003EA`, PC `0x18037B170`); `Collision_Plant` must not be included merely by MethodDef adjacency because prior direct-xref review did not establish it as the detector's direct resolution path.
+Include a helper/resolution method only when direct native call evidence proves it belongs to the active business path and its managed body has concrete loss. MethodDef adjacency and warning count alone are insufficient.
 
 A later HF stage is allowed only when both conditions hold:
 
 1. concrete managed loss/mis-reconstruction is proven from original PC native/metadata evidence; and
 2. the affected method is materially active in gameplay.
 
-If no remaining detector/dependency cluster satisfies both conditions, stop HF recovery and proceed to Unity `2022.3.44f1c1`, package restoration, 67/67 package-script validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation, then necessary iOS platform adaptation.
+If no remaining detector/helper cluster satisfies both conditions, stop HF recovery and proceed to Unity `2022.3.44f1c1`, package restoration, 67/67 package-script validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation, then necessary iOS platform adaptation.
