@@ -48,7 +48,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF26 `afa0e052902139c09cee9c715fe9a75c6f124af3af8a5647c799dc6b457fefac`
 - HF27 `18d9efebdcfcccbbe6c805a9276c4427b4e6baa33673fb71b96a04245bb0e8de`
 - HF28 `8e342bcf856b638d551e286034a5acf32d46a8a07e35e48333f480499bd705dd`
-- **HF29 Projectile Zombie Collision Detector — native-backed formal final — `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`.**
+- HF29 `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`
+- **HF30 Projectile Device Collision Detector — native-backed formal final — `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`.**
 
 ## Recent retained results
 
@@ -60,77 +61,60 @@ Restores exactly `0x06000456–0x0600045E` Hurt_Armor1/2, Artillery, Ashes, Body
 
 Restores exactly `0x060003D2 Projectile.Update()`: sorting-order truncation, pause/start gates, movement tracks 3/4/5/6/7, native-order delta-time integration, shadow sync, out-of-map destruction, CollisionDetect, tracking/rotation, LightSaber cleanup and previousPosition.
 
-### HF25 — Collision Dispatch / Ground
+### HF25–HF30 — Projectile collision chain
 
-Restores exactly `0x060003E0 CollisionDetect()` and `0x060003E2 CollisionDetect_Ground()`: hitType routing, camp gates, ground threshold 240 only for IDs 29/30, native unordered comparison behavior, ground AreaDamage ID set, then Collision_AudioParticle + DestroyProjectile.
+- HF25 restores `0x060003E0 CollisionDetect()` and `0x060003E2 CollisionDetect_Ground()`.
+- HF26 restores `0x060003EB Collision_AudioParticle()`.
+- HF27 restores `0x060003E6 Collision_Device(Device)` and `0x060003EA Collision_Zombie(Zombie)`.
+- HF28 restores `0x060003E3 CollisionDetect_Plant(bool sameCamp)`.
+- HF29 restores `0x060003E4 CollisionDetect_Zombie(bool sameCamp)`.
+- HF30 restores `0x060003E1 CollisionDetect_Device(bool sameCamp)` — RID 993 — PC `0x180379180`.
 
-### HF26 — Collision Audio / Particle
+HF30 accepted ordinary Device collision semantics: enumerate `board.deviceManager.deviceList` with disposal, `CanAttacked(damage)`, camp/sameCamp gate, ordered X/Y AABB and Z/H overlap, then first-match `Collision_Device` dispatch. IDs 19/23 retain the native two-phase new-contact path using `device.transform.position` for current contact and projectile `previousPosition` for persistent-contact suppression, collect new contacts before resolution, then inline AreaDamage/Device.TakeDamage -> Collision_AudioParticle with the `gameObject.activeSelf` break gate.
 
-Restores exactly `0x060003EB Collision_AudioParticle()` from PC `0x18037A410`: native particle/audio switches, positions/scales/shakes, sorting layer, ID30 Animator, clip/volume/pitch rules, ID0/1 RNG order and ID30 double audio.
+HF30 formal validation:
 
-### HF27 — Collision Resolution Core
-
-Restores exactly `0x060003E6 Collision_Device(Device)` and `0x060003EA Collision_Zombie(Zombie)`. Accepted AreaDamage ID sets, direct TakeDamage fallback, Collision_AudioParticle post-processing and 19/23 projectile-preservation rules.
-
-### HF28 — Projectile Plant Collision Detector
-
-Restores exactly `0x060003E3 CollisionDetect_Plant(bool sameCamp)` from PC `0x1803799B0`: Plant list enumeration/disposal, ordered X/Y AABB, camp/sameCamp gate, Z/H overlap, first match resolution, AreaDamage ID set, post-hit audio/particle and 19/23 projectile-preservation rule. Final Drive DLL `1T-UTvHpTZbhSs49DBjwWYz1qK_YCeOQF`; provider closure 22 files.
-
-### HF29 — Projectile Zombie Collision Detector
-
-Restores exactly `0x060003E4 CollisionDetect_Zombie(bool sameCamp)` — RID 996 — PC `0x180379D00`.
-
-Accepted behavior:
-
-- ordinary IDs enumerate `board.zombieManager.zombieList` with disposal, require `CanAttacked`, camp/sameCamp, ordered X/Y AABB and Z/H overlap, then dispatch the first match to `Collision_Zombie`;
-- IDs 19/23 use indexed iteration plus `GetPredictedPosition(0f)` for current-frame position;
-- native current-frame COMISS/JAE rejection semantics are kept distinct from previous-frame overlap semantics;
-- persistent previous-frame overlap is suppressed using Zombie/Projectile `previousPosition`; only new contact dispatches `Collision_Zombie`;
-- inactive projectile after resolution stops special-path iteration.
-
-HF29 formal validation:
-
-- formal HF28 re-fetched and SHA-verified `8e342bcf856b638d551e286034a5acf32d46a8a07e35e48333f480499bd705dd`;
-- patcher workflow `34346510664` PASS, artifact SHA `83632ffd83dcc4c335926101fa757414458edf2f7b87ca93eb575e7690e34d67`;
-- deterministic double patch -> final SHA `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`;
-- Cecil reopen E4 `252 IL / 727 bytes / 1 EH`;
+- formal HF29 re-fetched and SHA-verified `8c13a6638276a0e201ee39192545bbbe73703a7251f4188080dcfcf0c4d55590`;
+- patcher workflow `34362687707` PASS, artifact SHA `970255e57dbcf414c06fc3dd36303d2a4db12e2b930f669510c9571d930313b6`;
+- deterministic double patch -> final SHA `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`;
+- Cecil reopen E1 `311 IL / 904 bytes / 3 EH`;
 - fixed ILSpy 11.0.0.9375 member readback PASS;
-- HF28 whole IL reproduced exactly; HF29 whole IL SHA `4baa4fc78ed28ca7ed903e3c80895a358adb9eb2ab25d77ee0cc09a1549953a4`;
-- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly E4 changed;
-- semantic diff SHA `86f00e9e65ae591a29dd63f0c796bca08bec29e887f14fb8f3ced56e239e3052`;
-- RecoveryAudit commit `76a97ca21c9bd973f76bb658ead398ad63175749`, workflow `34347012719` PASS, artifact SHA `43285cc5a7e47c65817fcb3e4d9b85756c413a875370f50ec621e3cdf2aef2ac`;
-- OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, E4 `252/727`, `RECOVERY_AUDIT_OK`.
+- HF29 whole IL reproduced exactly; HF30 whole IL SHA `4fe6bb80fe5de582c67c3e14427b526c244ab5f6dc9cba7cad0ce28970f2136e`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly E1 changed;
+- semantic diff SHA `59b9b5b2a1d7fcaf098b9185eea13ca8bb977183fcf4a8b8da25f2384d4735ba`;
+- RecoveryAudit commit `917087166a26893fce6ede5afefb02924206f44d`, workflow `34364225011` PASS, artifact SHA `d6157d9ff1fb7c139fd989d217f929f38b0b07017de94f03d99d8ab6499101db`;
+- OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, E1 `311/904`, `RECOVERY_AUDIT_OK`.
 
-HF29 Drive archive:
+HF30 Drive archive:
 
-- folder `1O6A2gXb983Z9-JDQWrI6DNTH27E05Xyb`;
-- cumulative audited DLL `1oQ8nG22Y4isLLlx8p9IkREwRDql0TVg1`;
-- patcher `19YVeHpF2OQNWQcY72ovwit8PfpmXEPw5`;
-- RecoveryAudit `13Y4SQ-E6ddzUbEYwbz_xPU9K_KLWNi0I`;
-- fixed ILSpy `14P_ve19i1cUMO9P2fYQwNZ5GRuCj7EvK`;
-- native evidence `1jPVmFMVcF5SOo472PmMGgOJWYjiTxzBW`;
-- payload manifest `1hc-k482JPIe0gRbDC2vJvZdbfpsPx-l3`, SHA `e1fceb7193a29b84eb1492d9d90de7673f8bd958279c01f265163846f406e4a4`;
-- Evidence-FINAL `1ZfzRa3dCnZDUS7AA946YN00X8mvgJrAg`, SHA `8798bd15d3fe5ef048a7676b51530e9b693d9e4da6c9c93598fcbc3439cd2c08`;
-- SHA256SUMS-FINAL `1ztmpGKao9WYnGGkG9GN4cqoVngfEfAGh`, SHA `597986324dee080221c2da179de8f1da7ca62b2dcd7f21b0010d740cfaf55793`;
+- folder `1JXbnqb-JQ7ofCyL26NpieGgIVkp1AUdF`;
+- cumulative audited DLL `1sjYzcOCDcRu7adJ-paQUKb95uHeMdTac`;
+- patcher `1uPEcJcnx_tvfzrUFp8MYO4-WukwkiYHZ`;
+- RecoveryAudit `1Li2VnNyhHisScOfvGhsTymoPDbtgD1MB`;
+- fixed ILSpy `1Z1l7hSzuByFFPLD_ZlnYYVJ6fup0yjAZ`;
+- native evidence `137zp1Wp15xZqMMApJ_TWILvnvi10eBzs`;
+- payload manifest `1tn28Q06XCIOZV6obByGMjIwMY8ov79Lu`, SHA `edd247bfbfe66bd6c1333a03e35988c649ad82e7f6a3e80437fab484ff916663`;
+- Evidence-FINAL `1XGdnMedJ9VCP4xRJNZARZJJze5-OepCx`, SHA `8ede9b565fa0e18fc43ad023c481715326d32936dd645ec5fba7388f681ed951`;
+- SHA256SUMS-FINAL `1Gu2xYzt0B_jC7VJD7spznywlE_D6pG83`, SHA `e5fa7dd034e1358680eb65450c2a669421b5426ba39aec1ecb8fd7561c649afe`;
 - provider final readback `has_more=false`, exactly 22 files = 20 payloads + 2 closure files.
 
-Evidence: `Tools/HighFidelityPatch/Evidence/HF29-Projectile-Zombie-Collision-Detector.md`.
+Evidence: `Tools/HighFidelityPatch/Evidence/HF30-Projectile-Device-Collision-Detector.md`.
 
-**HF29 formal acceptance: PASS. HF29 is now the only allowed formal input for any later cumulative HF stage.**
+**HF30 formal acceptance: PASS. HF30 is the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF30
+## Current decision gate — do not auto-open HF31
 
-HF29 closes the Zombie detector. Re-run the remaining native-vs-managed active-path scan on the final unrecovered dispatcher target:
+HF30 closes the final unrecovered direct target of the recovered `Projectile.CollisionDetect()` dispatcher. Re-run a broad remaining native-vs-managed active-path scan rather than continuing by warning count.
 
-- `Projectile.CollisionDetect_Device` `0x060003E1` — PC `0x180379180`.
-
-Open HF30 only when both are true:
+Open another HF stage only when both are true:
 
 1. original PC native/metadata proves concrete managed loss or mis-reconstruction; and
 2. the method is materially active in gameplay.
 
-Do not include neighboring methods by MethodDef adjacency or warning count alone. If E1 does not pass both gates, stop HF recovery and proceed to Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
+Priority scan targets include remaining methods actually called by the recovered projectile runtime (`Update_Tracking`, `Rotating`, `SetEulerAngles`, and any creation/aim helpers proven active), plus other gameplay-critical managed methods with independent native bodies. Shared-stub xref centrality and isolated Cpp2IL warnings are insufficient.
+
+If no remaining candidate passes both gates, stop HF recovery and proceed to 67/67 Unity/package validation, recovered Assembly-CSharp integration, compile/scene/gameplay validation and only then necessary iOS adaptation.
