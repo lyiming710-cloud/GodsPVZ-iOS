@@ -170,6 +170,8 @@ namespace Template
             UnityEngine.GameObject go = new UnityEngine.GameObject("One shot audio");
             go.transform.position = position;
             UnityEngine.AudioSource source = go.AddComponent<UnityEngine.AudioSource>();
+            if ((object)source == null)
+                throw new System.NullReferenceException();
             source.clip = clip;
             source.volume = volume;
             source.pitch = pitch;
