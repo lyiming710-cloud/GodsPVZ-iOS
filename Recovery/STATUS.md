@@ -17,6 +17,7 @@ A stage is not final until original native attribution, formal-input SHA validat
 - Cpp2IL source commit `5fb20304df698ffd3d0e664b2a698cd911dc9d57`; reproduced PC baseline `2318/2319`, sole full failure closed in HF3.
 - Native attribution rule: original MethodDef RID-1 -> Assembly-CSharp CodeGenModule methodPointers index.
 - Fixed ILSpyCmd / ICSharpCode.Decompiler `11.0.0.9375`, reproduced 56-DLL fixed-Cpp2IL reference set, reference ZIP SHA `fe091e5a5389c2491eebeff72c83c394097bef67ffd45a25cf7de01c9aad9ef1`.
+- Assembly-CSharp MethodDef total must remain `2317`.
 
 ## Final cumulative HF chain
 
@@ -52,7 +53,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF30 `6ccccf685950edba428b51dbe3aa95e511caa467d134dd4202939e19ef655c24`
 - HF31 `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`
 - HF32 `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`
-- **HF33 Projectile Aim / Euler Runtime Core — native-backed formal final — `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`.**
+- HF33 `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`
+- **HF34 Projectile Runtime Support Core — native-backed formal final — `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`.**
 
 ## Recent retained results
 
@@ -70,46 +72,11 @@ HF25–HF30 formally restore `CollisionDetect`, Ground, AudioParticle, Device/Zo
 
 ### HF31 — Projectile Rotating Runtime Core
 
-Restores exactly `0x060003F6 Projectile.Rotating()` — PC `0x18037BE20`.
-
-Accepted behavior:
-
-- real `Projectile.speed` field is `UnityEngine.Vector3`; native reads `speed.x`;
-- negative or NaN/unordered `speed.x` selects Y local Euler `180f`, otherwise `0f`;
-- `angularAcceleration != 0` integrates `angularSpeed += Time.deltaTime * angularAcceleration`;
-- non-zero angular speed rotates `projectileSprite` and `projectileAnimation` around Z/forward in `Space.World`.
-
-HF31 final SHA `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`; fixed ILSpy, whole-assembly semantic isolation, permanent RecoveryAudit and 20+2 Drive closure all passed. HF31 is retained as the accepted direct input to HF32.
+Restores exactly `0x060003F6 Projectile.Rotating()` — PC `0x18037BE20`. `Projectile.speed` is a real `Vector3`; native uses `speed.x` for facing, integrates angularSpeed with angularAcceleration, and rotates sprite/animation around world Z. HF31 final SHA `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`; all formal gates and 20+2 closure passed.
 
 ### HF32 — Projectile Tracking Runtime Core
 
-Restores exactly `0x060003D8 Projectile.Update_Tracking()` — RID `984`, PC `0x18037D4D0`.
-
-Accepted behavior:
-
-- initializes `target = null` and `minX = 2147483648f`;
-- iterates `board.zombieManager.zombieList`;
-- skips `IsDisabled()` zombies;
-- requires `CanAttacked()` and retains the attackable zombie with minimum `fX`;
-- preserves foreach `Enumerator.Dispose/finally`;
-- if a target exists, calls `Aim(new Vector3(target.fX - fX, target.fY - fY, 0f))`.
-
-HF32 formal validation:
-
-- formal HF31 input re-fetched and SHA-verified;
-- patcher workflow `34374542786` PASS, artifact ID `10113295189`;
-- deterministic double patch -> `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`;
-- Cecil reopen `55 IL / 150 bytes / 1 EH`;
-- fixed ILSpy member gate PASS;
-- HF31 whole IL reproduced exactly; HF32 whole IL `e81d4db126c25a9d3f593c0535017d4a0d24e3cca04e24635ea4bfe0b1769c89`;
-- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, exactly `0x060003D8` changed;
-- semantic diff `2c5caa7d12a898c3897ee123d0ab0e6400d1a2a482381a96ec0e8f6f1a09807a`;
-- published RecoveryAudit OPEN1/OPEN2 PASS and `RECOVERY_AUDIT_OK`;
-- Drive folder `1Uww_2PvbJIX3IUvyQRlWIHjqZQ1YHtkO`, final DLL `1SS6-gWmohn9JqU772ZAJ8vkCB4t4QWwP`, final readback exactly 22 files.
-
-Evidence: `Tools/HighFidelityPatch/Evidence/HF32-Projectile-Tracking-Runtime-Core.md`.
-
-**HF32 formal acceptance: PASS. HF32 is retained as the accepted direct input to HF33.**
+Restores exactly `0x060003D8 Projectile.Update_Tracking()` — RID `984`, PC `0x18037D4D0`: choose the enabled/attackable zombie with minimum `fX`, preserve foreach Dispose/finally, and call `Aim(target-projectile XY delta)`. HF32 final SHA `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`; all formal gates and 20+2 closure passed.
 
 ### HF33 — Projectile Aim / Euler Runtime Core
 
@@ -118,71 +85,73 @@ Restores exactly:
 - `0x060003DC Projectile.Aim(Vector3)` — RID `988`, PC `0x180378D50`;
 - `0x060003F8 Projectile.SetEulerAngles(float,float)` — RID `1016`, PC `0x18037C120`.
 
-The original PC Windows release was re-fetched from the archived game package and the fixed GameAssembly/global-metadata hashes were re-verified before behavioral closure.
+`Aim` computes the atan2 direction, preserves speed magnitude while redirecting the Vector3 and calls SetEulerAngles. `SetEulerAngles` preserves original angular/zAngular fields, computes a local effective z through native Approximately/Lerp logic, applies effective z to sprite/animation/track and original angular to shadow. HF33 final SHA `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`; fixed ILSpy, semantic isolation, permanent RecoveryAudit and Drive 20+2 closure all passed.
 
-Accepted `Aim` behavior:
+### HF34 — Projectile Runtime Support Core
 
-- `angle = Mathf.Atan2(distant.y, distant.x) * 57.29578f`;
-- ordered-negative `speed.x` applies `180f - angle`; unordered/NaN does not take that negative branch;
-- normalize `distant` with Unity Vector3 semantics;
-- preserve the current three-component `speed` magnitude and redirect `speed` along normalized `distant`;
-- call `SetEulerAngles(angle, 0f)`.
+Restores exactly:
 
-Accepted `SetEulerAngles` behavior:
+- `0x0600013E GlobalStaticVars.CreateAudioAtPoint(AudioClip,Vector3,float,float)` — RID `318`, PC `0x18031B350`;
+- `0x060003D6 Projectile.Update_Time()` — RID `982`, PC `0x18037D220`;
+- `0x060003DB Projectile.Update_MoveTrack7()` — RID `987`, PC `0x18037CCF0`;
+- `0x06000450 Zombie.GetPredictedPosition(float)` — RID `1104`, PC `0x1803617F0`.
 
-- stores original `angular` and `zAngular` arguments in fields immediately;
-- local effective z becomes `angular` for zero/Approximately cases, otherwise uses Abs-selected `Mathf.Lerp(angular,zAngular,selected/(angular+zAngular))`;
-- sprite and animation preserve x/y and receive effective z;
-- shadow preserves x/y and receives original `angular`;
-- track preserves the original native behavior of sourcing x/y from `projectileSprite` and using effective z;
-- local effective z is not written back into the `zAngular` field.
+Accepted behavior:
 
-HF33 formal validation:
+- `CreateAudioAtPoint/4`: Unity-null clip returns null; create one-shot GameObject and AudioSource; assign position, clip, volume, pitch and spatialBlend=0; Play; destroy the temporary object after `clip.length * max(0.01f, Time.timeScale)`; return the AudioSource.
+- `Update_Time`: integrate `livingTime` by `Time.deltaTime * updateRate`; preserve ID27/28 timed AreaDamage/Collision_AudioParticle/DestroyProjectile behavior; preserve ID21 periodic plant damage and LightSaber explosion timeout.
+- `Update_MoveTrack7`: preserve native zSpeed equation and plant-centered rotating-offset speed computation.
+- `GetPredictedPosition`: preserve `(fX,fY,fZ)` plus `(time + Time.deltaTime) * rSpeed` in X/Y with Z unchanged.
 
-- formal HF32 Drive final re-fetched and SHA-verified `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`;
-- patcher workflow `34381241262` PASS;
-- patcher artifact ID `10115939120`, SHA `3b53a4e2a22d9efc41918c87f6648911018bdd9a0a1b7c075c864d0fd262db53`;
-- independent double patch -> byte-identical `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`;
-- Cecil reopen Aim `31 IL / 93 bytes / 0 EH`, SetEulerAngles `118 IL / 386 bytes / 0 EH`;
-- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL member readback PASS, stderr 0, Cpp2IL refs 0, issue markers 0;
-- HF32 whole IL reproduced exactly `e81d4db126c25a9d3f593c0535017d4a0d24e3cca04e24635ea4bfe0b1769c89`;
-- HF33 whole IL SHA `36f84c63dc8906ab33424da6a67246569a7e103e5b2ffbf35ca757d698698450`;
-- accepted HF31->HF32 semantic diff reproduced byte-for-byte first at `2c5caa7d12a898c3897ee123d0ab0e6400d1a2a482381a96ec0e8f6f1a09807a`;
-- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, changed exactly `0x060003DC` and `0x060003F8`;
-- HF32->HF33 semantic diff SHA `59d5f0c92d7115c54bc4f5ee69881c5b120d1a99dabc640e7ce180dbfdc3ceae`;
-- permanent RecoveryAudit commit `2d57910889988b590f1dd07cdcc34ee12897b952`;
-- RecoveryAudit workflow `34381940381` PASS, artifact ID `10116213345`, SHA `3685e1d9fd17d8b277a64a8bd4cc05c293eaff87869bd07d81caa36f1cf51139`;
-- published auditor OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Aim `31/93`, SetEulerAngles `118/386`, `RECOVERY_AUDIT_OK`.
+HF34 formal validation:
 
-HF33 Drive archive:
+- formal HF33 input SHA-verified `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`;
+- final stable-audio-CIL template commit `ee6092042d3396e71c01a574fad5f59a6d84ff49`;
+- final patcher workflow `34387511067` PASS;
+- patcher artifact ID `10118287463`, SHA `e9e39330f029467bb6cf86af153a630e62283ee3214c1b2178494b7a0473a1f2`;
+- independent double patch -> byte-identical `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`, stderr 0;
+- Cecil reopen CreateAudioAtPoint/4 `55 IL / 145 bytes / 0 EH`, Update_Time `81/225/0`, Update_MoveTrack7 `67/207/0`, GetPredictedPosition `36/83/0`;
+- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL readback PASS for all four, stderr 0, Cpp2IL refs 0, issue markers 0;
+- HF33 whole IL reproduced exactly `36f84c63dc8906ab33424da6a67246569a7e103e5b2ffbf35ca757d698698450`;
+- HF34 whole IL SHA `96d4bd053040cb1531d3feb5f2e28d20cfd9f51ebc273d6a457127f312088599`;
+- accepted HF32->HF33 semantic diff reproduced byte-for-byte first at `59d5f0c92d7115c54bc4f5ee69881c5b120d1a99dabc640e7ce180dbfdc3ceae`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, changed exactly `0x0600013E`, `0x060003D6`, `0x060003DB`, `0x06000450`;
+- HF33->HF34 semantic diff SHA `27e250ef34624ad70c5345c770eefe52d7204a4452d7c861013e1a72dcc59697`;
+- permanent RecoveryAudit commit `addee3ab7b67d406561e8b9e11a2eae75296a786`;
+- RecoveryAudit workflow `34388391648` PASS, artifact ID `10118629226`, SHA `32637b66f392dfb4d4d880e54b3ce768e43178d4a04606bbcdce3e1d37645879`;
+- published auditor OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, all four target sizes match, terminal `RECOVERY_AUDIT_OK`.
 
-- folder `1jGlVm6aPkLamhOSRuCPZezPqwC-zcQmT`;
-- cumulative audited DLL `1Ogbe_UWDSdux7n9ROWyRr5e6dU1Nk5Vm`;
-- patcher `1MbL4joVSYGeIMUJS4FO8qhWbDZ-3DUFZ`;
-- RecoveryAudit `1kj41inhhOifAmMlcUL2ZGgHYP4g_KKrc`;
-- fixed ILSpy `1bmEgTCcHue3J_xYaM3q2tqV0HdRvukOk`;
-- native evidence `1aFA43x3zI2G1UdyXmKj1GeKPLFAFV_5F`;
-- semantic diff `1WUOWoHmMJagr1N0WBuBHboKGL7YzAfUw`;
-- payload manifest `1T5JqgT-axJVHjcKn2CKXfsgrbdNm4uDg`, SHA `bc6ae57092ea8d9e8ddec228b4f0070f5b3658c279a04cccebfab773ef45e84c`;
-- Evidence-FINAL `1J2V5wEhjPWoSh_WnxiHCozcJ9q0fy2U4`, SHA `781eca6bd6fe245bdcdbca77c1efbf950728fb978641785c0865609b196d25d2`;
-- SHA256SUMS-FINAL `1Q23ybMl2Boh2USLJPz4HYTm2m9ues4RZ`, SHA `bfbf169153ec1d9cc7821ec2fe74e4b6507ee333450c98d8d4b9a5880877c4d7`;
+HF34 Drive archive:
+
+- folder `18gmKI_V1HS2j1CFnzauo9GZkN3bJlTPf`;
+- cumulative audited DLL `1UEZgP33n40vo9klmH0sU5r8bx7kZt1iB`;
+- patcher `1jFoTaMOaneREMpLv-r0BLf2P-MEWVnFk`;
+- RecoveryAudit `1U_y6fl44zIEooVR29rsRo0kDB4mB5D27`;
+- fixed ILSpy `1cZD1za8a-LcKw6jL_7fbzuZAHUivyWCB`;
+- native evidence `1gm4reiFQgviwP4xy7DZKux4dEOEnuCL2`;
+- semantic diff `1BUnU0jZVFWonqWPPetcvw6Obtamy2_5e`;
+- payload manifest `112piV84o2zvDaUeBen5MeKCnn0YAXi_S`, SHA `7c8dddee9cabaf5fb4bdf3b319c83bf9cfd0213e341f526e8e20a00d85ed3596`;
+- Evidence-FINAL `14rbMKUmtCiEyz6ig4uC7fgm-fdCR3bhs`, SHA `0a684e5d9c151becfd6cb7dd787309100e625b34667799608215edbb638bb92a`;
+- SHA256SUMS-FINAL `18yet-e3uG_PGvF8OnWJhmGReHrkyPEVK`, SHA `5eee708f63ca70dac4470b8abf0848210e6b91ce0a98f30f8b9b0c94a4e62128`;
 - final provider readback: exactly 22 files = 20 payloads + 2 closure files.
 
-Evidence: `Tools/HighFidelityPatch/Evidence/HF33-Projectile-Aim-Euler-Runtime-Core.md`, commit `7d8b45d9dd7d410d9ea2f07fee17ff0310ef78e9`.
+Evidence: `Tools/HighFidelityPatch/Evidence/HF34-Projectile-Runtime-Support-Core.md`, commit `edc56dd90e92131e2dba544bd0761f977ac7e712`.
 
-**HF33 formal acceptance: PASS. HF33 is now the only allowed formal input for any later cumulative HF stage.**
+**HF34 formal acceptance: PASS. HF34 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF34
+## Current decision gate — do not auto-open HF35
 
-HF33 closes the active `Update_Tracking -> Aim -> SetEulerAngles` tracking/orientation chain. Do not create HF34 merely because other methods still contain Cpp2IL warnings or unattractive recovered IL.
+HF34 closes four additional active projectile-support methods, but does not authorize HF35 automatically. Re-run the original-native-vs-managed decision scan from the new HF34 formal cumulative DLL.
 
-Open HF34 only when both are independently proven:
+Remaining known candidates to reconsider include `Device.InjuryStatusUpdate`, `Plant.KillEvent`, and `Zombie.ZC_ArmoredFlagWakeUpZombies`, but none is an HF35 target merely because it contains damaged Cpp2IL output. In particular, `Plant.KillEvent` still depends on unresolved shared native helper `0x1804A25F0`; that dependency must be behaviorally closed before it can enter a formal stage.
+
+Open HF35 only if both are independently proven:
 
 1. original PC native/metadata demonstrates concrete managed loss or mis-reconstruction; and
-2. the method is materially active in gameplay on a path not already semantically closed by HF1–HF33.
+2. the method is materially active in gameplay, with all required native dependencies behaviorally closed.
 
-Do not use warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality as a gate. If no remaining candidate satisfies both conditions, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF33 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+Do not use warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality as a gate. If no remaining candidate satisfies both conditions, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF34 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
