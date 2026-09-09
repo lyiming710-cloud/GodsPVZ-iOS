@@ -41,8 +41,8 @@ TypeReference MT(TypeReference t, MethodDefinition? dst = null, GenericInstanceT
 {
     if (t is GenericParameter gp)
     {
-        if (gp.GenericParameterType == GenericParameterType.Type && ctx != null) return MT(ctx.GenericArguments[gp.Position], dst);
-        if (gp.GenericParameterType == GenericParameterType.Method && dst != null && gp.Position < dst.GenericParameters.Count) return dst.GenericParameters[gp.Position];
+        if (gp.Type == GenericParameterType.Type && ctx != null) return MT(ctx.GenericArguments[gp.Position], dst);
+        if (gp.Type == GenericParameterType.Method && dst != null && gp.Position < dst.GenericParameters.Count) return dst.GenericParameters[gp.Position];
         throw new InvalidDataException($"HF34 generic param {gp.FullName}");
     }
     if (t is ByReferenceType br) return new ByReferenceType(MT(br.ElementType,dst,ctx));
@@ -92,7 +92,7 @@ MethodReference Construct(MethodReference m, MethodDefinition dst)
     foreach (var gp in m.GenericParameters) x.GenericParameters.Add(new GenericParameter(gp.Name,x));
     TypeReference MapMethodType(TypeReference t)
     {
-        if (t is GenericParameter gp && gp.GenericParameterType == GenericParameterType.Method)
+        if (t is GenericParameter gp && gp.Type == GenericParameterType.Method)
             return x.GenericParameters[gp.Position];
         if (t is ByReferenceType br) return new ByReferenceType(MapMethodType(br.ElementType));
         if (t is ArrayType ar) return new ArrayType(MapMethodType(ar.ElementType), ar.Rank);
