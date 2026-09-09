@@ -125,7 +125,7 @@ EB member readback exits 0 with stderr 0, zero Cpp2IL references and zero issue 
 
 The semantic-normalization implementation was first checked by regenerating HF24->HF25: it reproduced accepted HF25 semantic diff SHA `e64591dafd6297de6c3193683eef80078cc27490a849ce92206250f450cea2a2` byte-for-byte before being used for HF25->HF26.
 
-## Drive pre-closure acceptance
+## Drive formal acceptance
 
 Archive folder `HF26-Projectile-Collision-Audio-Particle`, ID `1mPZ-qZ5WBdjfBzPpR4nKxiufPvLbK-TH`.
 
@@ -141,11 +141,13 @@ Key payload artifacts:
 - semantic isolation `1pCt00yAEI7bqcY772nG7cRDgaRDEKUwB`;
 - MethodDef table `1iRV-EdQA-35OJZ3v0aZHFtI7B9gAOljv`;
 - RecoveryAudit log `1vwxGm00hsoATQe-omWcynVSTLIRFZtxB`;
-- payload SHA manifest `1h7P7OUC_-tQuoip3wEZSDK_rNvitXWQr`, SHA-256 `b5fedf16e09450c1494414910d7d8af5523ab817d46e6fb028cb40f02027503d`.
+- payload SHA manifest `1h7P7OUC_-tQuoip3wEZSDK_rNvitXWQr`, SHA-256 `b5fedf16e09450c1494414910d7d8af5523ab817d46e6fb028cb40f02027503d`;
+- authoritative Evidence-FINAL `1cMvaPfip_Pg5zHIOHfqNWdjcOned6hBX`, SHA-256 `6355726fe788f5124fd75d3fa842e12f5b517b22af16a881b4af399adecd5ab7`;
+- authoritative SHA256SUMS-FINAL `1ZhXT2lU60PVs6ob0F2zL2slGRfupeBE4`, SHA-256 `0c8c724f972e089e77dd540c922bccec28b6f43524cbe5b14ee53d50be92c657`.
 
-Provider pre-closure readback has no next page and verifies exactly **20 payload files**.
+Provider final readback has no next page and verifies exactly **22 files = 20 payloads + 2 closure files**.
 
-Closure IDs/hashes are appended after final Drive closure.
+**HF26 formal acceptance: PASS. After STATUS advancement, HF26 is the only allowed formal input for any later cumulative HF stage.**
 
 ## Next decision gate
 
