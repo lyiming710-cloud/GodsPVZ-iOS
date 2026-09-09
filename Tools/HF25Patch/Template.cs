@@ -83,7 +83,8 @@ namespace Template
         private void CollisionDetect_Ground()
         {
             float threshold = (ID == 29 || ID == 30) ? 240f : 0f;
-            if (threshold < fZ - fZ_shadow)
+            float diff = fZ - fZ_shadow;
+            if (!(threshold >= diff))
                 return;
 
             if ((ID >= 9 && ID <= 11) || ID == 15 || (ID >= 26 && ID <= 32))
