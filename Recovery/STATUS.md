@@ -54,7 +54,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF31 `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`
 - HF32 `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`
 - HF33 `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`
-- **HF34 Projectile Runtime Support Core — native-backed formal final — `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`.**
+- HF34 `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`
+- **HF35 Device Injury Status Core — native-backed formal final — `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`.**
 
 ## Recent retained results
 
@@ -137,21 +138,75 @@ HF34 Drive archive:
 
 Evidence: `Tools/HighFidelityPatch/Evidence/HF34-Projectile-Runtime-Support-Core.md`, commit `edc56dd90e92131e2dba544bd0761f977ac7e712`.
 
-**HF34 formal acceptance: PASS. HF34 is now the only allowed formal input for any later cumulative HF stage.**
+**HF34 formal acceptance: PASS. HF34 is retained as the accepted direct input to HF35.**
+
+### HF35 — Device Injury Status Core
+
+Restores exactly `0x0600032B Device.InjuryStatusUpdate()` — original RID `811`, PC `0x180349280`.
+
+Accepted behavior:
+
+- original `COMISS 0,healthPoint` / `JAE` semantics invoke `Broken()` only for ordered `healthPoint <= 0`; unordered/NaN proceeds through the active body;
+- non-broken processing is specific to Device `ID == 4`;
+- damage fraction is `1f - healthPoint / maxHealthPoint` and each crossed `(brokenLevel + 1) / 3` threshold increments `brokenLevel`;
+- each crossed threshold updates the `Roadblock` SpriteRenderer from `ResourceManager.deviceSprites[brokenLevel]` when Unity-truthy;
+- native helper `0x1802FB100` is closed as the ParticlesManager singleton backing-field getter/shared thunk, followed by `CreatNewParticle(ParticleState.RoadblockBroken)` where the native enum value is `26`;
+- a valid particle copies this Device transform position;
+- audio uses `ResourceManager.particleClips[12]`, `Camera.main.transform.position`, `AudioVolume() * 1.6f`, and pitch `0.7f` through the already formal four-argument `CreateAudioAtPoint`.
+
+HF35 formal validation:
+
+- formal HF34 input re-fetched and SHA-verified `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`;
+- original PC GameAssembly/global-metadata fixed hashes re-verified and the native body/callsite closed;
+- final patcher build head `85934bf0ca63b0faa9c1f59a96ed938293f5012c`;
+- patcher workflow `34391370140` PASS;
+- patcher artifact ID `10119789189`, SHA `fabd1010ee865a1c3021ddb37a457c24115d74c1ecddcdb0ba3c145c9cdf27dc`;
+- independent double patch -> byte-identical `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`, stderr 0;
+- Cecil reopen `79 IL / 244 bytes / 0 EH`;
+- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL member readback PASS, stderr 0, Cpp2IL refs 0, issue markers 0;
+- HF34 whole IL reproduced exactly `96d4bd053040cb1531d3feb5f2e28d20cfd9f51ebc273d6a457127f312088599`;
+- HF35 whole IL SHA `ca155db767d34a814ce322166216aa7c83a868e5d44743c25b71d2c120f22a9e`;
+- accepted HF33->HF34 semantic diff reproduced byte-for-byte first at `27e250ef34624ad70c5345c770eefe52d7204a4452d7c861013e1a72dcc59697`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, changed exactly `0x0600032B`;
+- HF34->HF35 semantic diff SHA `9c0dacb91256ecadf658ae35faba6474ee5f3f269e7d0f4b2b35b3cfacc22a2e`;
+- permanent RecoveryAudit commit `11cb9d454071cf4162ed4813b0c376d120408bd1`;
+- RecoveryAudit workflow `34417105324` PASS, artifact ID `10129507233`, SHA `32a52ed6ccdd3cf29808e86da1324c474e8cf5f456f3caef32b7cc5d947bbe75`;
+- published auditor OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, Device.InjuryStatusUpdate `79/244` both, stderr 0, terminal `RECOVERY_AUDIT_OK`.
+
+HF35 Drive archive:
+
+- folder `1ZqhsosBN7DZ2RBQcK_b6xJ_RRcu8QZgc`;
+- cumulative audited DLL `1mjP1TgepHjgjw-r2y-Y3K576nhQXOxCF`;
+- patcher `1HggbixmDAu6dEtaQ8RfATv1QXi0dVTvN`;
+- RecoveryAudit `13ejCFG8F13pt8VKrxJbJWJhm1JNxz1iM`;
+- fixed ILSpy `1W1vrOSdabizyKrE-Gf8GXKy7pAoGXkBY`;
+- native evidence `1MPyUuuXRAUGe1zwpd39vf3hThgZ6gq-_`;
+- semantic diff `1yY3mWdrpqdKFm-qjKIDGwKkF2PADcjJd`;
+- payload manifest `19WftCs0qhKBGrntxvhNKh2PtLuThnKtP`, SHA `56fef5e8e4d82b8b7504bdffebaa8ffb01fe7b447c0d407aa976b8132b2518f0`;
+- Evidence-FINAL `1sN88YRR6CiPaL5u2Qd7qbO4ioxe9TXe-`, SHA `66b7af677c9f96edfd852fe3944c492554811a64a37ff3212192240f6445beff`;
+- SHA256SUMS-FINAL `1-FKM0F2CDmUu9Rca-f199-GB79PVVDCv`, SHA `6c3eabb8f0c7ae21dc015a59408affae9beb0cf80a9b7755d7609a5342ff86b5`;
+- final provider readback: exactly 22 files = 20 payloads + 2 closure files.
+
+Evidence: `Tools/HighFidelityPatch/Evidence/HF35-Device-Injury-Status-Core.md`, commit `d08323ea70f0600bb23543108e1b4cea2d5e8327`.
+
+**HF35 formal acceptance: PASS. HF35 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF35
+## Current decision gate — do not auto-open HF36
 
-HF34 closes four additional active projectile-support methods, but does not authorize HF35 automatically. Re-run the original-native-vs-managed decision scan from the new HF34 formal cumulative DLL.
+HF35 closes the active Device roadblock injury-status path. Do not create HF36 merely because another MethodDef has warnings or unattractive recovered IL.
 
-Remaining known candidates to reconsider include `Device.InjuryStatusUpdate`, `Plant.KillEvent`, and `Zombie.ZC_ArmoredFlagWakeUpZombies`, but none is an HF35 target merely because it contains damaged Cpp2IL output. In particular, `Plant.KillEvent` still depends on unresolved shared native helper `0x1804A25F0`; that dependency must be behaviorally closed before it can enter a formal stage.
+Re-run the original-native-vs-managed decision gate from the new HF35 formal cumulative DLL. Two known areas require special treatment:
 
-Open HF35 only if both are independently proven:
+- `Plant.KillEvent` remains blocked until shared native helper `0x1804A25F0` is behaviorally identified and all dependencies close; do not infer or omit that call.
+- `Zombie.ZC_ArmoredFlagWakeUpZombies` may be reconsidered as a separate zombie wake-up subsystem, but must independently satisfy concrete managed-loss and materially-active-path gates against the HF35 cumulative assembly and original PC native body.
+
+Open HF36 only if both are independently proven:
 
 1. original PC native/metadata demonstrates concrete managed loss or mis-reconstruction; and
-2. the method is materially active in gameplay, with all required native dependencies behaviorally closed.
+2. the method is materially active in gameplay, with every required native dependency behaviorally closed.
 
-Do not use warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality as a gate. If no remaining candidate satisfies both conditions, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF34 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+Do not use warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality as a gate. If no remaining candidate satisfies both conditions, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF35 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
