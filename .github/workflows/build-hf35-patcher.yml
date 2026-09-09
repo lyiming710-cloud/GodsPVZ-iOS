@@ -1,0 +1,33 @@
+name: Build HF35 device injury patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF35Patch/**'
+      - '.github/workflows/build-hf35-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF35 patcher
+        run: dotnet publish Tools/HF35Patch/HF35Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf35
+      - name: Smoke test
+        run: |
+          chmod +x out/hf35/GodsPVZ.HF35Patch
+          set +e
+          out/hf35/GodsPVZ.HF35Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf35/GodsPVZ.HF35Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF35Patch-linux-x64
+          path: out/hf35
+          if-no-files-found: error
