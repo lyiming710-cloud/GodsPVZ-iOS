@@ -33,9 +33,10 @@ namespace Template
 
         private void Rotating()
         {
+            bool reverse = speed < 0f || float.IsNaN(speed);
             transform.localEulerAngles = new UnityEngine.Vector3(
                 transform.localEulerAngles.x,
-                !(speed >= 0f) ? 180f : 0f,
+                reverse ? 180f : 0f,
                 transform.localEulerAngles.z);
 
             if (angularAcceleration != 0f)
