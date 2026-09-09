@@ -1,0 +1,33 @@
+name: Build HF28 projectile plant collision patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF28Patch/**'
+      - '.github/workflows/build-hf28-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF28 patcher
+        run: dotnet publish Tools/HF28Patch/HF28Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf28
+      - name: Smoke test
+        run: |
+          chmod +x out/hf28/GodsPVZ.HF28Patch
+          set +e
+          out/hf28/GodsPVZ.HF28Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf28/GodsPVZ.HF28Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF28Patch-linux-x64
+          path: out/hf28
+          if-no-files-found: error
