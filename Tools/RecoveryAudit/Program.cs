@@ -103,6 +103,7 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "Hurt_Normal", 2, 73),
     ("Zombie", "Hurt_Real", 2, 59),
     ("Zombie", "Hurt_Throughout", 2, 78),
+    ("Projectile", "Update", 0, 335),
 };
 
 void AuditOnce(string label)
