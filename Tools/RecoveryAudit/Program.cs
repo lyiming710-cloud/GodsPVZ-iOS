@@ -152,6 +152,9 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Plant", "ResetUpdateRate", 1, 45),
     ("Plant", "SetUpdateRate", 0, 70),
     ("Zombie", "GetRandenAnimationSpeedMagnification", 0, 10),
+    ("Zombie", "ResetMoveSpeed", 0, 20),
+    ("Zombie", "ResetUpdateRate", 1, 50),
+    ("Zombie", "TestPosition", 2, 90),
 };
 
 void AuditOnce(string label)
