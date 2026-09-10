@@ -59,7 +59,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF36 `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`
 - HF37 `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`
 - HF38 `25ca8b5afe45930dd39517c2477a96db520d067c067493c334f107201a973b5d`
-- **HF39 Element Runtime Core — native-backed formal final — `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`.**
+- HF39 `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`
+- **HF40 Element UI Start Core — native-backed formal final — `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`.**
 
 ## Recent retained formal results
 
@@ -69,15 +70,15 @@ Restores `CreateAudioAtPoint/4`, `Projectile.Update_Time`, `Projectile.Update_Mo
 
 ### HF35 — Device Injury Status Core
 
-Restores `0x0600032B Device.InjuryStatusUpdate()` / PC `0x180349280`, including roadblock thresholds, sprite/particle/audio behavior and native ordered-float semantics. Final `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`. Evidence commit `d08323ea70f0600bb23543108e1b4cea2d5e8327`.
+Restores `0x0600032B Device.InjuryStatusUpdate()` / PC `0x180349280`. Final `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`. Evidence commit `d08323ea70f0600bb23543108e1b4cea2d5e8327`.
 
 ### HF36 — Armored Flag Wake-Up Core
 
-Restores `0x0600048C Zombie.ZC_ArmoredFlagWakeUpZombies()` / PC `0x18036D560`, including self wake-up, zombieList eligibility filters and foreach Dispose/finally. Final `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`.
+Restores `0x0600048C Zombie.ZC_ArmoredFlagWakeUpZombies()` / PC `0x18036D560`. Final `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`.
 
 ### HF37 — Projectile Initial Core
 
-Restores `0x060003ED/3EE/3EF Projectile.Initial<T>` /6, /7, /10. Generic attribution is closed through original MethodSpec/generic-method tables. /6 and /7 forward defaults to /10; /10 restores position/speed/z/angular/track/origin initialization while intentionally preserving the original unused `acceleration` parameter. Final `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`. Evidence commit `b4c50aece1eb0e5f4f27096eb510ffc5b88ae394`; Drive folder `1L7mnzN8udi4HX-NiusZsOOgX4tp9S_9u`; final provider readback exactly 22 files.
+Restores `0x060003ED/3EE/3EF Projectile.Initial<T>` /6, /7, /10 with original MethodSpec/generic attribution and native defaults. Final `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`. Evidence commit `b4c50aece1eb0e5f4f27096eb510ffc5b88ae394`; Drive folder `1L7mnzN8udi4HX-NiusZsOOgX4tp9S_9u`; final provider readback exactly 22 files.
 
 ### HF38 — Plant Kill Event Core
 
@@ -85,52 +86,41 @@ Restores `0x0600037C Plant.KillEvent(Zombie)` and `0x0600038F Plant.PC_SSI_KillE
 
 ### HF39 — Element Runtime Core
 
-Restores exactly fourteen MethodDefs:
+Restores fourteen Element/Buff/ER/SnowPea runtime MethodDefs, including true `List<Buff>.Add`, native sign-crossing/shuttle/decay behavior, signed negative UI progress, banker-style ER rounding/clamp, and SnowPea ID5 element transitions. Final `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`. Evidence commit `3725046b046c19299a8993b99d0a7ec73d7928ee`; Drive folder `1Xf5KA-ZsvUUKbnL8PveKx5ia2AOPpOZT`; final provider readback exactly 22 files.
 
-- `0x06000102 BuffManager.AddBuff(Buff)`;
-- `0x0600011D Element.Burst()`;
-- `0x0600011F Element.Decay(int)`;
-- `0x06000121 ElementManager.GetEffectBoardEntry(ElementType,int)`;
-- `0x06000123 ElementManager.Effect(Element)`;
-- `0x06000125 ElementManager.Update()`;
-- `0x0600012D ElementUIController.UpdateUI(Element)`;
-- `0x0600013F GlobalStaticVars.AppearSprite(List<GameObject>,string)`;
-- `0x06000142 GlobalStaticVars.GetAnimationSprite_Name(List<GameObject>,string)`;
-- `0x06000145 GlobalStaticVars.HideSprite(List<GameObject>,string)`;
-- `0x0600035F Plant.ElementLevelUp(ElementType,int)`;
-- `0x0600036A Plant.GetER()`;
-- `0x06000373 Plant.GetElementPreference(ElementType)`;
-- `0x0600044D Zombie.GetER()`.
+### HF40 — Element UI Start Core
 
-Accepted behavior includes `List<Buff>.Add` then `Awake(false)`, resistance through `GetER`, `abs(point)>=15000` burst threshold, original sign-crossing/shuttle/decay behavior, signed negative UI progress, `Round` then `[0,100]` ER clamp, and SnowPea ID5 preference/element-level sprite transitions.
+Restores exactly `0x0600012B ElementUIController.Start()` / RID 299 / PC `0x180315850`.
+
+Accepted native behavior: compare `progress` against +0.0 with native `UCOMISS`; NaN/unordered and any nonzero value return, while ordered +0.0/-0.0 continues. Then independently deactivate non-null `back1`, `image1`, `back2`, `image2` GameObjects via `SetActive(false)`. HF40 emits `BNE.UN` so native unordered semantics are preserved.
 
 Formal validation:
 
-- formal HF38 input SHA-verified `25ca8b5afe45930dd39517c2477a96db520d067c067493c334f107201a973b5d`;
-- patcher build head `bd8f690f38eb9d872275f707e303442da2265271`, workflow `34431291604` PASS, artifact ID `10134579437`, SHA `244d4931e1612fd5afc631c7b3b125def0787881d0b9b2b8c9616fd690d046e8`;
-- independent double patch -> byte-identical `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`, stderr 0;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all fourteen targets exit 0, stderr 0, Cpp2IL refs 0, issue markers 0;
-- HF38 whole IL reproduced `a6a49a269cf0ef7f45094c0a7d329c0a076d6f42cb651d00a8d9019f87efe836`; HF39 whole IL `23e2734766d033c4b22767fd9b969d8312261cedc24622a38bf6ff5dc5dcc54d`;
-- prior HF37->HF38 semantic diff reproduced first at `c4e5311c70cefb2da5c5d14696df0b7383cc99dab8479f833cc6c763254ec0be`;
-- MethodDef `2317 -> 2317`, method blocks `2139 -> 2139`, normalized non-method skeleton identical, changed exactly the fourteen declared HF39 MethodDefs;
-- HF38->HF39 semantic diff `c7c2b30f98986999cf5ed1de9ef800f044e796a2f4f1002c769cb7c0b57868e0`;
-- permanent RecoveryAudit commit `1dfb57a1840ec0e8d4ce5a74f4d4e419f445f76a`, workflow `34431587167` PASS, artifact ID `10134685295`, SHA `409e8692556c0210702a0cf868073f26af3fe702e66ae892504e01669b34eed1`; independent OPEN1/OPEN2 passed all retained targets and ended `RECOVERY_AUDIT_OK`;
-- Evidence commit `3725046b046c19299a8993b99d0a7ec73d7928ee`;
-- Drive folder `1Xf5KA-ZsvUUKbnL8PveKx5ia2AOPpOZT`;
-- cumulative DLL `13G9muTu1ewxGljnTEIJAaxQONe4c16TS`;
-- payload manifest `1ila6MOgwuU5DeUFKN4UOt4x7EtuQOR3K`, SHA `a1fab01211b526fcdff6fc2f84d2aafd96cd6a37546abbdb13329a80bdebb7a3`;
-- Evidence-FINAL `12ncLOlGKXyQoiFE4_ViV9qmfpYPumQyp`, SHA `809fd6836b0423d5656b405543f1059a36f1799e16ceeb6e302aeb85ee1374d4`;
-- SHA256SUMS-FINAL `1MmJP9cjWeJKvjUhNQJg1O-D52dFSHyu2`, SHA `f8aebc6e8a546000cb76669e94b61cadb910df0493eeb93c83df93f7bd098a01`;
+- formal HF39 input SHA-verified `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`;
+- patcher build head `a5b337cc391264ff44a5655e9241b23e3cb9afec`, workflow `34433570862` PASS, artifact ID `10135362791`, SHA `55929a360a706af6de10972389dbaad1fe6078ea4f5a60841603a5cb7bc8dbc6`;
+- independent double patch -> byte-identical `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`, stderr 0;
+- Cecil reopen `41 IL / 133 bytes / 0 EH`; fixed ILSpy 11.0.0.9375 + 56 refs exit 0, stderr 0, Cpp2IL refs 0, issue markers 0;
+- HF39 whole IL reproduced `23e2734766d033c4b22767fd9b969d8312261cedc24622a38bf6ff5dc5dcc54d`; HF40 whole IL `fd43ae98ca25cc7a43f5265c76a924eaefb8fa8b4616575c6af914935fd0ff7e`;
+- prior HF38->HF39 semantic diff reproduced byte-for-byte at `c7c2b30f98986999cf5ed1de9ef800f044e796a2f4f1002c769cb7c0b57868e0`;
+- MethodDef `2317 -> 2317`, method blocks `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x0600012B`;
+- HF39->HF40 semantic diff `053387ddf76a053cc57cbca509bb72c653c5becea3d92e7c595be6a58b670d76`;
+- permanent RecoveryAudit commit `f418fa6214ff6cce680f00178ad54f5614e816bb`, workflow `34433765345` PASS, artifact ID `10135428591`, SHA `add5be4fafd3e2284ce0d76222b52a0b2a666418475ab59ccd8db5fdb914ebfb`; independent OPEN1/OPEN2 passed all retained targets and ended `RECOVERY_AUDIT_OK`;
+- Evidence commit `6685eec19815bfc571f9eeab97319ba3e45be6b6`;
+- Drive folder `1k_tnoO9Rx_BCVpkzdr7-tp06HDziPTXf`;
+- cumulative DLL `1bX-nH1QtTSzz-Qs15FnSzFngZSuu3VfW`;
+- payload manifest `1uMrfEq6xgH07bUYc8RWC0V7Y52_lFvz6`, SHA `0f68c8c8c632124058ca6a00b1cd082e10ad5a1bc10a584a529bbc9f42ad5cb6`;
+- Evidence-FINAL `1hc2NvG7hH7zTVEqkaERgY0IzwiXXnTRc`, SHA `c1068ca7b689073b9fdd7b6932657f3c83a629851f9992de766989b012a8e6eb`;
+- SHA256SUMS-FINAL `1xDuvQelRx61IUWSsYAZyEfWbWRMmsTqY`, SHA `6d202a09daf4405eec7f8b5b8983792524a09cfb790f60ee451a86da595b2f18`;
 - final provider readback exactly 22 files = 20 payloads + 2 closure files.
 
-**HF39 formal acceptance: PASS. HF39 is now the only allowed formal input for any later cumulative HF stage.**
+**HF40 formal acceptance: PASS. HF40 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Package scripts still require 67/67 validation before final Unity integration.
 
-## Decision gate — do not auto-open HF40
+## Decision gate — do not auto-open HF41
 
-Run a fresh residual active-path scan against the HF39 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+Run a fresh residual active-path scan against the HF40 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
 
-If no remaining candidate satisfies those gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF39 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies those gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF40 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
