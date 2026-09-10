@@ -62,7 +62,7 @@ TypeReference MT(TypeReference t, MethodDefinition? dst = null, GenericInstanceT
     if (t is GenericInstanceType gi)
     {
         var g = new GenericInstanceType(MT(gi.ElementType, dst, ctx));
-        foreach (var a in gi.GenericArguments) g.GenericArguments.Add(MT(a, dst));
+        foreach (var a in gi.GenericArguments) g.GenericArguments.Add(MT(a, dst, ctx));
         return g;
     }
 
