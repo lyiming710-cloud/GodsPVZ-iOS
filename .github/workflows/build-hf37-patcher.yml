@@ -1,0 +1,33 @@
+name: Build HF37 Projectile Initial patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF37Patch/**'
+      - '.github/workflows/build-hf37-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF37 patcher
+        run: dotnet publish Tools/HF37Patch/HF37Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf37
+      - name: Smoke test
+        run: |
+          chmod +x out/hf37/GodsPVZ.HF37Patch
+          set +e
+          out/hf37/GodsPVZ.HF37Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf37/GodsPVZ.HF37Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF37Patch-linux-x64
+          path: out/hf37
+          if-no-files-found: error
