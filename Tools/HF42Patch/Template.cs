@@ -32,25 +32,6 @@ namespace Template
         public float amplitude;
         public float shakeTime;
 
-        private static Vector3 RandomOffset(float amplitude)
-        {
-            Vector2 v = UnityEngine.Random.insideUnitCircle;
-            float mag = (float)Math.Sqrt((double)(v.x * v.x + v.y * v.y));
-            float x;
-            float y;
-            if (mag > 0.00001f)
-            {
-                x = v.x / mag;
-                y = v.y / mag;
-            }
-            else
-            {
-                x = 0f;
-                y = 0f;
-            }
-            return new Vector3(x * amplitude, y * amplitude, 0f);
-        }
-
         private void FixedUpdate()
         {
             if (shakeTime > 0f)
@@ -70,13 +51,29 @@ namespace Template
 
             if (!(0f >= shakeTime))
             {
-                dithering = RandomOffset(amplitude);
+                Vector2 v = UnityEngine.Random.insideUnitCircle;
+                float mag = (float)Math.Sqrt((double)(v.x * v.x + v.y * v.y));
+                float x;
+                float y;
+                if (mag > 0.00001f)
+                {
+                    x = v.x / mag;
+                    y = v.y / mag;
+                }
+                else
+                {
+                    x = 0f;
+                    y = 0f;
+                }
+                dithering = new Vector3(x * amplitude, y * amplitude, 0f);
+
                 Transform transform2 = Camera.main.transform;
                 Vector3 position2 = transform2.position;
                 transform2.position = new Vector3(
                     position2.x + dithering.x,
                     position2.y + dithering.y,
                     position2.z + dithering.z);
+
                 amplitude = (1f - Time.fixedDeltaTime / Time.fixedTime * 0.05f) * amplitude;
             }
             else
@@ -92,31 +89,29 @@ namespace Template
         public GameObject animationGroup = null!;
         public Vector3 dithering_anim;
 
-        private static Vector3 RandomOffset(float amplitude)
-        {
-            Vector2 v = UnityEngine.Random.insideUnitCircle;
-            float mag = (float)Math.Sqrt((double)(v.x * v.x + v.y * v.y));
-            float x;
-            float y;
-            if (mag > 0.00001f)
-            {
-                x = v.x / mag;
-                y = v.y / mag;
-            }
-            else
-            {
-                x = 0f;
-                y = 0f;
-            }
-            return new Vector3(x * amplitude, y * amplitude, 0f);
-        }
-
         private void Dithering_Animation(float amplitude)
         {
-            Vector3 next = new Vector3(0f, 0f, 0f);
+            float x = 0f;
+            float y = 0f;
             if (amplitude != 0f)
-                next = RandomOffset(amplitude);
+            {
+                Vector2 v = UnityEngine.Random.insideUnitCircle;
+                float mag = (float)Math.Sqrt((double)(v.x * v.x + v.y * v.y));
+                if (mag > 0.00001f)
+                {
+                    x = v.x / mag;
+                    y = v.y / mag;
+                }
+                else
+                {
+                    x = 0f;
+                    y = 0f;
+                }
+                x *= amplitude;
+                y *= amplitude;
+            }
 
+            Vector3 next = new Vector3(x, y, 0f);
             Transform transform = animationGroup.transform;
             Vector3 position = transform.position;
             transform.position = new Vector3(
