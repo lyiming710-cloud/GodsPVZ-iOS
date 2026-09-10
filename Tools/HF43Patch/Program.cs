@@ -207,7 +207,7 @@ var specs = new (uint token, string type, string name, int parameters, int minIl
 {
     (0x0600039Eu, "Plant", "ResetUpdateRate", 1, 45),
     (0x060003A7u, "Plant", "SetUpdateRate", 0, 70),
-    (0x06000451u, "Zombie", "GetRandenAnimationSpeedMagnification", 0, 15),
+    (0x06000451u, "Zombie", "GetRandenAnimationSpeedMagnification", 0, 10),
 };
 
 foreach (var s in specs)
