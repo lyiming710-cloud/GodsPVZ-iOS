@@ -31,7 +31,6 @@ The raw whole-assembly IL contains 3920 calls to `Cpp2ILHelpers.NoteDecompilerIs
 
 The strongest retained gameplay candidate remains the EnemyManager wave-timing chain:
 
-- `0x060001B0`? — lifecycle/root identity is not inferred from adjacency; the relevant concrete root is `EnemyManager.Update()` in the HF46 managed body.
 - `EnemyManager.Update()` directly calls `EnemyManager.TimeUpdate()` on every Update invocation.
 - `0x060001C0` — RID 448 — `EnemyManager.TimeUpdate()` still contains 5 explicit Cpp2IL issue calls and concrete invalid/mis-reconstructed arithmetic/type paths in the HF46 managed body.
 - `0x060001B5` — RID 437 — `EnemyManager.DispatcheWave(Wave)` is a direct `TimeUpdate()` dependency and still contains 3 explicit Cpp2IL issue calls plus invalid managed reconstruction.
