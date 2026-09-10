@@ -142,6 +142,10 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Plant", "GetElementPreference", 1, 10),
     ("Zombie", "GetER", 0, 12),
     ("ElementUIController", "Start", 0, 41),
+    ("ElementManager", "GetElementColor", 0, 35),
+    ("Zombie", "Update_Color", 0, 45),
+    ("Zombie", "FixedUpdate", 0, 20),
+    ("Zombie", "FixedUpdate_BGM", 0, 60),
 };
 
 void AuditOnce(string label)
