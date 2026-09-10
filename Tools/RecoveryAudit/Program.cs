@@ -122,6 +122,9 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "GetPredictedPosition", 1, 36),
     ("Device", "InjuryStatusUpdate", 0, 70),
     ("Zombie", "ZC_ArmoredFlagWakeUpZombies", 0, 50),
+    ("Projectile", "Initial", 6, 10),
+    ("Projectile", "Initial", 7, 10),
+    ("Projectile", "Initial", 10, 70),
 };
 
 void AuditOnce(string label)
