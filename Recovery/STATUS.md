@@ -62,7 +62,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF39 `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`
 - HF40 `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`
 - HF41 `2e03010cab5a4776243ecf3509402f387c39ccb9faa039876c85ad629ba7fcfa`
-- **HF42 Dithering Motion Core — native-backed formal final — `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`.**
+- HF42 `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`
+- **HF43 Animation Rate Core — native-backed formal final — `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`.**
 
 ## Recent retained formal results
 
@@ -178,16 +179,49 @@ Formal validation:
 - SHA256SUMS-FINAL `19W3-Fq_rSsT54askm-1Lv-PeuL1xTbEN`, 21 entries, SHA `7ca3c4a43935d7a3deababe9af67be3fd7c8658ba8fb18f3e79ae258eb3371de`;
 - final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
 
-**HF42 formal acceptance: PASS. HF42 is now the only allowed formal input for any later cumulative HF stage.**
+**HF42 formal acceptance: PASS.**
+
+### HF43 — Animation Rate Core
+
+Restores exactly three original native-backed MethodDefs:
+
+- `0x0600039E Plant.ResetUpdateRate(float)` / RID 926 / PC `0x180356970`;
+- `0x060003A7 Plant.SetUpdateRate()` / RID 935 / PC `0x180359430`;
+- `0x06000451 Zombie.GetRandenAnimationSpeedMagnification()` / RID 1105 / PC `0x180361870`.
+
+Accepted behavior preserves Animator Unity Object truthiness; ordered-zero versus unordered/nonzero update-rate paths; the original `0f / updateRate` floating behavior in burst; elemental Ceiling/Max slowdown with ID5/ID6 exceptions; and the original two-level Zombie ID jump table in which exactly IDs `{0,2,4,5,6,7,8,9,11,12,14}` use `Random.Range(0.75f,1.3f)` and all others return 1f.
+
+Formal validation:
+
+- formal HF42 input was re-fetched from Drive after the accepted v2 patcher publication and SHA-verified `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`;
+- HF43 v1 patcher head `eaafbbefcecf0c5a6489796ace5408c54b827b83`, workflow `34479347287` published successfully but its first formal application was rejected by its own reopen floor (`GetRanden...` produced 12 IL while the conservative floor was 15); no v1 candidate was accepted or propagated;
+- v2 changed only that reopen floor to 10, leaving gameplay Template semantics unchanged; v2 patcher head `25ada471bf94f96dc5abc7affdcd6e616e02767d`, workflow `34479568604` PASS, artifact ID `10152984471`, SHA `b7193f7f6dc11f86ae433c3db0ab2a04670e0893b70c59f48fbe6f0ad0034b03`;
+- independent v2 double patch -> byte-identical `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`, both exit 0, stderr 0;
+- Cecil reopen: `0x0600039E` 70 IL / 216 bytes / 0 EH; `0x060003A7` 94 / 276 / 0 EH; `0x06000451` 12 / 97 / 0 EH; no Cpp2IL helper remains;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF41 whole IL reproduced `48183cd6963c3bde3056e73d8983eeceea36574199b881077f76091bd458b4c0`; HF42 whole IL reproduced `ad4b9a6ce967456c40b04b258b02eb7470ec8de747d8d077d13ec135007587ed`; HF43 whole IL `26da408a5fe00508522d3a784338c4c50577ab1a78226d3c1929886e42760743`;
+- prior Drive-archived HF41->HF42 semantic diff reproduced byte-for-byte at `1f321b7604d20bf6aa700310c2ec90c10717be02fb2c5de21ea31a710dfb52b6`; HF42->HF43 semantic diff `4538f058ada84cf46c899cf9c85bc07db7c1a49780720e6d4298ea2f9d3e0f91`;
+- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x0600039E`, `0x060003A7`, `0x06000451`;
+- HF42 MethodDef table reproduced at the accepted canonical path `34f45e7c4beb53630472ae0a5cba63db6622029e131f193cbc1dacaec05d3e9b`; HF43 MethodDef table `b856427fdef2d77350ab805f1aaa0fab35d77bfb8a7bd1d0fb22e02829869149`;
+- permanent RecoveryAudit commit `fde3f301afd31ad0cd5588ea7a8dee36758f4ebb`, workflow `34480261357` PASS, artifact ID `10153273106`, SHA `b200e4a830eb274d333415d396207398ad2642dffc77446e853ec71fcf3ae116`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
+- GitHub Evidence commit `319ae0ea005a86e8bfadbb2b7c8a64f983ca4fe0`;
+- Drive folder `1VLh1-JRb1-Y-iI0v3EW8wzvqtwvvQ36s`;
+- cumulative DLL `15pAzAORNoxbQamjmj4xotoQ82RjaeirI`;
+- payload manifest `1xUR8HBaQfFaTGLNwuWRlvf1TInzTsMoH`, SHA `18e27ee935590af8d150af0506fcdbf44b9ede88182cb8b22bdbc412f17fff68`; pre-closure provider readback exactly 20 files;
+- Evidence-FINAL `1-tFd6uNFrTGUIM9MTKMeanFrTECLYMut`, SHA `a77fa3a2cbdaa3bd2a5730a10d473afb731577e2e2fbd2a8d3dc7af479de7715`;
+- SHA256SUMS-FINAL `1yPYiGKVDikkTJ7jbGe3dZjDsBraICekP`, 21 entries, SHA `1e3954be58bbd85027dab9a665747c2fb3ebe070c27266d26d24ed88f3a983d8`;
+- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
+
+**HF43 formal acceptance: PASS. HF43 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Package scripts still require 67/67 validation before final Unity integration.
 
-## Decision gate — do not auto-open HF43
+## Decision gate — do not auto-open HF44
 
-Run a fresh residual active-path scan against the HF42 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+Run a fresh residual active-path scan against the HF43 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
 
-The HF42 scan deliberately deferred `EnemyManager.TimeUpdate()`, `Zombie.GetRandenAnimationSpeedMagnification()`, `Zombie.TestPosition(float,float)`, and `Plant.SetUpdateRate()` because their native dependencies or semantics were not closed enough for HF42. They are candidates only and must be re-evaluated from original native evidence; none is automatically an HF43 target.
+`EnemyManager.TimeUpdate()` and `Zombie.TestPosition(float,float)` were deliberately excluded from HF43. They remain candidates only and must be re-evaluated from original native evidence after HF43 formal closure; neither is automatically an HF44 target.
 
-If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF42 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF43 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
