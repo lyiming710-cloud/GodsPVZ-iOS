@@ -63,7 +63,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF40 `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`
 - HF41 `2e03010cab5a4776243ecf3509402f387c39ccb9faa039876c85ad629ba7fcfa`
 - HF42 `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`
-- **HF43 Animation Rate Core — native-backed formal final — `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`.**
+- HF43 `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`
+- **HF44 Zombie Movement Position Core — native-backed formal final — `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`.**
 
 ## Recent retained formal results
 
@@ -212,16 +213,48 @@ Formal validation:
 - SHA256SUMS-FINAL `1yPYiGKVDikkTJ7jbGe3dZjDsBraICekP`, 21 entries, SHA `1e3954be58bbd85027dab9a665747c2fb3ebe070c27266d26d24ed88f3a983d8`;
 - final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
 
-**HF43 formal acceptance: PASS. HF43 is now the only allowed formal input for any later cumulative HF stage.**
+**HF43 formal acceptance: PASS.**
+
+### HF44 — Zombie Movement Position Core
+
+Restores exactly three original native-backed MethodDefs:
+
+- `0x06000472 Zombie.ResetMoveSpeed()` / RID 1138 / PC `0x180366D90`;
+- `0x06000474 Zombie.ResetUpdateRate(float)` / RID 1140 / PC `0x180366E40`;
+- `0x06000481 Zombie.TestPosition(float,float)` / RID 1153 / PC `0x180369FC0`.
+
+Accepted behavior preserves the ID17 ordered-negative move-direction rule with NaN/unordered fall-through, Animator Unity Object truthiness, the ordered-zero initialization path and nonzero/unordered three-channel rescaling in `ResetUpdateRate`, ordinary managed `Grid` null semantics versus Unity `Device` truthiness, passability acceptance, negative-X Ladder interaction, ID13 Snowbeast impact/wall calls, blocked-grid midpoint ±3 correction, original candidate X/Y Transform writeback with Z preserved, and null-Grid coordinate acceptance. No defensive iOS null guards or guessed movement corrections were added.
+
+Formal validation:
+
+- formal HF43 input was re-fetched from Drive after HF44 patcher publication and SHA-verified `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`;
+- patcher build head `33ef6bc3e9d5b1dcd92f4fee970336f4ce503cdc`, workflow `34484120971` PASS, artifact ID `10154861901`, SHA `f4c3fa9f4f4e992e4721ebc4480e86dd67382bf68fdb03b6636476b7c73d17eb`;
+- independent double patch -> byte-identical `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`, both exit 0, stderr 0;
+- Cecil reopen: `0x06000472` 22 IL / 61 bytes / 0 EH; `0x06000474` 67 / 196 / 0 EH; `0x06000481` 161 / 408 / 0 EH; no Cpp2IL helper remains;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF42 whole IL reproduced `ad4b9a6ce967456c40b04b258b02eb7470ec8de747d8d077d13ec135007587ed`; HF43 whole IL reproduced `26da408a5fe00508522d3a784338c4c50577ab1a78226d3c1929886e42760743`; HF44 whole IL `dbb10be399d1672a0927510a2fb05481783aabdfd56c9eb921d2bb9982ce2b1f`;
+- prior Drive-archived HF42->HF43 semantic diff reproduced byte-for-byte at `4538f058ada84cf46c899cf9c85bc07db7c1a49780720e6d4298ea2f9d3e0f91`; HF43->HF44 semantic diff `c79688ce7518eb8fd5fe0cc697d2569ff39b4a189c004ceacd9460a09c430294`;
+- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x06000472`, `0x06000474`, `0x06000481`;
+- HF43 canonical MethodDef table reproduced byte-for-byte at `b856427fdef2d77350ab805f1aaa0fab35d77bfb8a7bd1d0fb22e02829869149`; HF44 MethodDef table `ab1557de0172766a51cc30dd7edae12d5a0cd29551cfb659a0e3641571afc790`;
+- permanent RecoveryAudit commit `fec4f209eadb00d4620983c93b88e0d107baba72`, workflow `34484770234` PASS, artifact ID `10155135509`, SHA `075dfd1a1a84f779e074c0da64cd58bcd301f8a7da15d0a1eb79db7fd33e94b8`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
+- GitHub Evidence commit `d39cdd6a0e2476eb97ca0f3d79821f876fb4fa05`;
+- Drive folder `1AsQpnZd9MJlcPdihbJqN0izasvoLY_br`;
+- cumulative DLL `1gGvEopIJHDzdVilPHSVf1ka_Rm-Pfx9a`;
+- payload manifest `1w3QjD2USbRhIHNDOBIwsPeGncZVcHdQl`, SHA `5e511fe1825912fc571d0fb8956b860f45ef3370a49e4a737f28fdc44badef02`; pre-closure provider readback exactly 20 files;
+- Evidence-FINAL `1NzJeS6yu6-CuvygC6W4DQw7lmJxBKVrg`, SHA `9b6c350b9548fb33f4e4e1ddac472f7e4d9d209cf17f2fdac31be8db176992d6`;
+- SHA256SUMS-FINAL `14iwpKm3BI9YLUXwZbWfJAfKVXSC-lJbb`, 21 entries, SHA `94ed2598167b43c43f68d67803865c07efaf31707b789b64e9ac9e8c4d5723ab`;
+- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
+
+**HF44 formal acceptance: PASS. HF44 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Package scripts still require 67/67 validation before final Unity integration.
 
-## Decision gate — do not auto-open HF44
+## Decision gate — do not auto-open HF45
 
-Run a fresh residual active-path scan against the HF43 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+Run a fresh residual active-path scan against the HF44 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
 
-`EnemyManager.TimeUpdate()` and `Zombie.TestPosition(float,float)` were deliberately excluded from HF43. They remain candidates only and must be re-evaluated from original native evidence after HF43 formal closure; neither is automatically an HF44 target.
+`EnemyManager.TimeUpdate()` remains deferred because its huge-wave/final-particle Board/state dependencies require separate native closure. `Zombie.SetUpdateRate()` is not promoted by adjacency or similarity to the repaired rate helpers; it must independently satisfy the fresh post-HF44 reachability and dependency-closure gates.
 
-If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF43 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF44 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
