@@ -7,6 +7,7 @@ namespace UnityEngine
 {
     public class Object
     {
+        public string name { get; set; } = "";
         public static bool operator ==(Object? a, Object? b) => ReferenceEquals(a, b);
         public static bool operator !=(Object? a, Object? b) => !ReferenceEquals(a, b);
         public static implicit operator bool(Object? a) => !ReferenceEquals(a, null);
