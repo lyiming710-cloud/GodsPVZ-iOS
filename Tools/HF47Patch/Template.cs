@@ -280,7 +280,7 @@ namespace Template
                 if (theWave % 10 == 9)
                 {
                     nextFlagWaveTime = 7.5f;
-                    GameObject hugeWave = Object.Instantiate<GameObject>(ResourceManager.prefab_HugeWave);
+                    GameObject hugeWave = UnityEngine.Object.Instantiate<GameObject>(ResourceManager.prefab_HugeWave);
                     Transform hugeTransform = hugeWave.transform;
                     Vector3 hugeScale = hugeTransform.localScale;
                     float hugeFactor = board.map.cameraSize / 540f;
