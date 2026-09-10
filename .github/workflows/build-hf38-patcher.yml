@@ -1,0 +1,33 @@
+name: Build HF38 Plant kill event patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF38Patch/**'
+      - '.github/workflows/build-hf38-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF38 patcher
+        run: dotnet publish Tools/HF38Patch/HF38Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf38
+      - name: Smoke test
+        run: |
+          chmod +x out/hf38/GodsPVZ.HF38Patch
+          set +e
+          out/hf38/GodsPVZ.HF38Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf38/GodsPVZ.HF38Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF38Patch-linux-x64
+          path: out/hf38
+          if-no-files-found: error
