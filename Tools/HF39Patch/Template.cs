@@ -82,18 +82,18 @@ namespace Template
 
     public class Buff
     {
+        public string name = "";
+        public BuffType buffType;
+        public float duration;
+        public Plant originalPlant = null!;
+        public Zombie originalZombie = null!;
+        public List<Buff> childBuffs = null!;
         public virtual void Awake(bool child) { }
     }
 
     public class StatsIncreased : Buff
     {
-        public string name = "";
-        public BuffType buffType;
-        public float duration;
         public float value;
-        public List<StatsIncreased> childBuffs = null!;
-        public Plant originalPlant = null!;
-        public Zombie originalZombie = null!;
         public StatsIncreased(string stat, float value, bool multi) { }
     }
 
