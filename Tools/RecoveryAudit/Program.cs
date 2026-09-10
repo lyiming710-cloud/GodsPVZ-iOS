@@ -127,6 +127,20 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Projectile", "Initial", 10, 70),
     ("Plant", "KillEvent", 1, 65),
     ("Plant", "PC_SSI_KillEvent", 1, 90),
+    ("BuffManager", "AddBuff", 1, 8),
+    ("Element", "Burst", 0, 240),
+    ("Element", "Decay", 1, 75),
+    ("ElementManager", "GetEffectBoardEntry", 2, 40),
+    ("ElementManager", "Effect", 1, 90),
+    ("ElementManager", "Update", 0, 75),
+    ("ElementUIController", "UpdateUI", 1, 150),
+    ("GlobalStaticVars", "AppearSprite", 2, 10),
+    ("GlobalStaticVars", "GetAnimationSprite_Name", 2, 25),
+    ("GlobalStaticVars", "HideSprite", 2, 10),
+    ("Plant", "ElementLevelUp", 2, 110),
+    ("Plant", "GetER", 0, 12),
+    ("Plant", "GetElementPreference", 1, 10),
+    ("Zombie", "GetER", 0, 12),
 };
 
 void AuditOnce(string label)
