@@ -14,9 +14,9 @@ A stage is not final until original native attribution, formal-input SHA validat
 - PC GameAssembly SHA-256 `9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d`.
 - PC metadata SHA-256 `ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9`.
 - Android APK SHA-256 `428e0ba2e46645a905fb9fbb00cfde42406727a3ddfce9a7df1e0875889a739f`.
-- Cpp2IL source commit `5fb20304df698ffd3d0e664b2a698cd911dc9d57`; reproduced PC baseline `2318/2319`, sole full failure closed in HF3.
-- Native attribution rule: original MethodDef RID-1 -> Assembly-CSharp CodeGenModule methodPointers index.
-- Fixed ILSpyCmd / ICSharpCode.Decompiler `11.0.0.9375`, reproduced 56-DLL fixed-Cpp2IL reference set, reference ZIP SHA `fe091e5a5389c2491eebeff72c83c394097bef67ffd45a25cf7de01c9aad9ef1`.
+- Cpp2IL source commit `5fb20304df698ffd3d0e664b2a698cd911dc9d57`.
+- Ordinary native attribution: original MethodDef RID-1 -> Assembly-CSharp CodeGenModule `methodPointers[index]`. Generic MethodDefs additionally require original MethodSpec / generic-method-function attribution.
+- Fixed ILSpyCmd / ICSharpCode.Decompiler `11.0.0.9375`; reproduced 56-DLL fixed-Cpp2IL reference ZIP SHA `fe091e5a5389c2491eebeff72c83c394097bef67ffd45a25cf7de01c9aad9ef1`.
 - Assembly-CSharp MethodDef total must remain `2317`.
 
 ## Final cumulative HF chain
@@ -56,125 +56,73 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF33 `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`
 - HF34 `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`
 - HF35 `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`
-- **HF36 Armored Flag Wake-Up Core — native-backed formal final — `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`.**
+- HF36 `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`
+- **HF37 Projectile Initial Core — native-backed formal final — `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`.**
 
-## Recent retained results
+## Recent retained formal results
 
-### HF23 — Zombie Hurt Core
+### HF31–HF33 — Projectile rotation / tracking / aim-euler
 
-Restores exactly `0x06000456–0x0600045E` Hurt_Armor1/2, Artillery, Ashes, Body, FinalDamageReduction, Normal, Real, Throughout with native armor/body DEF, non-real 0.1 floor, real bypass, `MathF.Round`, PoleCommander cap 0.95, iceCube fire_ice 0.2 and throughout truncation.
-
-### HF24 — Projectile Runtime Core
-
-Restores exactly `0x060003D2 Projectile.Update()`: sorting-order truncation, pause/start gates, movement tracks 3/4/5/6/7, native-order delta-time integration, shadow sync, out-of-map destruction, CollisionDetect, tracking/rotation, LightSaber cleanup and previousPosition.
-
-### HF25–HF30 — Projectile collision chain
-
-HF25–HF30 formally restore `CollisionDetect`, Ground, AudioParticle, Device/Zombie resolution, and Plant/Zombie/Device detectors. The recovered collision dispatcher path is closed end-to-end into damage and hit post-processing.
-
-### HF31 — Projectile Rotating Runtime Core
-
-Restores exactly `0x060003F6 Projectile.Rotating()` — PC `0x18037BE20`. `Projectile.speed` is a real `Vector3`; native uses `speed.x` for facing, integrates angularSpeed with angularAcceleration, and rotates sprite/animation around world Z. HF31 final SHA `a4d001581430fe440e50feb37f3abd189a1ae86a00f4fe41114ae3f9b99386d2`; all formal gates and 20+2 closure passed.
-
-### HF32 — Projectile Tracking Runtime Core
-
-Restores exactly `0x060003D8 Projectile.Update_Tracking()` — RID `984`, PC `0x18037D4D0`: choose the enabled/attackable zombie with minimum `fX`, preserve foreach Dispose/finally, and call `Aim(target-projectile XY delta)`. HF32 final SHA `a959e450bd71beb67c948a9a85a1263a7739ccd37b2438405ae954fe10b7bf87`; all formal gates and 20+2 closure passed.
-
-### HF33 — Projectile Aim / Euler Runtime Core
-
-Restores exactly:
-
-- `0x060003DC Projectile.Aim(Vector3)` — RID `988`, PC `0x180378D50`;
-- `0x060003F8 Projectile.SetEulerAngles(float,float)` — RID `1016`, PC `0x18037C120`.
-
-`Aim` computes the atan2 direction, preserves speed magnitude while redirecting the Vector3 and calls SetEulerAngles. `SetEulerAngles` preserves original angular/zAngular fields, computes a local effective z through native Approximately/Lerp logic, applies effective z to sprite/animation/track and original angular to shadow. HF33 final SHA `6b467ef40f2e8e4e7fcff48d71c328457ac4107261a95fbd59908f5516720518`; fixed ILSpy, semantic isolation, permanent RecoveryAudit and Drive 20+2 closure all passed.
+HF31 restores `Projectile.Rotating()`. HF32 restores `Projectile.Update_Tracking()` with minimum-fX enabled/attackable zombie selection and foreach Dispose/finally. HF33 restores `Projectile.Aim(Vector3)` and `Projectile.SetEulerAngles(float,float)` with native atan2 direction, speed-magnitude preservation and original sprite/animation/shadow/track Euler behavior. All formal gates and Drive 20+2 closures passed.
 
 ### HF34 — Projectile Runtime Support Core
 
-Restores exactly:
-
-- `0x0600013E GlobalStaticVars.CreateAudioAtPoint(AudioClip,Vector3,float,float)` — RID `318`, PC `0x18031B350`;
-- `0x060003D6 Projectile.Update_Time()` — RID `982`, PC `0x18037D220`;
-- `0x060003DB Projectile.Update_MoveTrack7()` — RID `987`, PC `0x18037CCF0`;
-- `0x06000450 Zombie.GetPredictedPosition(float)` — RID `1104`, PC `0x1803617F0`.
-
-Accepted behavior:
-
-- `CreateAudioAtPoint/4`: Unity-null clip returns null; create one-shot GameObject and AudioSource; assign position, clip, volume, pitch and spatialBlend=0; Play; destroy the temporary object after `clip.length * max(0.01f, Time.timeScale)`; return the AudioSource.
-- `Update_Time`: integrate `livingTime` by `Time.deltaTime * updateRate`; preserve ID27/28 timed AreaDamage/Collision_AudioParticle/DestroyProjectile behavior; preserve ID21 periodic plant damage and LightSaber explosion timeout.
-- `Update_MoveTrack7`: preserve native zSpeed equation and plant-centered rotating-offset speed computation.
-- `GetPredictedPosition`: preserve `(fX,fY,fZ)` plus `(time + Time.deltaTime) * rSpeed` in X/Y with Z unchanged.
-
-HF34 formal validation and Drive 20+2 closure passed. Evidence: `Tools/HighFidelityPatch/Evidence/HF34-Projectile-Runtime-Support-Core.md`, commit `edc56dd90e92131e2dba544bd0761f977ac7e712`.
+Restores exactly `0x0600013E CreateAudioAtPoint/4`, `0x060003D6 Update_Time`, `0x060003DB Update_MoveTrack7`, `0x06000450 Zombie.GetPredictedPosition`. HF34 final `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`; all formal gates and Drive 20+2 closure passed. Evidence commit `edc56dd90e92131e2dba544bd0761f977ac7e712`.
 
 ### HF35 — Device Injury Status Core
 
-Restores exactly `0x0600032B Device.InjuryStatusUpdate()` — original RID `811`, PC `0x180349280`.
-
-Accepted behavior:
-
-- original `COMISS 0,healthPoint` / `JAE` semantics invoke `Broken()` only for ordered `healthPoint <= 0`; unordered/NaN proceeds through the active body;
-- non-broken processing is specific to Device `ID == 4`;
-- damage fraction is `1f - healthPoint / maxHealthPoint` and each crossed `(brokenLevel + 1) / 3` threshold increments `brokenLevel`;
-- each threshold updates the `Roadblock` sprite, creates RoadblockBroken particle 26 at this Device position, and plays clip 12 at camera position with `AudioVolume() * 1.6f`, pitch `0.7f`.
-
-HF35 formal validation and Drive 20+2 closure passed. Evidence: `Tools/HighFidelityPatch/Evidence/HF35-Device-Injury-Status-Core.md`, commit `d08323ea70f0600bb23543108e1b4cea2d5e8327`.
+Restores exactly `0x0600032B Device.InjuryStatusUpdate()` / RID 811 / PC `0x180349280`, including roadblock damage thresholds, sprite/particle/audio behavior and native ordered-float handling. HF35 final `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`; all formal gates and Drive 20+2 closure passed. Evidence commit `d08323ea70f0600bb23543108e1b4cea2d5e8327`.
 
 ### HF36 — Armored Flag Wake-Up Core
 
-Restores exactly `0x0600048C Zombie.ZC_ArmoredFlagWakeUpZombies()` — original RID `1164`, PC `0x18036D560`.
+Restores exactly `0x0600048C Zombie.ZC_ArmoredFlagWakeUpZombies()` / RID 1164 / PC `0x18036D560`: wake self when `isStant && !immune_wakeUp && !hide`; enumerate `board.zombieManager.zombieList`; for each eligible stunned zombie call `Path_Finding()` then `TranToWalk()`; preserve Enumerator Dispose/finally. HF36 final `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`; all formal gates and Drive 20+2 closure passed. Evidence commit `6206eb4c2ca07f72edd108fe0f8e6168f0b36062`.
 
-Accepted behavior:
+### HF37 — Projectile Initial Core
 
-- if this zombie is `isStant && !immune_wakeUp && !hide`, call `Path_Finding()` then `TranToWalk()`;
-- enumerate `board.zombieManager.zombieList`;
-- for each zombie require `!immune_wakeUp && !hide && !IsDisabled() && isStant`, then call `Path_Finding()` and `TranToWalk()`;
-- preserve list Enumerator Dispose/finally and original null behavior.
+Restores exactly:
 
-HF36 formal validation:
+- `0x060003ED Projectile.Initial<T>/6` — RID 1005;
+- `0x060003EE Projectile.Initial<T>/7` — RID 1006;
+- `0x060003EF Projectile.Initial<T>/10` — RID 1007.
 
-- formal HF35 input SHA-verified `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`;
-- patcher build head `7233686d52ee43149c45f76b35f09011809e6ecf`, workflow `34420563912` PASS, artifact ID `10130723306`, SHA `c34d9d8e78e10dad7edc60cb2c3d6fc107818bb82d0ab6bb1742530f152899d1`;
-- independent double patch -> byte-identical `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`, stderr 0;
-- Cecil reopen `50 IL / 140 bytes / 1 EH`;
-- fixed ILSpy 11.0.0.9375 + reproduced 56-DLL member readback PASS, stderr 0, Cpp2IL refs 0, issue markers 0;
-- HF35 whole IL reproduced `ca155db767d34a814ce322166216aa7c83a868e5d44743c25b71d2c120f22a9e`; HF36 whole IL `6a0c79a8c0b758c35d61e7edba8da5740dd72cb82426f976c064ad358b7d5391`;
-- prior accepted HF34->HF35 semantic diff reproduced byte-for-byte first at `9c0dacb91256ecadf658ae35faba6474ee5f3f269e7d0f4b2b35b3cfacc22a2e`;
-- MethodDef `2317 -> 2317`, normalized non-method skeleton byte-identical, changed exactly `0x0600048C`; HF35->HF36 semantic diff SHA `83f0cd40ea1d266d2f78972b18ccc177fd77a9b12792109e40a36db9e134250e`;
-- permanent RecoveryAudit commit `623b6ad710577828261b4612b71c2e7fa6e6396b`, workflow `34420936171` PASS, artifact ID `10130857784`, SHA `163022dd32f85899b857ef96254851f7a5745edb85dc793d9edc6170257f2cff`;
-- independent published auditor OPEN1/OPEN2 `320 types / 2317 methods / 2297 bodies`, target `50/140` both, stderr 0, terminal `RECOVERY_AUDIT_OK`.
+Generic attribution is closed through original MethodSpec/generic-method tables. In particular, `Plant.KillEvent` encoded MethodInfo `0xC0024671` resolves under metadata v31 to MethodSpec 74552 -> global methodDefinitionIndex 42770 -> `0x060003ED`, method instantiation 2453 -> typeDefinition `0x1457` -> `Plant`; this is therefore `Initial<Plant>` at metadata level.
 
-HF36 Drive archive:
+Accepted behavior: /6 and /7 forward default z/angular arguments to /10. /10 sets fX/fY/fZ, speed, zSpeed, movementTracks, `SetEulerAngles(0,zAngular)`, angular speed/acceleration, track-1 `zAcceleration=-2025`, calls `Moving_SetNewPosition()`, writes the native previousPosition sentinel, and assigns Plant/Zombie origin through runtime type tests. The `acceleration` parameter is intentionally unused, matching native.
 
-- folder `1PO7YbeLkbQt_Y5uhN3Xnx4Eg6BHu198z`;
-- cumulative audited DLL `15eQIfAuueLIeWtncXBQWmxldDR3E0fmK`;
-- patcher `1M8iC3VU9vaUZpdN53I7h_aCIGqQqzaC6`;
-- RecoveryAudit `13V90m53NH6Xp3j48VNxwozhWZ4FcYjTf`;
-- fixed ILSpy `1fk1qWTa4EYAmWlkpDS40_wBdxfHykfth`;
-- native evidence `1MGxnOvGAUcIERM1M80re7Tx1fAVr15n-`;
-- semantic diff `1j1oH-IDWZHWlGC6WmexhJPFb0oyQCZoI`;
-- payload manifest `1rvAnrzZdWkLG6oUBQerOamT76BV8PjAt`, SHA `51185e6d4b21ca0be3084c2e80e92232909b450d2560596a1279c7566253a061`;
-- Evidence-FINAL `1MSxLqf7CrXl-ewJeTOon2QGWQWeM62G9`, SHA `9cf4eb000af23d35200d409ea07f1a2017c3a6fe774fd38e57812302594cc708`;
-- SHA256SUMS-FINAL `153TnPiEcY74J7nXocK2nZmiebwngzwzf`, SHA `022e7f9c3c6bc3f0552418a9ff81b03e08adc752d5a24cc24482813bb6ca1bbb`;
-- final provider readback: exactly 22 files = 20 payloads + 2 closure files.
+Formal validation:
 
-Evidence: `Tools/HighFidelityPatch/Evidence/HF36-Armored-Flag-Wake-Up-Core.md`, commit `6206eb4c2ca07f72edd108fe0f8e6168f0b36062`.
+- formal HF36 input SHA-verified `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`;
+- patcher build head `58b9316853725a0c5da0c51960ce7e381fa56473`, workflow `34423760532` PASS, artifact ID `10131864829`, SHA `4b33df295489a157ca5008734ea7321d5b60641703b55b44c0c98416f49ae478`;
+- independent double patch -> byte-identical `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`, stderr 0;
+- Cecil reopen /6 `13 IL / 36 bytes / 0 EH`, /7 `13/33/0`, /10 `75/213/0`;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all three exit 0, stderr 0, Cpp2IL refs 0, issue markers 0;
+- HF36 whole IL reproduced `6a0c79a8c0b758c35d61e7edba8da5740dd72cb82426f976c064ad358b7d5391`; HF37 whole IL `dd045b66df4989f3e617ec2b4ee7f8f398dbba28b9305b31433de5314cffe655`;
+- prior HF35->HF36 diff reproduced first at `83f0cd40ea1d266d2f78972b18ccc177fd77a9b12792109e40a36db9e134250e`;
+- MethodDef `2317 -> 2317`, normalized non-method skeleton identical, changed exactly `0x060003ED`, `0x060003EE`, `0x060003EF`;
+- HF36->HF37 semantic diff `125ca6d7ec2e0322056bc7014bae7aed911a9953973e804009cc8ae8d6c35d0b`;
+- permanent RecoveryAudit commit `04355be372d0ae6c928bf7e2b8e5c2a1647f0903`, run `34424112325` PASS, artifact ID `10131987391`, SHA `9a9d594eddec824e56202093788e243d86410cdbb0505bf1035e17c16130a1e1`; published auditor OPEN1/OPEN2 passed all retained targets and ended `RECOVERY_AUDIT_OK`;
+- Evidence commit `b4c50aece1eb0e5f4f27096eb510ffc5b88ae394`;
+- Drive folder `1L7mnzN8udi4HX-NiusZsOOgX4tp9S_9u`;
+- payload manifest `1f49bqZdssXrAuAk0ATh2JIbjSUPrblwj`, SHA `e47ceee4b97030c4f94b304c707b857c47a038c895f0e5b99ebe1c39b5b0a22e`;
+- Evidence-FINAL `13pw2zMplFFR_mglXITNwI95B0fT6Pyxd`, SHA `6de264117c6733c07832bfddd74bb709fbe63bce405019c861bb22927e8efcc8`;
+- SHA256SUMS-FINAL `1g76O9rpH2fJtTL3hXH6MmYCR2PZbUBs3`, SHA `13c92441ac6d7b51013eb3a0d4de33746f878c32d5ecfb6a0c84c13c4fd2ef62`;
+- final provider readback exactly 22 files = 20 payloads + 2 closure files.
 
-**HF36 formal acceptance: PASS. HF36 is now the only allowed formal input for any later cumulative HF stage.**
+**HF37 formal acceptance: PASS. HF37 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Fixed package set includes UGUI 1.0.0, TMP 3.0.6, Core/URP 14.0.11, 2D Animation 9.1.1, Tilemap Extras 3.1.2, Burst 1.8.17, Collections 1.2.4, Mathematics 1.2.6, Visual Scripting 1.9.4. 67 package script types still require 67/67 Unity validation.
 
-## Current decision gate — do not auto-open HF37
+## Current decision gate — do not auto-open HF38
 
-HF36 closes the active armored-flag zombie wake-up path. Do not create HF37 merely because another MethodDef has warnings or unattractive recovered IL.
+Re-run the original-native-vs-managed decision gate from the new HF37 formal cumulative DLL.
 
-Re-run the original-native-vs-managed decision scan from the HF36 formal cumulative DLL. `Plant.KillEvent` remains a known special case: it must not enter a formal stage until shared native helper `0x1804A25F0` is behaviorally identified and every dependency closes; do not infer or omit that call.
+`Plant.KillEvent` is the first candidate to reconsider because its previously blocking `Projectile.Initial<Plant>` dependency is now behaviorally and formally closed in HF37. Do not assume that makes `Plant.KillEvent` automatically eligible. Open HF38 only if both are independently proven against the HF37 cumulative assembly and original PC native body:
 
-Open HF37 only if both are independently proven:
+1. original PC native/metadata demonstrates concrete managed loss or mis-reconstruction in `Plant.KillEvent`; and
+2. it is materially active in gameplay and every remaining native dependency in its body is behaviorally closed.
 
-1. original PC native/metadata demonstrates concrete managed loss or mis-reconstruction; and
-2. the method is materially active in gameplay, with every required native dependency behaviorally closed.
+Do not use warning count, MethodDef adjacency, shared-stub xref centrality or cosmetic decompiler quality as a gate. After any accepted HF38 candidate, re-run a fresh active-path residual scan rather than chaining stages automatically.
 
-Do not use warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality as a gate. If no remaining candidate satisfies both conditions, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF36 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies both gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF37 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
