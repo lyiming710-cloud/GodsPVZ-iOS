@@ -60,7 +60,8 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF37 `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`
 - HF38 `25ca8b5afe45930dd39517c2477a96db520d067c067493c334f107201a973b5d`
 - HF39 `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`
-- **HF40 Element UI Start Core — native-backed formal final — `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`.**
+- HF40 `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`
+- **HF41 Zombie Fixed Visual Core — native-backed formal final — `2e03010cab5a4776243ecf3509402f387c39ccb9faa039876c85ad629ba7fcfa`.**
 
 ## Recent retained formal results
 
@@ -113,14 +114,46 @@ Formal validation:
 - SHA256SUMS-FINAL `1xDuvQelRx61IUWSsYAZyEfWbWRMmsTqY`, SHA `6d202a09daf4405eec7f8b5b8983792524a09cfb790f60ee451a86da595b2f18`;
 - final provider readback exactly 22 files = 20 payloads + 2 closure files.
 
-**HF40 formal acceptance: PASS. HF40 is now the only allowed formal input for any later cumulative HF stage.**
+**HF40 formal acceptance: PASS.**
+
+### HF41 — Zombie Fixed Visual Core
+
+Restores exactly four native-backed MethodDefs:
+
+- `0x06000128 ElementManager.GetElementColor()` / RID 296 / PC `0x180314F20`;
+- `0x06000425 Zombie.Update_Color()` / RID 1061 / PC `0x18036BEB0`;
+- `0x0600042D Zombie.FixedUpdate()` / RID 1069 / PC `0x180360080`;
+- `0x0600042E Zombie.FixedUpdate_BGM()` / RID 1070 / PC `0x18035FD10`.
+
+Accepted behavior preserves original Unity Object versus plain-reference semantics, native unordered/NaN floating branches, `Ceiling`/clamp color scaling, ashes and renderer/material alpha behavior, `List<GameObject>.Enumerator` finally/Dispose, ID17 BGM scaling, ID18 Board BGM cross-fade, original array/null behavior, and the original `FixedUpdate` call order before dying-health drain.
+
+Formal validation:
+
+- formal HF40 input re-fetched from Drive and SHA-verified `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`;
+- patcher build head `0984f986c6d96570c95d6f488753de8e3d3fbc02`, workflow `34435893128` PASS, artifact ID `10136146571`, SHA `e53af852ecd3242df3acc1ec8f15abf52f3ba81fa1f6f9de293a28a313bc36cf`;
+- independent double patch -> byte-identical `2e03010cab5a4776243ecf3509402f387c39ccb9faa039876c85ad629ba7fcfa`, both exit 0, stderr 0;
+- Cecil reopen: `0x06000128` 117 IL / 340 bytes / 0 EH; `0x06000425` 90 / 264 / 1 EH; `0x0600042D` 30 / 82 / 0 EH; `0x0600042E` 122 / 350 / 0 EH; no Cpp2IL helper or issue marker remains;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all four targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF40 whole IL reproduced `fd43ae98ca25cc7a43f5265c76a924eaefb8fa8b4616575c6af914935fd0ff7e`; HF41 whole IL `48183cd6963c3bde3056e73d8983eeceea36574199b881077f76091bd458b4c0`;
+- prior HF39->HF40 semantic diff reproduced byte-for-byte at `053387ddf76a053cc57cbca509bb72c653c5becea3d92e7c595be6a58b670d76`; HF40->HF41 semantic diff `8080c9fa957c43f70073275f44f9e81d5153670c563ca8bcbdf6e8629480873b`;
+- MethodDef `2317 -> 2317`, method blocks `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x06000128`, `0x06000425`, `0x0600042D`, `0x0600042E`;
+- permanent RecoveryAudit commit `31a9f759fd0c08ef5cb41de4db57680a9849b876`, workflow `34446634528` PASS, artifact ID `10139898714`, SHA `149c9fac6d0a40c308f7142509756b2e8b6d85a2acd18dfcc4364ec8de9ddeae`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
+- GitHub Evidence commit `12fa5db97745dd8d2069eb8a488a4a57e69e0de5`;
+- Drive folder `1abfwNIw2Oq-gSIHTtVOnmCtJSxKy5D1D`;
+- cumulative DLL `1iEUvEYiv2qUFFhFhpGSQXN4XycNnnmJ4`;
+- payload manifest `1SjcGI1RDIlFI2mYORnXMukvU_eQGqWia`, SHA `c9fe6f84acde971fc59847ed664c9fe9fd77781b5e61f2d57ec0d9654bc8868e`; pre-closure provider readback exactly 20 files;
+- Evidence-FINAL `1Qt-WPv8cdM4IBExDqwTF6s6EZszgn8pW`, SHA `7d4a2376ee5c66001884d1668e28ee36658e957efd435b857b157090baf1d043`;
+- SHA256SUMS-FINAL `1ESErGFP2fVH9UKVX95IjWYE8ycmq3jkO`, 21 entries, SHA `1b01690089bb50937eecf3944dec1216a397411e55e46898314bc204ac495375`;
+- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
+
+**HF41 formal acceptance: PASS. HF41 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Package scripts still require 67/67 validation before final Unity integration.
 
-## Decision gate — do not auto-open HF41
+## Decision gate — do not auto-open HF42
 
-Run a fresh residual active-path scan against the HF40 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+Run a fresh residual active-path scan against the HF41 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
 
-If no remaining candidate satisfies those gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF40 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies those gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF41 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
