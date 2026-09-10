@@ -40,7 +40,7 @@ namespace Template
         public float point;
     }
 
-    public class Board
+    public class Board : MonoBehaviour
     {
         public bool gameStart;
         public AudioSource[] audioSource = null!;
