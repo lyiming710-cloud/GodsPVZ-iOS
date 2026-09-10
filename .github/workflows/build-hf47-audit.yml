@@ -1,0 +1,37 @@
+name: Build HF47 composite recovery audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF47Audit/**'
+      - '.github/workflows/build-hf47-audit.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish historical RecoveryAudit
+        run: dotnet publish Tools/RecoveryAudit/RecoveryAudit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/historical
+      - name: Publish HF47 targeted auditor
+        run: dotnet publish Tools/HF47Audit/HF47Audit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf47
+      - name: Smoke tests
+        run: |
+          chmod +x out/historical/GodsPVZ.RecoveryAudit out/hf47/GodsPVZ.HF47Audit
+          set +e
+          out/historical/GodsPVZ.RecoveryAudit; a=$?
+          out/hf47/GodsPVZ.HF47Audit; b=$?
+          set -e
+          test "$a" = "2"
+          test "$b" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF47-CompositeAudit-linux-x64
+          path: |
+            out/historical/GodsPVZ.RecoveryAudit
+            out/hf47/GodsPVZ.HF47Audit
+          if-no-files-found: error
