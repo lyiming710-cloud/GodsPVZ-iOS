@@ -155,6 +155,8 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "ResetMoveSpeed", 0, 20),
     ("Zombie", "ResetUpdateRate", 1, 50),
     ("Zombie", "TestPosition", 2, 90),
+    ("FlagMeter", "Update", 0, 55),
+    ("FlagMeter", "UpdateMeter", 2, 25),
 };
 
 void AuditOnce(string label)
