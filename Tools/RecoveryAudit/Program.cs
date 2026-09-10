@@ -141,6 +141,7 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Plant", "GetER", 0, 12),
     ("Plant", "GetElementPreference", 1, 10),
     ("Zombie", "GetER", 0, 12),
+    ("ElementUIController", "Start", 0, 41),
 };
 
 void AuditOnce(string label)
