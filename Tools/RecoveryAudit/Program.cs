@@ -125,6 +125,8 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Projectile", "Initial", 6, 10),
     ("Projectile", "Initial", 7, 10),
     ("Projectile", "Initial", 10, 70),
+    ("Plant", "KillEvent", 1, 65),
+    ("Plant", "PC_SSI_KillEvent", 1, 90),
 };
 
 void AuditOnce(string label)
