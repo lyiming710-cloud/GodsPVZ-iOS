@@ -4,7 +4,9 @@
 
 Use PC x86-64 IL2CPP as the primary gameplay source, Android native second, then original metadata/assets/JSON. Cpp2IL/ILSpy are attribution and managed-reconstruction aids, not authoritative source.
 
-A stage is not final until original native attribution, formal-input SHA validation, deterministic independent patching, Cecil reopen, permanent RecoveryAudit OPEN1/OPEN2, fixed ILSpy readback, whole-assembly semantic isolation, GitHub Evidence, Google Drive archive, provider readback and STATUS closure all pass.
+A stage is not final until original native attribution, formal-input SHA validation, deterministic independent patching, Cecil reopen, permanent/composite RecoveryAudit OPEN1/OPEN2, fixed ILSpy readback, whole-assembly semantic isolation, GitHub Evidence, Google Drive archive, provider readback and STATUS closure all pass.
+
+Historical per-stage detail remains preserved in Git history and `Tools/HighFidelityPatch/Evidence/`. This STATUS file records the authoritative cumulative chain and the current integration/next-stage gate.
 
 ## Fixed original baseline
 
@@ -65,260 +67,66 @@ A stage is not final until original native attribution, formal-input SHA validat
 - HF42 `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`
 - HF43 `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`
 - HF44 `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`
-- **HF45 FlagMeter Runtime Core — native-backed formal final — `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`.**
-- **HF46 EnemyManager Dependency Core — native-backed formal final — `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`.**
+- HF45 `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`
+- HF46 `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`
+- **HF47 EnemyManager Wave Progression Core — native-backed formal final — `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`.**
 
-## Recent retained formal results
+HF47 is the only allowed formal cumulative input for any later HF stage.
 
-### HF34 — Projectile Runtime Support Core
-
-Restores `CreateAudioAtPoint/4`, `Projectile.Update_Time`, `Projectile.Update_MoveTrack7`, and `Zombie.GetPredictedPosition`. Final `ead8dee5def2818ca8c64c36b4fe65f1830dbf873fae34dbc84d2f07b103d999`. Evidence commit `edc56dd90e92131e2dba544bd0761f977ac7e712`.
-
-### HF35 — Device Injury Status Core
-
-Restores `0x0600032B Device.InjuryStatusUpdate()` / PC `0x180349280`. Final `ffd3e858a6ea15c1203a8c543e800b9181e0ab115fa7ab6a84d00975be5b947b`. Evidence commit `d08323ea70f0600bb23543108e1b4cea2d5e8327`.
-
-### HF36 — Armored Flag Wake-Up Core
-
-Restores `0x0600048C Zombie.ZC_ArmoredFlagWakeUpZombies()` / PC `0x18036D560`. Final `291e22bffefdf98f0fca29475c485264ad5b9eb6cf8a934226d1e73a187ddfb0`.
-
-### HF37 — Projectile Initial Core
-
-Restores `0x060003ED/3EE/3EF Projectile.Initial<T>` /6, /7, /10 with original MethodSpec/generic attribution and native defaults. Final `412e12b39d1107c29a20027a37094e796d0059e0a3b8637d78233599148d0c56`. Evidence commit `b4c50aece1eb0e5f4f27096eb510ffc5b88ae394`; Drive folder `1L7mnzN8udi4HX-NiusZsOOgX4tp9S_9u`; final provider readback exactly 22 files.
-
-### HF38 — Plant Kill Event Core
-
-Restores `0x0600037C Plant.KillEvent(Zombie)` and `0x0600038F Plant.PC_SSI_KillEvent(Zombie)`. Final `25ca8b5afe45930dd39517c2477a96db520d067c067493c334f107201a973b5d`. Evidence commit `9942516d8bb151b362619e29e20b03ea900d5a75`; Drive folder `1PbrPjBPT-EbBT9p78aroQHrgLxItcDni`; final provider readback exactly 22 files.
-
-### HF39 — Element Runtime Core
-
-Restores fourteen Element/Buff/ER/SnowPea runtime MethodDefs, including true `List<Buff>.Add`, native sign-crossing/shuttle/decay behavior, signed negative UI progress, banker-style ER rounding/clamp, and SnowPea ID5 element transitions. Final `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`. Evidence commit `3725046b046c19299a8993b99d0a7ec73d7928ee`; Drive folder `1Xf5KA-ZsvUUKbnL8PveKx5ia2AOPpOZT`; final provider readback exactly 22 files.
-
-### HF40 — Element UI Start Core
-
-Restores exactly `0x0600012B ElementUIController.Start()` / RID 299 / PC `0x180315850`.
-
-Accepted native behavior: compare `progress` against +0.0 with native `UCOMISS`; NaN/unordered and any nonzero value return, while ordered +0.0/-0.0 continues. Then independently deactivate non-null `back1`, `image1`, `back2`, `image2` GameObjects via `SetActive(false)`. HF40 emits `BNE.UN` so native unordered semantics are preserved.
-
-Formal validation:
-
-- formal HF39 input SHA-verified `7c6360c79852f94a86e560367f25c79298d62d3e1bf86027f86112d9fc333f6e`;
-- patcher build head `a5b337cc391264ff44a5655e9241b23e3cb9afec`, workflow `34433570862` PASS, artifact ID `10135362791`, SHA `55929a360a706af6de10972389dbaad1fe6078ea4f5a60841603a5cb7bc8dbc6`;
-- independent double patch -> byte-identical `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`, stderr 0;
-- Cecil reopen `41 IL / 133 bytes / 0 EH`; fixed ILSpy 11.0.0.9375 + 56 refs exit 0, stderr 0, Cpp2IL refs 0, issue markers 0;
-- HF39 whole IL reproduced `23e2734766d033c4b22767fd9b969d8312261cedc24622a38bf6ff5dc5dcc54d`; HF40 whole IL `fd43ae98ca25cc7a43f5265c76a924eaefb8fa8b4616575c6af914935fd0ff7e`;
-- prior HF38->HF39 semantic diff reproduced byte-for-byte at `c7c2b30f98986999cf5ed1de9ef800f044e796a2f4f1002c769cb7c0b57868e0`;
-- MethodDef `2317 -> 2317`, method blocks `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x0600012B`;
-- HF39->HF40 semantic diff `053387ddf76a053cc57cbca509bb72c653c5becea3d92e7c595be6a58b670d76`;
-- permanent RecoveryAudit commit `f418fa6214ff6cce680f00178ad54f5614e816bb`, workflow `34433765345` PASS, artifact ID `10135428591`, SHA `add5be4fafd3e2284ce0d76222b52a0b2a666418475ab59ccd8db5fdb914ebfb`; independent OPEN1/OPEN2 passed all retained targets and ended `RECOVERY_AUDIT_OK`;
-- Evidence commit `6685eec19815bfc571f9eeab97319ba3e45be6b6`;
-- Drive folder `1k_tnoO9Rx_BCVpkzdr7-tp06HDziPTXf`;
-- cumulative DLL `1bX-nH1QtTSzz-Qs15FnSzFngZSuu3VfW`;
-- payload manifest `1uMrfEq6xgH07bUYc8RWC0V7Y52_lFvz6`, SHA `0f68c8c8c632124058ca6a00b1cd082e10ad5a1bc10a584a529bbc9f42ad5cb6`;
-- Evidence-FINAL `1hc2NvG7hH7zTVEqkaERgY0IzwiXXnTRc`, SHA `c1068ca7b689073b9fdd7b6932657f3c83a629851f9992de766989b012a8e6eb`;
-- SHA256SUMS-FINAL `1xDuvQelRx61IUWSsYAZyEfWbWRMmsTqY`, SHA `6d202a09daf4405eec7f8b5b8983792524a09cfb790f60ee451a86da595b2f18`;
-- final provider readback exactly 22 files = 20 payloads + 2 closure files.
-
-**HF40 formal acceptance: PASS.**
-
-### HF41 — Zombie Fixed Visual Core
-
-Restores exactly four native-backed MethodDefs:
-
-- `0x06000128 ElementManager.GetElementColor()` / RID 296 / PC `0x180314F20`;
-- `0x06000425 Zombie.Update_Color()` / RID 1061 / PC `0x18036BEB0`;
-- `0x0600042D Zombie.FixedUpdate()` / RID 1069 / PC `0x180360080`;
-- `0x0600042E Zombie.FixedUpdate_BGM()` / RID 1070 / PC `0x18035FD10`.
-
-Accepted behavior preserves original Unity Object versus plain-reference semantics, native unordered/NaN floating branches, `Ceiling`/clamp color scaling, ashes and renderer/material alpha behavior, `List<GameObject>.Enumerator` finally/Dispose, ID17 BGM scaling, ID18 Board BGM cross-fade, original array/null behavior, and the original `FixedUpdate` call order before dying-health drain.
-
-Formal validation:
-
-- formal HF40 input re-fetched from Drive and SHA-verified `726c7ceda476cb0034b9394964407a72d2ab7a1a92424dee9c81e118f5590cce`;
-- patcher build head `0984f986c6d96570c95d6f488753de8e3d3fbc02`, workflow `34435893128` PASS, artifact ID `10136146571`, SHA `e53af852ecd3242df3acc1ec8f15abf52f3ba81fa1f6f9de293a28a313bc36cf`;
-- independent double patch -> byte-identical `2e03010cab5a4776243ecf3509402f387c39ccb9faa039876c85ad629ba7fcfa`, both exit 0, stderr 0;
-- Cecil reopen: `0x06000128` 117 IL / 340 bytes / 0 EH; `0x06000425` 90 / 264 / 1 EH; `0x0600042D` 30 / 82 / 0 EH; `0x0600042E` 122 / 350 / 0 EH; no Cpp2IL helper or issue marker remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all four targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF40 whole IL reproduced `fd43ae98ca25cc7a43f5265c76a924eaefb8fa8b4616575c6af914935fd0ff7e`; HF41 whole IL `48183cd6963c3bde3056e73d8983eeceea36574199b881077f76091bd458b4c0`;
-- prior HF39->HF40 semantic diff reproduced byte-for-byte at `053387ddf76a053cc57cbca509bb72c653c5becea3d92e7c595be6a58b670d76`; HF40->HF41 semantic diff `8080c9fa957c43f70073275f44f9e81d5153670c563ca8bcbdf6e8629480873b`;
-- MethodDef `2317 -> 2317`, method blocks `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x06000128`, `0x06000425`, `0x0600042D`, `0x0600042E`;
-- permanent RecoveryAudit commit `31a9f759fd0c08ef5cb41de4db57680a9849b876`, workflow `34446634528` PASS, artifact ID `10139898714`, SHA `149c9fac6d0a40c308f7142509756b2e8b6d85a2acd18dfcc4364ec8de9ddeae`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
-- GitHub Evidence commit `12fa5db97745dd8d2069eb8a488a4a57e69e0de5`;
-- Drive folder `1abfwNIw2Oq-gSIHTtVOnmCtJSxKy5D1D`;
-- cumulative DLL `1iEUvEYiv2qUFFhFhpGSQXN4XycNnnmJ4`;
-- payload manifest `1SjcGI1RDIlFI2mYORnXMukvU_eQGqWia`, SHA `c9fe6f84acde971fc59847ed664c9fe9fd77781b5e61f2d57ec0d9654bc8868e`; pre-closure provider readback exactly 20 files;
-- Evidence-FINAL `1Qt-WPv8cdM4IBExDqwTF6s6EZszgn8pW`, SHA `7d4a2376ee5c66001884d1668e28ee36658e957efd435b857b157090baf1d043`;
-- SHA256SUMS-FINAL `1ESErGFP2fVH9UKVX95IjWYE8ycmq3jkO`, 21 entries, SHA `1b01690089bb50937eecf3944dec1216a397411e55e46898314bc204ac495375`;
-- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
-
-**HF41 formal acceptance: PASS.**
-
-### HF42 — Dithering Motion Core
-
-Restores exactly three original native-backed MethodDefs:
-
-- `0x060002AF Board.FixedUpdate()` / RID 687 / PC `0x1803265C0`;
-- `0x060002B0 Board.FixedUpdate_Shake()` / RID 688 / PC `0x1803262A0`;
-- `0x0600035E Plant.Dithering_Animation(float)` / RID 862 / PC `0x18034E890`.
-
-Accepted behavior restores the original Board/Plant dithering path: ordered `shakeTime > 0f` gate with NaN false, previous-frame offset removal, native unordered-preserving shake continuation, `Random.insideUnitCircle` normalization with the original `1e-5f` guard, new-offset addition, original Board amplitude decay, and Plant's `amplitude != 0f` unordered behavior. Original Unity/null/exception behavior is retained; no defensive iOS-oriented guard was added.
-
-Formal validation:
-
-- formal HF41 input was re-fetched from Drive after HF42 patcher publication and SHA-verified `2e03010cab5a4776243ecf3509402f387c39ccb9faa039876c85ad629ba7fcfa`;
-- patcher build head `3fb55af85182896824b3743fddda40f6fe8d5100`, workflow `34476087441` PASS, artifact ID `10151538241`, SHA `c4910c871d83828555e993ff3c8484928e2464f7206e9811222d9b987f80ade1`;
-- independent double patch -> byte-identical `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`, both exit 0, stderr 0;
-- Cecil reopen: `0x060002AF` 7 IL / 20 bytes / 0 EH; `0x060002B0` 130 / 391 / 0 EH; `0x0600035E` 108 / 295 / 0 EH; no Cpp2IL helper remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF40 whole IL reproduced `fd43ae98ca25cc7a43f5265c76a924eaefb8fa8b4616575c6af914935fd0ff7e`; HF41 whole IL reproduced `48183cd6963c3bde3056e73d8983eeceea36574199b881077f76091bd458b4c0`; HF42 whole IL `ad4b9a6ce967456c40b04b258b02eb7470ec8de747d8d077d13ec135007587ed`;
-- prior Drive-archived HF40->HF41 semantic diff reproduced byte-for-byte at `8080c9fa957c43f70073275f44f9e81d5153670c563ca8bcbdf6e8629480873b`; HF41->HF42 semantic diff `1f321b7604d20bf6aa700310c2ec90c10717be02fb2c5de21ea31a710dfb52b6`;
-- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x060002AF`, `0x060002B0`, `0x0600035E`;
-- permanent RecoveryAudit commit `8fc4e7ddf6d3b5d551caf6d989def0f8fb3da3a2`, workflow `34476864538` PASS, artifact ID `10151865052`, SHA `e91943cfb5f5dc4692e207702fa3f2fa7c6208b68f6cc849023ac7ced2a5c4d8`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
-- GitHub Evidence commit `6afec47a028c806293046f70cd41858d0144a3c3`;
-- Drive folder `1cXHCViPgqd6-glDnpiPUREXBD5ds1WT9`;
-- cumulative DLL `1Aw_s062EA-uXi-MpZkIWx-7BElPHPpXM`;
-- payload manifest `1bEoTJcNvhgoqhvi-KZ-LdTPo_L3Cg5ii`, SHA `496dc3deff88255d817f4ea7792b7cce6f93f6e9267372f5fd307a141ef5e519`; pre-closure provider readback exactly 20 files;
-- Evidence-FINAL `1wQThN98KYQYA5NDuHawKZCD-u0UIisbz`, SHA `f4b4ce538a09d2669746e574d1df4707c57ec80656012ee5f26307cb43f3fbff`;
-- SHA256SUMS-FINAL `19W3-Fq_rSsT54askm-1Lv-PeuL1xTbEN`, 21 entries, SHA `7ca3c4a43935d7a3deababe9af67be3fd7c8658ba8fb18f3e79ae258eb3371de`;
-- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
-
-**HF42 formal acceptance: PASS.**
-
-### HF43 — Animation Rate Core
-
-Restores exactly three original native-backed MethodDefs:
-
-- `0x0600039E Plant.ResetUpdateRate(float)` / RID 926 / PC `0x180356970`;
-- `0x060003A7 Plant.SetUpdateRate()` / RID 935 / PC `0x180359430`;
-- `0x06000451 Zombie.GetRandenAnimationSpeedMagnification()` / RID 1105 / PC `0x180361870`.
-
-Accepted behavior preserves Animator Unity Object truthiness; ordered-zero versus unordered/nonzero update-rate paths; the original `0f / updateRate` floating behavior in burst; elemental Ceiling/Max slowdown with ID5/ID6 exceptions; and the original two-level Zombie ID jump table in which exactly IDs `{0,2,4,5,6,7,8,9,11,12,14}` use `Random.Range(0.75f,1.3f)` and all others return 1f.
-
-Formal validation:
-
-- formal HF42 input was re-fetched from Drive after the accepted v2 patcher publication and SHA-verified `687a973f640fc1be1e092fc75f6d09e697995563c605763d1195751af91dc7d6`;
-- HF43 v1 patcher head `eaafbbefcecf0c5a6489796ace5408c54b827b83`, workflow `34479347287` published successfully but its first formal application was rejected by its own reopen floor (`GetRanden...` produced 12 IL while the conservative floor was 15); no v1 candidate was accepted or propagated;
-- v2 changed only that reopen floor to 10, leaving gameplay Template semantics unchanged; v2 patcher head `25ada471bf94f96dc5abc7affdcd6e616e02767d`, workflow `34479568604` PASS, artifact ID `10152984471`, SHA `b7193f7f6dc11f86ae433c3db0ab2a04670e0893b70c59f48fbe6f0ad0034b03`;
-- independent v2 double patch -> byte-identical `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`, both exit 0, stderr 0;
-- Cecil reopen: `0x0600039E` 70 IL / 216 bytes / 0 EH; `0x060003A7` 94 / 276 / 0 EH; `0x06000451` 12 / 97 / 0 EH; no Cpp2IL helper remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF41 whole IL reproduced `48183cd6963c3bde3056e73d8983eeceea36574199b881077f76091bd458b4c0`; HF42 whole IL reproduced `ad4b9a6ce967456c40b04b258b02eb7470ec8de747d8d077d13ec135007587ed`; HF43 whole IL `26da408a5fe00508522d3a784338c4c50577ab1a78226d3c1929886e42760743`;
-- prior Drive-archived HF41->HF42 semantic diff reproduced byte-for-byte at `1f321b7604d20bf6aa700310c2ec90c10717be02fb2c5de21ea31a710dfb52b6`; HF42->HF43 semantic diff `4538f058ada84cf46c899cf9c85bc07db7c1a49780720e6d4298ea2f9d3e0f91`;
-- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x0600039E`, `0x060003A7`, `0x06000451`;
-- HF42 MethodDef table reproduced at the accepted canonical path `34f45e7c4beb53630472ae0a5cba63db6622029e131f193cbc1dacaec05d3e9b`; HF43 MethodDef table `b856427fdef2d77350ab805f1aaa0fab35d77bfb8a7bd1d0fb22e02829869149`;
-- permanent RecoveryAudit commit `fde3f301afd31ad0cd5588ea7a8dee36758f4ebb`, workflow `34480261357` PASS, artifact ID `10153273106`, SHA `b200e4a830eb274d333415d396207398ad2642dffc77446e853ec71fcf3ae116`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
-- GitHub Evidence commit `319ae0ea005a86e8bfadbb2b7c8a64f983ca4fe0`;
-- Drive folder `1VLh1-JRb1-Y-iI0v3EW8wzvqtwvvQ36s`;
-- cumulative DLL `15pAzAORNoxbQamjmj4xotoQ82RjaeirI`;
-- payload manifest `1xUR8HBaQfFaTGLNwuWRlvf1TInzTsMoH`, SHA `18e27ee935590af8d150af0506fcdbf44b9ede88182cb8b22bdbc412f17fff68`; pre-closure provider readback exactly 20 files;
-- Evidence-FINAL `1-tFd6uNFrTGUIM9MTKMeanFrTECLYMut`, SHA `a77fa3a2cbdaa3bd2a5730a10d473afb731577e2e2fbd2a8d3dc7af479de7715`;
-- SHA256SUMS-FINAL `1yPYiGKVDikkTJ7jbGe3dZjDsBraICekP`, 21 entries, SHA `1e3954be58bbd85027dab9a665747c2fb3ebe070c27266d26d24ed88f3a983d8`;
-- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
-
-**HF43 formal acceptance: PASS.**
+## Latest formal stages
 
 ### HF44 — Zombie Movement Position Core
 
-Restores exactly three original native-backed MethodDefs:
-
-- `0x06000472 Zombie.ResetMoveSpeed()` / RID 1138 / PC `0x180366D90`;
-- `0x06000474 Zombie.ResetUpdateRate(float)` / RID 1140 / PC `0x180366E40`;
-- `0x06000481 Zombie.TestPosition(float,float)` / RID 1153 / PC `0x180369FC0`.
-
-Accepted behavior preserves the ID17 ordered-negative move-direction rule with NaN/unordered fall-through, Animator Unity Object truthiness, the ordered-zero initialization path and nonzero/unordered three-channel rescaling in `ResetUpdateRate`, ordinary managed `Grid` null semantics versus Unity `Device` truthiness, passability acceptance, negative-X Ladder interaction, ID13 Snowbeast impact/wall calls, blocked-grid midpoint ±3 correction, original candidate X/Y Transform writeback with Z preserved, and null-Grid coordinate acceptance. No defensive iOS null guards or guessed movement corrections were added.
-
-Formal validation:
-
-- formal HF43 input was re-fetched from Drive after HF44 patcher publication and SHA-verified `c5d998c691f5e32edb5bf48f7d5da3d9ed03f362cb049c3fa3ed8a11617ee078`;
-- patcher build head `33ef6bc3e9d5b1dcd92f4fee970336f4ce503cdc`, workflow `34484120971` PASS, artifact ID `10154861901`, SHA `f4c3fa9f4f4e992e4721ebc4480e86dd67382bf68fdb03b6636476b7c73d17eb`;
-- independent double patch -> byte-identical `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`, both exit 0, stderr 0;
-- Cecil reopen: `0x06000472` 22 IL / 61 bytes / 0 EH; `0x06000474` 67 / 196 / 0 EH; `0x06000481` 161 / 408 / 0 EH; no Cpp2IL helper remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF42 whole IL reproduced `ad4b9a6ce967456c40b04b258b02eb7470ec8de747d8d077d13ec135007587ed`; HF43 whole IL reproduced `26da408a5fe00508522d3a784338c4c50577ab1a78226d3c1929886e42760743`; HF44 whole IL `dbb10be399d1672a0927510a2fb05481783aabdfd56c9eb921d2bb9982ce2b1f`;
-- prior Drive-archived HF42->HF43 semantic diff reproduced byte-for-byte at `4538f058ada84cf46c899cf9c85bc07db7c1a49780720e6d4298ea2f9d3e0f91`; HF43->HF44 semantic diff `c79688ce7518eb8fd5fe0cc697d2569ff39b4a189c004ceacd9460a09c430294`;
-- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x06000472`, `0x06000474`, `0x06000481`;
-- HF43 canonical MethodDef table reproduced byte-for-byte at `b856427fdef2d77350ab805f1aaa0fab35d77bfb8a7bd1d0fb22e02829869149`; HF44 MethodDef table `ab1557de0172766a51cc30dd7edae12d5a0cd29551cfb659a0e3641571afc790`;
-- permanent RecoveryAudit commit `fec4f209eadb00d4620983c93b88e0d107baba72`, workflow `34484770234` PASS, artifact ID `10155135509`, SHA `075dfd1a1a84f779e074c0da64cd58bcd301f8a7da15d0a1eb79db7fd33e94b8`; two independent auditor processes each passed internal OPEN1/OPEN2 for all retained targets and ended `RECOVERY_AUDIT_OK`;
-- GitHub Evidence commit `d39cdd6a0e2476eb97ca0f3d79821f876fb4fa05`;
-- Drive folder `1AsQpnZd9MJlcPdihbJqN0izasvoLY_br`;
-- cumulative DLL `1gGvEopIJHDzdVilPHSVf1ka_Rm-Pfx9a`;
-- payload manifest `1w3QjD2USbRhIHNDOBIwsPeGncZVcHdQl`, SHA `5e511fe1825912fc571d0fb8956b860f45ef3370a49e4a737f28fdc44badef02`; pre-closure provider readback exactly 20 files;
-- Evidence-FINAL `1NzJeS6yu6-CuvygC6W4DQw7lmJxBKVrg`, SHA `9b6c350b9548fb33f4e4e1ddac472f7e4d9d209cf17f2fdac31be8db176992d6`;
-- SHA256SUMS-FINAL `14iwpKm3BI9YLUXwZbWfJAfKVXSC-lJbb`, 21 entries, SHA `94ed2598167b43c43f68d67803865c07efaf31707b789b64e9ac9e8c4d5723ab`;
-- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
-
-**HF44 formal acceptance: PASS. HF44 is now the only allowed formal input for any later cumulative HF stage.**
+Restores `Zombie.ResetMoveSpeed`, `Zombie.ResetUpdateRate(float)`, and `Zombie.TestPosition(float,float)`. Final `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`. Evidence commit `d39cdd6a0e2476eb97ca0f3d79821f876fb4fa05`; Drive folder `1AsQpnZd9MJlcPdihbJqN0izasvoLY_br`; final provider readback exactly 22 files.
 
 ### HF45 — FlagMeter Runtime Core
 
-Restores exactly two original native-backed MethodDefs:
-
-- `0x06000617 FlagMeter.Update()` / RID 1559 / PC `0x18039D010`;
-- `0x06000618 FlagMeter.UpdateMeter(int,int)` / RID 1560 / PC `0x18039CF30`.
-
-Accepted behavior restores the original wave-meter runtime: single-precision `(theWave + 1) / wavesNum` progress, signed `% 10` flag activation, current/total text refresh, head-meter movement using `218f - progress * 436f`, and active-flag child vertical movement. Native COMISS unordered/NaN fall-through, List/index/null/Transform exception behavior, and all original constants are retained; no defensive iOS guards were added.
-
-Formal validation:
-
-- formal HF44 input was re-fetched from Drive after HF45 patcher publication and SHA-verified `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`;
-- patcher build head `289191fdf2fb9f30f2599833bd4b9b8de50fd6a0`, workflow `34489420443` PASS, artifact ID `10157078781`, SHA `21fbdb6a5814dd328941ac0ae36ec45de981b3617e3edcb0c678568d6bee0b67`;
-- independent double patch -> byte-identical `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`, both exit 0, stderr 0;
-- Cecil reopen: `0x06000617` 68 IL / 184 bytes / 0 EH; `0x06000618` 31 / 74 / 0 EH; no Cpp2IL helper remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: both target blocks exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF43 whole IL reproduced `26da408a5fe00508522d3a784338c4c50577ab1a78226d3c1929886e42760743`; HF44 whole IL reproduced `dbb10be399d1672a0927510a2fb05481783aabdfd56c9eb921d2bb9982ce2b1f`; HF45 whole IL `4d4ccd9b2c857ef9aceb0e18896e77cb6b493d9e654dc0a27dce2f5bfbd46668`;
-- prior Drive HF43->HF44 semantic diff reproduced byte-for-byte at `c79688ce7518eb8fd5fe0cc697d2569ff39b4a189c004ceacd9460a09c430294`; HF44->HF45 semantic diff `a1508fbe29703cec50c81b8db85857fcdb2e1fda4abbdf24a1059b0fcda225e5`;
-- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x06000617`, `0x06000618`;
-- HF44 canonical MethodDef table reproduced byte-for-byte at `ab1557de0172766a51cc30dd7edae12d5a0cd29551cfb659a0e3641571afc790`; HF45 MethodDef table `784c0d85a4dd74015670c865493c2e08e324fc54c83541caace717e06300b50d`;
-- permanent RecoveryAudit commit `bf54c77b625d818449d3a80a724a00ae2c0b95f6`, workflow `34489954734` PASS, artifact ID `10157301323`, SHA `c3d5aa29b9b2ef40803924de08fac48a1e66bf7062d8782e3ef990db8a9f06fc`; two independent auditor processes each passed internal OPEN1/OPEN2 over all retained targets and ended `RECOVERY_AUDIT_OK`;
-- GitHub Evidence commit `5fd1e2bd56d68c69e2e63c6484f1ffeea9b07351`;
-- Drive folder `1j1M9AyrsNcnHXtMg2sdQiBTuODSmLbUi`;
-- cumulative DLL `19HEqSmIkz4PUt-SIhXWdmEwBy6UMu8so`;
-- payload manifest `1Q-frWbl9L_rHsGTCR7yUOMeXOvjzdHwI`, SHA `26b9ffbc923460adc3c18d86fa3123f742407627570d92c0658e96ac88f1154f`; pre-closure provider readback exactly 20 files;
-- Evidence-FINAL `1qYAlZSvqvAjrQFvfZPqS7_t7gxLqjx4-`, SHA `5caff93348f409767016a3cb9c80f4d307f85bff02c649e739c20ff3f7e887ff`;
-- SHA256SUMS-FINAL `1thN5bR035bBNDFY5jAHrl2AwnnsM-eE2`, 21 entries, SHA `c64bd4b37fd7af6ae0bb5cf656a8f927243021e82304a8bf60f9962b1bcc9d3a`;
-- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the same recorded SHA values.
-
-**HF45 formal acceptance: PASS. HF45 is now the only allowed formal input for any later cumulative HF stage.**
+Restores `FlagMeter.Update()` and `FlagMeter.UpdateMeter(int,int)`. Final `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`. Evidence commit `5fd1e2bd56d68c69e2e63c6484f1ffeea9b07351`; Drive folder `1j1M9AyrsNcnHXtMg2sdQiBTuODSmLbUi`; final provider readback exactly 22 files.
 
 ### HF46 — EnemyManager Dependency Core
 
-Restores exactly two original native-backed MethodDefs:
+Restores `EnemyManager.PlayBoardAudio(int)` and `EnemyManager.TextWaveHealth()`. Final `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`. Evidence commit `3df515c171f82f50d631ceb35ecb02e2602ef446`; Drive folder `1LFsFv9vh2YWf3o3Aaa9lydWFEkWQ8IS6`; final provider readback exactly 22 files.
 
-- `0x060001BC EnemyManager.PlayBoardAudio(int)` / RID 444 / PC `0x180318240`;
-- `0x060001BF EnemyManager.TextWaveHealth()` / RID 447 / PC `0x180318CB0`.
+### HF47 — EnemyManager Wave Progression Core
 
-Accepted behavior restores the direct `TimeUpdate` dependency layer without patching `TimeUpdate` itself. `PlayBoardAudio` preserves board-clip indexing, Unity `AudioClip` truthiness, `Camera.main.transform.position`, `AudioVolume()`, and `CreateAudioAtPoint(...,1f)` with no defensive range/null fallbacks. `TextWaveHealth` preserves managed list enumeration/finally disposal, previous-wave/non-dying filtering, `healthPoint + armor1Point + armor2Point*0.2f` accumulation, ordinary CLR null/exception behavior, the `(double)waveHealth * 0.5 >= (double)waveHealthRemainder` comparison for non-flag waves, and `0f >= waveHealthRemainder` at flag positions.
+Restores exactly three original native-backed MethodDefs:
+
+- `0x060001B5 EnemyManager.DispatcheWave(Wave)` / RID 437 / PC `0x1803175F0`;
+- `0x060001B6 EnemyManager.DispatcheZombie(Enemy)` / RID 438 / PC `0x180317980`;
+- `0x060001C0 EnemyManager.TimeUpdate()` / RID 448 / PC `0x180318EB0`.
+
+Accepted behavior closes the active EnemyManager wave-progression path: wave-health reset and full enemy-list dispatch; native flag-row enemy synthesis and adventure-level ID selection; Zombie creation/teleport/path/wave/health/almanac updates with original Unity/null/array semantics; next-test and next-wave timers; `TextWaveHealth` retry/clamp behavior; wave-0 meter/audio; 7.5-second huge-wave warning and camera-size scaling; delayed flag-wave dispatch; final-wave particle/audio/finish state; and native `theWave`/`theFlag`/long-test timer transitions. No defensive iOS guards or guessed gameplay fallbacks were added.
 
 Formal validation:
 
-- formal HF45 input was re-fetched from Drive after HF46 patcher publication and SHA-verified `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`;
-- patcher build head `82ecf79f54815ac83d890988591e388f7341a812`, workflow `34494163583` PASS, artifact ID `10159056462`, SHA `2dd4544959cae93d05cddfbbf85993d63c5eda32c0141529a3fdc87fbbcbe6a2`;
-- independent double patch -> byte-identical `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`, both exit 0, stderr 0;
-- Cecil reopen: `0x060001BC` 20 IL / 57 bytes / 0 EH; `0x060001BF` 95 / 251 / 1 EH; no Cpp2IL helper remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: both targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF44 whole IL reproduced `dbb10be399d1672a0927510a2fb05481783aabdfd56c9eb921d2bb9982ce2b1f`; HF45 whole IL reproduced `4d4ccd9b2c857ef9aceb0e18896e77cb6b493d9e654dc0a27dce2f5bfbd46668`; HF46 whole IL `3bd8d8b77fa63476da612b5a26ad799395dbd2f0eedf836e50ef86cf991c5901`;
-- prior Drive HF44->HF45 semantic diff reproduced byte-for-byte at `a1508fbe29703cec50c81b8db85857fcdb2e1fda4abbdf24a1059b0fcda225e5`; HF45->HF46 semantic diff `d8d5e96b3d2e465f0cce0de909a6be146e162f074a229ed1c1b692c5f7d4b485`;
-- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x060001BC`, `0x060001BF`;
-- HF45 canonical MethodDef table reproduced at `784c0d85a4dd74015670c865493c2e08e324fc54c83541caace717e06300b50d`; HF46 MethodDef table `8266feac687beec6c232c4a5be3d062dbc033036a181534270627d4258706aa4`;
-- permanent RecoveryAudit commit `f8c0f3a9947a71de01b23d8be7250e7178720313`, workflow `34494674714` PASS, artifact ID `10159255979`, SHA `3c29a0e9c04cc9b439ed11df2560d6d59db953cd036be73ce2c92547bbae71ac`; two independent auditor processes each passed internal OPEN1/OPEN2 over all retained targets and ended `RECOVERY_AUDIT_OK`;
-- GitHub Evidence commit `3df515c171f82f50d631ceb35ecb02e2602ef446`;
-- Drive folder `1LFsFv9vh2YWf3o3Aaa9lydWFEkWQ8IS6`;
-- cumulative DLL `101Pc1kr80t3L0707ATTFFte9jVCKANO8`;
-- payload manifest `1qgczpetNJqif0aliihJxKh4174tgz0X6`, SHA `635be9a3d3e6931001885dc1ffc32c10be5a5b8b253d47f4b4426c6e87549681`; pre-closure provider readback exactly 20 files;
-- Evidence-FINAL `14XV2J2Trnc8AyjIc8mFxVbIQZzLhKlYM`, SHA `ec662083c756013c6f1a2aa68b2578c963c75da543dbcb6f0a53e9b41776a1c2`;
-- SHA256SUMS-FINAL `1oCqBMQtwJOXZ6cF_lubfL14WAE_PcAh_`, 21 entries, SHA `ab9fae6da6561880f966fdf043de31b6996501afb10e599256c630e919a76e24`;
-- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the recorded SHA values.
+- formal HF46 input SHA-verified `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd` by the published patcher before mutation;
+- patcher build head `0c1a28bbf536f773844f3107d87273eee72dca5c`, workflow `34517425819` PASS, artifact ID `10168290667`, SHA `92cf500782bd3b68a8dd04540f34097cdc26c77d30405e39d880d5dc6867a601`;
+- independent double patch -> byte-identical `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`, both exit 0;
+- Cecil reopen: `0x060001B5` 112 IL / 329 bytes / 1 EH; `0x060001B6` 67 / 192 / 0 EH; `0x060001C0` 348 / 959 / 0 EH; no Cpp2IL helper remains;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/Unknown/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF46 whole IL reproduced `3bd8d8b77fa63476da612b5a26ad799395dbd2f0eedf836e50ef86cf991c5901`; HF47 whole IL `e30a0559b3b2c6fbbafcc1783287a94a83364602de3891222f469556eb91438d`;
+- HF46->HF47 semantic diff `149b0a0a907e9495ccdda0963f7274013bc74f19540450437b090d20277fede1`;
+- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method/method-signature skeleton identical after canonicalizing IL data relocation labels, changed exactly `0x060001B5`, `0x060001B6`, `0x060001C0`;
+- HF47 MethodDef table `617708e6033055adb87be59c12e8b4229c999dde8ae07fe526ae40bef26a18ae`;
+- composite RecoveryAudit build head `aae7a1c4aba05333ccdd99bac6e737bedb365ecf`, workflow `34519145780` PASS, artifact ID `10168925271`, SHA `c996e40fbab078296cd979ee3eccd85710b728a53babf77745720aeb742c1501`; historical HF1-HF46 auditor source remained unchanged, and two independent composite runs passed historical `RECOVERY_AUDIT_OK` plus HF47 `HF47_AUDIT_OK` with stderr 0;
+- GitHub Evidence commit `c9e53de6dcb58bcdbf2a69ca9eb7bcb59869e0ff`;
+- Drive folder `1YKFGYZXZYTWwfqqFp3-v4PrkMX1ux_ii`;
+- cumulative DLL `1cG-fLSOr24DO0nJoY5XrZWDI686AeX3l`;
+- payload manifest `1MypMH6CnEPoClQS3PwtCumjLgjrXo_js`, SHA `e63b8b750e97dd6ba852c123515d54e6bb7dec2b4154bc0d4f93cd1027ecf923`; pre-closure provider readback exactly 20 files and all SHA values matched;
+- Evidence-FINAL `1Iurd-DU0zmsFvZoP9lcRnoEzZAduHeXv`, SHA `c8cfe653111891037f7f03328624a02a334f6b0c9f0cf4eec006136b33bf3e77`;
+- SHA256SUMS-FINAL `1ZHwn9NeUf0O5vzeV-JcByzTttk1k_HEM`, 21 entries, SHA `6ab040cf6d92fac4d2164ca163e9fee84b929752b52a32e9465e7b2905c2c3a9`;
+- final Google Drive provider readback exactly 22 files; both FINAL files were downloaded back from Drive and byte-hashed to the recorded SHA values.
 
-**HF46 formal acceptance: PASS. HF46 is now the only allowed formal input for any later cumulative HF stage.**
+**HF47 formal acceptance: PASS.**
 
 ## Unity reconstruction state
 
 AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Package scripts still require 67/67 validation before final Unity integration.
 
-## Decision gate — do not auto-open HF47
+## Decision gate — do not auto-open HF48
 
-Run a fresh residual active-path scan against the HF46 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+Run a fresh residual active-path scan against the HF47 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
 
-`EnemyManager.TimeUpdate()` remains a strong candidate because it is directly reached from `EnemyManager.Update()`. HF45/HF46 have now closed `FlagMeter.UpdateMeter`, `PlayBoardAudio`, and `TextWaveHealth`, but that does not automatically authorize `TimeUpdate`; its remaining `DispatcheWave`, `DispatcheZombie`, huge-wave/final-particle and Board/state dependencies must be re-evaluated from original PC native evidence. `Zombie.SetUpdateRate()` and residual Projectile helper bodies remain unpromoted without independent live-call evidence.
+The HF47 active wave-progression cluster is now clean: `EnemyManager.Update`, `DispatcheWave`, `DispatcheZombie`, `PlayBoardAudio`, `TextWaveHealth`, and `TimeUpdate` contain no Cpp2IL/NoteDecompilerIssue markers. Remaining EnemyManager `Start`, `CreateEnemyList`, `CreateEnemySelecter`, `DispatcheLadderWave`, `ExtendFlagList`, `FillFlagList`, `FlushedWavelenth`, `GetWave`, `SetPreZombie`, and `SetTargetGrid` bodies are candidates only and must be independently proven as live reconstruction loss before promotion. `Zombie.SetUpdateRate()` and residual Projectile helpers remain unpromoted absent independent live-call/closure evidence.
 
-If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF46 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF47 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
