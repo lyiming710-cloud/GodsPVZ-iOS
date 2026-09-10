@@ -146,6 +146,9 @@ var specs = new (string type, string method, int parameters, int minIl)[]
     ("Zombie", "Update_Color", 0, 45),
     ("Zombie", "FixedUpdate", 0, 20),
     ("Zombie", "FixedUpdate_BGM", 0, 60),
+    ("Board", "FixedUpdate", 0, 6),
+    ("Board", "FixedUpdate_Shake", 0, 80),
+    ("Plant", "Dithering_Animation", 1, 70),
 };
 
 void AuditOnce(string label)
