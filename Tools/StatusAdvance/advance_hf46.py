@@ -1,0 +1,67 @@
+from pathlib import Path
+
+path = Path('Recovery/STATUS.md')
+text = path.read_text(encoding='utf-8')
+final_sha = '900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd'
+chain_line = f'- **HF46 EnemyManager Dependency Core — native-backed formal final — `{final_sha}`.**'
+
+if chain_line not in text:
+    anchor = '- **HF45 FlagMeter Runtime Core — native-backed formal final — `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`.**'
+    if anchor not in text:
+        raise SystemExit('HF45 chain anchor missing')
+    text = text.replace(anchor, anchor + '\n' + chain_line, 1)
+
+section = '''### HF46 — EnemyManager Dependency Core
+
+Restores exactly two original native-backed MethodDefs:
+
+- `0x060001BC EnemyManager.PlayBoardAudio(int)` / RID 444 / PC `0x180318240`;
+- `0x060001BF EnemyManager.TextWaveHealth()` / RID 447 / PC `0x180318CB0`.
+
+Accepted behavior restores the direct `TimeUpdate` dependency layer without patching `TimeUpdate` itself. `PlayBoardAudio` preserves board-clip indexing, Unity `AudioClip` truthiness, `Camera.main.transform.position`, `AudioVolume()`, and `CreateAudioAtPoint(...,1f)` with no defensive range/null fallbacks. `TextWaveHealth` preserves managed list enumeration/finally disposal, previous-wave/non-dying filtering, `healthPoint + armor1Point + armor2Point*0.2f` accumulation, ordinary CLR null/exception behavior, the `(double)waveHealth * 0.5 >= (double)waveHealthRemainder` comparison for non-flag waves, and `0f >= waveHealthRemainder` at flag positions.
+
+Formal validation:
+
+- formal HF45 input was re-fetched from Drive after HF46 patcher publication and SHA-verified `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`;
+- patcher build head `82ecf79f54815ac83d890988591e388f7341a812`, workflow `34494163583` PASS, artifact ID `10159056462`, SHA `2dd4544959cae93d05cddfbbf85993d63c5eda32c0141529a3fdc87fbbcbe6a2`;
+- independent double patch -> byte-identical `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`, both exit 0, stderr 0;
+- Cecil reopen: `0x060001BC` 20 IL / 57 bytes / 0 EH; `0x060001BF` 95 / 251 / 1 EH; no Cpp2IL helper remains;
+- fixed ILSpy 11.0.0.9375 + 56 refs: both targets exit 0, stderr 0, Cpp2IL/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF44 whole IL reproduced `dbb10be399d1672a0927510a2fb05481783aabdfd56c9eb921d2bb9982ce2b1f`; HF45 whole IL reproduced `4d4ccd9b2c857ef9aceb0e18896e77cb6b493d9e654dc0a27dce2f5bfbd46668`; HF46 whole IL `3bd8d8b77fa63476da612b5a26ad799395dbd2f0eedf836e50ef86cf991c5901`;
+- prior Drive HF44->HF45 semantic diff reproduced byte-for-byte at `a1508fbe29703cec50c81b8db85857fcdb2e1fda4abbdf24a1059b0fcda225e5`; HF45->HF46 semantic diff `d8d5e96b3d2e465f0cce0de909a6be146e162f074a229ed1c1b692c5f7d4b485`;
+- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method skeleton identical, changed exactly `0x060001BC`, `0x060001BF`;
+- HF45 canonical MethodDef table reproduced at `784c0d85a4dd74015670c865493c2e08e324fc54c83541caace717e06300b50d`; HF46 MethodDef table `8266feac687beec6c232c4a5be3d062dbc033036a181534270627d4258706aa4`;
+- permanent RecoveryAudit commit `f8c0f3a9947a71de01b23d8be7250e7178720313`, workflow `34494674714` PASS, artifact ID `10159255979`, SHA `3c29a0e9c04cc9b439ed11df2560d6d59db953cd036be73ce2c92547bbae71ac`; two independent auditor processes each passed internal OPEN1/OPEN2 over all retained targets and ended `RECOVERY_AUDIT_OK`;
+- GitHub Evidence commit `3df515c171f82f50d631ceb35ecb02e2602ef446`;
+- Drive folder `1LFsFv9vh2YWf3o3Aaa9lydWFEkWQ8IS6`;
+- cumulative DLL `101Pc1kr80t3L0707ATTFFte9jVCKANO8`;
+- payload manifest `1qgczpetNJqif0aliihJxKh4174tgz0X6`, SHA `635be9a3d3e6931001885dc1ffc32c10be5a5b8b253d47f4b4426c6e87549681`; pre-closure provider readback exactly 20 files;
+- Evidence-FINAL `14XV2J2Trnc8AyjIc8mFxVbIQZzLhKlYM`, SHA `ec662083c756013c6f1a2aa68b2578c963c75da543dbcb6f0a53e9b41776a1c2`;
+- SHA256SUMS-FINAL `1oCqBMQtwJOXZ6cF_lubfL14WAE_PcAh_`, 21 entries, SHA `ab9fae6da6561880f966fdf043de31b6996501afb10e599256c630e919a76e24`;
+- final Google Drive provider readback exactly 22 files; FINAL pair was downloaded back from Drive and byte-hashed to the recorded SHA values.
+
+**HF46 formal acceptance: PASS. HF46 is now the only allowed formal input for any later cumulative HF stage.**
+
+'''
+
+if '### HF46 — EnemyManager Dependency Core' not in text:
+    anchor = '## Unity reconstruction state'
+    if anchor not in text:
+        raise SystemExit('Unity reconstruction anchor missing')
+    text = text.replace(anchor, section + anchor, 1)
+
+gate = '''## Decision gate — do not auto-open HF47
+
+Run a fresh residual active-path scan against the HF46 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+
+`EnemyManager.TimeUpdate()` remains a strong candidate because it is directly reached from `EnemyManager.Update()`. HF45/HF46 have now closed `FlagMeter.UpdateMeter`, `PlayBoardAudio`, and `TextWaveHealth`, but that does not automatically authorize `TimeUpdate`; its remaining `DispatcheWave`, `DispatcheZombie`, huge-wave/final-particle and Board/state dependencies must be re-evaluated from original PC native evidence. `Zombie.SetUpdateRate()` and residual Projectile helper bodies remain unpromoted without independent live-call evidence.
+
+If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF46 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+'''
+marker = '## Decision gate — do not auto-open HF46'
+if marker in text:
+    text = text[:text.index(marker)] + gate
+elif '## Decision gate — do not auto-open HF47' not in text:
+    raise SystemExit('Expected decision gate missing')
+
+path.write_text(text, encoding='utf-8')
