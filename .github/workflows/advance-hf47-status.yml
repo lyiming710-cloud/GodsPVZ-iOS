@@ -1,0 +1,96 @@
+name: Advance HF47 recovery status
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/advance-hf47-status.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  advance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - name: Advance STATUS to formally closed HF47
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('Recovery/STATUS.md')
+          s = p.read_text()
+
+          chain_anchor = '- **HF46 EnemyManager Dependency Core — native-backed formal final — `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`.**\n'
+          chain_hf47 = '- **HF47 EnemyManager Wave Progression Core — native-backed formal final — `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`.**\n'
+          if chain_hf47 not in s:
+              if chain_anchor not in s:
+                  raise SystemExit('HF46 chain anchor missing')
+              s = s.replace(chain_anchor, chain_anchor + chain_hf47, 1)
+
+          hf47 = '''### HF47 — EnemyManager Wave Progression Core
+
+Restores exactly three original native-backed MethodDefs:
+
+- `0x060001B5 EnemyManager.DispatcheWave(Wave)` / RID 437 / PC `0x1803175F0`;
+- `0x060001B6 EnemyManager.DispatcheZombie(Enemy)` / RID 438 / PC `0x180317980`;
+- `0x060001C0 EnemyManager.TimeUpdate()` / RID 448 / PC `0x180318EB0`.
+
+Accepted behavior closes the active EnemyManager wave-progression path: wave-health reset and full enemy-list dispatch; native flag-row enemy synthesis and adventure-level ID selection; Zombie creation/teleport/path/wave/health/almanac updates with original Unity/null/array semantics; next-test and next-wave timers; `TextWaveHealth` retry/clamp behavior; wave-0 meter/audio; 7.5-second huge-wave warning and camera-size scaling; delayed flag-wave dispatch; final-wave particle/audio/finish state; and native `theWave`/`theFlag`/long-test timer transitions. No defensive iOS guards or guessed gameplay fallbacks were added.
+
+Formal validation:
+
+- formal HF46 input SHA-verified `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd` by the published patcher before mutation;
+- patcher build head `0c1a28bbf536f773844f3107d87273eee72dca5c`, workflow `34517425819` PASS, artifact ID `10168290667`, SHA `92cf500782bd3b68a8dd04540f34097cdc26c77d30405e39d880d5dc6867a601`;
+- independent double patch -> byte-identical `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`, both exit 0;
+- Cecil reopen: `0x060001B5` 112 IL / 329 bytes / 1 EH; `0x060001B6` 67 / 192 / 0 EH; `0x060001C0` 348 / 959 / 0 EH; no Cpp2IL helper remains;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/Unknown/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF46 whole IL reproduced `3bd8d8b77fa63476da612b5a26ad799395dbd2f0eedf836e50ef86cf991c5901`; HF47 whole IL `e30a0559b3b2c6fbbafcc1783287a94a83364602de3891222f469556eb91438d`;
+- HF46->HF47 semantic diff `149b0a0a907e9495ccdda0963f7274013bc74f19540450437b090d20277fede1`;
+- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method/method-signature skeleton identical after canonicalizing IL data relocation labels, changed exactly `0x060001B5`, `0x060001B6`, `0x060001C0`;
+- HF47 MethodDef table `617708e6033055adb87be59c12e8b4229c999dde8ae07fe526ae40bef26a18ae`;
+- composite RecoveryAudit build head `aae7a1c4aba05333ccdd99bac6e737bedb365ecf`, workflow `34519145780` PASS, artifact ID `10168925271`, SHA `c996e40fbab078296cd979ee3eccd85710b728a53babf77745720aeb742c1501`; historical HF1-HF46 auditor source remained unchanged, and two independent composite runs passed historical `RECOVERY_AUDIT_OK` plus HF47 `HF47_AUDIT_OK` with stderr 0;
+- GitHub Evidence commit `c9e53de6dcb58bcdbf2a69ca9eb7bcb59869e0ff`;
+- Drive folder `1YKFGYZXZYTWwfqqFp3-v4PrkMX1ux_ii`;
+- cumulative DLL `1cG-fLSOr24DO0nJoY5XrZWDI686AeX3l`;
+- payload manifest `1MypMH6CnEPoClQS3PwtCumjLgjrXo_js`, SHA `e63b8b750e97dd6ba852c123515d54e6bb7dec2b4154bc0d4f93cd1027ecf923`; pre-closure provider readback exactly 20 files and all SHA values matched;
+- Evidence-FINAL `1Iurd-DU0zmsFvZoP9lcRnoEzZAduHeXv`, SHA `c8cfe653111891037f7f03328624a02a334f6b0c9f0cf4eec006136b33bf3e77`;
+- SHA256SUMS-FINAL `1ZHwn9NeUf0O5vzeV-JcByzTttk1k_HEM`, 21 entries, SHA `6ab040cf6d92fac4d2164ca163e9fee84b929752b52a32e9465e7b2905c2c3a9`;
+- final Google Drive provider readback exactly 22 files; both FINAL files were downloaded back from Drive and byte-hashed to the recorded SHA values.
+
+**HF47 formal acceptance: PASS. HF47 is now the only allowed formal input for any later cumulative HF stage.**
+
+'''
+          unity_marker = '## Unity reconstruction state\n'
+          if '### HF47 — EnemyManager Wave Progression Core\n' not in s:
+              if unity_marker not in s:
+                  raise SystemExit('Unity marker missing')
+              s = s.replace(unity_marker, hf47 + unity_marker, 1)
+
+          decision_marker = '## Decision gate — do not auto-open HF47\n'
+          if decision_marker in s:
+              prefix = s.split(decision_marker, 1)[0]
+              new_tail = '''## Decision gate — do not auto-open HF48
+
+Run a fresh residual active-path scan against the HF47 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+
+The HF47 active wave-progression cluster is now clean: `EnemyManager.Update`, `DispatcheWave`, `DispatcheZombie`, `PlayBoardAudio`, `TextWaveHealth`, and `TimeUpdate` contain no Cpp2IL/NoteDecompilerIssue markers. Remaining EnemyManager `Start`, `CreateEnemyList`, `CreateEnemySelecter`, `DispatcheLadderWave`, `ExtendFlagList`, `FillFlagList`, `FlushedWavelenth`, `GetWave`, `SetPreZombie`, and `SetTargetGrid` bodies are candidates only and must be independently proven as live reconstruction loss before promotion. `Zombie.SetUpdateRate()` and residual Projectile helpers remain unpromoted absent independent live-call/closure evidence.
+
+If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF47 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+'''
+              s = prefix + new_tail
+          elif '## Decision gate — do not auto-open HF48\n' not in s:
+              raise SystemExit('Decision gate marker missing')
+
+          p.write_text(s)
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Recovery/STATUS.md
+          git diff --cached --check
+          git diff --cached --exit-code && { echo 'No STATUS change'; exit 0; } || true
+          git commit -m 'Advance formal recovery status through HF47'
+          git push origin HEAD:high-fidelity
