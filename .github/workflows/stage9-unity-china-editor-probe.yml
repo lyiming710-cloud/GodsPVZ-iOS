@@ -1,0 +1,67 @@
+name: Probe exact Unity China Stage9.1 editor
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-unity-china-editor-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe candidate editor endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p stage9-unity-editor-probe
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+
+          changeset='c3ae09b9f03c'
+          candidates={
+            'china_linux': f'https://download.unitychina.cn/download_unity/{changeset}/LinuxEditorInstaller/Unity.tar.xz',
+            'china_windows': f'https://download.unitychina.cn/download_unity/{changeset}/Windows64EditorInstaller/UnitySetup64-2022.3.44f1.exe',
+            'global_linux_control': f'https://download.unity3d.com/download_unity/{changeset}/LinuxEditorInstaller/Unity.tar.xz',
+          }
+          out={}
+          for name,url in candidates.items():
+              headers=Path('stage9-unity-editor-probe')/(name+'.headers.txt')
+              cmd=['curl','-sS','-I','-L','--connect-timeout','20','--max-time','90','-D',str(headers),'-o','/dev/null','-w','%{http_code}\t%{url_effective}\t%{size_download}\n',url]
+              p=subprocess.run(cmd,text=True,capture_output=True)
+              text=headers.read_text(errors='replace') if headers.exists() else ''
+              length=None; ctype=None; status_lines=[]
+              for line in text.splitlines():
+                  lo=line.lower()
+                  if line.startswith('HTTP/'): status_lines.append(line.strip())
+                  elif lo.startswith('content-length:'):
+                      try: length=int(line.split(':',1)[1].strip())
+                      except: pass
+                  elif lo.startswith('content-type:'): ctype=line.split(':',1)[1].strip()
+              out[name]={
+                  'url':url,'curl_exit':p.returncode,'curl_writeout':p.stdout.strip(),
+                  'curl_stderr':p.stderr.strip(),'status_lines':status_lines,
+                  'content_length':length,'content_type':ctype,
+              }
+          Path('stage9-unity-editor-probe/RESULT.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          # Probe itself succeeds as long as the global control resolves. China candidates
+          # are evidence to decide the next exact download step, not assumptions.
+          if out['global_linux_control']['curl_exit'] != 0:
+              raise SystemExit(21)
+          PY
+
+      - name: Upload endpoint probe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-unity-china-editor-probe
+          path: stage9-unity-editor-probe/
+          if-no-files-found: error
+          retention-days: 90
+          include-hidden-files: true
