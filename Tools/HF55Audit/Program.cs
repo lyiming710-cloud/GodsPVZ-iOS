@@ -8,7 +8,7 @@ if (args.Length != 1)
     return 2;
 }
 
-const string ExpectedSha256 = "63266400a3add461c9cb6dacd302e5ba0070c4445f0e299cd491bd9166d51cbc";
+const string ExpectedSha256 = "dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655";
 const uint HF54DropToken = 0x06000202u;
 const uint HF55ZombieDropToken = 0x06000438u;
 var path = Path.GetFullPath(args[0]);
@@ -93,7 +93,7 @@ void AuditOnce(string label)
     if (drop.Body.Instructions.Count != 19 || drop.Body.CodeSize != 52 || drop.Body.ExceptionHandlers.Count != 0)
         throw new InvalidDataException($"{label}: HF55 exact body drift il={drop.Body.Instructions.Count} bytes={drop.Body.CodeSize} eh={drop.Body.ExceptionHandlers.Count}");
     if (!HasCall(drop, "Zombie", "GetHaedPosition", 0) || !HasCall(drop, "ProjectManager", "DropLootPiece", 2) ||
-        !HasCall(drop, "UnityEngine.GameObject", "get_transform", 0) || !HasCall(drop, "UnityEngine.Transform", "get_position", 0))
+        !HasCall(drop, "UnityEngine.Component", "get_transform", 0) || !HasCall(drop, "UnityEngine.Transform", "get_position", 0))
         throw new InvalidDataException($"{label}: HF55 required calls drift");
     var fields = drop.Body.Instructions.Select(i => i.Operand).OfType<FieldReference>().Select(f => $"{f.DeclaringType.FullName}::{f.Name}").ToList();
     foreach (var f in new[] { "Zombie::shadow", "Zombie::isOnBoard", "Zombie::board", "Board::projectManager" })
