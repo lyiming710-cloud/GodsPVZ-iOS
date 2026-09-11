@@ -22,11 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import hashlib
-          import json
-          import re
-          import subprocess
-          import tempfile
+          import hashlib, json, re, subprocess, tempfile
           from pathlib import Path
 
           MAP = Path('Recovery/package-script-map-editor.json')
@@ -47,19 +43,48 @@ jobs:
               'Unity.RenderPipelines.Universal.Runtime.dll': 5,
               'Unity.2D.Animation.Runtime.dll': 2,
           }
+          sources = {
+              ('com.unity.ugui','1.0.0'): {
+                  'repo':'https://github.com/zapabob/liltoon-pcss-extension.git',
+                  'commit':'10c495f6cd465747c2d03f1cc337df93b7d00662',
+                  'subdir':'Library/PackageCache/com.unity.ugui@1.0.0',
+                  'tree':'9952f30a9272f339505eb9eb5d63d44aac133630',
+                  'kind':'pinned-github-packagecache-history',
+              },
+              ('com.unity.textmeshpro','3.0.6'): {
+                  'repo':'https://github.com/needle-mirror/com.unity.textmeshpro.git',
+                  'commit':'5671be34032f3ead7e4f94de2bfa6f7a24513cdb',
+                  'subdir':'.',
+                  'tree':'0052ebfabf56c4332f5c9985077a29b3b737952f',
+                  'kind':'pinned-github-package-mirror',
+              },
+              ('com.unity.2d.animation','9.1.1'): {
+                  'repo':'https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git',
+                  'commit':'9104e9a40be711441d25848120cc83604c21d0b7',
+                  'subdir':'Library/PackageCache/com.unity.2d.animation@9.1.1',
+                  'tree':'0aae322aa413895341a9213218719ec423ed7dac',
+                  'kind':'pinned-gitlab-packagecache-history',
+              },
+              ('com.unity.render-pipelines.core','14.0.11'): {
+                  'repo':'https://github.com/SL0ANE/SloanePixelartURP.git',
+                  'commit':'1738732ad202a4d79d575005d9b85c2f12876d8f',
+                  'subdir':'Packages/com.unity.render-pipelines.core@14.0.11',
+                  'tree':'597b0cd638fdfa9eddd8baee8f4ec4ac8c35a9a0',
+                  'kind':'pinned-github-embedded-package',
+              },
+              ('com.unity.render-pipelines.universal','14.0.11'): {
+                  'repo':'https://github.com/SL0ANE/SloanePixelartURP.git',
+                  'commit':'1738732ad202a4d79d575005d9b85c2f12876d8f',
+                  'subdir':'Packages/com.unity.render-pipelines.universal@14.0.11',
+                  'tree':'3d4859c17939f08c69be7a7ce605b265735cd456',
+                  'kind':'pinned-github-embedded-package',
+              },
+          }
 
           root = json.loads(MAP.read_text(encoding='utf-8'))
           packages = root.get('packages') or []
           assert sum(len(p.get('mapping') or []) for p in packages) == 67
           assert {p['dll']: len(p.get('mapping') or []) for p in packages} == expected_counts
-
-          def validate_package(root_path, package_name, version):
-              pj = root_path / 'package.json'
-              if not pj.exists():
-                  raise RuntimeError(f'{package_name}@{version}: package.json missing at {root_path}')
-              actual = json.loads(pj.read_text(encoding='utf-8'))
-              if actual.get('name') != package_name or actual.get('version') != version:
-                  raise RuntimeError(f'{package_name}@{version}: identity mismatch: {actual.get("name")}@{actual.get("version")}')
 
           def clone_commit(repo_url, commit, dest):
               subprocess.run(['git','init',str(dest)],check=True,stdout=subprocess.DEVNULL)
@@ -70,155 +95,88 @@ jobs:
                   raise RuntimeError(f'commit mismatch for {repo_url}: {resolved} != {commit}')
               subprocess.run(['git','-C',str(dest),'checkout','--detach','FETCH_HEAD'],check=True,stdout=subprocess.DEVNULL)
 
-          package_roots = {}
-          package_provenance = []
+          def validate_package(root_path, package_name, version):
+              pj = root_path / 'package.json'
+              if not pj.exists(): raise RuntimeError(f'{package_name}@{version}: package.json missing')
+              actual = json.loads(pj.read_text(encoding='utf-8'))
+              if actual.get('name') != package_name or actual.get('version') != version:
+                  raise RuntimeError(f'{package_name}@{version}: identity mismatch {actual.get("name")}@{actual.get("version")}')
+
           work = Path(tempfile.mkdtemp(prefix='godspvz-package-evidence-'))
-
-          # Unity Registry no longer exposes these historical versions reliably.
-          # Recover exact package-cache trees from pinned public Git history instead.
-          legacy_repo = 'https://github.com/zapabob/liltoon-pcss-extension.git'
-          legacy_commit = '10c495f6cd465747c2d03f1cc337df93b7d00662'
-          legacy = work / 'legacy-unity-project'
-          clone_commit(legacy_repo, legacy_commit, legacy)
-          legacy_specs = [
-              ('com.unity.ugui','1.0.0','9952f30a9272f339505eb9eb5d63d44aac133630'),
-              ('com.unity.textmeshpro','3.0.6','65c06f7480a5b0e37c5fbdfe9d95b5b96bdb3799'),
-          ]
-          for package_name, version, expected_tree in legacy_specs:
-              rel = f'Library/PackageCache/{package_name}@{version}'
-              package_root = legacy / rel
-              validate_package(package_root, package_name, version)
-              tree_sha = subprocess.check_output(['git','-C',str(legacy),'rev-parse',f'HEAD:{rel}'],text=True).strip()
-              if tree_sha != expected_tree:
-                  raise RuntimeError(f'{package_name}@{version}: package tree mismatch {tree_sha} != {expected_tree}')
-              package_roots[(package_name, version)] = package_root
-              package_provenance.append({
-                  'name': package_name,
-                  'version': version,
-                  'source_kind': 'pinned-github-packagecache-history',
-                  'repository': legacy_repo,
-                  'commit': legacy_commit,
-                  'package_tree_sha': tree_sha,
+          clones = {}
+          package_roots = {}
+          provenance = []
+          for (package_name,version), spec in sources.items():
+              key=(spec['repo'],spec['commit'])
+              if key not in clones:
+                  dest=work/f'repo-{len(clones)}'
+                  clone_commit(spec['repo'],spec['commit'],dest)
+                  clones[key]=dest
+              repo=clones[key]
+              package_root=repo if spec['subdir']=='.' else repo/spec['subdir']
+              validate_package(package_root,package_name,version)
+              if spec['subdir']=='.':
+                  actual_tree=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD^{tree}'],text=True).strip()
+              else:
+                  actual_tree=subprocess.check_output(['git','-C',str(repo),'rev-parse',f"HEAD:{spec['subdir']}"],text=True).strip()
+              if actual_tree != spec['tree']:
+                  raise RuntimeError(f'{package_name}@{version}: tree mismatch {actual_tree} != {spec["tree"]}')
+              package_roots[(package_name,version)]=package_root
+              provenance.append({
+                  'name':package_name,'version':version,'source_kind':spec['kind'],
+                  'repository':spec['repo'],'commit':spec['commit'],'package_tree_sha':actual_tree,
               })
 
-          anim_repo = 'https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git'
-          anim_commit = '9104e9a40be711441d25848120cc83604c21d0b7'
-          anim_expected_tree = '0aae322aa413895341a9213218719ec423ed7dac'
-          anim = work / 'animation-911-project'
-          clone_commit(anim_repo, anim_commit, anim)
-          anim_name, anim_version = 'com.unity.2d.animation', '9.1.1'
-          anim_rel = f'Library/PackageCache/{anim_name}@{anim_version}'
-          anim_root = anim / anim_rel
-          validate_package(anim_root, anim_name, anim_version)
-          anim_tree = subprocess.check_output(['git','-C',str(anim),'rev-parse',f'HEAD:{anim_rel}'],text=True).strip()
-          if anim_tree != anim_expected_tree:
-              raise RuntimeError(f'{anim_name}@{anim_version}: package tree mismatch {anim_tree} != {anim_expected_tree}')
-          package_roots[(anim_name, anim_version)] = anim_root
-          package_provenance.append({
-              'name': anim_name,
-              'version': anim_version,
-              'source_kind': 'pinned-gitlab-packagecache-history',
-              'repository': anim_repo,
-              'commit': anim_commit,
-              'package_tree_sha': anim_tree,
-          })
-
-          # Exact 14.0.11 RP packages are preserved as embedded package trees in a pinned public project.
-          rp_repo = 'https://github.com/SL0ANE/SloanePixelartURP.git'
-          rp_commit = '1738732ad202a4d79d575005d9b85c2f12876d8f'
-          rp = work / 'rp-mirror'
-          clone_commit(rp_repo, rp_commit, rp)
-          for package_name in ('com.unity.render-pipelines.core', 'com.unity.render-pipelines.universal'):
-              version = '14.0.11'
-              rel = f'Packages/{package_name}@{version}'
-              package_root = rp / rel
-              validate_package(package_root, package_name, version)
-              tree_sha = subprocess.check_output(['git','-C',str(rp),'rev-parse',f'HEAD:{rel}'],text=True).strip()
-              package_roots[(package_name, version)] = package_root
-              package_provenance.append({
-                  'name': package_name,
-                  'version': version,
-                  'source_kind': 'pinned-github-embedded-package',
-                  'repository': rp_repo,
-                  'commit': rp_commit,
-                  'package_tree_sha': tree_sha,
-              })
-
-          rows = []
-          bad = []
+          rows=[]; bad=[]
           for pkg in packages:
-              dll = pkg['dll']
-              package_name, version = package_for_dll[dll]
-              package_root = package_roots[(package_name, version)]
+              dll=pkg['dll']
+              package_name,version=package_for_dll[dll]
+              package_root=package_roots[(package_name,version)]
               for m in pkg.get('mapping') or []:
-                  full_name = m['fullName']
-                  short = full_name.rsplit('.', 1)[-1]
-                  candidates = []
-                  for cs in package_root.rglob(short + '.cs'):
-                      rel = '/' + cs.relative_to(package_root).as_posix() + '/'
-                      if any(part in rel for part in ('/Editor/', '/Tests/', '/Samples~/', '/Documentation~/', '/TestProjects/')):
-                          continue
-                      if cs.with_suffix(cs.suffix + '.meta').exists():
-                          candidates.append(cs)
-                  if len(candidates) != 1:
-                      bad.append({'dll': dll, 'fullName': full_name, 'candidate_paths': [c.relative_to(package_root).as_posix() for c in candidates]})
+                  full_name=m['fullName']; short=full_name.rsplit('.',1)[-1]
+                  candidates=[]
+                  for cs in package_root.rglob(short+'.cs'):
+                      rel='/' + cs.relative_to(package_root).as_posix() + '/'
+                      if any(part in rel for part in ('/Editor/','/Tests/','/Samples~/','/Documentation~/','/TestProjects/')): continue
+                      if cs.with_suffix(cs.suffix+'.meta').exists(): candidates.append(cs)
+                  if len(candidates)!=1:
+                      bad.append({'dll':dll,'fullName':full_name,'candidate_paths':[c.relative_to(package_root).as_posix() for c in candidates]})
                       continue
-                  cs = candidates[0]
-                  meta = cs.with_suffix(cs.suffix + '.meta')
-                  mm = re.search(r'(?m)^guid:\s*([0-9a-fA-F]{32})\s*$', meta.read_text(encoding='utf-8', errors='replace'))
+                  cs=candidates[0]; meta=cs.with_suffix(cs.suffix+'.meta')
+                  mm=re.search(r'(?m)^guid:\s*([0-9a-fA-F]{32})\s*$',meta.read_text(encoding='utf-8',errors='replace'))
                   if not mm:
-                      bad.append({'dll': dll, 'fullName': full_name, 'candidate_paths': [cs.relative_to(package_root).as_posix()], 'error': 'guid missing from .meta'})
+                      bad.append({'dll':dll,'fullName':full_name,'candidate_paths':[cs.relative_to(package_root).as_posix()],'error':'guid missing from .meta'})
                       continue
                   rows.append({
-                      'dll': dll,
-                      'package': package_name,
-                      'version': version,
-                      'old_dll_guid': pkg['guid'],
-                      'old_fileID': m['fileID'],
-                      'fullName': full_name,
-                      'source_path': cs.relative_to(package_root).as_posix(),
-                      'meta_path': meta.relative_to(package_root).as_posix(),
-                      'monoscript_guid': mm.group(1).lower(),
-                      'new_fileID': 11500000,
+                      'dll':dll,'package':package_name,'version':version,
+                      'old_dll_guid':pkg['guid'],'old_fileID':m['fileID'],'fullName':full_name,
+                      'source_path':cs.relative_to(package_root).as_posix(),
+                      'meta_path':meta.relative_to(package_root).as_posix(),
+                      'monoscript_guid':mm.group(1).lower(),'new_fileID':11500000,
                   })
 
-          evidence = {
-              'schema': 3,
-              'source_map': str(MAP),
-              'resolved': len(rows),
-              'expected': 67,
-              'packages': sorted(package_provenance, key=lambda p: p['name']),
-              'mapping': sorted(rows, key=lambda r: (r['dll'], r['fullName'])),
-              'failures': bad,
-          }
-          (OUT / 'package-guid-map.json').write_text(json.dumps(evidence, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          evidence={'schema':3,'source_map':str(MAP),'resolved':len(rows),'expected':67,
+                    'packages':sorted(provenance,key=lambda p:p['name']),
+                    'mapping':sorted(rows,key=lambda r:(r['dll'],r['fullName'])),'failures':bad}
+          (OUT/'package-guid-map.json').write_text(json.dumps(evidence,indent=2,sort_keys=True)+'\n',encoding='utf-8')
 
-          report = []
-          report.append('GodsPVZ exact package GUID evidence')
-          report.append(f'resolved={len(rows)}/67')
-          report.append(f'failures={len(bad)}')
-          report.append('source_policy=pinned exact public git trees; no historical Unity Registry dependency')
-          report.append('')
-          for p in sorted(package_provenance, key=lambda p: p['name']):
+          report=['GodsPVZ exact package GUID evidence',f'resolved={len(rows)}/67',f'failures={len(bad)}',
+                  'source_policy=pinned exact public git trees; no historical Unity Registry dependency','']
+          for p in sorted(provenance,key=lambda p:p['name']):
               report.append(f"PACKAGE\t{p['name']}@{p['version']}\t{p['source_kind']}\tcommit={p['commit']}\ttree={p['package_tree_sha']}\t{p['repository']}")
           report.append('')
-          for r in sorted(rows, key=lambda r: (r['dll'], r['fullName'])):
+          for r in sorted(rows,key=lambda r:(r['dll'],r['fullName'])):
               report.append(f"MAP\t{r['dll']}\t{r['fullName']}\toldFileID={r['old_fileID']}\tguid={r['monoscript_guid']}\t{r['source_path']}")
           if bad:
               report.append('')
-              for x in bad:
-                  report.append('FAIL\t' + json.dumps(x, sort_keys=True))
-          (OUT / 'package-guid-map.txt').write_text('\n'.join(report) + '\n', encoding='utf-8')
-
-          sha_lines = []
-          for name in ('package-guid-map.json', 'package-guid-map.txt'):
-              path = OUT / name
-              sha_lines.append(f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {name}")
-          (OUT / 'SHA256SUMS.txt').write_text('\n'.join(sha_lines) + '\n', encoding='utf-8')
-
+              for x in bad: report.append('FAIL\t'+json.dumps(x,sort_keys=True))
+          (OUT/'package-guid-map.txt').write_text('\n'.join(report)+'\n',encoding='utf-8')
+          sha_lines=[]
+          for name in ('package-guid-map.json','package-guid-map.txt'):
+              p=OUT/name; sha_lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {name}")
+          (OUT/'SHA256SUMS.txt').write_text('\n'.join(sha_lines)+'\n',encoding='utf-8')
           print('\n'.join(report))
-          if bad or len(rows) != 67:
-              raise SystemExit(23)
+          if bad or len(rows)!=67: raise SystemExit(23)
           PY
 
       - name: Upload exact package evidence
