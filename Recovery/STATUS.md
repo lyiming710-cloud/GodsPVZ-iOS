@@ -4,9 +4,9 @@
 
 Use PC x86-64 IL2CPP as the primary gameplay source, Android native second, then original metadata/assets/JSON. Cpp2IL/ILSpy are attribution and managed-reconstruction aids, not authoritative source.
 
-A stage is not final until original native attribution, formal-input SHA validation, deterministic independent patching, Cecil reopen, permanent/composite RecoveryAudit OPEN1/OPEN2, fixed ILSpy readback, whole-assembly semantic isolation, GitHub Evidence, Google Drive archive, provider readback and STATUS closure all pass.
+A stage is not final until original native attribution, formal-input SHA validation, deterministic independent patching, Cecil reopen, permanent/cumulative RecoveryAudit OPEN1/OPEN2, fixed ILSpy readback, whole-assembly semantic isolation, GitHub Evidence, Google Drive archive, provider readback and STATUS closure all pass.
 
-Historical per-stage detail remains preserved in Git history and `Tools/HighFidelityPatch/Evidence/`. This STATUS file records the authoritative cumulative chain and the current integration/next-stage gate.
+Historical per-stage detail remains preserved in Git history and `Tools/HighFidelityPatch/Evidence/`. This STATUS file records the authoritative cumulative chain and current next-stage gate.
 
 ## Fixed original baseline
 
@@ -70,63 +70,60 @@ Historical per-stage detail remains preserved in Git history and `Tools/HighFide
 - HF45 `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`
 - HF46 `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`
 - **HF47 EnemyManager Wave Progression Core — native-backed formal final — `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`.**
+- **HF48 Ladder Runtime Core — native-backed formal final — `6c1eb1468f398610cc61ea89b7f3a9409f6baeb451e6df0ae6243b28af50e48e`.**
 
-HF47 is the only allowed formal cumulative input for any later HF stage.
+HF48 is the only allowed formal cumulative input for any later HF stage.
 
 ## Latest formal stages
 
-### HF44 — Zombie Movement Position Core
-
-Restores `Zombie.ResetMoveSpeed`, `Zombie.ResetUpdateRate(float)`, and `Zombie.TestPosition(float,float)`. Final `fe5e73abead459121ea00c0f91be7e7abc8b3392eb924458b9c0c0352b444118`. Evidence commit `d39cdd6a0e2476eb97ca0f3d79821f876fb4fa05`; Drive folder `1AsQpnZd9MJlcPdihbJqN0izasvoLY_br`; final provider readback exactly 22 files.
-
-### HF45 — FlagMeter Runtime Core
-
-Restores `FlagMeter.Update()` and `FlagMeter.UpdateMeter(int,int)`. Final `a34feef56319f047a9f60caef0028db9592536b89fa484c41e371a826d6ccd5a`. Evidence commit `5fd1e2bd56d68c69e2e63c6484f1ffeea9b07351`; Drive folder `1j1M9AyrsNcnHXtMg2sdQiBTuODSmLbUi`; final provider readback exactly 22 files.
-
-### HF46 — EnemyManager Dependency Core
-
-Restores `EnemyManager.PlayBoardAudio(int)` and `EnemyManager.TextWaveHealth()`. Final `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd`. Evidence commit `3df515c171f82f50d631ceb35ecb02e2602ef446`; Drive folder `1LFsFv9vh2YWf3o3Aaa9lydWFEkWQ8IS6`; final provider readback exactly 22 files.
-
 ### HF47 — EnemyManager Wave Progression Core
 
-Restores exactly three original native-backed MethodDefs:
+Restores exactly `EnemyManager.DispatcheWave(Wave)`, `EnemyManager.DispatcheZombie(Enemy)`, and `EnemyManager.TimeUpdate()`. Final `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`. GitHub Evidence commit `c9e53de6dcb58bcdbf2a69ca9eb7bcb59869e0ff`; Drive folder `1YKFGYZXZYTWwfqqFp3-v4PrkMX1ux_ii`; final provider readback exactly 22 files.
 
-- `0x060001B5 EnemyManager.DispatcheWave(Wave)` / RID 437 / PC `0x1803175F0`;
-- `0x060001B6 EnemyManager.DispatcheZombie(Enemy)` / RID 438 / PC `0x180317980`;
-- `0x060001C0 EnemyManager.TimeUpdate()` / RID 448 / PC `0x180318EB0`.
+### HF48 — Ladder Runtime Core
 
-Accepted behavior closes the active EnemyManager wave-progression path: wave-health reset and full enemy-list dispatch; native flag-row enemy synthesis and adventure-level ID selection; Zombie creation/teleport/path/wave/health/almanac updates with original Unity/null/array semantics; next-test and next-wave timers; `TextWaveHealth` retry/clamp behavior; wave-0 meter/audio; 7.5-second huge-wave warning and camera-size scaling; delayed flag-wave dispatch; final-wave particle/audio/finish state; and native `theWave`/`theFlag`/long-test timer transitions. No defensive iOS guards or guessed gameplay fallbacks were added.
+Restores exactly six original native-backed MethodDefs:
+
+- `0x060001B3 EnemyManager.DispatcheLadderWave()` / RID 435 / PC `0x1803170D0`;
+- `0x060001B4 EnemyManager.DispatcheSPHWave()` / RID 436 / PC `0x1803172F0`;
+- `0x06000273 ZombieManager.Update()` / RID 627 / PC `0x180342AC0`;
+- `0x06000274 ZombieManager.Update_Ladder()` / RID 628 / PC `0x1803427B0`;
+- `0x0600027D ZombieManager.TriggerLadder()` / RID 637 / PC `0x180342620`;
+- `0x060002A4 EnemyPath..ctor(int,int,float,BoardConfig)` / RID 676 / PC `0x1803299E0`.
+
+Accepted behavior closes the active ladder runtime path: traversable-row ID16 ladder waves; ID17 SPH waves and original `prePath.Insert(0,new EnemyPath(...999f...))`; the real `ZombieManager.Update -> Update_Ladder` call; countdown/popup/audio/pause/timeScale behavior; ladder wave cadence and tenth-event SPH wave; complete TriggerLadder list enumeration/Dispose semantics; and the original four-argument EnemyPath position construction. No defensive iOS guards or guessed gameplay fallbacks were added.
 
 Formal validation:
 
-- formal HF46 input SHA-verified `900d3aabbf79b094a6b412f7d869cc5285ce206a2d17501b69fc3cd8651beefd` by the published patcher before mutation;
-- patcher build head `0c1a28bbf536f773844f3107d87273eee72dca5c`, workflow `34517425819` PASS, artifact ID `10168290667`, SHA `92cf500782bd3b68a8dd04540f34097cdc26c77d30405e39d880d5dc6867a601`;
-- independent double patch -> byte-identical `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`, both exit 0;
-- Cecil reopen: `0x060001B5` 112 IL / 329 bytes / 1 EH; `0x060001B6` 67 / 192 / 0 EH; `0x060001C0` 348 / 959 / 0 EH; no Cpp2IL helper remains;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all three targets exit 0, stderr 0, Cpp2IL/Unknown/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
-- HF46 whole IL reproduced `3bd8d8b77fa63476da612b5a26ad799395dbd2f0eedf836e50ef86cf991c5901`; HF47 whole IL `e30a0559b3b2c6fbbafcc1783287a94a83364602de3891222f469556eb91438d`;
-- HF46->HF47 semantic diff `149b0a0a907e9495ccdda0963f7274013bc74f19540450437b090d20277fede1`;
-- MethodDef `2317 -> 2317`, distinct method-body RVAs `2139 -> 2139`, normalized non-method/method-signature skeleton identical after canonicalizing IL data relocation labels, changed exactly `0x060001B5`, `0x060001B6`, `0x060001C0`;
-- HF47 MethodDef table `617708e6033055adb87be59c12e8b4229c999dde8ae07fe526ae40bef26a18ae`;
-- composite RecoveryAudit build head `aae7a1c4aba05333ccdd99bac6e737bedb365ecf`, workflow `34519145780` PASS, artifact ID `10168925271`, SHA `c996e40fbab078296cd979ee3eccd85710b728a53babf77745720aeb742c1501`; historical HF1-HF46 auditor source remained unchanged, and two independent composite runs passed historical `RECOVERY_AUDIT_OK` plus HF47 `HF47_AUDIT_OK` with stderr 0;
-- GitHub Evidence commit `c9e53de6dcb58bcdbf2a69ca9eb7bcb59869e0ff`;
-- Drive folder `1YKFGYZXZYTWwfqqFp3-v4PrkMX1ux_ii`;
-- cumulative DLL `1cG-fLSOr24DO0nJoY5XrZWDI686AeX3l`;
-- payload manifest `1MypMH6CnEPoClQS3PwtCumjLgjrXo_js`, SHA `e63b8b750e97dd6ba852c123515d54e6bb7dec2b4154bc0d4f93cd1027ecf923`; pre-closure provider readback exactly 20 files and all SHA values matched;
-- Evidence-FINAL `1Iurd-DU0zmsFvZoP9lcRnoEzZAduHeXv`, SHA `c8cfe653111891037f7f03328624a02a334f6b0c9f0cf4eec006136b33bf3e77`;
-- SHA256SUMS-FINAL `1ZHwn9NeUf0O5vzeV-JcByzTttk1k_HEM`, 21 entries, SHA `6ab040cf6d92fac4d2164ca163e9fee84b929752b52a32e9465e7b2905c2c3a9`;
+- formal HF47 input SHA-verified `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533`;
+- patcher build head `a756f88bdc5d502ea06a19146ae33362e2564bef`, workflow `34543329650` PASS, artifact ID `10178091954`, SHA `6708200c297776a9685a7ebca56eed7d77340825ce4543411dff03a0130ce19b`;
+- independent double patch -> byte-identical `6c1eb1468f398610cc61ea89b7f3a9409f6baeb451e6df0ae6243b28af50e48e`, both exit 0 with zero stderr;
+- Cecil reopen: `0x060001B3` 64 IL / 186 bytes / 0 EH; `0x060001B4` 89 / 260 / 0; `0x06000273` 3 / 7 / 0; `0x06000274` 97 / 308 / 0; `0x0600027D` 44 / 115 / 1; `0x060002A4` 27 / 66 / 0;
+- fixed ILSpy 11.0.0.9375 + 56 refs: all six targets exit 0, stderr 0, Cpp2IL/Unknown/NotImplemented/invalid stack-type-comparison/warning-error markers 0;
+- HF47 whole IL reproduced `e30a0559b3b2c6fbbafcc1783287a94a83364602de3891222f469556eb91438d`; HF48 whole IL `47726f82264e97ecc44a9fdb5a41fcb447c76da57a16cce3c2c20622e7ecb0bd`;
+- HF47->HF48 semantic diff `94bbc39d24b4aabc5c31b425d42badabb88fe916452e551d11e24eea4f5b7b1b`;
+- Method blocks `2317 -> 2317`; normalized non-method/method-signature skeleton byte-identical; changed exactly the six target tokens;
+- distinct nonzero method-body RVAs `2139 -> 2140`, expected solely because authorized `ZombieManager.Update()` changes from a damaged empty/shared body to its original 7-byte body;
+- HF48 MethodDef table SHA `c7d4dfa7af316c26366dfa2f5a1a75b5c47d418bf1d5c269f014ac6ec99f6aab`;
+- corrected cumulative RecoveryAudit build head `54cedf35bfdfd8244155e625dbf497d250f2d40e`, workflow `34546011331` PASS, artifact ID `10179032692`, SHA `3867f6e6116cdc6deaacdf7ba6f24b0087cf69aca6cc593d528fc0f5df9e3154`; unchanged historical auditor covers HF1-HF46, and the HF48 cumulative auditor locks the HF48 whole-file SHA while checking HF47+HF48 late-stage targets; two independent corrected composite executions ended `RECOVERY_AUDIT_OK` and `HF48_AUDIT_OK` with stderr 0;
+- GitHub Evidence commit `2edfe75f17a42e27d0f9a3e6ee7be15d2ebf8a47`;
+- Drive folder `1945a0ednBRxXQcnzw9RLR4icPXJVTUXY`;
+- cumulative DLL `1D-vEXZjQVW0CWkB0FIkh9ckVDeQ8lHyk`;
+- payload manifest `1ZMNQCf4n170MDfS4PSVeJAyrxRn4XrmC`, SHA `3ac98631abd123e92c9c8175de67776bafa41dc2ef6835a7ec18db039ca01534`; pre-closure provider readback exactly 20 files with all SHA values matched;
+- Evidence-FINAL `1mDd6TwSp8Y4mvK-SNk8_9lXLTVKBgdI5`, SHA `c9cff3cb6fff06b253be1c5926da3e7c35c6e7fdaea7069bd31cd3f5cc3f89cd`;
+- SHA256SUMS-FINAL `1zSsy5KDgMsZN5uqPYA6BpSwvo-BiszHq`, 21 entries, SHA `d95ba51a5fce83b891da1844c6df93d493a2e3ff6c0d1a5dd1bc66365c142d0d`;
 - final Google Drive provider readback exactly 22 files; both FINAL files were downloaded back from Drive and byte-hashed to the recorded SHA values.
 
-**HF47 formal acceptance: PASS.**
+**HF48 formal acceptance: PASS. HF48 is now the only allowed formal input for any later cumulative HF stage.**
 
 ## Unity reconstruction state
 
-AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Package scripts still require 67/67 validation before final Unity integration.
+AssetRipper ~3,149 objects; reconstructed project ~6,783 files. 173 game script types and 263 refs across 114 assets migrated. MainMenu/Board scenes restored. Stage9.1 remains the reconstructed Unity project baseline. Package scripts still require 67/67 validation before final Unity integration.
 
-## Decision gate — do not auto-open HF48
+## Decision gate — do not auto-open HF49
 
-Run a fresh residual active-path scan against the HF47 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
+Run a fresh residual active-path scan against the HF48 cumulative assembly. A later HF stage may open only if an original-PC-native-backed MethodDef simultaneously has concrete managed loss/mis-reconstruction, material gameplay reachability, and behaviorally closed native dependencies. Warning count, MethodDef adjacency, shared-stub xref centrality, or cosmetic decompiler quality alone are not gates.
 
-The HF47 active wave-progression cluster is now clean: `EnemyManager.Update`, `DispatcheWave`, `DispatcheZombie`, `PlayBoardAudio`, `TextWaveHealth`, and `TimeUpdate` contain no Cpp2IL/NoteDecompilerIssue markers. Remaining EnemyManager `Start`, `CreateEnemyList`, `CreateEnemySelecter`, `DispatcheLadderWave`, `ExtendFlagList`, `FillFlagList`, `FlushedWavelenth`, `GetWave`, `SetPreZombie`, and `SetTargetGrid` bodies are candidates only and must be independently proven as live reconstruction loss before promotion. `Zombie.SetUpdateRate()` and residual Projectile helpers remain unpromoted absent independent live-call/closure evidence.
+The HF48 ladder cluster is now clean. Remaining markers include the broad `EnemyManager.Start/CreateEnemyList/CreateEnemySelecter/ExtendFlagList/FillFlagList/FlushedWavelenth/GetWave/SetPreZombie/SetTargetGrid` initialization cluster, whose dependency graph includes damaged `EnemySelecter.FillWave`, plus residual ZombieManager initialization/board-entry/list-utility paths such as `AllFindPath`, `BGMPasue`, `BGMUnPasue`, and `KillAll`. These are candidates only and must be independently proven as live reconstruction loss with native dependency closure before any HF49 promotion.
 
-If no remaining candidate satisfies the gates, stop HF managed recovery and proceed to 67/67 Unity/package validation, integrate the HF47 cumulative Assembly-CSharp recovery, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
+If no remaining candidate satisfies the gate, stop managed HF recovery and proceed to 67/67 Unity/package validation, integrate the HF48 cumulative Assembly-CSharp recovery into Stage9.1, compile and validate MainMenu/Board/gameplay paths, and only then perform necessary iOS adaptation.
