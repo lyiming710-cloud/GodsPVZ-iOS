@@ -1,0 +1,140 @@
+name: Build Stage9.1 package dependency closure
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-package-dependency-closure.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  closure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve exact Unity Registry package dependency closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, shutil, tarfile, tempfile, urllib.request
+          from collections import deque
+          from pathlib import Path
+
+          # Direct non-module dependencies declared by the five already-pinned embedded packages.
+          initial = {
+              'com.unity.2d.common': '8.0.2',
+              'com.unity.2d.sprite': '1.0.0',
+              'com.unity.collections': '1.1.0',
+              'com.unity.burst': '1.8.9',
+              'com.unity.mathematics': '1.2.1',
+              'com.unity.render-pipelines.universal-config': '14.0.9',
+              'com.unity.shadergraph': '14.0.11',
+          }
+          already_embedded = {
+              'com.unity.ugui': '1.0.0',
+              'com.unity.textmeshpro': '3.0.6',
+              'com.unity.2d.animation': '9.1.1',
+              'com.unity.render-pipelines.core': '14.0.11',
+              'com.unity.render-pipelines.universal': '14.0.11',
+          }
+
+          out = Path('stage9-package-dependency-closure')
+          pkgs = out / 'Packages'
+          pkgs.mkdir(parents=True)
+          work = Path(tempfile.mkdtemp(prefix='godspvz-upm-closure-'))
+          resolved = {}
+          requested_by = {}
+          unresolved = []
+          q = deque((n,v,'direct') for n,v in sorted(initial.items()))
+
+          def sha256(path):
+              h=hashlib.sha256()
+              with path.open('rb') as f:
+                  for b in iter(lambda:f.read(1024*1024), b''): h.update(b)
+              return h.hexdigest()
+
+          def get_json(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'GodsPVZ-Stage9.1/1'})
+              with urllib.request.urlopen(req,timeout=45) as r:
+                  return json.loads(r.read().decode('utf-8'))
+
+          while q:
+              name, version, parent = q.popleft()
+              if name.startswith('com.unity.modules.'):
+                  continue
+              if name in already_embedded:
+                  # Existing exact embedded package takes precedence; require compatible exact request if encountered.
+                  requested_by.setdefault(name,[]).append({'version':version,'parent':parent,'provided_by':'existing-embedded'})
+                  continue
+              requested_by.setdefault(name,[]).append({'version':version,'parent':parent})
+              if name in resolved:
+                  if resolved[name]['version'] != version:
+                      unresolved.append({'name':name,'requested_version':version,'already_resolved':resolved[name]['version'],'parent':parent,'error':'version-conflict'})
+                  continue
+              try:
+                  meta=get_json('https://packages.unity.com/'+name)
+                  versions=meta.get('versions') or {}
+                  vm=versions.get(version)
+                  if vm is None:
+                      raise RuntimeError('exact version absent from registry metadata')
+                  tar_url=((vm.get('dist') or {}).get('tarball'))
+                  if not tar_url:
+                      raise RuntimeError('dist.tarball missing')
+                  tgz=work/(name.replace('/','_')+'@'+version+'.tgz')
+                  req=urllib.request.Request(tar_url,headers={'User-Agent':'GodsPVZ-Stage9.1/1'})
+                  with urllib.request.urlopen(req,timeout=90) as r, tgz.open('wb') as f:
+                      shutil.copyfileobj(r,f)
+                  tar_sha=sha256(tgz)
+                  ex=work/(name.replace('/','_')+'@'+version)
+                  ex.mkdir()
+                  with tarfile.open(tgz,'r:*') as tf: tf.extractall(ex,filter='data')
+                  candidates=[ex/'package',ex]
+                  root=next((p for p in candidates if (p/'package.json').is_file()),None)
+                  if root is None: raise RuntimeError('package.json not found after extraction')
+                  pj=json.loads((root/'package.json').read_text(encoding='utf-8'))
+                  if pj.get('name')!=name or pj.get('version')!=version:
+                      raise RuntimeError(f"identity mismatch {pj.get('name')}@{pj.get('version')}")
+                  dst=pkgs/name
+                  shutil.copytree(root,dst)
+                  files=sorted(p for p in dst.rglob('*') if p.is_file())
+                  resolved[name]={
+                      'name':name,'version':version,'registry_metadata':'https://packages.unity.com/'+name,
+                      'tarball_url':tar_url,'tarball_sha256':tar_sha,'file_count':len(files),
+                      'dependencies':pj.get('dependencies') or {},
+                  }
+                  for dep,dv in sorted((pj.get('dependencies') or {}).items()):
+                      if dep.startswith('com.unity.modules.'): continue
+                      q.append((dep,dv,name+'@'+version))
+              except Exception as e:
+                  unresolved.append({'name':name,'version':version,'parent':parent,'error':str(e)})
+
+          result={
+              'schema':1,
+              'initial':initial,
+              'already_embedded':already_embedded,
+              'resolved':sorted(resolved.values(),key=lambda x:x['name']),
+              'requested_by':requested_by,
+              'unresolved':unresolved,
+          }
+          (out/'CLOSURE.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          with (out/'SHA256SUMS.tsv').open('w',encoding='utf-8',newline='\n') as f:
+              for p in sorted(x for x in out.rglob('*') if x.is_file() and x.name!='SHA256SUMS.tsv'):
+                  f.write(f'{sha256(p)}\t{p.stat().st_size}\t{p.relative_to(out).as_posix()}\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          print('resolved_count',len(resolved),'unresolved_count',len(unresolved))
+          if unresolved:
+              raise SystemExit(31)
+          PY
+
+      - name: Upload dependency closure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-package-dependency-closure
+          path: stage9-package-dependency-closure/
+          if-no-files-found: error
+          retention-days: 90
+          include-hidden-files: true
