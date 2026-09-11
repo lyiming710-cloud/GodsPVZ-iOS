@@ -3,16 +3,15 @@ using UnityEngine;
 namespace UnityEngine
 {
     public class Object { }
-    public class Component : Object { }
+    public class Component : Object
+    {
+        public Transform transform => null!;
+    }
     public class Behaviour : Component { }
     public class MonoBehaviour : Behaviour { }
     public class Transform : Component
     {
         public Vector3 position => default;
-    }
-    public class GameObject : Object
-    {
-        public Transform transform => null!;
     }
     public struct Vector3
     {
@@ -38,7 +37,7 @@ namespace Template
 
     public class Zombie : MonoBehaviour
     {
-        public GameObject shadow = null!;
+        public Transform shadow = null!;
         public bool isOnBoard;
         public Board board = null!;
 
