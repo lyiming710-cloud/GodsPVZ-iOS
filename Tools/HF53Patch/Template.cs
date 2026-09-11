@@ -81,7 +81,7 @@ namespace Template
 
         public static Window_Q PopupNewWindow(int q, Transform parent, Board board)
         {
-            Window_Q window = Object.Instantiate(ResourceManager.prefab_Window_Q);
+            Window_Q window = UnityEngine.Object.Instantiate(ResourceManager.prefab_Window_Q);
             window.Q = q;
             window.onBoard = true;
             window.board = board;
