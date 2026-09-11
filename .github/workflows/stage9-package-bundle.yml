@@ -1,0 +1,73 @@
+name: Build Stage9.1 pinned Unity package bundle
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-package-bundle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build exact embedded package bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, shutil, subprocess, tempfile
+          from pathlib import Path
+
+          specs={
+            'com.unity.ugui':('1.0.0','https://github.com/zapabob/liltoon-pcss-extension.git','10c495f6cd465747c2d03f1cc337df93b7d00662','Library/PackageCache/com.unity.ugui@1.0.0','9952f30a9272f339505eb9eb5d63d44aac133630'),
+            'com.unity.textmeshpro':('3.0.6','https://github.com/needle-mirror/com.unity.textmeshpro.git','5671be34032f3ead7e4f94de2bfa6f7a24513cdb','.','0052ebfabf56c4332f5c9985077a29b3b737952f'),
+            'com.unity.2d.animation':('9.1.1','https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git','9104e9a40be711441d25848120cc83604c21d0b7','Library/PackageCache/com.unity.2d.animation@9.1.1','0aae322aa413895341a9213218719ec423ed7dac'),
+            'com.unity.render-pipelines.core':('14.0.11','https://github.com/SL0ANE/SloanePixelartURP.git','1738732ad202a4d79d575005d9b85c2f12876d8f','Packages/com.unity.render-pipelines.core@14.0.11','597b0cd638fdfa9eddd8baee8f4ec4ac8c35a9a0'),
+            'com.unity.render-pipelines.universal':('14.0.11','https://github.com/SL0ANE/SloanePixelartURP.git','1738732ad202a4d79d575005d9b85c2f12876d8f','Packages/com.unity.render-pipelines.universal@14.0.11','3d4859c17939f08c69be7a7ce605b265735cd456'),
+          }
+          work=Path(tempfile.mkdtemp(prefix='stage9-packages-'))
+          out=Path('stage9-package-bundle'); pkgs=out/'Packages'; pkgs.mkdir(parents=True)
+          clones={}; manifest=[]
+          def clone(repo,commit):
+            key=(repo,commit)
+            if key in clones:return clones[key]
+            d=work/f'repo-{len(clones)}'
+            subprocess.run(['git','init',str(d)],check=True,stdout=subprocess.DEVNULL)
+            subprocess.run(['git','-C',str(d),'remote','add','origin',repo],check=True)
+            subprocess.run(['git','-C',str(d),'fetch','--depth=1','origin',commit],check=True)
+            got=subprocess.check_output(['git','-C',str(d),'rev-parse','FETCH_HEAD'],text=True).strip()
+            if got!=commit: raise RuntimeError((repo,got,commit))
+            subprocess.run(['git','-C',str(d),'checkout','--detach','FETCH_HEAD'],check=True,stdout=subprocess.DEVNULL)
+            clones[key]=d; return d
+          def sha(p):
+            h=hashlib.sha256()
+            with p.open('rb') as f:
+              for b in iter(lambda:f.read(1024*1024),b''):h.update(b)
+            return h.hexdigest()
+          for name,(version,repo,commit,subdir,tree) in specs.items():
+            r=clone(repo,commit); src=r if subdir=='.' else r/subdir
+            pj=json.loads((src/'package.json').read_text())
+            assert pj.get('name')==name and pj.get('version')==version,(name,pj.get('name'),pj.get('version'))
+            got_tree=subprocess.check_output(['git','-C',str(r),'rev-parse','HEAD^{tree}' if subdir=='.' else f'HEAD:{subdir}'],text=True).strip()
+            assert got_tree==tree,(name,got_tree,tree)
+            dst=pkgs/name
+            shutil.copytree(src,dst,ignore=shutil.ignore_patterns('.git'))
+            files=sorted(p for p in dst.rglob('*') if p.is_file())
+            manifest.append({'name':name,'version':version,'repository':repo,'commit':commit,'tree_sha':tree,'file_count':len(files),'dependencies':pj.get('dependencies',{})})
+          (out/'PACKAGE-PROVENANCE.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          with (out/'SHA256SUMS.tsv').open('w',encoding='utf-8',newline='\n') as f:
+            for p in sorted(x for x in out.rglob('*') if x.is_file() and x.name!='SHA256SUMS.tsv'):
+              f.write(f'{sha(p)}\t{p.stat().st_size}\t{p.relative_to(out).as_posix()}\n')
+          print((out/'PACKAGE-PROVENANCE.json').read_text())
+          print('files',sum(1 for p in out.rglob('*') if p.is_file()))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-pinned-unity-packages
+          path: stage9-package-bundle/
+          if-no-files-found: error
+          retention-days: 90
