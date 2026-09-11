@@ -25,8 +25,13 @@ static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
     }
 }
 
+// HF47 + HF48 late-stage targets. HF1-HF46 are independently covered by the
+// retained historical RecoveryAudit in the composite artifact.
 var specs = new (uint token, string type, string method, int parameters, int minIl)[]
 {
+    (0x060001B5u, "EnemyManager", "DispatcheWave", 1, 100),
+    (0x060001B6u, "EnemyManager", "DispatcheZombie", 1, 60),
+    (0x060001C0u, "EnemyManager", "TimeUpdate", 0, 300),
     (0x060001B3u, "EnemyManager", "DispatcheLadderWave", 0, 60),
     (0x060001B4u, "EnemyManager", "DispatcheSPHWave", 0, 80),
     (0x06000273u, "ZombieManager", "Update", 0, 3),
