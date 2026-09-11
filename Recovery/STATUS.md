@@ -10,14 +10,18 @@ Historical per-stage detail remains preserved in Git history and `Tools/HighFide
 
 ## Fixed original baseline
 
-- Unity `2022.3.44f1c1`; metadata `31.1`.
+- Unity `2022.3.44f1c1`; IL2CPP metadata layout `31.1`.
 - PC CodeRegistration / MetadataRegistration `0x1815E88C0` / `0x1818C6D00`.
 - PC ZIP SHA-256 `2f08b4e2243e2bd296f3db694b4a2c9656252d76202c80167bdf3340b9f65b48`.
 - PC GameAssembly SHA-256 `9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d`.
 - PC metadata SHA-256 `ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9`.
 - Android APK SHA-256 `428e0ba2e46645a905fb9fbb00cfde42406727a3ddfce9a7df1e0875889a739f`.
+- Android arm64 `libil2cpp.so` SHA-256 `cfa13d53d7c3e218221a90c5fb615a012339393774af3160ff1c17f3826c61a6`.
+- Android armeabi-v7a `libil2cpp.so` SHA-256 `3d035afbf3e419a0d48947ec460eb910731727b3e0da5a2ee83e20650668fadb`.
+- Android metadata SHA-256 `e7a4412e3af25da3ba2c806d3c691ec68d00c1e7915d8fb6843c3a82422f5005`.
+- PC `globalgamemanagers` and Android UnityFS both identify Unity `2022.3.44f1c1`.
 - Cpp2IL source commit `5fb20304df698ffd3d0e664b2a698cd911dc9d57`.
-- Ordinary native attribution: original MethodDef RID-1 -> Assembly-CSharp CodeGenModule `methodPointers[index]`. Generic MethodDefs additionally require original MethodSpec / generic-method-function attribution.
+- Native attribution must use original IL2CPP metadata / CodeGenModule method-pointer identity. A Cpp2IL-generated reference PE MethodDef RID/token is **not** automatically the original native methodPointers index: generated-reference rows can be omitted or inserted, so name/signature, neighboring identity and native behavior must be reconciled before assigning a pointer. Formal restored-DLL tokens are a third identifier namespace. Generic MethodDefs additionally require original MethodSpec / generic-method-function attribution.
 - Fixed ILSpyCmd / ICSharpCode.Decompiler `11.0.0.9375`; reproduced 56-DLL fixed-Cpp2IL reference ZIP SHA `fe091e5a5389c2491eebeff72c83c394097bef67ffd45a25cf7de01c9aad9ef1`.
 - Assembly-CSharp MethodDef total must remain `2317`.
 
@@ -75,9 +79,10 @@ Historical per-stage detail remains preserved in Git history and `Tools/HighFide
 - HF50 `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb` — Path Support Dependency Core.
 - HF51 `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e` — Project Generic EndPosition Core.
 - HF52 `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82` — Project Sun Scale Core.
-- **HF53 `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5` — GameFail Dependency Core — original-PC-native-backed formal final.**
+- HF53 `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5` — GameFail Dependency Core.
+- **HF54 `307dc20c09a6338ecf4a4917b489cc0303d61c79a6aafeb34011e3e67961af2c` — ProjectManager DropLoot Core — original-PC-native-backed formal final.**
 
-HF53 is the only allowed formal cumulative input for HF54 or any later HF stage.
+HF54 is the only allowed formal cumulative managed input for HF55 or any later HF stage.
 
 ## Latest formal stages
 
@@ -91,126 +96,64 @@ Restores `EnemyManager.DispatcheLadderWave`, `EnemyManager.DispatcheSPHWave`, `Z
 
 ### HF49 — EnemyPath Arrival Core
 
-Restores exactly `0x060002A3 EnemyPath.ArrivalTest(Zombie)` / RID 675 / PC `0x180329620`. Final `6dff7975abd2b62d2cc40564a17f21518526d8dae2ce7f53a7be3e49c2114f69`. Evidence commit `b3d3747710dcba5aea3f5a73593fcf4cacfa6d80`; Drive folder `1LsjyP8K8z8CeW75Q0Vdp8r0sao39XoR3`; final provider readback exactly 22 files. `Zombie.Path_Test()` itself remains outside HF49.
+Restores `EnemyPath.ArrivalTest(Zombie)`. Final `6dff7975abd2b62d2cc40564a17f21518526d8dae2ce7f53a7be3e49c2114f69`. Evidence commit `b3d3747710dcba5aea3f5a73593fcf4cacfa6d80`; Drive folder `1LsjyP8K8z8CeW75Q0Vdp8r0sao39XoR3`; final provider readback exactly 22 files. `Zombie.Path_Test()` remains outside HF49.
 
 ### HF50 — Path Support Dependency Core
 
-Restores exactly five original native-backed MethodDefs:
-
-- `0x06000141 GlobalStaticVars.GetAnimationSpritePosition(List<GameObject>,string)` / RID 321 / PC `0x18031B680`;
-- `0x06000201 ProjectManager.CreateProject(int,int,Vector3)` / RID 513 / PC `0x180323050`;
-- `0x06000299 Grid.FindDevice_Occupy(OccupyState)` / RID 665 / PC `0x18032A0A0`;
-- `0x060002D0 Board.TestWinTargetZombie()` / RID 720 / PC `0x180328000`;
-- `0x06000484 Zombie.TranToStant(float)` / RID 1156 / PC `0x18036A5E0`.
-
-Formal validation:
-
-- formal HF49 input SHA-verified `6dff7975abd2b62d2cc40564a17f21518526d8dae2ce7f53a7be3e49c2114f69`;
-- patcher build head `865c7539a42dc9a5c7f1016430e16f094ace4983`, workflow `34552198504` PASS, artifact ID `10181225959`, SHA `9f5cd1779bc44fa3239d556384db38dfa8e56cc851ba241e0a8031d65b100a20`;
-- independent double patch -> byte-identical `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb`, both exit 0 / stderr 0;
-- Cecil reopen: `0x06000141` 14 IL / 35 bytes / 0 EH; `0x06000201` 54 / 157 / 0; `0x06000299` 27 / 77 / 0; `0x060002D0` 35 / 94 / 1; `0x06000484` 93 / 264 / 0;
-- fixed ILSpy 11.0.0.9375 + 56 refs: all five targets clean, stderr 0, target-local Cpp2IL/Unknown/NotImplemented/invalid type-comparison markers 0;
-- HF49 whole IL reproduced `c60eb750651402273ec5cc7ac98520c500dd361568cd2214c42518ed7a737455`; HF50 whole IL `0e9929692d9627b8a8e0f1261293ee2bb9cc69ed346165e96458e9ff544c6df3`;
-- HF49->HF50 semantic diff `229de8a6ab43aa502d97f267b66b1bd6748e2ed35cf34732985bea59fddaf0b8`;
-- MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized non-method/method-signature skeleton identical, changed exactly the five authorized targets;
-- candidate-specific MethodDef table `b5aa2d0216863d128d286aea4b3ee537ebcadc496e1c0ac1178d676347743dce`;
-- cumulative RecoveryAudit build head `27a73fd974f66b18fc3557fa0df27aa0484ecb15`, workflow `34552873703` PASS, artifact ID `10181455848`, SHA `271023744274706414e37c069c395c5c959ee66aea18ba07781c1ff9f41e43e6`; historical auditor remains unchanged for HF1-HF46 and HF50 cumulative auditor locks the HF50 whole-file SHA while rechecking HF47-HF50 targets; two independent actual executions ended `RECOVERY_AUDIT_OK` and `HF50_AUDIT_OK`, stderr 0;
-- MethodDef inspector workflow `34553137764` PASS, artifact ID `10181537760`, digest `dd08cf4338076b71f2691ce59fe418f297b04a8d833f0fbb7c94762592c2383a`;
-- GitHub Evidence commit `5385bc2b9d4afdc17772e71856146b0c3dd3926f`;
-- Drive folder `1Fmvna-e9i8bAKNuGJ88mI_j2Q5SvX4Cf`; cumulative DLL `1VywZ8Yat0NdcDt37PeC1GYQFLZcnW204`;
-- ordinary provider readback 19/19 SHA PASS; payload manifest `d08990bc30ac90e03206956936556bff01d0780c54faefd76d16487077803cb0`;
-- final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `070fe0002008192887f70ab51135a656ca85b05fd4810203513946614ddfa5c7`; FINAL SHA manifest provider-readback SHA `ec86d57c1fafc8f4c0bbca5e384ffe1a98762a058447a5d87b552e11112d9542`.
-
-HF50 deliberately did not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, `ProjectManager.DropLootPiece`, `Project.SetEndPosition<T>`, or `Project.SunSet`. HF51 closes the generic `Project.SetEndPosition<T>` dependency and HF52 closes `Project.SunSet(int)`; `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, and `ProjectManager.DropLootPiece` remain outside HF52.
+Restores five native-backed formal MethodDefs: `GlobalStaticVars.GetAnimationSpritePosition`, `ProjectManager.CreateProject`, `Grid.FindDevice_Occupy`, `Board.TestWinTargetZombie`, and `Zombie.TranToStant`. Final `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb`. Evidence commit `5385bc2b9d4afdc17772e71856146b0c3dd3926f`; Drive folder `1Fmvna-e9i8bAKNuGJ88mI_j2Q5SvX4Cf`; final provider readback exactly 22 files.
 
 ### HF51 — Project Generic EndPosition Core
 
-Restores exactly one generic MethodDef:
-
-- `0x060003CA Project.SetEndPosition<T>(T)` / RID 970 / one method generic parameter.
-
-Because ordinary RID-1 native attribution is insufficient for a generic MethodDef, HF51 additionally closes original MethodSpec/generic-function attribution:
-
-- `SetEndPosition<Zombie>` MethodSpec index `74551`;
-- live `ProjectManager.DropLootPiece` callsite loads hidden MethodInfo/RGCTX from PC global slot `0x181BBB770`;
-- encoded metadata value `0xC002466F` decodes to MethodSpec `74551`;
-- reference-type shared implementation PC `0x1804A1AA0`;
-- native behavior restores Plant/Zombie branches and original `Random.Range` Y offsets without guessed fallback behavior.
-
-Formal validation:
-
-- formal HF50 input SHA-verified `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb`;
-- patcher build head `ef8472d0b89991c77e3a4bc75fd56f5660fedb4d`, workflow `34555405016` PASS, artifact ID `10182364367`, SHA `fef2fdce1afb800a0e1f5780b2405ccb7479054b8429e89b3c225095170d6213`;
-- independent double patch -> byte-identical `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e`, both exit 0 / stderr 0;
-- Cecil reopen `0x060003CA`: genericParameters=1 / parameters=1 / 87 IL / 250 bytes / 0 EH;
-- fixed ILSpy 11.0.0.9375 + locked 56 refs: target exit 0, stderr 0, target-local bad markers 0;
-- HF50 whole IL `0e9929692d9627b8a8e0f1261293ee2bb9cc69ed346165e96458e9ff544c6df3`; HF51 whole IL `0b153d64cc9ae3c49f9386f2dfc75a48db2485c788c2448bcf9160eb3d6c2a4a`;
-- HF50->HF51 semantic diff `e7c88166a41f65c7f871780ea018fc321baa429395a822225cd6c9f8fb93af56`; MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized skeleton identical, changed exactly `0x060003CA`;
-- candidate-specific MethodDef table `7c6788afae725b36397b0e3a3143a3c446e948df8aea61212bf976a5f6258a7d`;
-- cumulative RecoveryAudit build head `f0d1a40b33eda7449fcd00b04a486100f6506d83`, workflow `34557272214` PASS, artifact ID `10183019307`, SHA `84e2174133ee0167abd9736764f870250cce76b4d24fcedd239c51ff808f8c3c`; historical auditor covers HF1-HF46 and HF51 cumulative auditor locks the HF51 whole-file SHA while rechecking HF47-HF51 targets; two independent actual executions ended `RECOVERY_AUDIT_OK` and `HF51_AUDIT_OK`, stderr 0, byte-identical log SHA `05ce0727d1539a7665e155156a3ce6480283f1286d4d9d600005d26b0f4c141d`;
-- GitHub Evidence commit `56778abb461c2e47e5d15e8b527d8df6c0922fb4`;
-- Drive folder `1CW2-2_bowUTC7d97V38Yp--RrroVNrYD`; cumulative DLL `1mncyCTYPvMXsAmNAfYQnwLR8XcW8PYvN`;
-- ordinary provider readback 19/19 SHA PASS; payload manifest SHA `5bfe4eea809425946551ba2dbba1dea366a5609424e3699757718a0cab2050eb`;
-- final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `84650b2750c099d72bfbe55dfca5529099bc4935d5afdfec53556a975d3bf449`; FINAL SHA manifest provider-readback SHA `c7bc75a59816702a63715a7e8f27995de6b929c333ce8833106f0894dbcc61a3`.
-
-HF51 deliberately does not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, `ProjectManager.DropLootPiece`, or `Project.SunSet`.
+Restores formal `0x060003CA Project.SetEndPosition<T>(T)`. Original generic attribution closes `SetEndPosition<Zombie>` MethodSpec index `74551`, hidden MethodInfo/RGCTX global slot `0x181BBB770`, encoded MethodRef `0xC002466F`, and reference-type shared PC implementation `0x1804A1AA0`. Final `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e`. Evidence commit `56778abb461c2e47e5d15e8b527d8df6c0922fb4`; Drive folder `1CW2-2_bowUTC7d97V38Yp--RrroVNrYD`; final provider readback exactly 22 files.
 
 ### HF52 — Project Sun Scale Core
 
-Restores exactly one original-PC-native-backed MethodDef:
-
-- `0x060003CE Project.SunSet(int)` / RID 974 / PC `0x180378750..0x1803787CC`.
-
-Original native behavior stores `Project.value`, converts the integer to float32, divides by original float32 constant `50.0f`, converts to double, evaluates `Math.Pow(..., 0.5)`, executes the missing native `cvtsd2ss`, and writes the resulting float32 to `Project.size`. The original managed reconstruction had lost only the final double-to-float conversion and therefore wrote `0f`; HF52 restores that conversion chain without changing other gameplay logic.
-
-Formal validation:
-
-- formal HF51 input SHA-verified `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e`;
-- patcher build head `0f93223733b55b0a7a70d12eafa1f8c40a8e288e`, workflow `34558616229` PASS, artifact ID `10183500128`, SHA `55649525e05a065b3606b6f7599b01c2eedd9a808b02bd1706d7028a1f8745ee`;
-- independent double patch -> byte-identical `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82`, both stderr 0;
-- Cecil reopen `0x060003CE`: 14 IL / 38 bytes / 0 EH / genericParameters=0, no Cpp2IL helper;
-- fixed ILSpy 11.0.0.9375 + locked 56 refs: target exit 0, stderr 0, target-local bad markers 0; clean readback `size = (float)Math.Pow((float)value / 50f, 0.5)`;
-- HF51 whole IL baseline reproduced `0b153d64cc9ae3c49f9386f2dfc75a48db2485c788c2448bcf9160eb3d6c2a4a`; HF52 whole IL `515fd597660dd2baafc251c3797707186839ccac01727f32ff4ad2ba52c39994`;
-- HF51->HF52 semantic diff `9de97a39558bc03122f3248da7ebbef24c165f3d13a3f1e5dae9133e0952acca`; MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized skeleton identical, changed exactly `0x060003CE`;
-- candidate-specific MethodDef table `76289ddaba44cb95cad0c297e71c1336202068c5eca4b99a199aacfbe1daa889`;
-- cumulative RecoveryAudit build head `43ca5dedcdb407083aa9b2499d0da0d3bb315ac9`, workflow `34559275724` PASS, artifact ID `10183727793`, SHA `db0152a55fc5f21022eb213fbf03bc2724e431705ce4ecfcba13fc8ca172deb3`; two independent actual composite executions ended `RECOVERY_AUDIT_OK` and `HF52_AUDIT_OK`, stderr 0, byte-identical log SHA `0e80cb5849e8a1cc2ad1b312943062d6872fcb144505405bcb426e027f4ca06d`;
-- GitHub Evidence commit `5d3b9f9b96a29c522eadc56aa97837d8ba6be929`;
-- Drive folder `1gHTJvN3hQ2EV6DpER8m7MYQyP5IcZ51s`; cumulative DLL `1NJV7vb-cNcUh_mdLt5MP04hX1-I9a97Z`;
-- ordinary provider readback 19/19 SHA PASS; payload manifest SHA `a1adb8f12b3b93c0b1fa91d51d42fac39b0bb4de8d5c6a2b9450072948ad8354`;
-- final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `41cea726b17af4edab4784ba421b19cacd1781217afaa21c18d85299a11d61a6`; FINAL SHA manifest provider-readback SHA `919de99e5e44ffde255da7232755b27aa0b2b4224dba7fef71fc47667ca43c32`.
-
-HF52 deliberately does not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, or `ProjectManager.DropLootPiece`.
+Restores formal `0x060003CE Project.SunSet(int)` from PC native `0x180378750..0x1803787CC`, including the lost double-to-float conversion after `Math.Pow`. Final `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82`. Evidence commit `5d3b9f9b96a29c522eadc56aa97837d8ba6be929`; Drive folder `1gHTJvN3hQ2EV6DpER8m7MYQyP5IcZ51s`; final provider readback exactly 22 files.
 
 ### HF53 — GameFail Dependency Core
 
-Restores exactly four original-PC-native-backed MethodDefs:
+Restores four native-backed formal MethodDefs: `GlobalStaticVars.CreateAudioAtPoint(AudioClip,Vector3,float)`, `ZombieManager.BGMPasue()`, `Board.GameFail()`, and `Window_Q.PopupNewWindow(int,Transform,Board)`. Final `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5`. Evidence commit `074172f2f60f92c8b54b7a11c4d8d7a3217c877d`; Drive folder `19xtYYFiYYIsGK0IYYM2yIIEfIDRasXMT`; final provider readback exactly 22 files.
 
-- `0x0600013D GlobalStaticVars.CreateAudioAtPoint(AudioClip,Vector3,float)` / RID 317 / PC `0x18031B230`;
-- `0x06000277 ZombieManager.BGMPasue()` / RID 631 / PC `0x180341700`;
-- `0x060002BC Board.GameFail()` / RID 700 / PC `0x180326910`;
-- `0x06000705 Window_Q.PopupNewWindow(int,Transform,Board)` / RID 1797 / PC `0x1803AFC60`.
+### HF54 — ProjectManager DropLoot Core
 
-HF53 repairs the GameFail dependency cluster without claiming closure of the remaining path/drop/destroy chain. The original native behavior restores the Camera `Vector3` audio position, the 3-argument audio overload forwarding to the existing 4-argument overload, the zombie-manager BGM pause iteration, and `Window_Q` instantiate/field/parent setup.
+Restores exactly one formal managed MethodDef:
+
+- formal HF53/HF54 identifier `0x06000202` / RID 514 / `ProjectManager.DropLootPiece(Zombie,Vector3)`.
+
+Original-file and identifier reconciliation was re-run before formal closure:
+
+- the PC ZIP and Android APK were re-materialized directly from Google Drive and reproduced the fixed package hashes above;
+- PC `GameAssembly.dll` and metadata reproduced the fixed original hashes above; PC metadata header is version 31 and `globalgamemanagers` identifies Unity `2022.3.44f1c1`;
+- Android arm64/armv7 native binaries and metadata were independently extracted and locked above; Android UnityFS also identifies `2022.3.44f1c1`;
+- fixed Cpp2IL was rerun on Android arm64 and completed `2319/2319` methods;
+- both the fixed original-PC generated reference and independent Android generated reference identify `ProjectManager.DropLootPiece` at generated-reference token `0x060001FC` / RID 508, while the formal recovery DLL identifies it at `0x06000202` / RID 514;
+- sequence alignment shows six formal MethodDefs before `ProjectManager` absent from the generated-reference PE, so Cpp2IL reference tokens are explicitly not used as native pointer indexes;
+- verified original PC `Assembly-CSharp` methodPointers slot 513 resolves to `0x180323260`, and direct disassembly of that function independently closes the defining DropLoot behavior: Camera X clamp with `920/540`, `TestWinTargetZombie`, `GameFinished`, award ID 4, random `[0,10000)`, enemyPoint multipliers `30/100/150/800`, project IDs `3/2/1/8`, SunSet `25/50/100`, and `SetEndPosition<Zombie>`.
 
 Formal validation:
 
-- formal HF52 input SHA-verified `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82`;
-- patcher build head `7891747d33470a877ca5779e06e85f0c691b1da5`, workflow `34569860029` PASS, artifact ID `10187362596`, SHA `d7652ec5dabc8916bcf6cf2227198cfac2278ed5dd36ccac39029ee7137e8912`;
-- independent double patch -> byte-identical `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5`, both stderr 0;
-- Cecil reopen: `0x0600013D` 6 IL / 14 bytes / 0 EH; `0x06000277` 17 / 52 / 1; `0x060002BC` 38 / 102 / 0; `0x06000705` 17 / 45 / 0; MethodDef total 2317;
-- fixed ILSpy 11.0.0.9375 + locked 56 refs: all four targets clean, stderr 0, target-local Cpp2IL/Unknown/Expected/NotImplemented/invalid markers 0;
-- HF52 whole IL baseline reproduced `515fd597660dd2baafc251c3797707186839ccac01727f32ff4ad2ba52c39994`; HF53 whole IL `9d02f7b55aac9fa89b0ffb0f5bc2e1a4644513dc46632fa7d8acc82091c5ca4a`;
-- MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized skeleton identical, changed exactly `0x0600013D`, `0x06000277`, `0x060002BC`, `0x06000705`;
-- cumulative RecoveryAudit build head `80cd3838c91f98b04761e8c6713dcea1d4e9dd96`, workflow `34570344401` PASS, artifact ID `10187537492`, SHA `d9d9273bf7277608bb06dacde940fab667d02f9c203130c5bdf24f5be915143f`; two independent actual executions ended `RECOVERY_AUDIT_OK` and `HF53_AUDIT_OK`, stderr 0, byte-identical log SHA `2f3846aba608d83dc10415ee2704b2b2666a11fede51aa9b771423121235a30c`;
-- GitHub Evidence commit `074172f2f60f92c8b54b7a11c4d8d7a3217c877d`;
-- Drive folder `19xtYYFiYYIsGK0IYYM2yIIEfIDRasXMT`; cumulative DLL `1dp_Oqy8m0er7sq44ISj_jjpcyevl0s2-`;
-- ordinary provider readback 19/19 SHA PASS; payload manifest SHA `0ff609d040a9ac4e395bcb144d879116c86ff19d762087b9d05df32c75e3cb82`;
-- final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `a56de79e360b5329da3d99916cd3515b87d8fb926ad4cbcf6b8dc27b89f0febd`; FINAL SHA manifest provider-readback SHA `b606efa43eb0cea8bbb279e1198661676145036439f986dbb29930a04afbbd46`.
+- formal HF53 input SHA-verified `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5`;
+- patcher build head `d9cc2dc18fda2a087f1ec81eb016fc57388dcfc0`, workflow `34572300501` PASS, artifact ID `10188237519`, SHA `357f588db9a6da8b780cad002dce778b934d356ddf8b601fa634f99ef75e5116`;
+- two independent patches -> byte-identical `307dc20c09a6338ecf4a4917b489cc0303d61c79a6aafeb34011e3e67961af2c`, both stderr 0;
+- Cecil reopen: 159 IL / 341 bytes / 0 EH;
+- fixed ILSpy 11.0.0.9375 + locked 56 refs: target stderr 0 and target-local Cpp2IL/Unknown/NotImplemented/Expected/invalid markers 0;
+- HF53 whole IL baseline reproduced `9d02f7b55aac9fa89b0ffb0f5bc2e1a4644513dc46632fa7d8acc82091c5ca4a`; HF54 whole IL `2b342d49e118eb70c16137132270ddd37672e268d69e517322797fdf6bd43f42`;
+- MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized skeleton identical, changed exactly formal `0x06000202 ProjectManager.DropLootPiece(Zombie,Vector3)`;
+- cumulative audit build head `73d3ad3b4ec239a21855b74e5eb38eb980607bb4`, workflow `34572736707` PASS, artifact ID `10188399748`, SHA `4bdf83b65696faf21ca861dee0080ce56a6de48a3f4a7445b37c31cf416b2683`;
+- two independent actual composite executions ended `RECOVERY_AUDIT_OK` + `HF54_AUDIT_OK`, stderr 0, byte-identical log SHA `09973cba9a90d3e28a4450c6cd7b3ef51fd150a243907b8d24b72f8bca529a68`;
+- corrected GitHub Evidence commit `9553754787aae9f35b1087e36bd098c0104b0409`;
+- Drive folder `1I6tuQRxbDKcUF507_Tx_iTlhDn3Xsd75`; cumulative DLL `1Eraz5XKozAOjXKXCqmvMSN0YmJKKao8S`;
+- ordinary provider readback 19/19 SHA PASS, 0 missing, 0 mismatch; payload manifest SHA `25f6a049346e8946142dff7a7e70f4dd43fc15daf5459d99aa80cb18b706a2e4`;
+- final Drive folder exactly 22 files;
+- FINAL Evidence provider-readback SHA `416fb2f15e1a8e1c9243637fa2743dc0306f0f9430a667935f2706290de305f4`;
+- FINAL SHA manifest provider-readback SHA `ba709d4c6509f58c20fef3355288871e5efb8fb0b5e111a22cfcfe2f71e1802f`.
 
-HF53 deliberately does not claim to repair `Zombie.Path_Test`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, or `ProjectManager.DropLootPiece`.
+HF54 deliberately does not claim to repair `Zombie.Path_Test()`, `Zombie.DestroyZombie()`, or `Zombie.DropLootPiece()`.
 
-## HF54 / Unity gate
+## HF55 / Unity gate
 
-Use only the formal HF53 DLL above as managed input. Open HF54 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure. `Zombie.Path_Test()` and the drop/destroy chain remain the primary residual candidates, but none is pre-authorized.
+Use only the formal HF54 DLL above as managed input. Open HF55 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure.
 
-If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
+Primary residual candidates are `Zombie.Path_Test()`, `Zombie.DestroyZombie()`, and `Zombie.DropLootPiece()`, but none is pre-authorized. Before any native-pointer attribution, reconcile formal restored-DLL identity, original PC/APK method identity and Cpp2IL generated-reference identity by name/signature/neighbor sequence; never infer a native slot directly from a regenerated reference token.
+
+If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal HF54 cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
