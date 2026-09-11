@@ -72,9 +72,10 @@ Historical per-stage detail remains preserved in Git history and `Tools/HighFide
 - HF47 `e94942c50cdce952ca37f746bc5c3ab83b49106ae0837a077045f54f6ecb9533` — EnemyManager Wave Progression Core.
 - HF48 `6c1eb1468f398610cc61ea89b7f3a9409f6baeb451e6df0ae6243b28af50e48e` — Ladder Runtime Core.
 - HF49 `6dff7975abd2b62d2cc40564a17f21518526d8dae2ce7f53a7be3e49c2114f69` — EnemyPath Arrival Core.
-- **HF50 `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb` — Path Support Dependency Core — native-backed formal final.**
+- HF50 `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb` — Path Support Dependency Core.
+- **HF51 `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e` — Project Generic EndPosition Core — MethodSpec/generic-native-backed formal final.**
 
-HF50 is the only allowed formal cumulative input for HF51 or any later HF stage.
+HF51 is the only allowed formal cumulative input for HF52 or any later HF stage.
 
 ## Latest formal stages
 
@@ -118,10 +119,42 @@ Formal validation:
 - ordinary provider readback 19/19 SHA PASS; payload manifest `d08990bc30ac90e03206956936556bff01d0780c54faefd76d16487077803cb0`;
 - final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `070fe0002008192887f70ab51135a656ca85b05fd4810203513946614ddfa5c7`; FINAL SHA manifest provider-readback SHA `ec86d57c1fafc8f4c0bbca5e384ffe1a98762a058447a5d87b552e11112d9542`.
 
-HF50 deliberately does not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, `ProjectManager.DropLootPiece`, `Project.SetEndPosition<T>`, or `Project.SunSet`. `Project.SetEndPosition<T>` requires original MethodSpec/generic-method-function attribution before any managed repair.
+HF50 deliberately did not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, `ProjectManager.DropLootPiece`, `Project.SetEndPosition<T>`, or `Project.SunSet`. HF51 now closes only the generic `Project.SetEndPosition<T>` dependency; all other items in that list remain outside HF51.
 
-## HF51 / Unity gate
+### HF51 — Project Generic EndPosition Core
 
-Use only the formal HF50 DLL above as managed input. Open HF51 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure. `Zombie.Path_Test()` and the drop/destroy chain remain primary candidates but are not pre-authorized.
+Restores exactly one generic MethodDef:
+
+- `0x060003CA Project.SetEndPosition<T>(T)` / RID 970 / one method generic parameter.
+
+Because ordinary RID-1 native attribution is insufficient for a generic MethodDef, HF51 additionally closes original MethodSpec/generic-function attribution:
+
+- `SetEndPosition<Zombie>` MethodSpec index `74551`;
+- live `ProjectManager.DropLootPiece` callsite loads hidden MethodInfo/RGCTX from PC global slot `0x181BBB770`;
+- encoded metadata value `0xC002466F` decodes to MethodSpec `74551`;
+- reference-type shared implementation PC `0x1804A1AA0`;
+- native behavior restores Plant/Zombie branches and original `Random.Range` Y offsets without guessed fallback behavior.
+
+Formal validation:
+
+- formal HF50 input SHA-verified `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb`;
+- patcher build head `ef8472d0b89991c77e3a4bc75fd56f5660fedb4d`, workflow `34555405016` PASS, artifact ID `10182364367`, SHA `fef2fdce1afb800a0e1f5780b2405ccb7479054b8429e89b3c225095170d6213`;
+- independent double patch -> byte-identical `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e`, both exit 0 / stderr 0;
+- Cecil reopen `0x060003CA`: genericParameters=1 / parameters=1 / 87 IL / 250 bytes / 0 EH;
+- fixed ILSpy 11.0.0.9375 + locked 56 refs: target exit 0, stderr 0, target-local bad markers 0;
+- HF50 whole IL `0e9929692d9627b8a8e0f1261293ee2bb9cc69ed346165e96458e9ff544c6df3`; HF51 whole IL `0b153d64cc9ae3c49f9386f2dfc75a48db2485c788c2448bcf9160eb3d6c2a4a`;
+- HF50->HF51 semantic diff `e7c88166a41f65c7f871780ea018fc321baa429395a822225cd6c9f8fb93af56`; MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized skeleton identical, changed exactly `0x060003CA`;
+- candidate-specific MethodDef table `7c6788afae725b36397b0e3a3143a3c446e948df8aea61212bf976a5f6258a7d`;
+- cumulative RecoveryAudit build head `f0d1a40b33eda7449fcd00b04a486100f6506d83`, workflow `34557272214` PASS, artifact ID `10183019307`, SHA `84e2174133ee0167abd9736764f870250cce76b4d24fcedd239c51ff808f8c3c`; historical auditor covers HF1-HF46 and HF51 cumulative auditor locks the HF51 whole-file SHA while rechecking HF47-HF51 targets; two independent actual executions ended `RECOVERY_AUDIT_OK` and `HF51_AUDIT_OK`, stderr 0, byte-identical log SHA `05ce0727d1539a7665e155156a3ce6480283f1286d4d9d600005d26b0f4c141d`;
+- GitHub Evidence commit `56778abb461c2e47e5d15e8b527d8df6c0922fb4`;
+- Drive folder `1CW2-2_bowUTC7d97V38Yp--RrroVNrYD`; cumulative DLL `1mncyCTYPvMXsAmNAfYQnwLR8XcW8PYvN`;
+- ordinary provider readback 19/19 SHA PASS; payload manifest SHA `5bfe4eea809425946551ba2dbba1dea366a5609424e3699757718a0cab2050eb`;
+- final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `84650b2750c099d72bfbe55dfca5529099bc4935d5afdfec53556a975d3bf449`; FINAL SHA manifest provider-readback SHA `c7bc75a59816702a63715a7e8f27995de6b929c333ce8833106f0894dbcc61a3`.
+
+HF51 deliberately does not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, `ProjectManager.DropLootPiece`, or `Project.SunSet`.
+
+## HF52 / Unity gate
+
+Use only the formal HF51 DLL above as managed input. Open HF52 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure. The drop/destroy/game-fail dependency chain and `Zombie.Path_Test()` remain primary candidates, but none is pre-authorized.
 
 If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
