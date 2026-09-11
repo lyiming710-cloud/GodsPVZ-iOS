@@ -80,9 +80,10 @@ Historical per-stage detail remains preserved in Git history and `Tools/HighFide
 - HF51 `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e` — Project Generic EndPosition Core.
 - HF52 `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82` — Project Sun Scale Core.
 - HF53 `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5` — GameFail Dependency Core.
-- **HF54 `307dc20c09a6338ecf4a4917b489cc0303d61c79a6aafeb34011e3e67961af2c` — ProjectManager DropLoot Core — original-PC-native-backed formal final.**
+- HF54 `307dc20c09a6338ecf4a4917b489cc0303d61c79a6aafeb34011e3e67961af2c` — ProjectManager DropLoot Core.
+- **HF55 `dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655` — Zombie DropLoot Core — original-PC-native-backed formal final.**
 
-HF54 is the only allowed formal cumulative managed input for HF55 or any later HF stage.
+HF55 is the only allowed formal cumulative managed input for HF56 or any later HF stage.
 
 ## Latest formal stages
 
@@ -150,10 +151,46 @@ Formal validation:
 
 HF54 deliberately does not claim to repair `Zombie.Path_Test()`, `Zombie.DestroyZombie()`, or `Zombie.DropLootPiece()`.
 
-## HF55 / Unity gate
+### HF55 — Zombie DropLoot Core
 
-Use only the formal HF54 DLL above as managed input. Open HF55 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure.
+Restores exactly one formal managed MethodDef:
 
-Primary residual candidates are `Zombie.Path_Test()`, `Zombie.DestroyZombie()`, and `Zombie.DropLootPiece()`, but none is pre-authorized. Before any native-pointer attribution, reconcile formal restored-DLL identity, original PC/APK method identity and Cpp2IL generated-reference identity by name/signature/neighbor sequence; never infer a native slot directly from a regenerated reference token.
+- formal HF54/HF55 identifier `0x06000438` / RID 1080 / `Zombie.DropLootPiece()`.
 
-If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal HF54 cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
+Original-file and identifier reconciliation was re-run before formal closure:
+
+- fixed original PC and independently regenerated Android arm64 Cpp2IL references both identify the generated-reference method as `0x0600041E` / RID 1054, while the formal recovery DLL uses `0x06000438` / RID 1080;
+- generated-reference tokens are not used directly as original native pointer indexes;
+- reconciled original-PC native body is `0x18035EDB0..0x18035F040`;
+- PC native reads `shadow.transform.position`, gates on `isOnBoard`, computes the head-position Vector3, loads `board.projectManager`, and calls `0x180323260` (HF54 `ProjectManager.DropLootPiece`) with `r8 = &Vector3`, `rdx = this Zombie`, `rcx = projectManager`;
+- Android Cpp2IL independently recovers the same control flow but corrupts the final value-type operand to `(Vector3)0`; PC native ABI proves the real operand is the computed `GetHaedPosition()` Vector3.
+
+Formal validation:
+
+- formal HF54 input SHA-verified `307dc20c09a6338ecf4a4917b489cc0303d61c79a6aafeb34011e3e67961af2c`;
+- corrected patcher build head `e9be71217fad3c1d36d4ea8a0ff1de2053cba472`, workflow `34600412954` PASS, artifact ID `10264430775`, SHA `372809225401b203da6244f08148f9242cd206cd7ed6853aa10d275cbc99bb0d`;
+- two independent patches -> byte-identical `dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655`, both stderr 0;
+- Cecil reopen: 19 IL / 52 bytes / 0 EH;
+- provisional template using `GameObject shadow` was discarded; corrected formal template uses actual `Transform shadow`, and fixed ILSpy readback has no artificial object/GameObject cast;
+- fixed ILSpy 11.0.0.9375 + locked 56 refs: target stderr 0 and target-local Cpp2IL/Unknown/NotImplemented/Expected/invalid markers 0;
+- HF54 whole IL baseline reproduced exactly `2b342d49e118eb70c16137132270ddd37672e268d69e517322797fdf6bd43f42`; HF55 whole IL `e0e4dc29327bf63ee0b48fdecd7ccd071dfa1fd9f0f62194512d49cd3d6b0c9c`;
+- MethodDef `2317 -> 2317`, normalized skeleton identical at `8c48e2535749c44abf5e696553cd25f1fc352425d1603d9135b67bb942ee10c9`, changed exactly formal `0x06000438 Zombie.DropLootPiece()`;
+- normalized semantic diff SHA `05d10d12823183a4f15c4645a0081b9709fbea8f238f53f6e1314ec490b5c62c`; MethodDef table SHA `44bf60f800146ee195d07383c00988f7e41a82ae3ada1a67cfe7c4bcb2d1ecb2`;
+- cumulative audit build head `5448fe17bf6a85a30d871a0cbd6c7f9374d5437c`, workflow `34600623192` PASS, artifact ID `10263064154`, SHA `37644faaf7984cc6d80a5e2faae8c86aca1cbbef5796babf7431bc1b12da4a2c`;
+- two independent actual composite executions ended `RECOVERY_AUDIT_OK` + `HF55_AUDIT_OK`, stderr 0, byte-identical log SHA `abad1e0674b4358fb9012efa51d01b800b74dfd44489f818afee221a62bec679`;
+- GitHub Evidence commit `2f5372514e23829d2c832c4ecf02d8c5de921b9b`;
+- Drive folder `1RCKjozAtPyF4XnDy6RSBiombtbmNDtl1`; cumulative DLL `1yjwk3g13yf42qg_5bRq2UBULy-ROeQvn`;
+- ordinary provider readback 19/19 SHA PASS, 0 missing, 0 mismatch; payload manifest SHA `e423aa80014638473c557a8d2214fcc0cad7c28c8b06f71342b562d0b51e5f35`;
+- final Drive folder exactly 22 files;
+- FINAL Evidence provider-readback SHA `cdd96ece4e2543fb6e00fc1fc5da88efb474ced49aaf95f9a8795b3ed229b668`;
+- FINAL SHA manifest provider-readback SHA `ba3128441baec591ebc3976dd87964af0a5bb9b05a75b97dc04704b8dfe51c54`.
+
+HF55 deliberately does not claim to repair `Zombie.Path_Test()` or `Zombie.DestroyZombie()`.
+
+## HF56 / Unity gate
+
+Use only the formal HF55 DLL above as managed input. Open HF56 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure.
+
+Primary residual candidates are `Zombie.Path_Test()` and `Zombie.DestroyZombie()`, but neither is pre-authorized. Before any native-pointer attribution, reconcile formal restored-DLL identity, original PC/APK method identity and Cpp2IL generated-reference identity by name/signature/neighbor sequence; never infer a native slot directly from a regenerated reference token.
+
+If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal HF55 cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
