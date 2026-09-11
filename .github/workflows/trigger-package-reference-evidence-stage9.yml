@@ -1,0 +1,20 @@
+name: Trigger package reference evidence for Stage9.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/trigger-package-reference-evidence-stage9.yml'
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch existing package reference evidence workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run package-reference-evidence.yml --repo "${{ github.repository }}" --ref high-fidelity
