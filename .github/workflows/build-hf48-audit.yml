@@ -17,26 +17,21 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Publish historical RecoveryAudit
         run: dotnet publish Tools/RecoveryAudit/RecoveryAudit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/historical
-      - name: Publish HF47 targeted auditor
-        run: dotnet publish Tools/HF47Audit/HF47Audit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf47
-      - name: Publish HF48 targeted auditor
+      - name: Publish cumulative HF48 auditor
         run: dotnet publish Tools/HF48Audit/HF48Audit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf48
       - name: Smoke tests
         run: |
-          chmod +x out/historical/GodsPVZ.RecoveryAudit out/hf47/GodsPVZ.HF47Audit out/hf48/GodsPVZ.HF48Audit
+          chmod +x out/historical/GodsPVZ.RecoveryAudit out/hf48/GodsPVZ.HF48Audit
           set +e
           out/historical/GodsPVZ.RecoveryAudit; a=$?
-          out/hf47/GodsPVZ.HF47Audit; b=$?
-          out/hf48/GodsPVZ.HF48Audit; c=$?
+          out/hf48/GodsPVZ.HF48Audit; b=$?
           set -e
           test "$a" = "2"
           test "$b" = "2"
-          test "$c" = "2"
       - uses: actions/upload-artifact@v4
         with:
           name: GodsPVZ-HF48-CompositeAudit-linux-x64
           path: |
             out/historical/GodsPVZ.RecoveryAudit
-            out/hf47/GodsPVZ.HF47Audit
             out/hf48/GodsPVZ.HF48Audit
           if-no-files-found: error
