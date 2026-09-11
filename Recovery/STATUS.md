@@ -74,9 +74,10 @@ Historical per-stage detail remains preserved in Git history and `Tools/HighFide
 - HF49 `6dff7975abd2b62d2cc40564a17f21518526d8dae2ce7f53a7be3e49c2114f69` — EnemyPath Arrival Core.
 - HF50 `74ae15e2ed7f1626ecea7741d83803208ea0e8381306f1900f7a46c198c425cb` — Path Support Dependency Core.
 - HF51 `89e1961cefec6f8c532a0ca7cda4bd4afff2152c14f3856842ee44e5d7d7d90e` — Project Generic EndPosition Core.
-- **HF52 `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82` — Project Sun Scale Core — original-PC-native-backed formal final.**
+- HF52 `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82` — Project Sun Scale Core.
+- **HF53 `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5` — GameFail Dependency Core — original-PC-native-backed formal final.**
 
-HF52 is the only allowed formal cumulative input for HF53 or any later HF stage.
+HF53 is the only allowed formal cumulative input for HF54 or any later HF stage.
 
 ## Latest formal stages
 
@@ -180,8 +181,36 @@ Formal validation:
 
 HF52 deliberately does not claim to repair `Zombie.Path_Test`, `Board.GameFail`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, or `ProjectManager.DropLootPiece`.
 
-## HF53 / Unity gate
+### HF53 — GameFail Dependency Core
 
-Use only the formal HF52 DLL above as managed input. Open HF53 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure. The drop/destroy/game-fail dependency chain and `Zombie.Path_Test()` remain primary candidates, but none is pre-authorized.
+Restores exactly four original-PC-native-backed MethodDefs:
+
+- `0x0600013D GlobalStaticVars.CreateAudioAtPoint(AudioClip,Vector3,float)` / RID 317 / PC `0x18031B230`;
+- `0x06000277 ZombieManager.BGMPasue()` / RID 631 / PC `0x180341700`;
+- `0x060002BC Board.GameFail()` / RID 700 / PC `0x180326910`;
+- `0x06000705 Window_Q.PopupNewWindow(int,Transform,Board)` / RID 1797 / PC `0x1803AFC60`.
+
+HF53 repairs the GameFail dependency cluster without claiming closure of the remaining path/drop/destroy chain. The original native behavior restores the Camera `Vector3` audio position, the 3-argument audio overload forwarding to the existing 4-argument overload, the zombie-manager BGM pause iteration, and `Window_Q` instantiate/field/parent setup.
+
+Formal validation:
+
+- formal HF52 input SHA-verified `1db686c32f24ea81660f3d18ccfd649ee7aeb5a40902e2042639e47355184b82`;
+- patcher build head `7891747d33470a877ca5779e06e85f0c691b1da5`, workflow `34569860029` PASS, artifact ID `10187362596`, SHA `d7652ec5dabc8916bcf6cf2227198cfac2278ed5dd36ccac39029ee7137e8912`;
+- independent double patch -> byte-identical `924a06f86d648d1bc04bb1d73ccc610dbd59daeb040331910dad86541777d9b5`, both stderr 0;
+- Cecil reopen: `0x0600013D` 6 IL / 14 bytes / 0 EH; `0x06000277` 17 / 52 / 1; `0x060002BC` 38 / 102 / 0; `0x06000705` 17 / 45 / 0; MethodDef total 2317;
+- fixed ILSpy 11.0.0.9375 + locked 56 refs: all four targets clean, stderr 0, target-local Cpp2IL/Unknown/Expected/NotImplemented/invalid markers 0;
+- HF52 whole IL baseline reproduced `515fd597660dd2baafc251c3797707186839ccac01727f32ff4ad2ba52c39994`; HF53 whole IL `9d02f7b55aac9fa89b0ffb0f5bc2e1a4644513dc46632fa7d8acc82091c5ca4a`;
+- MethodDef `2317 -> 2317`, emitted bodies `2297 -> 2297`, distinct nonzero body RVAs `2140 -> 2140`, normalized skeleton identical, changed exactly `0x0600013D`, `0x06000277`, `0x060002BC`, `0x06000705`;
+- cumulative RecoveryAudit build head `80cd3838c91f98b04761e8c6713dcea1d4e9dd96`, workflow `34570344401` PASS, artifact ID `10187537492`, SHA `d9d9273bf7277608bb06dacde940fab667d02f9c203130c5bdf24f5be915143f`; two independent actual executions ended `RECOVERY_AUDIT_OK` and `HF53_AUDIT_OK`, stderr 0, byte-identical log SHA `2f3846aba608d83dc10415ee2704b2b2666a11fede51aa9b771423121235a30c`;
+- GitHub Evidence commit `074172f2f60f92c8b54b7a11c4d8d7a3217c877d`;
+- Drive folder `19xtYYFiYYIsGK0IYYM2yIIEfIDRasXMT`; cumulative DLL `1dp_Oqy8m0er7sq44ISj_jjpcyevl0s2-`;
+- ordinary provider readback 19/19 SHA PASS; payload manifest SHA `0ff609d040a9ac4e395bcb144d879116c86ff19d762087b9d05df32c75e3cb82`;
+- final Drive folder exactly 22 files; FINAL Evidence provider-readback SHA `a56de79e360b5329da3d99916cd3515b87d8fb926ad4cbcf6b8dc27b89f0febd`; FINAL SHA manifest provider-readback SHA `b606efa43eb0cea8bbb279e1198661676145036439f986dbb29930a04afbbd46`.
+
+HF53 deliberately does not claim to repair `Zombie.Path_Test`, `Zombie.DestroyZombie`, `Zombie.DropLootPiece`, or `ProjectManager.DropLootPiece`.
+
+## HF54 / Unity gate
+
+Use only the formal HF53 DLL above as managed input. Open HF54 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure. `Zombie.Path_Test()` and the drop/destroy chain remain the primary residual candidates, but none is pre-authorized.
 
 If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
