@@ -1,0 +1,81 @@
+name: Probe exact package cache history
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/probe-packagecache-history.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe public Unity package-cache history
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/packages
+          repo=https://github.com/zapabob/liltoon-pcss-extension.git
+          git clone --filter=blob:none --no-checkout "$repo" src
+          cd src
+          git fetch --all --tags --prune
+          cd ..
+          python3 - <<'PY'
+          import json, pathlib, subprocess, hashlib, tarfile, os
+          repo=pathlib.Path('src')
+          out=pathlib.Path('out')
+          targets=[
+            ('com.unity.ugui','1.0.0'),
+            ('com.unity.textmeshpro','3.0.6'),
+            ('com.unity.2d.animation','9.1.1'),
+          ]
+          rows=[]
+          for name,ver in targets:
+              rel=f'Library/PackageCache/{name}@{ver}'
+              p=subprocess.run(['git','-C',str(repo),'log','--all','--format=%H','--',rel],text=True,capture_output=True,check=True)
+              commits=[x.strip() for x in p.stdout.splitlines() if x.strip()]
+              row={'name':name,'version':ver,'path':rel,'commit_count':len(commits)}
+              if commits:
+                  c=commits[0]
+                  row['commit']=c
+                  tree=subprocess.check_output(['git','-C',str(repo),'rev-parse',f'{c}:{rel}'],text=True).strip()
+                  row['tree_sha']=tree
+                  dst=out/'packages'/f'{name}@{ver}.tar'
+                  with open(dst,'wb') as f:
+                      subprocess.run(['git','-C',str(repo),'archive','--format=tar',f'{c}:{rel}'],stdout=f,check=True)
+                  row['archive_sha256']=hashlib.sha256(dst.read_bytes()).hexdigest()
+                  with tarfile.open(dst,'r') as tf:
+                      names=tf.getnames()
+                      pkg=[n for n in names if n.endswith('package.json')]
+                      row['file_count']=len(names)
+                      row['meta_count']=sum(n.endswith('.meta') for n in names)
+                      identities=[]
+                      for n in pkg:
+                          try:
+                              j=json.loads(tf.extractfile(n).read())
+                          except Exception:
+                              continue
+                          if j.get('name')==name:
+                              identities.append({'path':n,'name':j.get('name'),'version':j.get('version')})
+                      row['identities']=identities
+              rows.append(row)
+          (out/'report.json').write_text(json.dumps(rows,indent=2,sort_keys=True)+'\n')
+          report=[]
+          for r in rows:
+              report.append(json.dumps(r,sort_keys=True))
+          (out/'report.txt').write_text('\n'.join(report)+'\n')
+          print((out/'report.txt').read_text())
+          if not any(r.get('commit') for r in rows):
+              raise SystemExit(23)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exact-packagecache-history-probe
+          path: out/
+          if-no-files-found: error
+          retention-days: 30
