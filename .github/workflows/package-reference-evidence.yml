@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Resolve exact package versions and MonoScript GUIDs
+      - name: Resolve pinned exact package versions and MonoScript GUIDs
         shell: bash
         run: |
           set -euo pipefail
@@ -25,11 +25,8 @@ jobs:
           import hashlib
           import json
           import re
-          import shutil
           import subprocess
-          import tarfile
           import tempfile
-          import urllib.request
           from pathlib import Path
 
           MAP = Path('Recovery/package-script-map-editor.json')
@@ -50,30 +47,11 @@ jobs:
               'Unity.RenderPipelines.Universal.Runtime.dll': 5,
               'Unity.2D.Animation.Runtime.dll': 2,
           }
-          registry_packages = {
-              ('com.unity.ugui', '1.0.0'),
-              ('com.unity.textmeshpro', '3.0.6'),
-              ('com.unity.2d.animation', '9.1.1'),
-          }
-          # Unity Registry no longer exposes 14.0.11 in its current metadata.
-          # This pinned public project contains embedded copies of both exact 14.0.11 packages.
-          rp_mirror_repo = 'https://github.com/SL0ANE/SloanePixelartURP.git'
-          rp_mirror_commit = '1738732ad202a4d79d575005d9b85c2f12876d8f'
 
           root = json.loads(MAP.read_text(encoding='utf-8'))
           packages = root.get('packages') or []
           assert sum(len(p.get('mapping') or []) for p in packages) == 67
           assert {p['dll']: len(p.get('mapping') or []) for p in packages} == expected_counts
-
-          def get_json(url):
-              req = urllib.request.Request(url, headers={'User-Agent': 'GodsPVZ-package-evidence/1.1'})
-              with urllib.request.urlopen(req, timeout=60) as r:
-                  return json.load(r)
-
-          def download(url, path):
-              req = urllib.request.Request(url, headers={'User-Agent': 'GodsPVZ-package-evidence/1.1'})
-              with urllib.request.urlopen(req, timeout=120) as r, open(path, 'wb') as w:
-                  shutil.copyfileobj(r, w)
 
           def validate_package(root_path, package_name, version):
               pj = root_path / 'package.json'
@@ -83,78 +61,87 @@ jobs:
               if actual.get('name') != package_name or actual.get('version') != version:
                   raise RuntimeError(f'{package_name}@{version}: identity mismatch: {actual.get("name")}@{actual.get("version")}')
 
+          def clone_commit(repo_url, commit, dest):
+              subprocess.run(['git','init',str(dest)],check=True,stdout=subprocess.DEVNULL)
+              subprocess.run(['git','-C',str(dest),'remote','add','origin',repo_url],check=True)
+              subprocess.run(['git','-C',str(dest),'fetch','--depth=1','origin',commit],check=True)
+              resolved=subprocess.check_output(['git','-C',str(dest),'rev-parse','FETCH_HEAD'],text=True).strip()
+              if resolved != commit:
+                  raise RuntimeError(f'commit mismatch for {repo_url}: {resolved} != {commit}')
+              subprocess.run(['git','-C',str(dest),'checkout','--detach','FETCH_HEAD'],check=True,stdout=subprocess.DEVNULL)
+
           package_roots = {}
           package_provenance = []
-          work = Path(tempfile.mkdtemp(prefix='godspvz-upm-'))
+          work = Path(tempfile.mkdtemp(prefix='godspvz-package-evidence-'))
 
-          for package_name, version in sorted(registry_packages):
-              meta_url = 'https://packages.unity.com/' + package_name
-              metadata = get_json(meta_url)
-              ver = (metadata.get('versions') or {}).get(version)
-              if not ver:
-                  raise RuntimeError(f'{package_name}@{version}: version missing from Unity Registry metadata')
-              dist = ver.get('dist') or {}
-              tarball_url = dist.get('tarball')
-              if not tarball_url:
-                  raise RuntimeError(f'{package_name}@{version}: dist.tarball missing')
-              tgz = work / f'{package_name}-{version}.tgz'
-              download(tarball_url, tgz)
-              sha256 = hashlib.sha256(tgz.read_bytes()).hexdigest()
-              extract = work / f'{package_name}@{version}'
-              extract.mkdir()
-              with tarfile.open(tgz, 'r:*') as tf:
-                  tf.extractall(extract)
-              found = list(extract.rglob('package.json'))
-              exact = []
-              for pj in found:
-                  try:
-                      j = json.loads(pj.read_text(encoding='utf-8'))
-                  except Exception:
-                      continue
-                  if j.get('name') == package_name and j.get('version') == version:
-                      exact.append(pj.parent)
-              if len(exact) != 1:
-                  raise RuntimeError(f'{package_name}@{version}: exact package roots={len(exact)}')
-              package_root = exact[0]
+          # Unity Registry no longer exposes these historical versions reliably.
+          # Recover exact package-cache trees from pinned public Git history instead.
+          legacy_repo = 'https://github.com/zapabob/liltoon-pcss-extension.git'
+          legacy_commit = '10c495f6cd465747c2d03f1cc337df93b7d00662'
+          legacy = work / 'legacy-unity-project'
+          clone_commit(legacy_repo, legacy_commit, legacy)
+          legacy_specs = [
+              ('com.unity.ugui','1.0.0','9952f30a9272f339505eb9eb5d63d44aac133630'),
+              ('com.unity.textmeshpro','3.0.6','65c06f7480a5b0e37c5fbdfe9d95b5b96bdb3799'),
+          ]
+          for package_name, version, expected_tree in legacy_specs:
+              rel = f'Library/PackageCache/{package_name}@{version}'
+              package_root = legacy / rel
               validate_package(package_root, package_name, version)
+              tree_sha = subprocess.check_output(['git','-C',str(legacy),'rev-parse',f'HEAD:{rel}'],text=True).strip()
+              if tree_sha != expected_tree:
+                  raise RuntimeError(f'{package_name}@{version}: package tree mismatch {tree_sha} != {expected_tree}')
               package_roots[(package_name, version)] = package_root
               package_provenance.append({
                   'name': package_name,
                   'version': version,
-                  'source_kind': 'unity-registry',
-                  'registry_metadata_url': meta_url,
-                  'tarball_url': tarball_url,
-                  'tarball_sha256': sha256,
-                  'dist_shasum': dist.get('shasum'),
-                  'dist_integrity': dist.get('integrity'),
+                  'source_kind': 'pinned-github-packagecache-history',
+                  'repository': legacy_repo,
+                  'commit': legacy_commit,
+                  'package_tree_sha': tree_sha,
               })
 
-          mirror = work / 'rp-mirror'
-          subprocess.run(['git', 'init', str(mirror)], check=True, stdout=subprocess.DEVNULL)
-          subprocess.run(['git', '-C', str(mirror), 'remote', 'add', 'origin', rp_mirror_repo], check=True)
-          subprocess.run(['git', '-C', str(mirror), 'config', 'core.sparseCheckout', 'true'], check=True)
-          info = mirror / '.git' / 'info' / 'sparse-checkout'
-          info.write_text('Packages/com.unity.render-pipelines.core@14.0.11/\nPackages/com.unity.render-pipelines.universal@14.0.11/\n', encoding='utf-8')
-          subprocess.run(['git', '-C', str(mirror), 'fetch', '--depth=1', 'origin', rp_mirror_commit], check=True)
-          subprocess.run(['git', '-C', str(mirror), 'checkout', '--detach', 'FETCH_HEAD'], check=True)
-          resolved_commit = subprocess.check_output(['git', '-C', str(mirror), 'rev-parse', 'HEAD'], text=True).strip()
-          if resolved_commit != rp_mirror_commit:
-              raise RuntimeError(f'RP mirror commit mismatch: {resolved_commit}')
+          anim_repo = 'https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git'
+          anim_commit = '9104e9a40be711441d25848120cc83604c21d0b7'
+          anim_expected_tree = '0aae322aa413895341a9213218719ec423ed7dac'
+          anim = work / 'animation-911-project'
+          clone_commit(anim_repo, anim_commit, anim)
+          anim_name, anim_version = 'com.unity.2d.animation', '9.1.1'
+          anim_rel = f'Library/PackageCache/{anim_name}@{anim_version}'
+          anim_root = anim / anim_rel
+          validate_package(anim_root, anim_name, anim_version)
+          anim_tree = subprocess.check_output(['git','-C',str(anim),'rev-parse',f'HEAD:{anim_rel}'],text=True).strip()
+          if anim_tree != anim_expected_tree:
+              raise RuntimeError(f'{anim_name}@{anim_version}: package tree mismatch {anim_tree} != {anim_expected_tree}')
+          package_roots[(anim_name, anim_version)] = anim_root
+          package_provenance.append({
+              'name': anim_name,
+              'version': anim_version,
+              'source_kind': 'pinned-gitlab-packagecache-history',
+              'repository': anim_repo,
+              'commit': anim_commit,
+              'package_tree_sha': anim_tree,
+          })
 
+          # Exact 14.0.11 RP packages are preserved as embedded package trees in a pinned public project.
+          rp_repo = 'https://github.com/SL0ANE/SloanePixelartURP.git'
+          rp_commit = '1738732ad202a4d79d575005d9b85c2f12876d8f'
+          rp = work / 'rp-mirror'
+          clone_commit(rp_repo, rp_commit, rp)
           for package_name in ('com.unity.render-pipelines.core', 'com.unity.render-pipelines.universal'):
               version = '14.0.11'
-              package_root = mirror / 'Packages' / f'{package_name}@{version}'
+              rel = f'Packages/{package_name}@{version}'
+              package_root = rp / rel
               validate_package(package_root, package_name, version)
-              tree_sha = subprocess.check_output(['git', '-C', str(mirror), 'rev-parse', f'HEAD:Packages/{package_name}@{version}'], text=True).strip()
+              tree_sha = subprocess.check_output(['git','-C',str(rp),'rev-parse',f'HEAD:{rel}'],text=True).strip()
               package_roots[(package_name, version)] = package_root
               package_provenance.append({
                   'name': package_name,
                   'version': version,
-                  'source_kind': 'pinned-github-embedded-copy',
-                  'repository': rp_mirror_repo,
-                  'commit': rp_mirror_commit,
+                  'source_kind': 'pinned-github-embedded-package',
+                  'repository': rp_repo,
+                  'commit': rp_commit,
                   'package_tree_sha': tree_sha,
-                  'note': 'Pinned exact-version embedded copy used because current Unity Registry metadata no longer exposes 14.0.11; final Unity Editor validation remains authoritative.',
               })
 
           rows = []
@@ -168,8 +155,8 @@ jobs:
                   short = full_name.rsplit('.', 1)[-1]
                   candidates = []
                   for cs in package_root.rglob(short + '.cs'):
-                      s = '/' + cs.relative_to(package_root).as_posix() + '/'
-                      if any(part in s for part in ('/Editor/', '/Tests/', '/Samples~/', '/Documentation~/', '/TestProjects/')):
+                      rel = '/' + cs.relative_to(package_root).as_posix() + '/'
+                      if any(part in rel for part in ('/Editor/', '/Tests/', '/Samples~/', '/Documentation~/', '/TestProjects/')):
                           continue
                       if cs.with_suffix(cs.suffix + '.meta').exists():
                           candidates.append(cs)
@@ -196,7 +183,7 @@ jobs:
                   })
 
           evidence = {
-              'schema': 2,
+              'schema': 3,
               'source_map': str(MAP),
               'resolved': len(rows),
               'expected': 67,
@@ -210,12 +197,10 @@ jobs:
           report.append('GodsPVZ exact package GUID evidence')
           report.append(f'resolved={len(rows)}/67')
           report.append(f'failures={len(bad)}')
+          report.append('source_policy=pinned exact public git trees; no historical Unity Registry dependency')
           report.append('')
           for p in sorted(package_provenance, key=lambda p: p['name']):
-              if p['source_kind'] == 'unity-registry':
-                  report.append(f"PACKAGE\t{p['name']}@{p['version']}\tunity-registry\tsha256={p['tarball_sha256']}\t{p['tarball_url']}")
-              else:
-                  report.append(f"PACKAGE\t{p['name']}@{p['version']}\tpinned-github-embedded-copy\tcommit={p['commit']}\ttree={p['package_tree_sha']}")
+              report.append(f"PACKAGE\t{p['name']}@{p['version']}\t{p['source_kind']}\tcommit={p['commit']}\ttree={p['package_tree_sha']}\t{p['repository']}")
           report.append('')
           for r in sorted(rows, key=lambda r: (r['dll'], r['fullName'])):
               report.append(f"MAP\t{r['dll']}\t{r['fullName']}\toldFileID={r['old_fileID']}\tguid={r['monoscript_guid']}\t{r['source_path']}")
