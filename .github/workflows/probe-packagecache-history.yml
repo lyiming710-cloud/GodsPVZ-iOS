@@ -25,7 +25,7 @@ jobs:
           git fetch --all --tags --prune
           cd ..
           python3 - <<'PY'
-          import json, pathlib, subprocess, hashlib, tarfile, os
+          import json, pathlib, subprocess, hashlib, tarfile
           repo=pathlib.Path('src')
           out=pathlib.Path('out')
           targets=[
@@ -33,28 +33,41 @@ jobs:
             ('com.unity.textmeshpro','3.0.6'),
             ('com.unity.2d.animation','9.1.1'),
           ]
+          def exists(commit, rel):
+              return subprocess.run(['git','-C',str(repo),'cat-file','-e',f'{commit}:{rel}'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
           rows=[]
           for name,ver in targets:
               rel=f'Library/PackageCache/{name}@{ver}'
               p=subprocess.run(['git','-C',str(repo),'log','--all','--format=%H','--',rel],text=True,capture_output=True,check=True)
-              commits=[x.strip() for x in p.stdout.splitlines() if x.strip()]
-              row={'name':name,'version':ver,'path':rel,'commit_count':len(commits)}
-              if commits:
-                  c=commits[0]
-                  row['commit']=c
-                  tree=subprocess.check_output(['git','-C',str(repo),'rev-parse',f'{c}:{rel}'],text=True).strip()
+              history=[x.strip() for x in p.stdout.splitlines() if x.strip()]
+              candidates=[]
+              for c in history:
+                  candidates.append(c)
+                  pp=subprocess.run(['git','-C',str(repo),'rev-parse',f'{c}^'],text=True,capture_output=True)
+                  if pp.returncode==0:
+                      candidates.append(pp.stdout.strip())
+              seen=[]
+              chosen=None
+              for c in candidates:
+                  if not c or c in seen: continue
+                  seen.append(c)
+                  if exists(c,rel):
+                      chosen=c; break
+              row={'name':name,'version':ver,'path':rel,'history_commit_count':len(history),'tested_candidates':len(seen)}
+              if chosen:
+                  row['commit']=chosen
+                  tree=subprocess.check_output(['git','-C',str(repo),'rev-parse',f'{chosen}:{rel}'],text=True).strip()
                   row['tree_sha']=tree
                   dst=out/'packages'/f'{name}@{ver}.tar'
                   with open(dst,'wb') as f:
-                      subprocess.run(['git','-C',str(repo),'archive','--format=tar',f'{c}:{rel}'],stdout=f,check=True)
+                      subprocess.run(['git','-C',str(repo),'archive','--format=tar',f'{chosen}:{rel}'],stdout=f,check=True)
                   row['archive_sha256']=hashlib.sha256(dst.read_bytes()).hexdigest()
                   with tarfile.open(dst,'r') as tf:
                       names=tf.getnames()
-                      pkg=[n for n in names if n.endswith('package.json')]
                       row['file_count']=len(names)
                       row['meta_count']=sum(n.endswith('.meta') for n in names)
                       identities=[]
-                      for n in pkg:
+                      for n in [n for n in names if n.endswith('package.json')]:
                           try:
                               j=json.loads(tf.extractfile(n).read())
                           except Exception:
@@ -64,10 +77,7 @@ jobs:
                       row['identities']=identities
               rows.append(row)
           (out/'report.json').write_text(json.dumps(rows,indent=2,sort_keys=True)+'\n')
-          report=[]
-          for r in rows:
-              report.append(json.dumps(r,sort_keys=True))
-          (out/'report.txt').write_text('\n'.join(report)+'\n')
+          (out/'report.txt').write_text('\n'.join(json.dumps(r,sort_keys=True) for r in rows)+'\n')
           print((out/'report.txt').read_text())
           if not any(r.get('commit') for r in rows):
               raise SystemExit(23)
