@@ -1,0 +1,37 @@
+name: Build HF54 cumulative recovery audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF54Audit/**'
+      - '.github/workflows/build-hf54-audit.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish historical RecoveryAudit
+        run: dotnet publish Tools/RecoveryAudit/RecoveryAudit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/historical
+      - name: Publish cumulative HF54 auditor
+        run: dotnet publish Tools/HF54Audit/HF54Audit.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf54
+      - name: Smoke tests
+        run: |
+          chmod +x out/historical/GodsPVZ.RecoveryAudit out/hf54/GodsPVZ.HF54Audit
+          set +e
+          out/historical/GodsPVZ.RecoveryAudit; a=$?
+          out/hf54/GodsPVZ.HF54Audit; b=$?
+          set -e
+          test "$a" = "2"
+          test "$b" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF54-CompositeAudit-linux-x64
+          path: |
+            out/historical/GodsPVZ.RecoveryAudit
+            out/hf54/GodsPVZ.HF54Audit
+          if-no-files-found: error
