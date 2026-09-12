@@ -1,0 +1,66 @@
+name: Stage9.1 59b LoadBaseData enum-width gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-59b-loadbasedata-enum-gate.yml'
+      - 'Tools/Stage9SaveLoadBaseDataPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  loadbasedata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 59b candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34717232463
+          pattern: Stage9.1-52ec-MAINMENU-POPUP-PATH
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-loadbase/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-loadbase/ilspy
+      - name: Apply exact repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-loadbase"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-mainmenu-popup-path.dll"; DLL="$OUT/GodsPVZRuntime1-loadbasedata.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '59b193dd670f0a4d0c8d1540ed38d2dea7c53c6d3e6c51ff2158481638ae0e01' ] || exit 61
+          dotnet build Tools/Stage9SaveLoadBaseDataPatch/Stage9SaveLoadBaseDataPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9SaveLoadBaseDataPatch/Stage9SaveLoadBaseDataPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^PATCH_LOADBASEDATA challengeTypeOnPlay=-1 opcode=ldc.i4.m1$' "$E/patch.log"
+          grep -q '^REOPEN_LOADBASEDATA_PASS enum_width=int32$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-loadbase"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-loadbasedata.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -m 0x06000243 "$DLL" > "$E/LoadBaseData.cs" 2> "$E/LoadBaseData.stderr"; test ! -s "$E/LoadBaseData.stderr"
+          grep -q 'challengeTypeOnPlay = ChallengeType.None' "$E/LoadBaseData.cs"
+          ! grep -Eq 'Expected I4, but got I8|Invalid IL|Unknown result type' "$E/LoadBaseData.cs"
+          echo 'ILSPY_LOADBASEDATA_PASS token=0x06000243' | tee "$E/ilspy-pass.txt"
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-59b-LOADBASEDATA-ENUM
+          path: ${{ runner.temp }}/stage9-loadbase/evidence/
+          if-no-files-found: error
+          retention-days: 90
