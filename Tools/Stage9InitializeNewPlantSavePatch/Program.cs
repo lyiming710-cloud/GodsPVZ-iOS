@@ -11,7 +11,8 @@ if (args.Length != 2)
 
 const string ExpectedInputSha256 = "bad91c3610837a05e38dbccf5b25730bcdb30b242f213af885a3b31a1c0ed3a0";
 const int ExpectedMethodDefCount = 2317;
-var NullCheckOffsets = new[] { 0x0013, 0x0046, 0x0070, 0x00F6, 0x0153, 0x01B0, 0x01E5, 0x0218, 0x0261, 0x02A7 };
+const uint ExpectedTargetToken = 0x0600023Eu;
+var NullCheckOffsets = new[] { 0x000E, 0x0041, 0x006B, 0x00F1, 0x014E, 0x01AB, 0x01E0, 0x0213, 0x025C, 0x02A2 };
 
 static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
 {
@@ -64,6 +65,7 @@ var target = methods.SingleOrDefault(m => m.FullName == "PlantSave SavesManager:
     ?? throw new InvalidDataException("InitializeNewPlantSave(int) target missing or ambiguous");
 var targetToken = Raw(target);
 Console.WriteLine($"TARGET_METHOD token=0x{targetToken:X8} name={target.FullName}");
+if (targetToken != ExpectedTargetToken) throw new InvalidDataException($"InitializeNewPlantSave token drift: 0x{targetToken:X8}");
 if (target.Body.Variables.Count <= 24 || target.Body.Variables[6].VariableType.FullName != "PlantSave" || target.Body.Variables[24].VariableType.FullName != "System.NullReferenceException")
     throw new InvalidDataException("InitializeNewPlantSave local layout drift");
 
