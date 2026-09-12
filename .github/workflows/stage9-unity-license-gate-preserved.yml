@@ -17,16 +17,23 @@ jobs:
     timeout-minutes: 45
     env:
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
-      - name: Verify secret is present without exposing it
+      - name: Verify required secrets are present without exposing them
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${UNITY_LICENSE:-}" ]; then
-            echo 'UNITY_LICENSE repository secret is missing or empty.' >&2
-            exit 51
-          fi
-          echo 'UNITY_LICENSE secret is present.'
+          missing=0
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [ -z "${!name:-}" ]; then
+              echo "$name repository secret is missing or empty." >&2
+              missing=1
+            else
+              echo "$name secret is present."
+            fi
+          done
+          [ "$missing" = 0 ] || exit 51
 
       - name: Download preserved editor parts from formal preservation run
         uses: actions/download-artifact@v4
@@ -82,7 +89,6 @@ jobs:
           cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -t
           df -h . > "$EVIDENCE/disk-before-extract.txt"
 
-          # Stream the preserved split archive directly into extraction and delete each consumed part.
           (
             for p in "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do
               cat "$p"
@@ -98,10 +104,11 @@ jobs:
           VERSION="$(printf '%s\n' "$VERSION_OUT" | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n1 || true)"
           [ "$VERSION" = '2022.3.44f1c1' ] || { echo "Exact editor version gate failed: $VERSION" >&2; exit 56; }
           printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          printf '%s\n' "$EDITOR" > "$OUT/editor-root.txt"
           df -h . > "$EVIDENCE/disk-after-extract.txt"
           echo 'Preserved exact editor reconstruction PASS.'
 
-      - name: Import Personal license and probe persisted license state
+      - name: Import Personal license with machine-binding fallback and probe
         id: license
         shell: bash
         run: |
@@ -109,74 +116,156 @@ jobs:
           OUT="$RUNNER_TEMP/stage9-license-gate-preserved"
           EVIDENCE="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
+          EDITOR_ROOT="$(cat "$OUT/editor-root.txt")"
           LICENSE_FILE="$RUNNER_TEMP/Unity_lic.ulf"
-          RAW1="$OUT/license-import-raw.log"
-          RAW2="$OUT/license-probe-raw.log"
+          RAW_FILE="$OUT/license-file-import-raw.log"
+          RAW_ACCOUNT="$OUT/license-account-activation-raw.log"
+          RAW_PROBE="$OUT/license-probe-raw.log"
+          RAW_EDITOR_FALLBACK="$OUT/license-editor-account-fallback-raw.log"
+          CLIENT="$EDITOR_ROOT/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          ACCOUNT_ACTIVATED=0
+          METHOD='none'
+          FILE_EXIT=99
+          ACCOUNT_EXIT=99
+          EDITOR_FALLBACK_EXIT=99
+          PROBE_EXIT=99
+
+          sanitize() {
+            python3 - "$1" "$2" <<'PY'
+          import re,sys
+          src,dst=sys.argv[1:3]
+          try:
+              lines=open(src,'r',encoding='utf-8',errors='replace').read().splitlines()
+          except FileNotFoundError:
+              lines=['<raw log missing>']
+          # Keep diagnostic wording while suppressing values on credential/token/key lines.
+          sensitive=re.compile(r'(access.?token|refresh.?token|password|e-?mail|username|user name|license key|serial number|serial:)',re.I)
+          out=[]
+          for line in lines:
+              out.append('[REDACTED POTENTIALLY SENSITIVE LICENSE LINE]' if sensitive.search(line) else line)
+          open(dst,'w',encoding='utf-8').write('\n'.join(out)+'\n')
+          PY
+          }
+
+          cleanup() {
+            if [ "$ACCOUNT_ACTIVATED" = 1 ] && [ -x "$CLIENT" ]; then
+              "$CLIENT" --return-ulf >/dev/null 2>&1 || true
+            fi
+            rm -f "$LICENSE_FILE" "$RAW_FILE" "$RAW_ACCOUNT" "$RAW_PROBE" "$RAW_EDITOR_FALLBACK"
+          }
+          trap cleanup EXIT
 
           umask 077
           printf '%s' "$UNITY_LICENSE" > "$LICENSE_FILE"
           [ -s "$LICENSE_FILE" ] || { echo 'Temporary ULF file is empty.' >&2; exit 57; }
           printf '%s\n' "$(stat -c %s "$LICENSE_FILE")" > "$EVIDENCE/license-secret-byte-count.txt"
 
+          # First preserve the exact failure/success semantics of the provided ULF.
           set +e
-          "$UNITY" -batchmode -nographics -quit -manualLicenseFile "$LICENSE_FILE" -logFile "$RAW1"
-          IMPORT_EXIT=$?
-          "$UNITY" -batchmode -nographics -quit -logFile "$RAW2"
+          "$UNITY" -batchmode -nographics -quit -manualLicenseFile "$LICENSE_FILE" -logFile "$RAW_FILE"
+          FILE_EXIT=$?
+          set -e
+          sanitize "$RAW_FILE" "$EVIDENCE/license-file-import-sanitized.log"
+          printf '%s\n' "$FILE_EXIT" > "$EVIDENCE/license-file-import-exit.txt"
+
+          # If the Windows-generated Personal ULF is machine-bound, activate the
+          # current ephemeral runner through this exact Editor's Licensing Client.
+          if grep -qi "Machine bindings don't match" "$RAW_FILE"; then
+            METHOD='account-client'
+            if [ ! -x "$CLIENT" ]; then
+              echo "Exact Editor Licensing Client not found/executable: $CLIENT" >&2
+              exit 59
+            fi
+
+            "$CLIENT" --help > "$OUT/client-help-raw.txt" 2>&1 || true
+            head -n 20 "$OUT/client-help-raw.txt" > "$EVIDENCE/licensing-client-help-head.txt"
+
+            PERSONAL_FLAGS=(--activate-all)
+            if grep -q -- '--include-personal' "$OUT/client-help-raw.txt"; then
+              PERSONAL_FLAGS+=(--include-personal)
+              echo 'Licensing Client supports --include-personal.' > "$EVIDENCE/personal-activation-capability.txt"
+            else
+              echo 'Licensing Client does not advertise --include-personal; using --activate-all first.' > "$EVIDENCE/personal-activation-capability.txt"
+            fi
+
+            set +e
+            "$CLIENT" "${PERSONAL_FLAGS[@]}" --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$RAW_ACCOUNT" 2>&1
+            ACCOUNT_EXIT=$?
+            set -e
+            sanitize "$RAW_ACCOUNT" "$EVIDENCE/license-account-activation-sanitized.log"
+            printf '%s\n' "$ACCOUNT_EXIT" > "$EVIDENCE/license-account-activation-exit.txt"
+
+            if [ "$ACCOUNT_EXIT" -eq 0 ] && ! grep -qiE 'No seat available|No license activation found for this computer' "$RAW_ACCOUNT"; then
+              ACCOUNT_ACTIVATED=1
+            else
+              # Historical fallback used by GameCI for clients that cannot acquire
+              # Personal seats directly: invoke Editor with account only, no serial.
+              METHOD='account-editor-fallback'
+              set +e
+              "$UNITY" -batchmode -nographics -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -logFile "$RAW_EDITOR_FALLBACK"
+              EDITOR_FALLBACK_EXIT=$?
+              set -e
+              sanitize "$RAW_EDITOR_FALLBACK" "$EVIDENCE/license-editor-account-fallback-sanitized.log"
+              printf '%s\n' "$EDITOR_FALLBACK_EXIT" > "$EVIDENCE/license-editor-account-fallback-exit.txt"
+              if ! grep -qiE 'No valid Unity Editor license found|License is not active|No seat available' "$RAW_EDITOR_FALLBACK"; then
+                ACCOUNT_ACTIVATED=1
+              fi
+            fi
+          else
+            METHOD='license-file'
+          fi
+
+          # Decisive no-project probe using the exact Editor after whichever
+          # activation path ran. This must pass before R2 is ever touched.
+          set +e
+          "$UNITY" -batchmode -nographics -quit -logFile "$RAW_PROBE"
           PROBE_EXIT=$?
           set -e
-
-          printf '%s\n' "$IMPORT_EXIT" > "$EVIDENCE/license-import-exit.txt"
+          sanitize "$RAW_PROBE" "$EVIDENCE/license-probe-sanitized.log"
           printf '%s\n' "$PROBE_EXIT" > "$EVIDENCE/license-probe-exit.txt"
+          printf '%s\n' "$METHOD" > "$EVIDENCE/license-method.txt"
 
-          python3 - "$RAW1" "$EVIDENCE/license-import-sanitized.log" "$RAW2" "$EVIDENCE/license-probe-sanitized.log" <<'PY'
-          import re,sys
-          pairs=[(sys.argv[1],sys.argv[2]),(sys.argv[3],sys.argv[4])]
-          sensitive=re.compile(r'(access.?token|refresh.?token|serial|password|e-?mail|username|user name|license key)',re.I)
-          for src,dst in pairs:
-              try:
-                  lines=open(src,'r',encoding='utf-8',errors='replace').read().splitlines()
-              except FileNotFoundError:
-                  lines=['<raw log missing>']
-              out=[]
-              for line in lines:
-                  out.append('[REDACTED POTENTIALLY SENSITIVE LICENSE LINE]' if sensitive.search(line) else line)
-              open(dst,'w',encoding='utf-8').write('\n'.join(out)+'\n')
-          PY
+          INVALID=0
+          if grep -qiE 'No valid Unity Editor license found|License is not active|No ULF license found' "$RAW_PROBE"; then
+            INVALID=1
+          fi
 
-          rm -f "$LICENSE_FILE" "$RAW1" "$RAW2"
-          unset UNITY_LICENSE || true
-
-          python3 - "$EVIDENCE/RESULT.json" "$IMPORT_EXIT" "$PROBE_EXIT" <<'PY'
+          python3 - "$EVIDENCE/RESULT.json" "$FILE_EXIT" "$ACCOUNT_EXIT" "$EDITOR_FALLBACK_EXIT" "$PROBE_EXIT" "$INVALID" "$METHOD" <<'PY'
           import json,sys
-          p=sys.argv[1]; imp=int(sys.argv[2]); probe=int(sys.argv[3])
+          p=sys.argv[1]
+          file_exit,account_exit,editor_fallback_exit,probe_exit,invalid=map(int,sys.argv[2:7])
+          method=sys.argv[7]
+          passed=(probe_exit==0 and invalid==0)
           d={
-            'gate':'STAGE9_1_UNITY_LICENSE_GATE_PRESERVED_EDITOR',
+            'gate':'STAGE9_1_UNITY_LICENSE_GATE_PRESERVED_EDITOR_V2',
             'editor':'Unity China 2022.3.44f1c1',
             'editor_sha256':'0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14',
             'editor_source':'GitHub Actions formal preservation run 34668863583',
-            'license_secret_present':True,
-            'manual_license_import_exit':imp,
-            'persisted_license_probe_exit':probe,
-            'license_gate_pass': imp == 0 and probe == 0,
+            'all_required_secrets_present':True,
+            'license_file_import_exit':file_exit,
+            'account_client_activation_exit':account_exit,
+            'editor_account_fallback_exit':editor_fallback_exit,
+            'persisted_license_probe_exit':probe_exit,
+            'probe_invalid_license_signature':bool(invalid),
+            'effective_activation_method':method,
+            'license_gate_pass':passed,
             'project_import_attempted':False,
             'r2_touched':False,
             'hf56_authorized':False,
           }
           open(p,'w',encoding='utf-8').write(json.dumps(d,indent=2,sort_keys=True)+'\n')
           print(json.dumps(d,indent=2,sort_keys=True))
+          if not passed:
+              raise SystemExit(58)
           PY
 
-          if [ "$IMPORT_EXIT" -ne 0 ] || [ "$PROBE_EXIT" -ne 0 ]; then
-            echo "License gate FAILED: import=$IMPORT_EXIT probe=$PROBE_EXIT" >&2
-            exit 58
-          fi
-          echo 'License gate PASS.'
+          echo 'Exact-editor Personal license gate PASS.'
 
       - name: Upload sanitized license-gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Stage9.1-unity-license-gate-preserved-evidence
+          name: Stage9.1-unity-license-gate-preserved-evidence-v2
           path: |
             ${{ runner.temp }}/stage9-license-gate-preserved/evidence/
           if-no-files-found: warn
