@@ -1,0 +1,467 @@
+name: Stage9.1 R3 PlayMode runtime smoke
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-r3-playmode-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  r3-playmode-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Prepare
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          mkdir -p "$EVIDENCE"
+          [ -n "${UNITY_EMAIL:-}" ] && [ -n "${UNITY_PASSWORD:-}" ] || exit 61
+
+      - name: Download and verify formal R3
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          PARTS="$OUT/r3-parts"
+          ROOT="$OUT/r3"
+          mkdir -p "$PARTS" "$ROOT"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/r3-parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a	67108864
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2	67108864
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2	67108864
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f	67108864
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc	67108864
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263	67108864
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c	67108864
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec	67108864
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8	67108864
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a	67108864
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994	67108864
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325	48568114
+          EOF
+          while IFS=$'\t' read -r idx fid sha size; do
+            f="$PARTS/r3.${idx}.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            [ "$(sha256sum "$f" | awk '{print $1}')" = "$sha" ] || exit 62
+            [ "$(stat -c %s "$f")" = "$size" ] || exit 63
+          done < "$OUT/r3-parts.tsv"
+          ARCHIVE="$OUT/r3.tar.zst"
+          cat "$PARTS"/*.part > "$ARCHIVE"
+          [ "$(sha256sum "$ARCHIVE" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 64
+          [ "$(stat -c %s "$ARCHIVE")" = '786765618' ] || exit 65
+          zstd -t "$ARCHIVE"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$ROOT"
+          rm -rf "$PARTS" "$ARCHIVE"
+          PROJECT="$ROOT/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          [ -d "$PROJECT" ] || exit 66
+          [ ! -d "$PROJECT/Library" ] || exit 67
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 68
+          grep -q '^  isExplicitlyReferenced: 1$' "$PROJECT/Assets/Plugins/Assembly-CSharp.dll.meta"
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          echo R3_INPUT_PASS > "$EVIDENCE/r3-input-gate.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-r3-playmode/editor-parts
+
+      - name: Reconstruct exact Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          EDITOR="$OUT/editor"
+          mkdir -p "$EDITOR"
+          COUNT="$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          [ "$COUNT" = '15' ] || exit 69
+          SHA="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')"
+          SIZE="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | wc -c)"
+          printf '%s\n' "$SHA" > "$EVIDENCE/editor-rejoined-sha256.txt"
+          printf '%s\n' "$SIZE" > "$EVIDENCE/editor-rejoined-size.txt"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 70
+          [ "$SIZE" = '3906640940' ] || exit 71
+          (for p in "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; rm -f "$p"; done) | xz -dc | tar -xf - -C "$EDITOR"
+          UNITY="$EDITOR/Editor/Unity"
+          chmod +x "$UNITY"
+          VER="$("$UNITY" -version 2>&1)"
+          printf '%s\n' "$VER" > "$EVIDENCE/unity-version.txt"
+          printf '%s' "$VER" | grep -q '2022.3.44f1c1' || exit 72
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$PARTS"
+
+      - name: Acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$OUT/activate.log" 2>&1
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > "$EVIDENCE/activation-exit.txt"
+          [ "$RC" -eq 0 ] || exit 73
+          echo ACQUIRED > "$OUT/seat-acquired.flag"
+
+      - name: First import to populate Library
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$EVIDENCE/first-import.log"
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > "$EVIDENCE/first-import-exit.txt"
+          [ "$RC" -eq 0 ] || exit 74
+          test -d "$PROJECT/Library"
+
+      - name: Install PlayMode runtime smoke tests into disposable copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          DIR="$PROJECT/Assets/Stage9PlayModeSmoke"
+          mkdir -p "$DIR"
+          cat > "$DIR/Stage9.PlayModeSmoke.asmdef" <<'JSON'
+          {
+            "name": "Stage9.PlayModeSmoke",
+            "rootNamespace": "",
+            "references": [],
+            "includePlatforms": [],
+            "excludePlatforms": [],
+            "allowUnsafeCode": false,
+            "overrideReferences": false,
+            "precompiledReferences": [],
+            "autoReferenced": true,
+            "defineConstraints": [],
+            "versionDefines": [],
+            "noEngineReferences": false,
+            "optionalUnityReferences": ["TestAssemblies"]
+          }
+          JSON
+          cat > "$DIR/Stage9PlayModeSmoke.cs" <<'CS'
+          using System;
+          using System.Collections;
+          using System.Collections.Generic;
+          using System.IO;
+          using NUnit.Framework;
+          using UnityEngine;
+          using UnityEngine.EventSystems;
+          using UnityEngine.SceneManagement;
+          using UnityEngine.TestTools;
+
+          [Serializable]
+          public class Stage9RuntimeSceneResult
+          {
+              public string scene;
+              public bool loaded;
+              public int rootCount;
+              public int gameObjectCount;
+              public int componentSlots;
+              public int missingComponentSlots;
+              public int starterTypeCount;
+              public int cameraCount;
+              public int eventSystemCount;
+              public int rendererCount;
+              public int rendererMissingShaderCount;
+              public int runtimeErrorCount;
+              public string[] runtimeErrors;
+              public bool expandedBeyondStaticScene;
+              public bool pass;
+          }
+
+          [Serializable]
+          public class Stage9RuntimeReport
+          {
+              public string unityVersion;
+              public List<Stage9RuntimeSceneResult> scenes = new List<Stage9RuntimeSceneResult>();
+              public bool pass;
+          }
+
+          public class Stage9PlayModeSmoke
+          {
+              static readonly Stage9RuntimeReport Report = new Stage9RuntimeReport();
+              static readonly List<string> Errors = new List<string>();
+
+              static void OnLog(string condition, string stackTrace, LogType type)
+              {
+                  if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
+                  {
+                      Errors.Add(type + ": " + condition + "\n" + stackTrace);
+                  }
+              }
+
+              static void Walk(GameObject go, Stage9RuntimeSceneResult r, string starterTypeName)
+              {
+                  r.gameObjectCount++;
+                  var comps = go.GetComponents<Component>();
+                  r.componentSlots += comps.Length;
+                  foreach (var c in comps)
+                  {
+                      if (c == null)
+                      {
+                          r.missingComponentSlots++;
+                          continue;
+                      }
+                      if (c.GetType().Name == starterTypeName) r.starterTypeCount++;
+                      var renderer = c as Renderer;
+                      if (renderer != null)
+                      {
+                          r.rendererCount++;
+                          foreach (var m in renderer.sharedMaterials)
+                          {
+                              if (m == null || m.shader == null || m.shader.name == "Hidden/InternalErrorShader") r.rendererMissingShaderCount++;
+                          }
+                      }
+                  }
+                  foreach (Transform child in go.transform) Walk(child.gameObject, r, starterTypeName);
+              }
+
+              static IEnumerator Probe(string sceneName, string starterTypeName)
+              {
+                  Errors.Clear();
+                  Application.logMessageReceived += OnLog;
+                  var op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+                  Assert.IsNotNull(op, "LoadSceneAsync returned null for " + sceneName);
+                  while (!op.isDone) yield return null;
+
+                  yield return new WaitForSecondsRealtime(3f);
+                  for (int i = 0; i < 30; i++) yield return null;
+
+                  Application.logMessageReceived -= OnLog;
+                  var active = SceneManager.GetActiveScene();
+                  var r = new Stage9RuntimeSceneResult();
+                  r.scene = sceneName;
+                  r.loaded = active.IsValid() && active.isLoaded && active.name == sceneName;
+                  var roots = active.GetRootGameObjects();
+                  r.rootCount = roots.Length;
+                  foreach (var root in roots) Walk(root, r, starterTypeName);
+                  r.cameraCount = UnityEngine.Object.FindObjectsOfType<Camera>(true).Length;
+                  r.eventSystemCount = UnityEngine.Object.FindObjectsOfType<EventSystem>(true).Length;
+                  r.runtimeErrorCount = Errors.Count;
+                  r.runtimeErrors = Errors.ToArray();
+                  r.expandedBeyondStaticScene = r.gameObjectCount > 3;
+                  r.pass = r.loaded && r.rootCount > 0 && r.expandedBeyondStaticScene &&
+                           r.missingComponentSlots == 0 && r.starterTypeCount > 0 &&
+                           r.cameraCount > 0 && r.eventSystemCount > 0 &&
+                           r.rendererMissingShaderCount == 0 && r.runtimeErrorCount == 0;
+                  Report.scenes.Add(r);
+                  SaveReport();
+
+                  Assert.IsTrue(r.loaded, sceneName + " failed to load in PlayMode");
+                  Assert.Greater(r.gameObjectCount, 3, sceneName + " did not expand beyond its 3-object serialized bootstrap scene; starter gameplay script may not have executed");
+                  Assert.Greater(r.starterTypeCount, 0, starterTypeName + " component was not live in PlayMode");
+                  Assert.AreEqual(0, r.missingComponentSlots, sceneName + " has missing component slots at runtime");
+                  Assert.Greater(r.cameraCount, 0, sceneName + " has no active scene camera component");
+                  Assert.Greater(r.eventSystemCount, 0, sceneName + " has no EventSystem");
+                  Assert.AreEqual(0, r.rendererMissingShaderCount, sceneName + " has missing/error shaders at runtime");
+                  Assert.AreEqual(0, r.runtimeErrorCount, sceneName + " logged Error/Exception/Assert during runtime boot");
+              }
+
+              static void SaveReport()
+              {
+                  Report.unityVersion = Application.unityVersion;
+                  Report.pass = Report.scenes.Count >= 2;
+                  foreach (var r in Report.scenes) Report.pass &= r.pass;
+                  var path = Environment.GetEnvironmentVariable("STAGE9_PLAYMODE_SMOKE_OUT");
+                  if (string.IsNullOrEmpty(path)) path = Path.Combine(Directory.GetCurrentDirectory(), "Stage9PlayModeSmoke.json");
+                  File.WriteAllText(path, JsonUtility.ToJson(Report, true));
+              }
+
+              [UnityTest, Order(1)]
+              public IEnumerator MainMenuRuntimeBoot()
+              {
+                  yield return Probe("MainMenu", "GameStart");
+              }
+
+              [UnityTest, Order(2)]
+              public IEnumerator BoardRuntimeBootAfterMainMenuInitialization()
+              {
+                  yield return Probe("Board", "BoardStart");
+              }
+
+              [OneTimeTearDown]
+              public void FinalizeReport()
+              {
+                  SaveReport();
+              }
+          }
+          CS
+          echo "$DIR" > "$EVIDENCE/test-harness-path.txt"
+
+      - name: Compile test harness and run PlayMode runtime smoke
+        shell: bash
+        env:
+          STAGE9_PLAYMODE_SMOKE_OUT: ${{ runner.temp }}/stage9-r3-playmode/evidence/playmode-runtime-smoke.json
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          RESULTS="$EVIDENCE/playmode-test-results.xml"
+          set +e
+          "$UNITY" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode -testResults "$RESULTS" -logFile "$EVIDENCE/playmode-test-editor.log"
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > "$EVIDENCE/playmode-test-exit.txt"
+          echo ATTEMPTED > "$OUT/playmode-attempted.flag"
+          exit 0
+
+      - name: Classify PlayMode runtime smoke
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          RC="$(cat "$EVIDENCE/playmode-test-exit.txt" 2>/dev/null || echo 999)"
+          python3 - "$EVIDENCE/playmode-runtime-smoke.json" "$EVIDENCE/playmode-test-results.xml" "$EVIDENCE/playmode-test-editor.log" "$RC" "$EVIDENCE/PLAYMODE_SMOKE_RESULT.json" <<'PY'
+          import json,re,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          report_path=Path(sys.argv[1]); xml_path=Path(sys.argv[2]); log_path=Path(sys.argv[3]); rc=int(sys.argv[4]); out=Path(sys.argv[5])
+          report=None
+          if report_path.exists():
+              try: report=json.loads(report_path.read_text(encoding='utf-8'))
+              except Exception: report=None
+          tests={'total':None,'passed':None,'failed':None,'skipped':None}
+          if xml_path.exists():
+              try:
+                  root=ET.parse(xml_path).getroot()
+                  for k in tests:
+                      v=root.attrib.get(k)
+                      tests[k]=int(v) if v is not None and str(v).isdigit() else v
+              except Exception:
+                  pass
+          log=log_path.read_text(encoding='utf-8',errors='replace') if log_path.exists() else ''
+          compile_errors=len(re.findall(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',log,re.I))
+          fatal_errors=len(re.findall(r'Aborting batchmode due to failure|Fatal Error|Crash!!!',log,re.I))
+          scenes=[] if not isinstance(report,dict) else report.get('scenes',[]) or []
+          runtime_error_count=sum(int(s.get('runtimeErrorCount',0) or 0) for s in scenes if isinstance(s,dict))
+          missing_slots=sum(int(s.get('missingComponentSlots',0) or 0) for s in scenes if isinstance(s,dict))
+          missing_shaders=sum(int(s.get('rendererMissingShaderCount',0) or 0) for s in scenes if isinstance(s,dict))
+          expanded=all(bool(s.get('expandedBeyondStaticScene')) for s in scenes) if scenes else False
+          starters=all(int(s.get('starterTypeCount',0) or 0)>0 for s in scenes) if scenes else False
+          report_pass=bool(report and report.get('pass') and len(scenes)==2)
+          xml_failed=tests['failed'] if isinstance(tests['failed'],int) else None
+          passed=(rc==0 and report_pass and compile_errors==0 and fatal_errors==0 and runtime_error_count==0 and missing_slots==0 and missing_shaders==0 and expanded and starters and (xml_failed in (None,0)))
+          if passed:
+              classification='PLAYMODE_RUNTIME_PASS'
+          elif compile_errors:
+              classification='PLAYMODE_TEST_HARNESS_COMPILE_BLOCKER'
+          elif runtime_error_count:
+              classification='PLAYMODE_RUNTIME_GAME_ERROR'
+          elif report is not None:
+              classification='PLAYMODE_RUNTIME_INVARIANT_BLOCKER'
+          elif xml_failed not in (None,0):
+              classification='PLAYMODE_TEST_FAILURE'
+          elif fatal_errors or rc!=0:
+              classification='PLAYMODE_RUNNER_FAILURE'
+          else:
+              classification='PLAYMODE_RESULT_MISSING'
+          result={
+              'playmode_runtime_pass':passed,
+              'classification':classification,
+              'unity_test_process_exit':rc,
+              'test_summary':tests,
+              'report_present':report is not None,
+              'scene_count':len(scenes),
+              'runtime_error_count':runtime_error_count,
+              'missing_component_slots':missing_slots,
+              'renderer_missing_shader_count':missing_shaders,
+              'all_scenes_expanded_beyond_static_bootstrap':expanded,
+              'all_starter_types_live':starters,
+              'compile_error_matches':compile_errors,
+              'fatal_error_matches':fatal_errors,
+              'hf56_authorized':False,
+          }
+          out.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          PY
+
+      - name: Return Personal seat safely
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"
+          EVIDENCE="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --showEntitlements > "$EVIDENCE/entitlements-before-return.txt" 2>&1
+            SHOW_BEFORE=$?
+            RETURN_RC=0
+            if grep -q 'Product Name: Unity Personal' "$EVIDENCE/entitlements-before-return.txt"; then
+              "$CLIENT" --return-ulf > "$EVIDENCE/license-return.log" 2>&1
+              RETURN_RC=$?
+            else
+              echo 'No active Unity Personal entitlement found; no return command required.' > "$EVIDENCE/license-return.log"
+            fi
+            "$CLIENT" --showEntitlements > "$EVIDENCE/entitlements-after-return.txt" 2>&1
+            SHOW_AFTER=$?
+            set -e
+            printf '%s\n' "$SHOW_BEFORE" > "$EVIDENCE/show-entitlements-before-exit.txt"
+            printf '%s\n' "$RETURN_RC" > "$EVIDENCE/license-return-exit.txt"
+            printf '%s\n' "$SHOW_AFTER" > "$EVIDENCE/show-entitlements-after-exit.txt"
+            if grep -q 'Product Name: Unity Personal' "$EVIDENCE/entitlements-after-return.txt"; then
+              echo 'PERSONAL_STILL_ACTIVE' > "$EVIDENCE/license-return-status.txt"
+            else
+              echo 'PERSONAL_NOT_ACTIVE' > "$EVIDENCE/license-return-status.txt"
+            fi
+          else
+            echo 'NO_ACQUIRED_SEAT_FLAG' > "$EVIDENCE/license-return-status.txt"
+          fi
+
+      - name: Upload PlayMode runtime smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-R3-PLAYMODE-RUNTIME-SMOKE-evidence
+          path: ${{ runner.temp }}/stage9-r3-playmode/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Enforce PlayMode runtime smoke result
+        if: always()
+        shell: bash
+        run: |
+          RESULT="$RUNNER_TEMP/stage9-r3-playmode/evidence/PLAYMODE_SMOKE_RESULT.json"
+          [ -f "$RESULT" ] || { echo 'PLAYMODE_SMOKE_RESULT.json missing' >&2; exit 90; }
+          python3 - "$RESULT" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print(json.dumps(d,indent=2,sort_keys=True))
+          if not d.get('playmode_runtime_pass',False): raise SystemExit(91)
+          PY
