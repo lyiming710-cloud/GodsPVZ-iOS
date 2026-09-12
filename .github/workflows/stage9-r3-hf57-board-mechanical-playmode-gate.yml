@@ -1,4 +1,4 @@
-name: Stage9.1 R3 HF57 Board mechanical PlayMode gate
+name: Stage9.1 R3 HF57 Board managed-cleanup PlayMode gate
 
 on:
   workflow_dispatch:
@@ -108,6 +108,16 @@ jobs:
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-hf57-board-mechanical/board-patcher
 
+      - name: Download managed cleanup patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34704753051
+          pattern: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board-mechanical/managed-cleanup-patcher
+
       - name: Apply HF56 HF57 integration candidate
         shell: bash
         run: |
@@ -168,11 +178,34 @@ jobs:
           "$P" "$DLL" "$PATCHED" | tee "$E/board-mechanical-patcher.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2313 changed_targets=4$' "$E/board-mechanical-patcher.log" || exit 77
           PATCHED_SHA="$(sha256sum "$PATCHED" | awk '{print $1}')"
+          [ "$PATCHED_SHA" = '00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980' ] || exit 78
           cp "$PATCHED" "$DLL"
-          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$PATCHED_SHA" ] || exit 78
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$PATCHED_SHA" ] || exit 79
           printf 'board_mechanical_sha256=%s\nboard_mechanical_patcher_run=%s\n' "$PATCHED_SHA" '34699623218' >> "$E/input-gate.txt"
           sha256sum "$DLL" > "$E/board-mechanical-final-sha256.txt"
           rm -rf "$OUT/board-patcher" "$PATCHED"
+
+      - name: Apply managed IL cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57-board-mechanical"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"
+          DLL="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"; PATCHED="$OUT/GodsPVZRuntime1-managed-cleanup.dll"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = '00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980' ] || exit 80
+          P="$(find "$OUT/managed-cleanup-patcher" -type f -name 'GodsPVZ.Stage9ManagedCleanupPatch' | head -1)"
+          [ -n "$P" ]; chmod +x "$P"
+          "$P" "$DLL" "$PATCHED" | tee "$E/managed-cleanup-patcher.log"
+          grep -q '^SYNTHETIC_HELPERS_NOPPED pairs=3866 ' "$E/managed-cleanup-patcher.log" || exit 81
+          grep -q '^REOPEN_HELPER_CALLS 0$' "$E/managed-cleanup-patcher.log" || exit 82
+          grep -q '^REOPEN_GENERIC_MEMBERREF_PASS list_board=4 particle_dict=2$' "$E/managed-cleanup-patcher.log" || exit 83
+          grep -q '^REOPEN_BUTTON_Z_PASS text=1 image=1$' "$E/managed-cleanup-patcher.log" || exit 84
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=' "$E/managed-cleanup-patcher.log" || exit 85
+          PATCHED_SHA="$(sha256sum "$PATCHED" | awk '{print $1}')"
+          cp "$PATCHED" "$DLL"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$PATCHED_SHA" ] || exit 86
+          printf 'managed_cleanup_sha256=%s\nmanaged_cleanup_patcher_run=%s\n' "$PATCHED_SHA" '34704753051' >> "$E/input-gate.txt"
+          sha256sum "$DLL" > "$E/managed-cleanup-final-sha256.txt"
+          rm -rf "$OUT/managed-cleanup-patcher" "$PATCHED"
 
       - name: Download preserved exact Editor parts
         uses: actions/download-artifact@v4
@@ -190,12 +223,12 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf57-board-mechanical"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
           mkdir -p "$D"
-          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 87
           (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
           rm -rf "$P"
           U="$D/Editor/Unity"; chmod +x "$U"
           "$U" -version > "$E/unity-version.txt" 2>&1
-          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 82
+          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 88
           echo "$U" > "$OUT/unity.txt"
           C="$D/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
           set +e
@@ -203,11 +236,11 @@ jobs:
           RC=$?
           set -e
           echo "$RC" > "$E/activation-exit.txt"
-          [ "$RC" = 0 ] || exit 83
+          [ "$RC" = 0 ] || exit 89
           echo ACQUIRED > "$OUT/seat.flag"
           df -h > "$E/disk-after-editor.txt"
 
-      - name: First import Board mechanical candidate
+      - name: First import Board managed-cleanup candidate
         shell: bash
         run: |
           set -euo pipefail
@@ -252,7 +285,7 @@ jobs:
               var active=SceneManager.GetActiveScene();
               int gos=0,missing=0,boardStart=0,board=0;
               foreach(var r in active.GetRootGameObjects()) Walk(r,ref gos,ref missing,ref boardStart,ref board);
-              Debug.Log($"STAGE9_HF57_BOARD_MECHANICAL_MARKER scene={active.name} gos={gos} missing={missing} boardStart={boardStart} board={board}");
+              Debug.Log($"STAGE9_HF57_BOARD_MANAGED_CLEANUP_MARKER scene={active.name} gos={gos} missing={missing} boardStart={boardStart} board={board}");
               Assert.AreEqual("Board",active.name,"Board did not remain the active scene");
               Assert.Greater(gos,3,"Board did not expand beyond bootstrap content");
               Assert.AreEqual(0,missing,"Board has missing component slots");
@@ -263,7 +296,7 @@ jobs:
           "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/test-compile.log"
           ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/test-compile.log"
 
-      - name: Run focused Board PlayMode after mechanical repairs
+      - name: Run focused Board PlayMode after managed cleanup
         shell: bash
         run: |
           set -uo pipefail
@@ -274,7 +307,7 @@ jobs:
           RC=$?
           set -e
           echo "$RC" > "$E/board-playmode-exit.txt"
-          grep 'STAGE9_HF57_BOARD_MECHANICAL_MARKER' "$E/board-playmode.log" > "$E/board-playmode-markers.txt" || true
+          grep 'STAGE9_HF57_BOARD_MANAGED_CLEANUP_MARKER' "$E/board-playmode.log" > "$E/board-playmode-markers.txt" || true
           cat "$E/board-playmode-markers.txt" || true
           grep -E 'Exception|AssertionException|NullReferenceException|InvalidOperationException|ArgumentException|InvalidProgramException|TypeLoadException|MissingMethodException' "$E/board-playmode.log" > "$E/board-exceptions.txt" || true
           if [ -f "$E/board-playmode-results.xml" ]; then
@@ -305,7 +338,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Stage9.1-R3-HF57-BOARD-MECHANICAL-PLAYMODE-evidence
+          name: Stage9.1-R3-HF57-BOARD-MANAGED-CLEANUP-PLAYMODE-evidence
           path: ${{ runner.temp }}/stage9-hf57-board-mechanical/evidence/
           if-no-files-found: warn
           retention-days: 90
