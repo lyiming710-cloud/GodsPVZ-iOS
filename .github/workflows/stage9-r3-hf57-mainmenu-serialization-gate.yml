@@ -244,7 +244,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"; T="$PROJECT/Assets/Stage9HF57PlayMode"
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"; T="$PROJECT/Assets/Stage9HF57PlayMode"
           mkdir -p "$T"
           cat > "$T/Stage9.HF57.PlayMode.asmdef" <<'EOF'
           {"name":"Stage9.HF57.PlayMode.Tests","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
