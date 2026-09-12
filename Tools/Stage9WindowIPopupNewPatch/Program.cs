@@ -101,11 +101,12 @@ if (after.Count != ExpectedMethodDefCount) throw new InvalidDataException("reope
 MethodDefinition RM(uint token) => reopen.LookupToken(new MetadataToken(TokenType.Method, (int)(token & 0x00FFFFFF))) as MethodDefinition
     ?? throw new InvalidDataException("reopen method missing");
 var rp = RM(PopupToken);
-var rz1 = At(rp, 0x0017); var rz2 = At(rp, 0x006B);
-if (rz1.OpCode.Code != Code.Ldnull || rz2.OpCode.Code != Code.Ldnull) throw new InvalidDataException("reopen null-check repair missing");
-var rn = At(rp, 0x009B); var rs = At(rp, 0x00A0); var rl = At(rp, 0x00A4); var rr = At(rp, 0x00A8);
-if (rn.OpCode.Code != Code.Ldnull || rs.OpCode.Code != Code.Stloc || rs.Operand is not VariableDefinition rsv || rsv.Index != 2 ||
-    rl.OpCode.Code != Code.Ldloc || rl.Operand is not VariableDefinition rlv || rlv.Index != 2 || rr.OpCode.Code != Code.Ret)
+var ri = rp.Body.Instructions;
+if (ri.Count != 43) throw new InvalidDataException($"reopen instruction count drift: {ri.Count}");
+if (ri[5].OpCode.Code != Code.Ldnull || ri[6].OpCode.Code != Code.Ceq || ri[25].OpCode.Code != Code.Ldnull || ri[26].OpCode.Code != Code.Ceq)
+    throw new InvalidDataException("reopen null-check repair missing");
+if (ri[37].OpCode.Code != Code.Ldnull || ri[38].OpCode.Code != Code.Stloc || ri[38].Operand is not VariableDefinition rsv || rsv.Index != 2 ||
+    ri[39].OpCode.Code != Code.Ldloc || ri[39].Operand is not VariableDefinition rlv || rlv.Index != 2 || ri[40].OpCode.Code != Code.Ret)
     throw new InvalidDataException("reopen null-return repair missing");
 Console.WriteLine("REOPEN_POPUPNEW_PASS null_checks=2 null_return=1");
 
