@@ -44,7 +44,7 @@ jobs:
           dotnet run --project Tools/Stage9InitializeNewPlantSavePatch/Stage9InitializeNewPlantSavePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
           grep -q '^PATCH_PLANTSAVE_NULL_CHECKS sites=10 opcode=ldnull$' "$E/patch.log"
           grep -q '^PATCH_PLANTSAVE_NULL_RETURN local=PlantSave$' "$E/patch.log"
-          grep -q '^REOPEN_PLANTSAVE_PASS null_checks=10 null_return=1 token=0x' "$E/patch.log"
+          grep -q '^REOPEN_PLANTSAVE_PASS null_checks=10 null_return=1 token=0x0600023E$' "$E/patch.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
           sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
       - name: Independent ILSpy validation
@@ -54,13 +54,14 @@ jobs:
           OUT="$RUNNER_TEMP/stage9-plant-save"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-plant-save.dll"
           ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
           "$ILSPY" -t SavesManager "$DLL" > "$E/SavesManager.cs" 2> "$E/SavesManager.stderr"; test ! -s "$E/SavesManager.stderr"
-          python3 - <<'PY'
+          python3 - "$E/SavesManager.cs" "$E/InitializeNewPlantSave.cs" <<'PY'
           from pathlib import Path
-          s=Path("$RUNNER_TEMP/stage9-plant-save/evidence/SavesManager.cs").read_text()
+          import sys
+          s=Path(sys.argv[1]).read_text()
           start=s.index('public PlantSave InitializeNewPlantSave(int ID)')
           end=s.index('public PlantSave InitializeNewPlantSave(int ID, int order, int level, int skillLevel)', start)
           m=s[start:end]
-          Path("$RUNNER_TEMP/stage9-plant-save/evidence/InitializeNewPlantSave.cs").write_text(m)
+          Path(sys.argv[2]).write_text(m)
           assert 'return null;' in m
           assert '(PlantSave)(object)new NullReferenceException()' not in m
           assert 'Invalid IL' not in m and 'Expected ' not in m and 'Unknown result type' not in m
