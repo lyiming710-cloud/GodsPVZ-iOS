@@ -20,12 +20,13 @@ jobs:
           set -euo pipefail
           OUT='stage9-unity-editor-preserve'
           PARTS="$OUT/parts"
-          mkdir -p "$OUT" "$PARTS" editor
+          mkdir -p "$OUT" "$PARTS" editor-min
           URL='https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorInstaller/Unity.tar.xz'
           EXPECTED_SIZE='3906640940'
           EXPECTED_VERSION='2022.3.44f1c1'
           ARCHIVE='Unity-China-2022.3.44f1c1.tar.xz'
 
+          df -h . > "$OUT/disk-before.txt"
           curl -fL --retry 5 --retry-delay 5 --connect-timeout 30 -o "$ARCHIVE" "$URL"
           ACTUAL_SIZE="$(stat -c %s "$ARCHIVE")"
           ARCHIVE_SHA="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
@@ -34,13 +35,15 @@ jobs:
             exit 31
           fi
           xz -t "$ARCHIVE"
+          df -h . > "$OUT/disk-after-download.txt"
 
-          tar -xJf "$ARCHIVE" -C editor
-          UNITY="$(find editor -type f \( -path '*/Editor/Unity' -o -path '*/Unity' \) -print | head -n 1)"
-          if [ -z "$UNITY" ]; then
-            echo 'Unity executable not found after extraction' >&2
+          UNITY_MEMBER="$(tar -tJf "$ARCHIVE" | grep -E '(^|/)Editor/Unity$' | head -n 1 || true)"
+          if [ -z "$UNITY_MEMBER" ]; then
+            echo 'Editor/Unity member not found in archive' >&2
             exit 32
           fi
+          tar -xJf "$ARCHIVE" -C editor-min "$UNITY_MEMBER"
+          UNITY="editor-min/$UNITY_MEMBER"
           chmod +x "$UNITY"
           set +e
           VERSION_OUT="$("$UNITY" -version 2>&1)"
@@ -58,6 +61,7 @@ jobs:
             'download_size': int('$ACTUAL_SIZE'),
             'download_sha256': '$ARCHIVE_SHA',
             'xz_test': 'PASS',
+            'unity_archive_member': '$UNITY_MEMBER',
             'unity_executable': '$UNITY',
             'version_exit': int('$VERSION_EXIT'),
             'parsed_version': '$VERSION',
@@ -65,6 +69,7 @@ jobs:
             'version_match': '$VERSION' == '$EXPECTED_VERSION',
             'changeset': 'c3ae09b9f03c',
             'source_variant': 'Unity China Linux Editor',
+            'preserve_strategy': 'minimal executable extraction + streaming split/rejoin verification',
           }
           Path('$OUT/RESULT.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           print(json.dumps(result,indent=2,sort_keys=True))
@@ -81,6 +86,7 @@ jobs:
             echo "Unexpected part count: $PART_COUNT" >&2
             exit 34
           fi
+          df -h . > "$OUT/disk-after-split.txt"
 
           {
             printf 'FULL\t%s\t%s\t%s\n' "$ARCHIVE_SHA" "$ACTUAL_SIZE" "$ARCHIVE"
@@ -89,15 +95,13 @@ jobs:
             done
           } > "$OUT/EDITOR-SHA256SUMS.tsv"
 
-          cat "$PARTS"/* > "$OUT/rejoined.tar.xz"
-          REJOIN_SHA="$(sha256sum "$OUT/rejoined.tar.xz" | awk '{print $1}')"
-          REJOIN_SIZE="$(stat -c %s "$OUT/rejoined.tar.xz")"
+          REJOIN_SHA="$(cat "$PARTS"/* | sha256sum | awk '{print $1}')"
+          REJOIN_SIZE="$(cat "$PARTS"/* | wc -c)"
           if [ "$REJOIN_SHA" != "$ARCHIVE_SHA" ] || [ "$REJOIN_SIZE" != "$ACTUAL_SIZE" ]; then
-            echo 'Local split/rejoin verification failed' >&2
+            echo 'Streaming split/rejoin verification failed' >&2
             exit 35
           fi
-          xz -t "$OUT/rejoined.tar.xz"
-          rm -f "$OUT/rejoined.tar.xz"
+          cat "$PARTS"/* | xz -t
 
           python3 - <<PY
           import json
@@ -109,6 +113,7 @@ jobs:
           d['split_rejoin_sha256']='$REJOIN_SHA'
           d['split_rejoin_size']=int('$REJOIN_SIZE')
           d['split_rejoin_match']=('$REJOIN_SHA'=='$ARCHIVE_SHA' and '$REJOIN_SIZE'=='$ACTUAL_SIZE')
+          d['streaming_rejoined_xz_test']='PASS'
           p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           PY
 
@@ -121,6 +126,7 @@ jobs:
             stage9-unity-editor-preserve/RESULT.json
             stage9-unity-editor-preserve/unity-version-raw.txt
             stage9-unity-editor-preserve/EDITOR-SHA256SUMS.tsv
+            stage9-unity-editor-preserve/disk-*.txt
           if-no-files-found: warn
           retention-days: 90
           include-hidden-files: true
@@ -129,135 +135,60 @@ jobs:
       - name: Upload editor part 00
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-00
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-00
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-00, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-00, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 01
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-01
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-01
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-01, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-01, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 02
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-02
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-02
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-02, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-02, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 03
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-03
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-03
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-03, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-03, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 04
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-04
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-04
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-04, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-04, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 05
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-05
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-05
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-05, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-05, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 06
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-06
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-06
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-06, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-06, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 07
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-07
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-07
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-07, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-07, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 08
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-08
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-08
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-08, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-08, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 09
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-09
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-09
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-09, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-09, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 10
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-10
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-10
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-10, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-10, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 11
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-11
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-11
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-11, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-11, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 12
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-12
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-12
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-12, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-12, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 13
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-13
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-13
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-13, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-13, if-no-files-found: error, retention-days: 90, compression-level: 0}
       - name: Upload editor part 14
         if: success()
         uses: actions/upload-artifact@v4
-        with:
-          name: Stage9.1-unity-china-editor-part-14
-          path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-14
-          if-no-files-found: error
-          retention-days: 90
-          compression-level: 0
+        with: {name: Stage9.1-unity-china-editor-part-14, path: stage9-unity-editor-preserve/parts/Unity-China-2022.3.44f1c1.tar.xz.part-14, if-no-files-found: error, retention-days: 90, compression-level: 0}
