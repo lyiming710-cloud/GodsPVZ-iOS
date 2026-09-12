@@ -1,0 +1,37 @@
+name: Build Stage9 managed cleanup patcher
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - 'Tools/Stage9ManagedCleanupPatch/**'
+      - '.github/workflows/build-stage9-managed-cleanup-patcher.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish Stage9 managed cleanup patcher
+        run: dotnet publish Tools/Stage9ManagedCleanupPatch/Stage9ManagedCleanupPatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out
+      - name: Smoke test
+        run: |
+          chmod +x out/GodsPVZ.Stage9ManagedCleanupPatch
+          set +e
+          out/GodsPVZ.Stage9ManagedCleanupPatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
+          path: out/**
+          if-no-files-found: error
+          retention-days: 90
