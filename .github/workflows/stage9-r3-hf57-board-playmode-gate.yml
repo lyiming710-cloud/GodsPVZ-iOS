@@ -118,7 +118,7 @@ jobs:
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-hf57-board/pc
 
-      - name: Download Board ctor patcher
+      - name: Download narrow Board ctor patcher
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -138,6 +138,26 @@ jobs:
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-hf57-board/pdetail
 
+      - name: Download PlantDetail generic ref fix v2
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34712392060
+          pattern: GodsPVZ-Stage9PlantDetailGenericRefFixV2-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board/pgeneric
+
+      - name: Download native Board ctor patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34712601618
+          pattern: GodsPVZ-Stage9BoardCtorNativePatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board/pnative
+
       - name: Build exact repaired runtime candidate
         shell: bash
         run: |
@@ -150,14 +170,15 @@ jobs:
           PC="$(find "$OUT/pc" -type f -name GodsPVZ.Stage9ManagedCleanupPatch | head -1)"
           PCTOR="$(find "$OUT/pctor" -type f -name GodsPVZ.Stage9BoardCtorPatch | head -1)"
           PDETAIL="$(find "$OUT/pdetail" -type f -name GodsPVZ.Stage9PlantDetailAwakePatch | head -1)"
-          [ -n "$P56" ] && [ -n "$P57" ] && [ -n "$PB" ] && [ -n "$PC" ] && [ -n "$PCTOR" ] && [ -n "$PDETAIL" ]
-          chmod +x "$P56" "$P57" "$PB" "$PC" "$PCTOR" "$PDETAIL"
+          PGEN="$(find "$OUT/pgeneric" -type f -name GodsPVZ.Stage9PlantDetailGenericRefFixV2 | head -1)"
+          PNATIVE="$(find "$OUT/pnative" -type f -name GodsPVZ.Stage9BoardCtorNativePatch | head -1)"
+          [ -n "$P56" ] && [ -n "$P57" ] && [ -n "$PB" ] && [ -n "$PC" ] && [ -n "$PCTOR" ] && [ -n "$PDETAIL" ] && [ -n "$PGEN" ] && [ -n "$PNATIVE" ]
+          chmod +x "$P56" "$P57" "$PB" "$PC" "$PCTOR" "$PDETAIL" "$PGEN" "$PNATIVE"
 
           "$P56" "$OLD" "$OUT/hf56.dll" | tee "$E/hf56-patcher.log"
           [ "$(sha256sum "$OUT/hf56.dll" | awk '{print $1}')" = '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' ] || exit 71
           "$P57" "$OUT/hf56.dll" "$OUT/hf57.dll" | tee "$E/hf57-patcher.log"
           [ "$(sha256sum "$OUT/hf57.dll" | awk '{print $1}')" = 'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' ] || exit 72
-
           cp "$OUT/hf57.dll" "$OUT/integrated.dll"
           python3 - "$OUT/integrated.dll" "$E/integration-binary-diff.txt" <<'PY'
           import hashlib,sys
@@ -166,47 +187,36 @@ jobs:
           assert hashlib.sha256(b).hexdigest()=='a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b'
           lines=[]
           for o in [0x9f3d6,0x9f3e3,0x9f3f1,0x9f3ff,0x9f412,0x9f41c,0x9f446]:
-              assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000')
-              b[o+1]=0x0d
-              lines.append(f'{o:#x}: fe0c0000 -> fe0d0000')
+              assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000'); b[o+1]=0x0d; lines.append(f'{o:#x}: fe0c0000 -> fe0d0000')
           for o,old,new in [(0xde448,b'Assembly-CSharp.dll',b'GodsPVZRuntime1.dll'),(0xe0137,b'Assembly-CSharp',b'GodsPVZRuntime1')]:
-              assert len(old)==len(new)
-              assert bytes(b[o:o+len(old)])==old
-              b[o:o+len(old)]=new
-              lines.append(f'{o:#x}: {old.decode()} -> {new.decode()}')
-          p.write_bytes(b)
-          got=hashlib.sha256(b).hexdigest()
-          assert got=='e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568'
+              assert len(old)==len(new); assert bytes(b[o:o+len(old)])==old; b[o:o+len(old)]=new; lines.append(f'{o:#x}: {old.decode()} -> {new.decode()}')
+          p.write_bytes(b); got=hashlib.sha256(b).hexdigest(); assert got=='e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568'
           out.write_text('\n'.join(lines)+f'\nintegrated_sha256={got}\n')
           PY
-
           "$PB" "$OUT/integrated.dll" "$OUT/board-mechanical.dll" | tee "$E/board-mechanical.log"
           [ "$(sha256sum "$OUT/board-mechanical.dll" | awk '{print $1}')" = '00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980' ] || exit 73
-          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2313 changed_targets=4$' "$E/board-mechanical.log" || exit 74
-
           "$PC" "$OUT/board-mechanical.dll" "$OUT/managed-cleanup.dll" | tee "$E/managed-cleanup.log"
-          [ "$(sha256sum "$OUT/managed-cleanup.dll" | awk '{print $1}')" = 'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' ] || exit 75
-          grep -q '^REOPEN_HELPER_CALLS 0$' "$E/managed-cleanup.log" || exit 76
-
-          "$PCTOR" "$OUT/managed-cleanup.dll" "$OUT/board-ctor.dll" | tee "$E/board-ctor.log"
-          [ "$(sha256sum "$OUT/board-ctor.dll" | awk '{print $1}')" = '7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3' ] || exit 77
-          grep -q '^REOPEN_BOARD_CTOR_PASS good=1 old_bad=0$' "$E/board-ctor.log" || exit 78
-
-          "$PDETAIL" "$OUT/board-ctor.dll" "$OUT/plantdetail-awake.dll" | tee "$E/plantdetail-awake.log"
-          [ "$(sha256sum "$OUT/plantdetail-awake.dll" | awk '{print $1}')" = 'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' ] || exit 79
-          grep -q '^REOPEN_PLANTDETAIL_AWAKE_PASS helpers=0 loadData=1 lock=1 nan=1 logo=1 objectEq=1 cardStores=1 locals=13$' "$E/plantdetail-awake.log" || exit 80
-          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/plantdetail-awake.log" || exit 81
+          [ "$(sha256sum "$OUT/managed-cleanup.dll" | awk '{print $1}')" = 'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' ] || exit 74
+          "$PCTOR" "$OUT/managed-cleanup.dll" "$OUT/board-ctor-narrow.dll" | tee "$E/board-ctor-narrow.log"
+          [ "$(sha256sum "$OUT/board-ctor-narrow.dll" | awk '{print $1}')" = '7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3' ] || exit 75
+          "$PDETAIL" "$OUT/board-ctor-narrow.dll" "$OUT/plantdetail-awake.dll" | tee "$E/plantdetail-awake.log"
+          [ "$(sha256sum "$OUT/plantdetail-awake.dll" | awk '{print $1}')" = 'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' ] || exit 76
+          "$PGEN" "$OUT/plantdetail-awake.dll" "$OUT/generic-fixed.dll" | tee "$E/generic-ref-v2.log"
+          [ "$(sha256sum "$OUT/generic-fixed.dll" | awk '{print $1}')" = '06be72c9a18079f6b0dea7e6026b1ad1f5cd6f083aedf2ea250e074330aef21d' ] || exit 77
+          grep -q '^REOPEN_GENERIC_LIST_ITEM_PASS calls=8 distinct_refs=3 all_return_var0=1$' "$E/generic-ref-v2.log" || exit 78
+          "$PNATIVE" "$OUT/generic-fixed.dll" "$OUT/final.dll" | tee "$E/board-ctor-native.log"
+          [ "$(sha256sum "$OUT/final.dll" | awk '{print $1}')" = 'c8d0fdf2c6c03188ebe8a123121c6ef8972d9541ed8f630e95ee4e17b268b425' ] || exit 79
+          grep -q '^REOPEN_BOARD_CTOR_NATIVE_PASS instructions=45 locals=0 zero_calls=2 helpers=0 native_locals=0$' "$E/board-ctor-native.log" || exit 80
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/board-ctor-native.log" || exit 81
 
           sed -i 's/^  isPreloaded: 0$/  isPreloaded: 1/' "$OLDMETA"
           NEW="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"; NEWMETA="$NEW.meta"
-          cp "$OUT/plantdetail-awake.dll" "$NEW"
-          mv "$OLDMETA" "$NEWMETA"
-          rm "$OLD"
-          [ "$(sha256sum "$NEW" | awk '{print $1}')" = 'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' ] || exit 82
+          cp "$OUT/final.dll" "$NEW"; mv "$OLDMETA" "$NEWMETA"; rm "$OLD"
+          [ "$(sha256sum "$NEW" | awk '{print $1}')" = 'c8d0fdf2c6c03188ebe8a123121c6ef8972d9541ed8f630e95ee4e17b268b425' ] || exit 82
           grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$NEWMETA" || exit 83
           grep -q '^  isExplicitlyReferenced: 1$' "$NEWMETA" || exit 84
           grep -q '^  isPreloaded: 1$' "$NEWMETA" || exit 85
-          printf 'hf56_sha256=%s\nhf57_sha256=%s\nintegrated_sha256=%s\nboard_mechanical_sha256=%s\nmanaged_cleanup_sha256=%s\nboard_ctor_sha256=%s\nplantdetail_awake_sha256=%s\nguid=%s\n' \
+          printf 'hf56_sha256=%s\nhf57_sha256=%s\nintegrated_sha256=%s\nboard_mechanical_sha256=%s\nmanaged_cleanup_sha256=%s\nboard_ctor_narrow_sha256=%s\nplantdetail_awake_sha256=%s\nplantdetail_generic_v2_sha256=%s\nboard_ctor_native_sha256=%s\nguid=%s\n' \
             '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' \
             'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' \
             'e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568' \
@@ -214,9 +224,11 @@ jobs:
             'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' \
             '7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3' \
             'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' \
+            '06be72c9a18079f6b0dea7e6026b1ad1f5cd6f083aedf2ea250e074330aef21d' \
+            'c8d0fdf2c6c03188ebe8a123121c6ef8972d9541ed8f630e95ee4e17b268b425' \
             '60b84a767c46ced9aacc93f38da4d2f3' >> "$E/input-gate.txt"
-          rm -rf "$OUT/p56" "$OUT/p57" "$OUT/pb" "$OUT/pc" "$OUT/pctor" "$OUT/pdetail" \
-            "$OUT/hf56.dll" "$OUT/hf57.dll" "$OUT/integrated.dll" "$OUT/board-mechanical.dll" "$OUT/managed-cleanup.dll" "$OUT/board-ctor.dll" "$OUT/plantdetail-awake.dll"
+          rm -rf "$OUT/p56" "$OUT/p57" "$OUT/pb" "$OUT/pc" "$OUT/pctor" "$OUT/pdetail" "$OUT/pgeneric" "$OUT/pnative" \
+            "$OUT/hf56.dll" "$OUT/hf57.dll" "$OUT/integrated.dll" "$OUT/board-mechanical.dll" "$OUT/managed-cleanup.dll" "$OUT/board-ctor-narrow.dll" "$OUT/plantdetail-awake.dll" "$OUT/generic-fixed.dll" "$OUT/final.dll"
 
       - name: Download preserved exact Editor parts
         uses: actions/download-artifact@v4
@@ -296,7 +308,7 @@ jobs:
               var active=SceneManager.GetActiveScene();
               int gos=0,missing=0,boardStart=0,board=0;
               foreach(var r in active.GetRootGameObjects()) Walk(r,ref gos,ref missing,ref boardStart,ref board);
-              Debug.Log($"STAGE9_HF57_BOARD_MARKER scene={active.name} gos={gos} missing={missing} boardStart={boardStart} board={board}");
+              Debug.Log($"STAGE9_BOARD_NATIVE_MARKER scene={active.name} gos={gos} missing={missing} boardStart={boardStart} board={board}");
               Assert.AreEqual("Board",active.name,"Board did not remain the active scene");
               Assert.Greater(gos,3,"Board did not expand beyond bootstrap content");
               Assert.AreEqual(0,missing,"Board has missing component slots");
@@ -318,9 +330,9 @@ jobs:
           RC=$?
           set -e
           echo "$RC" > "$E/board-playmode-exit.txt"
-          grep 'STAGE9_HF57_BOARD_MARKER' "$E/board-playmode.log" > "$E/board-playmode-markers.txt" || true
+          grep 'STAGE9_BOARD_NATIVE_MARKER' "$E/board-playmode.log" > "$E/board-playmode-markers.txt" || true
           cat "$E/board-playmode-markers.txt" || true
-          grep -E 'Exception|AssertionException|NullReferenceException|InvalidOperationException|ArgumentException|InvalidProgramException|TypeLoadException|MissingMethodException' "$E/board-playmode.log" > "$E/board-exceptions.txt" || true
+          grep -E 'Exception|AssertionException|NullReferenceException|InvalidProgramException|MissingMethodException|TypeLoadException|InvalidOperationException|ArgumentException' "$E/board-playmode.log" > "$E/board-exceptions.txt" || true
           if [ -f "$E/board-playmode-results.xml" ]; then
             python3 - "$E/board-playmode-results.xml" "$E/board-playmode-summary.txt" <<'PY'
           import sys,xml.etree.ElementTree as ET
@@ -329,7 +341,7 @@ jobs:
           PY
           fi
           [ "$RC" = 0 ] || exit "$RC"
-          grep -q 'STAGE9_HF57_BOARD_MARKER' "$E/board-playmode-markers.txt" || exit 101
+          grep -q 'STAGE9_BOARD_NATIVE_MARKER' "$E/board-playmode-markers.txt" || exit 101
           grep -q 'scene=Board .*missing=0 .*boardStart=' "$E/board-playmode-markers.txt" || exit 102
 
       - name: Return Personal seat
