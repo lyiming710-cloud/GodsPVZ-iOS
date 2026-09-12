@@ -113,7 +113,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: lyiming710-cloud/GodsPVZ-iOS
-          run-id: 34704753051
+          run-id: 34705278743
           pattern: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-hf57-board-mechanical/managed-cleanup-patcher
@@ -195,15 +195,16 @@ jobs:
           P="$(find "$OUT/managed-cleanup-patcher" -type f -name 'GodsPVZ.Stage9ManagedCleanupPatch' | head -1)"
           [ -n "$P" ]; chmod +x "$P"
           "$P" "$DLL" "$PATCHED" | tee "$E/managed-cleanup-patcher.log"
-          grep -q '^SYNTHETIC_HELPERS_NOPPED pairs=3866 ' "$E/managed-cleanup-patcher.log" || exit 81
+          grep -q '^SYNTHETIC_HELPERS_NEUTRALIZED calls=3866 ' "$E/managed-cleanup-patcher.log" || exit 81
           grep -q '^REOPEN_HELPER_CALLS 0$' "$E/managed-cleanup-patcher.log" || exit 82
           grep -q '^REOPEN_GENERIC_MEMBERREF_PASS list_board=4 particle_dict=2$' "$E/managed-cleanup-patcher.log" || exit 83
           grep -q '^REOPEN_BUTTON_Z_PASS text=1 image=1$' "$E/managed-cleanup-patcher.log" || exit 84
-          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=' "$E/managed-cleanup-patcher.log" || exit 85
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=1572 changed_methods=745$' "$E/managed-cleanup-patcher.log" || exit 85
           PATCHED_SHA="$(sha256sum "$PATCHED" | awk '{print $1}')"
+          [ "$PATCHED_SHA" = 'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' ] || exit 86
           cp "$PATCHED" "$DLL"
-          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$PATCHED_SHA" ] || exit 86
-          printf 'managed_cleanup_sha256=%s\nmanaged_cleanup_patcher_run=%s\n' "$PATCHED_SHA" '34704753051' >> "$E/input-gate.txt"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$PATCHED_SHA" ] || exit 87
+          printf 'managed_cleanup_sha256=%s\nmanaged_cleanup_patcher_run=%s\n' "$PATCHED_SHA" '34705278743' >> "$E/input-gate.txt"
           sha256sum "$DLL" > "$E/managed-cleanup-final-sha256.txt"
           rm -rf "$OUT/managed-cleanup-patcher" "$PATCHED"
 
@@ -223,12 +224,12 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf57-board-mechanical"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
           mkdir -p "$D"
-          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 87
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 88
           (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
           rm -rf "$P"
           U="$D/Editor/Unity"; chmod +x "$U"
           "$U" -version > "$E/unity-version.txt" 2>&1
-          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 88
+          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 89
           echo "$U" > "$OUT/unity.txt"
           C="$D/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
           set +e
@@ -236,7 +237,7 @@ jobs:
           RC=$?
           set -e
           echo "$RC" > "$E/activation-exit.txt"
-          [ "$RC" = 0 ] || exit 89
+          [ "$RC" = 0 ] || exit 90
           echo ACQUIRED > "$OUT/seat.flag"
           df -h > "$E/disk-after-editor.txt"
 
