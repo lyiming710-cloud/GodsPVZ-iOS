@@ -1,0 +1,185 @@
+name: Stage9.1 license gate using preserved exact editor
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-unity-license-gate-preserved.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  license-gate-preserved:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    steps:
+      - name: Verify secret is present without exposing it
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${UNITY_LICENSE:-}" ]; then
+            echo 'UNITY_LICENSE repository secret is missing or empty.' >&2
+            exit 51
+          fi
+          echo 'UNITY_LICENSE secret is present.'
+
+      - name: Download preserved editor parts from formal preservation run
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-preserved-editor-parts
+
+      - name: Verify all 15 preserved parts and reconstruct exact editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          PARTS="$RUNNER_TEMP/stage9-preserved-editor-parts"
+          OUT="$RUNNER_TEMP/stage9-license-gate-preserved"
+          EVIDENCE="$OUT/evidence"
+          EDITOR="$OUT/editor"
+          mkdir -p "$EVIDENCE" "$EDITOR"
+
+          cat > "$OUT/expected-parts.sha256" <<'EOF'
+          c2cb7252b28c99581fd1ebfa7bd0d63b82fbdfd66ed9323327560eab9f9c5b12  Unity-China-2022.3.44f1c1.tar.xz.part-00
+          6f9af6d8bfae2d0dcb5482778fdb2ffee9bf8a4eb32b3030601d2d817eff5380  Unity-China-2022.3.44f1c1.tar.xz.part-01
+          daf4e501efa59d388cec09fb1bb69fb71b074933c20389748fc1aaab5b4f1b6e  Unity-China-2022.3.44f1c1.tar.xz.part-02
+          e8870b1b8ac3354302b3d4c7fa80a74249d3f2ca1d442a0fb978448ad2b7a586  Unity-China-2022.3.44f1c1.tar.xz.part-03
+          115be82c7f103fd0888e28ee316c6cd1e877d4d14939388e3be40d877e8591d4  Unity-China-2022.3.44f1c1.tar.xz.part-04
+          2efe6703f8a4b871275bde3c742c61d5b4a3322bb56fcbaf417cb9a80e90a97e  Unity-China-2022.3.44f1c1.tar.xz.part-05
+          e7b300ff6e5639c0e5d6cbc065ec6918e4dc4d36ae8abab8f97c896af8b595f1  Unity-China-2022.3.44f1c1.tar.xz.part-06
+          00f364a9e6619acd9ed466ae46055a9480d7c62a76914f713e69c3fa94abf151  Unity-China-2022.3.44f1c1.tar.xz.part-07
+          0f7b8225b57960ba08b104f20869ce42707c17df290c143d4e3bd9dc3a26c0e2  Unity-China-2022.3.44f1c1.tar.xz.part-08
+          6930abaf854320d200b069d135800fc310abcb0cb9a910e88ce68693e69a6d0a  Unity-China-2022.3.44f1c1.tar.xz.part-09
+          47b0bb1451d33932ee9f56fea9f10d7ffbffd578b8105c212401119182c3d0f0  Unity-China-2022.3.44f1c1.tar.xz.part-10
+          b5377382ceb94492a1c5288aee7c598f0495cfd108666ba2857059f6ecd92b7f  Unity-China-2022.3.44f1c1.tar.xz.part-11
+          9d6c3a3e5c94104c783620c13095460638604f9ca92fb5017d1142970710e116  Unity-China-2022.3.44f1c1.tar.xz.part-12
+          7541e40151f60c3882a82650595a4d9a97f2fdc2fe49469f440aef8f7996cc0a  Unity-China-2022.3.44f1c1.tar.xz.part-13
+          c364240981c3a762bc3be6b61db0170bd7d168b3e7c3d14d48770e72e897e830  Unity-China-2022.3.44f1c1.tar.xz.part-14
+          EOF
+
+          PART_COUNT="$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          printf '%s\n' "$PART_COUNT" > "$EVIDENCE/part-count.txt"
+          [ "$PART_COUNT" = '15' ] || { echo "Expected 15 preserved parts, found $PART_COUNT" >&2; exit 52; }
+
+          (cd "$PARTS" && sha256sum -c "$OUT/expected-parts.sha256") | tee "$EVIDENCE/part-sha256-check.txt"
+
+          FULL_SHA="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')"
+          FULL_SIZE="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | wc -c)"
+          printf '%s\n' "$FULL_SHA" > "$EVIDENCE/editor-rejoined-sha256.txt"
+          printf '%s\n' "$FULL_SIZE" > "$EVIDENCE/editor-rejoined-size.txt"
+          [ "$FULL_SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 53
+          [ "$FULL_SIZE" = '3906640940' ] || exit 54
+
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -t
+          df -h . > "$EVIDENCE/disk-before-extract.txt"
+
+          # Stream the preserved split archive directly into extraction and delete each consumed part.
+          (
+            for p in "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do
+              cat "$p"
+              rm -f "$p"
+            done
+          ) | xz -dc | tar -xf - -C "$EDITOR"
+
+          UNITY="$EDITOR/Editor/Unity"
+          [ -f "$UNITY" ] || { echo 'Unity executable missing after reconstruction' >&2; exit 55; }
+          chmod +x "$UNITY"
+          VERSION_OUT="$("$UNITY" -version 2>&1)"
+          printf '%s\n' "$VERSION_OUT" > "$EVIDENCE/unity-version-raw.txt"
+          VERSION="$(printf '%s\n' "$VERSION_OUT" | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n1 || true)"
+          [ "$VERSION" = '2022.3.44f1c1' ] || { echo "Exact editor version gate failed: $VERSION" >&2; exit 56; }
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          df -h . > "$EVIDENCE/disk-after-extract.txt"
+          echo 'Preserved exact editor reconstruction PASS.'
+
+      - name: Import Personal license and probe persisted license state
+        id: license
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-license-gate-preserved"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          LICENSE_FILE="$RUNNER_TEMP/Unity_lic.ulf"
+          RAW1="$OUT/license-import-raw.log"
+          RAW2="$OUT/license-probe-raw.log"
+
+          umask 077
+          printf '%s' "$UNITY_LICENSE" > "$LICENSE_FILE"
+          [ -s "$LICENSE_FILE" ] || { echo 'Temporary ULF file is empty.' >&2; exit 57; }
+          printf '%s\n' "$(stat -c %s "$LICENSE_FILE")" > "$EVIDENCE/license-secret-byte-count.txt"
+
+          set +e
+          "$UNITY" -batchmode -nographics -quit -manualLicenseFile "$LICENSE_FILE" -logFile "$RAW1"
+          IMPORT_EXIT=$?
+          "$UNITY" -batchmode -nographics -quit -logFile "$RAW2"
+          PROBE_EXIT=$?
+          set -e
+
+          printf '%s\n' "$IMPORT_EXIT" > "$EVIDENCE/license-import-exit.txt"
+          printf '%s\n' "$PROBE_EXIT" > "$EVIDENCE/license-probe-exit.txt"
+
+          python3 - "$RAW1" "$EVIDENCE/license-import-sanitized.log" "$RAW2" "$EVIDENCE/license-probe-sanitized.log" <<'PY'
+          import re,sys
+          pairs=[(sys.argv[1],sys.argv[2]),(sys.argv[3],sys.argv[4])]
+          sensitive=re.compile(r'(access.?token|refresh.?token|serial|password|e-?mail|username|user name|license key)',re.I)
+          for src,dst in pairs:
+              try:
+                  lines=open(src,'r',encoding='utf-8',errors='replace').read().splitlines()
+              except FileNotFoundError:
+                  lines=['<raw log missing>']
+              out=[]
+              for line in lines:
+                  out.append('[REDACTED POTENTIALLY SENSITIVE LICENSE LINE]' if sensitive.search(line) else line)
+              open(dst,'w',encoding='utf-8').write('\n'.join(out)+'\n')
+          PY
+
+          rm -f "$LICENSE_FILE" "$RAW1" "$RAW2"
+          unset UNITY_LICENSE || true
+
+          python3 - "$EVIDENCE/RESULT.json" "$IMPORT_EXIT" "$PROBE_EXIT" <<'PY'
+          import json,sys
+          p=sys.argv[1]; imp=int(sys.argv[2]); probe=int(sys.argv[3])
+          d={
+            'gate':'STAGE9_1_UNITY_LICENSE_GATE_PRESERVED_EDITOR',
+            'editor':'Unity China 2022.3.44f1c1',
+            'editor_sha256':'0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14',
+            'editor_source':'GitHub Actions formal preservation run 34668863583',
+            'license_secret_present':True,
+            'manual_license_import_exit':imp,
+            'persisted_license_probe_exit':probe,
+            'license_gate_pass': imp == 0 and probe == 0,
+            'project_import_attempted':False,
+            'r2_touched':False,
+            'hf56_authorized':False,
+          }
+          open(p,'w',encoding='utf-8').write(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,indent=2,sort_keys=True))
+          PY
+
+          if [ "$IMPORT_EXIT" -ne 0 ] || [ "$PROBE_EXIT" -ne 0 ]; then
+            echo "License gate FAILED: import=$IMPORT_EXIT probe=$PROBE_EXIT" >&2
+            exit 58
+          fi
+          echo 'License gate PASS.'
+
+      - name: Upload sanitized license-gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-unity-license-gate-preserved-evidence
+          path: |
+            ${{ runner.temp }}/stage9-license-gate-preserved/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
