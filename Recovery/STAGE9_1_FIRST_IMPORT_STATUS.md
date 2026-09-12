@@ -66,9 +66,21 @@ No valid Unity Editor license found. Please activate your license.
 
 No C# compiler, package-resolution, serialization, shader, runtime, or gameplay diagnostics were reached.
 
+## `-force-free` infrastructure check
+
+A second controlled launch added Unity's documented `-force-free` option without changing any project content:
+
+- start UTC: `2026-09-12T03:50:21Z`
+- end UTC: `2026-09-12T03:50:21Z`
+- exit code: `1`
+- result: same license failure (`No ULF license found`, token unavailable, no matching free entitlement, `No valid Unity Editor license found`)
+- formal project import started: NO
+
+Therefore `-force-free` does not remove the activation requirement in this runtime.
+
 ## Post-attempt differential audit
 
-The disposable work copy was compared again against the formal R2 `after-project-manifest.json` after the failed license-only launch:
+The disposable work copy was compared again against the formal R2 `after-project-manifest.json` after both license-only launches:
 
 - actual files: `19782`
 - missing: `0`
@@ -79,7 +91,21 @@ The disposable work copy was compared again against the formal R2 `after-project
 - `Packages/packages-lock.json`: absent
 - HF55 SHA unchanged: YES
 
-Therefore the license attempt did not mutate the recovered project.
+Therefore neither license attempt mutated the recovered project.
+
+## Evidence preservation
+
+Full local evidence includes the complete Editor logs, exact command, timestamps, exit codes, stdout/stderr, pre-import verification, post-attempt differential audit, and the `-force-free` result.
+
+Final Drive evidence archive:
+
+`/Google Drive/PVZ GOD/HighFidelity-Recovery-2026-09-08/Stage9.1-PreImport-R2-2026-09-12/FirstImport-LicenseBlocker-2026-09-12/Stage9.1-FirstImport-LicenseBlocker-Evidence-2026-09-12-FINAL.zip`
+
+- size: `7514` bytes
+- SHA256: `e41d8ba92571931b9b1567a36911d147ea21dd346ef671005ccbbd79dfe88a60`
+- ZIP integrity: PASS before upload
+
+An earlier 4698-byte evidence archive from before the `-force-free` check is also preserved in the same Drive folder; the file with `-FINAL.zip` is the authoritative evidence archive for this status.
 
 ## Repository/runtime license discovery
 
