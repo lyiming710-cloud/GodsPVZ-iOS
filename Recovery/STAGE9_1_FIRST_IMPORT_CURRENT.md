@@ -6,16 +6,17 @@ Branch: `high-fidelity`
 ## Current state
 
 - `UNITY_LICENSE_GATE = PASS`
-- `FIRST_IMPORT_PASS = NO`
-- `FORMAL_R2_IMPORT_ATTEMPTED = NO`
-- current classification: `INFRASTRUCTURE_GATE_R2_RUNNER_ACCESS`
+- `FORMAL_STAGE9_1_INPUT = R3`
+- `R3_FIRST_IMPORT_PASS = YES`
+- `R3_CLASSIFICATION = R3_FIRST_IMPORT_PASS`
+- `UNITY_EXIT_CODE = 0`
 - HF56 authorized: **NO**
 
-The prior Unity-license blocker is resolved. A formal GitHub Actions FIRST IMPORT workflow now exists, but its anonymous R2 preflight stopped before reconstruction because R2 part `00` is still not anonymously downloadable. No Unity project import, package resolution, compile, or serialized-asset import was reached.
+Stage9.1 has passed the first formal Unity import gate. The prior R2 import exposed a non-gameplay assembly-reference collision. The minimal importer-only correction was validated independently, frozen into R3, and R3 then passed a fresh formal import from its own persisted Drive parts.
 
-Do not change HF55, packages, serialized assets, or gameplay code to address this infrastructure gate.
+Do not open HF56 merely because the import gate is complete. HF56 remains authorized only if a subsequent runtime/scene/build blocker is specifically attributable to missing native-backed gameplay reconstruction.
 
-## Exact Editor gate
+## Exact Editor gate — PASS
 
 Formal Editor source: preserved GitHub Actions artifacts from run `34668863583`.
 
@@ -25,99 +26,154 @@ Formal Editor source: preserved GitHub Actions artifacts from run `34668863583`.
 - archive SHA256: `0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14`
 - 15/15 preserved raw parts: SHA256 PASS
 - reconstructed Editor version gate: PASS
-- bundled Licensing Client supports `--include-personal`: PASS
 
 ## Personal license gate — PASS
 
-Workflow: `.github/workflows/stage9-unity-license-gate-preserved-v3.yml`
+Proven CI activation path:
 
-- workflow run: `34675146453`
-- job: `103503560660`
-- workflow commit: `9606e1846190cf18fc048adb58bc015f9e34e53c`
+- `Unity.Licensing.Client --activate-all --include-personal`
+- credentials are stored only in GitHub repository secrets
+- exact Editor licensed probe: PASS
+- Personal seat is returned at workflow exit
+
+The Windows-Hub `Unity_lic.ulf` is machine-bound and is not used as the final Linux CI activation mechanism.
+
+## R2 lineage and blocker
+
+R2 remains preserved for provenance but is superseded as the formal Stage9.1 input.
+
+- R2 archive SHA256: `99bc1ed7a713b627919fee8c3f63bbed5eb949ede72b32a7a5866a067d1b2a0e`
+- R2 size: `786481679`
+- R2 project files: `19782`
+- HF55 DLL SHA256: `dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655`
+- formal R2 workflow run: `34675644811`, successful import attempt job `103505188607`
+- Unity launch/import command reached the project and exited normally, but compile diagnostics classified the input as `PROJECT_COMPILE_BLOCKER`
+- blocker: SRP Core `RenderGraph.cs` resolved `DebugManager` against the HF55 precompiled game assembly and then failed on `GetPanel`
+
+Root cause: `Assets/Plugins/Assembly-CSharp.dll.meta` had `isExplicitlyReferenced: 0`, so HF55 `Assembly-CSharp.dll` was automatically referenced by asmdef assemblies including SRP Core. HF55 contains a game-side global `DebugManager`, which shadowed `UnityEngine.Rendering.DebugManager` in that compile context.
+
+This was not missing reconstructed gameplay and did not authorize HF56.
+
+## Fix1 validation — PASS
+
+Controlled disposable-copy change:
+
+```text
+Assets/Plugins/Assembly-CSharp.dll.meta
+isExplicitlyReferenced: 0
+->
+isExplicitlyReferenced: 1
+```
+
+Nothing else was changed. HF55 DLL bytes remained exact.
+
+Validation workflow:
+
+- workflow: `.github/workflows/stage9-first-import-fix1-hf55-autoref.yml`
+- commit: `d42882d6abfcfc87bea01fed31554073488ed1f6`
+- run: `34676489013`
+- job: `103507157972`
+- result: SUCCESS / `FIX1_IMPORT_PASS`
+- Unity exit: `0`
+- compile errors: `0`
+- package errors: `0`
+- assembly collisions: `0`
+- serialization errors: `0`
+- missing-script errors: `0`
+- license errors: `0`
+- fatal errors: `0`
+- HF55 DLL unchanged: YES
+- GitHub artifact ID: `10292388034`
+- artifact digest: `sha256:ba21e7e99a8deb107178813bb7cf01fcf8096e1962a46bbc0c67ab6f76d36516`
+
+Drive preservation:
+
+- folder ID: `1U56_5oPwqq22UM7I1NNtm1x33SYhYU9Q`
+- evidence file ID: `1SuXlUlL-jehnsFdH1y86PxBB2AYp41B4`
+
+## Formal Stage9.1 R3 input
+
+R3 supersedes R2 as the only formal Stage9.1 pre-import input.
+
+- archive: `GodsPVZ-Stage9.1-preimport-r3-2026-09-12.tar.zst`
+- archive SHA256: `d4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc`
+- archive size: `786765618`
+- deterministic rebuild test: two independent builds produced identical SHA256 and size
+- parts: `12`
+- parts `00`–`10`: `67108864` bytes each
+- part `11`: `48568114` bytes
+- project file count: `19782`
+- project manifest SHA256: `87ceec00ed89e4b7969fffbbeb1903435789966489ad9138b6d4cee74d176856`
+- R2 -> R3 project delta: exactly one file changed: `Assets/Plugins/Assembly-CSharp.dll.meta`
+- missing files: `0`
+- extra files: `0`
+- HF55 DLL SHA256: `dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655`
+- project version: `2022.3.44f1c1`
+- scenes: `Assets/Scenes/MainMenu.unity`, `Assets/Scenes/Board.unity`
+
+Drive preservation:
+
+- R3 folder ID: `1sGIgsBKpdntTNlORJkSjuWZgST3TacGa`
+- R3 evidence ZIP ID: `1IshC5no-lOky0FXBMahDaE6iNa3sgxw7`
+- part/hash manifests are stored alongside the 12 archive parts
+
+## Formal R3 FIRST IMPORT — PASS
+
+Workflow:
+
+- workflow: `.github/workflows/stage9-r3-first-formal-import.yml`
+- workflow commit: `3ed2a58a36ccbc9c6cbcf56b8bec6740594d87d4`
+- run: `34677452067`
+- job: `103509743561`
 - result: SUCCESS
-- activation method: `Unity.Licensing.Client --activate-all --include-personal`
-- account activation exit: `0`
-- Personal seat assignment/update: PASS
-- exact Editor licensed probe exit: `0`
-- `Successfully resolved entitlement details`: observed repeatedly
-- fatal `No valid Unity Editor license found` / `License is not active`: absent
-- R2 touched: NO
-- formal recovered-project import attempted: NO
+- classification: `R3_FIRST_IMPORT_PASS`
+- Unity exit code: `0`
+- Library created: YES
 
-The earlier Windows-Hub `.ulf` remains machine-bound and is not the final CI activation mechanism. The valid CI path is account-based Personal activation using `UNITY_EMAIL` and `UNITY_PASSWORD` stored only as GitHub repository secrets. `UNITY_LICENSE` may remain configured but is not required by the v3 account-based gate.
+Formal pre-import audit:
 
-## License evidence
+- manifest entries: `19782`
+- actual files: `19782`
+- missing: `0`
+- extra: `0`
+- mismatch: `0`
+- R3 archive SHA256 matched: YES
+- R3 manifest SHA256 matched: YES
+- HF55 DLL SHA256 matched: YES
+- `isExplicitlyReferenced: 1` present exactly once: YES
 
-GitHub artifact:
+Import diagnostics:
 
-- name: `Stage9.1-exact-editor-personal-license-gate-v3-evidence`
-- artifact ID: `10292505723`
-- artifact digest / locally reverified ZIP SHA256: `ef4ecd16e9141c19a8f30674447cfb9720727c3467a22be30b538b3f8da41846`
+- compile errors: `0`
+- package errors: `0`
+- assembly collisions: `0`
+- serialization errors: `0`
+- missing-script errors: `0`
+- license errors: `0`
+- fatal errors: `0`
+
+GitHub evidence:
+
+- artifact name: `Stage9.1-R3-FIRST-FORMAL-UNITY-IMPORT-evidence`
+- artifact ID: `10293065266`
+- artifact digest: `sha256:0f574aea6e9692bf3c858b1e3b9bdde74ba2439943d841e73ea3f32c7cc14dde`
 - retention: 90 days
 
 Drive preservation:
 
-- folder: `Stage9.1-PreImport-R2-2026-09-12/LicenseGate-PASS-2026-09-12`
-- folder ID: `14Qxj9-Oo_H4so_fe98aw1CTP7_SNhxVX`
-- evidence file ID: `1F8VI5uCE9J6R83GJWVy1QNTSO0Oh8RDN`
+- folder ID: `1dOXB9sHdnlgj6te_tMWaymEXlZaVh-6u`
+- evidence file ID: `1VsPtvtwksYAU7t4fgOhb2TkNJVv0kgGP`
 
-No raw password, email credential, access token, refresh token, or license XML is included in the uploaded evidence.
-
-## Locked R2 input
-
-- archive size: `786481679`
-- archive SHA256: `99bc1ed7a713b627919fee8c3f63bbed5eb949ede72b32a7a5866a067d1b2a0e`
-- project manifest: `19782 / 19782`
-- HF55 SHA256: `dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655`
-- project editor version: `2022.3.44f1c1`
-- Drive folder ID: `1XE6CdcBq7P-__OV7ZfdD23FdYumYjIvG`
-- R2 consists of 12 Drive parts; parts 00–10 are 67108864 bytes and part 11 is 48284175 bytes.
-
-## FIRST IMPORT workflow and R2 access preflight
-
-Workflow: `.github/workflows/stage9-first-formal-import.yml`
-
-- workflow commit: `db92b2436758946fe6fb741dfeff3dd141bec868`
-- workflow run: `34675644811`
-- job: `103504915120`
-- R2 download mode: anonymous Google Drive file-ID download via `gdown`
-- first requested file: R2 part `00`, Drive ID `1Z8XaczeHLaActdzRFDo98l8pQvRm7hpx`
-- result: `DOWNLOAD_FAIL`, gdown exit `1`
-- GitHub runner diagnostic: `Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link'`
-- R2 reconstruction attempted: NO
-- formal pre-import manifest audit attempted: NO
-- exact Editor reconstruction in this run: NO (safely skipped)
-- Personal seat acquired in this run: NO (safely skipped)
-- FIRST FORMAL UNITY IMPORT attempted: NO
-- classification: `NOT_ATTEMPTED` due R2 access infrastructure gate
-
-GitHub preflight evidence:
-
-- artifact name: `Stage9.1-FIRST-FORMAL-UNITY-IMPORT-evidence`
-- artifact ID: `10291773126`
-- artifact digest: `sha256:40e975d5aa8fd69a9e0c97e7d2d315bd145a4ac9b5ee3a9f959a52109054bd5a`
-
-Drive preservation:
-
-- folder: `Stage9.1-PreImport-R2-2026-09-12/FirstImport-R2-Access-Preflight-2026-09-12`
-- folder ID: `1dn759bbkscTBDcrpWac03s4TLD-Wb10U`
-- evidence file ID: `1uaTCXbw6Ojc4ga3HjGXdCcGg-UAC4qNT`
-
-Connector metadata immediately before the GitHub preflight showed `04.part` as shared but `00.part` and the other formal R2 parts as not shared. The GitHub runner independently confirmed that `00.part` is not available anonymously, so this is not merely a connector metadata lag.
+No raw Unity password, access token, refresh token, or license XML is preserved in these evidence artifacts.
 
 ## Next valid action
 
-Make all 12 formal R2 `*.part` files anonymously readable (`Anyone with the link` / Viewer), preferably by selecting all 12 part files together inside the R2 folder and changing their General access in one operation. Then re-run workflow `34675644811` / `.github/workflows/stage9-first-formal-import.yml`.
+Stage9.1 import infrastructure is no longer blocked. Continue with runtime-oriented validation using R3 as the sole input:
 
-The workflow is already prepared to perform in one job, only after 12/12 R2 parts download and hash-verify:
+1. inspect the successful R3 `Editor.log` for non-fatal warnings and import anomalies;
+2. verify package resolution / generated `packages-lock.json` against the pinned embedded package set;
+3. perform controlled scene-load validation for `MainMenu` and `Board`;
+4. perform a minimal non-interactive runtime/play-mode smoke gate where feasible;
+5. only if those gates expose a gameplay/runtime failure attributable to unrecovered native behavior should HF56 be considered.
 
-1. reconstruct R2 and verify archive size/SHA256 plus `zstd -t`;
-2. verify the formal 19782-file pre-import manifest and HF55 SHA256;
-3. reconstruct and SHA-verify exact Unity China `2022.3.44f1c1`;
-4. acquire a Personal seat using the proven account-based path;
-5. run FIRST FORMAL UNITY IMPORT against the verified R2 project;
-6. classify compile/package/serialization/license diagnostics;
-7. perform a post-import differential audit;
-8. preserve evidence and return the Personal seat.
-
-Until FIRST IMPORT is actually reached, do not classify any result as a Unity project import failure and do not open HF56.
+R2 should be retained only as provenance. All new Stage9.1+ work must start from formal R3.
