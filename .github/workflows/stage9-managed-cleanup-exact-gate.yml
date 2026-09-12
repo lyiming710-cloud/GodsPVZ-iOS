@@ -86,7 +86,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: lyiming710-cloud/GodsPVZ-iOS
-          run-id: 34704753051
+          run-id: 34705090292
           pattern: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-managed-cleanup/pc
@@ -124,7 +124,7 @@ jobs:
           PC="$(find "$OUT/pc" -name GodsPVZ.Stage9ManagedCleanupPatch -type f | head -1)"
           chmod +x "$PC"
           "$PC" "$OUT/postmechanical.dll" "$OUT/managed-cleanup.dll" | tee "$E/managed-cleanup.log"
-          grep -q '^SYNTHETIC_HELPERS_NOPPED pairs=3866 ' "$E/managed-cleanup.log"
+          grep -q '^SYNTHETIC_HELPERS_NEUTRALIZED calls=3866 ' "$E/managed-cleanup.log"
           grep -q '^REOPEN_HELPER_CALLS 0$' "$E/managed-cleanup.log"
           grep -q '^REOPEN_GENERIC_MEMBERREF_PASS list_board=4 particle_dict=2$' "$E/managed-cleanup.log"
           grep -q '^REOPEN_BUTTON_Z_PASS text=1 image=1$' "$E/managed-cleanup.log"
