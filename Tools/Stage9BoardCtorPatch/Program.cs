@@ -110,8 +110,7 @@ for (int i = 0; i + 2 < ins.Count; i++)
     if (a.OpCode.Code != Code.Ldarg_0) continue;
     if (b.OpCode.Code != Code.Ldc_I8 || b.Operand is not long lv || lv != 4294967295L) continue;
     if (c.OpCode.Code != Code.Stfld || c.Operand is not FieldReference fr || Raw(fr) != ChallengeFieldToken) continue;
-    if (targets.Contains(a) || targets.Contains(b) || targets.Contains(c))
-        throw new InvalidDataException("Board ctor repair span contains control-flow/EH target");
+    Console.WriteLine($"TARGET_STATUS ldarg0={targets.Contains(a)} constant={targets.Contains(b)} stfld={targets.Contains(c)} strategy=in_place_opcode_replacement");
     b.OpCode = OpCodes.Ldc_I4_M1;
     b.Operand = null;
     repaired++;
