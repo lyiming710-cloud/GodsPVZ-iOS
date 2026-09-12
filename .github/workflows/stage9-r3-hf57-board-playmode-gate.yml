@@ -86,7 +86,7 @@ jobs:
           run-id: 34689491315
           pattern: GodsPVZ-HF56Patch-linux-x64
           merge-multiple: true
-          path: ${{ runner.temp }}/stage9-hf57-board/hf56-patcher
+          path: ${{ runner.temp }}/stage9-hf57-board/p56
 
       - name: Download HF57 patcher
         uses: actions/download-artifact@v4
@@ -96,24 +96,70 @@ jobs:
           run-id: 34690940527
           pattern: GodsPVZ-HF57Patch-linux-x64
           merge-multiple: true
-          path: ${{ runner.temp }}/stage9-hf57-board/hf57-patcher
+          path: ${{ runner.temp }}/stage9-hf57-board/p57
 
-      - name: Apply HF56 HF57 integration candidate
+      - name: Download Board mechanical patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34699623218
+          pattern: GodsPVZ-Stage9BoardMechanicalPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board/pb
+
+      - name: Download managed cleanup patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34705278743
+          pattern: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board/pc
+
+      - name: Download Board ctor patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34710104085
+          pattern: GodsPVZ-Stage9BoardCtorPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board/pctor
+
+      - name: Download PlantDetail Awake patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34710657395
+          pattern: GodsPVZ-Stage9PlantDetailAwakePatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57-board/pdetail
+
+      - name: Build exact repaired runtime candidate
         shell: bash
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf57-board"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"
           OLD="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"; OLDMETA="$OLD.meta"
-          HF56="$OUT/Assembly-CSharp-HF56.dll"; HF57="$OUT/Assembly-CSharp-HF57.dll"
-          P56="$(find "$OUT/hf56-patcher" -type f -name 'GodsPVZ.HF56Patch' | head -1)"
-          P57="$(find "$OUT/hf57-patcher" -type f -name 'GodsPVZ.HF57Patch' | head -1)"
-          [ -n "$P56" ] && [ -n "$P57" ]; chmod +x "$P56" "$P57"
-          "$P56" "$OLD" "$HF56" | tee "$E/hf56-patcher.log"
-          [ "$(sha256sum "$HF56" | awk '{print $1}')" = '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' ] || exit 71
-          "$P57" "$HF56" "$HF57" | tee "$E/hf57-patcher.log"
-          [ "$(sha256sum "$HF57" | awk '{print $1}')" = 'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' ] || exit 72
-          cp "$HF57" "$OLD"
-          python3 - "$OLD" "$E/integration-binary-diff.txt" <<'PY'
+          P56="$(find "$OUT/p56" -type f -name GodsPVZ.HF56Patch | head -1)"
+          P57="$(find "$OUT/p57" -type f -name GodsPVZ.HF57Patch | head -1)"
+          PB="$(find "$OUT/pb" -type f -name GodsPVZ.Stage9BoardMechanicalPatch | head -1)"
+          PC="$(find "$OUT/pc" -type f -name GodsPVZ.Stage9ManagedCleanupPatch | head -1)"
+          PCTOR="$(find "$OUT/pctor" -type f -name GodsPVZ.Stage9BoardCtorPatch | head -1)"
+          PDETAIL="$(find "$OUT/pdetail" -type f -name GodsPVZ.Stage9PlantDetailAwakePatch | head -1)"
+          [ -n "$P56" ] && [ -n "$P57" ] && [ -n "$PB" ] && [ -n "$PC" ] && [ -n "$PCTOR" ] && [ -n "$PDETAIL" ]
+          chmod +x "$P56" "$P57" "$PB" "$PC" "$PCTOR" "$PDETAIL"
+
+          "$P56" "$OLD" "$OUT/hf56.dll" | tee "$E/hf56-patcher.log"
+          [ "$(sha256sum "$OUT/hf56.dll" | awk '{print $1}')" = '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' ] || exit 71
+          "$P57" "$OUT/hf56.dll" "$OUT/hf57.dll" | tee "$E/hf57-patcher.log"
+          [ "$(sha256sum "$OUT/hf57.dll" | awk '{print $1}')" = 'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' ] || exit 72
+
+          cp "$OUT/hf57.dll" "$OUT/integrated.dll"
+          python3 - "$OUT/integrated.dll" "$E/integration-binary-diff.txt" <<'PY'
           import hashlib,sys
           from pathlib import Path
           p=Path(sys.argv[1]); out=Path(sys.argv[2]); b=bytearray(p.read_bytes())
@@ -133,19 +179,44 @@ jobs:
           assert got=='e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568'
           out.write_text('\n'.join(lines)+f'\nintegrated_sha256={got}\n')
           PY
+
+          "$PB" "$OUT/integrated.dll" "$OUT/board-mechanical.dll" | tee "$E/board-mechanical.log"
+          [ "$(sha256sum "$OUT/board-mechanical.dll" | awk '{print $1}')" = '00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980' ] || exit 73
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2313 changed_targets=4$' "$E/board-mechanical.log" || exit 74
+
+          "$PC" "$OUT/board-mechanical.dll" "$OUT/managed-cleanup.dll" | tee "$E/managed-cleanup.log"
+          [ "$(sha256sum "$OUT/managed-cleanup.dll" | awk '{print $1}')" = 'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' ] || exit 75
+          grep -q '^REOPEN_HELPER_CALLS 0$' "$E/managed-cleanup.log" || exit 76
+
+          "$PCTOR" "$OUT/managed-cleanup.dll" "$OUT/board-ctor.dll" | tee "$E/board-ctor.log"
+          [ "$(sha256sum "$OUT/board-ctor.dll" | awk '{print $1}')" = '7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3' ] || exit 77
+          grep -q '^REOPEN_BOARD_CTOR_PASS good=1 old_bad=0$' "$E/board-ctor.log" || exit 78
+
+          "$PDETAIL" "$OUT/board-ctor.dll" "$OUT/plantdetail-awake.dll" | tee "$E/plantdetail-awake.log"
+          [ "$(sha256sum "$OUT/plantdetail-awake.dll" | awk '{print $1}')" = 'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' ] || exit 79
+          grep -q '^REOPEN_PLANTDETAIL_AWAKE_PASS helpers=0 loadData=1 lock=1 nan=1 logo=1 objectEq=1 cardStores=1 locals=13$' "$E/plantdetail-awake.log" || exit 80
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/plantdetail-awake.log" || exit 81
+
           sed -i 's/^  isPreloaded: 0$/  isPreloaded: 1/' "$OLDMETA"
           NEW="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"; NEWMETA="$NEW.meta"
-          mv "$OLD" "$NEW"; mv "$OLDMETA" "$NEWMETA"
-          [ "$(sha256sum "$NEW" | awk '{print $1}')" = 'e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568' ] || exit 73
-          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$NEWMETA" || exit 74
-          grep -q '^  isExplicitlyReferenced: 1$' "$NEWMETA" || exit 75
-          grep -q '^  isPreloaded: 1$' "$NEWMETA" || exit 76
-          printf 'hf56_sha256=%s\nhf57_sha256=%s\nintegrated_sha256=%s\nguid=%s\n' \
+          cp "$OUT/plantdetail-awake.dll" "$NEW"
+          mv "$OLDMETA" "$NEWMETA"
+          rm "$OLD"
+          [ "$(sha256sum "$NEW" | awk '{print $1}')" = 'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' ] || exit 82
+          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$NEWMETA" || exit 83
+          grep -q '^  isExplicitlyReferenced: 1$' "$NEWMETA" || exit 84
+          grep -q '^  isPreloaded: 1$' "$NEWMETA" || exit 85
+          printf 'hf56_sha256=%s\nhf57_sha256=%s\nintegrated_sha256=%s\nboard_mechanical_sha256=%s\nmanaged_cleanup_sha256=%s\nboard_ctor_sha256=%s\nplantdetail_awake_sha256=%s\nguid=%s\n' \
             '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' \
             'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' \
             'e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568' \
+            '00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980' \
+            'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' \
+            '7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3' \
+            'eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995' \
             '60b84a767c46ced9aacc93f38da4d2f3' >> "$E/input-gate.txt"
-          rm -rf "$OUT/hf56-patcher" "$OUT/hf57-patcher" "$HF56" "$HF57"
+          rm -rf "$OUT/p56" "$OUT/p57" "$OUT/pb" "$OUT/pc" "$OUT/pctor" "$OUT/pdetail" \
+            "$OUT/hf56.dll" "$OUT/hf57.dll" "$OUT/integrated.dll" "$OUT/board-mechanical.dll" "$OUT/managed-cleanup.dll" "$OUT/board-ctor.dll" "$OUT/plantdetail-awake.dll"
 
       - name: Download preserved exact Editor parts
         uses: actions/download-artifact@v4
@@ -163,12 +234,12 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf57-board"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
           mkdir -p "$D"
-          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 91
           (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
           rm -rf "$P"
           U="$D/Editor/Unity"; chmod +x "$U"
           "$U" -version > "$E/unity-version.txt" 2>&1
-          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 82
+          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 92
           echo "$U" > "$OUT/unity.txt"
           C="$D/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
           set +e
@@ -176,11 +247,11 @@ jobs:
           RC=$?
           set -e
           echo "$RC" > "$E/activation-exit.txt"
-          [ "$RC" = 0 ] || exit 83
+          [ "$RC" = 0 ] || exit 93
           echo ACQUIRED > "$OUT/seat.flag"
           df -h > "$E/disk-after-editor.txt"
 
-      - name: First import integrated candidate
+      - name: First import repaired candidate
         shell: bash
         run: |
           set -euo pipefail
@@ -236,7 +307,7 @@ jobs:
           "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/test-compile.log"
           ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/test-compile.log"
 
-      - name: Run focused Board PlayMode HF57
+      - name: Run focused Board PlayMode repaired chain
         shell: bash
         run: |
           set -uo pipefail
@@ -249,7 +320,7 @@ jobs:
           echo "$RC" > "$E/board-playmode-exit.txt"
           grep 'STAGE9_HF57_BOARD_MARKER' "$E/board-playmode.log" > "$E/board-playmode-markers.txt" || true
           cat "$E/board-playmode-markers.txt" || true
-          grep -E 'Exception|AssertionException|NullReferenceException|InvalidOperationException|ArgumentException' "$E/board-playmode.log" > "$E/board-exceptions.txt" || true
+          grep -E 'Exception|AssertionException|NullReferenceException|InvalidOperationException|ArgumentException|InvalidProgramException|TypeLoadException|MissingMethodException' "$E/board-playmode.log" > "$E/board-exceptions.txt" || true
           if [ -f "$E/board-playmode-results.xml" ]; then
             python3 - "$E/board-playmode-results.xml" "$E/board-playmode-summary.txt" <<'PY'
           import sys,xml.etree.ElementTree as ET
@@ -258,7 +329,8 @@ jobs:
           PY
           fi
           [ "$RC" = 0 ] || exit "$RC"
-          grep -q 'scene=Board .*missing=0 .*boardStart=' "$E/board-playmode-markers.txt" || exit 101
+          grep -q 'STAGE9_HF57_BOARD_MARKER' "$E/board-playmode-markers.txt" || exit 101
+          grep -q 'scene=Board .*missing=0 .*boardStart=' "$E/board-playmode-markers.txt" || exit 102
 
       - name: Return Personal seat
         if: always()
