@@ -62,34 +62,20 @@ static string? Problem(MethodReference m)
     return null;
 }
 
-static bool IsGoodListTemplate(MethodReference m, string name)
-{
-    if (m.DeclaringType is not GenericInstanceType gi || gi.ElementType.FullName != "System.Collections.Generic.List`1" || m.Name != name)
-        return false;
-    return name switch
-    {
-        "Add" => m.Parameters.Count == 1 && IsGp(m.Parameters[0].ParameterType, 0),
-        "get_Item" => m.Parameters.Count == 1 && IsGp(m.ReturnType, 0),
-        "set_Item" => m.Parameters.Count == 2 && IsGp(m.Parameters[1].ParameterType, 0),
-        "Contains" or "IndexOf" or "Remove" => m.Parameters.Count == 1 && IsGp(m.Parameters[0].ParameterType, 0),
-        _ => false
-    };
-}
+static bool IsGoodListAdd(MethodReference m)
+    => m.Name == "Add"
+       && m.DeclaringType is GenericInstanceType gi
+       && gi.ElementType.FullName == "System.Collections.Generic.List`1"
+       && m.Parameters.Count == 1
+       && IsGp(m.Parameters[0].ParameterType, 0);
 
-static bool IsGoodDictionaryTemplate(MethodReference m, string name)
-{
-    if (m.DeclaringType is not GenericInstanceType gi || gi.ElementType.FullName != "System.Collections.Generic.Dictionary`2" || m.Name != name)
-        return false;
-    return name switch
-    {
-        "Add" => m.Parameters.Count == 2 && IsGp(m.Parameters[0].ParameterType, 0) && IsGp(m.Parameters[1].ParameterType, 1),
-        "get_Item" => m.Parameters.Count == 1 && IsGp(m.Parameters[0].ParameterType, 0) && IsGp(m.ReturnType, 1),
-        "set_Item" => m.Parameters.Count == 2 && IsGp(m.Parameters[0].ParameterType, 0) && IsGp(m.Parameters[1].ParameterType, 1),
-        "ContainsKey" or "Remove" => m.Parameters.Count == 1 && IsGp(m.Parameters[0].ParameterType, 0),
-        "TryGetValue" => m.Parameters.Count == 2 && IsGp(m.Parameters[0].ParameterType, 0) && IsByRefGp(m.Parameters[1].ParameterType, 1),
-        _ => false
-    };
-}
+static bool IsGoodDictionaryAdd(MethodReference m)
+    => m.Name == "Add"
+       && m.DeclaringType is GenericInstanceType gi
+       && gi.ElementType.FullName == "System.Collections.Generic.Dictionary`2"
+       && m.Parameters.Count == 2
+       && IsGp(m.Parameters[0].ParameterType, 0)
+       && IsGp(m.Parameters[1].ParameterType, 1);
 
 static string OperandSemantic(object? operand, MethodDefinition owner)
 {
@@ -116,6 +102,90 @@ static string MethodSemantic(MethodDefinition m)
     return sb.ToString();
 }
 
+static MethodReference BuildReplacement(MethodReference old, TypeReference listVar0, TypeReference dictVar0, TypeReference dictVar1)
+{
+    if (old.DeclaringType is not GenericInstanceType gi)
+        throw new InvalidDataException($"bad ref owner drift: {old.FullName}");
+
+    TypeReference returnType = old.ReturnType;
+    var parameterTypes = old.Parameters.Select(p => p.ParameterType).ToArray();
+    var owner = gi.ElementType.FullName;
+
+    if (owner == "System.Collections.Generic.List`1")
+    {
+        switch (old.Name)
+        {
+            case "Add":
+                if (parameterTypes.Length != 1) throw new InvalidDataException($"List.Add arity drift: {old.FullName}");
+                parameterTypes[0] = listVar0;
+                break;
+            case "get_Item":
+                if (parameterTypes.Length != 1) throw new InvalidDataException($"List.get_Item arity drift: {old.FullName}");
+                returnType = listVar0;
+                break;
+            case "set_Item":
+                if (parameterTypes.Length != 2) throw new InvalidDataException($"List.set_Item arity drift: {old.FullName}");
+                parameterTypes[1] = listVar0;
+                break;
+            case "Contains":
+            case "IndexOf":
+            case "Remove":
+                if (parameterTypes.Length != 1) throw new InvalidDataException($"List.{old.Name} arity drift: {old.FullName}");
+                parameterTypes[0] = listVar0;
+                break;
+            default:
+                throw new InvalidDataException($"unsupported malformed List<T> method: {old.FullName}");
+        }
+    }
+    else if (owner == "System.Collections.Generic.Dictionary`2")
+    {
+        switch (old.Name)
+        {
+            case "Add":
+                if (parameterTypes.Length != 2) throw new InvalidDataException($"Dictionary.Add arity drift: {old.FullName}");
+                parameterTypes[0] = dictVar0;
+                parameterTypes[1] = dictVar1;
+                break;
+            case "get_Item":
+                if (parameterTypes.Length != 1) throw new InvalidDataException($"Dictionary.get_Item arity drift: {old.FullName}");
+                parameterTypes[0] = dictVar0;
+                returnType = dictVar1;
+                break;
+            case "set_Item":
+                if (parameterTypes.Length != 2) throw new InvalidDataException($"Dictionary.set_Item arity drift: {old.FullName}");
+                parameterTypes[0] = dictVar0;
+                parameterTypes[1] = dictVar1;
+                break;
+            case "ContainsKey":
+            case "Remove":
+                if (parameterTypes.Length != 1) throw new InvalidDataException($"Dictionary.{old.Name} arity drift: {old.FullName}");
+                parameterTypes[0] = dictVar0;
+                break;
+            case "TryGetValue":
+                if (parameterTypes.Length != 2) throw new InvalidDataException($"Dictionary.TryGetValue arity drift: {old.FullName}");
+                parameterTypes[0] = dictVar0;
+                parameterTypes[1] = new ByReferenceType(dictVar1);
+                break;
+            default:
+                throw new InvalidDataException($"unsupported malformed Dictionary<TKey,TValue> method: {old.FullName}");
+        }
+    }
+    else
+    {
+        throw new InvalidDataException($"unsupported malformed owner: {old.FullName}");
+    }
+
+    var replacement = new MethodReference(old.Name, returnType, old.DeclaringType)
+    {
+        HasThis = old.HasThis,
+        ExplicitThis = old.ExplicitThis,
+        CallingConvention = old.CallingConvention
+    };
+    for (var i = 0; i < old.Parameters.Count; i++)
+        replacement.Parameters.Add(new ParameterDefinition(old.Parameters[i].Name, old.Parameters[i].Attributes, parameterTypes[i]));
+    return replacement;
+}
+
 var input = Path.GetFullPath(args[0]);
 var output = Path.GetFullPath(args[1]);
 var inputSha = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(input))).ToLowerInvariant();
@@ -132,23 +202,15 @@ var refs = methods.Where(m => m.HasBody)
     .OfType<MethodReference>()
     .ToList();
 
-var listTemplates = new Dictionary<string, MethodReference>();
-foreach (var name in new[] { "Add", "get_Item", "set_Item", "Contains", "IndexOf", "Remove" })
-{
-    var t = refs.FirstOrDefault(m => IsGoodListTemplate(m, name));
-    if (t is null) throw new InvalidDataException($"No valid List<T>.{name} template found");
-    listTemplates[name] = t;
-    Console.WriteLine($"TEMPLATE_LIST {name} token=0x{Raw(t):X8} sig={t.FullName}");
-}
-
-var dictTemplates = new Dictionary<string, MethodReference>();
-foreach (var name in new[] { "Add", "get_Item", "set_Item", "ContainsKey", "Remove", "TryGetValue" })
-{
-    var t = refs.FirstOrDefault(m => IsGoodDictionaryTemplate(m, name));
-    if (t is null) throw new InvalidDataException($"No valid Dictionary<TKey,TValue>.{name} template found");
-    dictTemplates[name] = t;
-    Console.WriteLine($"TEMPLATE_DICT {name} token=0x{Raw(t):X8} sig={t.FullName}");
-}
+var listAnchor = refs.FirstOrDefault(IsGoodListAdd)
+    ?? throw new InvalidDataException("No valid List<T>.Add(!0) anchor found");
+var dictAnchor = refs.FirstOrDefault(IsGoodDictionaryAdd)
+    ?? throw new InvalidDataException("No valid Dictionary<TKey,TValue>.Add(!0,!1) anchor found");
+var listVar0 = listAnchor.Parameters[0].ParameterType;
+var dictVar0 = dictAnchor.Parameters[0].ParameterType;
+var dictVar1 = dictAnchor.Parameters[1].ParameterType;
+Console.WriteLine($"ANCHOR_LIST token=0x{Raw(listAnchor):X8} sig={listAnchor.FullName}");
+Console.WriteLine($"ANCHOR_DICT token=0x{Raw(dictAnchor):X8} sig={dictAnchor.FullName}");
 
 var badSites = new List<(MethodDefinition Method, Instruction Ins, MethodReference Old, string Problem)>();
 foreach (var m in methods.Where(m => m.HasBody))
@@ -176,25 +238,7 @@ foreach (var site in badSites)
     var oldToken = Raw(site.Old);
     if (!replacements.TryGetValue(oldToken, out var replacement))
     {
-        MethodReference template;
-        if (site.Old.DeclaringType is not GenericInstanceType gi)
-            throw new InvalidDataException($"bad ref owner drift: {site.Old.FullName}");
-        if (gi.ElementType.FullName == "System.Collections.Generic.List`1")
-            template = listTemplates[site.Old.Name];
-        else if (gi.ElementType.FullName == "System.Collections.Generic.Dictionary`2")
-            template = dictTemplates[site.Old.Name];
-        else
-            throw new InvalidDataException($"unsupported bad ref owner: {site.Old.FullName}");
-
-        replacement = new MethodReference(site.Old.Name, template.ReturnType, site.Old.DeclaringType)
-        {
-            HasThis = site.Old.HasThis,
-            ExplicitThis = site.Old.ExplicitThis,
-            CallingConvention = site.Old.CallingConvention
-        };
-        foreach (var p in template.Parameters)
-            replacement.Parameters.Add(new ParameterDefinition(p.Name, p.Attributes, p.ParameterType));
-
+        replacement = BuildReplacement(site.Old, listVar0, dictVar0, dictVar1);
         replacements.Add(oldToken, replacement);
         Console.WriteLine($"REPLACE_REF old=0x{oldToken:X8} problem={site.Problem} old_sig={site.Old.FullName} new_sig={replacement.FullName}");
     }
