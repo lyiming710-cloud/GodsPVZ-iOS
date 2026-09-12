@@ -19,6 +19,21 @@ jobs:
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== disk before cleanup ==='
+          df -h
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+          sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+          echo '=== disk after cleanup ==='
+          df -h
+
       - name: Prepare formal R3
         shell: bash
         run: |
@@ -62,6 +77,9 @@ jobs:
           printf 'r3_sha256=%s\nhf55_sha256=%s\n' \
             'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' \
             'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' > "$E/input-gate.txt"
+          echo '=== disk after R3 reconstruction ==='
+          df -h
+          du -sh "$OUT/r3" || true
 
       - name: Download HF56 and HF57 patchers
         uses: actions/download-artifact@v4
@@ -130,6 +148,7 @@ jobs:
             'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' \
             'e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568' \
             '60b84a767c46ced9aacc93f38da4d2f3' >> "$E/input-gate.txt"
+          rm -rf "$OUT/hf56-patcher" "$OUT/hf57-patcher" "$HF56" "$HF57"
 
       - name: Download preserved exact Editor parts
         uses: actions/download-artifact@v4
@@ -147,8 +166,15 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
           mkdir -p "$D"
+          echo '=== disk before Editor extraction ==='
+          df -h
+          du -sh "$P" || true
           [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
           (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
+          rm -rf "$P"
+          echo '=== disk after Editor extraction and compressed-part cleanup ==='
+          df -h
+          du -sh "$D" || true
           U="$D/Editor/Unity"; chmod +x "$U"
           "$U" -version > "$E/unity-version.txt" 2>&1
           grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 82
@@ -167,9 +193,15 @@ jobs:
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          echo '=== disk before first Unity import ==='
+          df -h
+          du -sh "$PROJECT" || true
           "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/first-import.log"
           ! grep -q 'InvalidProgramException: Invalid IL code in UnitySourceGeneratedAssemblyMonoScriptTypes_v1:Get' "$E/first-import.log"
           ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/first-import.log"
+          echo '=== disk after first Unity import ==='
+          df -h
+          du -sh "$PROJECT/Library" || true
 
       - name: Verify GameStart serialized prefab binding
         shell: bash
