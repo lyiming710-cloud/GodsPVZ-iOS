@@ -78,7 +78,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-hf57-managed"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"
+          OUT="$RUNNER_TEMP/stage9-hf57-managed"; E="$OUT/evidence"
           HF55="$(cat "$OUT/hf55.txt")"; HF56="$OUT/Assembly-CSharp-HF56.dll"; HF57="$OUT/Assembly-CSharp-HF57.dll"; INT="$OUT/GodsPVZRuntime1-integrated.dll"
           P56="$(find "$OUT/hf56-patcher" -type f -name 'GodsPVZ.HF56Patch' | head -1)"
           P57="$(find "$OUT/hf57-patcher" -type f -name 'GodsPVZ.HF57Patch' | head -1)"
@@ -110,12 +110,7 @@ jobs:
           mkdir -p "$D"
           cat > "$D/Diag.csproj" <<'EOF'
           <Project Sdk="Microsoft.NET.Sdk">
-            <PropertyGroup>
-              <OutputType>Exe</OutputType>
-              <TargetFramework>net10.0</TargetFramework>
-              <ImplicitUsings>enable</ImplicitUsings>
-              <Nullable>enable</Nullable>
-            </PropertyGroup>
+            <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
             <ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup>
           </Project>
           EOF
@@ -123,61 +118,41 @@ jobs:
           using Mono.Cecil;
           using Mono.Cecil.Cil;
           using System.Globalization;
-
-          static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> xs) {
-            foreach (var t in xs) { yield return t; foreach (var n in AllTypes(t.NestedTypes)) yield return n; }
-          }
-          static string Tok(IMetadataTokenProvider? x) => x==null ? "<null>" : $"0x{x.MetadataToken.ToUInt32():X8}";
-          static string Op(object? o) => o switch {
-            null => "",
-            Instruction i => $"IL_{i.Offset:X4}",
-            Instruction[] a => string.Join(",", a.Select(x=>$"IL_{x.Offset:X4}")),
-            MethodReference m => $"{m.FullName} [{Tok(m)}]",
-            FieldReference f => $"{f.FullName} [{Tok(f)}]",
-            TypeReference t => $"{t.FullName} [{Tok(t)}]",
-            ParameterDefinition p => $"param#{p.Index} {p.Name}:{p.ParameterType.FullName}",
-            VariableDefinition v => $"V_{v.Index}:{v.VariableType.FullName}",
-            string s => $"\"{s.Replace("\n","\\n")}\"",
-            _ => Convert.ToString(o, CultureInfo.InvariantCulture) ?? ""
-          };
-          static void DumpMethod(TextWriter w, MethodDefinition m) {
-            w.WriteLine($"METHOD {m.DeclaringType.FullName}::{m.Name} TOKEN={Tok(m)} RVA=0x{m.RVA:X} STATIC={m.IsStatic} BODY={m.HasBody}");
-            w.WriteLine($"  SIG {m.FullName}");
-            if (!m.HasBody) { w.WriteLine(); return; }
-            w.WriteLine($"  MAXSTACK={m.Body.MaxStackSize} INITLOCALS={m.Body.InitLocals} CODESIZE={m.Body.CodeSize}");
-            foreach (var v in m.Body.Variables) w.WriteLine($"  LOCAL V_{v.Index} {v.VariableType.FullName}");
-            foreach (var i in m.Body.Instructions) w.WriteLine($"  IL_{i.Offset:X4}: {i.OpCode,-12} {Op(i.Operand)}");
-            foreach (var h in m.Body.ExceptionHandlers) w.WriteLine($"  EH {h.HandlerType} try=IL_{h.TryStart?.Offset:X4}-IL_{h.TryEnd?.Offset:X4} handler=IL_{h.HandlerStart?.Offset:X4}-IL_{h.HandlerEnd?.Offset:X4} catch={h.CatchType?.FullName}");
-            w.WriteLine();
-          }
-          static void Main(string[] args) {
-            if(args.Length!=2) throw new ArgumentException("usage: diag <dll> <out>");
-            using var a=AssemblyDefinition.ReadAssembly(args[0], new ReaderParameters{ReadingMode=ReadingMode.Immediate,InMemory=true});
-            var m=a.MainModule; using var w=new StreamWriter(args[1],false,System.Text.Encoding.UTF8);
-            w.WriteLine($"FILE={args[0]}"); w.WriteLine($"ASSEMBLY={a.Name.FullName}");
-            w.WriteLine($"MVID={m.Mvid}"); w.WriteLine($"METHODDEF_COUNT={AllTypes(m.Types).Sum(t=>t.Methods.Count)}"); w.WriteLine();
-            string[] targets={"BoardManager::.ctor","BoardManager::Awake","Button_z::Awake","PropChooseSystem::.ctor","Prop_Choose::.ctor","BoardStart::Awake"};
-            foreach(var key in targets){
-              var p=key.Split("::"); var found=AllTypes(m.Types).SelectMany(t=>t.Methods).Where(x=>x.DeclaringType.Name==p[0] && x.Name==p[1]).ToList();
-              w.WriteLine($"TARGET {key} COUNT={found.Count}"); foreach(var x in found) DumpMethod(w,x);
+          class Program {
+            static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> xs) { foreach (var t in xs) { yield return t; foreach (var n in AllTypes(t.NestedTypes)) yield return n; } }
+            static string Tok(IMetadataTokenProvider? x) => x==null ? "<null>" : $"0x{x.MetadataToken.ToUInt32():X8}";
+            static string Op(object? o) => o switch {
+              null => "", Instruction i => $"IL_{i.Offset:X4}", Instruction[] a => string.Join(",", a.Select(x=>$"IL_{x.Offset:X4}")),
+              MethodReference m => $"{m.FullName} [{Tok(m)}]", FieldReference f => $"{f.FullName} [{Tok(f)}]", TypeReference t => $"{t.FullName} [{Tok(t)}]",
+              ParameterDefinition p => $"param#{p.Index} {p.Name}:{p.ParameterType.FullName}", VariableDefinition v => $"V_{v.Index}:{v.VariableType.FullName}",
+              string s => $"\"{s.Replace("\n","\\n")}\"", _ => Convert.ToString(o, CultureInfo.InvariantCulture) ?? "" };
+            static void DumpMethod(TextWriter w, MethodDefinition m) {
+              w.WriteLine($"METHOD {m.DeclaringType.FullName}::{m.Name} TOKEN={Tok(m)} RVA=0x{m.RVA:X} STATIC={m.IsStatic} BODY={m.HasBody}");
+              w.WriteLine($"  SIG {m.FullName}"); if (!m.HasBody) { w.WriteLine(); return; }
+              w.WriteLine($"  MAXSTACK={m.Body.MaxStackSize} INITLOCALS={m.Body.InitLocals} CODESIZE={m.Body.CodeSize}");
+              foreach (var v in m.Body.Variables) w.WriteLine($"  LOCAL V_{v.Index} {v.VariableType.FullName}");
+              foreach (var i in m.Body.Instructions) w.WriteLine($"  IL_{i.Offset:X4}: {i.OpCode,-12} {Op(i.Operand)}");
+              foreach (var h in m.Body.ExceptionHandlers) w.WriteLine($"  EH {h.HandlerType} try=IL_{h.TryStart?.Offset:X4}-IL_{h.TryEnd?.Offset:X4} handler=IL_{h.HandlerStart?.Offset:X4}-IL_{h.HandlerEnd?.Offset:X4} catch={h.CatchType?.FullName}");
+              w.WriteLine();
             }
-            w.WriteLine("=== TOKEN RESOLUTION ===");
-            uint[] toks={0x040001af,0x0400089e,0x0400058c,0x0a0001d3};
-            foreach(var raw in toks){
-              try { var x=m.LookupToken(new MetadataToken(raw)); w.WriteLine($"0x{raw:X8} => {x?.GetType().Name} {x}"); }
-              catch(Exception e){ w.WriteLine($"0x{raw:X8} => ERROR {e.GetType().Name}: {e.Message}"); }
-            }
-            w.WriteLine(); w.WriteLine("=== CPP2IL TYPE REFERENCES ===");
-            foreach(var t in m.GetTypeReferences().Where(x=>x.FullName.Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase)).OrderBy(x=>x.FullName)) w.WriteLine($"{Tok(t)} {t.FullName} scope={t.Scope}");
-            w.WriteLine(); w.WriteLine("=== CPP2IL MEMBER REFERENCES ===");
-            foreach(var r in m.GetMemberReferences().Where(x=>x.FullName.Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase) || x.DeclaringType.FullName.Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase)).OrderBy(x=>x.FullName)) w.WriteLine($"{Tok(r)} {r.GetType().Name} {r.FullName}");
-            w.WriteLine(); w.WriteLine("=== DICTIONARY ADD REFERENCES ===");
-            foreach(var r in m.GetMemberReferences().OfType<MethodReference>().Where(x=>x.Name=="Add" && x.DeclaringType.FullName.Contains("Dictionary",StringComparison.Ordinal)).OrderBy(x=>x.FullName)) w.WriteLine($"{Tok(r)} {r.FullName}");
-            w.WriteLine(); w.WriteLine("=== METHODS USING CPP2IL OPERANDS ===");
-            foreach(var md in AllTypes(m.Types).SelectMany(t=>t.Methods).Where(x=>x.HasBody)){
-              var hits=md.Body.Instructions.Where(i=>Op(i.Operand).Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase)).ToList();
-              if(hits.Count==0) continue;
-              w.WriteLine($"{Tok(md)} {md.FullName}"); foreach(var i in hits) w.WriteLine($"  IL_{i.Offset:X4}: {i.OpCode} {Op(i.Operand)}");
+            static void Main(string[] args) {
+              if(args.Length!=2) throw new ArgumentException("usage: diag <dll> <out>");
+              using var a=AssemblyDefinition.ReadAssembly(args[0], new ReaderParameters{ReadingMode=ReadingMode.Immediate,InMemory=true});
+              var m=a.MainModule; using var w=new StreamWriter(args[1],false,System.Text.Encoding.UTF8);
+              w.WriteLine($"FILE={args[0]}"); w.WriteLine($"ASSEMBLY={a.Name.FullName}"); w.WriteLine($"MVID={m.Mvid}"); w.WriteLine($"METHODDEF_COUNT={AllTypes(m.Types).Sum(t=>t.Methods.Count)}"); w.WriteLine();
+              string[] targets={"BoardManager::.ctor","BoardManager::Awake","Button_z::Awake","PropChooseSystem::.ctor","Prop_Choose::.ctor","BoardStart::Awake"};
+              foreach(var key in targets){ var p=key.Split("::"); var found=AllTypes(m.Types).SelectMany(t=>t.Methods).Where(x=>x.DeclaringType.Name==p[0] && x.Name==p[1]).ToList(); w.WriteLine($"TARGET {key} COUNT={found.Count}"); foreach(var x in found) DumpMethod(w,x); }
+              w.WriteLine("=== TOKEN RESOLUTION ===");
+              uint[] toks={0x040001af,0x0400089e,0x0400058c,0x0a0001d3};
+              foreach(var raw in toks){ try { var x=m.LookupToken(new MetadataToken(raw)); w.WriteLine($"0x{raw:X8} => {x?.GetType().Name} {x}"); } catch(Exception e){ w.WriteLine($"0x{raw:X8} => ERROR {e.GetType().Name}: {e.Message}"); } }
+              w.WriteLine(); w.WriteLine("=== CPP2IL TYPE REFERENCES ===");
+              foreach(var t in m.GetTypeReferences().Where(x=>x.FullName.Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase)).OrderBy(x=>x.FullName)) w.WriteLine($"{Tok(t)} {t.FullName} scope={t.Scope}");
+              w.WriteLine(); w.WriteLine("=== CPP2IL MEMBER REFERENCES ===");
+              foreach(var r in m.GetMemberReferences().Where(x=>x.FullName.Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase) || x.DeclaringType.FullName.Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase)).OrderBy(x=>x.FullName)) w.WriteLine($"{Tok(r)} {r.GetType().Name} {r.FullName}");
+              w.WriteLine(); w.WriteLine("=== DICTIONARY ADD REFERENCES ===");
+              foreach(var r in m.GetMemberReferences().OfType<MethodReference>().Where(x=>x.Name=="Add" && x.DeclaringType.FullName.Contains("Dictionary",StringComparison.Ordinal)).OrderBy(x=>x.FullName)) w.WriteLine($"{Tok(r)} {r.FullName}");
+              w.WriteLine(); w.WriteLine("=== METHODS USING CPP2IL OPERANDS ===");
+              foreach(var md in AllTypes(m.Types).SelectMany(t=>t.Methods).Where(x=>x.HasBody)){ var hits=md.Body.Instructions.Where(i=>Op(i.Operand).Contains("Cpp2IL",StringComparison.OrdinalIgnoreCase)).ToList(); if(hits.Count==0) continue; w.WriteLine($"{Tok(md)} {md.FullName}"); foreach(var i in hits) w.WriteLine($"  IL_{i.Offset:X4}: {i.OpCode} {Op(i.Operand)}"); }
             }
           }
           EOF
@@ -194,6 +169,7 @@ jobs:
           dotnet "$D" "$HF57" "$E/hf57-managed-il.txt"
           dotnet "$D" "$INTEGRATED" "$E/integrated-managed-il.txt"
           sha256sum "$HF55" "$HF56" "$HF57" "$INTEGRATED" > "$E/variant-sha256.txt"
+          diff -u "$E/hf55-managed-il.txt" "$E/integrated-managed-il.txt" > "$E/hf55-vs-integrated.diff" || true
           echo '=== integrated target summary ==='
           grep -E '^TARGET |^METHOD |^0x040001AF|^0x0400089E|^0x0400058C|^0x0A0001D3|Cpp2ILHelpers|Dictionary.*Add' "$E/integrated-managed-il.txt" | head -300 || true
 
