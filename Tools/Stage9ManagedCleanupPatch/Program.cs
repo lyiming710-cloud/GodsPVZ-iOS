@@ -113,6 +113,25 @@ static MethodReference CloneMethodRefForDeclaring(MethodReference template, Type
     return r;
 }
 
+static int? LoadLocalAddressIndex(Instruction i)
+{
+    if (i.OpCode.Code is not (Code.Ldloca or Code.Ldloca_S)) return null;
+    return i.Operand is VariableDefinition v ? v.Index : null;
+}
+
+static int? StoreLocalIndex(Instruction i)
+{
+    return i.OpCode.Code switch
+    {
+        Code.Stloc_0 => 0,
+        Code.Stloc_1 => 1,
+        Code.Stloc_2 => 2,
+        Code.Stloc_3 => 3,
+        Code.Stloc or Code.Stloc_S when i.Operand is VariableDefinition v => v.Index,
+        _ => null
+    };
+}
+
 using var module = ModuleDefinition.ReadModule(input, new ReaderParameters { InMemory = true, ReadingMode = ReadingMode.Immediate });
 var allBefore = AllTypes(module.Types).SelectMany(t => t.Methods).ToList();
 if (allBefore.Count != ExpectedMethodDefCount)
@@ -143,8 +162,8 @@ var untouchedBefore = allBefore
     .Where(m => !changedMethods.Contains(RawToken(m)))
     .ToDictionary(m => RawToken(m), MethodSemantic);
 
-int helperPairsNopped = 0;
-int helperTargetedPairs = 0;
+int helperCallsNeutralized = 0;
+int helperTargetedCalls = 0;
 foreach (var m in allBefore.Where(x => x.HasBody))
 {
     var targets = ControlFlowTargets(m);
@@ -156,15 +175,18 @@ foreach (var m in allBefore.Where(x => x.HasBody))
         var text = ins[j - 1];
         if (text.OpCode.Code != Code.Ldstr || text.Operand is not string)
             throw new InvalidDataException($"Cpp2IL helper call lost adjacent ldstr: 0x{RawToken(m):X8} {m.FullName} IL_{call.Offset:X4}");
-        if (targets.Contains(text) || targets.Contains(call)) helperTargetedPairs++;
-        text.OpCode = OpCodes.Nop; text.Operand = null;
-        call.OpCode = OpCodes.Nop; call.Operand = null;
-        helperPairsNopped++;
+        if (targets.Contains(call)) helperTargetedCalls++;
+        // Preserve the original stack effect and instruction identity. The synthetic
+        // sequence ldstr; call void NoteDecompilerIssue(string) becomes ldstr; pop.
+        // This remains correct even when the call instruction itself is a branch/EH target.
+        call.OpCode = OpCodes.Pop;
+        call.Operand = null;
+        helperCallsNeutralized++;
     }
 }
-if (helperPairsNopped != ExpectedHelperCallCount)
-    throw new InvalidDataException($"Expected to NOP {ExpectedHelperCallCount} helper pairs, got {helperPairsNopped}");
-Console.WriteLine($"SYNTHETIC_HELPERS_NOPPED pairs={helperPairsNopped} methods={helperMethods.Count} targeted_pairs={helperTargetedPairs}");
+if (helperCallsNeutralized != ExpectedHelperCallCount)
+    throw new InvalidDataException($"Expected to neutralize {ExpectedHelperCallCount} helper calls, got {helperCallsNeutralized}");
+Console.WriteLine($"SYNTHETIC_HELPERS_NEUTRALIZED calls={helperCallsNeutralized} methods={helperMethods.Count} targeted_calls={helperTargetedCalls} strategy=call_to_pop");
 
 var goodListAdd = allBefore.Where(x => x.HasBody).SelectMany(x => x.Body.Instructions)
     .Select(i => i.Operand as MethodReference)
@@ -255,12 +277,13 @@ for (int k = 1; k + 3 < bi.Count; k++)
     if (bi[k].OpCode.Code != Code.Call || bi[k].Operand is not MethodReference setter) continue;
     if (setter.DeclaringType.FullName != "TMPro.TMP_Text" || setter.Name != "set_color" || setter.Parameters.Count != 1 || setter.Parameters[0].ParameterType.FullName != "UnityEngine.Color") continue;
     var prev = bi[k - 1]; var n1 = bi[k + 1]; var n2 = bi[k + 2]; var n3 = bi[k + 3];
-    if (prev.OpCode.Code != Code.Ldloca || prev.Operand is not VariableDefinition cv || cv.VariableType.FullName != "UnityEngine.Color")
-        throw new InvalidDataException("Button_z text setter source pattern drift");
+    var cvIndex = LoadLocalAddressIndex(prev);
+    if (cvIndex is null || cvIndex < 0 || cvIndex >= buttonAwake.Body.Variables.Count || buttonAwake.Body.Variables[cvIndex.Value].VariableType.FullName != "UnityEngine.Color")
+        throw new InvalidDataException($"Button_z text setter source pattern drift: prev={prev.OpCode.Code} operand={prev.Operand}");
     if (n1.OpCode.Code != Code.Ldarg_0 || n2.OpCode.Code != Code.Ldfld || n2.Operand is not FieldReference nf || nf.MetadataToken.ToUInt32() != normalText.MetadataToken.ToUInt32())
-        throw new InvalidDataException("Button_z text normalColor load pattern drift");
-    if (n3.OpCode.Code != Code.Stloc || n3.Operand is not VariableDefinition sv || sv.Index != cv.Index)
-        throw new InvalidDataException("Button_z text temporary store pattern drift");
+        throw new InvalidDataException($"Button_z text normalColor load pattern drift: next={n1.OpCode.Code},{n2.OpCode.Code} field={n2.Operand}");
+    if (StoreLocalIndex(n3) != cvIndex)
+        throw new InvalidDataException($"Button_z text temporary store pattern drift: store={n3.OpCode.Code} operand={n3.Operand} expectedLocal={cvIndex}");
     if (new[] { prev, bi[k], n1, n2, n3 }.Any(buttonTargets.Contains))
         throw new InvalidDataException("Button_z text color repair span unexpectedly contains a branch/EH target");
     prev.OpCode = OpCodes.Ldarg_0; prev.Operand = null;
@@ -279,8 +302,9 @@ for (int k = 1; k < bi.Count; k++)
     if (bi[k].OpCode.Code != Code.Call || bi[k].Operand is not MethodReference setter) continue;
     if (setter.DeclaringType.FullName != "UnityEngine.UI.Graphic" || setter.Name != "set_color" || setter.Parameters.Count != 1 || setter.Parameters[0].ParameterType.FullName != "UnityEngine.Color") continue;
     var prev = bi[k - 1];
-    if (prev.OpCode.Code != Code.Ldloca || prev.Operand is not VariableDefinition cv || cv.VariableType.FullName != "UnityEngine.Color")
-        throw new InvalidDataException("Button_z image setter source pattern drift");
+    var cvIndex = LoadLocalAddressIndex(prev);
+    if (cvIndex is null || cvIndex < 0 || cvIndex >= buttonAwake.Body.Variables.Count || buttonAwake.Body.Variables[cvIndex.Value].VariableType.FullName != "UnityEngine.Color")
+        throw new InvalidDataException($"Button_z image setter source pattern drift: prev={prev.OpCode.Code} operand={prev.Operand}");
     if (buttonTargets.Contains(prev) || buttonTargets.Contains(bi[k]))
         throw new InvalidDataException("Button_z image color repair span unexpectedly contains a branch/EH target");
     var savedOp = bi[k].OpCode;
