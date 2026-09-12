@@ -1,0 +1,76 @@
+name: Stage9.1 bad91 InitializeNewPlantSave repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-bad91-initialize-new-plant-save-gate.yml'
+      - 'Tools/Stage9InitializeNewPlantSavePatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  initialize-new-plant-save:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact bad91 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34718609750
+          pattern: Stage9.1-338b-WINDOWI-POPUPNEW
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plant-save/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plant-save/ilspy
+      - name: Apply exact repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plant-save"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-popupnew.dll"; DLL="$OUT/GodsPVZRuntime1-plant-save.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = 'bad91c3610837a05e38dbccf5b25730bcdb30b242f213af885a3b31a1c0ed3a0' ] || exit 61
+          dotnet build Tools/Stage9InitializeNewPlantSavePatch/Stage9InitializeNewPlantSavePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9InitializeNewPlantSavePatch/Stage9InitializeNewPlantSavePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^PATCH_PLANTSAVE_NULL_CHECKS sites=10 opcode=ldnull$' "$E/patch.log"
+          grep -q '^PATCH_PLANTSAVE_NULL_RETURN local=PlantSave$' "$E/patch.log"
+          grep -q '^REOPEN_PLANTSAVE_PASS null_checks=10 null_return=1 token=0x' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plant-save"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-plant-save.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t SavesManager "$DLL" > "$E/SavesManager.cs" 2> "$E/SavesManager.stderr"; test ! -s "$E/SavesManager.stderr"
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("$RUNNER_TEMP/stage9-plant-save/evidence/SavesManager.cs").read_text()
+          start=s.index('public PlantSave InitializeNewPlantSave(int ID)')
+          end=s.index('public PlantSave InitializeNewPlantSave(int ID, int order, int level, int skillLevel)', start)
+          m=s[start:end]
+          Path("$RUNNER_TEMP/stage9-plant-save/evidence/InitializeNewPlantSave.cs").write_text(m)
+          assert 'return null;' in m
+          assert '(PlantSave)(object)new NullReferenceException()' not in m
+          assert 'Invalid IL' not in m and 'Expected ' not in m and 'Unknown result type' not in m
+          print('ILSPY_PLANTSAVE_PASS method=InitializeNewPlantSave(int)')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-bad91-INITIALIZE-NEW-PLANT-SAVE
+          path: ${{ runner.temp }}/stage9-plant-save/evidence/
+          if-no-files-found: error
+          retention-days: 90
