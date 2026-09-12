@@ -133,10 +133,8 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
           mkdir -p "$D"
-          (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) > "$OUT/editor.tar.xz"
-          [ "$(sha256sum "$OUT/editor.tar.xz" | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
-          xz -dc "$OUT/editor.tar.xz" | tar -xf - -C "$D"
-          rm "$OUT/editor.tar.xz"
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
+          (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
           U="$D/Editor/Unity"; chmod +x "$U"
           "$U" -version > "$E/unity-version.txt" 2>&1
           grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 82
