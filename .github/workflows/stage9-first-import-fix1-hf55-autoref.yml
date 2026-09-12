@@ -1,0 +1,253 @@
+name: Stage9.1 FIRST IMPORT Fix1 - HF55 Auto Reference
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-first-import-fix1-hf55-autoref.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  fix1-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Prepare evidence and verify secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"
+          mkdir -p "$OUT/evidence"
+          [ -n "${UNITY_EMAIL:-}" ] && [ -n "${UNITY_PASSWORD:-}" ] || exit 51
+          echo 'Unity account secrets present; values not emitted.' > "$OUT/evidence/secret-presence.txt"
+
+      - name: Download and verify formal R2
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"
+          E="$OUT/evidence"
+          PARTS="$OUT/r2-parts"
+          mkdir -p "$PARTS"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/r2.tsv" <<'EOF'
+          00	1Z8XaczeHLaActdzRFDo98l8pQvRm7hpx	d0194311c47c551b1dd4deec8aeb8bffc4118d5e9559daefee666b2e5c7f6c8b	67108864
+          01	1bYAxLkatfAlzD6GRVpxk_NuLs1kJjLL9	814023ab5ef90902a0ff9bb327e38d77c2dc13ae4dd5012b61478959f354a583	67108864
+          02	1P3z9TXKsqWn8iQdJhAjY0mvSSKx-Wzni	34c0aa890f22393e6dd695747b039818c2956302f9f94bd36abeace9fba7eb3f	67108864
+          03	1PJO7C-HSdvZaD9fYbM0WqQmfy6E1ZAKU	f3996d5d9ecb30a343c5421ba6f1bcc9fdfae1448325081611ed4ea34a1d7135	67108864
+          04	1042yQOQ_PX3RwKLcpFhYwQ6__NcXyKxR	e79204af4c4962a89e72b1881ae64e59362bc61a1abe61a9b50d774974076912	67108864
+          05	1SbMab5cdBIURKecvapYgVoAIDYSrcvTB	eec487ac8d777c12da18629260cdec9a9e6b004c03a625d6361b4129da0ba915	67108864
+          06	1sYIn-qxdWd-LIDG4KbbKs0KlkMRmTGKp	16e57cb992f5a64c2c91bc62ad824b57efd735f9a89313f2d05efe7859da7387	67108864
+          07	1xWoKg75tCOEjnjTepgZ0i87IAo2Hgf_g	817c2b15b0be673b36d8742d30d704c0c694df1112047411b88a63cf80c23e2a	67108864
+          08	1eQMhMJxlMDGOH6OjCcHUsDZP_MLYaatC	528c88882e75577418f48c3cccbc676ab85c9ccb12f25f823448add2fb0d2f43	67108864
+          09	1WNW8uV5vD3Sa172gzGjCTmlK_DHPUF91	967c09f1cfbcae8ce1ad87680a0eb178f30e21ee72e74ae57e8d2537e7ef245c	67108864
+          10	1oQ_P1OaakT6MPv0jcLa2Qs5CSRuexYS4	e74c02064ca8f5e4150c293d3cd084563321ce3295cb8518b07fe208e888096e	67108864
+          11	1r_8hjfJdkOP0GzJ_tlvogpFM_L5dJU7S	6c6a46216303a8f5ce42966159575927f75e692d6849aaffe7cd854a0c7e2aff	48284175
+          EOF
+          : > "$E/r2-parts.tsv"
+          while IFS=$'\t' read -r idx fid sha size; do
+            f="$PARTS/r2.${idx}.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            a_sha="$(sha256sum "$f" | awk '{print $1}')"; a_size="$(stat -c %s "$f")"
+            [ "$a_sha" = "$sha" ] && [ "$a_size" = "$size" ] || exit 52
+            printf '%s\tPASS\t%s\t%s\n' "$idx" "$a_sha" "$a_size" >> "$E/r2-parts.tsv"
+          done < "$OUT/r2.tsv"
+          ARCH="$OUT/r2.tar.zst"
+          cat "$PARTS"/*.part > "$ARCH"
+          SHA="$(sha256sum "$ARCH" | awk '{print $1}')"; SIZE="$(stat -c %s "$ARCH")"
+          echo "$SHA" > "$E/r2-sha256.txt"; echo "$SIZE" > "$E/r2-size.txt"
+          [ "$SHA" = '99bc1ed7a713b627919fee8c3f63bbed5eb949ede72b32a7a5866a067d1b2a0e' ] || exit 53
+          [ "$SIZE" = '786481679' ] || exit 54
+          zstd -t "$ARCH" 2> "$E/r2-zstd-test.txt"
+          mkdir -p "$OUT/r2"
+          zstd -dc "$ARCH" | tar -xf - -C "$OUT/r2"
+          rm -rf "$PARTS" "$ARCH"
+          PROJECT="$OUT/r2/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          [ -d "$PROJECT" ] || exit 55
+          echo "$PROJECT" > "$OUT/project-path.txt"
+          HF55="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          [ "$(sha256sum "$HF55" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 56
+          grep -qx 'm_EditorVersion: 2022.3.44f1c1' "$PROJECT/ProjectSettings/ProjectVersion.txt" || exit 57
+          echo 'FORMAL_R2_HASH_GATE_PASS' > "$E/r2-gate.txt"
+
+      - name: Apply Fix1 only to disposable copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project-path.txt")"
+          META="$PROJECT/Assets/Plugins/Assembly-CSharp.dll.meta"
+          cp "$META" "$E/Assembly-CSharp.dll.meta.before"
+          sha256sum "$META" > "$E/hf55-meta-before-sha256.txt"
+          grep -q '^  isExplicitlyReferenced: 0$' "$META" || { echo 'Expected HF55 Auto Reference state not found' >&2; exit 58; }
+          sed -i 's/^  isExplicitlyReferenced: 0$/  isExplicitlyReferenced: 1/' "$META"
+          grep -q '^  isExplicitlyReferenced: 1$' "$META" || exit 59
+          cp "$META" "$E/Assembly-CSharp.dll.meta.after"
+          sha256sum "$META" > "$E/hf55-meta-after-sha256.txt"
+          diff -u "$E/Assembly-CSharp.dll.meta.before" "$E/Assembly-CSharp.dll.meta.after" > "$E/FIX1.diff" || true
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 60
+          echo 'Fix1: HF55 Auto Reference disabled; DLL unchanged.' > "$E/FIX1.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-fix1/editor-parts
+
+      - name: Reconstruct exact Unity China 2022.3.44f1c1
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"; E="$OUT/evidence"; PARTS="$OUT/editor-parts"; EDITOR="$OUT/editor"
+          mkdir -p "$EDITOR"
+          cat > "$OUT/editor.sha256" <<'EOF'
+          c2cb7252b28c99581fd1ebfa7bd0d63b82fbdfd66ed9323327560eab9f9c5b12  Unity-China-2022.3.44f1c1.tar.xz.part-00
+          6f9af6d8bfae2d0dcb5482778fdb2ffee9bf8a4eb32b3030601d2d817eff5380  Unity-China-2022.3.44f1c1.tar.xz.part-01
+          daf4e501efa59d388cec09fb1bb69fb71b074933c20389748fc1aaab5b4f1b6e  Unity-China-2022.3.44f1c1.tar.xz.part-02
+          e8870b1b8ac3354302b3d4c7fa80a74249d3f2ca1d442a0fb978448ad2b7a586  Unity-China-2022.3.44f1c1.tar.xz.part-03
+          115be82c7f103fd0888e28ee316c6cd1e877d4d14939388e3be40d877e8591d4  Unity-China-2022.3.44f1c1.tar.xz.part-04
+          2efe6703f8a4b871275bde3c742c61d5b4a3322bb56fcbaf417cb9a80e90a97e  Unity-China-2022.3.44f1c1.tar.xz.part-05
+          e7b300ff6e5639c0e5d6cbc065ec6918e4dc4d36ae8abab8f97c896af8b595f1  Unity-China-2022.3.44f1c1.tar.xz.part-06
+          00f364a9e6619acd9ed466ae46055a9480d7c62a76914f713e69c3fa94abf151  Unity-China-2022.3.44f1c1.tar.xz.part-07
+          0f7b8225b57960ba08b104f20869ce42707c17df290c143d4e3bd9dc3a26c0e2  Unity-China-2022.3.44f1c1.tar.xz.part-08
+          6930abaf854320d200b069d135800fc310abcb0cb9a910e88ce68693e69a6d0a  Unity-China-2022.3.44f1c1.tar.xz.part-09
+          47b0bb1451d33932ee9f56fea9f10d7ffbffd578b8105c212401119182c3d0f0  Unity-China-2022.3.44f1c1.tar.xz.part-10
+          b5377382ceb94492a1c5288aee7c598f0495cfd108666ba2857059f6ecd92b7f  Unity-China-2022.3.44f1c1.tar.xz.part-11
+          9d6c3a3e5c94104c783620c13095460638604f9ca92fb5017d1142970710e116  Unity-China-2022.3.44f1c1.tar.xz.part-12
+          7541e40151f60c3882a82650595a4d9a97f2fdc2fe49469f440aef8f7996cc0a  Unity-China-2022.3.44f1c1.tar.xz.part-13
+          c364240981c3a762bc3be6b61db0170bd7d168b3e7c3d14d48770e72e897e830  Unity-China-2022.3.44f1c1.tar.xz.part-14
+          EOF
+          [ "$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)" = '15' ] || exit 61
+          (cd "$PARTS" && sha256sum -c "$OUT/editor.sha256") > "$E/editor-part-sha256-check.txt"
+          SHA="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')"
+          SIZE="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | wc -c)"
+          echo "$SHA" > "$E/editor-sha256.txt"; echo "$SIZE" > "$E/editor-size.txt"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 62
+          [ "$SIZE" = '3906640940' ] || exit 63
+          (for p in "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; rm -f "$p"; done) | xz -dc | tar -xf - -C "$EDITOR"
+          UNITY="$EDITOR/Editor/Unity"; chmod +x "$UNITY"
+          V="$("$UNITY" -version 2>&1)"; echo "$V" > "$E/unity-version.txt"
+          echo "$V" | grep -q '2022.3.44f1c1' || exit 64
+          echo "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$PARTS"
+
+      - name: Acquire Personal seat and probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"; E="$OUT/evidence"; UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          [ -x "$CLIENT" ] || exit 65
+          "$CLIENT" --help > "$E/licensing-client-help.txt" 2>&1 || true
+          grep -q -- '--include-personal' "$E/licensing-client-help.txt" || exit 66
+          RAW="$OUT/activation.log"
+          set +e; "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$RAW" 2>&1; RC=$?; set -e
+          echo "$RC" > "$E/activation-exit.txt"
+          python3 - "$RAW" "$E/activation-sanitized.log" <<'PY'
+          import re,sys
+          s=re.compile(r'(access.?token|refresh.?token|password|username|e-?mail|serial|license key)',re.I)
+          lines=open(sys.argv[1],encoding='utf-8',errors='replace').read().splitlines()
+          open(sys.argv[2],'w').write('\n'.join('[REDACTED]' if s.search(x) else x for x in lines)+'\n')
+          PY
+          rm -f "$RAW"; [ "$RC" -eq 0 ] || exit 67
+          echo ACQUIRED > "$OUT/seat.flag"
+          set +e; "$UNITY" -batchmode -nographics -quit -logFile "$OUT/probe.log"; P=$?; set -e
+          echo "$P" > "$E/probe-exit.txt"; [ "$P" -eq 0 ] || exit 68
+          ! grep -q 'No valid Unity Editor license found' "$OUT/probe.log" || exit 69
+          rm -f "$OUT/probe.log"
+
+      - name: Run Fix1 import
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"; E="$OUT/evidence"; UNITY="$(cat "$OUT/unity-path.txt")"; PROJECT="$(cat "$OUT/project-path.txt")"
+          date -u +%FT%TZ > "$E/import-start.txt"
+          set +e; "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$OUT/Editor.log" > "$E/import-stdout.txt" 2> "$E/import-stderr.txt"; RC=$?; set -e
+          date -u +%FT%TZ > "$E/import-end.txt"; echo "$RC" > "$E/import-exit.txt"
+          cp "$OUT/Editor.log" "$E/Editor.log"
+          echo ATTEMPTED > "$OUT/import.flag"
+          exit 0
+
+      - name: Classify Fix1 import
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"; E="$OUT/evidence"
+          if [ ! -f "$OUT/import.flag" ]; then echo '{"fix1_pass":false,"classification":"NOT_ATTEMPTED"}' > "$E/RESULT.json"; exit 0; fi
+          RC="$(cat "$E/import-exit.txt")"
+          python3 - "$E/Editor.log" "$RC" "$E/RESULT.json" <<'PY'
+          import json,re,sys
+          log=open(sys.argv[1],encoding='utf-8',errors='replace').read().splitlines(); rc=int(sys.argv[2])
+          pats={
+            'compile_errors':r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',
+            'package_errors':r'Failed to resolve packages|Package resolution failed|\[Package Manager\].*(?:error|failed)',
+            'assembly_collisions':r'Multiple precompiled assemblies|Assembly with name .* already exists',
+            'serialization_errors':r'YAML parse error|SerializedFile.*error|PPtr.*failed',
+            'missing_script_errors':r'referenced script .* is missing|The referenced script on this Behaviour',
+            'license_errors':r'No valid Unity Editor license found|Machine bindings don.t match',
+            'fatal_errors':r'Aborting batchmode due to failure|Fatal Error|Crash!!!'}
+          counts={k:sum(bool(re.search(v,x,re.I)) for x in log) for k,v in pats.items()}
+          blocking=sum(counts.values())
+          passed=(rc==0 and blocking==0)
+          if passed: cls='FIX1_IMPORT_PASS'
+          elif counts['license_errors']: cls='LICENSE_BLOCKER'
+          elif counts['compile_errors'] or counts['assembly_collisions']: cls='COMPILE_BLOCKER'
+          elif counts['package_errors']: cls='PACKAGE_BLOCKER'
+          elif counts['serialization_errors'] or counts['missing_script_errors']: cls='SERIALIZATION_BLOCKER'
+          elif rc!=0: cls='UNITY_NONZERO_EXIT'
+          else: cls='DIAGNOSTIC_BLOCKER'
+          d={'fix1_pass':passed,'classification':cls,'unity_exit_code':rc,'diagnostic_counts':counts,'hf55_dll_sha_unchanged':True,'change':'Assembly-CSharp.dll.meta isExplicitlyReferenced 0->1','hf56_authorized':False}
+          open(sys.argv[3],'w').write(json.dumps(d,indent=2,sort_keys=True)+'\n'); print(json.dumps(d,indent=2,sort_keys=True))
+          PY
+          PROJECT="$(cat "$OUT/project-path.txt" 2>/dev/null || true)"
+          if [ -n "$PROJECT" ]; then
+            sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" > "$E/hf55-dll-post-sha256.txt" || true
+            [ -f "$PROJECT/Packages/packages-lock.json" ] && cp "$PROJECT/Packages/packages-lock.json" "$E/packages-lock.json" || true
+          fi
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-fix1"; E="$OUT/evidence"
+          if [ -f "$OUT/seat.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"; CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e; "$CLIENT" --return-ulf > "$OUT/return.log" 2>&1; RC=$?; set -e
+            echo "$RC" > "$E/license-return-exit.txt"
+            rm -f "$OUT/return.log"
+          fi
+
+      - name: Upload Fix1 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-FIRST-IMPORT-FIX1-HF55-AUTOREF-evidence
+          path: ${{ runner.temp }}/stage9-fix1/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Enforce Fix1 result
+        if: always()
+        shell: bash
+        run: |
+          R="$RUNNER_TEMP/stage9-fix1/evidence/RESULT.json"
+          [ -f "$R" ] || exit 90
+          python3 - "$R" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1])); print(json.dumps(d,indent=2,sort_keys=True))
+          raise SystemExit(0 if d.get('fix1_pass') else 91)
+          PY
