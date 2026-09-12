@@ -92,7 +92,7 @@ jobs:
           namespace Stage9Integration { internal static class HF55AssemblyAnchor { static readonly Type[] A={typeof(global::GameStart),typeof(global::BoardStart)}; [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void EnsureLoaded(){if(A.Length!=2)throw new InvalidOperationException();} } }
           EOF
           cat > "$T/Stage9.PlayModeSmoke.asmdef" <<'EOF'
-          {"name":"Stage9.PlayModeSmoke","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
+          {"name":"Stage9.PlayModeSmoke.Tests","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
           EOF
           cat > "$T/Stage9PlayModeSmoke.cs" <<'EOF'
           using System.Collections; using System.Collections.Generic; using NUnit.Framework; using UnityEngine; using UnityEngine.EventSystems; using UnityEngine.SceneManagement; using UnityEngine.TestTools;
