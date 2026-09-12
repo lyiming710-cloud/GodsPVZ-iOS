@@ -1,0 +1,77 @@
+name: Stage9.1 52ec MainMenu popup-path gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-52ec-mainmenu-popup-path-gate.yml'
+      - 'Tools/Stage9MainMenuPopupPathPatch/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  popup-path:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 52ec Window_I candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34717021518
+          pattern: Stage9.1-dc2d-WINDOWI-CONTROLFLOW
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-popup/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-popup/ilspy
+      - name: Build and apply bounded popup-path repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-popup"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-windowi-controlflow.dll"; DLL="$OUT/GodsPVZRuntime1-mainmenu-popup-path.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '52ec4dac6d7290a218836a9e977bb5f7bb8bff08252b8feaf2f67d94d8e136f4' ] || exit 61
+          dotnet build Tools/Stage9MainMenuPopupPathPatch/Stage9MainMenuPopupPathPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9MainMenuPopupPathPatch/Stage9MainMenuPopupPathPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^PATCH_MAINUI_INSTANCE sites=2 backing_field=0x04000843 getter=0x06000636$' "$E/patch.log"
+          grep -q '^PATCH_WINDOWI_CTOR info0_int=-1 opcode=ldc.i4.m1$' "$E/patch.log"
+          grep -q '^REOPEN_MAINMENU_POPUP_PATH_PASS instance_getter_sites=2 windowi_ctor_int32=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2314 changed_methods=3$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-popup"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-mainmenu-popup-path.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -m 0x0600024F "$DLL" > "$E/TryCreateNewPlayerSave.cs" 2> "$E/TryCreate.stderr"; test ! -s "$E/TryCreate.stderr"
+          grep -q 'MainUIController.instance' "$E/TryCreateNewPlayerSave.cs" || grep -q 'MainUIController.get_instance' "$E/TryCreateNewPlayerSave.cs"
+          ! grep -q '<instance>k__BackingField' "$E/TryCreateNewPlayerSave.cs"
+          "$ILSPY" -m 0x0600023B "$DLL" > "$E/CreateNewPlayerSaveList.cs" 2> "$E/CreateList.stderr"; test ! -s "$E/CreateList.stderr"
+          grep -q 'MainUIController.instance' "$E/CreateNewPlayerSaveList.cs" || grep -q 'MainUIController.get_instance' "$E/CreateNewPlayerSaveList.cs"
+          "$ILSPY" -m 0x060006FB "$DLL" > "$E/Window_I.ctor.cs" 2> "$E/Window_I.ctor.stderr"; test ! -s "$E/Window_I.ctor.stderr"
+          grep -q 'info0_int = -1' "$E/Window_I.ctor.cs"
+          ! grep -Eq 'Invalid IL|Expected [A-Z0-9]|Unknown result type' "$E/Window_I.ctor.cs"
+          echo 'ILSPY_MAINMENU_POPUP_PATH_PASS methods=0x0600023B,0x0600024F,0x060006FB' | tee "$E/ilspy-pass.txt"
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-52ec-MAINMENU-POPUP-PATH
+          path: ${{ runner.temp }}/stage9-popup/evidence/
+          if-no-files-found: error
+          retention-days: 90
