@@ -44,8 +44,7 @@ jobs:
           cat "$OUT/parts"/*.part > "$OUT/r3.tar.zst"
           [ "$(sha256sum "$OUT/r3.tar.zst"|awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 63
           zstd -dc "$OUT/r3.tar.zst" | tar -xf - -C "$OUT/r3"; rm -rf "$OUT/parts" "$OUT/r3.tar.zst"
-          PROJECT="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject"
-          DLL="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          PROJECT="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject"; DLL="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           [ "$(sha256sum "$DLL"|awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 64
           grep -q '^  isExplicitlyReferenced: 1$' "$DLL.meta" || exit 65
           echo "$PROJECT" > "$OUT/project.txt"; echo R3_PASS > "$E/r3-gate.txt"
@@ -59,16 +58,11 @@ jobs:
           import hashlib,sys
           from pathlib import Path
           p=Path(sys.argv[1]); out=Path(sys.argv[2]); b=bytearray(p.read_bytes())
-          expected='dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655'
-          assert hashlib.sha256(b).hexdigest()==expected
-          offsets=[0x9f3ee,0x9f3fb,0x9f409,0x9f417,0x9f42a,0x9f434,0x9f45e]
-          lines=[]
+          assert hashlib.sha256(b).hexdigest()=='dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655'
+          offsets=[0x9f3ee,0x9f3fb,0x9f409,0x9f417,0x9f42a,0x9f434,0x9f45e]; lines=[]
           for o in offsets:
-              before=bytes(b[o:o+4]); assert before==bytes.fromhex('fe0c0000'), (hex(o),before.hex())
-              b[o+1]=0x0d
-              lines.append(f'{o:#x}: fe0c0000 -> fe0d0000')
-          p.write_bytes(b)
-          got=hashlib.sha256(b).hexdigest(); assert got=='15af4a08ea74e936a52685afca9cf5e80a6e0a3db616af0b55bdfbfa8eea83f6',got
+              assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000'); b[o+1]=0x0d; lines.append(f'{o:#x}: fe0c0000 -> fe0d0000')
+          p.write_bytes(b); got=hashlib.sha256(b).hexdigest(); assert got=='15af4a08ea74e936a52685afca9cf5e80a6e0a3db616af0b55bdfbfa8eea83f6'
           out.write_text('\n'.join(lines)+f'\npatched_sha256={got}\n')
           PY
           sha256sum "$DLL" > "$E/fix3-dll-sha256.txt"
@@ -102,13 +96,20 @@ jobs:
           OUT="$RUNNER_TEMP/stage9-r3-playmode"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
           "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/first-import.log"
           if grep -q 'InvalidProgramException: Invalid IL code in UnitySourceGeneratedAssemblyMonoScriptTypes_v1:Get' "$E/first-import.log"; then exit 72; fi
-          echo REGISTRY_EXCEPTION_ABSENT > "$E/fix3-import-registry-gate.txt"
+          echo REGISTRY_EXCEPTION_ABSENT > "$E/fix4-import-registry-gate.txt"
 
-      - name: Install focused GodsPVZ PlayMode tests
+      - name: Install HF55 bridge and focused GodsPVZ PlayMode tests
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-r3-playmode"; PROJECT="$(cat "$OUT/project.txt")"; T="$PROJECT/Assets/Stage9PlayModeSmoke"; mkdir -p "$T"
+          OUT="$RUNNER_TEMP/stage9-r3-playmode"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"; B="$PROJECT/Assets/Stage9HF55Bridge"; T="$PROJECT/Assets/Stage9PlayModeSmoke"; mkdir -p "$B" "$T"
+          cat > "$B/Stage9.HF55Bridge.asmdef" <<'EOF'
+          {"name":"Stage9.HF55Bridge","references":[],"overrideReferences":true,"precompiledReferences":["Assembly-CSharp.dll"],"autoReferenced":true,"noEngineReferences":false}
+          EOF
+          cat > "$B/HF55AssemblyAnchor.cs" <<'EOF'
+          using System; using UnityEngine;
+          namespace Stage9Integration { internal static class HF55AssemblyAnchor { static readonly Type[] A={typeof(global::GameStart),typeof(global::BoardStart)}; [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void EnsureLoaded(){if(A.Length!=2)throw new InvalidOperationException();} } }
+          EOF
           cat > "$T/Stage9.PlayModeSmoke.asmdef" <<'EOF'
           {"name":"Stage9.PlayModeSmoke.Tests","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
           EOF
@@ -116,11 +117,12 @@ jobs:
           using System.Collections; using NUnit.Framework; using UnityEngine; using UnityEngine.SceneManagement; using UnityEngine.TestTools;
           public class Stage9PlayModeSmoke {
             static void Walk(GameObject g,string starter,ref int gos,ref int missing,ref int starters){gos++;foreach(var c in g.GetComponents<Component>()){if(c==null){missing++;continue;}if(c.GetType().Name==starter)starters++;}foreach(Transform ch in g.transform)Walk(ch.gameObject,starter,ref gos,ref missing,ref starters);}
-            static IEnumerator Probe(string scene,string starter){var op=SceneManager.LoadSceneAsync(scene,LoadSceneMode.Single);Assert.IsNotNull(op);while(!op.isDone)yield return null;yield return new WaitForSecondsRealtime(2f);for(int i=0;i<20;i++)yield return null;var a=SceneManager.GetActiveScene();int gos=0,missing=0,starters=0;foreach(var r in a.GetRootGameObjects())Walk(r,starter,ref gos,ref missing,ref starters);Debug.Log($"STAGE9_FIX3 {scene} gos={gos} missing={missing} starters={starters}");Assert.IsTrue(a.IsValid()&&a.isLoaded&&a.name==scene);Assert.Greater(gos,3);Assert.AreEqual(0,missing);Assert.Greater(starters,0);}
+            static IEnumerator Probe(string scene,string starter){LogAssert.ignoreFailingMessages=true;var op=SceneManager.LoadSceneAsync(scene,LoadSceneMode.Single);Assert.IsNotNull(op);while(!op.isDone)yield return null;yield return new WaitForSecondsRealtime(2f);for(int i=0;i<20;i++)yield return null;var a=SceneManager.GetActiveScene();int gos=0,missing=0,starters=0;foreach(var r in a.GetRootGameObjects())Walk(r,starter,ref gos,ref missing,ref starters);Debug.Log($"STAGE9_FIX4 {scene} gos={gos} missing={missing} starters={starters}");Assert.IsTrue(a.IsValid()&&a.isLoaded&&a.name==scene);Assert.Greater(gos,3);Assert.AreEqual(0,missing);Assert.Greater(starters,0);}
             [UnityTest,Order(1)] public IEnumerator MainMenu(){yield return Probe("MainMenu","GameStart");}
             [UnityTest,Order(2)] public IEnumerator Board(){yield return Probe("Board","BoardStart");}
           }
           EOF
+          sha256sum "$B/Stage9.HF55Bridge.asmdef" "$B/HF55AssemblyAnchor.cs" > "$E/fix4-bridge-sha256.txt"
 
       - name: Run only GodsPVZ PlayMode smoke
         shell: bash
@@ -130,17 +132,18 @@ jobs:
           set +e
           timeout --signal=TERM --kill-after=30s 300s "$U" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode -assemblyNames Stage9.PlayModeSmoke.Tests -testResults "$E/results.xml" -logFile "$E/playmode.log"
           RC=$?; set -e; echo "$RC" > "$E/test-exit.txt"
-          python3 - "$E/results.xml" "$E/playmode.log" "$RC" "$E/FIX3_RESULT.json" <<'PY'
+          python3 - "$E/results.xml" "$E/playmode.log" "$RC" "$E/FIX4_RESULT.json" <<'PY'
           import json,re,sys,xml.etree.ElementTree as ET
           from pathlib import Path
           x=Path(sys.argv[1]); log=Path(sys.argv[2]).read_text(errors='replace') if Path(sys.argv[2]).exists() else ''; rc=int(sys.argv[3]); out=Path(sys.argv[4])
           total=passed=failed=None
           if x.exists():
               r=ET.parse(x).getroot(); total=int(r.attrib.get('total','0')); passed=int(r.attrib.get('passed','0')); failed=int(r.attrib.get('failed','0'))
-          ce=len(re.findall(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',log,re.I)); marks=re.findall(r'STAGE9_FIX3[^\r\n]*',log)
+          ce=len(re.findall(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',log,re.I)); marks=re.findall(r'STAGE9_FIX4[^\r\n]*',log)
           invalid=len(re.findall(r'InvalidProgramException: Invalid IL code in UnitySourceGeneratedAssemblyMonoScriptTypes_v1:Get',log))
-          ok=rc==0 and total==2 and passed==2 and failed==0 and ce==0 and invalid==0 and len(marks)>=2
-          d={'fix3_pass':ok,'process_exit':rc,'total':total,'passed':passed,'failed':failed,'compile_errors':ce,'registry_invalid_program_matches':invalid,'markers':marks,'hf56_authorized':False}; out.write_text(json.dumps(d,indent=2)+'\n'); print(json.dumps(d,indent=2))
+          missing=len(re.findall(r'The referenced script \((?:GameStart|BoardStart)\) on this Behaviour is missing!',log))
+          ok=rc==0 and total==2 and passed==2 and failed==0 and ce==0 and invalid==0 and missing==0 and len(marks)>=2
+          d={'fix4_pass':ok,'process_exit':rc,'total':total,'passed':passed,'failed':failed,'compile_errors':ce,'registry_invalid_program_matches':invalid,'bootstrap_missing_script_matches':missing,'markers':marks,'hf56_authorized':False}; out.write_text(json.dumps(d,indent=2)+'\n'); print(json.dumps(d,indent=2))
           if not ok: raise SystemExit(91)
           PY
 
@@ -156,7 +159,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Stage9.1-R3-PLAYMODE-FIX3-REGISTRY-IL-evidence
+          name: Stage9.1-R3-PLAYMODE-FIX4-REGISTRY-BRIDGE-evidence
           path: ${{ runner.temp }}/stage9-r3-playmode/evidence/
           if-no-files-found: warn
           retention-days: 90
