@@ -111,9 +111,53 @@ An earlier 4698-byte evidence archive from before the `-force-free` check is als
 
 No existing repository reference to `UNITY_LICENSE` or a Unity activation workflow was found during the blocker check. No Unity license/token file or relevant Unity license environment variable was present in the execution runtime.
 
+## GitHub Actions Personal-license gate
+
+After `UNITY_LICENSE` was added as a repository secret, a dedicated no-project license gate was run before touching R2.
+
+Formal preserved-editor gate:
+
+- workflow: `.github/workflows/stage9-unity-license-gate-preserved.yml`
+- workflow run: `34674367001`
+- job: `103501451009`
+- source editor preservation run: `34668863583`
+- all 15 preserved editor artifacts downloaded: PASS
+- all 15 raw part SHA256 values: PASS
+- rejoined editor SHA256: `0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14`
+- exact `2022.3.44f1c1` editor reconstruction/version gate: PASS
+- `UNITY_LICENSE` secret present/non-empty: PASS
+- manual license import exit: `1`
+- persisted license probe exit: `1`
+- `license_gate_pass`: `false`
+- project import attempted: NO
+- R2 touched: NO
+- HF56 authorized: NO
+
+The decisive licensing error was:
+
+```text
+[Licensing::Module] Loading manual activation license file .../Unity_lic.ulf.
+[Licensing::Client] Error: Code 400 while processing request (status: Machine bindings don't match)
+```
+
+The follow-up no-argument probe still reported zero matching entitlements and `No valid Unity Editor license found.`
+
+This proves that the locally generated Windows Unity Personal `.ulf` is syntactically readable but is not directly usable on the ephemeral GitHub Linux runner because its machine binding does not match.
+
+Sanitized evidence artifact:
+
+- artifact name: `Stage9.1-unity-license-gate-preserved-evidence`
+- artifact ID: `10291434644`
+- artifact digest: `sha256:8804cf3f2299e5df0f5922ded131cc9620f85d2496fe2e6146caa99b0e883d2c`
+- retention: 90 days
+
+No raw Unity account credential, password, token, or license XML was uploaded as evidence.
+
 ## Required next action
 
 Resolve Unity licensing as an infrastructure task, then rerun the **same exact first-import command against the unchanged disposable work copy**.
+
+For Unity Personal on the GitHub runner, the next controlled gate is account-based Personal activation using the exact editor's bundled Unity Licensing Client, with `UNITY_EMAIL` and `UNITY_PASSWORD` supplied only as GitHub repository secrets. The existing `UNITY_LICENSE` remains in place as the initial file-mode input; on the observed machine-binding mismatch, the account-based path can request a Personal seat for the current runner.
 
 Until a licensed run reaches actual project import:
 
