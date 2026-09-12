@@ -176,9 +176,6 @@ foreach (var m in allBefore.Where(x => x.HasBody))
         if (text.OpCode.Code != Code.Ldstr || text.Operand is not string)
             throw new InvalidDataException($"Cpp2IL helper call lost adjacent ldstr: 0x{RawToken(m):X8} {m.FullName} IL_{call.Offset:X4}");
         if (targets.Contains(call)) helperTargetedCalls++;
-        // Preserve the original stack effect and instruction identity. The synthetic
-        // sequence ldstr; call void NoteDecompilerIssue(string) becomes ldstr; pop.
-        // This remains correct even when the call instruction itself is a branch/EH target.
         call.OpCode = OpCodes.Pop;
         call.Operand = null;
         helperCallsNeutralized++;
@@ -292,6 +289,7 @@ for (int k = 1; k + 3 < bi.Count; k++)
     n2.OpCode = OpCodes.Nop; n2.Operand = null;
     n3.OpCode = OpCodes.Nop; n3.Operand = null;
     textSetterFix++;
+    break;
 }
 if (textSetterFix != 1)
     throw new InvalidDataException($"Expected one Button_z TMP color setter repair, got {textSetterFix}");
