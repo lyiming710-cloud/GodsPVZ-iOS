@@ -20,9 +20,10 @@ jobs:
           set -euo pipefail
           OUT='stage9-unity-editor-preserve'
           PARTS="$OUT/parts"
-          mkdir -p "$OUT" "$PARTS" editor-min
+          mkdir -p "$OUT" "$PARTS" editor
           URL='https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorInstaller/Unity.tar.xz'
           EXPECTED_SIZE='3906640940'
+          EXPECTED_SHA='0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
           EXPECTED_VERSION='2022.3.44f1c1'
           ARCHIVE='Unity-China-2022.3.44f1c1.tar.xz'
 
@@ -34,16 +35,19 @@ jobs:
             printf 'size mismatch: %s != %s\n' "$ACTUAL_SIZE" "$EXPECTED_SIZE" >&2
             exit 31
           fi
+          if [ "$ARCHIVE_SHA" != "$EXPECTED_SHA" ]; then
+            printf 'sha mismatch: %s != %s\n' "$ARCHIVE_SHA" "$EXPECTED_SHA" >&2
+            exit 32
+          fi
           xz -t "$ARCHIVE"
           df -h . > "$OUT/disk-after-download.txt"
 
-          UNITY_MEMBER="$(tar -tJf "$ARCHIVE" | grep -E '(^|/)Editor/Unity$' | head -n 1 || true)"
-          if [ -z "$UNITY_MEMBER" ]; then
-            echo 'Editor/Unity member not found in archive' >&2
-            exit 32
+          tar -xJf "$ARCHIVE" -C editor
+          UNITY='editor/Editor/Unity'
+          if [ ! -f "$UNITY" ]; then
+            echo 'Unity executable not found after full extraction' >&2
+            exit 33
           fi
-          tar -xJf "$ARCHIVE" -C editor-min "$UNITY_MEMBER"
-          UNITY="editor-min/$UNITY_MEMBER"
           chmod +x "$UNITY"
           set +e
           VERSION_OUT="$("$UNITY" -version 2>&1)"
@@ -51,6 +55,7 @@ jobs:
           set -e
           printf '%s\n' "$VERSION_OUT" > "$OUT/unity-version-raw.txt"
           VERSION="$(printf '%s\n' "$VERSION_OUT" | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n 1 || true)"
+          df -h . > "$OUT/disk-after-full-extract.txt"
 
           python3 - <<PY
           import json
@@ -59,9 +64,10 @@ jobs:
             'url': '$URL',
             'expected_size': int('$EXPECTED_SIZE'),
             'download_size': int('$ACTUAL_SIZE'),
+            'expected_sha256': '$EXPECTED_SHA',
             'download_sha256': '$ARCHIVE_SHA',
+            'archive_sha_match': '$ARCHIVE_SHA' == '$EXPECTED_SHA',
             'xz_test': 'PASS',
-            'unity_archive_member': '$UNITY_MEMBER',
             'unity_executable': '$UNITY',
             'version_exit': int('$VERSION_EXIT'),
             'parsed_version': '$VERSION',
@@ -69,7 +75,7 @@ jobs:
             'version_match': '$VERSION' == '$EXPECTED_VERSION',
             'changeset': 'c3ae09b9f03c',
             'source_variant': 'Unity China Linux Editor',
-            'preserve_strategy': 'minimal executable extraction + streaming split/rejoin verification',
+            'preserve_strategy': 'full extraction for version gate; delete editor before split; streaming rejoin verification',
           }
           Path('$OUT/RESULT.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           print(json.dumps(result,indent=2,sort_keys=True))
@@ -77,14 +83,17 @@ jobs:
 
           if [ "$VERSION" != "$EXPECTED_VERSION" ]; then
             echo "Exact editor gate failed: got '$VERSION'" >&2
-            exit 33
+            exit 34
           fi
+
+          rm -rf editor
+          df -h . > "$OUT/disk-after-editor-delete.txt"
 
           split -b 268435456 -d -a 2 "$ARCHIVE" "$PARTS/Unity-China-2022.3.44f1c1.tar.xz.part-"
           PART_COUNT="$(find "$PARTS" -maxdepth 1 -type f | wc -l)"
           if [ "$PART_COUNT" != '15' ]; then
             echo "Unexpected part count: $PART_COUNT" >&2
-            exit 34
+            exit 35
           fi
           df -h . > "$OUT/disk-after-split.txt"
 
@@ -97,9 +106,9 @@ jobs:
 
           REJOIN_SHA="$(cat "$PARTS"/* | sha256sum | awk '{print $1}')"
           REJOIN_SIZE="$(cat "$PARTS"/* | wc -c)"
-          if [ "$REJOIN_SHA" != "$ARCHIVE_SHA" ] || [ "$REJOIN_SIZE" != "$ACTUAL_SIZE" ]; then
+          if [ "$REJOIN_SHA" != "$EXPECTED_SHA" ] || [ "$REJOIN_SIZE" != "$EXPECTED_SIZE" ]; then
             echo 'Streaming split/rejoin verification failed' >&2
-            exit 35
+            exit 36
           fi
           cat "$PARTS"/* | xz -t
 
@@ -112,7 +121,7 @@ jobs:
           d['part_size_bytes']=268435456
           d['split_rejoin_sha256']='$REJOIN_SHA'
           d['split_rejoin_size']=int('$REJOIN_SIZE')
-          d['split_rejoin_match']=('$REJOIN_SHA'=='$ARCHIVE_SHA' and '$REJOIN_SIZE'=='$ACTUAL_SIZE')
+          d['split_rejoin_match']=('$REJOIN_SHA'=='$EXPECTED_SHA' and '$REJOIN_SIZE'=='$EXPECTED_SIZE')
           d['streaming_rejoined_xz_test']='PASS'
           p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           PY
