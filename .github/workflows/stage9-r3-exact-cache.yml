@@ -21,7 +21,7 @@ jobs:
           - {idx: '02', fid: '1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y', sha: '4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2'}
           - {idx: '03', fid: '1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C', sha: 'f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f'}
           - {idx: '04', fid: '1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n', sha: '3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc'}
-          - {idx: '05', fid: '1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2', sha: '13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263c'}
+          - {idx: '05', fid: '1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2', sha: '13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263'}
           - {idx: '06', fid: '1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW', sha: 'd35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c'}
           - {idx: '07', fid: '1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J', sha: '0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec'}
           - {idx: '08', fid: '1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu', sha: '30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8'}
@@ -33,6 +33,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          EXPECTED='${{ matrix.sha }}'
+          [ "${#EXPECTED}" = 64 ] || { echo "invalid expected SHA length idx=${{ matrix.idx }} len=${#EXPECTED}"; exit 60; }
           python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
           mkdir -p "$RUNNER_TEMP/r3part"
           F="$RUNNER_TEMP/r3part/r3.${{ matrix.idx }}.part"
@@ -47,7 +49,7 @@ jobs:
               GOT="$(sha256sum "$F" | awk '{print $1}')"
               SIZE="$(stat -c%s "$F")"
               echo "R3_PART idx=${{ matrix.idx }} attempt=$ATTEMPT size=$SIZE sha=$GOT"
-              if [ "$GOT" = '${{ matrix.sha }}' ]; then OK=1; break; fi
+              if [ "$GOT" = "$EXPECTED" ]; then OK=1; break; fi
             else
               echo "R3_PART idx=${{ matrix.idx }} attempt=$ATTEMPT download_rc=$RC"
             fi
