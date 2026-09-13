@@ -16,8 +16,8 @@ const int ExpectedMethodCount = 2317;
 const int ExpectedFieldCount = 2802;
 const uint GameStartToken = 0x0600067E;
 const uint GetterToken = 0x06000169;
-static readonly HashSet<uint> MapTokens = new() { 0x06000285, 0x06000289, 0x0600028A };
-static readonly HashSet<uint> FinalTokens = new() { GameStartToken, 0x06000285, 0x06000289, 0x0600028A };
+var MapTokens = new HashSet<uint> { 0x06000285, 0x06000289, 0x0600028A };
+var FinalTokens = new HashSet<uint> { GameStartToken, 0x06000285, 0x06000289, 0x0600028A };
 
 static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
 {
