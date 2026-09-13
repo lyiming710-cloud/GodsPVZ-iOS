@@ -1,0 +1,99 @@
+name: Stage9.1 3b1b SetCardChooseList native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-3b1b-setcardchooselist-native-gate.yml'
+      - 'Tools/Stage9SeedChooserSetCardChooseListPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  setcardchooselist-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 3b1b input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34749987592
+          pattern: Stage9.1-5A1B-LOADSKILLLOGO
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-setcard/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-setcard/ilspy
+      - name: Apply PC-native-backed SetCardChooseList repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-setcard"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-loadskilllogo.dll"
+          DLL="$OUT/GodsPVZRuntime1-setcardchooselist.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = '3b1bfe50761537734063070618ea33e8b0d36d88f3d161861733449d34490243' ] || exit 61
+          dotnet build Tools/Stage9SeedChooserSetCardChooseListPatch/Stage9SeedChooserSetCardChooseListPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9SeedChooserSetCardChooseListPatch/Stage9SeedChooserSetCardChooseListPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 3b1bfe50761537734063070618ea33e8b0d36d88f3d161861733449d34490243$' "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x060006BD ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x060006BD address=0x00000001803AB510 function_end=0x00000001803ABA00 ' "$E/patch.log"
+          grep -q '^PATCH_SETCARDCHOOSELIST .*add_signature=!0 card_get_item_return=!0 plant_get_item_return=!0 private_list_fields=0 malformed_list_object_refs=0$' "$E/patch.log"
+          grep -q '^REOPEN_SETCARDCHOOSELIST_PASS .*card_get_item_return=!0 plant_get_item_return=!0 add_signature=!0 .*private_list_fields=0 malformed_list_object_refs=0 token=0x060006BD$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9SeedChooserSetCardChooseListPatch/Evidence.md "$E/native-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-setcard"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-setcardchooselist.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t SeedChooserScreen "$DLL" > "$E/SeedChooserScreen.cs" 2> "$E/SeedChooserScreen.stderr"; test ! -s "$E/SeedChooserScreen.stderr"
+          "$ILSPY" -il -t SeedChooserScreen "$DLL" > "$E/SeedChooserScreen.il" 2> "$E/SeedChooserScreen-il.stderr"; test ! -s "$E/SeedChooserScreen-il.stderr"
+          python3 - "$E/SeedChooserScreen.cs" "$E/SeedChooserScreen.il" <<'PY'
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text()
+          il=Path(sys.argv[2]).read_text()
+          a=il.index('instance void SetCardChooseList ()')
+          b=il.index('instance void SetCard_Choose_Position (',a)
+          m=il[a:b]
+          for bad in ('::_size','::_version','::_items','AddWithResize','List`1<object>','Enumerator<object>'):
+              assert bad not in m, (bad,m)
+          assert m.count('::get_Count()') == 2, m
+          assert m.count('::get_Item(int32)') == 2, m
+          assert '::Add(!0)' in m, m
+          assert '::Clear()' in m, m
+          assert 'Object::Instantiate<class Card_Choose>' in m, m
+          assert 'Object::Destroy(' in m, m
+          assert 'Transform::SetParent(' in m, m
+          assert 'Transform::set_localScale(' in m, m
+          assert 'Card_Choose::Initialize(class PlantSave)' in m, m
+          assert '存档不存在：创建选卡列表时' in m, m
+          assert '执行完成' in m, m
+          ca=cs.index('void SetCardChooseList()')
+          cb=cs.index('void SetCard_Choose_Position',ca)
+          cm=cs[ca:cb]
+          for bad in ('._size','._version','._items','AddWithResize','List<object>'):
+              assert bad not in cm, (bad,cm)
+          print('ILSPY_SETCARDCHOOSELIST_PASS count_calls=2 get_item_calls=2 add_signature=!0 clear=1 instantiate=1 initialize=1 private_list_fields=0 malformed_list_object_refs=0')
+          PY
+      - name: Upload evidence and candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-3B1B-SETCARDCHOOSELIST
+          path: ${{ runner.temp }}/stage9-setcard/evidence/
+          if-no-files-found: error
+          retention-days: 90
