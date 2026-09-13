@@ -83,7 +83,8 @@ jobs:
           assert 'System.Int32::ToString()' in im
           assert 'System.String::Concat' in im
           assert 'System.String::Empty' in im
-          assert '\t\tdiv' in im and '\t\trem' in im
+          ops=[line.split(':',1)[1].strip() for line in im.splitlines() if line.lstrip().startswith('IL_') and ':' in line]
+          assert 'div' in ops and 'rem' in ops
           assert 'Not implemented instruction' not in im
           print('ILSPY_BOARDNUMBER_PASS method=BoardManager.GetBoardNumberString adventure=20-div-rem rescue=R hard=H other=empty')
           PY
