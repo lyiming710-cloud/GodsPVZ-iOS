@@ -51,6 +51,22 @@ static string OperandSig(object? operand, MethodDefinition owner)
     return "C:" + Convert.ToString(operand, CultureInfo.InvariantCulture);
 }
 
+static string OperandShape(object? operand, MethodDefinition owner)
+{
+    if (operand is null) return "";
+    if (operand is Instruction i) return $"I#{owner.Body.Instructions.IndexOf(i)}";
+    if (operand is Instruction[] sw) return "SW[" + string.Join(',', sw.Select(i => owner.Body.Instructions.IndexOf(i))) + "]";
+    if (operand is MethodReference mr) return $"M:{mr.FullName}@{ScopeName(mr.DeclaringType)}";
+    if (operand is FieldReference fr) return $"F:{fr.FullName}@{ScopeName(fr.DeclaringType)}";
+    if (operand is TypeReference tr) return $"T:{TypeSig(tr)}";
+    if (operand is VariableDefinition vr) return $"V:{vr.Index}";
+    if (operand is ParameterDefinition pr) return $"P:{pr.Index}";
+    if (operand is string s) return "S:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(s));
+    if (operand is float f) return $"R4:{BitConverter.SingleToInt32Bits(f):X8}";
+    if (operand is double d) return $"R8:{BitConverter.DoubleToInt64Bits(d):X16}";
+    return "C:" + Convert.ToString(operand, CultureInfo.InvariantCulture);
+}
+
 static string MethodSemantic(MethodDefinition m)
 {
     var sb = new StringBuilder();
@@ -79,7 +95,7 @@ static string FieldSemantic(FieldDefinition f)
 static string InstructionShape(MethodDefinition m)
 {
     var sb = new StringBuilder();
-    foreach (var i in m.Body.Instructions) sb.Append(i.OpCode.Code).Append(':').Append(OperandSig(i.Operand, m)).Append(';');
+    foreach (var i in m.Body.Instructions) sb.Append(i.OpCode.Code).Append(':').Append(OperandShape(i.Operand, m)).Append(';');
     foreach (var h in m.Body.ExceptionHandlers)
     {
         int Idx(Instruction? x) => x is null ? -1 : m.Body.Instructions.IndexOf(x);
