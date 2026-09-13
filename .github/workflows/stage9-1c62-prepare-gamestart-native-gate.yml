@@ -1,0 +1,94 @@
+name: Stage9.1 1c62 PrepareUIController.GameStart native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c62-prepare-gamestart-native-gate.yml'
+      - 'Tools/Stage9PrepareGameStartPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  gamestart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 1c62 input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-gamestart/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-gamestart/ilspy
+      - name: Apply native-backed GameStart recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-gamestart"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-device-window-portraits.dll"
+          DLL="$OUT/GodsPVZRuntime1-gamestart.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209' ] || exit 61
+          dotnet build Tools/Stage9PrepareGameStartPatch/Stage9PrepareGameStartPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PrepareGameStartPatch/Stage9PrepareGameStartPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209$' "$E/patch.log"
+          grep -q '^PATCH_PREPARE_GAMESTART method_body_changes=1 replacement=ldsfld_private_backing_to_call_get_Instance gameplay_semantics_changed=0$' "$E/patch.log"
+          grep -q '^REOPEN_PREPARE_GAMESTART_PASS token=0x0600067E backing_field_reads=0 getter_calls=1 loadboard_calls=1 corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x0600067E$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9PrepareGameStartPatch/Evidence.md "$E/native-runtime-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-gamestart"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-gamestart.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'PrepareUIController' "$DLL" > "$E/PrepareUIController.cs" 2> "$E/cs.stderr"; test ! -s "$E/cs.stderr"
+          "$ILSPY" -il -t 'PrepareUIController' "$DLL" > "$E/PrepareUIController.il" 2> "$E/il.stderr"; test ! -s "$E/il.stderr"
+          python3 - "$E/PrepareUIController.cs" "$E/PrepareUIController.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text(); data=Path(sys.argv[3]).read_bytes()
+          m=re.search(r'public\s+void\s+GameStart\s*\(\s*\)',cs); assert m
+          o=cs.index('{',m.end()); d=0; end=None
+          for i in range(o,len(cs)):
+              if cs[i]=='{': d+=1
+              elif cs[i]=='}':
+                  d-=1
+                  if d==0: end=i+1; break
+          b=cs[m.start():end]
+          assert 'BoardManager.Instance' in b
+          assert '<Instance>k__BackingField' not in b
+          assert b.count('.LoadBoard()')==1
+          assert 'PopupNewWindow' in b and 'Object.Destroy' in b and 'SetActive(false)' in b
+          marker='// end of method PrepareUIController::GameStart'; e=il.index(marker); s=il.rfind('.method',0,e); ib=il[s:e]
+          assert "'<Instance>k__BackingField'" not in ib
+          assert ib.count('BoardManager::get_Instance()')==1
+          assert ib.count('BoardManager::LoadBoard()')==1
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_PREPARE_GAMESTART_PASS getter_calls=1 loadboard_calls=1 backing_field_reads=0 native_sequence_preserved=1 invalid_il_diagnostics=0 corelib_binary_string=0')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1C62-PREPARE-GAMESTART
+          path: ${{ runner.temp }}/stage9-gamestart/evidence/
+          if-no-files-found: warn
+          retention-days: 90
