@@ -74,11 +74,16 @@ var rowCtor = target.Body.Instructions.Select(i => i.Operand).OfType<MethodRefer
     ?? throw new InvalidDataException("Row(int,int) ctor MethodRef missing");
 var rowsField = target.DeclaringType.Fields.SingleOrDefault(f => f.Name == "rows" && f.FieldType.FullName == "System.Collections.Generic.List`1<Row>")
     ?? throw new InvalidDataException("Map.rows field missing");
-var rowType = module.Types.SingleOrDefault(t => t.FullName == "Row") ?? throw new InvalidDataException("Row type missing");
-var listRowType = listCtor.DeclaringType;
+var listRowType = listCtor.DeclaringType as GenericInstanceType
+    ?? throw new InvalidDataException($"List<Row> ctor declaring type is not GenericInstanceType: {listCtor.DeclaringType.FullName}");
+var listRowOpen = listRowType.ElementType;
+if (listRowOpen.GenericParameters.Count != 1) throw new InvalidDataException("open List<T> generic parameter count drift");
+var listT = listRowOpen.GenericParameters[0];
 var getCount = new MethodReference("get_Count", module.TypeSystem.Int32, listRowType) { HasThis = true };
 var add = new MethodReference("Add", module.TypeSystem.Void, listRowType) { HasThis = true };
-add.Parameters.Add(new ParameterDefinition(rowType));
+// Critical metadata detail: MemberRef for a method on List<Row> must retain the declaring type's !0
+// in its signature. Encoding concrete Row here produces a different CLR signature and fails at runtime.
+add.Parameters.Add(new ParameterDefinition(listT));
 
 var changed = new HashSet<uint> { token };
 var untouchedBefore = methods.Where(m => !changed.Contains(Raw(m))).ToDictionary(Raw, MethodSemantic);
@@ -118,7 +123,7 @@ il.Append(il.Create(OpCodes.Br, check));
 il.Append(done);
 
 Console.WriteLine("NATIVE_AUTHORITY token=0x06000281 address=0x000000018032D290 function_end=0x000000018032D3FB gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d metadata_sha256=ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9");
-Console.WriteLine("PATCH_MAP_CTOR rows=new List<Row>(); while(rows.Count<mapY) rows.Add(new Row(mapX,rows.Count)); private_list_fields=0");
+Console.WriteLine("PATCH_MAP_CTOR rows=new List<Row>(); while(rows.Count<mapY) rows.Add(new Row(mapX,rows.Count)); add_signature=!0 private_list_fields=0");
 
 module.Write(output);
 var outputSha = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(output))).ToLowerInvariant();
@@ -132,9 +137,12 @@ if (rt.Body.Variables.Count != 0) throw new InvalidDataException("Map ctor repai
 if (rt.Body.Instructions.Any(i => i.Operand is FieldReference f && f.DeclaringType.FullName.StartsWith("System.Collections.Generic.List`1") && (f.Name == "_size" || f.Name == "_version" || f.Name == "_items"))) throw new InvalidDataException("private List<T> field access survived repair");
 if (rt.Body.Instructions.Any(i => i.OpCode.Code == Code.Ldstr && Convert.ToString(i.Operand)!.StartsWith("Method not found @"))) throw new InvalidDataException("Cpp2IL method placeholder survived repair");
 if (rt.Body.Instructions.Count(i => i.OpCode.Code == Code.Callvirt && i.Operand is MethodReference m && m.Name == "get_Count") != 2) throw new InvalidDataException("expected two List<Row>.Count calls");
-if (rt.Body.Instructions.Count(i => i.OpCode.Code == Code.Callvirt && i.Operand is MethodReference m && m.Name == "Add") != 1) throw new InvalidDataException("expected one List<Row>.Add call");
+var reopenedAdd = rt.Body.Instructions.Where(i => i.OpCode.Code == Code.Callvirt).Select(i => i.Operand).OfType<MethodReference>().SingleOrDefault(m => m.Name == "Add")
+    ?? throw new InvalidDataException("expected one List<Row>.Add call");
+if (reopenedAdd.Parameters.Count != 1 || reopenedAdd.Parameters[0].ParameterType is not GenericParameter gp || gp.Type != GenericParameterType.Type || gp.Position != 0)
+    throw new InvalidDataException($"List<Row>.Add MemberRef is not Add(!0): {reopenedAdd.FullName}");
 if (!rt.Body.Instructions.Any(i => i.OpCode.Code == Code.Newobj && i.Operand is MethodReference m && m.FullName == "System.Void Row::.ctor(System.Int32,System.Int32)")) throw new InvalidDataException("Row ctor missing after repair");
-Console.WriteLine($"REOPEN_MAP_CTOR_PASS locals=0 count_calls=2 add_calls=1 private_list_fields=0 token=0x{token:X8}");
+Console.WriteLine($"REOPEN_MAP_CTOR_PASS locals=0 count_calls=2 add_calls=1 add_signature=!0 private_list_fields=0 token=0x{token:X8}");
 
 var untouchedAfter = after.Where(m => !changed.Contains(Raw(m))).ToDictionary(Raw, MethodSemantic);
 if (untouchedAfter.Count != untouchedBefore.Count) throw new InvalidDataException("untouched method count drift");
