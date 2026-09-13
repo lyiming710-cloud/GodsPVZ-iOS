@@ -69,17 +69,32 @@ jobs:
           import re,sys
           cs=Path(sys.argv[1]).read_text()
           il=Path(sys.argv[2]).read_text()
-          # C# validation scoped to Start body by stable neighboring method name.
-          m=re.search(r'public static void Start\(\)\s*\{(?P<body>.*?)\n\s*\}',cs,re.S)
-          assert m, 'ResourceManager.Start C# body not found'
-          b=m.group('body')
+
+          # C# validation scoped to the exact Start method using balanced braces,
+          # so nested if/else blocks cannot truncate the method body.
+          sig_text='public static void Start()'
+          start=cs.index(sig_text)
+          open_brace=cs.index('{', start)
+          depth=0
+          close_brace=None
+          for i in range(open_brace, len(cs)):
+              ch=cs[i]
+              if ch=='{': depth+=1
+              elif ch=='}':
+                  depth-=1
+                  if depth==0:
+                      close_brace=i
+                      break
+          assert close_brace is not None, 'ResourceManager.Start closing brace not found'
+          b=cs[open_brace+1:close_brace]
+          assert b.count('LoadAudioClips();') == 1, b.count('LoadAudioClips();')
+          assert b.count('LoadSprites();') == 1, b.count('LoadSprites();')
           a=b.index('LoadAudioClips();')
           s=b.index('LoadSprites();')
           c=b.index('prefabs/Card/CardTemplate')
           assert a < s < c, (a,s,c)
-          assert b.count('LoadAudioClips();') == 1
-          assert b.count('LoadSprites();') == 1
-          # IL validation scoped between Start and the next method marker.
+
+          # Independent IL validation scoped between Start and its exact end marker.
           sig=re.search(r'\.method public hidebysig static\s+void Start \(\) cil managed',il)
           assert sig, 'ResourceManager.Start IL signature not found'
           end=il.index('// end of method ResourceManager::Start',sig.start())
