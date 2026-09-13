@@ -92,9 +92,11 @@ jobs:
               b=body(n)
               for bad in ['._size','._version','._items','Expected I','Expected O','Expected I4','Unknown result type','System.Private.CoreLib']:
                   assert bad not in b,(n,bad)
-          assert 'Grid.Copy()' in body('Copy') and 'GetMapX()' in body('Copy')
+          marker='// end of method Map::Copy'; e=mil.index(marker); s=mil.rfind('.method',0,e); assert s>=0
+          ib=mil[s:e]
+          assert ib.count('Map::GetMapX()')==1 and ib.count('Grid::Copy()')==1
           assert b'System.Private.CoreLib' not in data
-          print('ILSPY_GAMEPLAY_BATCH1_PASS gamestart=1 map_methods=3 invalid_il_diagnostics=0 corelib_binary_string=0')
+          print('ILSPY_GAMEPLAY_BATCH1_PASS gamestart=1 map_methods=3 map_copy_getx_calls=1 map_copy_grid_copy_calls=1 invalid_il_diagnostics=0 corelib_binary_string=0')
           PY
       - name: Upload integrated candidate
         if: always()
