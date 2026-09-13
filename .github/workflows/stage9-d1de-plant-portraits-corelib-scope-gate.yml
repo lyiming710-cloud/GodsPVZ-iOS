@@ -1,0 +1,90 @@
+name: Stage9.1 d1de PlantPortraits corelib scope gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-d1de-plant-portraits-corelib-scope-gate.yml'
+      - 'Tools/Stage9PlantPortraitsCorelibScopePatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  plant-portraits-corelib-scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact d1de input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34770002116
+          pattern: Stage9.1-B908-PLANT-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-corelib/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-corelib/ilspy
+      - name: Correct PlantPortraits corelib scope only
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-corelib"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-plant-portraits.dll"
+          DLL="$OUT/GodsPVZRuntime1-plant-portraits-corelib-scope.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = 'd1decdd1788db6a6e78c7890311067bea5012323fd71bda914e3bfca20b70126' ] || exit 61
+          dotnet build Tools/Stage9PlantPortraitsCorelibScopePatch/Stage9PlantPortraitsCorelibScopePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantPortraitsCorelibScopePatch/Stage9PlantPortraitsCorelibScopePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 d1decdd1788db6a6e78c7890311067bea5012323fd71bda914e3bfca20b70126$' "$E/patch.log"
+          grep -q '^RUNTIME_CAUSAL_EVIDENCE strict_run=34770060252 candidate=d1decdd1788db6a6e78c7890311067bea5012323fd71bda914e3bfca20b70126 exception=FileNotFoundException assembly=System.Private.CoreLib,Version=10.0.0.0 caller=ResourceManager.LoadSprites$' "$E/patch.log"
+          grep -q '^PATCH_PLANT_PORTRAITS_CORELIB_SCOPE target_token=0x06000223 local_index=1 from=System.Array@System.Private.CoreLib to=System.Array@mscorlib instruction_changes=0 eh_changes=0$' "$E/patch.log"
+          grep -q '^REOPEN_PLANT_PORTRAITS_CORELIB_SCOPE_PASS local_index=1 scope=mscorlib corelib_assembly_refs=0 corelib_type_refs=0 instructions_unchanged=1 eh_unchanged=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x06000223$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9PlantPortraitsCorelibScopePatch/Evidence.md "$E/"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-corelib"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-plant-portraits-corelib-scope.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -il -t 'ResourceManager' "$DLL" > "$E/ResourceManager.il" 2> "$E/ResourceManager-il.stderr"; test ! -s "$E/ResourceManager-il.stderr"
+          python3 - "$E/ResourceManager.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import sys
+          il=Path(sys.argv[1]).read_text()
+          marker='// end of method ResourceManager::Load_card_Choose_PlantPortraits'
+          e=il.index(marker); s=il.rfind('.method',0,e); assert s>=0
+          b=il[s:e]
+          assert '[System.Private.CoreLib]' not in b
+          assert '[1] class [mscorlib]System.Array' in b
+          assert b.count('System.Enum::GetValues')==1
+          assert b.count('System.Enum::GetName')==1
+          assert b.count('InternalResourceLoader::Load<class [UnityEngine.CoreModule]UnityEngine.Sprite>(string)')==1
+          assert 'System.Collections.Generic.List`1<class [UnityEngine.CoreModule]UnityEngine.Sprite>::get_Count()' in b
+          assert 'System.Collections.Generic.List`1<class [UnityEngine.CoreModule]UnityEngine.Sprite>::Add(!0)' in b
+          assert 'finally' in b and 'System.IDisposable::Dispose()' in b
+          data=Path(sys.argv[2]).read_bytes()
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_PLANT_PORTRAITS_CORELIB_SCOPE_PASS local_array_scope=mscorlib corelib_binary_string=0 gameplay_shape_preserved=1')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-D1DE-PLANT-PORTRAITS-CORELIB-SCOPE
+          path: ${{ runner.temp }}/stage9-corelib/evidence/
+          if-no-files-found: warn
+          retention-days: 90
