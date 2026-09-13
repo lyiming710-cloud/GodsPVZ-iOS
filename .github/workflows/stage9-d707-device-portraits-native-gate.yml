@@ -1,0 +1,107 @@
+name: Stage9.1 d707 DevicePortraits native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-d707-device-portraits-native-gate.yml'
+      - 'Tools/Stage9ResourceManagerDevicePortraitsPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  device-portraits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact d707 input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34771086995
+          pattern: Stage9.1-D1DE-PLANT-PORTRAITS-CORELIB-SCOPE
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-device/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-device/ilspy
+      - name: Apply PC-native-backed DevicePortraits recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-device"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-plant-portraits-corelib-scope.dll"
+          DLL="$OUT/GodsPVZRuntime1-device-portraits.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = 'd7076ccb929b52509820e3ca1e58982242d50c8e7dfa79efa88308c623a40f1d' ] || exit 61
+          dotnet build Tools/Stage9ResourceManagerDevicePortraitsPatch/Stage9ResourceManagerDevicePortraitsPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9ResourceManagerDevicePortraitsPatch/Stage9ResourceManagerDevicePortraitsPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 d7076ccb929b52509820e3ca1e58982242d50c8e7dfa79efa88308c623a40f1d$' "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x06000224 type=ResourceManager method=Load_card_Choose_DevicePortraits code_size=1567 locals=71 corrupt_private_list_fields=_size,_version,_items$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x06000224 address=0x0000000180337650 function_end=0x0000000180337C10 semantics=existing_count_return_then_enum_DeviceType_load_add_missing_path_log_foreach_dispose$' "$E/patch.log"
+          grep -q '^RUNTIME_CAUSAL_EVIDENCE strict_run=34771137512 candidate=d7076ccb929b52509820e3ca1e58982242d50c8e7dfa79efa88308c623a40f1d exception=FieldAccessException field=List`1._size method=ResourceManager.Load_card_Choose_DevicePortraits caller=ResourceManager.LoadSprites$' "$E/patch.log"
+          grep -q '^PATCH_RESOURCE_MANAGER_DEVICE_PORTRAITS method_body_changes=1 field_metadata_changes=0 source=pc_native_source_semantics_foreach_reconstruction_with_missing_path_log$' "$E/patch.log"
+          grep -q '^REOPEN_RESOURCE_MANAGER_DEVICE_PORTRAITS_PASS token=0x06000224 list_count_calls=1 list_add_calls=1 enum_getvalues_calls=1 enum_getname_calls=1 load_sprite_calls=1 object_implicit_calls=1 debug_log_calls=1 private_list_field_refs=0 finally_handlers=1 locals=9 corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x06000224$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^PRIOR_RECOVERY_PRESERVATION_PASS load_card_choose_sprites_calls=1 load_plant_portraits_calls=1 load_device_portraits_calls=1 start_loadsprites_calls=1 corelib_refs=0$' "$E/patch.log"
+          grep -q '^CARD_CHOOSE_SERIALIZEFIELD_PRESERVATION_PASS fields=17$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9ResourceManagerDevicePortraitsPatch/Evidence.md "$E/native-runtime-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-device"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-device-portraits.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'ResourceManager' "$DLL" > "$E/ResourceManager.cs" 2> "$E/ResourceManager.stderr"; test ! -s "$E/ResourceManager.stderr"
+          "$ILSPY" -il -t 'ResourceManager' "$DLL" > "$E/ResourceManager.il" 2> "$E/ResourceManager-il.stderr"; test ! -s "$E/ResourceManager-il.stderr"
+          python3 - "$E/ResourceManager.cs" "$E/ResourceManager.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text()
+          m=re.search(r'\bstatic\s+[^\n]*Load_card_Choose_DevicePortraits\s*\(\s*\)',cs); assert m,'DevicePortraits C# signature missing'
+          o=cs.index('{',m.end()); d=0; end=None
+          for i in range(o,len(cs)):
+              if cs[i]=='{': d+=1
+              elif cs[i]=='}':
+                  d-=1
+                  if d==0: end=i+1; break
+          assert end is not None
+          b=cs[m.start():end]
+          for bad in ['Expected I','Expected O','Unknown result type','Not implemented instruction','._size','._version','._items','System.Private.CoreLib']:
+              assert bad not in b,bad
+          for x in ['card_Choose_DevicePortraits','Enum.GetValues','Enum.GetName','DeviceType','InternalResourceLoader.Load<Sprite>','sprites','Portrait','Device','.Add(','Debug.Log','不存在路径为','的文件']:
+              assert x in b,x
+          marker='// end of method ResourceManager::Load_card_Choose_DevicePortraits'; e=il.index(marker); s=il.rfind('.method',0,e); assert s>=0; ib=il[s:e]
+          assert '_size' not in ib and '_version' not in ib and '_items' not in ib
+          assert '[System.Private.CoreLib]' not in ib
+          assert ib.count('System.Enum::GetValues')==1
+          assert ib.count('System.Enum::GetName')==1
+          assert ib.count('InternalResourceLoader::Load<class [UnityEngine.CoreModule]UnityEngine.Sprite>(string)')==1
+          assert ib.count('UnityEngine.Debug::Log(object)')==1
+          assert ib.count('System.Collections.IEnumerator::MoveNext()')==1
+          assert ib.count('System.Collections.IEnumerator::get_Current()')==1
+          assert 'unbox.any DeviceType' in ib
+          assert 'finally' in ib and 'System.IDisposable::Dispose()' in ib
+          assert b'System.Private.CoreLib' not in Path(sys.argv[3]).read_bytes()
+          print('ILSPY_DEVICE_PORTRAITS_PASS enum_getvalues=1 enum_getname=1 load_sprite=1 debug_log=1 list_private_fields=0 foreach_finally=1 invalid_il_diagnostics=0 corelib_binary_string=0')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-D707-DEVICE-PORTRAITS
+          path: ${{ runner.temp }}/stage9-device/evidence/
+          if-no-files-found: warn
+          retention-days: 90
