@@ -44,8 +44,8 @@ jobs:
           dotnet run --project Tools/Stage9MapCtorPatch/Stage9MapCtorPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
           grep -q '^TARGET_METHOD token=0x06000281 ' "$E/patch.log"
           grep -q '^NATIVE_AUTHORITY token=0x06000281 address=0x000000018032D290 function_end=0x000000018032D3FB gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d metadata_sha256=ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9$' "$E/patch.log"
-          grep -Fq 'PATCH_MAP_CTOR rows=new List<Row>(); while(rows.Count<mapY) rows.Add(new Row(mapX,rows.Count)); private_list_fields=0' "$E/patch.log"
-          grep -q '^REOPEN_MAP_CTOR_PASS locals=0 count_calls=2 add_calls=1 private_list_fields=0 token=0x06000281$' "$E/patch.log"
+          grep -Fq 'PATCH_MAP_CTOR rows=new List<Row>(); while(rows.Count<mapY) rows.Add(new Row(mapX,rows.Count)); add_signature=!0 private_list_fields=0' "$E/patch.log"
+          grep -q '^REOPEN_MAP_CTOR_PASS locals=0 count_calls=2 add_calls=1 add_signature=!0 private_list_fields=0 token=0x06000281$' "$E/patch.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
           sha256sum "$DLL" | tee "$E/output-candidate.sha256"
           cp "$DLL" "$E/"
@@ -83,10 +83,11 @@ jobs:
           assert 'rows.Count < mapY' in cm
           assert 'rows.Add(new Row(mapX, rows.Count))' in cm
           assert im.count('::get_Count()') == 2
-          assert 'System.Collections.Generic.List`1<class Row>::Add(!0)' in im or 'System.Collections.Generic.List`1<class Row>::Add(class Row)' in im
+          assert 'System.Collections.Generic.List`1<class Row>::Add(!0)' in im
+          assert 'System.Collections.Generic.List`1<class Row>::Add(class Row)' not in im
           assert 'Row::.ctor(int32, int32)' in im
           assert 'System.Object::.ctor()' in im
-          print('ILSPY_MAP_CTOR_PASS count_calls=2 add=1 row_ctor=1 private_list_fields=0')
+          print('ILSPY_MAP_CTOR_PASS count_calls=2 add=1 add_signature=!0 row_ctor=1 private_list_fields=0')
           PY
       - name: Upload evidence and candidate
         if: always()
