@@ -1,0 +1,91 @@
+name: Stage9.1 0112 PlantDetail SerializeField metadata gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-0112-plantdetail-serializefield-gate.yml'
+      - 'Tools/Stage9PlantDetailSerializeFieldPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  plantdetail-serialization:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact 0112 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34746888745
+          pattern: Stage9.1-5140-ROWCTOR
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-pdserial/input
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-pdserial/ilspy
+
+      - name: Apply evidence-backed field metadata repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-pdserial"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-rowctor.dll"
+          DLL="$OUT/GodsPVZRuntime1-plantdetail-serializefield.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = '0112cbc9df8c729e4b96d72af7dd3399706accf5c26196177b1b8d47f7e53ef9' ] || exit 61
+          dotnet build Tools/Stage9PlantDetailSerializeFieldPatch/Stage9PlantDetailSerializeFieldPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantDetailSerializeFieldPatch/Stage9PlantDetailSerializeFieldPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 0112cbc9df8c729e4b96d72af7dd3399706accf5c26196177b1b8d47f7e53ef9$' "$E/patch.log"
+          grep -q '^TARGET_FIELD token=0x04' "$E/patch.log"
+          grep -q '^ASSET_AUTHORITY r3_sha256=d4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x060006C2 address=0x00000001803A1C60 ' "$E/patch.log"
+          grep -q '^PATCH_PLANTDETAIL_SERIALIZEFIELD add=UnityEngine.SerializeField method_body_changes=0 field_type_changes=0 visibility_changes=0$' "$E/patch.log"
+          grep -q '^METHOD_SEMANTIC_ISOLATION_PASS unchanged_methods=2317$' "$E/patch.log"
+          grep -q '^REOPEN_SERIALIZEFIELD_PASS token=0x04' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=.* changed_fields=1 target_token=0x04' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9PlantDetailSerializeFieldPatch/Evidence.md "$E/asset-native-evidence.md"
+
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-pdserial"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-plantdetail-serializefield.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'SeedChooserScreen.PlantDetail' "$DLL" > "$E/PlantDetail.cs" 2> "$E/PlantDetail.stderr"; test ! -s "$E/PlantDetail.stderr"
+          "$ILSPY" -il -t 'SeedChooserScreen.PlantDetail' "$DLL" > "$E/PlantDetail.il" 2> "$E/PlantDetail-il.stderr"; test ! -s "$E/PlantDetail-il.stderr"
+          python3 - "$E/PlantDetail.cs" "$E/PlantDetail.il" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text()
+          il=Path(sys.argv[2]).read_text()
+          m=re.search(r'\[SerializeField\]\s*\n\s*private GameObject button_Almanac;',cs)
+          assert m, 'ILSpy C# did not render [SerializeField] on button_Almanac'
+          p=il.index('button_Almanac')
+          block=il[p:p+500]
+          assert 'UnityEngine.SerializeField::.ctor()' in block, block
+          assert '.field private class [UnityEngine.CoreModule]UnityEngine.GameObject button_Almanac' in il
+          print('ILSPY_PLANTDETAIL_SERIALIZEFIELD_PASS field=button_Almanac private=1 type=GameObject custom_attr=UnityEngine.SerializeField')
+          PY
+
+      - name: Upload evidence and candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-0112-PLANTDETAIL-SERIALIZEFIELD
+          path: ${{ runner.temp }}/stage9-pdserial/evidence/
+          if-no-files-found: error
+          retention-days: 90
