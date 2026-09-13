@@ -102,9 +102,11 @@ echo "$RC" > "$E/playmode-exit.txt"
 grep -E 'STAGE9_STRICT_' "$E/playmode.log" > "$E/markers.txt" || true
 grep -E 'Exception|InvalidProgramException|MissingMethodException|FieldAccessException' "$E/playmode.log" > "$E/exceptions.txt" || true
 grep -E 'MissingMethodException.*System\.Collections\.Generic\.(List|Dictionary)' "$E/playmode.log" > "$E/generic-missing-methods.txt" || true
-grep -n -E 'BoardStart|BoardManager|BoardConfig|Map:\.ctor|Map::.ctor|Row:\.ctor|Row::.ctor|SeedChooserScreen|Exception|InvalidProgramException|FieldAccessException|MissingMethodException' "$E/playmode.log" > "$E/board-context.txt" || true
+grep -n -E 'BoardStart|BoardManager|BoardConfig|Map:\.ctor|Map::.ctor|Row:\.ctor|Row::.ctor|SeedChooserScreen|PrepareUIController|GameStart|LoadBoard|Exception|InvalidProgramException|FieldAccessException|MissingMethodException' "$E/playmode.log" > "$E/board-context.txt" || true
 cat "$E/markers.txt" || true
 [ "$RC" = 0 ] || exit "$RC"
 grep -q 'STAGE9_STRICT_CREATE_INVOKE ok=1' "$E/markers.txt" || exit 103
 grep -q 'STAGE9_STRICT_SAVE_READY player=1 playerName=Stage9Test saveList=1 defaultName=Stage9Test' "$E/markers.txt" || exit 104
-grep -Eq 'STAGE9_STRICT_BOARD scene=Board .*boardStart=[1-9][0-9]* .*board=[1-9][0-9]*' "$E/markers.txt" || exit 106
+grep -Eq 'STAGE9_STRICT_BOARD_PRESTART scene=Board .*boardStart=0 board=0 .*boardManager=1 prepare=1 seedChooser=1' "$E/markers.txt" || exit 105
+grep -q 'STAGE9_STRICT_GAMESTART_INVOKE ok=1' "$E/markers.txt" || exit 106
+grep -Eq 'STAGE9_STRICT_BOARD scene=Board .*boardStart=0 .*board=[1-9][0-9]* .*activeBoard=1' "$E/markers.txt" || exit 107
