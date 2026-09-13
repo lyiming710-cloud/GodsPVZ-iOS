@@ -45,9 +45,10 @@ jobs:
           dotnet run --project Tools/Stage9ResourceManagerCardChooseSpritesPatch/Stage9ResourceManagerCardChooseSpritesPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
           grep -q '^INPUT_SHA256 498b34ca2db493d42676a3283edac8126180fd624d6664b3c39e855abfa905ba$' "$E/patch.log"
           grep -q '^TARGET_METHOD token=0x06000222 type=ResourceManager method=Load_card_Choose_Sprites code_size=636 locals=37 invalid_offset=0x018D$' "$E/patch.log"
-          grep -q '^NATIVE_AUTHORITY token=0x06000222 address=0x0000000180338130 function_end=0x0000000180338500 load_sprite_calls=33 path_combine2_calls=34 int_tostring_calls=33 concat2_calls=33 array_stores=33 loops=7x4_plus_5x1$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x06000222 address=0x0000000180338130 function_end=0x0000000180338500 load_sprite_sites=5 path_combine2_sites=6 int_tostring_sites=5 concat2_sites=5 array_store_sites=5 runtime_sprite_loads=33 runtime_path_combines=34 loops=7x4_plus_5x1$' "$E/patch.log"
+          grep -q '^RUNTIME_CAUSAL_EVIDENCE strict_run=34767194659 candidate=498b34ca2db493d42676a3283edac8126180fd624d6664b3c39e855abfa905ba exception=InvalidProgramException method=ResourceManager.Load_card_Choose_Sprites il_offset=0x018D opcode=stloc_2$' "$E/patch.log"
           grep -q '^PATCH_RESOURCE_MANAGER_CARD_CHOOSE_SPRITES method_body_changes=1 field_metadata_changes=0 source=pc_native_exact_two_loop_reconstruction$' "$E/patch.log"
-          grep -q '^REOPEN_RESOURCE_MANAGER_CARD_CHOOSE_SPRITES_PASS token=0x06000222 load_sprite_calls=33 path_combine2_calls=34 int_tostring_calls=33 concat2_calls=33 array_stores=33 locals=2$' "$E/patch.log"
+          grep -q '^REOPEN_RESOURCE_MANAGER_CARD_CHOOSE_SPRITES_PASS token=0x06000222 load_sprite_sites=5 path_combine2_sites=6 int_tostring_sites=5 concat2_sites=5 array_store_sites=5 locals=2 runtime_sprite_loads=33 runtime_path_combines=34$' "$E/patch.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x06000222$' "$E/patch.log"
           grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
           grep -q '^LOADSPRITES_RECOVERY_PRESERVATION_PASS helper_calls=1$' "$E/patch.log"
@@ -91,7 +92,7 @@ jobs:
           assert ib.count('System.Int32::ToString()')==5,ib.count('System.Int32::ToString()')
           assert ib.count('System.String::Concat(string, string)')==5,ib.count('System.String::Concat(string, string)')
           assert ib.count('stelem.ref')==5,ib.count('stelem.ref')
-          print('ILSPY_CARD_CHOOSE_SPRITES_PASS loop_sites=5 runtime_loads=33 runtime_combines=34 runtime_tostring=33 runtime_concat=33 runtime_stores=33 invalid_il_diagnostics=0')
+          print('ILSPY_CARD_CHOOSE_SPRITES_PASS load_sprite_sites=5 path_combine2_sites=6 int_tostring_sites=5 concat2_sites=5 array_store_sites=5 runtime_sprite_loads=33 runtime_path_combines=34 invalid_il_diagnostics=0')
           PY
       - name: Upload evidence and candidate
         if: always()
