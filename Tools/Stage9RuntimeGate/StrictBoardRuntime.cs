@@ -26,6 +26,16 @@ public class Stage9StrictBoardRuntime
         }
         return a;
     }
+    static Component FSC(Type t, string scene)
+    {
+        if(t==null)return null;
+        foreach(var o in Resources.FindObjectsOfTypeAll(t))
+        {
+            var c=o as Component;
+            if(c!=null&&c.gameObject.scene.IsValid()&&c.gameObject.scene.name==scene)return c;
+        }
+        return null;
+    }
     static void Walk(GameObject g, ref int gos, ref int missing, ref int bs, ref int b)
     {
         gos++;
@@ -77,9 +87,34 @@ public class Stage9StrictBoardRuntime
         while(!op.isDone)yield return null;
         yield return new WaitForSecondsRealtime(2f);
         for(int i=0;i<30;i++)yield return null;
+
         var s=SceneManager.GetActiveScene(); int gos=0,missing=0,bs=0,b=0;
         foreach(var r in s.GetRootGameObjects())Walk(r,ref gos,ref missing,ref bs,ref b);
-        Debug.Log($"STAGE9_STRICT_BOARD scene={s.name} gos={gos} missing={missing} boardStart={bs} board={b}");
-        Assert.AreEqual("Board",s.name); Assert.Greater(bs,0); Assert.Greater(b,0);
+        var boardManager=FSC(rt?.GetType("BoardManager"),"Board");
+        var prepare=FSC(rt?.GetType("PrepareUIController"),"Board");
+        var seed=FSC(rt?.GetType("SeedChooserScreen"),"Board");
+        Debug.Log($"STAGE9_STRICT_BOARD_PRESTART scene={s.name} gos={gos} missing={missing} boardStart={bs} board={b} boardManager={(boardManager!=null?1:0)} prepare={(prepare!=null?1:0)} seedChooser={(seed!=null?1:0)}");
+        Assert.AreEqual("Board",s.name);
+        Assert.AreEqual(0,bs,"BoardStart must have completed Awake and destroyed itself before GameStart");
+        Assert.AreEqual(0,b,"Board must not exist before the original GameStart path runs");
+        Assert.IsNotNull(boardManager);
+        Assert.IsNotNull(prepare);
+        Assert.IsNotNull(seed);
+
+        var gameStart=prepare.GetType().GetMethod("GameStart",F,null,Type.EmptyTypes,null);
+        Assert.IsNotNull(gameStart);
+        try { gameStart.Invoke(prepare,null); Debug.Log("STAGE9_STRICT_GAMESTART_INVOKE ok=1"); }
+        catch(TargetInvocationException ex) { Debug.LogError("STAGE9_STRICT_GAMESTART_INVOKE ok=0 inner="+(ex.InnerException??ex)); throw ex.InnerException??ex; }
+
+        yield return new WaitForSecondsRealtime(2f);
+        for(int i=0;i<30;i++)yield return null;
+        s=SceneManager.GetActiveScene(); gos=0;missing=0;bs=0;b=0;
+        foreach(var r in s.GetRootGameObjects())Walk(r,ref gos,ref missing,ref bs,ref b);
+        var boardOnPlay=boardManager.GetType().GetMethod("Board_OnPlay",F,null,Type.EmptyTypes,null)?.Invoke(boardManager,null);
+        Debug.Log($"STAGE9_STRICT_BOARD scene={s.name} gos={gos} missing={missing} boardStart={bs} board={b} activeBoard={(boardOnPlay!=null?1:0)}");
+        Assert.AreEqual("Board",s.name);
+        Assert.AreEqual(0,bs,"BoardStart should stay destroyed after successful startup");
+        Assert.Greater(b,0);
+        Assert.IsNotNull(boardOnPlay);
     }
 }
