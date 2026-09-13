@@ -72,9 +72,9 @@ jobs:
                   if d==0: cend=i+1; break
           assert cend
           cm=cs[cstart:cend]
-          marker='instance void .ctor (\n\t\tint32 mapX,\n\t\tint32 mapY'
-          istart=il.index(marker)
-          iend=il.index('} // end of method Map::.ctor',istart)
+          iend=il.index('} // end of method Map::.ctor')
+          istart=il.rfind('.method',0,iend)
+          assert istart >= 0
           im=il[istart:iend]
           Path(sys.argv[3]).write_text(cm); Path(sys.argv[4]).write_text(im)
           for bad in ('Invalid IL','Expected O, but got','Method not found @180302170','._size','._version','._items','AddWithResize'):
