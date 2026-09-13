@@ -171,7 +171,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     target.Body.MaxStackSize = 4;
 
     var pathVar = new VariableDefinition(module.TypeSystem.String);
-    var valuesVar = new VariableDefinition(arrayGetEnumerator.DeclaringType); // keep Unity's mscorlib scope; never import host System.Array
+    var valuesVar = new VariableDefinition(arrayGetEnumerator.DeclaringType);
     var enumeratorVar = new VariableDefinition(ienumType);
     var deviceVar = new VariableDefinition(deviceType);
     var nameVar = new VariableDefinition(module.TypeSystem.String);
@@ -318,7 +318,7 @@ using (var after = ModuleDefinition.ReadModule(output, new ReaderParameters { In
     Console.WriteLine("FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0");
 
     var loadSprites = rm.Methods.Single(m => m.Name == "LoadSprites" && m.IsStatic && m.Parameters.Count == 0);
-    var start = rm.Methods.Single(m => m.Name == "Start" && !m.IsStatic && m.Parameters.Count == 0);
+    var start = rm.Methods.Single(m => m.Name == "Start" && m.IsStatic && m.Parameters.Count == 0);
     if (CountCalls(loadSprites, mr => mr.DeclaringType.FullName == "ResourceManager" && mr.Name == "Load_card_Choose_DevicePortraits") != 1) throw new InvalidDataException("LoadSprites DevicePortraits call drift");
     if (CountCalls(loadSprites, mr => mr.DeclaringType.FullName == "ResourceManager" && mr.Name == "Load_card_Choose_PlantPortraits") != 1) throw new InvalidDataException("PlantPortraits call drift");
     if (CountCalls(loadSprites, mr => mr.DeclaringType.FullName == "ResourceManager" && mr.Name == "Load_card_Choose_Sprites") != 1) throw new InvalidDataException("CardChooseSprites call drift");
