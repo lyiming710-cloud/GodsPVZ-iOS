@@ -1,0 +1,88 @@
+name: Stage9.1 1c62 Plant_DetaiPage.Initialize native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c62-plant-detail-initialize-native-gate.yml'
+      - 'Tools/Stage9PlantDetailInitializePatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  plant-detail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 1c62 input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/plant-detail/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/plant-detail/ilspy
+      - name: Apply PC-native Plant detail Initialize recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/plant-detail"; E="$ROOT/evidence"; mkdir -p "$E"
+          IN="$ROOT/input/GodsPVZRuntime1-device-window-portraits.dll"; DLL="$ROOT/GodsPVZRuntime1-plant-detail-initialize.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209' ] || exit 61
+          dotnet build Tools/Stage9PlantDetailInitializePatch/Stage9PlantDetailInitializePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantDetailInitializePatch/Stage9PlantDetailInitializePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209$' "$E/patch.log"
+          grep -q '^NATIVE_CONSTANTS skill_position_y_offset=30 range_color=1,1,1,1$' "$E/patch.log"
+          grep -q '^REOPEN_PLANT_DETAIL_INITIALIZE_PASS token=0x06000667 locals=3 load_skill_logo=1 load_data=1 check_text=1 y_offset_30=1 white_color=1 corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x06000667$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"; cp Tools/Stage9PlantDetailInitializePatch/Evidence.md "$E/native-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/plant-detail"; E="$ROOT/evidence"; DLL="$ROOT/GodsPVZRuntime1-plant-detail-initialize.dll"
+          ILSPY="$(find "$ROOT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$ROOT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'Plant_DetaiPage' "$DLL" > "$E/Plant_DetaiPage.cs" 2> "$E/cs.stderr"; test ! -s "$E/cs.stderr"
+          "$ILSPY" -il -t 'Plant_DetaiPage' "$DLL" > "$E/Plant_DetaiPage.il" 2> "$E/il.stderr"; test ! -s "$E/il.stderr"
+          python3 - "$E/Plant_DetaiPage.cs" "$E/Plant_DetaiPage.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text(); data=Path(sys.argv[3]).read_bytes()
+          m=re.search(r'public\s+void\s+Initialize\s*\(\s*Plant\s+thePlant\s*\)',cs); assert m
+          o=cs.index('{',m.end()); d=0
+          for i in range(o,len(cs)):
+              d += (cs[i]=='{')-(cs[i]=='}')
+              if d==0: b=cs[m.start():i+1]; break
+          for bad in ['Expected I','Expected O','Expected I4','Expected F4','Unknown result type','Not implemented instruction','System.Private.CoreLib']:
+              assert bad not in b,bad
+          for x in ['LoadSkillLogo','LoadData','CheckText','30f','maxChargedLayer','skillTriggerType','rangeIamge']:
+              assert x in b,x
+          marker='// end of method Plant_DetaiPage::Initialize'; e=il.index(marker); s=il.rfind('.method',0,e); ib=il[s:e]
+          assert 'ldc.r4 30' in ib
+          assert ib.count('Plant_DetaiPage::LoadSkillLogo()')==1
+          assert ib.count('Board_PlantDetail_PlantData::LoadData')==1
+          assert ib.count('Board_PlantDetail_PlantData::CheckText')==1
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_PLANT_DETAIL_INITIALIZE_PASS y_offset_30=1 white_range_color=1 invalid_il_diagnostics=0 corelib_binary_string=0')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1C62-PLANT-DETAIL-INITIALIZE
+          path: ${{ runner.temp }}/plant-detail/evidence/
+          if-no-files-found: warn
+          retention-days: 90
