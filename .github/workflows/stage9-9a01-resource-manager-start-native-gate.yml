@@ -1,0 +1,103 @@
+name: Stage9.1 9a01 ResourceManager.Start native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-9a01-resource-manager-start-native-gate.yml'
+      - 'Tools/Stage9ResourceManagerStartPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  resource-manager-start:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 9a01 input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34763592918
+          pattern: Stage9.1-D255-CARD-CHOOSE-SERIALIZEFIELD
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-rmstart/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-rmstart/ilspy
+      - name: Apply PC-native-backed ResourceManager.Start repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-rmstart"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-card-choose-serializefield.dll"
+          DLL="$OUT/GodsPVZRuntime1-resource-manager-start.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = '9a01f9e44a056373ab230d121a8838e472cdd11a7b0d0d8ae662bb4ddb2148df' ] || exit 61
+          dotnet build Tools/Stage9ResourceManagerStartPatch/Stage9ResourceManagerStartPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9ResourceManagerStartPatch/Stage9ResourceManagerStartPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 9a01f9e44a056373ab230d121a8838e472cdd11a7b0d0d8ae662bb4ddb2148df$' "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x06000216 type=ResourceManager method=Start code_size=421 load_audio_calls=1 load_sprites_calls=0 ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x06000216 address=0x000000018033BF30 load_audio_call=0x000000018033C4B4 target=0x0000000180330340 load_sprites_call=0x000000018033C4BB target=0x0000000180333DB0 ' "$E/patch.log"
+          grep -q '^PATCH_RESOURCE_MANAGER_START insert_call=ResourceManager.LoadSprites position=after_LoadAudioClips before_prefab_loads method_body_changes=1 field_metadata_changes=0$' "$E/patch.log"
+          grep -q '^REOPEN_RESOURCE_MANAGER_START_PASS token=0x06000216 load_audio_calls=1 load_sprites_calls=1 ' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x06000216$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=.* changed_fields=0$' "$E/patch.log"
+          grep -q '^CARD_CHOOSE_SERIALIZEFIELD_PRESERVATION_PASS fields=17$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9ResourceManagerStartPatch/Evidence.md "$E/native-runtime-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-rmstart"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-resource-manager-start.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'ResourceManager' "$DLL" > "$E/ResourceManager.cs" 2> "$E/ResourceManager.stderr"; test ! -s "$E/ResourceManager.stderr"
+          "$ILSPY" -il -t 'ResourceManager' "$DLL" > "$E/ResourceManager.il" 2> "$E/ResourceManager-il.stderr"; test ! -s "$E/ResourceManager-il.stderr"
+          python3 - "$E/ResourceManager.cs" "$E/ResourceManager.il" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text()
+          il=Path(sys.argv[2]).read_text()
+          # C# validation scoped to Start body by stable neighboring method name.
+          m=re.search(r'public static void Start\(\)\s*\{(?P<body>.*?)\n\s*\}',cs,re.S)
+          assert m, 'ResourceManager.Start C# body not found'
+          b=m.group('body')
+          a=b.index('LoadAudioClips();')
+          s=b.index('LoadSprites();')
+          c=b.index('prefabs/Card/CardTemplate')
+          assert a < s < c, (a,s,c)
+          assert b.count('LoadAudioClips();') == 1
+          assert b.count('LoadSprites();') == 1
+          # IL validation scoped between Start and the next method marker.
+          sig=re.search(r'\.method public hidebysig static\s+void Start \(\) cil managed',il)
+          assert sig, 'ResourceManager.Start IL signature not found'
+          end=il.index('// end of method ResourceManager::Start',sig.start())
+          ib=il[sig.start():end]
+          ac=ib.count('call void ResourceManager::LoadAudioClips()')
+          sc=ib.count('call void ResourceManager::LoadSprites()')
+          assert ac == 1 and sc == 1, (ac,sc)
+          ai=ib.index('call void ResourceManager::LoadAudioClips()')
+          si=ib.index('call void ResourceManager::LoadSprites()')
+          ci=ib.index('ldstr "prefabs/Card/CardTemplate"')
+          assert ai < si < ci, (ai,si,ci)
+          print('ILSPY_RESOURCE_MANAGER_START_PASS load_audio_calls=1 load_sprites_calls=1 order=audio<sprites<CardTemplate')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-9A01-RESOURCE-MANAGER-START
+          path: ${{ runner.temp }}/stage9-rmstart/evidence/
+          if-no-files-found: warn
+          retention-days: 90
