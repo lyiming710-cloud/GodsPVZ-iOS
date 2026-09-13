@@ -1,0 +1,91 @@
+name: Stage9.1 exact R3 cache
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-r3-exact-cache.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  part:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {idx: '00', fid: '111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI', sha: 'e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a'}
+          - {idx: '01', fid: '1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm', sha: '1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2'}
+          - {idx: '02', fid: '1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y', sha: '4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2'}
+          - {idx: '03', fid: '1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C', sha: 'f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f'}
+          - {idx: '04', fid: '1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n', sha: '3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc'}
+          - {idx: '05', fid: '1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2', sha: '13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263c'}
+          - {idx: '06', fid: '1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW', sha: 'd35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c'}
+          - {idx: '07', fid: '1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J', sha: '0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec'}
+          - {idx: '08', fid: '1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu', sha: '30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8'}
+          - {idx: '09', fid: '12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg', sha: '46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a'}
+          - {idx: '10', fid: '1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG', sha: '3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994'}
+          - {idx: '11', fid: '1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI', sha: 'dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325'}
+    steps:
+      - name: Download and verify one exact Drive part
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          mkdir -p "$RUNNER_TEMP/r3part"
+          F="$RUNNER_TEMP/r3part/r3.${{ matrix.idx }}.part"
+          OK=0
+          for ATTEMPT in 1 2 3; do
+            rm -f "$F"
+            set +e
+            python3 -m gdown --id '${{ matrix.fid }}' --output "$F" --quiet
+            RC=$?
+            set -e
+            if [ "$RC" = 0 ] && [ -f "$F" ]; then
+              GOT="$(sha256sum "$F" | awk '{print $1}')"
+              SIZE="$(stat -c%s "$F")"
+              echo "R3_PART idx=${{ matrix.idx }} attempt=$ATTEMPT size=$SIZE sha=$GOT"
+              if [ "$GOT" = '${{ matrix.sha }}' ]; then OK=1; break; fi
+            else
+              echo "R3_PART idx=${{ matrix.idx }} attempt=$ATTEMPT download_rc=$RC"
+            fi
+            sleep $((ATTEMPT * 5))
+          done
+          [ "$OK" = 1 ] || exit 62
+      - name: Upload verified part
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-r3-cache-part-${{ matrix.idx }}
+          path: ${{ runner.temp }}/r3part/r3.${{ matrix.idx }}.part
+          compression-level: 0
+          retention-days: 7
+
+  combine:
+    needs: part
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Download all verified parts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: Stage9.1-r3-cache-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/r3parts
+      - name: Combine and gate exact R3 archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          [ "$(find "$RUNNER_TEMP/r3parts" -maxdepth 1 -type f -name 'r3.*.part' | wc -l)" = 12 ] || exit 63
+          cat "$RUNNER_TEMP/r3parts"/r3.*.part > "$RUNNER_TEMP/GodsPVZ-Stage9.1-preimport-r3.tar.zst"
+          [ "$(stat -c%s "$RUNNER_TEMP/GodsPVZ-Stage9.1-preimport-r3.tar.zst")" = 786765618 ] || exit 64
+          [ "$(sha256sum "$RUNNER_TEMP/GodsPVZ-Stage9.1-preimport-r3.tar.zst" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 65
+          sha256sum "$RUNNER_TEMP/GodsPVZ-Stage9.1-preimport-r3.tar.zst"
+      - name: Upload exact combined R3 cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-r3-exact-archive
+          path: ${{ runner.temp }}/GodsPVZ-Stage9.1-preimport-r3.tar.zst
+          compression-level: 0
+          retention-days: 90
