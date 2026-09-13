@@ -99,6 +99,7 @@ jobs:
           PY
 
       - name: Upload evidence and candidate
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Stage9.1-4A2E-CARD-CHOOSE-INITIALIZE
