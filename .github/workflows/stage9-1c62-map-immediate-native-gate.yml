@@ -1,0 +1,94 @@
+name: Stage9.1 1c62 Map immediate-path native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c62-map-immediate-native-gate.yml'
+      - 'Tools/Stage9MapImmediatePatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  map-immediate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 1c62 input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-map/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-map/ilspy
+      - name: Apply PC-native Map immediate-path recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-map"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-device-window-portraits.dll"
+          DLL="$OUT/GodsPVZRuntime1-map-immediate.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209' ] || exit 61
+          dotnet build Tools/Stage9MapImmediatePatch/Stage9MapImmediatePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9MapImmediatePatch/Stage9MapImmediatePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209$' "$E/patch.log"
+          grep -q '^PATCH_MAP_IMMEDIATE methods=3 tokens=0x06000285,0x06000289,0x0600028A source=pc_native_immediate_gameplay_path$' "$E/patch.log"
+          grep -q '^REOPEN_MAP_IMMEDIATE_PASS copy_private_list_refs=0 getx_private_list_refs=0 gety_private_list_refs=0 getx_calls=1 grid_copy_calls=1 corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2314 changed_methods=3 target_tokens=0x06000285,0x06000289,0x0600028A$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9MapImmediatePatch/Evidence.md "$E/native-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-map"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-map-immediate.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'Map' "$DLL" > "$E/Map.cs" 2> "$E/cs.stderr"; test ! -s "$E/cs.stderr"
+          "$ILSPY" -il -t 'Map' "$DLL" > "$E/Map.il" 2> "$E/il.stderr"; test ! -s "$E/il.stderr"
+          python3 - "$E/Map.cs" "$E/Map.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text(); data=Path(sys.argv[3]).read_bytes()
+          def body(name):
+              m=re.search(r'public\s+[^\n]*\b'+re.escape(name)+r'\s*\(\s*\)',cs); assert m,name
+              o=cs.index('{',m.end()); d=0
+              for i in range(o,len(cs)):
+                  d += (cs[i]=='{')-(cs[i]=='}')
+                  if d==0: return cs[m.start():i+1]
+              raise AssertionError(name)
+          for name in ['GetMapX','GetMapY','Copy']:
+              b=body(name)
+              for bad in ['._size','._version','._items','Expected I','Expected O','Expected I4','Unknown result type','System.Private.CoreLib']:
+                  assert bad not in b,(name,bad)
+          b=body('Copy')
+          for x in ['GetMapX()','new Map(','senarioState','cameraSize','EnemyType','.Copy()','gridX','gridY']:
+              assert x in b,x
+          marker='// end of method Map::Copy'; e=il.index(marker); s=il.rfind('.method',0,e); ib=il[s:e]
+          assert 'List`1<class Row>::_size' not in ib and 'List`1<class Grid>::_size' not in ib
+          assert ib.count('Map::GetMapX()')==1 and ib.count('Grid::Copy()')==1
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_MAP_IMMEDIATE_PASS methods=3 private_list_fields=0 invalid_il_diagnostics=0 getx_call=1 grid_copy_call=1 corelib_binary_string=0')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1C62-MAP-IMMEDIATE
+          path: ${{ runner.temp }}/stage9-map/evidence/
+          if-no-files-found: warn
+          retention-days: 90
