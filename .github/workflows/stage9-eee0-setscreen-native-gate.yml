@@ -75,14 +75,20 @@ jobs:
           iend=il.index('} // end of method GlobalStaticVars::SetScreen',istart)
           im=il[istart:iend]
           Path(sys.argv[3]).write_text(cm); Path(sys.argv[4]).write_text(im)
-          for bad in ('Invalid IL','Expected O, but got','Unknown result type','Method not found @180D0E340','object obj'):
+          for bad in ('Invalid IL','Expected O, but got','Method not found @180D0E340','object obj'):
               assert bad not in cm, bad
+          # ILSpy 11 emits three analysis-only Unknown-result comments around the manually restored
+          # external value-type getter path, while still decompiling it correctly. Pin them exactly
+          # instead of treating any such comment as CLR-invalid IL.
+          assert cm.count('Unknown result type') == 3
+          for off in ('IL_011a','IL_011f','IL_0132'):
+              assert f'//{off}: Unknown result type' in cm, off
           for req in ('gLawnApp.fullscreen','gLawnApp.resolutionScale','1440','810','1280','720','1920','1080','2160','2560','2960','Screen.currentResolution','refreshRateRatio','Screen.SetResolution'):
               assert req in cm, req
           assert 'UnityEngine.Resolution::get_refreshRateRatio()' in im
           assert im.count('UnityEngine.Screen::SetResolution') == 3
           assert 'ldc.i4.1' in im and 'ldc.i4.3' in im
-          print('ILSPY_SETSCREEN_PASS method=GlobalStaticVars.SetScreen native_windowed_table=5+fallback fullscreen_refresh=currentResolution.refreshRateRatio')
+          print('ILSPY_SETSCREEN_PASS method=GlobalStaticVars.SetScreen native_windowed_table=5+fallback fullscreen_refresh=currentResolution.refreshRateRatio warnings=3-pinned-value-type-analysis')
           PY
       - name: Upload evidence and candidate
         if: always()
