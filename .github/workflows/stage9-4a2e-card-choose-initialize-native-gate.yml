@@ -71,9 +71,11 @@ jobs:
           import sys
           cs=Path(sys.argv[1]).read_text()
           il=Path(sys.argv[2]).read_text()
-          a=il.index('instance void Initialize (')
+          card=il.index('.class public auto ansi beforefieldinit Card_Choose')
+          a=il.index('instance void Initialize (',card)
           b=il.index('instance void ChooseThis',a)
           m=il[a:b]
+          assert 'class PlantSave plantSave' in m[:256], m[:256]
           assert '[0] int32' in m, m
           assert '[1] class Skill' in m and '[2] class Skill' in m, m
           assert 'System.Object' not in m, m
