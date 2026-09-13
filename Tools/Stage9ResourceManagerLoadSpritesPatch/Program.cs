@@ -79,7 +79,7 @@ static MethodReference FindCallRef(MethodDefinition m, Func<MethodReference, boo
     throw new InvalidDataException($"required method reference missing: {label}");
 }
 
-static MethodReference FindCallRef(IEnumerable<MethodDefinition> methods, Func<MethodReference, bool> predicate, string label)
+static MethodReference FindAnyCallRef(IEnumerable<MethodDefinition> methods, Func<MethodReference, bool> predicate, string label)
 {
     foreach (var m in methods)
         if (m.HasBody)
@@ -194,12 +194,12 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var suppliesName = Field(suppliesInfoType, "name");
     var suppliesListType = suppliesInfos.FieldType;
     var suppliesGetCount = MakeInstanceMethod(module, suppliesListType, "get_Count", module.TypeSystem.Int32);
-    var suppliesGetItem = FindCallRef(methods, mr => mr.Name == "get_Item" && IsGenericListOf(mr, suppliesInfoType.FullName) && mr.Parameters.Count == 1, "List<SuppliesInfo>.get_Item");
+    var suppliesGetItem = FindAnyCallRef(methods, mr => mr.Name == "get_Item" && IsGenericListOf(mr, suppliesInfoType.FullName) && mr.Parameters.Count == 1, "List<SuppliesInfo>.get_Item");
 
-    var spriteAdd = FindCallRef(methods, mr => mr.Name == "Add" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 1, "List<Sprite>.Add");
-    var spriteGetCount = FindCallRef(methods, mr => mr.Name == "get_Count" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 0, "List<Sprite>.get_Count");
-    var spriteGetItem = FindCallRef(methods, mr => mr.Name == "get_Item" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 1, "List<Sprite>.get_Item");
-    var spriteSetItem = FindCallRef(methods, mr => mr.Name == "set_Item" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 2, "List<Sprite>.set_Item");
+    var spriteAdd = FindAnyCallRef(methods, mr => mr.Name == "Add" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 1, "List<Sprite>.Add");
+    var spriteGetCount = FindAnyCallRef(methods, mr => mr.Name == "get_Count" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 0, "List<Sprite>.get_Count");
+    var spriteGetItem = FindAnyCallRef(methods, mr => mr.Name == "get_Item" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 1, "List<Sprite>.get_Item");
+    var spriteSetItem = FindAnyCallRef(methods, mr => mr.Name == "set_Item" && IsGenericListOf(mr, SpriteName) && mr.Parameters.Count == 2, "List<Sprite>.set_Item");
 
     var cliqueType = types.Single(t => t.FullName == "Clique");
     var cliqueConstants = cliqueType.Fields.Where(f => f.IsStatic && f.HasConstant)
@@ -212,97 +212,33 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     Console.WriteLine("NATIVE_AUTHORITY token=0x0600021C address=0x0000000180333DB0 load_sprite_calls=88 list_add_calls=85 path_combine2_calls=92 path_combine3_calls=4 helper_calls=4");
     Console.WriteLine("RUNTIME_CAUSAL_EVIDENCE strict_run=34765343442 candidate=50015e74e2225c2b3a98c83837195bcc510ea0920bd1a619bcf43c415fe9e641 exception=InvalidProgramException method=ResourceManager.LoadSprites il_offset=0x0113 opcode=ceq");
 
-    target.Body.Instructions.Clear();
-    target.Body.Variables.Clear();
-    target.Body.ExceptionHandlers.Clear();
-    target.Body.InitLocals = true;
-    target.Body.MaxStackSize = 8;
-
-    var basePath = new VariableDefinition(module.TypeSystem.String);
-    var index = new VariableDefinition(module.TypeSystem.Int32);
-    var cliqueName = new VariableDefinition(module.TypeSystem.String);
-    var cliqueSprite = new VariableDefinition(spriteType);
-    target.Body.Variables.Add(basePath);
-    target.Body.Variables.Add(index);
-    target.Body.Variables.Add(cliqueName);
-    target.Body.Variables.Add(cliqueSprite);
-
-    var il = target.Body.GetILProcessor();
-    Instruction Make(OpCode op, object? operand = null) => operand switch
-    {
-        null => il.Create(op), string s => il.Create(op, s), int n => il.Create(op, n), Instruction dest => il.Create(op, dest),
-        MethodReference mr => il.Create(op, mr), FieldReference fr => il.Create(op, fr), TypeReference tr => il.Create(op, tr),
-        VariableDefinition vr => il.Create(op, vr), _ => throw new InvalidDataException($"unsupported IL operand {operand.GetType().FullName}")
-    };
-    void Emit(OpCode op, object? operand = null) => il.Append(Make(op, operand));
-
-    Emit(OpCodes.Call, helperSprites);
-    Emit(OpCodes.Call, helperPlantPortraits); Emit(OpCodes.Pop);
-    Emit(OpCodes.Call, helperDevicePortraits); Emit(OpCodes.Pop);
-    Emit(OpCodes.Call, helperWindowPortraits); Emit(OpCodes.Pop);
-
-    void EmitLoadField2(FieldDefinition dest, string a, string b) { Emit(OpCodes.Ldstr,a); Emit(OpCodes.Ldstr,b); Emit(OpCodes.Call,combine2); Emit(OpCodes.Call,loadSprite); Emit(OpCodes.Stsfld,dest); }
-    void EmitLoadField3(FieldDefinition dest, string a, string b, string c) { Emit(OpCodes.Ldstr,a); Emit(OpCodes.Ldstr,b); Emit(OpCodes.Ldstr,c); Emit(OpCodes.Call,combine3); Emit(OpCodes.Call,loadSprite); Emit(OpCodes.Stsfld,dest); }
-    void EmitSetBase2(string a, string b) { Emit(OpCodes.Ldstr,a); Emit(OpCodes.Ldstr,b); Emit(OpCodes.Call,combine2); Emit(OpCodes.Stloc,basePath); }
-    void EmitSetBase3(string a, string b, string c) { Emit(OpCodes.Ldstr,a); Emit(OpCodes.Ldstr,b); Emit(OpCodes.Ldstr,c); Emit(OpCodes.Call,combine3); Emit(OpCodes.Stloc,basePath); }
-    void EmitAddFromBase(FieldDefinition list, string child) { Emit(OpCodes.Ldsfld,list); Emit(OpCodes.Ldloc,basePath); Emit(OpCodes.Ldstr,child); Emit(OpCodes.Call,combine2); Emit(OpCodes.Call,loadSprite); Emit(OpCodes.Callvirt,spriteAdd); }
-
-    EmitLoadField2(moneySprite, "sprites", "Dollar");
-    EmitLoadField3(cardPlant, "sprites", "Card", "SeedPacket_Larger_0");
-    EmitLoadField3(cardDevice, "sprites", "Card", "SeedPacket_Larger_1");
-
-    string[] plantNames = {"KnightWallnut_body","KnightWallnut_body2","KnightWallnut_cedun1_1","KnightWallnut_cedun1_2","KnightWallnut_cedun1_3","KnightWallnut_dunpai1_1","KnightWallnut_dunpai1_2","KnightWallnut_dunpai1_3","KnightWallnut_pifeng1_1","KnightWallnut_pifeng1_2","KnightWallnut_pifeng2_1","KnightWallnut_pifeng2_2","KnightWallnut_pifeng3_1","KnightWallnut_pifeng3_2","KnightWallnut_toukui1_1","KnightWallnut_toukui1_2","KnightWallnut_toukui2_1","KnightWallnut_toukui2_2","KnightWallnut_toukui2_3","VikingChomper_Barrels","VikingChomper_Barrels1","VikingChomper_Barrels2"};
-    EmitSetBase2("sprites", "Plant"); foreach (var n in plantNames) EmitAddFromBase(plantSprites,n);
-
-    string[] zombieNames = {"Zombie_cone1","Zombie_cone2","Zombie_cone3","Zombie_bucket1","Zombie_bucket2","Zombie_bucket3","Zombie_brick1","Zombie_brick2","Zombie_brick3","Zombie_screendoor1","Zombie_screendoor2","Zombie_screendoor3","Zombie_outerarm_upper2","Zombie_flag3","IceCube1","IceCube2","IceCube2_1","IceCube3","IceCube3_1","Wallnut_body","Wallnut_cracked1","Wallnut_cracked2","Wallnut_boom_body","Wallnut_boom_cracked1","Wallnut_boom_cracked2","Zombie_polevaulter_outerarm_upper2","Zombie_HeavyInfantry_bucket1","Zombie_HeavyInfantry_bucket2","Zombie_HeavyInfantry_bucket3","Zombie_HeavyInfantry_door1","Zombie_HeavyInfantry_door2","Zombie_HeavyInfantry_door3","Zombie_poleCommander_outerarm_upper2","LadderSaboteurs_ladder_1","LadderSaboteurs_ladder_2","LadderSaboteurs_ladder_3","LadderSaboteurs_helmet1","LadderSaboteurs_helmet2","LadderSaboteurs_helmet3","LadderSaboteurs_mask1","LadderSaboteurs_mask2","LadderSaboteurs_mask3","LadderSaboteurs_outerarm_upper2"};
-    EmitSetBase2("sprites", "Zombie"); foreach (var n in zombieNames) EmitAddFromBase(zombieSprites,n);
-
-    EmitSetBase2("sprites", "Supplies"); Emit(OpCodes.Ldc_I4_0); Emit(OpCodes.Stloc,index);
-    var suppliesBody=il.Create(OpCodes.Nop); var suppliesCheck=il.Create(OpCodes.Nop); Emit(OpCodes.Br,suppliesCheck); il.Append(suppliesBody);
-    Emit(OpCodes.Ldsfld,itemSprites); Emit(OpCodes.Ldloc,basePath); Emit(OpCodes.Ldsfld,suppliesInitialValue); Emit(OpCodes.Ldfld,suppliesInfos); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Callvirt,suppliesGetItem); Emit(OpCodes.Ldfld,suppliesName); Emit(OpCodes.Call,combine2); Emit(OpCodes.Call,loadSprite); Emit(OpCodes.Callvirt,spriteAdd);
-    Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldc_I4_1); Emit(OpCodes.Add); Emit(OpCodes.Stloc,index); il.Append(suppliesCheck); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldsfld,suppliesInitialValue); Emit(OpCodes.Ldfld,suppliesInfos); Emit(OpCodes.Callvirt,suppliesGetCount); Emit(OpCodes.Blt,suppliesBody);
-
-    EmitSetBase2("sprites","VFX"); foreach(var n in new[]{"IceCube_Large","IceCube1","IceCube2","IceCube2_1","IceCube3","IceCube3_1","icetrap"}) EmitAddFromBase(vfxSprites,n);
-
-    EmitSetBase3("sprites","UI","CliqueLogo"); Emit(OpCodes.Ldc_I4_0); Emit(OpCodes.Stloc,index);
-    var cliqueBody=il.Create(OpCodes.Nop); var cliqueNext=il.Create(OpCodes.Nop); var cliqueCheck=il.Create(OpCodes.Nop); var fillCheck=il.Create(OpCodes.Nop); var fillDone=il.Create(OpCodes.Nop); var needLoad=il.Create(OpCodes.Nop); var haveSprite=il.Create(OpCodes.Nop);
-    Emit(OpCodes.Br,cliqueCheck); il.Append(cliqueBody); il.Append(fillCheck);
-    Emit(OpCodes.Ldsfld,cliqueLogos); Emit(OpCodes.Callvirt,spriteGetCount); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Bgt,fillDone);
-    Emit(OpCodes.Ldsfld,cliqueLogos); Emit(OpCodes.Ldnull); Emit(OpCodes.Callvirt,spriteAdd); Emit(OpCodes.Br,fillCheck); il.Append(fillDone);
-    Emit(OpCodes.Ldsfld,cliqueLogos); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Callvirt,spriteGetItem); Emit(OpCodes.Ldnull); Emit(OpCodes.Call,objectEquality); Emit(OpCodes.Brtrue,needLoad); Emit(OpCodes.Br,cliqueNext); il.Append(needLoad);
-    Emit(OpCodes.Ldtoken,cliqueType); Emit(OpCodes.Call,typeFromHandle); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Box,cliqueType); Emit(OpCodes.Call,enumGetName); Emit(OpCodes.Stloc,cliqueName);
-    Emit(OpCodes.Ldloc,basePath); Emit(OpCodes.Ldloc,cliqueName); Emit(OpCodes.Call,combine2); Emit(OpCodes.Call,loadSprite); Emit(OpCodes.Stloc,cliqueSprite);
-    Emit(OpCodes.Ldloc,cliqueSprite); Emit(OpCodes.Call,objectImplicit); Emit(OpCodes.Brtrue,haveSprite); Emit(OpCodes.Ldstr,"加载派系图标"); Emit(OpCodes.Ldloc,cliqueName); Emit(OpCodes.Ldstr,"失败"); Emit(OpCodes.Call,concat3); Emit(OpCodes.Call,debugLog); Emit(OpCodes.Br,cliqueNext); il.Append(haveSprite);
-    Emit(OpCodes.Ldsfld,cliqueLogos); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldloc,cliqueSprite); Emit(OpCodes.Callvirt,spriteSetItem); il.Append(cliqueNext); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldc_I4_1); Emit(OpCodes.Add); Emit(OpCodes.Stloc,index); il.Append(cliqueCheck); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldc_I4_6); Emit(OpCodes.Blt,cliqueBody);
-
-    EmitSetBase2("sprites","Device"); foreach(var n in new[]{"Roadblock","Roadblock1","Roadblock2"}) EmitAddFromBase(deviceSprites,n);
-    EmitSetBase3("sprites","UI","LevelInside");
-    void EmitLevelAdd(FieldDefinition list,string prefix){ Emit(OpCodes.Ldsfld,list); Emit(OpCodes.Ldloc,basePath); Emit(OpCodes.Ldstr,prefix); Emit(OpCodes.Ldloca,index); Emit(OpCodes.Call,intToString); Emit(OpCodes.Call,concat2); Emit(OpCodes.Call,combine2); Emit(OpCodes.Call,loadSprite); Emit(OpCodes.Callvirt,spriteAdd); }
-    void EmitLevelLoop(int limit,params (FieldDefinition field,string prefix)[] loads){ Emit(OpCodes.Ldc_I4_0); Emit(OpCodes.Stloc,index); var body=il.Create(OpCodes.Nop); var check=il.Create(OpCodes.Nop); Emit(OpCodes.Br,check); il.Append(body); foreach(var x in loads) EmitLevelAdd(x.field,x.prefix); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldc_I4_1); Emit(OpCodes.Add); Emit(OpCodes.Stloc,index); il.Append(check); Emit(OpCodes.Ldloc,index); Emit(OpCodes.Ldc_I4,limit); Emit(OpCodes.Blt,body); }
-    EmitLevelLoop(100,(levelA,"A-")); EmitLevelLoop(50,(levelR,"R-")); EmitLevelLoop(50,(levelHA,"HA_A_"),(levelHB,"HA_B_"),(levelHC,"HA_C_")); EmitLevelLoop(50,(levelBA,"BA-"));
-
-    EmitSetBase2("sprites","Prop"); EmitAddFromBase(propSprites,"Shovel"); EmitAddFromBase(propSprites,"Glove"); Emit(OpCodes.Ret);
-    module.Write(output);
-    Console.WriteLine("PATCH_RESOURCE_MANAGER_LOADSPRITES method_body_changes=1 field_metadata_changes=0 source=pc_native_plus_exact_resource_sequence");
+    target.Body.Instructions.Clear(); target.Body.Variables.Clear(); target.Body.ExceptionHandlers.Clear(); target.Body.InitLocals = true; target.Body.MaxStackSize = 8;
+    var basePath=new VariableDefinition(module.TypeSystem.String); var index=new VariableDefinition(module.TypeSystem.Int32); var cliqueName=new VariableDefinition(module.TypeSystem.String); var cliqueSprite=new VariableDefinition(spriteType);
+    target.Body.Variables.Add(basePath); target.Body.Variables.Add(index); target.Body.Variables.Add(cliqueName); target.Body.Variables.Add(cliqueSprite);
+    var il=target.Body.GetILProcessor();
+    Instruction Make(OpCode op,object? operand=null)=>operand switch{null=>il.Create(op),string s=>il.Create(op,s),int n=>il.Create(op,n),Instruction d=>il.Create(op,d),MethodReference mr=>il.Create(op,mr),FieldReference fr=>il.Create(op,fr),TypeReference tr=>il.Create(op,tr),VariableDefinition vr=>il.Create(op,vr),_=>throw new InvalidDataException($"unsupported IL operand {operand.GetType().FullName}")};
+    void Emit(OpCode op,object? operand=null)=>il.Append(Make(op,operand));
+    Emit(OpCodes.Call,helperSprites); Emit(OpCodes.Call,helperPlantPortraits); Emit(OpCodes.Pop); Emit(OpCodes.Call,helperDevicePortraits); Emit(OpCodes.Pop); Emit(OpCodes.Call,helperWindowPortraits); Emit(OpCodes.Pop);
+    void LF2(FieldDefinition d,string a,string b){Emit(OpCodes.Ldstr,a);Emit(OpCodes.Ldstr,b);Emit(OpCodes.Call,combine2);Emit(OpCodes.Call,loadSprite);Emit(OpCodes.Stsfld,d);} void LF3(FieldDefinition d,string a,string b,string c){Emit(OpCodes.Ldstr,a);Emit(OpCodes.Ldstr,b);Emit(OpCodes.Ldstr,c);Emit(OpCodes.Call,combine3);Emit(OpCodes.Call,loadSprite);Emit(OpCodes.Stsfld,d);} void B2(string a,string b){Emit(OpCodes.Ldstr,a);Emit(OpCodes.Ldstr,b);Emit(OpCodes.Call,combine2);Emit(OpCodes.Stloc,basePath);} void B3(string a,string b,string c){Emit(OpCodes.Ldstr,a);Emit(OpCodes.Ldstr,b);Emit(OpCodes.Ldstr,c);Emit(OpCodes.Call,combine3);Emit(OpCodes.Stloc,basePath);} void Add(FieldDefinition f,string n){Emit(OpCodes.Ldsfld,f);Emit(OpCodes.Ldloc,basePath);Emit(OpCodes.Ldstr,n);Emit(OpCodes.Call,combine2);Emit(OpCodes.Call,loadSprite);Emit(OpCodes.Callvirt,spriteAdd);}
+    LF2(moneySprite,"sprites","Dollar"); LF3(cardPlant,"sprites","Card","SeedPacket_Larger_0"); LF3(cardDevice,"sprites","Card","SeedPacket_Larger_1");
+    string[] pn={"KnightWallnut_body","KnightWallnut_body2","KnightWallnut_cedun1_1","KnightWallnut_cedun1_2","KnightWallnut_cedun1_3","KnightWallnut_dunpai1_1","KnightWallnut_dunpai1_2","KnightWallnut_dunpai1_3","KnightWallnut_pifeng1_1","KnightWallnut_pifeng1_2","KnightWallnut_pifeng2_1","KnightWallnut_pifeng2_2","KnightWallnut_pifeng3_1","KnightWallnut_pifeng3_2","KnightWallnut_toukui1_1","KnightWallnut_toukui1_2","KnightWallnut_toukui2_1","KnightWallnut_toukui2_2","KnightWallnut_toukui2_3","VikingChomper_Barrels","VikingChomper_Barrels1","VikingChomper_Barrels2"}; B2("sprites","Plant"); foreach(var n in pn)Add(plantSprites,n);
+    string[] zn={"Zombie_cone1","Zombie_cone2","Zombie_cone3","Zombie_bucket1","Zombie_bucket2","Zombie_bucket3","Zombie_brick1","Zombie_brick2","Zombie_brick3","Zombie_screendoor1","Zombie_screendoor2","Zombie_screendoor3","Zombie_outerarm_upper2","Zombie_flag3","IceCube1","IceCube2","IceCube2_1","IceCube3","IceCube3_1","Wallnut_body","Wallnut_cracked1","Wallnut_cracked2","Wallnut_boom_body","Wallnut_boom_cracked1","Wallnut_boom_cracked2","Zombie_polevaulter_outerarm_upper2","Zombie_HeavyInfantry_bucket1","Zombie_HeavyInfantry_bucket2","Zombie_HeavyInfantry_bucket3","Zombie_HeavyInfantry_door1","Zombie_HeavyInfantry_door2","Zombie_HeavyInfantry_door3","Zombie_poleCommander_outerarm_upper2","LadderSaboteurs_ladder_1","LadderSaboteurs_ladder_2","LadderSaboteurs_ladder_3","LadderSaboteurs_helmet1","LadderSaboteurs_helmet2","LadderSaboteurs_helmet3","LadderSaboteurs_mask1","LadderSaboteurs_mask2","LadderSaboteurs_mask3","LadderSaboteurs_outerarm_upper2"}; B2("sprites","Zombie"); foreach(var n in zn)Add(zombieSprites,n);
+    B2("sprites","Supplies"); Emit(OpCodes.Ldc_I4_0);Emit(OpCodes.Stloc,index);var sb=il.Create(OpCodes.Nop);var scn=il.Create(OpCodes.Nop);Emit(OpCodes.Br,scn);il.Append(sb);Emit(OpCodes.Ldsfld,itemSprites);Emit(OpCodes.Ldloc,basePath);Emit(OpCodes.Ldsfld,suppliesInitialValue);Emit(OpCodes.Ldfld,suppliesInfos);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Callvirt,suppliesGetItem);Emit(OpCodes.Ldfld,suppliesName);Emit(OpCodes.Call,combine2);Emit(OpCodes.Call,loadSprite);Emit(OpCodes.Callvirt,spriteAdd);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldc_I4_1);Emit(OpCodes.Add);Emit(OpCodes.Stloc,index);il.Append(scn);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldsfld,suppliesInitialValue);Emit(OpCodes.Ldfld,suppliesInfos);Emit(OpCodes.Callvirt,suppliesGetCount);Emit(OpCodes.Blt,sb);
+    B2("sprites","VFX");foreach(var n in new[]{"IceCube_Large","IceCube1","IceCube2","IceCube2_1","IceCube3","IceCube3_1","icetrap"})Add(vfxSprites,n);
+    B3("sprites","UI","CliqueLogo");Emit(OpCodes.Ldc_I4_0);Emit(OpCodes.Stloc,index);var cb=il.Create(OpCodes.Nop);var cn=il.Create(OpCodes.Nop);var cc=il.Create(OpCodes.Nop);var fc=il.Create(OpCodes.Nop);var fd=il.Create(OpCodes.Nop);var nl=il.Create(OpCodes.Nop);var hs=il.Create(OpCodes.Nop);Emit(OpCodes.Br,cc);il.Append(cb);il.Append(fc);Emit(OpCodes.Ldsfld,cliqueLogos);Emit(OpCodes.Callvirt,spriteGetCount);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Bgt,fd);Emit(OpCodes.Ldsfld,cliqueLogos);Emit(OpCodes.Ldnull);Emit(OpCodes.Callvirt,spriteAdd);Emit(OpCodes.Br,fc);il.Append(fd);Emit(OpCodes.Ldsfld,cliqueLogos);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Callvirt,spriteGetItem);Emit(OpCodes.Ldnull);Emit(OpCodes.Call,objectEquality);Emit(OpCodes.Brtrue,nl);Emit(OpCodes.Br,cn);il.Append(nl);Emit(OpCodes.Ldtoken,cliqueType);Emit(OpCodes.Call,typeFromHandle);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Box,cliqueType);Emit(OpCodes.Call,enumGetName);Emit(OpCodes.Stloc,cliqueName);Emit(OpCodes.Ldloc,basePath);Emit(OpCodes.Ldloc,cliqueName);Emit(OpCodes.Call,combine2);Emit(OpCodes.Call,loadSprite);Emit(OpCodes.Stloc,cliqueSprite);Emit(OpCodes.Ldloc,cliqueSprite);Emit(OpCodes.Call,objectImplicit);Emit(OpCodes.Brtrue,hs);Emit(OpCodes.Ldstr,"加载派系图标");Emit(OpCodes.Ldloc,cliqueName);Emit(OpCodes.Ldstr,"失败");Emit(OpCodes.Call,concat3);Emit(OpCodes.Call,debugLog);Emit(OpCodes.Br,cn);il.Append(hs);Emit(OpCodes.Ldsfld,cliqueLogos);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldloc,cliqueSprite);Emit(OpCodes.Callvirt,spriteSetItem);il.Append(cn);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldc_I4_1);Emit(OpCodes.Add);Emit(OpCodes.Stloc,index);il.Append(cc);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldc_I4_6);Emit(OpCodes.Blt,cb);
+    B2("sprites","Device");foreach(var n in new[]{"Roadblock","Roadblock1","Roadblock2"})Add(deviceSprites,n);B3("sprites","UI","LevelInside");
+    void LA(FieldDefinition f,string p){Emit(OpCodes.Ldsfld,f);Emit(OpCodes.Ldloc,basePath);Emit(OpCodes.Ldstr,p);Emit(OpCodes.Ldloca,index);Emit(OpCodes.Call,intToString);Emit(OpCodes.Call,concat2);Emit(OpCodes.Call,combine2);Emit(OpCodes.Call,loadSprite);Emit(OpCodes.Callvirt,spriteAdd);} void LL(int lim,params(FieldDefinition f,string p)[] x){Emit(OpCodes.Ldc_I4_0);Emit(OpCodes.Stloc,index);var b=il.Create(OpCodes.Nop);var c=il.Create(OpCodes.Nop);Emit(OpCodes.Br,c);il.Append(b);foreach(var z in x)LA(z.f,z.p);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldc_I4_1);Emit(OpCodes.Add);Emit(OpCodes.Stloc,index);il.Append(c);Emit(OpCodes.Ldloc,index);Emit(OpCodes.Ldc_I4,lim);Emit(OpCodes.Blt,b);} LL(100,(levelA,"A-"));LL(50,(levelR,"R-"));LL(50,(levelHA,"HA_A_"),(levelHB,"HA_B_"),(levelHC,"HA_C_"));LL(50,(levelBA,"BA-"));B2("sprites","Prop");Add(propSprites,"Shovel");Add(propSprites,"Glove");Emit(OpCodes.Ret);
+    module.Write(output); Console.WriteLine("PATCH_RESOURCE_MANAGER_LOADSPRITES method_body_changes=1 field_metadata_changes=0 source=pc_native_plus_exact_resource_sequence");
 }
 
-var outputSha=Sha256(output); Console.WriteLine($"OUTPUT_SHA256 {outputSha}"); if(outputSha==ExpectedInputSha256) throw new InvalidDataException("output SHA unexpectedly identical to input");
-
+var outputSha=Sha256(output);Console.WriteLine($"OUTPUT_SHA256 {outputSha}");if(outputSha==ExpectedInputSha256)throw new InvalidDataException("output SHA unexpectedly identical to input");
 using(var after=ModuleDefinition.ReadModule(output,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate}))
 {
-    var types=AllTypes(after.Types).ToList(); var methods=types.SelectMany(t=>t.Methods).ToList(); var fields=types.SelectMany(t=>t.Fields).ToList();
-    if(methods.Count!=ExpectedMethodDefCount||fields.Count!=ExpectedFieldCount) throw new InvalidDataException($"postwrite counts methods={methods.Count} fields={fields.Count}");
-    var rm=types.Single(t=>t.FullName==TargetType); var target=rm.Methods.Single(m=>Raw(m)==TargetToken); const string SpriteName="UnityEngine.Sprite";
-    int loadCount=CountCalls(target,mr=>IsLoadSprite(mr,SpriteName)); int addCount=CountCalls(target,mr=>mr.Name=="Add"&&IsGenericListOf(mr,SpriteName)); int c2=CountCalls(target,mr=>mr.DeclaringType.FullName=="System.IO.Path"&&mr.Name=="Combine"&&mr.Parameters.Count==2); int c3=CountCalls(target,mr=>mr.DeclaringType.FullName=="System.IO.Path"&&mr.Name=="Combine"&&mr.Parameters.Count==3);
-    if(loadCount!=88||addCount!=85||c2!=92||c3!=4) throw new InvalidDataException($"native call-shape mismatch load={loadCount} add={addCount} combine2={c2} combine3={c3}");
-    foreach(var h in new[]{"Load_card_Choose_Sprites","Load_card_Choose_PlantPortraits","Load_card_Choose_DevicePortraits","Load_devicePortraits_Window"}) if(CountCalls(target,mr=>mr.DeclaringType.FullName==TargetType&&mr.Name==h)!=1) throw new InvalidDataException($"helper mismatch {h}");
-    var strings=target.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr).Select(i=>(string)i.Operand).ToList(); foreach(var r in new[]{"Dollar","SeedPacket_Larger_0","SeedPacket_Larger_1","KnightWallnut_body","VikingChomper_Barrels2","Zombie_cone1","LadderSaboteurs_outerarm_upper2","Supplies","IceCube_Large","icetrap","CliqueLogo","Roadblock2","LevelInside","A-","R-","HA_A_","HA_B_","HA_C_","BA-","Shovel","Glove"}) if(!strings.Contains(r)) throw new InvalidDataException($"resource missing {r}");
-    var start=rm.Methods.Single(m=>Raw(m)==StartToken); var audio=rm.Methods.Single(m=>m.Name=="LoadAudioClips"&&m.IsStatic&&m.Parameters.Count==0); var ac=start.Body.Instructions.Where(i=>(i.OpCode==OpCodes.Call||i.OpCode==OpCodes.Callvirt)&&i.Operand is MethodReference mr&&mr.FullName==audio.FullName).ToList(); var sc=start.Body.Instructions.Where(i=>(i.OpCode==OpCodes.Call||i.OpCode==OpCodes.Callvirt)&&i.Operand is MethodReference mr&&mr.FullName==target.FullName).ToList(); if(ac.Count!=1||sc.Count!=1||start.Body.Instructions.IndexOf(sc[0])!=start.Body.Instructions.IndexOf(ac[0])+1) throw new InvalidDataException("Start preservation failed");
-    int changed=0,untouched=0; foreach(var m in methods){ if(!beforeMethodSemantics.TryGetValue(Raw(m),out var old)) throw new InvalidDataException($"new method 0x{Raw(m):X8}"); if(old==MethodSemantic(m)) untouched++; else {changed++; if(Raw(m)!=TargetToken) throw new InvalidDataException($"unexpected method drift 0x{Raw(m):X8}");}}
-    if(changed!=1||untouched!=2316) throw new InvalidDataException($"isolation mismatch untouched={untouched} changed={changed}");
-    foreach(var f in fields) if(!beforeFieldSemantics.TryGetValue(Raw(f),out var old)||old!=FieldSemantic(f)) throw new InvalidDataException($"field drift 0x{Raw(f):X8}");
-    var cc=types.Single(t=>t.FullName=="Card_Choose"); if(cc.Fields.Count(f=>f.CustomAttributes.Any(a=>a.AttributeType.FullName=="UnityEngine.SerializeField"))!=17) throw new InvalidDataException("Card_Choose SerializeField preservation failed");
-    Console.WriteLine($"REOPEN_RESOURCE_MANAGER_LOADSPRITES_PASS token=0x{TargetToken:X8} load_sprite_calls={loadCount} list_add_calls={addCount} path_combine2_calls={c2} path_combine3_calls={c3}");
-    Console.WriteLine($"SEMANTIC_ISOLATION_PASS untouched_methods={untouched} changed_methods={changed} target_token=0x{TargetToken:X8}"); Console.WriteLine($"FIELD_METADATA_ISOLATION_PASS unchanged_fields={fields.Count} changed_fields=0"); Console.WriteLine("START_RECOVERY_PRESERVATION_PASS load_audio_calls=1 load_sprites_calls=1 adjacent=1"); Console.WriteLine("CARD_CHOOSE_SERIALIZEFIELD_PRESERVATION_PASS fields=17");
+    var types=AllTypes(after.Types).ToList();var methods=types.SelectMany(t=>t.Methods).ToList();var fields=types.SelectMany(t=>t.Fields).ToList();if(methods.Count!=ExpectedMethodDefCount||fields.Count!=ExpectedFieldCount)throw new InvalidDataException($"postwrite counts methods={methods.Count} fields={fields.Count}");var rm=types.Single(t=>t.FullName==TargetType);var target=rm.Methods.Single(m=>Raw(m)==TargetToken);const string SpriteName="UnityEngine.Sprite";
+    int loadCount=CountCalls(target,mr=>IsLoadSprite(mr,SpriteName));int addCount=CountCalls(target,mr=>mr.Name=="Add"&&IsGenericListOf(mr,SpriteName));int c2=CountCalls(target,mr=>mr.DeclaringType.FullName=="System.IO.Path"&&mr.Name=="Combine"&&mr.Parameters.Count==2);int c3=CountCalls(target,mr=>mr.DeclaringType.FullName=="System.IO.Path"&&mr.Name=="Combine"&&mr.Parameters.Count==3);if(loadCount!=88||addCount!=85||c2!=92||c3!=4)throw new InvalidDataException($"native call-shape mismatch load={loadCount} add={addCount} combine2={c2} combine3={c3}");foreach(var h in new[]{"Load_card_Choose_Sprites","Load_card_Choose_PlantPortraits","Load_card_Choose_DevicePortraits","Load_devicePortraits_Window"})if(CountCalls(target,mr=>mr.DeclaringType.FullName==TargetType&&mr.Name==h)!=1)throw new InvalidDataException($"helper mismatch {h}");
+    var strings=target.Body.Instructions.Where(i=>i.OpCode==OpCodes.Ldstr).Select(i=>(string)i.Operand).ToList();foreach(var r in new[]{"Dollar","SeedPacket_Larger_0","SeedPacket_Larger_1","KnightWallnut_body","VikingChomper_Barrels2","Zombie_cone1","LadderSaboteurs_outerarm_upper2","Supplies","IceCube_Large","icetrap","CliqueLogo","Roadblock2","LevelInside","A-","R-","HA_A_","HA_B_","HA_C_","BA-","Shovel","Glove"})if(!strings.Contains(r))throw new InvalidDataException($"resource missing {r}");
+    var start=rm.Methods.Single(m=>Raw(m)==StartToken);var audio=rm.Methods.Single(m=>m.Name=="LoadAudioClips"&&m.IsStatic&&m.Parameters.Count==0);var ac=start.Body.Instructions.Where(i=>(i.OpCode==OpCodes.Call||i.OpCode==OpCodes.Callvirt)&&i.Operand is MethodReference mr&&mr.FullName==audio.FullName).ToList();var sc=start.Body.Instructions.Where(i=>(i.OpCode==OpCodes.Call||i.OpCode==OpCodes.Callvirt)&&i.Operand is MethodReference mr&&mr.FullName==target.FullName).ToList();if(ac.Count!=1||sc.Count!=1||start.Body.Instructions.IndexOf(sc[0])!=start.Body.Instructions.IndexOf(ac[0])+1)throw new InvalidDataException("Start preservation failed");
+    int changed=0,untouched=0;foreach(var m in methods){if(!beforeMethodSemantics.TryGetValue(Raw(m),out var old))throw new InvalidDataException($"new method 0x{Raw(m):X8}");if(old==MethodSemantic(m))untouched++;else{changed++;if(Raw(m)!=TargetToken)throw new InvalidDataException($"unexpected method drift 0x{Raw(m):X8}");}}if(changed!=1||untouched!=2316)throw new InvalidDataException($"isolation mismatch untouched={untouched} changed={changed}");foreach(var f in fields)if(!beforeFieldSemantics.TryGetValue(Raw(f),out var old)||old!=FieldSemantic(f))throw new InvalidDataException($"field drift 0x{Raw(f):X8}");var card=types.Single(t=>t.FullName=="Card_Choose");if(card.Fields.Count(f=>f.CustomAttributes.Any(a=>a.AttributeType.FullName=="UnityEngine.SerializeField"))!=17)throw new InvalidDataException("Card_Choose SerializeField preservation failed");
+    Console.WriteLine($"REOPEN_RESOURCE_MANAGER_LOADSPRITES_PASS token=0x{TargetToken:X8} load_sprite_calls={loadCount} list_add_calls={addCount} path_combine2_calls={c2} path_combine3_calls={c3}");Console.WriteLine($"SEMANTIC_ISOLATION_PASS untouched_methods={untouched} changed_methods={changed} target_token=0x{TargetToken:X8}");Console.WriteLine($"FIELD_METADATA_ISOLATION_PASS unchanged_fields={fields.Count} changed_fields=0");Console.WriteLine("START_RECOVERY_PRESERVATION_PASS load_audio_calls=1 load_sprites_calls=1 adjacent=1");Console.WriteLine("CARD_CHOOSE_SERIALIZEFIELD_PRESERVATION_PASS fields=17");
 }
 return 0;
