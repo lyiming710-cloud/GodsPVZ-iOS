@@ -98,18 +98,33 @@ jobs:
           "$ILSPY" -il -t 'Map' "$DLL" > "$E/Map.il" 2> "$E/map-il.stderr"; test ! -s "$E/map-il.stderr"
           python3 - "$E/PrepareUIController.cs" "$E/Map.cs" "$E/PrepareUIController.il" "$E/Map.il" "$DLL" <<'PY'
           from pathlib import Path
-          import sys
+          import re,sys
           pcs,mcs,pil,mil=[Path(x).read_text() for x in sys.argv[1:5]]; data=Path(sys.argv[5]).read_bytes()
-          assert 'BoardManager.Instance' in pcs and '<Instance>k__BackingField' not in pcs
-          assert pcs.count('.LoadBoard()')>=1
-          assert 'BoardManager::get_Instance()' in pil and 'BoardManager::LoadBoard()' in pil
+          def cs_body(text, pattern):
+              m=re.search(pattern,text); assert m,pattern
+              o=text.index('{',m.end()); d=0
+              for i in range(o,len(text)):
+                  if text[i]=='{': d+=1
+                  elif text[i]=='}':
+                      d-=1
+                      if d==0: return text[m.start():i+1]
+              raise AssertionError(pattern)
+          def il_body(text, marker):
+              e=text.index(marker); s=text.rfind('.method',0,e); assert s>=0
+              return text[s:e]
+          gb=cs_body(pcs,r'public\s+void\s+GameStart\s*\(\s*\)')
+          gib=il_body(pil,'// end of method PrepareUIController::GameStart')
+          assert 'BoardManager.Instance' in gb and '<Instance>k__BackingField' not in gb
+          assert gb.count('.LoadBoard()')==1
+          assert gib.count('BoardManager::get_Instance()')==1 and gib.count('BoardManager::LoadBoard()')==1
           for name in ['GetMapX','GetMapY','Copy']:
-              assert name in mcs
-          for bad in ['System.Private.CoreLib']:
-              assert bad not in pcs and bad not in mcs
-          assert 'Map::GetMapX()' in mil and 'Grid::Copy()' in mil
+              mb=cs_body(mcs,r'public\s+[^\n]*\b'+name+r'\s*\(\s*\)')
+              for bad in ['._size','._version','._items','Expected I','Expected O','Expected I4','Unknown result type','System.Private.CoreLib']:
+                  assert bad not in mb,(name,bad)
+          mib=il_body(mil,'// end of method Map::Copy')
+          assert mib.count('Map::GetMapX()')==1 and mib.count('Grid::Copy()')==1
           assert b'System.Private.CoreLib' not in data
-          print('ILSPY_FOUR_METHOD_INTEGRATION_PASS gamestart=1 map_methods=3 corelib_binary_string=0')
+          print('ILSPY_FOUR_METHOD_INTEGRATION_PASS gamestart=1 map_methods=3 target_scope_only=1 corelib_binary_string=0')
           PY
           cp "$DLL" "$E/"
       - name: Upload integrated candidate and evidence
