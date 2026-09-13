@@ -1,0 +1,89 @@
+name: Stage9.1 2080 Plant detail canonical refs gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-2080-plant-detail-canonical-refs-gate.yml'
+      - 'Tools/Stage9PlantDetailCanonicalRefsPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  canonicalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download 2080 Plant detail candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34776303603
+          pattern: Stage9.1-1C62-PLANT-DETAIL-INITIALIZE
+          merge-multiple: true
+          path: ${{ runner.temp }}/pd-canonical/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/pd-canonical/ilspy
+      - name: Canonicalize external refs only
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/pd-canonical"; E="$ROOT/evidence"; mkdir -p "$E"
+          IN="$ROOT/input/GodsPVZRuntime1-plant-detail-initialize.dll"; OUT="$ROOT/GodsPVZRuntime1-plant-detail-canonical.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '20802aef2aa7cf5d430cf780d7511dd4ddd8afc7e97260903dc9977951cba739' ] || exit 61
+          dotnet build Tools/Stage9PlantDetailCanonicalRefsPatch/Stage9PlantDetailCanonicalRefsPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantDetailCanonicalRefsPatch/Stage9PlantDetailCanonicalRefsPatch.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 20802aef2aa7cf5d430cf780d7511dd4ddd8afc7e97260903dc9977951cba739$' "$E/patch.log"
+          grep -q '^PATCH_PLANT_DETAIL_CANONICAL_REFS target_token=0x06000667 replaced_refs=7 semantics_changed=0$' "$E/patch.log"
+          grep -q '^REOPEN_PLANT_DETAIL_CANONICAL_REFS_PASS token=0x06000667 locals=3 y_offset_30=1 white_color_components=4 corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x06000667$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"; cp "$OUT" "$E/"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/pd-canonical"; E="$ROOT/evidence"; DLL="$ROOT/GodsPVZRuntime1-plant-detail-canonical.dll"
+          ILSPY="$(find "$ROOT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$ROOT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'Plant_DetaiPage' "$DLL" > "$E/Plant_DetaiPage.cs" 2> "$E/cs.stderr"; test ! -s "$E/cs.stderr"
+          "$ILSPY" -il -t 'Plant_DetaiPage' "$DLL" > "$E/Plant_DetaiPage.il" 2> "$E/il.stderr"; test ! -s "$E/il.stderr"
+          python3 - "$E/Plant_DetaiPage.cs" "$E/Plant_DetaiPage.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text(); data=Path(sys.argv[3]).read_bytes()
+          m=re.search(r'public\s+void\s+Initialize\s*\(\s*Plant\s+thePlant\s*\)',cs); assert m
+          o=cs.index('{',m.end()); d=0
+          for i in range(o,len(cs)):
+              d += (cs[i]=='{')-(cs[i]=='}')
+              if d==0: b=cs[m.start():i+1]; break
+          for bad in ['Expected I','Expected O','Expected I4','Expected F4','Unknown result type','Not implemented instruction','System.Private.CoreLib']:
+              assert bad not in b,bad
+          for x in ['LoadSkillLogo','LoadData','CheckText','30f','maxChargedLayer','skillTriggerType','rangeIamge']:
+              assert x in b,x
+          assert 'new Vector3' in b or 'Vector3(' in b
+          marker='// end of method Plant_DetaiPage::Initialize'; e=il.index(marker); s=il.rfind('.method',0,e); ib=il[s:e]
+          assert 'ldc.r4 30' in ib
+          assert ib.count('Plant_DetaiPage::LoadSkillLogo()')==1
+          assert ib.count('Board_PlantDetail_PlantData::LoadData')==1
+          assert ib.count('Board_PlantDetail_PlantData::CheckText')==1
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_PLANT_DETAIL_CANONICAL_PASS invalid_il_diagnostics=0 native_constants_preserved=1 corelib_binary_string=0')
+          PY
+      - name: Upload canonical candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-2080-PLANT-DETAIL-CANONICAL
+          path: ${{ runner.temp }}/pd-canonical/evidence/
+          if-no-files-found: warn
+          retention-days: 90
