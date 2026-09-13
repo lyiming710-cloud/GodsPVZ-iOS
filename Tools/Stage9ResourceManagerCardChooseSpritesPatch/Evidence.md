@@ -8,9 +8,8 @@ Native semantics:
 - base path: `Path.Combine("sprites", "Card_Choose")`
 - loop `i=0..6`: load `data{i}`, `lv{i}`, `innerlining{i}`, `outerlining{i}` into the four corresponding 7-element Sprite arrays
 - loop `i=0..4`: load `orderArabesques{i}` into the 5-element Sprite array
-- 33 `InternalResourceLoader.Load<Sprite>` calls total
-- 34 `Path.Combine(string,string)` calls total (one base path + one per sprite)
-- 33 `Int32.ToString`, 33 `String.Concat(string,string)`, 33 array stores
+- static native callsites: 5 `InternalResourceLoader.Load<Sprite>`, 6 `Path.Combine(string,string)`, 5 `Int32.ToString`, 5 `String.Concat(string,string)`, 5 array-store sites
+- loop execution totals: 33 sprite loads, 34 path combines, 33 `ToString`, 33 concatenations, 33 array stores
 
 Runtime causal evidence: exact R3 strict run `34767194659`, candidate `498b34ca2db493d42676a3283edac8126180fd624d6664b3c39e855abfa905ba`, first direct blocker inside the restored `ResourceManager.LoadSprites()` call chain: `InvalidProgramException: Invalid IL code in ResourceManager:Load_card_Choose_Sprites (): IL_018d: stloc 2`.
 
