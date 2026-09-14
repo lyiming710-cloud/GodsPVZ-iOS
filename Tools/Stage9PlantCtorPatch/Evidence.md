@@ -60,4 +60,4 @@ The PC body is straight-line initialization plus allocation and the base `MonoBe
 24. allocate/construct `BuffManager`, store `buffManager` (`+0x220`)
 25. tail-call the `MonoBehaviour` base constructor.
 
-The repaired managed body lowers the two zero-valued vector copies with `ldflda + initobj`, which is semantically equivalent to the PC native zero-value copy while avoiding an illegal managed reference to Unity's private `Vector3.zeroVector` field. No null guards or fallback gameplay behavior are introduced.
+The final repaired managed body lowers the two native zero-value copies through existing public `Vector2(float,float)` and `Vector3(float,float,float)` constructor MemberRefs with all-zero components. This produces the same field values as the PC native stores, avoids the illegal private `Vector3.zeroVector` access, introduces no new assembly reference or MemberRef, and is fully understood by the fixed ILSpy validator. No null guards or fallback gameplay behavior are introduced.
