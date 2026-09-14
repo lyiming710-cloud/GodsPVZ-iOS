@@ -1,0 +1,55 @@
+name: Stage9.1 5695 BoardConfig CreateMap static gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-5695-boardconfig-createmap-static-gate.yml'
+      - 'Tools/Stage9BoardConfigCreateMapPatch/**'
+      - 'Tools/Stage9NativeProbe/BoardConfig.CreateMap.native-evidence.md'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified 5695 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34837660929
+          name: Stage9.1-4110-BOARD-PLANT-DETAIL-LOAD-DATA-STATIC
+          path: ${{ runner.temp }}/input
+      - name: Build and recover BoardConfig CreateMap
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/create-map"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-board-plant-detail-load-data.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '56958c11480ad840904c07e2194c7f36304287c6c7a170be964d581a99d16751'
+          OUT="$O/GodsPVZRuntime1-boardconfig-createmap.dll"
+          dotnet build Tools/Stage9BoardConfigCreateMapPatch/Stage9BoardConfigCreateMapPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9BoardConfigCreateMapPatch/Stage9BoardConfigCreateMapPatch.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000157 rid=343 method_pointer_entry=0x181B83810 va=0x18030EBB0 leaf_bytes=21 native_leaf_sha256=c45928899d11a9a908c583d4190b11c29d70a4fccf8b7c2eb8cadb93da620549$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS map_null_returns_null=1 map_live_tailcalls_Map.Copy=1 boardconfig_map_offset=0x30$' "$E/patch.log"
+          grep -q '^REOPEN_CREATE_MAP_PASS token=0x06000157 .*locals=0 ceq=0 ldc_i4_0=0 map_refs=2 Map_Copy_calls=1 ldnull=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000157$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^PRESERVATION_PASS batch1=4 plant_ctor=1 projectile_ctor=1 projectile_hf21=2 managers=2 plant_detail_initialize=1 load_skill_logo=1 load_data=1$' "$E/patch.log"
+          grep -q '^PATCH_CREATE_MAP method_body_changes=1 native_leaf_semantics=1 object_integer_ceq_removed=1 metadata_visibility_changes=0$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9NativeProbe/BoardConfig.CreateMap.native-evidence.md "$E/"
+      - name: Upload static candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-5695-BOARDCONFIG-CREATEMAP-STATIC
+          path: ${{ runner.temp }}/create-map/evidence/
+          if-no-files-found: warn
+          retention-days: 90
