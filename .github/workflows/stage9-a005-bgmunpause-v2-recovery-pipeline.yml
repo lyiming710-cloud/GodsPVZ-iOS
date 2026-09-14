@@ -1,0 +1,266 @@
+name: Stage9.1 a005 BGMUnPasue v2 recovery pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-a005-bgmunpause-v2-recovery-pipeline.yml'
+      - 'Tools/Stage9BGMUnPasuePatchV2/**'
+      - 'Tools/Stage9RuntimeGateFast/**'
+      - 'Tools/Stage9NativeProbe/ZombieManager.BGMUnPasue.native-evidence.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runtime-qualified a005 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34863937932
+          name: Stage9.1-18B4-BOARD-GAMECONTINUE-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Download exact Unity Mono corelib cache
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34878091297
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib
+
+      - name: Build patch and run static plus generic resolution gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/bgm-unpause-v2"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-board-gamecontinue.dll' -print -quit)
+          CORE=$(find "$RUNNER_TEMP/corelib" -type f -path '*/unityjit-linux/mscorlib.dll' -print -quit)
+          test -n "$IN"; test -n "$CORE"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = 'a005d602d20814c5917d6f36ac7d85ee3013615aea54019ac417f5c84aed3b28'
+          test "$(sha256sum "$CORE"|awk '{print $1}')" = '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+          OUT="$O/GodsPVZRuntime1-bgm-unpause-v2.dll"
+          dotnet build Tools/Stage9BGMUnPasuePatchV2/Stage9BGMUnPasuePatchV2.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9BGMUnPasuePatchV2/Stage9BGMUnPasuePatchV2.csproj -c Release --no-build -- "$IN" "$OUT" "$CORE" | tee "$E/patch.log"
+          grep -q '^UNITYJIT_LINUX_MSCORLIB_SHA256 4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000278 rid=632 method_pointer_entry=0x181B84118 va=0x180341800 end=0x1803418FC native_slice_sha256=70e89e1031d7c703b2e919b2669723929e0741f48233720eddf91120df9fd832$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS zombieList_foreach=1 typed_Zombie_enumerator=1 per_item_BGMUnPasue=1 dispose_finally=1 pause_unpause_structural_twin=1$' "$E/patch.log"
+          grep -q '^RECOVERY_STRATEGY exact_unityjit_linux_corelib_methoddefs=1 closed_host_open_member_signature=1 per_item_call=Zombie.BGMUnPasue metadata_changes=0 null_guard_changes=0 exception_swallowing=0$' "$E/patch.log"
+          grep -q '^GENERIC_MEMBERREF_RESOLUTION_PASS GetEnumerator=1 get_Current=1 MoveNext=1 Dispose=1 corelib_sha256=4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be open_var_signatures=1$' "$E/patch.log"
+          grep -q '^REOPEN_BGMUNPAUSE_V2_PASS token=0x06000278 code_size=52 locals=1 eh_finally=1 ceq=0 object_locals=0 framework_exception_ctors=0 bad_strings=0 zombieList_refs=1 GetEnumerator=1 get_Current=1 MoveNext=1 Dispose=1 Zombie_BGMUnPasue=1 Zombie_BGMPasue=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 mscorlib_ref_count_unchanged=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000278$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^PRESERVATION_PASS batch1=4 plant_ctor=1 projectile_ctor=1 projectile_hf21=2 managers=2 plant_detail_initialize=1 load_skill_logo=1 load_data=1 create_map=1 grid_copy=1 dialogue_start=1 board_gamecontinue=1 healthy_BGMPasue=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9NativeProbe/ZombieManager.BGMUnPasue.native-evidence.md "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Exact-reference readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/bgm-unpause-v2"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-bgm-unpause-v2.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t ZombieManager "$DLL" > "$E/ZombieManager.cs" 2> "$E/ZombieManager.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t ZombieManager "$DLL" > "$E/ZombieManager.il" 2> "$E/ZombieManager.il.stderr"
+          test ! -s "$E/ZombieManager.cs.stderr"
+          test ! -s "$E/ZombieManager.il.stderr"
+          python3 - "$E/ZombieManager.cs" "$E/ZombieManager.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          def csmethod(name):
+              m=re.search(r'(?:private|public|protected|internal)\s+void\s+'+re.escape(name)+r'\s*\(\s*\)',cs); assert m,name+' C# not found'
+              o=cs.index('{',m.end()); d=0
+              for i in range(o,len(cs)):
+                  d+=(cs[i]=='{')-(cs[i]=='}')
+                  if d==0: return cs[m.start():i+1]
+              raise AssertionError(name+' C# unterminated')
+          target=csmethod('BGMUnPasue'); sibling=csmethod('BGMPasue')
+          Path(sys.argv[1]+'.BGMUnPasue.txt').write_text(target)
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Method not found @','Warning: Method ends','NullReferenceException','System.Private.CoreLib']:
+              assert bad not in target,(bad,target)
+          assert 'zombieList' in target and '.BGMUnPasue()' in target,target
+          norm=lambda s: re.sub(r'\s+','',s.replace('BGMUnPasue','BGMPasue'))
+          assert norm(target)==norm(sibling),(target,sibling)
+          e=il.find('} // end of method ZombieManager::BGMUnPasue'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.BGMUnPasue.txt').write_text(ib)
+          for bad in ['ceq','System.Object','NullReferenceException','Method not found @','Warning: Method ends','System.Private.CoreLib']:
+              assert bad not in ib,(bad,ib)
+          for good in ['ZombieManager::zombieList','Zombie::BGMUnPasue()','::GetEnumerator()','::get_Current()','::MoveNext()','System.IDisposable::Dispose()','constrained.']:
+              assert good in ib,(good,ib)
+          assert '.try' in ib and 'finally' in ib,ib
+          print('BGMUNPAUSE_V2_EXACT_REF_PASS target_token=0x06000278 healthy_sibling_shape_match=1 typed_Zombie_enumerator=1 finally_dispose=1 invalid_diagnostics=0 corelib_pollution=0 generic_resolution_prevalidated=1')
+          print('=== TARGET_CSHARP ==='); print(target)
+          PY
+
+      - name: Upload qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-A005-BGMUNPAUSE-V2-QUALIFIED
+          path: ${{ runner.temp }}/bgm-unpause-v2/evidence/
+          retention-days: 90
+
+  runtime:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+
+      - name: Download qualified candidate from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Stage9.1-A005-BGMUNPAUSE-V2-QUALIFIED
+          path: ${{ runner.temp }}/stage9-bgm-v2/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-bgm-v2/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-bgm-v2/editor-parts
+
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-bgm-v2/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-bgm-unpause-v2.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "${#EXPECTED}" = 64
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "BGM_V2_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "BGM_V2_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+
+      - name: Run single-launch exact R3 strict Board gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9RuntimeGateFast/run-strict-board-fast.sh "$RUNNER_TEMP/stage9-bgm-v2" "$BGM_V2_CANDIDATE" "$BGM_V2_SHA"
+
+      - name: Audit BGM v2 and promote next causal error
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-bgm-v2/evidence"; mkdir -p "$E"; LOG="$E/playmode.log"
+          if [ ! -f "$LOG" ]; then echo 'RUNTIME_AUDIT no_playmode_log=1' | tee "$E/bgmunpause-v2-runtime-audit.txt"; exit 1; fi
+          python3 - "$LOG" > "$E/bgmunpause-v2-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'BGMUNPAUSE_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in ZombieManager:BGMUnPasue',text)),
+            'BGMUNPAUSE_GENERIC_MISSINGMETHOD_COUNT':len(re.findall(r'MissingMethodException: Method not found: System\.Collections\.Generic\.List`1/Enumerator<Zombie> System\.Collections\.Generic\.List`1\.GetEnumerator\(\)',text)),
+            'BOARD_GAMECONTINUE_METHODACCESS_COUNT':text.count("MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)' is inaccessible from method `Board.GameContinue()'"),
+            'DIALOGUE_START_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',text)),
+            'GRID_COPY_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Grid:Copy',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'BOARDCONFIG_CREATEMAP_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',text)),
+            'LOAD_DATA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',text)),
+            'LOAD_SKILL_LOGO_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text)),
+            'PROJECTILE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text)),
+          }
+          counts['PLANT_DETAIL_INITIALIZE_FIELDACCESS_COUNT']=sum('FieldAccessException' in x and 'Plant:isOnField' in x and 'Plant_DetaiPage:Initialize' in x for x in lines)
+          counts['PLANT_CTOR_RUNTIME_ERROR_COUNT']=len(re.findall(r'(?:InvalidProgramException|FieldAccessException).*Plant:\.ctor',text))
+          counts['ZEROVECTOR_TEXT_COUNT']=text.count('zeroVector')
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_STRICT_')]
+          print('STRICT_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          pre_idx=next((i for i,x in enumerate(lines) if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')),None)
+          recovered=['ZombieManager:BGMUnPasue','Board.GameContinue','DialogueManager_OnBoard:Start','Grid:Copy','BoardConfig:CreateMap','Board_PlantDetail_PlantData:LoadData','Plant_DetaiPage:LoadSkillLogo','Projectile:.ctor']
+          first=None
+          if pre_idx is not None:
+            for i in range(pre_idx+1,len(lines)):
+              x=lines[i]
+              if 'Exception:' not in x or x.startswith('UnityEngine.'): continue
+              if any(s in x for s in recovered): continue
+              if 'FieldAccessException' in x and 'Plant:isOnField' in x: continue
+              first=i; break
+          if first is None: print('FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION none')
+          else:
+            print('=== FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION ===')
+            for j in range(max(pre_idx or 0,first-4),min(len(lines),first+36)): print(f'{j+1}: {lines[j]}')
+          assert all(v==0 for v in counts.values()),counts
+          assert any(x.startswith('STAGE9_STRICT_MAINMENU ') for x in markers)
+          assert 'STAGE9_STRICT_CREATE_INVOKE ok=1' in markers
+          assert any(x.startswith('STAGE9_STRICT_SAVE_READY ') for x in markers)
+          pre=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')]
+          assert pre and all(s in pre[-1] for s in ['boardStart=0','board=0','boardManager=1','prepare=1','seedChooser=1']),pre
+          assert 'STAGE9_STRICT_GAMESTART_INVOKE ok=1' in markers
+          board=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD ')]
+          assert board and 'board=1' in board[-1] and 'activeBoard=1' in board[-1],board
+          print('BGMUNPAUSE_V2_RUNTIME_GATE_PASS blocker_removed=1 generic_memberrefs_resolved=1 previous_recoveries_preserved=1 corelib_pollution=0 corrected_board_lifecycle=1')
+          PY
+          cat "$E/bgmunpause-v2-runtime-audit.txt"
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BGMUNPAUSE-V2-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-bgm-v2/evidence/
+          retention-days: 90
