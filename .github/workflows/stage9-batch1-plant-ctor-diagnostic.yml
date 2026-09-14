@@ -40,16 +40,16 @@ jobs:
           O="$RUNNER_TEMP/plant"; E="$O/evidence"; mkdir -p "$E"
           DLL="$O/input/GodsPVZRuntime1-gameplay-batch1.dll"
           [ "$(sha256sum "$DLL"|awk '{print $1}')" = '2bcf1643457eecddeff3eaed9668c2117c11fdd5829b264a29e0f30cc86fe20c' ] || exit 61
+          dotnet build Tools/Stage9PlantCtorProbe/Stage9PlantCtorProbe.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantCtorProbe/Stage9PlantCtorProbe.csproj -c Release --no-build -- "$DLL" | tee "$E/cecil-probe.txt"
           ILSPY="$(find "$O/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$O/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
           chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
           "$ILSPY" -t Plant "$DLL" > "$E/Plant.cs" 2> "$E/Plant.cs.stderr"
           "$ILSPY" -il -t Plant "$DLL" > "$E/Plant.il" 2> "$E/Plant.il.stderr"
           test ! -s "$E/Plant.cs.stderr"; test ! -s "$E/Plant.il.stderr"
-          dotnet build Tools/Stage9PlantCtorProbe/Stage9PlantCtorProbe.csproj -c Release --nologo
-          dotnet run --project Tools/Stage9PlantCtorProbe/Stage9PlantCtorProbe.csproj -c Release --no-build -- "$DLL" | tee "$E/cecil-probe.txt"
           python3 - "$E/Plant.cs" "$E/Plant.il" <<'PY' | tee "$E/summary.txt"
           from pathlib import Path
-          import re,sys
+          import sys
           cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
           print('CS_DIAGNOSTICS', {k:cs.count(k) for k in ['Expected I','Expected O','Expected I4','Unknown result type']})
           print('zeroVector_cs', cs.count('zeroVector'))
