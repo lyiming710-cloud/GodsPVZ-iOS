@@ -49,3 +49,17 @@ Key `BGMUnPasue` native instructions:
 ```
 
 Therefore the recovery is constrained to the canonical managed equivalent already present and healthy in adjacent `ZombieManager::BGMPasue()`: clone its strong `List<Zombie>.Enumerator` foreach/finally control-flow shape and replace only the per-item call `Zombie::BGMPasue()` with `Zombie::BGMUnPasue()`. No field visibility, metadata, null-guard, collection-layout, or exception-swallowing change is authorized.
+
+## Rejected CLR candidate 5789
+
+Candidate `5789676a1577d288165452e444ac1a50d0b087835e7bbf38e8ae27054144d3f6` passed static isolation and ILSpy shape checks but is **not runtime-qualified**. Exact-R3 run `34876561856` showed that the original `InvalidProgramException` was replaced by:
+
+```text
+MissingMethodException: Method not found: System.Collections.Generic.List`1/Enumerator<Zombie> System.Collections.Generic.List`1.GetEnumerator()
+  at Board.GameContinue()
+  at DialogueManager_OnBoard.Start()
+```
+
+Cause: the managed Cpp2IL sibling `ZombieManager.BGMPasue()` is useful as control-flow evidence but is not a CLR MemberRef authority. Its reconstructed generic `List<Zombie>` method references eagerly substitute `Zombie` into signatures that CLR/Mono resolves against open generic MethodDefs. Reusing those MemberRefs therefore preserves decompiler shape while still failing runtime member resolution.
+
+Recovery v2 must import `List<T>.GetEnumerator`, `List<T>.Enumerator.get_Current`, and `MoveNext` from the exact Unity 2022.3.44f1c1 Mono core library, bind the host generic type correctly, and add a cheap MemberRef-resolution gate before any Unity runtime launch. The development base remains `a005d602d20814c5917d6f36ac7d85ee3013615aea54019ac417f5c84aed3b28` until a corrected BGM candidate passes exact-R3.
