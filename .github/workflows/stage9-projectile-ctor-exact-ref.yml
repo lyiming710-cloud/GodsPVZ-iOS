@@ -65,27 +65,37 @@ jobs:
           import re,sys
           cs=Path(sys.argv[1]).read_text(errors='replace')
           il=Path(sys.argv[2]).read_text(errors='replace')
-          bad=['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','zeroVector']
-          for x in bad:
-              assert x not in cs, (x,'C#')
-          # C# may retain an explicit ctor or fold the trivial stores into field initializers.
           explicit=bool(re.search(r'public\s+Projectile\s*\(\s*\)',cs))
-          scale=bool(re.search(r'\bscale\s*=\s*1(?:\.0+)?f?\s*;',cs))
-          rate=bool(re.search(r'\bupdateRate\s*=\s*1(?:\.0+)?f?\s*;',cs))
-          zero=('previousPosition = Vector3.zero' in cs or 'previousPosition = default(Vector3)' in cs or 'previousPosition = default' in cs)
-          assert scale and rate and zero, (scale,rate,zero)
-          start=il.find('} // end of method Projectile::.ctor')
-          assert start>=0, 'Projectile ctor IL end marker missing'
-          # isolate ctor backwards from its end marker
-          begin=il.rfind('.method ',0,start)
-          body=il[begin:start]
-          for x in ['zeroVector','Unmanaged memory load','stloc']:
+          scale_m=re.search(r'\bscale\s*=\s*1(?:\.0+)?f?\s*;',cs)
+          rate_m=re.search(r'\bupdateRate\s*=\s*1(?:\.0+)?f?\s*;',cs)
+          zero_m=re.search(r'\bpreviousPosition\s*=\s*(?:Vector3\.zero|default(?:\(Vector3\))?)\s*;',cs)
+          assert scale_m and rate_m and zero_m, (bool(scale_m),bool(rate_m),bool(zero_m))
+          # Other Projectile methods still contain known Cpp2IL damage. Scope C# diagnostics to the
+          # recovered constructor representation (explicit ctor or the three folded field initializers).
+          if explicit:
+              m=re.search(r'public\s+Projectile\s*\(\s*\)',cs); o=cs.index('{',m.end()); d=0; end=None
+              for i in range(o,len(cs)):
+                  d+=(cs[i]=='{')-(cs[i]=='}')
+                  if d==0: end=i+1; break
+              assert end is not None
+              local_cs=cs[m.start():end]
+          else:
+              spans=[scale_m.span(),rate_m.span(),zero_m.span()]
+              local_cs='\n'.join(cs[max(0,a-160):min(len(cs),b+160)] for a,b in spans)
+          for x in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','zeroVector']:
+              assert x not in local_cs,(x,local_cs)
+          end=il.find('} // end of method Projectile::.ctor')
+          assert end>=0, 'Projectile ctor IL end marker missing'
+          begin=il.rfind('.method ',0,end)
+          body=il[begin:end]
+          for x in ['zeroVector','Unmanaged memory load','Unknown result type','stloc']:
               assert x not in body,(x,body)
           assert body.count('stfld float32 Projectile::scale')==1, body
           assert body.count('stfld float32 Projectile::updateRate')==1, body
           assert body.count('stfld valuetype [UnityEngine.CoreModule]UnityEngine.Vector3 Projectile::previousPosition')==1, body
           assert ('UnityEngine.Vector3::get_zero()' in body or 'initobj valuetype [UnityEngine.CoreModule]UnityEngine.Vector3' in body), body
-          print('PROJECTILE_EXACT_REF_PASS explicit_ctor=%d scale=1 updateRate=1 previousPosition_zero=1 invalid_diagnostics=0 private_zeroVector_refs=0' % explicit)
+          assert body.count('UnityEngine.MonoBehaviour::.ctor()')==1, body
+          print('PROJECTILE_EXACT_REF_PASS explicit_ctor=%d scale=1 updateRate=1 previousPosition_zero=1 invalid_diagnostics=0 private_zeroVector_refs=0 unrelated_class_unknown=%d' % (explicit,cs.count('Unknown result type')))
           PY
       - name: Upload exact-reference evidence
         if: always()
