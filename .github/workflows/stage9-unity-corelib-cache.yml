@@ -1,0 +1,72 @@
+name: Stage9.1 Unity exact corelib cache
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-unity-corelib-cache.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  cache:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free only required disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get clean || true
+          df -h /
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/corelib/editor-parts
+
+      - name: Extract exact Mono class-library profiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/corelib"; P="$O/editor-parts"; E="$O/editor"; C="$O/cache"
+          mkdir -p "$E" "$C"
+          test "$(find "$P" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)" = 15
+          cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* > "$O/editor.tar.xz"
+          test "$(sha256sum "$O/editor.tar.xz" | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+          xz -dc "$O/editor.tar.xz" | tar -xf - -C "$E"
+          ROOT="$E/Editor/Data/MonoBleedingEdge/lib/mono"
+          test -d "$ROOT"
+          find "$ROOT" -type f \( -name mscorlib.dll -o -name System.dll -o -name System.Core.dll -o -name netstandard.dll \) -print | sort | tee "$C/source-paths.txt"
+          test "$(grep -c '/mscorlib.dll$' "$C/source-paths.txt")" -ge 1
+          while IFS= read -r F; do
+            REL="${F#$ROOT/}"
+            mkdir -p "$C/$(dirname "$REL")"
+            cp "$F" "$C/$REL"
+          done < "$C/source-paths.txt"
+          find "$C" -type f ! -name MANIFEST-SHA256.txt -print0 | sort -z | xargs -0 sha256sum > "$C/MANIFEST-SHA256.txt"
+          {
+            echo 'UNITY_VERSION Unity China 2022.3.44f1c1'
+            echo 'SOURCE_EDITOR_ARCHIVE_SHA256 0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+            echo "MSCORLIB_COUNT $(find "$C" -type f -name mscorlib.dll | wc -l)"
+            echo "CORELIB_CACHE_BYTES $(du -sb "$C" | awk '{print $1}')"
+          } | tee "$C/CORELIB-PROVENANCE.txt"
+
+      - name: Upload exact corelib cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib/cache/
+          retention-days: 90
+          compression-level: 6
