@@ -22,8 +22,8 @@ var PreservationTokens = new HashSet<uint>
 {
     0x0600067E, 0x06000285, 0x06000289, 0x0600028A, // Batch1
     0x060003BA,                                     // Plant::.ctor
-    0x060003DD, 0x060003DE,                        // Projectile ResetData / BindTrack
-    0x060001F6, 0x06000216                         // ProjectileManager.Start / ResourceManager.Start
+    0x060003DD, 0x060003DE,                        // Projectile.ResetData / BindTrack
+    0x060001F3, 0x06000216                         // ProjectileManager.Start / ResourceManager.Start
 };
 
 static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
@@ -34,6 +34,7 @@ static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
         foreach (var n in AllTypes(t.NestedTypes)) yield return n;
     }
 }
+
 static uint Raw(IMetadataTokenProvider p) => p.MetadataToken.ToUInt32();
 static string Sha256(string p) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(p))).ToLowerInvariant();
 static string ScopeName(TypeReference t) => t.Scope switch
@@ -108,7 +109,6 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var target = projectile.Methods.Single(m => m.IsConstructor && !m.IsStatic && m.Parameters.Count == 0);
     if (Raw(target) != TargetToken || target.MetadataToken.RID != ExpectedRid || target.Body.CodeSize != ExpectedOldCodeSize || target.Body.Variables.Count != ExpectedOldLocals)
         throw new InvalidDataException($"target fingerprint mismatch token=0x{Raw(target):X8} rid={target.MetadataToken.RID} size={target.Body.CodeSize} locals={target.Body.Variables.Count}");
-
     var badStloc = target.Body.Instructions.SingleOrDefault(i => i.Offset == 0x25 && i.OpCode.Code == Code.Stloc);
     if (badStloc?.Operand is not VariableDefinition badLocal || badLocal.VariableType.FullName != "System.IntPtr")
         throw new InvalidDataException("old IL_0025 stloc IntPtr fingerprint mismatch");
@@ -119,12 +119,10 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var scale = F("scale");
     var updateRate = F("updateRate");
     var previousPosition = F("previousPosition");
-
     var monoCtor = target.Body.Instructions
         .Where(i => i.OpCode == OpCodes.Call && i.Operand is MethodReference)
         .Select(i => (MethodReference)i.Operand)
         .Single(m => m.Name == ".ctor" && m.DeclaringType.FullName == "UnityEngine.MonoBehaviour" && m.Parameters.Count == 0);
-
     var vector3Zero = methods
         .Where(m => m.HasBody)
         .SelectMany(m => m.Body.Instructions)
@@ -140,14 +138,12 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     body.InitLocals = false;
     body.MaxStackSize = 2;
     var il = body.GetILProcessor();
-
     void StoreR4(FieldDefinition f, float v)
     {
         il.Append(il.Create(OpCodes.Ldarg_0));
         il.Append(il.Create(OpCodes.Ldc_R4, v));
         il.Append(il.Create(OpCodes.Stfld, f));
     }
-
     StoreR4(scale, 1f);
     StoreR4(updateRate, 1f);
     il.Append(il.Create(OpCodes.Ldarg_0));
@@ -179,7 +175,6 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     var projectile = target.DeclaringType;
     FieldDefinition F(string name) => projectile.Fields.Single(f => f.Name == name);
     int Stores(FieldDefinition f) => target.Body.Instructions.Count(i => i.OpCode == OpCodes.Stfld && i.Operand is FieldReference fr && fr.FullName == f.FullName);
-
     if (target.Body.Variables.Count != 0 || target.Body.ExceptionHandlers.Count != 0 || target.Body.InitLocals)
         throw new InvalidDataException("recovered ctor local/EH shape mismatch");
     if (target.Body.Instructions.Any(i => i.Operand is FieldReference fr && fr.DeclaringType.FullName == "UnityEngine.Vector3" && fr.Name == "zeroVector"))
@@ -193,11 +188,11 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Call && i.Operand is MethodReference mr && mr.DeclaringType.FullName == "UnityEngine.MonoBehaviour" && mr.Name == ".ctor") != 1)
         throw new InvalidDataException("MonoBehaviour ctor call mismatch");
 
-    var afterM = methods.ToDictionary(Raw, MethodSemantic);
+    var afterM = methods.ToDictionary(m => Raw(m), m => MethodSemantic(m));
     var changed = beforeM.Keys.Where(k => beforeM[k] != afterM[k]).OrderBy(x => x).ToList();
     if (changed.Count != 1 || changed[0] != TargetToken)
         throw new InvalidDataException("semantic isolation failure: " + string.Join(',', changed.Select(x => $"0x{x:X8}")));
-    var afterF = fields.ToDictionary(Raw, FieldSemantic);
+    var afterF = fields.ToDictionary(f => Raw(f), f => FieldSemantic(f));
     var changedFields = beforeF.Keys.Where(k => beforeF[k] != afterF[k]).ToList();
     if (changedFields.Count != 0)
         throw new InvalidDataException("field metadata drift: " + string.Join(',', changedFields.Select(x => $"0x{x:X8}")));
