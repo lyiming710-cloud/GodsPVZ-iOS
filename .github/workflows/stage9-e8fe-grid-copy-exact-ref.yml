@@ -1,0 +1,108 @@
+name: Stage9.1 E8FE Grid Copy exact-reference gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-e8fe-grid-copy-exact-ref.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-ref:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download static Grid Copy candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34840686963
+          name: Stage9.1-D65C-GRID-COPY-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference decompile and gate Grid Copy only
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/grid-copy-ref"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-grid-copy.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL"|awk '{print $1}')
+          echo "CANDIDATE_SHA256 $SHA" | tee "$O/reference-gate.txt"
+          test "$SHA" = 'e8fec1d52306f69389a38a97bb8e49fef3f1925e3c66f9f180c11d2e7999e0b4'
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t Grid "$DLL" > "$O/Grid.cs" 2> "$O/Grid.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Grid "$DLL" > "$O/Grid.il" 2> "$O/Grid.il.stderr"
+          test ! -s "$O/Grid.cs.stderr"
+          test ! -s "$O/Grid.il.stderr"
+          python3 - "$O/Grid.cs" "$O/Grid.il" <<'PY' | tee -a "$O/reference-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+Grid\s+Copy\s*\(\s*\)',cs)
+          assert m, 'Grid.Copy() C# method not found'
+          o=cs.index('{',m.end()); depth=0; end=None
+          for i in range(o,len(cs)):
+              depth+=(cs[i]=='{')-(cs[i]=='}')
+              if depth==0:
+                  end=i+1; break
+          assert end is not None
+          body=cs[m.start():end]
+          Path(sys.argv[1]+'.Copy.txt').write_text(body)
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Method not found @','Warning: Method ends','(Grid)(object)new NullReferenceException']:
+              assert bad not in body,(bad,body)
+          assert 'new Grid(gridX, gridY)' in body, body
+          assert 'gridState = gridState' in body, body
+          assert 'isHome = isHome' in body, body
+          assert 'passablePoint = passablePoint' in body, body
+          assert 'throw new NullReferenceException()' in body, body
+
+          target_end=il.find('} // end of method Grid::Copy')
+          assert target_end>=0
+          target_begin=il.rfind('.method ',0,target_end)
+          ib=il[target_begin:target_end]
+          Path(sys.argv[2]+'.Copy.txt').write_text(ib)
+          for bad in ['ceq','ldc.i4.0','System.Object','Method not found @','Warning: Method ends']:
+              assert bad not in ib,(bad,ib)
+          assert ib.count('Grid::.ctor(int32, int32)') == 1, ib
+          assert ib.count('Grid::gridState') == 2, ib
+          assert ib.count('Grid::isHome') == 2, ib
+          assert ib.count('Grid::passablePoint') == 2, ib
+          assert ib.count('NullReferenceException::.ctor()') == 1 and ib.count('throw') == 1, ib
+          print('GRID_COPY_EXACT_REF_PASS target_token=0x06000294 invalid_diagnostics=0 object_integer_ceq=0 Grid_ctor=1 three_field_copy=1 null_failure_throw=1')
+          print('=== TARGET_CSHARP ===')
+          print(body)
+          PY
+      - name: Upload exact-reference evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-E8FE-GRID-COPY-EXACT-REF
+          path: ${{ runner.temp }}/grid-copy-ref/
+          if-no-files-found: warn
+          retention-days: 90
