@@ -1,0 +1,31 @@
+name: Stage9.1 Dialogue Start evidence readback
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-dialogue-start-evidence-readback.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Download prefetched exact-ref evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34833926172
+          name: Stage9.1-273D-DIALOGUE-START-EXACT-REF-EVIDENCE
+          path: ${{ runner.temp }}/e
+      - name: Print exact Start and Update methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== DIALOGUE_START_EXACT_CS ==='
+          cat "$RUNNER_TEMP/e/DialogueManager_OnBoard.cs.Start.txt"
+          echo '=== DIALOGUE_UPDATE_EXACT_CS ==='
+          cat "$RUNNER_TEMP/e/DialogueManager_OnBoard.cs.Update.txt"
