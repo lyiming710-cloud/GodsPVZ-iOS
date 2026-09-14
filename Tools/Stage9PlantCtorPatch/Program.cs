@@ -86,8 +86,6 @@ static int CountCalls(MethodDefinition m, Func<MethodReference, bool> pred) =>
     m.Body.Instructions.Count(i => (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Newobj) && i.Operand is MethodReference mr && pred(mr));
 static int CountStores(MethodDefinition m, FieldDefinition f) =>
     m.Body.Instructions.Count(i => i.OpCode == OpCodes.Stfld && i.Operand is FieldReference fr && fr.FullName == f.FullName);
-static int CountAddresses(MethodDefinition m, FieldDefinition f) =>
-    m.Body.Instructions.Count(i => i.OpCode == OpCodes.Ldflda && i.Operand is FieldReference fr && fr.FullName == f.FullName);
 
 var input = Path.GetFullPath(args[0]);
 var output = Path.GetFullPath(args[1]);
@@ -159,6 +157,17 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
         return oldInstructions.Where(i => (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt) && i.Operand is MethodReference mr && pred(mr))
                               .Select(i => (MethodReference)i.Operand).Single();
     }
+    MethodReference FindExistingValueCtor(string typeName, int paramCount)
+    {
+        var refs = methods.Where(m => m.HasBody).SelectMany(m => m.Body.Instructions)
+            .Where(i => (i.OpCode == OpCodes.Newobj || i.OpCode == OpCodes.Call) && i.Operand is MethodReference mr &&
+                        mr.Name == ".ctor" && mr.DeclaringType.FullName == typeName && mr.Parameters.Count == paramCount &&
+                        mr.Parameters.All(p => p.ParameterType.FullName == "System.Single"))
+            .Select(i => (MethodReference)i.Operand)
+            .DistinctBy(m => m.FullName + "@" + ScopeName(m.DeclaringType)).ToList();
+        if (refs.Count != 1) throw new InvalidDataException($"expected one reusable {typeName}({paramCount}x float) ctor ref, got {refs.Count}");
+        return refs[0];
+    }
 
     var stringEmpty = oldInstructions.Where(i => i.OpCode == OpCodes.Ldsfld && i.Operand is FieldReference fr && fr.DeclaringType.FullName == "System.String" && fr.Name == "Empty")
                                      .Select(i => (FieldReference)i.Operand).First();
@@ -169,6 +178,8 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var listIntCtor = FindCtor(t => IsListOf(t, "System.Int32"));
     var buffManagerCtor = FindCtor(t => t.FullName == "BuffManager");
     var monoBehaviourCtor = FindCall(mr => mr.Name == ".ctor" && mr.DeclaringType.FullName == "UnityEngine.MonoBehaviour" && mr.Parameters.Count == 0);
+    var vector2Ctor = FindExistingValueCtor("UnityEngine.Vector2", 2);
+    var vector3Ctor = FindExistingValueCtor("UnityEngine.Vector3", 3);
 
     var stringType = ((ArrayType)talentNames.FieldType).ElementType;
     var spriteType = ((ArrayType)ui1.FieldType).ElementType;
@@ -178,7 +189,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     body.ExceptionHandlers.Clear();
     body.Variables.Clear();
     body.InitLocals = false;
-    body.MaxStackSize = 2;
+    body.MaxStackSize = 4;
     var il = body.GetILProcessor();
 
     void StFieldConstI4(FieldDefinition f, int v)
@@ -211,11 +222,12 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
         il.Append(il.Create(OpCodes.Newarr, element));
         il.Append(il.Create(OpCodes.Stfld, f));
     }
-    void InitStruct(FieldDefinition f)
+    void StZeroValue(FieldDefinition f, MethodReference ctor, int dimensions)
     {
         il.Append(il.Create(OpCodes.Ldarg_0));
-        il.Append(il.Create(OpCodes.Ldflda, f));
-        il.Append(il.Create(OpCodes.Initobj, f.FieldType));
+        for (int i = 0; i < dimensions; i++) il.Append(il.Create(OpCodes.Ldc_R4, 0f));
+        il.Append(il.Create(OpCodes.Newobj, ctor));
+        il.Append(il.Create(OpCodes.Stfld, f));
     }
 
     il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldsfld, stringEmpty)); il.Append(il.Create(OpCodes.Stfld, plantName));
@@ -233,8 +245,8 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     StFieldR4(updateRate, 1f);
     StNewObj(skill, skillCtor);
     StNewObj(elementManager, elementManagerCtor);
-    InitStruct(dithering);
-    InitStruct(ditheringAnim);
+    StZeroValue(dithering, vector2Ctor, 2);
+    StZeroValue(ditheringAnim, vector3Ctor, 3);
     StNewObj(animationSprites, listGameObjectCtor);
     StNewArray(ui1, spriteType, 8);
     StNewArray(ui2, spriteType, 8);
@@ -252,7 +264,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
 
     Console.WriteLine("NATIVE_AUTHORITY target_token=0x060003BA rid=954 va=0x18035CAD0 end=0x18035CEF0 native_slice_sha256=4aa8c226c4128cb04ee0851a5802a5fecf013ad1be9a9e200586c32d363ebb06");
     Console.WriteLine("NATIVE_BOOLEAN_RECOVERY attackable=true blockable=true active=true native_word_store=this+0xB5_value_0x0101");
-    Console.WriteLine("PATCH_PLANT_CTOR method_body_changes=1 vector_zero_lowering=ldflda_initobj gameplay_semantics_changed=0");
+    Console.WriteLine("PATCH_PLANT_CTOR method_body_changes=1 vector_zero_lowering=public_value_type_ctors gameplay_semantics_changed=0");
     module.Write(output);
 }
 
@@ -270,20 +282,17 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     if (target.Body.Variables.Count != 0 || target.Body.ExceptionHandlers.Count != 0) throw new InvalidDataException("recovered ctor should have no locals/EH");
     if (target.Body.Instructions.Any(i => i.Operand is FieldReference fr && fr.DeclaringType.FullName == "UnityEngine.Vector3" && fr.Name == "zeroVector"))
         throw new InvalidDataException("private Vector3.zeroVector ref remains");
-    if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Initobj && i.Operand is TypeReference tr && tr.FullName == "UnityEngine.Vector2") != 1)
-        throw new InvalidDataException("Vector2 zero init mismatch");
-    if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Initobj && i.Operand is TypeReference tr && tr.FullName == "UnityEngine.Vector3") != 1)
-        throw new InvalidDataException("Vector3 zero init mismatch");
-    if (CountAddresses(target, F("dithering")) != 1 || CountAddresses(target, F("dithering_anim")) != 1)
-        throw new InvalidDataException("vector field address/init lowering mismatch");
+    if (target.Body.Instructions.Any(i => i.OpCode == OpCodes.Initobj)) throw new InvalidDataException("initobj lowering unexpectedly remains");
 
-    foreach (var name in new[] { "plantName", "characteristicText", "talentNames", "talents", "level", "healthPoint", "maxHealthPoint", "attackPoint", "attackable", "blockable", "active", "camp", "updateRate", "skill", "elementManager", "animationSprites", "UISprites1", "UISprites2", "UISprites3", "UISprites4", "elementUIControllers", "UI_Characteristic", "produce_Brightness", "flash_Brightness", "parameter_ints", "buffManager" })
+    foreach (var name in new[] { "plantName", "characteristicText", "talentNames", "talents", "level", "healthPoint", "maxHealthPoint", "attackPoint", "attackable", "blockable", "active", "camp", "updateRate", "skill", "elementManager", "dithering", "dithering_anim", "animationSprites", "UISprites1", "UISprites2", "UISprites3", "UISprites4", "elementUIControllers", "UI_Characteristic", "produce_Brightness", "flash_Brightness", "parameter_ints", "buffManager" })
         if (CountStores(target, F(name)) != 1) throw new InvalidDataException($"field store mismatch {name}");
 
     if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Newarr && i.Operand is TypeReference tr && tr.FullName == "System.String") != 2) throw new InvalidDataException("string[3] allocation count mismatch");
     if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Newarr && i.Operand is TypeReference tr && tr.FullName == "UnityEngine.Sprite") != 4) throw new InvalidDataException("Sprite[8] allocation count mismatch");
     if (CountCalls(target, mr => mr.Name == ".ctor" && mr.DeclaringType.FullName == "Skill") != 1) throw new InvalidDataException("Skill ctor count mismatch");
     if (CountCalls(target, mr => mr.Name == ".ctor" && mr.DeclaringType.FullName == "ElementManager") != 1) throw new InvalidDataException("ElementManager ctor count mismatch");
+    if (CountCalls(target, mr => mr.Name == ".ctor" && mr.DeclaringType.FullName == "UnityEngine.Vector2" && mr.Parameters.Count == 2) != 1) throw new InvalidDataException("Vector2 ctor count mismatch");
+    if (CountCalls(target, mr => mr.Name == ".ctor" && mr.DeclaringType.FullName == "UnityEngine.Vector3" && mr.Parameters.Count == 3) != 1) throw new InvalidDataException("Vector3 ctor count mismatch");
     if (CountCalls(target, mr => mr.Name == ".ctor" && IsListOf(mr.DeclaringType, "UnityEngine.GameObject")) != 2) throw new InvalidDataException("List<GameObject> ctor count mismatch");
     if (CountCalls(target, mr => mr.Name == ".ctor" && IsListOf(mr.DeclaringType, "ElementUIController")) != 1) throw new InvalidDataException("List<ElementUIController> ctor count mismatch");
     if (CountCalls(target, mr => mr.Name == ".ctor" && IsListOf(mr.DeclaringType, "System.Int32")) != 1) throw new InvalidDataException("List<int> ctor count mismatch");
@@ -306,7 +315,7 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
         if (beforeM[tok] != MethodSemantic(m)) throw new InvalidDataException($"Batch1 repair drift 0x{tok:X8}");
     }
 
-    Console.WriteLine($"REOPEN_PLANT_CTOR_PASS token=0x{TargetToken:X8} code_size={target.Body.CodeSize} locals=0 zeroVector_private_refs=0 vector2_initobj=1 vector3_initobj=1 blockable_stores=1");
+    Console.WriteLine($"REOPEN_PLANT_CTOR_PASS token=0x{TargetToken:X8} code_size={target.Body.CodeSize} locals=0 zeroVector_private_refs=0 vector2_ctor_calls=1 vector3_ctor_calls=1 blockable_stores=1");
     Console.WriteLine("SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x060003BA");
     Console.WriteLine("FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0");
     Console.WriteLine("BATCH1_REPAIRS_PRESERVATION_PASS tokens=0x0600067E,0x06000285,0x06000289,0x0600028A");
