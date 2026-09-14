@@ -45,8 +45,8 @@ jobs:
           dotnet run --project Tools/Stage9PlantCtorPatch/Stage9PlantCtorPatch.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
           grep -q '^NATIVE_AUTHORITY target_token=0x060003BA rid=954 va=0x18035CAD0 end=0x18035CEF0 native_slice_sha256=4aa8c226c4128cb04ee0851a5802a5fecf013ad1be9a9e200586c32d363ebb06$' "$E/patch.log"
           grep -q '^NATIVE_BOOLEAN_RECOVERY attackable=true blockable=true active=true native_word_store=this+0xB5_value_0x0101$' "$E/patch.log"
-          grep -q '^PATCH_PLANT_CTOR method_body_changes=1 vector_zero_lowering=ldflda_initobj gameplay_semantics_changed=0$' "$E/patch.log"
-          grep -q '^REOPEN_PLANT_CTOR_PASS token=0x060003BA .*locals=0 zeroVector_private_refs=0 vector2_initobj=1 vector3_initobj=1 blockable_stores=1$' "$E/patch.log"
+          grep -q '^PATCH_PLANT_CTOR method_body_changes=1 vector_zero_lowering=public_value_type_ctors gameplay_semantics_changed=0$' "$E/patch.log"
+          grep -q '^REOPEN_PLANT_CTOR_PASS token=0x060003BA .*locals=0 zeroVector_private_refs=0 vector2_ctor_calls=1 vector3_ctor_calls=1 blockable_stores=1$' "$E/patch.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x060003BA$' "$E/patch.log"
           grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
           grep -q '^BATCH1_REPAIRS_PRESERVATION_PASS tokens=0x0600067E,0x06000285,0x06000289,0x0600028A$' "$E/patch.log"
@@ -83,13 +83,16 @@ jobs:
           ib=il[start:stop]
           assert 'zeroVector' not in ib
           assert 'Unmanaged memory load' not in ib
-          assert ib.count('initobj valuetype [UnityEngine.CoreModule]UnityEngine.Vector2') == 1
-          assert ib.count('initobj valuetype [UnityEngine.CoreModule]UnityEngine.Vector3') == 1
+          assert 'initobj' not in ib
+          assert len(re.findall(r'newobj\s+instance void \[UnityEngine\.CoreModule\]UnityEngine\.Vector2::\.ctor\(float32, float32\)',ib)) == 1, ib
+          assert len(re.findall(r'newobj\s+instance void \[UnityEngine\.CoreModule\]UnityEngine\.Vector3::\.ctor\(float32, float32, float32\)',ib)) == 1, ib
+          assert ib.count('stfld valuetype [UnityEngine.CoreModule]UnityEngine.Vector2 Plant::dithering') == 1
+          assert ib.count('stfld valuetype [UnityEngine.CoreModule]UnityEngine.Vector3 Plant::dithering_anim') == 1
           assert ib.count('stfld bool Plant::blockable') == 1
           assert ib.count('newarr [mscorlib]System.String') == 2
           assert ib.count('newarr [UnityEngine.CoreModule]UnityEngine.Sprite') == 4
           assert b'System.Private.CoreLib' not in data
-          print('ILSPY_PLANT_CTOR_PASS invalid_il_diagnostics=0 zeroVector_private_refs=0 blockable_true=1 vector_zero_initobj=2 corelib_binary_string=0')
+          print('ILSPY_PLANT_CTOR_PASS invalid_il_diagnostics=0 zeroVector_private_refs=0 blockable_true=1 vector_zero_public_ctors=2 corelib_binary_string=0')
           PY
       - name: Upload recovered candidate
         if: always()
