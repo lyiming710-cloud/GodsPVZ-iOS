@@ -154,12 +154,11 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     body.Variables.Add(enumVar);
     var il = body.GetILProcessor();
 
-    var tryStart = il.Create(OpCodes.Br_S, (Instruction)null!);
     var loopBody = il.Create(OpCodes.Ldloca_S, enumVar);
     var loopCheck = il.Create(OpCodes.Ldloca_S, enumVar);
     var finallyStart = il.Create(OpCodes.Ldloca_S, enumVar);
     var ret = il.Create(OpCodes.Ret);
-    tryStart.Operand = loopCheck;
+    var tryStart = il.Create(OpCodes.Br_S, loopCheck);
 
     il.Append(il.Create(OpCodes.Ldarg_0));
     il.Append(il.Create(OpCodes.Ldfld, zombieList));
