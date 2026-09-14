@@ -32,6 +32,9 @@ jobs:
           test -n "$IN"
           test "$(sha256sum "$IN"|awk '{print $1}')" = '4110588321372dd0c388f69485bcbdca6f908136c377d65d8903fe657c1e5035'
           OUT="$O/GodsPVZRuntime1-board-plant-detail-load-data.dll"
+          # Temporary compile probe for the one lexical variable-name collision found in run 34837157971.
+          # This does not alter patch semantics; once the patcher is fully validated the source is normalized.
+          sed -i 's/foreach (var f in fields) beforeF\[Raw(f)\] = FieldSemantic(f);/foreach (var fld in fields) beforeF[Raw(fld)] = FieldSemantic(fld);/' Tools/Stage9BoardPlantDetailLoadDataPatch/Program.cs
           dotnet build Tools/Stage9BoardPlantDetailLoadDataPatch/Stage9BoardPlantDetailLoadDataPatch.csproj -c Release --nologo
           dotnet run --project Tools/Stage9BoardPlantDetailLoadDataPatch/Stage9BoardPlantDetailLoadDataPatch.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
           grep -q '^NATIVE_AUTHORITY target_token=0x060005E1 rid=1505 method_pointer_entry=0x181B85C60 va=0x180398B90 next_method_va=0x1803992F0 span_bytes=1888 native_span_sha256=24d71c446fd08dfa73dc6551d29431b1fa4bb62af348e224e4adf60f7165a898$' "$E/patch.log"
