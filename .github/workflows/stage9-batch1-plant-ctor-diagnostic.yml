@@ -5,6 +5,7 @@ on:
     branches: [high-fidelity]
     paths:
       - '.github/workflows/stage9-batch1-plant-ctor-diagnostic.yml'
+      - 'Tools/Stage9PlantCtorProbe/**'
 permissions:
   contents: read
   actions: read
@@ -44,21 +45,13 @@ jobs:
           "$ILSPY" -t Plant "$DLL" > "$E/Plant.cs" 2> "$E/Plant.cs.stderr"
           "$ILSPY" -il -t Plant "$DLL" > "$E/Plant.il" 2> "$E/Plant.il.stderr"
           test ! -s "$E/Plant.cs.stderr"; test ! -s "$E/Plant.il.stderr"
+          dotnet build Tools/Stage9PlantCtorProbe/Stage9PlantCtorProbe.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantCtorProbe/Stage9PlantCtorProbe.csproj -c Release --no-build -- "$DLL" | tee "$E/cecil-probe.txt"
           python3 - "$E/Plant.cs" "$E/Plant.il" <<'PY' | tee "$E/summary.txt"
           from pathlib import Path
           import re,sys
           cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
           print('CS_DIAGNOSTICS', {k:cs.count(k) for k in ['Expected I','Expected O','Expected I4','Unknown result type']})
-          # Emit constructor section from IL including token comment.
-          lines=il.splitlines()
-          for i,l in enumerate(lines):
-              if '.method' in l and 'rtspecialname' in l:
-                  block='\n'.join(lines[i:i+120])
-                  if 'Plant::.ctor' in block or ' instance void .ctor' in block:
-                      print('CTOR_BLOCK_BEGIN')
-                      print(block)
-                      print('CTOR_BLOCK_END')
-                      break
           print('zeroVector_cs', cs.count('zeroVector'))
           print('Vector3_zero_cs', cs.count('Vector3.zero'))
           print('zeroVector_il', il.count('zeroVector'))
