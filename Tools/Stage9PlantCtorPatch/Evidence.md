@@ -60,4 +60,16 @@ The PC body is straight-line initialization plus allocation and the base `MonoBe
 24. allocate/construct `BuffManager`, store `buffManager` (`+0x220`)
 25. tail-call the `MonoBehaviour` base constructor.
 
-The final repaired managed body lowers the two native zero-value copies through existing public `Vector2(float,float)` and `Vector3(float,float,float)` constructor MemberRefs with all-zero components. This produces the same field values as the PC native stores, avoids the illegal private `Vector3.zeroVector` access, introduces no new assembly reference or MemberRef, and is fully understood by the fixed ILSpy validator. No null guards or fallback gameplay behavior are introduced.
+## Managed lowering of the native zero-value copies
+
+The repaired body uses two strongly typed locals: one `UnityEngine.Vector2` and one `UnityEngine.Vector3`. Each local is initialized with standard managed `ldloca + initobj`; the resulting zero value is then loaded with `ldloc` and written to the corresponding instance field with `stfld`.
+
+This lowering is intentionally chosen because:
+
+- it preserves the exact PC-native field result (all-zero `Vector2` / `Vector3` values);
+- it removes all illegal direct references to Unity's private `Vector3.zeroVector` backing field;
+- it introduces no new assembly reference, MemberRef, method call, null guard, or fallback gameplay behavior;
+- direct `ldflda field + initobj` was rejected for the final artifact because the fixed ILSpy emitted false `Unknown result type` diagnostics for that shape;
+- a public constructor lowering was also rejected because the locked input contains no reusable `Vector2(float,float)` MemberRef, so using that route would require adding metadata not already present.
+
+The final static gate therefore requires two typed locals, one `Vector2` `initobj`, one `Vector3` `initobj`, exactly one store to each target field, zero `zeroVector` private-field references, single-method semantic isolation, unchanged field metadata, preservation of the four prior Batch1 repairs, and an independent fixed-ILSpy pass.
