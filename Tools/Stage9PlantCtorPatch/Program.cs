@@ -85,7 +85,7 @@ static bool IsListOf(TypeReference t, string argFullName)
 static int CountCalls(MethodDefinition m, Func<MethodReference, bool> pred) =>
     m.Body.Instructions.Count(i => (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Newobj) && i.Operand is MethodReference mr && pred(mr));
 static int CountStores(MethodDefinition m, FieldDefinition f) =>
-    m.Body.Instructions.Count(i => i.OpCode == OpCodes.Stfld && i.Operand is FieldReference fr && fr.Resolve()?.MetadataToken == f.MetadataToken);
+    m.Body.Instructions.Count(i => i.OpCode == OpCodes.Stfld && i.Operand is FieldReference fr && fr.FullName == f.FullName);
 
 var input = Path.GetFullPath(args[0]);
 var output = Path.GetFullPath(args[1]);
@@ -182,7 +182,12 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     void StFieldConstI4(FieldDefinition f, int v)
     {
         il.Append(il.Create(OpCodes.Ldarg_0));
-        il.Append(il.Create(v switch { 0 => OpCodes.Ldc_I4_0, 1 => OpCodes.Ldc_I4_1, _ => OpCodes.Ldc_I4 }, v == 0 || v == 1 ? null : v));
+        il.Append(v switch
+        {
+            0 => il.Create(OpCodes.Ldc_I4_0),
+            1 => il.Create(OpCodes.Ldc_I4_1),
+            _ => il.Create(OpCodes.Ldc_I4, v)
+        });
         il.Append(il.Create(OpCodes.Stfld, f));
     }
     void StFieldR4(FieldDefinition f, float v)
