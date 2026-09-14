@@ -1,0 +1,59 @@
+name: Stage9.1 273d next Board blockers managed bundle
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-273d-next-board-blockers-managed-bundle.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  evidence-bundle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download validated 273d candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34812322356
+          name: Stage9.1-B192-PLANT-DETAIL-INITIALIZE-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Build reusable MethodDef probe
+        run: dotnet build Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release --nologo
+      - name: Prefetch likely post-Initialize Board blockers
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/evidence"; mkdir -p "$OUT"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-plant-detail-initialize.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL" | awk '{print $1}')
+          echo "CANDIDATE_SHA256 $SHA" | tee "$OUT/candidate.txt"
+          test "$SHA" = '273ddef385775d169aa88d63a505aeb2b99aab4b8c32204a4929175310e2969b'
+          dotnet Tools/Stage9MethodProbe/bin/Release/net10.0/Stage9MethodProbe.dll \
+            "$DLL" \
+            'DialogueManager_OnBoard::Start' \
+            'DialogueManager_OnBoard::Update' \
+            'Plant_DetaiPage::Update' \
+            'Board_PlantDetail_PlantData::Update' \
+            'ZombieManager::Update_Ladder' \
+            'Board::Awake' \
+            > "$OUT/managed-fingerprint.txt"
+          cat "$OUT/managed-fingerprint.txt"
+          {
+            echo 'BASE_DLL 273ddef385775d169aa88d63a505aeb2b99aab4b8c32204a4929175310e2969b'
+            echo 'STATUS read-only-prefetch'
+            echo 'RULE Do not mutate any prefetched target until exact-R3 runtime 34833389193 promotes it as the first causal gameplay blocker.'
+          } > "$OUT/triage.txt"
+      - name: Upload reusable evidence bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-273D-NEXT-BOARD-BLOCKERS-MANAGED-BUNDLE
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn
+          retention-days: 90
