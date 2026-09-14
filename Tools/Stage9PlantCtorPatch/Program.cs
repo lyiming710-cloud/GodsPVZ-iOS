@@ -86,6 +86,8 @@ static int CountCalls(MethodDefinition m, Func<MethodReference, bool> pred) =>
     m.Body.Instructions.Count(i => (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Newobj) && i.Operand is MethodReference mr && pred(mr));
 static int CountStores(MethodDefinition m, FieldDefinition f) =>
     m.Body.Instructions.Count(i => i.OpCode == OpCodes.Stfld && i.Operand is FieldReference fr && fr.FullName == f.FullName);
+static int CountAddresses(MethodDefinition m, FieldDefinition f) =>
+    m.Body.Instructions.Count(i => i.OpCode == OpCodes.Ldflda && i.Operand is FieldReference fr && fr.FullName == f.FullName);
 
 var input = Path.GetFullPath(args[0]);
 var output = Path.GetFullPath(args[1]);
@@ -272,8 +274,10 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
         throw new InvalidDataException("Vector2 zero init mismatch");
     if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Initobj && i.Operand is TypeReference tr && tr.FullName == "UnityEngine.Vector3") != 1)
         throw new InvalidDataException("Vector3 zero init mismatch");
+    if (CountAddresses(target, F("dithering")) != 1 || CountAddresses(target, F("dithering_anim")) != 1)
+        throw new InvalidDataException("vector field address/init lowering mismatch");
 
-    foreach (var name in new[] { "plantName", "characteristicText", "talentNames", "talents", "level", "healthPoint", "maxHealthPoint", "attackPoint", "attackable", "blockable", "active", "camp", "updateRate", "skill", "elementManager", "dithering", "dithering_anim", "animationSprites", "UISprites1", "UISprites2", "UISprites3", "UISprites4", "elementUIControllers", "UI_Characteristic", "produce_Brightness", "flash_Brightness", "parameter_ints", "buffManager" })
+    foreach (var name in new[] { "plantName", "characteristicText", "talentNames", "talents", "level", "healthPoint", "maxHealthPoint", "attackPoint", "attackable", "blockable", "active", "camp", "updateRate", "skill", "elementManager", "animationSprites", "UISprites1", "UISprites2", "UISprites3", "UISprites4", "elementUIControllers", "UI_Characteristic", "produce_Brightness", "flash_Brightness", "parameter_ints", "buffManager" })
         if (CountStores(target, F(name)) != 1) throw new InvalidDataException($"field store mismatch {name}");
 
     if (target.Body.Instructions.Count(i => i.OpCode == OpCodes.Newarr && i.Operand is TypeReference tr && tr.FullName == "System.String") != 2) throw new InvalidDataException("string[3] allocation count mismatch");
