@@ -1,0 +1,52 @@
+name: Stage9.1 273d Plant detail LoadSkillLogo static gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - 'Tools/Stage9PlantDetailLoadSkillLogoPatch/**'
+      - 'Tools/Stage9NativeProbe/Plant_DetaiPage.LoadSkillLogo.native-evidence.md'
+      - '.github/workflows/stage9-273d-load-skill-logo-static-gate.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  static-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified 273d base
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34812322356
+          name: Stage9.1-B192-PLANT-DETAIL-INITIALIZE-STATIC
+          path: ${{ runner.temp }}/base
+      - name: Build one-MethodDef patcher
+        run: dotnet build Tools/Stage9PlantDetailLoadSkillLogoPatch/Stage9PlantDetailLoadSkillLogoPatch.csproj -c Release --nologo
+      - name: Reconstruct Plant_DetaiPage.LoadSkillLogo and enforce isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/out"; mkdir -p "$O"
+          IN=$(find "$RUNNER_TEMP/base" -type f -name 'GodsPVZRuntime1-plant-detail-initialize.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN" | awk '{print $1}')" = '273ddef385775d169aa88d63a505aeb2b99aab4b8c32204a4929175310e2969b'
+          OUT="$O/GodsPVZRuntime1-plant-detail-load-skill-logo.dll"
+          dotnet Tools/Stage9PlantDetailLoadSkillLogoPatch/bin/Release/net10.0/Stage9PlantDetailLoadSkillLogoPatch.dll "$IN" "$OUT" | tee "$O/patch.log"
+          sha256sum "$OUT" | tee "$O/output-candidate.sha256"
+          cp Tools/Stage9NativeProbe/Plant_DetaiPage.LoadSkillLogo.native-evidence.md "$O/"
+          grep -q 'NATIVE_AUTHORITY target_token=0x06000668 rid=1640' "$O/patch.log"
+          grep -q 'SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000668' "$O/patch.log"
+          grep -q 'FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0' "$O/patch.log"
+          grep -q 'REOPEN_LOAD_SKILL_LOGO_PASS token=0x06000668' "$O/patch.log"
+      - name: Upload static candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-273D-PLANT-DETAIL-LOAD-SKILL-LOGO-STATIC
+          path: ${{ runner.temp }}/out/
+          if-no-files-found: warn
+          retention-days: 90
