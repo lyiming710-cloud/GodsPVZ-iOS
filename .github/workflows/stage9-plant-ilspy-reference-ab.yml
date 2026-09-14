@@ -1,0 +1,101 @@
+name: Stage9.1 Plant ILSpy exact-reference A-B
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-plant-ilspy-reference-ab.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  ab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+      - name: Download Plant typed-local candidate evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34795946769
+          pattern: Stage9.1-BATCH1-PLANT-CTOR-NATIVE
+          merge-multiple: true
+          path: ${{ runner.temp }}/ab/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ab/ilspy
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/ab/editor-parts
+      - name: Reconstruct exact editor and run A-B decompile
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/ab"; E="$O/evidence"; mkdir -p "$E" "$O/editor"
+          DLL="$O/candidate/GodsPVZRuntime1-plant-ctor.dll"
+          [ "$(sha256sum "$DLL"|awk '{print $1}')" = 'dc39b8bcbfcd61f04acf2c18c42e24583e9a6e75248bb24b6aae9e381b19f173' ]
+          P="$O/editor-parts"
+          [ "$(find "$P" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*'|wc -l)" = 15 ]
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*|sha256sum|awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ]
+          cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -dc | tar -xf - -C "$O/editor"
+          ILSPY="$(find "$O/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$O/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          UROOT="$O/editor/Editor/Data/Managed"
+          CORE="$(find "$UROOT" -type f -name UnityEngine.CoreModule.dll | head -1)"
+          test -n "$CORE"; echo "COREMODULE $CORE" | tee "$E/reference.txt"
+          RDIR="$(dirname "$CORE")"; echo "REFERENCE_DIR $RDIR" | tee -a "$E/reference.txt"
+          "$ILSPY" -t Plant "$DLL" > "$E/Plant-no-ref.cs" 2> "$E/Plant-no-ref.stderr"
+          "$ILSPY" -r "$RDIR" -t Plant "$DLL" > "$E/Plant-with-ref.cs" 2> "$E/Plant-with-ref.stderr"
+          python3 - "$E/Plant-no-ref.cs" "$E/Plant-with-ref.cs" <<'PY' | tee "$E/ab-result.txt"
+          from pathlib import Path
+          import re,sys
+          def ctor(path):
+              s=Path(path).read_text(errors='replace')
+              m=re.search(r'public\s+Plant\s*\(\s*\)',s); assert m
+              o=s.index('{',m.end()); d=0
+              for i in range(o,len(s)):
+                  d+=(s[i]=='{')-(s[i]=='}')
+                  if d==0:return s[m.start():i+1]
+              raise AssertionError('unterminated')
+          a=ctor(sys.argv[1]); b=ctor(sys.argv[2])
+          bad=['Unknown result type','Expected I','Expected O','Expected I4','Unmanaged memory load','zeroVector']
+          ca={x:a.count(x) for x in bad}; cb={x:b.count(x) for x in bad}
+          print('NO_REF',ca)
+          print('WITH_REF',cb)
+          print('WITH_REF_BLOCKABLE', int('blockable = true' in b))
+          print('WITH_REF_DITHERING', int('dithering = default(Vector2)' in b))
+          print('WITH_REF_DITHERING_ANIM', int('dithering_anim = default(Vector3)' in b))
+          assert ca['Unknown result type'] > 0
+          assert all(v==0 for v in cb.values()), (cb,b)
+          assert 'blockable = true' in b
+          assert 'dithering = default(Vector2)' in b
+          assert 'dithering_anim = default(Vector3)' in b
+          print('ILSPY_EXACT_REFERENCE_AB_PASS no_ref_has_diagnostics=1 with_ref_diagnostics=0')
+          PY
+      - name: Upload A-B evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-PLANT-ILSPY-REFERENCE-AB
+          path: ${{ runner.temp }}/ab/evidence/
+          if-no-files-found: warn
+          retention-days: 90
