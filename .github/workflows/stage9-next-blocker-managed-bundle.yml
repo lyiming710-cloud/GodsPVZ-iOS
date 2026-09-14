@@ -40,7 +40,7 @@ jobs:
       - name: Build reusable MethodDef probe
         run: dotnet build Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release
 
-      - name: Fingerprint adjacent projectile constructors
+      - name: Fingerprint blocker and preserved projectile path
         shell: bash
         run: |
           set -euo pipefail
@@ -54,8 +54,9 @@ jobs:
           dotnet Tools/Stage9MethodProbe/bin/Release/net10.0/Stage9MethodProbe.dll \
             "$DLL" \
             'Projectile::.ctor' \
-            'SupperBullet::.ctor' \
-            'SquashBullet::.ctor' \
+            'Projectile::ResetData' \
+            'Projectile::BindTrack' \
+            'ProjectileManager::Start' \
             'ResourceManager::Start' \
             > "$OUT/managed-fingerprint.txt"
           cat "$OUT/managed-fingerprint.txt"
@@ -71,19 +72,17 @@ jobs:
           import re, sys
           p=sys.argv[1]
           lines=open(p,encoding='utf-8',errors='replace').read().splitlines()
-          pats=[
-              r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',
-              r'InvalidProgramException: Invalid IL code in SupperBullet:\.ctor',
-              r'InvalidProgramException: Invalid IL code in SquashBullet:\.ctor',
-          ]
-          for pat in pats:
-              rx=re.compile(pat)
-              for i,line in enumerate(lines):
-                  if rx.search(line):
-                      lo=max(0,i-3); hi=min(len(lines),i+18)
-                      print(f'=== FIRST {pat} line={i+1} ===')
-                      for n in range(lo,hi): print(f'{n+1}: {lines[n]}')
-                      break
+          rx=re.compile(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor')
+          hits=[]
+          for i,line in enumerate(lines):
+              if rx.search(line):
+                  hits.append(i)
+          print(f'PROJECTILE_CTOR_INVALID_IL_COUNT {len(hits)}')
+          if hits:
+              i=hits[0]
+              lo=max(0,i-3); hi=min(len(lines),i+18)
+              print(f'=== FIRST Projectile::.ctor line={i+1} ===')
+              for n in range(lo,hi): print(f'{n+1}: {lines[n]}')
           markers=[x for x in lines if x.startswith('STAGE9_STRICT_')]
           print('=== STRICT MARKERS ===')
           for x in markers: print(x)
@@ -98,8 +97,10 @@ jobs:
           {
             echo 'BASE_DLL dc39b8bcbfcd61f04acf2c18c42e24583e9a6e75248bb24b6aae9e381b19f173'
             echo 'RUNTIME_RUN 34797212292'
-            echo 'PRIMARY_CAUSAL_PATH ResourceManager.Start -> Resources.Load<T> -> projectile-family constructor'
-            echo 'RULE Native-attribution required before mutation; adjacent constructors may be batched only after independent evidence.'
+            echo 'PRIMARY_CAUSAL_PATH ResourceManager.Start -> InternalResourceLoader.Load<Projectile> -> Projectile::.ctor'
+            echo 'TARGET Projectile::.ctor token=0x060003FD rid=1021'
+            echo 'PRESERVE Projectile.ResetData Projectile.BindTrack ProjectileManager.Start ResourceManager.Start'
+            echo 'RULE Native-attribution required before mutation; no adjacent-method mutation without independent evidence.'
           } > "$OUT/triage.txt"
           cat "$OUT/triage.txt"
 
