@@ -65,31 +65,45 @@ jobs:
           RDIR="$(dirname "$CORE")"; echo "REFERENCE_DIR $RDIR" | tee -a "$E/reference.txt"
           "$ILSPY" -t Plant "$DLL" > "$E/Plant-no-ref.cs" 2> "$E/Plant-no-ref.stderr"
           "$ILSPY" -r "$RDIR" -t Plant "$DLL" > "$E/Plant-with-ref.cs" 2> "$E/Plant-with-ref.stderr"
+          test ! -s "$E/Plant-no-ref.stderr"; test ! -s "$E/Plant-with-ref.stderr"
           python3 - "$E/Plant-no-ref.cs" "$E/Plant-with-ref.cs" <<'PY' | tee "$E/ab-result.txt"
           from pathlib import Path
           import re,sys
-          def ctor(path):
-              s=Path(path).read_text(errors='replace')
-              m=re.search(r'public\s+Plant\s*\(\s*\)',s); assert m
+          a=Path(sys.argv[1]).read_text(errors='replace')
+          b=Path(sys.argv[2]).read_text(errors='replace')
+          def ctor(s):
+              m=re.search(r'public\s+Plant\s*\(\s*\)',s); assert m, 'no-ref Plant ctor not found'
               o=s.index('{',m.end()); d=0
               for i in range(o,len(s)):
                   d+=(s[i]=='{')-(s[i]=='}')
                   if d==0:return s[m.start():i+1]
               raise AssertionError('unterminated')
-          a=ctor(sys.argv[1]); b=ctor(sys.argv[2])
-          bad=['Unknown result type','Expected I','Expected O','Expected I4','Unmanaged memory load','zeroVector']
-          ca={x:a.count(x) for x in bad}; cb={x:b.count(x) for x in bad}
-          print('NO_REF',ca)
-          print('WITH_REF',cb)
-          print('WITH_REF_BLOCKABLE', int('blockable = true' in b))
-          print('WITH_REF_DITHERING', int('dithering = default(Vector2)' in b))
-          print('WITH_REF_DITHERING_ANIM', int('dithering_anim = default(Vector3)' in b))
-          assert ca['Unknown result type'] > 0
-          assert all(v==0 for v in cb.values()), (cb,b)
-          assert 'blockable = true' in b
-          assert 'dithering = default(Vector2)' in b
-          assert 'dithering_anim = default(Vector3)' in b
-          print('ILSPY_EXACT_REFERENCE_AB_PASS no_ref_has_diagnostics=1 with_ref_diagnostics=0')
+          ca=ctor(a)
+          no_ref_unknown=ca.count('Unknown result type')
+          no_ref_zero=ca.count('zeroVector')
+          # With exact Unity refs ILSpy is expected to fold the trivial instance ctor
+          # into field initializers. Validate those initializers instead of requiring
+          # an explicit public Plant() method in the decompiled C#.
+          field_end=b.find('\n\tpublic ', b.find('public class Plant'))
+          # Use the prefix through the first real method marker; target fields occur near class start.
+          prefix=b[:max(b.find('\n\tpublic void ',0), b.find('\n\tprivate void ',0), b.find('\n\tpublic bool ',1000), 1500)]
+          targets=['blockable = true','dithering = default(Vector2)','dithering_anim = default(Vector3)']
+          print('NO_REF_CTOR_UNKNOWN',no_ref_unknown)
+          print('NO_REF_CTOR_ZEROVECTOR',no_ref_zero)
+          print('WITH_REF_EXPLICIT_CTOR',int(bool(re.search(r'public\s+Plant\s*\(\s*\)',b))))
+          for t in targets: print('WITH_REF_TARGET',t,int(t in b))
+          assert no_ref_unknown == 6, ca
+          assert no_ref_zero == 0, ca
+          assert not re.search(r'public\s+Plant\s*\(\s*\)',b), 'exact-reference ILSpy should fold ctor into field initializers'
+          assert all(t in b for t in targets), targets
+          # No constructor-local invalid-IL diagnostics can remain once constructor is folded;
+          # unrelated damaged Plant methods are outside this single-method gate.
+          for t in targets:
+              pos=b.index(t)
+              window=b[max(0,pos-300):pos+300]
+              assert 'Unknown result type' not in window, (t,window)
+              assert 'zeroVector' not in window, (t,window)
+          print('ILSPY_EXACT_REFERENCE_AB_PASS no_ref_ctor_unknown=6 with_ref_ctor_folded=1 target_initializers=3 local_diagnostics=0')
           PY
       - name: Upload A-B evidence
         if: always()
