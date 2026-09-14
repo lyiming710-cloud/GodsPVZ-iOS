@@ -1,0 +1,54 @@
+name: Stage9.1 D65C Grid Copy V2 static gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-d65c-grid-copy-v2-static-gate.yml'
+      - 'Tools/Stage9GridCopyPatchV2/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified D65C candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34839186752
+          name: Stage9.1-5695-BOARDCONFIG-CREATEMAP-STATIC
+          path: ${{ runner.temp }}/input
+      - name: Build and recover Grid Copy V2
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/grid-copy-v2"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-boardconfig-createmap.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = 'd65c0dc71b1f47d590e96d617c5d0d3aaa693a478ef433f0d9d572dd933fe132'
+          OUT="$O/GodsPVZRuntime1-grid-copy-v2.dll"
+          dotnet build Tools/Stage9GridCopyPatchV2/Stage9GridCopyPatchV2.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9GridCopyPatchV2/Stage9GridCopyPatchV2.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000294 rid=660 method_pointer_entry=0x181B841F8 va=0x18032A010 end=0x18032A09E native_slice_sha256=26d0e35128665a985e660cd922b345fc01fc5857e2e78e9421a167a949d21617$' "$E/patch.log"
+          grep -q '^CLR_ALLOCATION_ADAPTATION explicit_null_branch=0 managed_newobj_failure_semantics=1 system_private_corelib_refs=0$' "$E/patch.log"
+          grep -q '^REOPEN_GRID_COPY_V2_PASS token=0x06000294 .*locals=1 ceq=0 Grid_ctor_calls=1 explicit_throw=0 nre_refs=0 gridState_copy=1 isHome_copy=1 passablePoint_copy=1$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000294$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^PRESERVATION_PASS batch1=4 plant_ctor=1 projectile_ctor=1 projectile_hf21=2 managers=2 plant_detail_initialize=1 load_skill_logo=1 load_data=1 create_map=1$' "$E/patch.log"
+          grep -q '^PATCH_GRID_COPY_V2 method_body_changes=1 pc_native_semantics=1 framework_ref_pollution=0 metadata_visibility_changes=0$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+      - name: Upload static candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-D65C-GRID-COPY-V2-STATIC
+          path: ${{ runner.temp }}/grid-copy-v2/evidence/
+          if-no-files-found: warn
+          retention-days: 90
