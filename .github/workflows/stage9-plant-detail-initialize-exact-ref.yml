@@ -93,8 +93,9 @@ jobs:
           for bad in ['Plant::isOnField','Unmanaged memory load','Unknown result type']:
               assert bad not in ib,(bad,ib)
           assert 'Plant::IsOnField()' in ib, ib
-          assert 'newobj instance void [UnityEngine.CoreModule]UnityEngine.Vector3::.ctor(float32, float32, float32)' in ib, ib
-          assert 'newobj instance void [UnityEngine.CoreModule]UnityEngine.Color::.ctor(float32, float32, float32, float32)' in ib, ib
+          # Cecil initializes value-type locals with ldloca + call instance .ctor; this is the canonical IL shape here.
+          assert 'call instance void [UnityEngine.CoreModule]UnityEngine.Vector3::.ctor(float32, float32, float32)' in ib, ib
+          assert 'call instance void [UnityEngine.CoreModule]UnityEngine.Color::.ctor(float32, float32, float32, float32)' in ib, ib
           print('PLANT_DETAIL_EXACT_REF_PASS target_token=0x06000667 invalid_diagnostics=0 private_isOnField_refs=0 IsOnField_call=1 xyz_preserved_y_plus_30=1 color_rgba_1=1 native_charge_semantics=1 unrelated_class_unknown=%d' % cs.count('Unknown result type'))
           PY
       - name: Upload exact-reference evidence
