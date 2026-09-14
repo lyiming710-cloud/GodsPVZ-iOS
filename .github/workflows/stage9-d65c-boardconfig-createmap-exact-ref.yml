@@ -1,0 +1,104 @@
+name: Stage9.1 D65C BoardConfig CreateMap exact-reference gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-d65c-boardconfig-createmap-exact-ref.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-ref:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download static CreateMap candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34839186752
+          name: Stage9.1-5695-BOARDCONFIG-CREATEMAP-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference decompile and gate CreateMap only
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/create-map-ref"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-boardconfig-createmap.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL"|awk '{print $1}')
+          echo "CANDIDATE_SHA256 $SHA" | tee "$O/reference-gate.txt"
+          test "$SHA" = 'd65c0dc71b1f47d590e96d617c5d0d3aaa693a478ef433f0d9d572dd933fe132'
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t BoardConfig "$DLL" > "$O/BoardConfig.cs" 2> "$O/BoardConfig.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t BoardConfig "$DLL" > "$O/BoardConfig.il" 2> "$O/BoardConfig.il.stderr"
+          test ! -s "$O/BoardConfig.cs.stderr"
+          test ! -s "$O/BoardConfig.il.stderr"
+          python3 - "$O/BoardConfig.cs" "$O/BoardConfig.il" <<'PY' | tee -a "$O/reference-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+Map\s+CreateMap\s*\(\s*\)',cs)
+          assert m, 'CreateMap() C# method not found'
+          o=cs.index('{',m.end()); depth=0; end=None
+          for i in range(o,len(cs)):
+              depth+=(cs[i]=='{')-(cs[i]=='}')
+              if depth==0:
+                  end=i+1; break
+          assert end is not None
+          body=cs[m.start():end]
+          Path(sys.argv[1]+'.CreateMap.txt').write_text(body)
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Method not found @','Warning: Method ends','unsafe Map CreateMap']:
+              assert bad not in body,(bad,body)
+          assert 'map == null' in body or 'map != null' in body or 'if (map' in body, body
+          assert body.count('map.Copy()') == 1, body
+          assert 'return null;' in body, body
+
+          target_end=il.find('} // end of method BoardConfig::CreateMap')
+          assert target_end>=0, 'CreateMap IL end marker missing'
+          target_begin=il.rfind('.method ',0,target_end)
+          ib=il[target_begin:target_end]
+          Path(sys.argv[2]+'.CreateMap.txt').write_text(ib)
+          for bad in ['ceq','ldc.i4.0','System.Object','Method not found @','Warning: Method ends']:
+              assert bad not in ib,(bad,ib)
+          assert ib.count('BoardConfig::map') == 2, ib
+          assert ib.count('Map::Copy()') == 1, ib
+          assert ib.count('ldnull') == 1, ib
+          print('CREATE_MAP_EXACT_REF_PASS target_token=0x06000157 invalid_diagnostics=0 object_integer_ceq=0 map_refs=2 Map_Copy=1 null_return=1')
+          print('=== TARGET_CSHARP ===')
+          print(body)
+          PY
+      - name: Upload exact-reference evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-D65C-BOARDCONFIG-CREATEMAP-EXACT-REF
+          path: ${{ runner.temp }}/create-map-ref/
+          if-no-files-found: warn
+          retention-days: 90
