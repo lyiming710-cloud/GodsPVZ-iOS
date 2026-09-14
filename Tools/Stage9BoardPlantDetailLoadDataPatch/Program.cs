@@ -124,7 +124,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
         throw new InvalidDataException("unexpected System.Private.CoreLib input ref");
 
     foreach (var m in methods) beforeM[Raw(m)] = MethodSemantic(m);
-    foreach (var f in fields) beforeF[Raw(f)] = FieldSemantic(f);
+    foreach (var fld in fields) beforeF[Raw(fld)] = FieldSemantic(fld);
     foreach (var token in PreservationTokens)
         preservedBefore[token] = beforeM.TryGetValue(token, out var sem) ? sem : throw new InvalidDataException($"preservation token missing 0x{token:X8}");
 
