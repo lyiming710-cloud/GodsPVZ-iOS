@@ -1,0 +1,73 @@
+name: Stage9.1 batch1 Plant ctor diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-batch1-plant-ctor-diagnostic.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download validated gameplay batch1 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34791010159
+          pattern: Stage9.1-GAMEPLAY-BATCH1-INTEGRATED
+          merge-multiple: true
+          path: ${{ runner.temp }}/plant/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/plant/ilspy
+      - name: Extract Plant managed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/plant"; E="$O/evidence"; mkdir -p "$E"
+          DLL="$O/input/GodsPVZRuntime1-gameplay-batch1.dll"
+          [ "$(sha256sum "$DLL"|awk '{print $1}')" = '2bcf1643457eecddeff3eaed9668c2117c11fdd5829b264a29e0f30cc86fe20c' ] || exit 61
+          ILSPY="$(find "$O/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$O/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t Plant "$DLL" > "$E/Plant.cs" 2> "$E/Plant.cs.stderr"
+          "$ILSPY" -il -t Plant "$DLL" > "$E/Plant.il" 2> "$E/Plant.il.stderr"
+          test ! -s "$E/Plant.cs.stderr"; test ! -s "$E/Plant.il.stderr"
+          python3 - "$E/Plant.cs" "$E/Plant.il" <<'PY' | tee "$E/summary.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          print('CS_DIAGNOSTICS', {k:cs.count(k) for k in ['Expected I','Expected O','Expected I4','Unknown result type']})
+          # Emit constructor section from IL including token comment.
+          lines=il.splitlines()
+          for i,l in enumerate(lines):
+              if '.method' in l and 'rtspecialname' in l:
+                  block='\n'.join(lines[i:i+120])
+                  if 'Plant::.ctor' in block or ' instance void .ctor' in block:
+                      print('CTOR_BLOCK_BEGIN')
+                      print(block)
+                      print('CTOR_BLOCK_END')
+                      break
+          print('zeroVector_cs', cs.count('zeroVector'))
+          print('Vector3_zero_cs', cs.count('Vector3.zero'))
+          print('zeroVector_il', il.count('zeroVector'))
+          PY
+          sha256sum "$DLL" > "$E/input.sha256"
+      - name: Upload diagnostic evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BATCH1-PLANT-CTOR-DIAGNOSTIC
+          path: ${{ runner.temp }}/plant/evidence/
+          if-no-files-found: error
+          retention-days: 90
