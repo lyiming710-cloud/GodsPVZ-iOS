@@ -1,0 +1,118 @@
+name: Stage9.1 5695 Board plant detail LoadData exact-reference gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-5695-load-data-exact-ref.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-ref:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download static LoadData candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34837311961
+          name: Stage9.1-4110-BOARD-PLANT-DETAIL-LOAD-DATA-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference decompile and gate LoadData only
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/load-data-ref"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-board-plant-detail-load-data.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL"|awk '{print $1}')
+          echo "CANDIDATE_SHA256 $SHA" | tee "$O/reference-gate.txt"
+          test "$SHA" = '56958c11480ad840904c07e2194c7f36304287c6c7a170be964d581a99d16751'
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          echo "REFERENCE_DIR $RDIR" | tee -a "$O/reference-gate.txt"
+          "$ILSPY" -r "$RDIR" -t Board_PlantDetail_PlantData "$DLL" > "$O/Board_PlantDetail_PlantData.cs" 2> "$O/Board_PlantDetail_PlantData.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Board_PlantDetail_PlantData "$DLL" > "$O/Board_PlantDetail_PlantData.il" 2> "$O/Board_PlantDetail_PlantData.il.stderr"
+          test ! -s "$O/Board_PlantDetail_PlantData.cs.stderr"
+          test ! -s "$O/Board_PlantDetail_PlantData.il.stderr"
+          python3 - "$O/Board_PlantDetail_PlantData.cs" "$O/Board_PlantDetail_PlantData.il" <<'PY' | tee -a "$O/reference-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+(?:unsafe\s+)?void\s+LoadData\s*\(\s*Plant_DetaiPage\s+\w+\s*\)',cs)
+          assert m, 'LoadData(Plant_DetaiPage) C# method not found'
+          o=cs.index('{',m.end()); depth=0; end=None
+          for i in range(o,len(cs)):
+              depth+=(cs[i]=='{')-(cs[i]=='}')
+              if depth==0:
+                  end=i+1; break
+          assert end is not None
+          body=cs[m.start():end]
+          Path(sys.argv[1]+'.LoadData.txt').write_text(body)
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Method not found @','Warning: Method ends','List<object>','._size','unsafe void LoadData']:
+              assert bad not in body,(bad,body)
+          assert '.level' in body and 'Lv.' in body, body
+          assert 'Math.Min' in body and 'Math.Max' in body and body.count('Math.Truncate') == 2, body
+          assert 'GetATK()' in body and 'GetARM()' in body and 'GetDEF()' in body, body
+          assert 'ResourceManager.cliqueLogos' in body, body
+          assert 'ResourceManager.LoadSkillLogo' in body and 'LoadSkillData' in body, body
+          callpos=body.find('ResourceManager.LoadSkillLogo')
+          callfrag=body[callpos:body.find(';',callpos)+1]
+          assert callfrag.count('.ID') >= 2 and '+' in callfrag and '* 3' in callfrag and '.name' in callfrag, callfrag
+          assert 'characteristicText' in body, body
+          assert 'talentNames' in body and 'talentDescriptions' in body and 'talents' in body and '：' in body, body
+          assert '.Count' in body and re.search(r'<\s*[^;\n]*\.stars',body), body
+
+          target_end=il.find('} // end of method Board_PlantDetail_PlantData::LoadData')
+          assert target_end>=0, 'LoadData IL end marker missing'
+          target_begin=il.rfind('.method ',0,target_end)
+          ib=il[target_begin:target_end]
+          Path(sys.argv[2]+'.LoadData.txt').write_text(ib)
+          for bad in ['::_size','System.Object','Unmanaged memory load','Method not found @','Warning: Method ends']:
+              assert bad not in ib,(bad,ib)
+          assert ib.count('Plant::level') == 1, ib
+          assert ib.count('System.Math::Truncate(float64)') == 2, ib
+          assert ib.count('Plant::GetATK()') == 1 and ib.count('Plant::GetARM()') == 1 and ib.count('Plant::GetDEF()') == 1, ib
+          assert ib.count('ResourceManager::LoadSkillLogo(int32, string)') == 1, ib
+          assert ib.count('Board_PlantDetail_PlantData::LoadSkillData(class Skill)') == 1, ib
+          assert ib.count('List`1<class [UnityEngine.UI]UnityEngine.UI.Image>::get_Count()') == 1, ib
+          assert ib.count('UnityEngine.GameObject::SetActive(bool)') == 1, ib
+          assert 'ldc.i4.3' in ib and 'mul' in ib and 'add' in ib, ib
+          print('LOAD_DATA_EXACT_REF_PASS target_token=0x060005E1 invalid_diagnostics=0 object_arithmetic=0 private_List_size=0 Plant_level=1 native_skill_id_formula=1 stars_Count=1')
+          print('=== TARGET_CSHARP ===')
+          print(body)
+          PY
+      - name: Upload exact-reference evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-5695-BOARD-PLANT-DETAIL-LOAD-DATA-EXACT-REF
+          path: ${{ runner.temp }}/load-data-ref/
+          if-no-files-found: warn
+          retention-days: 90
