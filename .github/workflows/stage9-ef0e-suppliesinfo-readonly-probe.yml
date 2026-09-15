@@ -1,0 +1,25 @@
+name: Stage9.1 ef0e SuppliesInfo read-only probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-ef0e-suppliesinfo-readonly-probe.yml','Tools/Stage9SuppliesInfoProbe/**']
+permissions: {contents: read, actions: read}
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34974706641, name: Stage9.1-FDD1-ADMINISTRATOR-CTOR-QUALIFIED, path: '${{ runner.temp }}/candidate'}
+      - name: Probe SuppliesInfo ctor read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-administrator-ctor.dll' -print -quit)
+          test -n "$DLL"
+          dotnet run --project Tools/Stage9SuppliesInfoProbe/Stage9SuppliesInfoProbe.csproj -c Release -- "$DLL" 'ef0e435d545429557c5cd260ee0d6b9348f3ab8de4197836741b993a1fe9a5a2' | tee "$RUNNER_TEMP/suppliesinfo-probe.txt"
+          grep -q '^READONLY_SUPPLIESINFO_PROBE_PASS mutation=0$' "$RUNNER_TEMP/suppliesinfo-probe.txt"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-EF0E-SUPPLIESINFO-READONLY-PROBE, path: '${{ runner.temp }}/suppliesinfo-probe.txt', retention-days: 90}
