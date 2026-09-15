@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -104,18 +103,14 @@ public class Stage9SkillProgressRuntime
         Assert.GreaterOrEqual(textCount, 3);
         Assert.IsNotNull(layerText);
 
-        // Skill is a plain CLR class; its parameterless constructor only initializes
-        // normal managed defaults.
         var skill = Activator.CreateInstance(skillT);
         Assert.IsNotNull(skill);
         var chargeTypeField = skillT.GetField("ChargeType", F);
         Assert.IsNotNull(chargeTypeField);
 
-        // Prefer a real Board-scene Plant. A fresh strict Board commonly has none,
-        // so fall back to a CLR-only shell. The exercised branches only read/write
-        // plain Plant fields and do not invoke UnityEngine.Object/Component APIs on it.
         object plant = null;
         string plantSource = "none";
+        GameObject tempPlantGo = null;
         foreach (var o in Resources.FindObjectsOfTypeAll(plantT))
         {
             var c = o as Component;
@@ -128,10 +123,15 @@ public class Stage9SkillProgressRuntime
         }
         if (plant == null)
         {
-#pragma warning disable SYSLIB0050
-            plant = FormatterServices.GetUninitializedObject(plantT);
-#pragma warning restore SYSLIB0050
-            plantSource = "clr_shell";
+            // Plant derives from MonoBehaviour. A FormatterServices shell has no native
+            // UnityEngine.Object backing and is not a valid runtime probe target.
+            // Create a real inactive component instead; the GameObject never becomes
+            // active, so gameplay Update does not run while the two plain fields below
+            // are exercised by Update_SkillProgress.
+            tempPlantGo = new GameObject("Stage9SkillProgressPlant");
+            tempPlantGo.SetActive(false);
+            plant = tempPlantGo.AddComponent(plantT);
+            plantSource = "inactive_component";
         }
         Assert.IsNotNull(plant);
 
@@ -162,7 +162,6 @@ public class Stage9SkillProgressRuntime
 
         try
         {
-            // Ready: chargedLayer > 0 and skill is not ongoing.
             SF(skillT, skill, "chargedLayer", 1);
             SF(plantT, plant, "skillOngoing", false);
             try
@@ -178,7 +177,6 @@ public class Stage9SkillProgressRuntime
                 throw ex.InnerException ?? ex;
             }
 
-            // Active charging: non-passive ChargeType, ratio and current/max text path.
             SF(skillT, skill, "chargedLayer", 0);
             chargeTypeField.SetValue(skill, Enum.ToObject(chargeTypeField.FieldType, 0));
             SF(skillT, skill, "chargeTicking", 0.25f);
@@ -186,20 +184,17 @@ public class Stage9SkillProgressRuntime
             SF(plantT, plant, "skillOngoing", false);
             InvokePhase("active_charge");
 
-            // Passive charging: ChargeType.Passively == 3.
             chargeTypeField.SetValue(skill, Enum.ToObject(chargeTypeField.FieldType, 3));
             SF(skillT, skill, "chargedLayer", 0);
             SF(plantT, plant, "skillOngoing", false);
             InvokePhase("passive");
 
-            // Ongoing with another charged layer available.
             SF(skillT, skill, "chargedLayer", 2);
             SF(skillT, skill, "duration", 0.5f);
             SF(plantT, plant, "skillOngoing", true);
             SF(plantT, plant, "skillRemainTime", 0.25f);
             InvokePhase("ongoing_high");
 
-            // Ongoing with no extra layer beyond the active one.
             SF(skillT, skill, "chargedLayer", 1);
             SF(plantT, plant, "skillOngoing", true);
             SF(plantT, plant, "skillRemainTime", 0.25f);
@@ -211,8 +206,12 @@ public class Stage9SkillProgressRuntime
         {
             SF(detailT, detail, "p_skill", oldPSkill);
             SF(detailT, detail, "plant", oldPlant);
-            SF(plantT, plant, "skillOngoing", oldSkillOngoing);
-            SF(plantT, plant, "skillRemainTime", oldSkillRemainTime);
+            if (plant != null)
+            {
+                SF(plantT, plant, "skillOngoing", oldSkillOngoing);
+                SF(plantT, plant, "skillRemainTime", oldSkillRemainTime);
+            }
+            if (tempPlantGo != null) UnityEngine.Object.DestroyImmediate(tempPlantGo);
         }
 
         yield return null;
