@@ -1,0 +1,130 @@
+name: Stage9.1 4736 SkillProgress coverage promotion probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-4736-skillprogress-coverage-probe.yml'
+      - 'Tools/Stage9SkillProgressRuntime/**'
+      - 'Tools/Stage9CI/conditional-free-space.sh'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+
+      - name: Download runtime-qualified PlantData candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34915836008
+          name: Stage9.1-1F00-PLANTDATA-UPDATE-QUALIFIED
+          path: ${{ runner.temp }}/stage9-skillprogress/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-skillprogress/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-skillprogress/editor-parts
+
+      - name: Resolve candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-skillprogress/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-plantdata-update.dll' -print -quit)
+          test -n "$DLL"
+          EXPECTED='47369e6d43789f303d7d7ebc42a2f16b6c9add2d7a5f7bb6ba412db02c963058'
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "SKILLPROGRESS_INPUT=$DLL" >> "$GITHUB_ENV"
+          echo "SKILLPROGRESS_INPUT_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "COVERAGE_INPUT_SHA256 $EXPECTED"
+
+      - name: Run one-launch SkillProgress Ready coverage probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh "$RUNNER_TEMP/stage9-skillprogress" "$SKILLPROGRESS_INPUT" "$SKILLPROGRESS_INPUT_SHA"
+
+      - name: Audit target invocation and promote only observed blocker
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-skillprogress/evidence"; LOG="$E/playmode.log"
+          test -f "$LOG"
+          python3 - "$LOG" > "$E/skillprogress-coverage-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          target=len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update_SkillProgress',text))
+          print('SKILLPROGRESS_INVALID_IL_COUNT',target)
+          regressions={
+            'PLANTDATA_UPDATE_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|FieldAccessException|MissingMethodException).*Board_PlantDetail_PlantData:Update',text)),
+            'CAMERA_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|FieldAccessException|MissingMethodException).*Plant_DetaiPage:Updata_Camera',text)),
+            'PLANT_DETAIL_UPDATE_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|FieldAccessException|MissingMethodException).*Plant_DetaiPage:Update \(',text)),
+            'DIALOGUE_UPDATE_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'List`1:_size' in x and 'DialogueManager_OnBoard:Update' in x for x in lines),
+            'BGMUNPAUSE_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|MissingMethodException).*ZombieManager:BGMUnPasue',text)),
+            'BOARD_GAMECONTINUE_METHODACCESS_COUNT':text.count("MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)' is inaccessible from method `Board.GameContinue()'"),
+            'DIALOGUE_START_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',text)),
+            'GRID_COPY_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Grid:Copy',text)),
+            'BOARDCONFIG_CREATEMAP_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',text)),
+            'LOAD_DATA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',text)),
+            'LOAD_SKILL_LOGO_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text)),
+            'PROJECTILE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'ZEROVECTOR_TEXT_COUNT':text.count('zeroVector'),
+          }
+          for k,v in regressions.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_SKILLPROGRESS_')]
+          print('SKILLPROGRESS_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          assert 'STAGE9_SKILLPROGRESS_SAVE_READY ok=1' in markers
+          assert 'STAGE9_SKILLPROGRESS_BOARD_READY ok=1' in markers
+          assert any(x.startswith('STAGE9_SKILLPROGRESS_UI detail=1 ') and 'layerText=1' in x for x in markers)
+          assert any(x.startswith('STAGE9_SKILLPROGRESS_PLANT_SOURCE source=') for x in markers)
+          assert not any(x=='STAGE9_SKILLPROGRESS_READY_INVOKE ok=1' for x in markers)
+          assert target>0,target
+          assert all(v==0 for v in regressions.values()),regressions
+          first=next(i for i,x in enumerate(lines) if 'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update_SkillProgress' in x)
+          print('=== SKILLPROGRESS_TARGET_EXCEPTION_CONTEXT ===')
+          for j in range(max(0,first-6),min(len(lines),first+20)): print(f'{j+1}: {lines[j]}')
+          print('SKILLPROGRESS_COVERAGE_PROMOTION_PASS target_invoked=1 target_invalid_il_observed=1 previous_recoveries_preserved=1')
+          PY
+          cat "$E/skillprogress-coverage-audit.txt"
+
+      - name: Upload coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-SKILLPROGRESS-COVERAGE-PROMOTION
+          path: ${{ runner.temp }}/stage9-skillprogress/evidence/
+          retention-days: 90
