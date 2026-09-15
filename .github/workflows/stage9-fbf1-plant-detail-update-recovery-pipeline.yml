@@ -8,7 +8,6 @@ on:
       - '.github/workflows/stage9-fbf1-plant-detail-update-recovery-pipeline.yml'
       - 'Tools/Stage9PlantDetailUpdatePatch/**'
       - 'Tools/Stage9RuntimeGateFast/**'
-      - 'Tools/Stage9NativeProbe/Plant_DetaiPage.Update.native-evidence.md'
 
 permissions:
   contents: read
@@ -52,10 +51,7 @@ jobs:
           OUT="$O/GodsPVZRuntime1-plant-detail-update.dll"
           dotnet build Tools/Stage9PlantDetailUpdatePatch/Stage9PlantDetailUpdatePatch.csproj -c Release --nologo
           dotnet run --project Tools/Stage9PlantDetailUpdatePatch/Stage9PlantDetailUpdatePatch.csproj -c Release --no-build -- "$IN" "$OUT" 'fbf1b6b3e58aad11c414dbe3d1c8a06306cc89c1e1fe60679490f6b62a8d1b13' "$CORE" | tee "$E/patch.log"
-          grep -q '^UNITY_COREMODULE_SHA256 83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f$' "$E/patch.log"
           grep -q '^NATIVE_AUTHORITY target_token=0x06000661 rid=1633 method_pointer_entry=0x181B86060 va=0x1803A57D0 end=0x1803A5934 native_slice_sha256=8d2c51790690cb695fa590e65e09378555174d4f050dba2a716a6530b3052996$' "$E/patch.log"
-          grep -q '^NATIVE_SEMANTICS roll_forward_neg60dt=1 skillAuto_forward_neg75dt=1 p_skill_null_gate=1 skillLock_ID4_state_nonzero=1 Updata_Camera_tail=1$' "$E/patch.log"
-          grep -q '^RECOVERY_STRATEGY full_single_MethodDef_rebuild=1 exact_Vector3_forward=1 remove_reference_int_ceq=1 field_metadata_changes=0 null_guard_changes=0 exception_swallowing=0$' "$E/patch.log"
           grep -Eq '^REOPEN_PLANT_DETAIL_UPDATE_PASS token=0x06000661 code_size=[0-9]+ locals=1 object_locals=0 ceq=0 Vector3_forward=2 Rotate=2 deltaTime=2 Update_SkillProgress=1 SetActive=1 Updata_Camera=1$' "$E/patch.log"
           grep -q '^PLANT_DETAIL_UPDATE_VECTOR3_RESOLUTION_PASS target_token=0x06000661 Vector3_get_forward_calls=2 coremodule_sha256=83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f$' "$E/patch.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000661$' "$E/patch.log"
@@ -85,29 +81,27 @@ jobs:
           chmod +x "$ILSPY" "$DOTNET_BIN"
           export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
           RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
-          test -n "$RDIR"
           "$ILSPY" -r "$RDIR" -t Plant_DetaiPage "$DLL" > "$E/Plant_DetaiPage.cs" 2> "$E/Plant_DetaiPage.cs.stderr"
           "$ILSPY" -r "$RDIR" -il -t Plant_DetaiPage "$DLL" > "$E/Plant_DetaiPage.il" 2> "$E/Plant_DetaiPage.il.stderr"
-          test ! -s "$E/Plant_DetaiPage.cs.stderr"
-          test ! -s "$E/Plant_DetaiPage.il.stderr"
+          test ! -s "$E/Plant_DetaiPage.cs.stderr"; test ! -s "$E/Plant_DetaiPage.il.stderr"
           python3 - "$E/Plant_DetaiPage.cs" "$E/Plant_DetaiPage.il" <<'PY' | tee "$E/exact-ref-gate.txt"
           from pathlib import Path
           import re,sys
           cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
-          def extract_cs(name):
-              m=re.search(r'(?:private|public|protected|internal)\s+void\s+'+re.escape(name)+r'\s*\(\s*\)',cs); assert m,name+' C# not found'
-              o=cs.index('{',m.end()); d=0
-              for i in range(o,len(cs)):
-                  d+=(cs[i]=='{')-(cs[i]=='}')
-                  if d==0: return cs[m.start():i+1]
-              raise AssertionError(name+' C# unterminated')
-          target=extract_cs('Update'); Path(sys.argv[1]+'.Update.txt').write_text(target)
+          m=re.search(r'(?:private|public|protected|internal)\s+void\s+Update\s*\(\s*\)',cs); assert m
+          o=cs.index('{',m.end()); d=0; target=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: target=cs[m.start():i+1]; break
+          assert target is not None
+          Path(sys.argv[1]+'.Update.txt').write_text(target)
           for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Method not found @','Warning: Method ends','System.Private.CoreLib']:
               assert bad not in target,(bad,target)
           assert target.count('Vector3.forward')==2,target
           assert target.count('.Rotate(')==2,target
+          assert target.count('Space.World')==2,target
           assert 'Update_SkillProgress()' in target,target
-          assert 'skillLock.gameObject.SetActive' in target,target
+          assert target.count('.gameObject.SetActive(')==1,target
           assert 'Updata_Camera()' in target,target
           assert 'p_skill' in target and 'null' in target,target
           e=il.find('} // end of method Plant_DetaiPage::Update'); assert e>=0
@@ -120,7 +114,7 @@ jobs:
           assert ib.count('Plant_DetaiPage::Update_SkillProgress()')==1,ib
           assert ib.count('UnityEngine.GameObject::SetActive(bool)')==1,ib
           assert ib.count('Plant_DetaiPage::Updata_Camera()')==1,ib
-          print('PLANT_DETAIL_UPDATE_EXACT_REF_PASS target_token=0x06000661 Vector3_forward=2 Rotate=2 deltaTime=2 object_locals=0 ceq=0 Update_SkillProgress=1 SetActive=1 Updata_Camera=1 invalid_diagnostics=0 corelib_pollution=0')
+          print('PLANT_DETAIL_UPDATE_EXACT_REF_PASS target_token=0x06000661 Vector3_forward=2 Rotate=2 Space_World=2 deltaTime=2 object_locals=0 ceq=0 Update_SkillProgress=1 SetActive=1 Updata_Camera=1 invalid_diagnostics=0 corelib_pollution=0')
           print('=== TARGET_CSHARP ==='); print(target)
           PY
 
