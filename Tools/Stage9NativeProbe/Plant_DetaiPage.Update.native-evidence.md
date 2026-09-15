@@ -1,6 +1,6 @@
 # Plant_DetaiPage.Update PC native authority
 
-Read-only prefetch. This method is not a promoted mutation target until runtime selects it as the first causal gameplay blocker.
+Runtime-promoted recovery target after the qualified `DialogueManager_OnBoard.Update()` gate.
 
 Authority: original GodsPVZ 1.0.2 PC x86-64 IL2CPP `GameAssembly.dll`.
 
@@ -14,21 +14,24 @@ Authority: original GodsPVZ 1.0.2 PC x86-64 IL2CPP `GameAssembly.dll`.
 - `.pdata` exact range: `0x1803A57D0–0x1803A5934` (356 bytes)
 - Native slice SHA256: `8d2c51790690cb695fa590e65e09378555174d4f050dba2a716a6530b3052996`
 
-Managed 5789 fingerprint before recovery:
+Managed pre-recovery fingerprint:
 
 - code size: `355`
 - locals: `14`
 - semantic fingerprint: `3c14baa548dc90bc73b00f0e524b8257b6e48c1ca2506b0fb5c0efe9885d56ef`
 - corrupt local: `System.Object` local 13 is used by both `Transform.Rotate(Vector3,float,Space)` calls as if it were a `Vector3` address.
+- corrupt `p_skill` null check: reference compared with integer zero through `ceq`.
 
 ## Recovered semantics
 
 The PC native body establishes both Rotate calls precisely:
 
-1. `roll.transform.Rotate(Vector3.forward, -60f * Time.deltaTime, Space.Self)`
-2. `skillAuto.transform.Rotate(Vector3.forward, -75f * Time.deltaTime, Space.Self)`
+1. `roll.transform.Rotate(Vector3.forward, -60f * Time.deltaTime, Space.World)`
+2. `skillAuto.transform.Rotate(Vector3.forward, -75f * Time.deltaTime, Space.World)`
 
-The axis constant is `(0, 0, 1)`: native zeroes x/y and loads float `1.0f` from `0x1815A7A10` into z. Rotation-speed constants are `-60.0f` at `0x1815A7F9C` and `-75.0f` at `0x1815A7FA0`; the Space argument is native integer `0` (`Space.Self`).
+The axis constant is `(0, 0, 1)`: native zeroes x/y and loads float `1.0f` from `0x1815A7A10` into z. Rotation-speed constants are `-60.0f` at `0x1815A7F9C` and `-75.0f` at `0x1815A7FA0`.
+
+The Space argument is native integer `0`. Exact Unity 2022.3.44f1c1 metadata and exact-reference ILSpy readback establish `UnityEngine.Space.World = 0` and `UnityEngine.Space.Self = 1`; therefore the original call uses `Space.World`. The recovered candidate decompiles both calls as `Space.World`.
 
 Key native sequence for the first rotation:
 
@@ -39,17 +42,17 @@ Key native sequence for the first rotation:
 0x1803A5819  mulss xmm0,[0x1815A7F9C] ; * -60.0f
 0x1803A582C  xorps xmm1,xmm1          ; x/y = 0
 0x1803A582F  movss [rsp+0x38],xmm7    ; z = 1.0f
-0x1803A584A  call 0x18132E150         ; Transform.Rotate(Vector3,float,Space)
+0x1803A584A  call 0x18132E150         ; Transform.Rotate(Vector3,float,Space), Space=0
 ```
 
 Second rotation is structurally identical and uses `skillAuto` plus `-75.0f`.
 
-Remaining gameplay flow matches the managed reconstruction:
+Remaining gameplay flow:
 
-- if `p_skill` is live, call `Update_SkillProgress()`;
-- inspect `plant`;
-- `skillLock.gameObject.SetActive(true)` only when `plant.ID == 4` and `plant.state != 0`, otherwise false;
-- always tail into `Updata_Camera()` after that logic;
-- if `p_skill` is absent, skip skill-progress/lock logic and tail into `Updata_Camera()`.
+- if `p_skill != null`, call `Update_SkillProgress()`;
+- set the skill-lock active state to `plant.ID == 4 && plant.state != 0`;
+- call `skillLock.gameObject.SetActive(active)`;
+- if `p_skill == null`, skip skill-progress/lock work;
+- always tail into `Updata_Camera()`.
 
-If runtime promotes this method, the recovery must use typed `Vector3.forward`/equivalent `(0,0,1)` values for both Rotate calls and preserve the rest of the PC-native branch structure. Do not substitute a zero vector, expose fields, or add defensive guards solely for CLR execution.
+Recovery constraint: rebuild only this MethodDef, use typed `Vector3.forward`, a normal CLR reference null branch for `p_skill`, and preserve the PC-native branch structure. Do not expose fields, add defensive null guards, or swallow exceptions solely for CLR execution.
