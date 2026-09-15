@@ -1,0 +1,141 @@
+name: Stage9.1 68a105 ZombieInfo ctor qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-68a105-zombieinfo-ctor-qualify.yml'
+      - 'Tools/Stage9ZombieInfoCtorPatch/**'
+      - 'Tools/Stage9NativeProbe/ZombieInfo.ctor.native-evidence.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download formal Zombie natural-runtime re-audit
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34927353049
+          name: Stage9.1-ZOMBIE-CTOR-NATURAL-RUNTIME-REAUDIT
+          path: ${{ runner.temp }}/promotion
+
+      - name: Gate Zombie completion and ZombieInfo promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          A=$(find "$RUNNER_TEMP/promotion" -type f -name 'zombie-ctor-natural-runtime-reaudit.txt' -print -quit)
+          test -n "$A"
+          grep -q '^CURRENT_CANDIDATE_SHA256 68a105d366f0e7bfa9215c6e09040b9275bcad7e6c2771fec745340eb8e08d97$' "$A"
+          grep -q '^ZOMBIE_CTOR_INVALID_IL baseline=26 current=0$' "$A"
+          grep -q '^ZOMBIEINFO_CTOR_INVALID_IL baseline=12 current=6$' "$A"
+          grep -q '^NEXT_SELECTED_UNRESOLVED_CTOR ZombieInfo note=preexisting_not_newly_introduced$' "$A"
+          grep -q '^ZOMBIE_CTOR_NATURAL_RUNTIME_REAUDIT_PASS baseline_invalid=26 current_invalid=0 corelib_pollution=0 zerovector_pollution=0$' "$A"
+          cat "$A"
+
+      - name: Download runtime-observed Zombie ctor candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34925548959
+          name: Stage9.1-2B2F-ZOMBIE-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Build ZombieInfo ctor recovery and run static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/zombieinfo-ctor-recovery"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-zombie-ctor.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '68a105d366f0e7bfa9215c6e09040b9275bcad7e6c2771fec745340eb8e08d97'
+          OUT="$O/GodsPVZRuntime1-zombieinfo-ctor.dll"
+          dotnet build Tools/Stage9ZombieInfoCtorPatch/Stage9ZombieInfoCtorPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9ZombieInfoCtorPatch/Stage9ZombieInfoCtorPatch.csproj -c Release --no-build -- \
+            "$IN" "$OUT" '68a105d366f0e7bfa9215c6e09040b9275bcad7e6c2771fec745340eb8e08d97' | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000152 rid=338 method_pointer_entry=0x181B837E8 va=0x1803251F0 end=0x180325261 native_span_sha256=4ccabbc3bb2ebdc0f06c97337a2473d0855c91c94c5c753635bf8e167ed90c56$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS healthPoint=270 attackPoint=100 speedRating=3 enemyRequirements=bool\[10\] painterID=-1 base_ctor=System.Object$' "$E/patch.log"
+          grep -Eq '^REOPEN_ZOMBIEINFO_CTOR_PASS token=0x06000152 code_size=[0-9]+ locals=0 ldc_i8=0 bool_array_alloc=1 fake_diagnostics=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000152$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9ZombieInfoCtorPatch/Program.cs "$E/"
+          cp Tools/Stage9NativeProbe/ZombieInfo.ctor.native-evidence.md "$E/"
+          cp "$RUNNER_TEMP/promotion/zombie-ctor-natural-runtime-reaudit.txt" "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Exact-reference ZombieInfo ctor readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/zombieinfo-ctor-recovery"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-zombieinfo-ctor.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t ZombieInfo "$DLL" > "$E/ZombieInfo.cs" 2> "$E/ZombieInfo.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t ZombieInfo "$DLL" > "$E/ZombieInfo.il" 2> "$E/ZombieInfo.il.stderr"
+          test ! -s "$E/ZombieInfo.cs.stderr"; test ! -s "$E/ZombieInfo.il.stderr"
+          python3 - "$E/ZombieInfo.cs" "$E/ZombieInfo.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:public|private|protected|internal)\s+ZombieInfo\s*\(\s*\)',cs); assert m, 'ZombieInfo ctor not found'
+          o=cs.index('{',m.end()); d=0; target=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: target=cs[m.start():i+1]; break
+          assert target is not None
+          Path(sys.argv[1]+'.ctor.txt').write_text(target)
+          bad=['Unmanaged memory load','System.IntPtr','System.Private.CoreLib','Method not found @','Unknown result type','Not implemented instruction','Warning: Method ends']
+          for x in bad: assert x not in target,(x,target)
+          good=['healthPoint = 270','attackPoint = 100','speedRating = 3','new bool[10]','painterID = -1']
+          for x in good: assert x in target,(x,target)
+          e=il.find('} // end of method ZombieInfo::.ctor'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ib)
+          for x in ['System.IntPtr','Unmanaged memory load','System.Private.CoreLib','Method not found @']:
+              assert x not in ib,(x,ib)
+          assert 'newarr' in ib and 'System.Boolean' in ib, ib
+          assert 'System.Object::.ctor' in ib, ib
+          print('ZOMBIEINFO_CTOR_EXACT_REF_PASS token=0x06000152 native_defaults=1 typed_bool_array=1 object_base_ctor=1 invalid_diagnostics=0 unmanaged_scaffolding=0 corelib_pollution=0')
+          print('=== TARGET_CSHARP ==='); print(target)
+          PY
+
+      - name: Upload qualified ZombieInfo ctor candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-68A105-ZOMBIEINFO-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/zombieinfo-ctor-recovery/evidence/
+          retention-days: 90
