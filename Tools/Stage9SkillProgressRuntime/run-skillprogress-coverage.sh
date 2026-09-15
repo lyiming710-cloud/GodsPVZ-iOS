@@ -63,6 +63,6 @@ cat "$E/markers.txt" || true
 [ -s "$E/results.xml" ] || exit 101
 grep -q 'STAGE9_SKILLPROGRESS_SAVE_READY ok=1' "$E/markers.txt" || exit 102
 grep -q 'STAGE9_SKILLPROGRESS_BOARD_READY ok=1' "$E/markers.txt" || exit 103
-grep -Eq 'STAGE9_SKILLPROGRESS_UI detail=1 logos=[4-9][0-9]* texts=[3-9][0-9]* layerText=1' "$E/markers.txt" || exit 104
+grep -Eq 'STAGE9_SKILLPROGRESS_UI detail=1 logos=([4-9]|[1-9][0-9]+) texts=([3-9]|[1-9][0-9]+) layerText=1' "$E/markers.txt" || exit 104
 grep -Eq 'STAGE9_SKILLPROGRESS_PLANT_SOURCE source=(scene|clr_shell)' "$E/markers.txt" || exit 105
 printf 'SKILLPROGRESS_COVERAGE_LAUNCH_DONE unity_project_launches=1 playmode_exit=%s\n' "$RC"
