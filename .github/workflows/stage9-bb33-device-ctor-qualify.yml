@@ -1,0 +1,134 @@
+name: Stage9.1 bb33 Device ctor qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-bb33-device-ctor-qualify.yml'
+      - 'Tools/Stage9DeviceCtorPatch/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download ZombieInfo natural-runtime promotion evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34927587876
+          name: Stage9.1-BB33-ZOMBIEINFO-CTOR-NATURAL-RUNTIME
+          path: ${{ runner.temp }}/promotion
+
+      - name: Gate runtime promotion of Device ctor
+        shell: bash
+        run: |
+          set -euo pipefail
+          A=$(find "$RUNNER_TEMP/promotion" -type f -name 'zombieinfo-ctor-natural-runtime-audit.txt' -print -quit)
+          test -n "$A"
+          grep -q '^ZOMBIE_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^ZOMBIEINFO_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_FIELDACCESS_COUNT 13$' "$A"
+          grep -q '^CORELIB_TEXT_COUNT 0$' "$A"
+          grep -q '^ZEROVECTOR_TEXT_COUNT 0$' "$A"
+          grep -q '^ZOMBIEINFO_CTOR_NATURAL_RUNTIME_PASS candidate=bb33dee77ec94d415ac02b38496984548ea68f4717be9bfd4e39b1f232e95280 zombie_invalid=0 zombieinfo_invalid=0 five_state_paths=5 corelib_pollution=0 zerovector_pollution=0$' "$A"
+          cat "$A"
+
+      - name: Download runtime-qualified ZombieInfo candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34927520352
+          name: Stage9.1-68A105-ZOMBIEINFO-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Build surgical Device ctor adaptation
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/device-ctor-recovery"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-zombieinfo-ctor.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = 'bb33dee77ec94d415ac02b38496984548ea68f4717be9bfd4e39b1f232e95280'
+          OUT="$O/GodsPVZRuntime1-device-ctor.dll"
+          dotnet build Tools/Stage9DeviceCtorPatch/Stage9DeviceCtorPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9DeviceCtorPatch/Stage9DeviceCtorPatch.csproj -c Release --no-build -- \
+            "$IN" "$OUT" 'bb33dee77ec94d415ac02b38496984548ea68f4717be9bfd4e39b1f232e95280' | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x0600033A rid=826 method_pointer_entry=0x181B84728 va=0x18034CAD0 end=0x18034CC66 native_span_sha256=40738cc7ee1cd160439bb04745a2279b7509e202ccc6e91d9cd7e6888fd2f699$' "$E/patch.log"
+          grep -q '^CLR_ADAPTATION remove_outer_private_store=Device/HPUIController::maxHPEffect preserve_nested_ctor=1 preserve_hpui_assignment=1 preserve_list_ctor_refs=4 preserve_field_visibility=1$' "$E/patch.log"
+          grep -Eq '^REOPEN_DEVICE_CTOR_PASS token=0x0600033A code_size=[0-9]+ locals=6 outer_maxHPEffect_store=0 hpui_ctor=1 hpui_assignment=1$' "$E/patch.log"
+          grep -q '^GENERIC_REF_PRESERVATION_PASS list_ctor_refs=4 source=runtime_qualified_bb33$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x0600033A$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0 private_maxHPEffect_preserved=1$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9DeviceCtorPatch/Program.cs "$E/"
+          cp Tools/Stage9NativeProbe/Device.ctor.native-evidence.md "$E/"
+          cp "$RUNNER_TEMP/promotion/zombieinfo-ctor-natural-runtime-audit.txt" "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Exact-reference Device ctor readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/device-ctor-recovery"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-device-ctor.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -il -t Device "$DLL" > "$E/Device.il" 2> "$E/Device.il.stderr"
+          test ! -s "$E/Device.il.stderr"
+          python3 - "$E/Device.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import sys
+          il=Path(sys.argv[1]).read_text(errors='replace')
+          e=il.find('} // end of method Device::.ctor'); assert e>=0, il
+          b=il.rfind('.method ',0,e); assert b>=0, il
+          ctor=il[b:e]; Path(sys.argv[1]+'.ctor.txt').write_text(ctor)
+          assert 'Device/HPUIController::maxHPEffect' not in ctor, ctor
+          assert ctor.count('newobj instance void Device/HPUIController::.ctor()')==1, ctor
+          assert ctor.count('stfld class Device/HPUIController Device::hpUIController')==1, ctor
+          assert ctor.count('UnityEngine.MonoBehaviour::.ctor()')==1, ctor
+          assert ctor.count('newobj instance void class [mscorlib]System.Collections.Generic.List`1')==4, ctor
+          for x in ['System.Private.CoreLib','Unmanaged memory load','Method not found @']:
+              assert x not in ctor,(x,ctor)
+          print('DEVICE_CTOR_EXACT_REF_PASS token=0x0600033A outer_private_store=0 hpui_ctor=1 hpui_assignment=1 list_ctor_refs=4 mono_base_ctor=1 corelib_pollution=0 fake_diagnostics=0')
+          print('=== DEVICE_CTOR_IL ==='); print(ctor)
+          PY
+
+      - name: Upload qualified Device ctor candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BB33-DEVICE-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/device-ctor-recovery/evidence/
+          retention-days: 90
