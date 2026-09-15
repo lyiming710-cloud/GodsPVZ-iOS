@@ -79,7 +79,7 @@ jobs:
           grep -q '^NATIVE_AUTHORITY target_token=0x060005BA rid=1466 method_pointer_entry=0x181B85B28 va=0x18037E1C0 end=0x18037E1CE native_slice_sha256=f45ad37c4c4cf57a18ea2891a76433a467a8c55b6f48907c573db40c236ff6a9$' "$E/patch.log"
           grep -q '^NATIVE_SEMANTICS zombieID_offset=0x28 store_width=32 value=-1 base_ctor_tailcall=1$' "$E/patch.log"
           grep -q '^RECOVERY_STRATEGY single_instruction_replace=1 old=ldc.i8_4294967295 new=ldc.i4.m1 metadata_changes=0 guards=0 exception_swallowing=0$' "$E/patch.log"
-          grep -q '^REOPEN_ALMANAC_CTOR_PASS token=0x060005BA instructions=6 ldc_i4_m1=1 zombieID_stfld=1 monoBehaviour_ctor=1 exception_handlers=0 locals=0$' "$E/patch.log"
+          grep -q '^REOPEN_ALMANAC_CTOR_PASS token=0x060005BA instructions=6 ldc_i4_m1=1 zombieID_stfld=1 monoBehaviour_ctor=1 exception_handlers=0 locals=1 local_type=Almanac_ZombieWindow$' "$E/patch.log"
           grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x060005BA$' "$E/patch.log"
           grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
           grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
