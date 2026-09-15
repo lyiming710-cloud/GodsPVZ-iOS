@@ -14,10 +14,13 @@ for g in \
 '^ALMANAC_CTOR_INVALID_IL_COUNT 0$' \
 '^POPUP_CTOR_FIELDACCESS_COUNT 0$' \
 '^POPUP_CTOR_INVALID_IL_COUNT 0$' \
+'^POPUP_CTOR_MISSINGMETHOD_COUNT 0$' \
 '^CORELIB_TEXT_COUNT 0$' \
 '^ZEROVECTOR_TEXT_COUNT 0$' \
 '^GENERIC_LIST_MISSINGMETHOD_COUNT 0$' \
-'^STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5$'; do grep -q "$g" "$A"; done
+'^NEXT_ALMANAC_TALENTSYSTEM_CTOR_INVALID_IL_COUNT 2$' \
+'^STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5$' \
+'^POPUP_CTOR_NATURAL_RUNTIME_PASS candidate=805a177be099c923daf93a93d98d461312c76711f112c8f778800a69f5874253 popup_fieldaccess=0 popup_invalid=0 popup_missingmethod=0 five_state_paths=5 corelib_pollution=0 zerovector_pollution=0$'; do grep -q "$g" "$A"; done
 
 IN=$(find "$INPUT" -type f -name 'GodsPVZRuntime1-popup-ctor.dll' -print -quit); test -n "$IN"
 test "$(sha256sum "$IN"|awk '{print $1}')" = '805a177be099c923daf93a93d98d461312c76711f112c8f778800a69f5874253'
@@ -35,7 +38,7 @@ for g in \
 '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$'; do grep -q "$g" "$E/patch.log"; done
 grep -q '^REOPEN_INT32_MINUS_ONE_PASS type=Almanac_TalentSystem token=0x0600059D field=previewID field_token=0x0400073D ldc_i4_m1_present=1 ldc_i8_minus_one=0 target_stfld=1 ' "$E/patch.log"
 sha256sum "$OUT" | tee "$E/output-candidate.sha256"
-cp "$OUT" "$E/"; cp Tools/Stage9Int32MinusOnePatch/Program.cs "$E/"; cp "$A" "$E/"
+cp "$OUT" "$E/"; cp Tools/Stage9Int32MinusOnePatch/Program.cs "$E/"; cp Tools/Stage9NativeProbe/Almanac_TalentSystem.ctor.native-evidence.md "$E/"; cp "$A" "$E/"
 
 ILSPY=$(find "$ILSPY_DIR" -type f -name ilspycmd -print -quit)
 DOTNET_BIN=$(find "$ILSPY_DIR" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
