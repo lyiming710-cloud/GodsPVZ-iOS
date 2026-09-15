@@ -94,7 +94,9 @@ jobs:
           print('GENERIC_LIST_MISSINGMETHOD_COUNT',generic)
           print('ZOMBIE_CTOR_MARKER_COUNT',len(markers)); [print(x) for x in markers]
           assert 'STAGE9_ZOMBIE_CTOR_INPUT runtime=1 zombieType=1' in markers,markers
-          assert not any(x=='STAGE9_ZOMBIE_CTOR_CREATE ok=1' for x in markers),markers
+          assert 'STAGE9_ZOMBIE_CTOR_METHOD ctor=1' in markers,markers
+          assert any(x.startswith('STAGE9_ZOMBIE_CTOR_INVOKE ok=0') for x in markers),markers
+          assert not any(x=='STAGE9_ZOMBIE_CTOR_INVOKE ok=1' for x in markers),markers
           assert target>0,target
           assert 'IL_0055: stfld' in text,text[-4000:]
           assert corelib==0,corelib
@@ -102,7 +104,7 @@ jobs:
           first=next(i for i,x in enumerate(lines) if 'InvalidProgramException: Invalid IL code in Zombie:.ctor' in x)
           print('=== ZOMBIE_CTOR_TARGET_EXCEPTION_CONTEXT ===')
           for j in range(max(0,first-6),min(len(lines),first+22)): print(f'{j+1}: {lines[j]}')
-          print('ZOMBIE_CTOR_COVERAGE_PROMOTION_PASS target_invoked=1 target_invalid_il_observed=1 expected_il_0055_stfld=1 runtime_base=2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5')
+          print('ZOMBIE_CTOR_COVERAGE_PROMOTION_PASS target_invoked=1 direct_ctor_invoke=1 target_invalid_il_observed=1 expected_il_0055_stfld=1 runtime_base=2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5')
           PY
           cat "$E/zombie-ctor-coverage-audit.txt"
 

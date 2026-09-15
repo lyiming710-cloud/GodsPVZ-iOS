@@ -5,11 +5,10 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using System.Collections;
 
-// Dormant targeted coverage/qualification harness.
-// Do not wire this to a workflow until the current runtime-qualified base is fixed
-// and Zombie::.ctor is explicitly selected for observation or qualification.
+// Targeted ctor observation / qualification harness.
+// Invoke Zombie::.ctor directly. AddComponent does not execute the managed
+// instance constructor in the way this recovery gate needs to observe.
 public class Stage9ZombieCtorRuntime
 {
     static readonly BindingFlags F = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
@@ -41,24 +40,26 @@ public class Stage9ZombieCtorRuntime
         Assert.IsNotNull(rt);
         Assert.IsNotNull(zt);
 
-        var go = new GameObject("Stage9ZombieCtorProbe");
-        go.SetActive(false);
-        Component z = null;
+        var ctor = zt.GetConstructor(F, null, Type.EmptyTypes, null);
+        Debug.Log($"STAGE9_ZOMBIE_CTOR_METHOD ctor={(ctor != null ? 1 : 0)}");
+        Assert.IsNotNull(ctor);
+
+        object z = null;
         try
         {
             try
             {
-                z = go.AddComponent(zt);
-                Debug.Log("STAGE9_ZOMBIE_CTOR_CREATE ok=1");
+                z = ctor.Invoke(null);
+                Debug.Log("STAGE9_ZOMBIE_CTOR_INVOKE ok=1");
             }
             catch (Exception ex)
             {
                 var inner = ex is TargetInvocationException tie ? (tie.InnerException ?? tie) : ex;
-                Debug.LogError("STAGE9_ZOMBIE_CTOR_CREATE ok=0 inner=" + inner);
+                Debug.LogError("STAGE9_ZOMBIE_CTOR_INVOKE ok=0 inner=" + inner);
                 throw inner;
             }
 
-            Assert.IsNotNull(z);
+            Assert.IsFalse(ReferenceEquals(z, null));
             float attackPoint = Convert.ToSingle(RF(zt, z, "attackPoint"));
             bool isStant = Convert.ToBoolean(RF(zt, z, "isStant"));
             bool isOnBoard = Convert.ToBoolean(RF(zt, z, "isOnBoard"));
@@ -109,7 +110,8 @@ public class Stage9ZombieCtorRuntime
         }
         finally
         {
-            UnityEngine.Object.DestroyImmediate(go);
+            // ctor.Invoke creates only the managed test object. Do not treat it
+            // as a scene-owned Component or call DestroyImmediate on it.
         }
         yield return null;
     }
