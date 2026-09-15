@@ -1,0 +1,258 @@
+name: Stage9.1 932d Plant detail camera recovery pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-932d-plant-detail-camera-recovery-pipeline.yml'
+      - 'Tools/Stage9PlantDetailCameraPatch/**'
+      - 'Tools/Stage9RuntimeGateFast/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runtime-qualified Plant detail Update candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34913843256
+          name: Stage9.1-FBF1-PLANT-DETAIL-UPDATE-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Build full camera recovery and run static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/plant-detail-camera"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-plant-detail-update.dll' -print -quit)
+          CORE=$(find "$RUNNER_TEMP/refs" -type f -name 'UnityEngine.CoreModule.dll' -print -quit)
+          test -n "$IN"; test -n "$CORE"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '932d2b0e6351054fb0e0dbf6b429acde8434bf3c8f42455674b8573b9cb2c3e5'
+          test "$(sha256sum "$CORE"|awk '{print $1}')" = '83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f'
+          OUT="$O/GodsPVZRuntime1-plant-detail-camera.dll"
+          dotnet build Tools/Stage9PlantDetailCameraPatch/Stage9PlantDetailCameraPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantDetailCameraPatch/Stage9PlantDetailCameraPatch.csproj -c Release --no-build -- "$IN" "$OUT" '932d2b0e6351054fb0e0dbf6b429acde8434bf3c8f42455674b8573b9cb2c3e5' "$CORE" | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000662 rid=1634 method_pointer_entry=0x181B86068 va=0x1803A4810 end=0x1803A4BAB native_span_sha256=1cff925d1002b279b599a7a18bc076ad423f89878bc26b3ec04ed665c2e66ee9$' "$E/patch.log"
+          grep -Eq '^REOPEN_PLANT_DETAIL_CAMERA_PASS token=0x06000662 code_size=[0-9]+ locals=7 object_locals=0 Camera_main=2 position_get=3 position_set=2 Vector3_ctor=2 ordered_cgt=2 ortho_get=2 ortho_set=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000662$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9NativeProbe/Plant_DetaiPage.Updata_Camera.native-evidence.md "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Exact-reference readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/plant-detail-camera"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-plant-detail-camera.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          "$ILSPY" -r "$RDIR" -t Plant_DetaiPage "$DLL" > "$E/Plant_DetaiPage.cs" 2> "$E/Plant_DetaiPage.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Plant_DetaiPage "$DLL" > "$E/Plant_DetaiPage.il" 2> "$E/Plant_DetaiPage.il.stderr"
+          test ! -s "$E/Plant_DetaiPage.cs.stderr"; test ! -s "$E/Plant_DetaiPage.il.stderr"
+          python3 - "$E/Plant_DetaiPage.cs" "$E/Plant_DetaiPage.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+void\s+Updata_Camera\s*\(\s*\)',cs); assert m
+          o=cs.index('{',m.end()); d=0; target=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: target=cs[m.start():i+1]; break
+          assert target is not None
+          Path(sys.argv[1]+'.Updata_Camera.txt').write_text(target)
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Invalid comparison','Method not found @','Warning: Method ends','System.Private.CoreLib']:
+              assert bad not in target,(bad,target)
+          for good in ['Camera.main','skill.activeSelf','PlantSkillCrosshairs','cameraSize','orthographicSize']:
+              assert good in target,(good,target)
+          for number in ['0.1f','1.1f','0.3f','880f','0.4f','1.4f']:
+              assert number in target,(number,target)
+          e=il.find('} // end of method Plant_DetaiPage::Updata_Camera'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.Updata_Camera.txt').write_text(ib)
+          for bad in ['System.Object','Method not found @','Warning: Method ends','System.Private.CoreLib']:
+              assert bad not in ib,(bad,ib)
+          assert ib.count('UnityEngine.Camera::get_main()')==2,ib
+          assert ib.count('UnityEngine.Transform::get_position()')==3,ib
+          assert ib.count('UnityEngine.Transform::set_position(')==2,ib
+          assert ib.count('UnityEngine.Vector3::.ctor(')==2,ib
+          assert ib.count('cgt')==2,ib
+          assert ib.count('UnityEngine.Camera::get_orthographicSize()')==2,ib
+          assert ib.count('UnityEngine.Camera::set_orthographicSize(')==1,ib
+          print('PLANT_DETAIL_CAMERA_EXACT_REF_PASS target_token=0x06000662 typed_locals=7 Camera_main=2 position_get=3 position_set=2 Vector3_ctor=2 ordered_cgt=2 ortho_get=2 ortho_set=1 invalid_diagnostics=0 corelib_pollution=0')
+          print('=== TARGET_CSHARP ==='); print(target)
+          PY
+
+      - name: Upload qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-932D-PLANT-DETAIL-CAMERA-QUALIFIED
+          path: ${{ runner.temp }}/plant-detail-camera/evidence/
+          retention-days: 90
+
+  runtime:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk space without Docker prune
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get clean || true
+          df -h /
+
+      - name: Download qualified candidate from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Stage9.1-932D-PLANT-DETAIL-CAMERA-QUALIFIED
+          path: ${{ runner.temp }}/stage9-plant-detail-camera/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plant-detail-camera/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plant-detail-camera/editor-parts
+
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-plant-detail-camera/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-plant-detail-camera.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "${#EXPECTED}" = 64
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "CAMERA_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "CAMERA_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+
+      - name: Run single-launch exact R3 strict Board gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9RuntimeGateFast/run-strict-board-fast.sh "$RUNNER_TEMP/stage9-plant-detail-camera" "$CAMERA_CANDIDATE" "$CAMERA_SHA"
+
+      - name: Audit Camera and promote next causal error
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-plant-detail-camera/evidence"; mkdir -p "$E"; LOG="$E/playmode.log"
+          if [ ! -f "$LOG" ]; then echo 'RUNTIME_AUDIT no_playmode_log=1' | tee "$E/camera-runtime-audit.txt"; exit 1; fi
+          python3 - "$LOG" > "$E/camera-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'CAMERA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Updata_Camera',text)),
+            'CAMERA_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'Plant_DetaiPage:Updata_Camera' in x for x in lines),
+            'CAMERA_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'Plant_DetaiPage:Updata_Camera' in x for x in lines),
+            'PLANT_DETAIL_UPDATE_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update \(',text)),
+            'PLANT_DETAIL_UPDATE_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'Plant_DetaiPage:Update ()' in x for x in lines),
+            'DIALOGUE_UPDATE_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'List`1:_size' in x and 'DialogueManager_OnBoard:Update' in x for x in lines),
+            'BGMUNPAUSE_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in ZombieManager:BGMUnPasue',text)),
+            'BGMUNPAUSE_GENERIC_MISSINGMETHOD_COUNT':len(re.findall(r'MissingMethodException: Method not found: System\.Collections\.Generic\.List`1/Enumerator<Zombie> System\.Collections\.Generic\.List`1\.GetEnumerator\(\)',text)),
+            'BOARD_GAMECONTINUE_METHODACCESS_COUNT':text.count("MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)' is inaccessible from method `Board.GameContinue()'"),
+            'DIALOGUE_START_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',text)),
+            'GRID_COPY_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Grid:Copy',text)),
+            'BOARDCONFIG_CREATEMAP_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',text)),
+            'LOAD_DATA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',text)),
+            'LOAD_SKILL_LOGO_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text)),
+            'PROJECTILE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+          }
+          counts['PLANT_DETAIL_INITIALIZE_FIELDACCESS_COUNT']=sum('FieldAccessException' in x and 'Plant:isOnField' in x and 'Plant_DetaiPage:Initialize' in x for x in lines)
+          counts['PLANT_CTOR_RUNTIME_ERROR_COUNT']=len(re.findall(r'(?:InvalidProgramException|FieldAccessException).*Plant:\.ctor',text))
+          counts['ZEROVECTOR_TEXT_COUNT']=text.count('zeroVector')
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_STRICT_')]
+          print('STRICT_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          pre_idx=next((i for i,x in enumerate(lines) if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')),None)
+          recovered=['Plant_DetaiPage:Updata_Camera','Plant_DetaiPage:Update','DialogueManager_OnBoard:Update','ZombieManager:BGMUnPasue','Board.GameContinue','DialogueManager_OnBoard:Start','Grid:Copy','BoardConfig:CreateMap','Board_PlantDetail_PlantData:LoadData','Plant_DetaiPage:LoadSkillLogo','Projectile:.ctor']
+          first=None
+          if pre_idx is not None:
+            for i in range(pre_idx+1,len(lines)):
+              x=lines[i]
+              if 'Exception:' not in x or x.startswith('UnityEngine.'): continue
+              if any(s in x for s in recovered): continue
+              if 'FieldAccessException' in x and 'Plant:isOnField' in x: continue
+              first=i; break
+          if first is None: print('FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION none')
+          else:
+            print('=== FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION ===')
+            for j in range(max(pre_idx or 0,first-4),min(len(lines),first+40)): print(f'{j+1}: {lines[j]}')
+          assert all(v==0 for v in counts.values()),counts
+          assert any(x.startswith('STAGE9_STRICT_MAINMENU ') for x in markers)
+          assert 'STAGE9_STRICT_CREATE_INVOKE ok=1' in markers
+          assert any(x.startswith('STAGE9_STRICT_SAVE_READY ') for x in markers)
+          pre=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')]
+          assert pre and all(s in pre[-1] for s in ['boardStart=0','board=0','boardManager=1','prepare=1','seedChooser=1']),pre
+          assert 'STAGE9_STRICT_GAMESTART_INVOKE ok=1' in markers
+          board=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD ')]
+          assert board and 'board=1' in board[-1] and 'activeBoard=1' in board[-1],board
+          print('PLANT_DETAIL_CAMERA_RUNTIME_GATE_PASS blocker_removed=1 full_MethodDef_rebuild=1 previous_recoveries_preserved=1 corelib_pollution=0 corrected_board_lifecycle=1')
+          PY
+          cat "$E/camera-runtime-audit.txt"
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-PLANT-DETAIL-CAMERA-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-plant-detail-camera/evidence/
+          retention-days: 90
