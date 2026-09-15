@@ -1,0 +1,215 @@
+name: Stage9.1 2b2f Zombie ctor recovery pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-2b2f-zombie-ctor-recovery-pipeline.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified SkillProgress v2 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34922788006
+          name: Stage9.1-4736-SKILLPROGRESS-V2-QUALIFIED
+          path: ${{ runner.temp }}/input
+      - name: Download exact Unity Mono corelib cache
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34878091297
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib
+      - name: Build Zombie ctor recovery and run static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/zombie-ctor-recovery"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-skillprogress-v2.dll' -print -quit)
+          CORE=$(find "$RUNNER_TEMP/corelib" -type f -path '*/unityjit-linux/mscorlib.dll' -print -quit)
+          test -n "$IN"; test -n "$CORE"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5'
+          test "$(sha256sum "$CORE"|awk '{print $1}')" = '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+          OUT="$O/GodsPVZRuntime1-zombie-ctor.dll"
+          dotnet build Tools/Stage9ZombieCtorPatch/Stage9ZombieCtorPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9ZombieCtorPatch/Stage9ZombieCtorPatch.csproj -c Release --no-build -- "$IN" "$OUT" '2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5' "$CORE" | tee "$E/patch.log"
+          grep -q '^UNITYJIT_LINUX_MSCORLIB_SHA256 4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x060004BB rid=1211 method_pointer_entry=0x181B85330 va=0x1803741D0 end=0x1803744DD native_span_sha256=84d27db79e7cf21970718ac79287badd239f62af082e008e02fea7e6cef88cb0$' "$E/patch.log"
+          grep -q '^GENERIC_MEMBERREF_RESOLUTION_PASS List_ctor_calls=4 corelib_sha256=4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be$' "$E/patch.log"
+          grep -Eq '^REOPEN_ZOMBIE_CTOR_PASS token=0x060004BB code_size=[0-9]+ locals=1 object_locals=0 intptr_locals=0 Vector3_initobj=1 Vector3_stores=3 Color_ctor=1 List_ctor_calls=4$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x060004BB$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9ZombieCtorPatch/Program.cs "$E/"
+          cp Tools/Stage9NativeProbe/Zombie.ctor.native-evidence.md "$E/"
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference Zombie ctor readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/zombie-ctor-recovery"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-zombie-ctor.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t Zombie "$DLL" > "$E/Zombie.cs" 2> "$E/Zombie.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Zombie "$DLL" > "$E/Zombie.il" 2> "$E/Zombie.il.stderr"
+          test ! -s "$E/Zombie.cs.stderr"; test ! -s "$E/Zombie.il.stderr"
+          python3 - "$E/Zombie.cs" "$E/Zombie.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:public|private|protected|internal)\s+Zombie\s*\(\s*\)',cs); assert m, 'Zombie ctor not found'
+          o=cs.index('{',m.end()); d=0; target=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: target=cs[m.start():i+1]; break
+          assert target is not None
+          Path(sys.argv[1]+'.ctor.txt').write_text(target)
+          bad=['Unmanaged memory load','zeroVector','System.IntPtr','System.Private.CoreLib','Method not found @','Unknown result type','Invalid comparison','Not implemented instruction','Warning: Method ends']
+          for x in bad: assert x not in target,(x,target)
+          good=['attackPoint = 100','waitingTime = 3','brightIntensity = 1','brightIntensity_Armor2 = 1','updateRate = 1','new ElementManager','new HPUIController_Zombie','new BuffManager','new List<EnemyPath>','new List<GameObject>','new List<ElementUIController>']
+          for x in good: assert x in target,(x,target)
+          e=il.find('} // end of method Zombie::.ctor'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ib)
+          for x in ['System.Object','System.IntPtr','zeroVector','Unmanaged memory load','System.Private.CoreLib','Method not found @']:
+              assert x not in ib,(x,ib)
+          assert ib.count('System.Collections.Generic.List`1') >= 4, ib
+          assert ib.count('UnityEngine.Color::.ctor(')==1, ib
+          assert ib.count('initobj')==1, ib
+          print('ZOMBIE_CTOR_EXACT_REF_PASS token=0x060004BB invalid_diagnostics=0 unmanaged_scaffolding=0 zeroVector_refs=0 typed_Vector3_initobj=1 Color_ctor=1 generic_List_ctor_calls=4 corelib_pollution=0')
+          print('=== TARGET_CSHARP ==='); print(target)
+          PY
+      - name: Upload qualified Zombie ctor candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-2B2F-ZOMBIE-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/zombie-ctor-recovery/evidence/
+          retention-days: 90
+
+  runtime:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+      - name: Download qualified candidate from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Stage9.1-2B2F-ZOMBIE-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/stage9-zombie-ctor/candidate
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-zombie-ctor/r3-cache
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-zombie-ctor/editor-parts
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-zombie-ctor/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-zombie-ctor.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "${#EXPECTED}" = 64
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "ZOMBIE_CTOR_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "ZOMBIE_CTOR_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+      - name: Run one-launch direct Zombie ctor qualification
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9ZombieCtorRuntime/run-zombie-ctor-coverage.sh "$RUNNER_TEMP/stage9-zombie-ctor" "$ZOMBIE_CTOR_CANDIDATE" "$ZOMBIE_CTOR_SHA"
+      - name: Audit direct Zombie ctor qualification
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-zombie-ctor/evidence"; LOG="$E/playmode.log"; test -f "$LOG"
+          python3 - "$LOG" > "$E/zombie-ctor-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'ZOMBIE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Zombie:\.ctor',text)),
+            'ZOMBIE_CTOR_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'Zombie:.ctor' in x for x in lines),
+            'ZOMBIE_CTOR_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'Zombie:.ctor' in x for x in lines),
+            'GENERIC_LIST_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'System.Collections.Generic.List' in x for x in lines),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'ZEROVECTOR_TEXT_COUNT':text.count('zeroVector'),
+          }
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_ZOMBIE_CTOR_')]
+          print('ZOMBIE_CTOR_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          assert all(v==0 for v in counts.values()),counts
+          assert 'STAGE9_ZOMBIE_CTOR_INPUT runtime=1 zombieType=1' in markers,markers
+          assert 'STAGE9_ZOMBIE_CTOR_METHOD ctor=1' in markers,markers
+          assert 'STAGE9_ZOMBIE_CTOR_INVOKE ok=1' in markers,markers
+          assert 'STAGE9_ZOMBIE_CTOR_VERIFY pass=1' in markers,markers
+          state=next(x for x in markers if x.startswith('STAGE9_ZOMBIE_CTOR_STATE '))
+          for frag in ['attack=100','stant=1','onBoard=1','camp=2','waiting=3','updateRate=1','bright=1','brightArmor2=1','zeroSpeed=1','zeroDirection=1','zeroPrevious=1','white=1','prePath=1:0','path=1:0','animation=1:0','elements=1:0','elementManager=1','hpUI=1','buff=1']:
+              assert frag in state,(frag,state)
+          print('ZOMBIE_CTOR_RUNTIME_GATE_PASS direct_ctor_invoke=1 pc_defaults_verified=1 generic_list_resolution=1 previous_methods_byte_preserved=2316 field_metadata_preserved=2802 corelib_pollution=0')
+          PY
+          cat "$E/zombie-ctor-runtime-audit.txt"
+      - name: Upload Zombie ctor runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ZOMBIE-CTOR-RUNTIME
+          path: ${{ runner.temp }}/stage9-zombie-ctor/evidence/
+          retention-days: 90
