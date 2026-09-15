@@ -65,16 +65,26 @@ var allRefs = methods.Where(m => m.HasBody)
     .Select(i => i.Operand)
     .OfType<MethodReference>()
     .ToList();
-var whiteRefs = allRefs
-    .Where(m => m.DeclaringType.FullName == "UnityEngine.Color" && m.Name == "get_white" && !m.HasThis && m.Parameters.Count == 0 && m.ReturnType.FullName == "UnityEngine.Color")
+var colorRefs = allRefs
+    .Where(m => m.DeclaringType.FullName == "UnityEngine.Color")
     .GroupBy(m => m.FullName + "@" + Scope(m.DeclaringType.Scope), StringComparer.Ordinal)
-    .Select(g => g.First()).ToList();
+    .Select(g => g.First()).OrderBy(m => m.FullName, StringComparer.Ordinal).ToList();
+var whiteRefs = colorRefs
+    .Where(m => m.Name == "get_white" && !m.HasThis && m.Parameters.Count == 0 && m.ReturnType.FullName == "UnityEngine.Color")
+    .ToList();
+var rgbaCtorRefs = colorRefs
+    .Where(m => m.Name == ".ctor" && m.HasThis && m.Parameters.Count == 4 && m.Parameters.All(p => p.ParameterType.FullName == "System.Single"))
+    .ToList();
 var monoCtorRefs = allRefs
     .Where(m => m.DeclaringType.FullName == "UnityEngine.MonoBehaviour" && m.Name == ".ctor" && m.HasThis && m.Parameters.Count == 0)
     .GroupBy(m => m.FullName + "@" + Scope(m.DeclaringType.Scope), StringComparer.Ordinal)
     .Select(g => g.First()).ToList();
+Console.WriteLine($"COLOR_METHOD_REF_COUNT {colorRefs.Count}");
+foreach (var r in colorRefs) Console.WriteLine($"COLOR_METHOD_REF {r.FullName}@{Scope(r.DeclaringType.Scope)}");
 Console.WriteLine($"COLOR_WHITE_REF_COUNT {whiteRefs.Count}");
 foreach (var r in whiteRefs) Console.WriteLine($"COLOR_WHITE_REF {r.FullName}@{Scope(r.DeclaringType.Scope)}");
+Console.WriteLine($"COLOR_RGBA_CTOR_REF_COUNT {rgbaCtorRefs.Count}");
+foreach (var r in rgbaCtorRefs) Console.WriteLine($"COLOR_RGBA_CTOR_REF {r.FullName}@{Scope(r.DeclaringType.Scope)}");
 Console.WriteLine($"MONOBEHAVIOUR_CTOR_REF_COUNT {monoCtorRefs.Count}");
 foreach (var r in monoCtorRefs) Console.WriteLine($"MONOBEHAVIOUR_CTOR_REF {r.FullName}@{Scope(r.DeclaringType.Scope)}");
 Console.WriteLine("READONLY_TEXTLINK_CTOR_PROBE_PASS mutation=0 token=0x060006E5");
