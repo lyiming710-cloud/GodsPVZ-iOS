@@ -91,7 +91,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     if (methods.Count != ExpectedMethods || fields.Count != ExpectedFields) throw new InvalidDataException("metadata count drift");
     if (module.AssemblyReferences.Any(a => a.Name == "System.Private.CoreLib")) throw new InvalidDataException("input references System.Private.CoreLib");
     foreach (var m in methods) beforeM[Raw(m)] = MethodSig(m);
-    foreach (var f in fields) beforeF[Raw(f)] = FieldSig(f);
+    foreach (var field in fields) beforeF[Raw(field)] = FieldSig(field);
     beforeRefs = string.Join("\n", module.AssemblyReferences.Select(a => a.FullName).OrderBy(x => x, StringComparer.Ordinal));
 
     var t = types.Single(x => x.FullName == "Device");
@@ -100,7 +100,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
         throw new InvalidDataException($"Device ctor fingerprint drift token=0x{Raw(target):X8} rid={target.MetadataToken.RID} size={target.Body.CodeSize} locals={target.Body.Variables.Count}");
 
     var hpType = t.NestedTypes.Single(x => x.Name == "HPUIController");
-    var maxHp = hpType.Fields.Single(f => f.Name == "maxHPEffect");
+    var maxHp = hpType.Fields.Single(field => field.Name == "maxHPEffect");
     if (!maxHp.IsPrivate) throw new InvalidDataException("HPUIController.maxHPEffect visibility drift");
     var hpCtor = hpType.Methods.Single(m => m.IsConstructor && !m.IsStatic && m.Parameters.Count == 0);
     if (!hpCtor.Body.Instructions.Any(i => i.OpCode == OpCodes.Stfld && i.Operand is FieldReference fr && fr.Name == "maxHPEffect" && fr.DeclaringType.FullName == "Device/HPUIController"))
@@ -116,7 +116,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var one = ins[idx-1];
     if (loadHp.OpCode != OpCodes.Ldloc || loadHp.Operand is not VariableDefinition v || v.Index != 5)
         throw new InvalidDataException("expected ldloc 5 before private store");
-    if (one.OpCode != OpCodes.Ldc_R4 || one.Operand is not float f || BitConverter.SingleToInt32Bits(f) != BitConverter.SingleToInt32Bits(1f))
+    if (one.OpCode != OpCodes.Ldc_R4 || one.Operand is not float oneValue || BitConverter.SingleToInt32Bits(oneValue) != BitConverter.SingleToInt32Bits(1f))
         throw new InvalidDataException("expected ldc.r4 1 before private store");
     if (!ins.Any(i => i.Operand == loadHp && (i.OpCode.FlowControl == FlowControl.Branch || i.OpCode.FlowControl == FlowControl.Cond_Branch)))
         throw new InvalidDataException("expected control-flow edge into redundant store block");
@@ -152,7 +152,7 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     if(ListCtorSig(target)!=beforeListCtors) throw new InvalidDataException("List<T> ctor refs changed");
     var changedM=methods.Where(m=>beforeM[Raw(m)]!=MethodSig(m)).Select(Raw).OrderBy(x=>x).ToList();
     if(changedM.Count!=1 || changedM[0]!=TargetToken) throw new InvalidDataException("semantic isolation failed: "+string.Join(',',changedM.Select(x=>$"0x{x:X8}")));
-    var changedF=fields.Where(f=>beforeF[Raw(f)]!=FieldSig(f)).Select(Raw).ToList(); if(changedF.Count!=0) throw new InvalidDataException("field metadata drift");
+    var changedF=fields.Where(field=>beforeF[Raw(field)]!=FieldSig(field)).Select(Raw).ToList(); if(changedF.Count!=0) throw new InvalidDataException("field metadata drift");
     var afterRefs=string.Join("\n",module.AssemblyReferences.Select(a=>a.FullName).OrderBy(x=>x,StringComparer.Ordinal)); if(afterRefs!=beforeRefs) throw new InvalidDataException("assembly reference set changed");
     if(module.AssemblyReferences.Any(a=>a.Name=="System.Private.CoreLib")) throw new InvalidDataException("System.Private.CoreLib pollution");
     Console.WriteLine($"REOPEN_DEVICE_CTOR_PASS token=0x{TargetToken:X8} code_size={target.Body.CodeSize} locals={target.Body.Variables.Count} outer_maxHPEffect_store=0 hpui_ctor=1 hpui_assignment=1");
