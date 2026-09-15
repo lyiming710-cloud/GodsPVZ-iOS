@@ -67,6 +67,15 @@ jobs:
           name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
           path: ${{ runner.temp }}/refs
 
+      - name: Download exact Unity Mono corelib cache
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34878091297
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib
+
       - name: Build high-level typed Supplies ctor recovery and run static gates
         shell: bash
         run: |
@@ -75,7 +84,7 @@ jobs:
           IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-device-ctor.dll' -print -quit)
           test -n "$IN"
           test "$(sha256sum "$IN"|awk '{print $1}')" = 'c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446'
-          CORE=$(find "$RUNNER_TEMP/refs" -type f -name 'mscorlib.dll' -print -quit)
+          CORE=$(find "$RUNNER_TEMP/corelib" -type f -path '*/unityjit-linux/mscorlib.dll' -print -quit)
           test -n "$CORE"
           test "$(sha256sum "$CORE"|awk '{print $1}')" = '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
           echo "LOCKED_UNITYJIT_LINUX_MSCORLIB $CORE"
