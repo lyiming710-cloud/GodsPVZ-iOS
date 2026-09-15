@@ -1,0 +1,16 @@
+name: Stage9 dual Int32 minus-one patch buildcheck
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-dual-int32-minus-one-patch-buildcheck.yml','Tools/Stage9DualInt32MinusOnePatch/**']
+permissions: {contents: read}
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build strict dual repair tool
+        shell: bash
+        run: dotnet build Tools/Stage9DualInt32MinusOnePatch/Stage9DualInt32MinusOnePatch.csproj -c Release --nologo
