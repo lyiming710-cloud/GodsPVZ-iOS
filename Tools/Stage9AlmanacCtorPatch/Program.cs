@@ -16,7 +16,7 @@ const uint ZombieIdFieldToken = 0x04000768;
 const int ExpectedMethods = 2317;
 const int ExpectedFields = 2802;
 const int ExpectedOldCodeSize = 22;
-const int ExpectedOldLocals = 0;
+const int ExpectedOldLocals = 1;
 const string NativeSliceSha = "f45ad37c4c4cf57a18ea2891a76433a467a8c55b6f48907c573db40c236ff6a9";
 
 static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
@@ -101,6 +101,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var target = t.Methods.Single(m => m.IsConstructor && !m.IsStatic && m.Parameters.Count == 0);
     if (Raw(target) != TargetToken || target.MetadataToken.RID != ExpectedRid || target.Body.CodeSize != ExpectedOldCodeSize || target.Body.Variables.Count != ExpectedOldLocals)
         throw new InvalidDataException($"Almanac ctor fingerprint drift token=0x{Raw(target):X8} rid={target.MetadataToken.RID} size={target.Body.CodeSize} locals={target.Body.Variables.Count}");
+    if (target.Body.Variables[0].VariableType.FullName != "Almanac_ZombieWindow") throw new InvalidDataException("expected preserved Almanac_ZombieWindow local");
     if (target.Body.ExceptionHandlers.Count != 0) throw new InvalidDataException("unexpected exception handlers");
     var ins = target.Body.Instructions;
     if (ins.Count != 6) throw new InvalidDataException($"unexpected instruction count {ins.Count}");
@@ -136,7 +137,8 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
         throw new InvalidDataException("reopened target instruction shape drift");
     if (ins[2].Operand is not FieldReference fr || Raw(fr.Resolve()) != ZombieIdFieldToken || fr.FieldType.FullName != "System.Int32") throw new InvalidDataException("reopened zombieID field drift");
     if (ins[4].Operand is not MethodReference mr || mr.DeclaringType.FullName != "UnityEngine.MonoBehaviour" || mr.Name != ".ctor") throw new InvalidDataException("reopened base ctor drift");
-    if (target.Body.ExceptionHandlers.Count != 0 || target.Body.Variables.Count != 0) throw new InvalidDataException("reopened body metadata drift");
+    if (target.Body.ExceptionHandlers.Count != 0 || target.Body.Variables.Count != 1 || target.Body.Variables[0].VariableType.FullName != "Almanac_ZombieWindow")
+        throw new InvalidDataException("reopened body metadata drift");
 
     var changedM = methods.Where(m => beforeM[Raw(m)] != MethodSig(m)).Select(Raw).OrderBy(x => x).ToList();
     if (changedM.Count != 1 || changedM[0] != TargetToken) throw new InvalidDataException("semantic isolation failed: " + string.Join(',', changedM.Select(x => $"0x{x:X8}")));
@@ -146,7 +148,7 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     if (beforeRefs != afterRefs) throw new InvalidDataException("assembly reference set changed");
     if (module.AssemblyReferences.Any(a => a.Name == "System.Private.CoreLib")) throw new InvalidDataException("System.Private.CoreLib pollution");
 
-    Console.WriteLine($"REOPEN_ALMANAC_CTOR_PASS token=0x{TargetToken:X8} instructions=6 ldc_i4_m1=1 zombieID_stfld=1 monoBehaviour_ctor=1 exception_handlers=0 locals=0");
+    Console.WriteLine($"REOPEN_ALMANAC_CTOR_PASS token=0x{TargetToken:X8} instructions=6 ldc_i4_m1=1 zombieID_stfld=1 monoBehaviour_ctor=1 exception_handlers=0 locals=1 local_type=Almanac_ZombieWindow");
     Console.WriteLine($"SEMANTIC_ISOLATION_PASS untouched_methods={ExpectedMethods - 1} changed_methods=1 target=0x{TargetToken:X8}");
     Console.WriteLine($"FIELD_METADATA_ISOLATION_PASS unchanged_fields={ExpectedFields} changed_fields=0");
     Console.WriteLine("FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1");
