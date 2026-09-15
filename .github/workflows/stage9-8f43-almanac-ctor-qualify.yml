@@ -1,0 +1,150 @@
+name: Stage9.1 8f43 Almanac ctor qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-8f43-almanac-ctor-qualify.yml'
+      - 'Tools/Stage9AlmanacCtorPatch/**'
+      - 'Tools/Stage9NativeProbe/Almanac_ZombieWindow.ctor.native-evidence.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Supplies natural-runtime promotion evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34949233871
+          name: Stage9.1-8F43-SUPPLIES-CTOR-NATURAL-RUNTIME
+          path: ${{ runner.temp }}/promotion
+
+      - name: Gate runtime promotion of Almanac ctor
+        shell: bash
+        run: |
+          set -euo pipefail
+          A=$(find "$RUNNER_TEMP/promotion" -type f -name 'supplies-ctor-natural-runtime-audit.txt' -print -quit)
+          test -n "$A"
+          grep -q '^ZOMBIE_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^ZOMBIEINFO_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_FIELDACCESS_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_MISSINGMETHOD_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CTOR_FIELDACCESS_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CTOR_MISSINGMETHOD_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CLASS_FIELDACCESS_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CLASS_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CLASS_MISSINGMETHOD_COUNT 0$' "$A"
+          grep -q '^ALMANAC_ZOMBIEWINDOW_INVALID_IL_COUNT 2$' "$A"
+          grep -q '^CORELIB_TEXT_COUNT 0$' "$A"
+          grep -q '^ZEROVECTOR_TEXT_COUNT 0$' "$A"
+          grep -q '^GENERIC_LIST_MISSINGMETHOD_COUNT 0$' "$A"
+          grep -q '^STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5$' "$A"
+          grep -q '^SUPPLIES_CTOR_NATURAL_RUNTIME_PASS candidate=8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292 supplies_fieldaccess=0 supplies_invalid=0 supplies_missingmethod=0 five_state_paths=5 corelib_pollution=0 zerovector_pollution=0$' "$A"
+          cat "$A"
+
+      - name: Download runtime-qualified Supplies candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34949011350
+          name: Stage9.1-C347-SUPPLIES-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Build minimal Almanac ctor repair and run static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/almanac-ctor-recovery"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-supplies-ctor.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292'
+          OUT="$O/GodsPVZRuntime1-almanac-ctor.dll"
+          dotnet build Tools/Stage9AlmanacCtorPatch/Stage9AlmanacCtorPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9AlmanacCtorPatch/Stage9AlmanacCtorPatch.csproj -c Release --no-build -- \
+            "$IN" "$OUT" '8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292' | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x060005BA rid=1466 method_pointer_entry=0x181B85B28 va=0x18037E1C0 end=0x18037E1CE native_slice_sha256=f45ad37c4c4cf57a18ea2891a76433a467a8c55b6f48907c573db40c236ff6a9$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS zombieID_offset=0x28 store_width=32 value=-1 base_ctor_tailcall=1$' "$E/patch.log"
+          grep -q '^RECOVERY_STRATEGY single_instruction_replace=1 old=ldc.i8_4294967295 new=ldc.i4.m1 metadata_changes=0 guards=0 exception_swallowing=0$' "$E/patch.log"
+          grep -q '^REOPEN_ALMANAC_CTOR_PASS token=0x060005BA instructions=6 ldc_i4_m1=1 zombieID_stfld=1 monoBehaviour_ctor=1 exception_handlers=0 locals=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x060005BA$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9AlmanacCtorPatch/Program.cs "$E/"
+          cp Tools/Stage9NativeProbe/Almanac_ZombieWindow.ctor.native-evidence.md "$E/"
+          cp "$RUNNER_TEMP/promotion/supplies-ctor-natural-runtime-audit.txt" "$E/"
+
+      - name: Download exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Exact-reference Almanac ctor readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/almanac-ctor-recovery"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-almanac-ctor.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t Almanac_ZombieWindow "$DLL" > "$E/Almanac_ZombieWindow.cs" 2> "$E/Almanac_ZombieWindow.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Almanac_ZombieWindow "$DLL" > "$E/Almanac_ZombieWindow.il" 2> "$E/Almanac_ZombieWindow.il.stderr"
+          test ! -s "$E/Almanac_ZombieWindow.cs.stderr"; test ! -s "$E/Almanac_ZombieWindow.il.stderr"
+          python3 - "$E/Almanac_ZombieWindow.cs" "$E/Almanac_ZombieWindow.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          e=il.find('} // end of method Almanac_ZombieWindow::.ctor'); assert e>=0, il
+          b=il.rfind('.method ',0,e); assert b>=0, il
+          ctor=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ctor)
+          assert 'ldc.i4.m1' in ctor, ctor
+          assert 'ldc.i8' not in ctor, ctor
+          assert 'stfld int32 Almanac_ZombieWindow::zombieID' in ctor, ctor
+          assert 'UnityEngine.MonoBehaviour::.ctor()' in ctor, ctor
+          assert 'System.Private.CoreLib' not in ctor, ctor
+          assert 'Unmanaged memory load' not in ctor, ctor
+          assert '.try' not in ctor and 'catch' not in ctor, ctor
+          assert 'zombieID = -1;' in cs, cs
+          print('ALMANAC_CTOR_EXACT_REF_PASS token=0x060005BA ldc_i4_m1=1 zombieID_stfld=1 monoBehaviour_ctor=1 ldc_i8=0 corelib_pollution=0 exception_handlers=0')
+          print('=== ALMANAC_CTOR_CSHARP ==='); print(cs[:5000])
+          print('=== ALMANAC_CTOR_IL ==='); print(ctor)
+          PY
+
+      - name: Upload qualified Almanac ctor candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-8F43-ALMANAC-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/almanac-ctor-recovery/evidence/
+          retention-days: 90
