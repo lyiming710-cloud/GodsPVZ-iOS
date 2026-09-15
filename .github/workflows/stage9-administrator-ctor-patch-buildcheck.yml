@@ -1,0 +1,16 @@
+name: Stage9 Administrator ctor patch buildcheck
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-administrator-ctor-patch-buildcheck.yml','Tools/Stage9AdministratorCtorPatch/**']
+permissions: {contents: read}
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build target-specific Administrator ctor patcher
+        shell: bash
+        run: dotnet build Tools/Stage9AdministratorCtorPatch/Stage9AdministratorCtorPatch.csproj -c Release --nologo
