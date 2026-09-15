@@ -77,10 +77,20 @@ static string FieldSig(FieldDefinition f)
 }
 static IEnumerable<MethodReference> MethodRefs(IEnumerable<MethodDefinition> methods) => methods
     .Where(m => m.HasBody).SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<MethodReference>();
+static IEnumerable<FieldReference> FieldRefs(IEnumerable<MethodDefinition> methods) => methods
+    .Where(m => m.HasBody).SelectMany(m => m.Body.Instructions).Select(i => i.Operand).OfType<FieldReference>();
 static MethodReference FindRef(IEnumerable<MethodDefinition> methods, Func<MethodReference,bool> pred, string label)
 {
     var hits = MethodRefs(methods).Where(pred)
         .GroupBy(m => m.FullName + "@" + Scope(m.DeclaringType.Scope), StringComparer.Ordinal)
+        .Select(g => g.First()).ToList();
+    if (hits.Count != 1) throw new InvalidDataException($"{label} refs={hits.Count}: {string.Join(" | ", hits.Select(h => h.FullName))}");
+    return hits[0];
+}
+static FieldReference FindFieldRef(IEnumerable<MethodDefinition> methods, Func<FieldReference,bool> pred, string label)
+{
+    var hits = FieldRefs(methods).Where(pred)
+        .GroupBy(f => f.FullName + "@" + Scope(f.DeclaringType.Scope), StringComparer.Ordinal)
         .Select(g => g.First()).ToList();
     if (hits.Count != 1) throw new InvalidDataException($"{label} refs={hits.Count}: {string.Join(" | ", hits.Select(h => h.FullName))}");
     return hits[0];
@@ -94,14 +104,20 @@ if (expectedInputSha.Length != 64 || expectedInputSha.Any(c => !Uri.IsHexDigit(c
 if (Sha(input) != expectedInputSha) throw new InvalidDataException("input SHA mismatch");
 if (Sha(coreModulePath) != ExpectedCoreModuleSha) throw new InvalidDataException("UnityEngine.CoreModule SHA mismatch");
 
+// Read the exact CoreModule only as an authority check.  The output must reuse
+// Assembly-CSharp's existing UnityEngine.CoreModule MemberRefs so the AssemblyRef
+// set remains byte-for-byte semantically unchanged.
 var exactResolver = new DefaultAssemblyResolver();
 exactResolver.AddSearchDirectory(Path.GetDirectoryName(coreModulePath)!);
-using var exactCore = ModuleDefinition.ReadModule(coreModulePath, new ReaderParameters { InMemory=true, ReadingMode=ReadingMode.Immediate, AssemblyResolver=exactResolver });
-var exactVector3 = exactCore.GetType("UnityEngine.Vector3") ?? throw new InvalidDataException("Vector3 missing from exact CoreModule");
-var vectorCtorDef = exactVector3.Methods.Single(m => m.IsConstructor && !m.IsStatic && m.Parameters.Count == 3 && m.Parameters.All(p => p.ParameterType.FullName == "System.Single"));
-var xDef = exactVector3.Fields.Single(f => f.Name == "x" && f.FieldType.FullName == "System.Single");
-var yDef = exactVector3.Fields.Single(f => f.Name == "y" && f.FieldType.FullName == "System.Single");
-var zDef = exactVector3.Fields.Single(f => f.Name == "z" && f.FieldType.FullName == "System.Single");
+using (var exactCore = ModuleDefinition.ReadModule(coreModulePath, new ReaderParameters { InMemory=true, ReadingMode=ReadingMode.Immediate, AssemblyResolver=exactResolver }))
+{
+    var exactVector3 = exactCore.GetType("UnityEngine.Vector3") ?? throw new InvalidDataException("Vector3 missing from exact CoreModule");
+    if (!exactVector3.Methods.Any(m => m.IsConstructor && !m.IsStatic && m.Parameters.Count == 3 && m.Parameters.All(p => p.ParameterType.FullName == "System.Single")))
+        throw new InvalidDataException("exact Vector3(float,float,float) ctor missing");
+    foreach (var n in new[] { "x", "y", "z" })
+        if (!exactVector3.Fields.Any(f => f.Name == n && f.FieldType.FullName == "System.Single"))
+            throw new InvalidDataException($"exact Vector3.{n} missing");
+}
 
 var beforeM = new Dictionary<uint,string>();
 var beforeF = new Dictionary<uint,string>();
@@ -155,19 +171,24 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var setPosition = FindRef(methods, m => m.DeclaringType.FullName == "UnityEngine.Transform" && m.Name == "set_position" && m.Parameters.Count == 1 && m.Parameters[0].ParameterType.FullName == "UnityEngine.Vector3", "Transform.set_position");
     var getOrtho = FindRef(methods, m => m.DeclaringType.FullName == "UnityEngine.Camera" && m.Name == "get_orthographicSize" && m.Parameters.Count == 0, "Camera.get_orthographicSize");
     var setOrtho = FindRef(methods, m => m.DeclaringType.FullName == "UnityEngine.Camera" && m.Name == "set_orthographicSize" && m.Parameters.Count == 1 && m.Parameters[0].ParameterType.FullName == "System.Single", "Camera.set_orthographicSize");
-    var vectorCtor = module.ImportReference(vectorCtorDef);
-    var vx = module.ImportReference(xDef); var vy = module.ImportReference(yDef); var vz = module.ImportReference(zDef);
+    var vectorCtor = FindRef(methods, m => m.DeclaringType.FullName == "UnityEngine.Vector3" && m.Name == ".ctor" && m.Parameters.Count == 3 && m.Parameters.All(p => p.ParameterType.FullName == "System.Single"), "existing Vector3.ctor(float,float,float)");
+    var vx = FindFieldRef(methods, f => f.DeclaringType.FullName == "UnityEngine.Vector3" && f.Name == "x" && f.FieldType.FullName == "System.Single", "existing Vector3.x");
+    var vy = FindFieldRef(methods, f => f.DeclaringType.FullName == "UnityEngine.Vector3" && f.Name == "y" && f.FieldType.FullName == "System.Single", "existing Vector3.y");
+    var vz = FindFieldRef(methods, f => f.DeclaringType.FullName == "UnityEngine.Vector3" && f.Name == "z" && f.FieldType.FullName == "System.Single", "existing Vector3.z");
+    var vectorType = getPosition.ReturnType;
+    if (vectorType.FullName != "UnityEngine.Vector3" || Scope(vectorType.Scope) != Scope(boardCameraPosition.FieldType.Scope))
+        throw new InvalidDataException("existing Vector3 type scope drift");
 
     Console.WriteLine($"NATIVE_AUTHORITY target_token=0x{TargetToken:X8} rid={ExpectedRid} method_pointer_entry=0x181B86068 va=0x1803A4810 end=0x1803A4BAB native_span_sha256={NativeSpanSha}");
     Console.WriteLine("NATIVE_SEMANTICS Camera_main_calls=2 skill_inactive_board_cameraPosition_x=1 crosshair_scale_1_1=1 skill_active_skill_x_scale_0_3=1 ratio_div_880=1 ordered_clamp_0_1_nan_raw=1 ortho_smooth_0_1=1");
-    Console.WriteLine("RECOVERY_STRATEGY full_single_MethodDef_rebuild=1 typed_Vector3=1 exact_Vector3_ctor_fields=1 preserve_Unity_liveness=1 metadata_changes=0 null_guard_changes=0 exception_swallowing=0");
+    Console.WriteLine("RECOVERY_STRATEGY full_single_MethodDef_rebuild=1 reuse_existing_Vector3_memberrefs=1 exact_CoreModule_authority_check=1 preserve_Unity_liveness=1 metadata_changes=0 null_guard_changes=0 exception_swallowing=0");
 
     var body = target.Body;
     body.Instructions.Clear(); body.Variables.Clear(); body.ExceptionHandlers.Clear();
     body.InitLocals = true; body.MaxStackSize = 5;
     var camera = new VariableDefinition(cameraMain.ReturnType);
-    var current = new VariableDefinition(module.ImportReference(exactVector3));
-    var newPos = new VariableDefinition(module.ImportReference(exactVector3));
+    var current = new VariableDefinition(vectorType);
+    var newPos = new VariableDefinition(vectorType);
     var newX = new VariableDefinition(module.TypeSystem.Single);
     var targetSize = new VariableDefinition(module.TypeSystem.Single);
     var ratio = new VariableDefinition(module.TypeSystem.Single);
@@ -183,7 +204,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var rawRatio = il.Create(OpCodes.Ldloc, ratio);
     var afterClamp = il.Create(OpCodes.Ldc_R4, 1.4f);
 
-    // Camera main = Camera.main; if (!main) return; main = Camera.main;
+    // Camera main = Camera.main; if (!main) return; main = Camera.main.
     il.Append(il.Create(OpCodes.Call, cameraMain));
     il.Append(il.Create(OpCodes.Stloc, camera));
     il.Append(il.Create(OpCodes.Ldloc, camera));
@@ -192,55 +213,59 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     il.Append(il.Create(OpCodes.Call, cameraMain));
     il.Append(il.Create(OpCodes.Stloc, camera));
 
-    // skill.activeSelf ? skill-active : board-camera path
+    // skill.activeSelf ? skill-active : board-camera path.
     il.Append(il.Create(OpCodes.Ldarg_0));
     il.Append(il.Create(OpCodes.Ldfld, skill));
     il.Append(il.Create(OpCodes.Call, activeSelf));
     il.Append(il.Create(OpCodes.Brtrue, skillActive));
 
-    // Inactive skill: current = camera.transform.position
+    // Inactive skill: current = camera.transform.position.
     il.Append(il.Create(OpCodes.Ldloc, camera));
     il.Append(il.Create(OpCodes.Call, componentTransform));
     il.Append(il.Create(OpCodes.Call, getPosition));
     il.Append(il.Create(OpCodes.Stloc, current));
-    // newX = current.x + (board.cameraPosition.x - current.x) * 0.1f
+    // newX = current.x + (board.cameraPosition.x - current.x) * 0.1f.
     il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vx));
     il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, board)); il.Append(il.Create(OpCodes.Ldflda, boardCameraPosition)); il.Append(il.Create(OpCodes.Ldfld, vx));
     il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vx));
     il.Append(il.Create(OpCodes.Sub)); il.Append(il.Create(OpCodes.Ldc_R4, 0.1f)); il.Append(il.Create(OpCodes.Mul)); il.Append(il.Create(OpCodes.Add)); il.Append(il.Create(OpCodes.Stloc, newX));
-    // camera.transform.position = new Vector3(newX,current.y,current.z)
+    // camera.transform.position = new Vector3(newX,current.y,current.z).
     il.Append(il.Create(OpCodes.Ldloc, newX));
     il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vy));
     il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vz));
     il.Append(il.Create(OpCodes.Newobj, vectorCtor)); il.Append(il.Create(OpCodes.Stloc, newPos));
     il.Append(il.Create(OpCodes.Ldloc, camera)); il.Append(il.Create(OpCodes.Call, componentTransform)); il.Append(il.Create(OpCodes.Ldloc, newPos)); il.Append(il.Create(OpCodes.Call, setPosition));
-    // hand item: normal cameraSize or crosshair cameraSize*1.1
+
+    // Hand item: normal cameraSize or crosshair cameraSize * 1.1.
     il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, board)); il.Append(il.Create(OpCodes.Ldfld, boardMouse)); il.Append(il.Create(OpCodes.Ldfld, handItemType));
     il.Append(il.Create(OpCodes.Ldc_I4_4)); il.Append(il.Create(OpCodes.Beq, crosshairPath));
     il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, board)); il.Append(il.Create(OpCodes.Ldfld, boardMap)); il.Append(il.Create(OpCodes.Ldfld, cameraSize)); il.Append(il.Create(OpCodes.Stloc, targetSize));
     il.Append(il.Create(OpCodes.Br, sizeSmooth));
     il.Append(crosshairPath); il.Append(il.Create(OpCodes.Ldfld, board)); il.Append(il.Create(OpCodes.Ldfld, boardMap)); il.Append(il.Create(OpCodes.Ldfld, cameraSize)); il.Append(il.Create(OpCodes.Ldc_R4, 1.1f)); il.Append(il.Create(OpCodes.Mul)); il.Append(il.Create(OpCodes.Stloc, targetSize)); il.Append(il.Create(OpCodes.Br, sizeSmooth));
 
-    // Skill-active path
+    // Skill-active path. Reuse newPos as a typed temporary for skill.position
+    // before it is overwritten by the final camera position.
     il.Append(skillActive); il.Append(il.Create(OpCodes.Call, componentTransform)); il.Append(il.Create(OpCodes.Call, getPosition)); il.Append(il.Create(OpCodes.Stloc, current));
+    il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, skill)); il.Append(il.Create(OpCodes.Call, gameObjectTransform)); il.Append(il.Create(OpCodes.Call, getPosition)); il.Append(il.Create(OpCodes.Stloc, newPos));
     il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vx));
-    il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, skill)); il.Append(il.Create(OpCodes.Call, gameObjectTransform)); il.Append(il.Create(OpCodes.Call, getPosition)); il.Append(il.Create(OpCodes.Ldfld, vx)); il.Append(il.Create(OpCodes.Ldc_R4, 0.3f)); il.Append(il.Create(OpCodes.Mul));
+    il.Append(il.Create(OpCodes.Ldloca, newPos)); il.Append(il.Create(OpCodes.Ldfld, vx)); il.Append(il.Create(OpCodes.Ldc_R4, 0.3f)); il.Append(il.Create(OpCodes.Mul));
     il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vx)); il.Append(il.Create(OpCodes.Sub)); il.Append(il.Create(OpCodes.Ldc_R4, 0.1f)); il.Append(il.Create(OpCodes.Mul)); il.Append(il.Create(OpCodes.Add)); il.Append(il.Create(OpCodes.Stloc, newX));
     il.Append(il.Create(OpCodes.Ldloc, newX)); il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vy)); il.Append(il.Create(OpCodes.Ldloca, current)); il.Append(il.Create(OpCodes.Ldfld, vz)); il.Append(il.Create(OpCodes.Newobj, vectorCtor)); il.Append(il.Create(OpCodes.Stloc, newPos));
     il.Append(il.Create(OpCodes.Ldloc, camera)); il.Append(il.Create(OpCodes.Call, componentTransform)); il.Append(il.Create(OpCodes.Ldloc, newPos)); il.Append(il.Create(OpCodes.Call, setPosition));
-    // ratio = cameraSize/880
+
+    // ratio = cameraSize / 880.
     il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, board)); il.Append(il.Create(OpCodes.Ldfld, boardMap)); il.Append(il.Create(OpCodes.Ldfld, cameraSize)); il.Append(il.Create(OpCodes.Ldc_R4, 880f)); il.Append(il.Create(OpCodes.Div)); il.Append(il.Create(OpCodes.Stloc, ratio));
-    // ordered clamp: NaN makes both cgt tests false, therefore raw ratio path.
+    // Ordered clamp: NaN makes both cgt tests false, therefore raw-ratio path.
     il.Append(il.Create(OpCodes.Ldc_R4, 0f)); il.Append(il.Create(OpCodes.Ldloc, ratio)); il.Append(il.Create(OpCodes.Cgt)); il.Append(il.Create(OpCodes.Brfalse, upperCheck));
     il.Append(il.Create(OpCodes.Ldc_R4, 0f)); il.Append(il.Create(OpCodes.Stloc, clamped)); il.Append(il.Create(OpCodes.Br, afterClamp));
     il.Append(upperCheck); il.Append(il.Create(OpCodes.Ldc_R4, 1f)); il.Append(il.Create(OpCodes.Cgt)); il.Append(il.Create(OpCodes.Brfalse, rawRatio));
     il.Append(il.Create(OpCodes.Ldc_R4, 1f)); il.Append(il.Create(OpCodes.Stloc, clamped)); il.Append(il.Create(OpCodes.Br, afterClamp));
     il.Append(rawRatio); il.Append(il.Create(OpCodes.Stloc, clamped));
-    // target = (1.4 - clamped*0.4) * cameraSize
+    // target = (1.4 - clamped * 0.4) * cameraSize.
     il.Append(afterClamp); il.Append(il.Create(OpCodes.Ldloc, clamped)); il.Append(il.Create(OpCodes.Ldc_R4, 0.4f)); il.Append(il.Create(OpCodes.Mul)); il.Append(il.Create(OpCodes.Sub));
     il.Append(il.Create(OpCodes.Ldarg_0)); il.Append(il.Create(OpCodes.Ldfld, board)); il.Append(il.Create(OpCodes.Ldfld, boardMap)); il.Append(il.Create(OpCodes.Ldfld, cameraSize)); il.Append(il.Create(OpCodes.Mul)); il.Append(il.Create(OpCodes.Stloc, targetSize));
 
-    // orthographicSize += (targetSize - orthographicSize) * 0.1f
+    // orthographicSize += (targetSize - orthographicSize) * 0.1f.
     il.Append(sizeSmooth);
     il.Append(il.Create(OpCodes.Ldloc, targetSize)); il.Append(il.Create(OpCodes.Ldloc, camera)); il.Append(il.Create(OpCodes.Call, getOrtho)); il.Append(il.Create(OpCodes.Sub)); il.Append(il.Create(OpCodes.Ldc_R4, 0.1f)); il.Append(il.Create(OpCodes.Mul)); il.Append(il.Create(OpCodes.Ldloc, camera)); il.Append(il.Create(OpCodes.Call, getOrtho)); il.Append(il.Create(OpCodes.Add)); il.Append(il.Create(OpCodes.Call, setOrtho));
     il.Append(ret);
@@ -256,12 +281,15 @@ resolver.AddSearchDirectory(Path.GetDirectoryName(coreModulePath)!);
 resolver.AddSearchDirectory(Path.GetDirectoryName(output)!);
 using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { InMemory=true, ReadingMode=ReadingMode.Immediate, AssemblyResolver=resolver }))
 {
-    var types = AllTypes(module.Types).ToList(); var methods = types.SelectMany(t => t.Methods).ToList(); var fields = types.SelectMany(t => t.Fields).ToList();
+    var types = AllTypes(module.Types).ToList();
+    var methods = types.SelectMany(t => t.Methods).ToList();
+    var fields = types.SelectMany(t => t.Fields).ToList();
     var target = methods.Single(m => Raw(m) == TargetToken);
     var afterRefs = string.Join("\n", module.AssemblyReferences.Select(a => a.FullName).OrderBy(x => x, StringComparer.Ordinal));
     if (afterRefs != beforeRefs) throw new InvalidDataException("assembly reference set changed");
     if (module.AssemblyReferences.Any(a => a.Name == "System.Private.CoreLib")) throw new InvalidDataException("System.Private.CoreLib pollution");
-    int Calls(string type,string name) => target.Body.Instructions.Count(i => (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Newobj) && i.Operand is MethodReference m && m.DeclaringType.FullName == type && m.Name == name);
+    int Calls(string type,string name) => target.Body.Instructions.Count(i =>
+        (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Newobj) && i.Operand is MethodReference m && m.DeclaringType.FullName == type && m.Name == name);
     if (target.Body.Variables.Count != 7 || target.Body.Variables.Any(v => v.VariableType.FullName == "System.Object")) throw new InvalidDataException("typed local gate failed");
     if (Calls("UnityEngine.Camera","get_main") != 2 || Calls("UnityEngine.Object","op_Implicit") != 1 || Calls("UnityEngine.GameObject","get_activeSelf") != 1 || Calls("UnityEngine.Transform","get_position") != 3 || Calls("UnityEngine.Transform","set_position") != 2 || Calls("UnityEngine.Vector3",".ctor") != 2 || Calls("UnityEngine.Camera","get_orthographicSize") != 2 || Calls("UnityEngine.Camera","set_orthographicSize") != 1)
         throw new InvalidDataException("reopen call-count mismatch");
