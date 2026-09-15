@@ -1,0 +1,39 @@
+name: Stage9.1 76c1 LevelItem ctor read-only probe
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - 'Tools/Stage9LevelItemCtorProbe/**'
+      - '.github/workflows/stage9-76c1-levelitem-ctor-readonly-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34984733215
+          name: Stage9.1-342C-TEXTLINK-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/candidate
+      - name: Probe LevelItem ctor read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-textlink-ctor.dll' -print -quit)
+          test -n "$DLL"
+          dotnet run --project Tools/Stage9LevelItemCtorProbe/Stage9LevelItemCtorProbe.csproj -c Release -- "$DLL" '76c1c48219af73c73e48fcfb3d0a53254b567c07db7450a80ed51b61a2f6ce19' | tee "$RUNNER_TEMP/levelitem-ctor-probe.txt"
+          grep -q '^READONLY_LEVELITEM_CTOR_PROBE_PASS mutation=0 token=0x' "$RUNNER_TEMP/levelitem-ctor-probe.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-76C1-LEVELITEM-CTOR-READONLY-PROBE
+          path: ${{ runner.temp }}/levelitem-ctor-probe.txt
+          retention-days: 90
