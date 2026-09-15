@@ -13,11 +13,8 @@ Read-only evidence only. This file does not mutate a managed candidate and does 
 
 ## Managed identity
 
-On the current TextLink/LevelItem recovery chain:
-
 - `TextLink` TypeDef `0x020000D0`
 - `TextLink::Update()` MethodDef `0x060006DE`, RID 1758
-- managed RVA `0x93510`
 - damaged code size 235 bytes
 - maxstack 3
 - 9 locals, initlocals true
@@ -27,7 +24,9 @@ On the current TextLink/LevelItem recovery chain:
   - `linkIndex` `0x040008E2`
   - `lastLinkIndex` `0x040008E3`
 
-The damaged managed body stores `Input.mousePosition` into local 1 (`UnityEngine.Vector3`) and `Camera.main` into local 2, but then calls `TMP_TextUtilities.FindIntersectingLink` using `ldloca V_8:System.Object` as the Vector3 argument. That is type-invalid IL. The remaining high-level state-machine structure already resembles the native implementation.
+Managed RVA is file-layout output and is not used as method identity. It was `0x93510` on the pre-LevelItem TextLink candidate and is `0x93294` on static-qualified LevelItem candidate `fe67249cf3bdb30b94aa44045548c3de5ce6861e7686c7acebd4c97e4a3ead7b`; MethodDef token/RID and body semantics remain the stable identity.
+
+Read-only probe run `34989463898`, artifact `10404822152`, on `fe67249c…` confirms that the damaged body stores `Input.mousePosition` into local 1 (`UnityEngine.Vector3`) and `Camera.main` into local 2, but then calls `TMP_TextUtilities.FindIntersectingLink` using `ldloca V_8:System.Object` as the Vector3 argument. That is type-invalid IL. It also confirms one call each to mousePosition, Camera.main, FindIntersectingLink, SetLink and ResetLink. The remaining high-level state-machine structure already resembles the native implementation.
 
 ## Native pointer and body
 
