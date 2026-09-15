@@ -1,0 +1,86 @@
+name: Stage9.1 c347 Almanac ZombieWindow ctor read-only inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-c347-almanac-zombiewindow-ctor-readonly-inspect.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download qualified Device candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34928562898
+          name: Stage9.1-BB33-DEVICE-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+      - name: Resolve locked candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-device-ctor.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = 'c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446'
+          echo "CANDIDATE=$DLL" >> "$GITHUB_ENV"
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Read-only Almanac_ZombieWindow ctor inspection
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/almanac-zombie-inspect"; mkdir -p "$E"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t Almanac_ZombieWindow "$CANDIDATE" > "$E/Almanac_ZombieWindow.cs" 2> "$E/Almanac_ZombieWindow.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Almanac_ZombieWindow "$CANDIDATE" > "$E/Almanac_ZombieWindow.il" 2> "$E/Almanac_ZombieWindow.il.stderr"
+          test ! -s "$E/Almanac_ZombieWindow.cs.stderr"; test ! -s "$E/Almanac_ZombieWindow.il.stderr"
+          python3 - "$E/Almanac_ZombieWindow.cs" "$E/Almanac_ZombieWindow.il" <<'PY' | tee "$E/almanac-zombiewindow-ctor-inspect.txt"
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          e=il.find('} // end of method Almanac_ZombieWindow::.ctor'); assert e>=0, 'ctor end not found'
+          b=il.rfind('.method ',0,e); assert b>=0, 'ctor start not found'
+          ctor=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ctor)
+          print('CANDIDATE_SHA256 c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446')
+          for x in ['Method not found @','Unmanaged memory load','System.Private.CoreLib','System.IntPtr','ldc.i8','zeroVector']:
+              print(x.replace(' ','_').replace('.','_').replace('@','AT').upper()+'_COUNT',ctor.count(x))
+          print('=== ALMANAC_ZOMBIEWINDOW_CTOR_IL ==='); print(ctor)
+          print('=== ALMANAC_ZOMBIEWINDOW_CSHARP_HEAD ==='); print(cs[:16000])
+          print('ALMANAC_ZOMBIEWINDOW_CTOR_READONLY_INSPECT_PASS mutation=0')
+          PY
+      - name: Upload read-only Almanac evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-C347-ALMANAC-ZOMBIEWINDOW-CTOR-READONLY-INSPECT
+          path: ${{ runner.temp }}/almanac-zombie-inspect/
+          retention-days: 90
