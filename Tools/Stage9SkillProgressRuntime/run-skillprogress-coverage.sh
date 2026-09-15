@@ -50,8 +50,12 @@ echo "$RC" > "$E/activation-exit.txt"; [ "$RC" = 0 ] || exit 84; SEAT=1
 
 # One Unity launch. A target exception is allowed here because this is an observation/probe,
 # not a qualification runtime. The caller audits the exact exception and promotion conditions.
+UNITY_TIMEOUT_SECONDS="${STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS:-360}"
+case "$UNITY_TIMEOUT_SECONDS" in (*[!0-9]*|'') echo 'invalid STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS' >&2; exit 85;; esac
+[ "$UNITY_TIMEOUT_SECONDS" -ge 60 ] || exit 86
+printf 'SKILLPROGRESS_UNITY_TIMEOUT_SECONDS %s\n' "$UNITY_TIMEOUT_SECONDS" > "$E/timeout-config.txt"
 set +e
-timeout 360 "$U" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode -assemblyNames Stage9.SkillProgress.Runtime -testResults "$E/results.xml" -logFile "$E/playmode.log"
+timeout "$UNITY_TIMEOUT_SECONDS" "$U" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode -assemblyNames Stage9.SkillProgress.Runtime -testResults "$E/results.xml" -logFile "$E/playmode.log"
 RC=$?
 set -e
 echo "$RC" > "$E/playmode-exit.txt"
