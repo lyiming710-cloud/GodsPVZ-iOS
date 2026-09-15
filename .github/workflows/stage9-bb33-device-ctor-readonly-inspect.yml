@@ -1,0 +1,102 @@
+name: Stage9.1 bb33 Device ctor read-only inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-bb33-device-ctor-readonly-inspect.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download qualified ZombieInfo candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34927520352
+          name: Stage9.1-68A105-ZOMBIEINFO-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Resolve locked candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-zombieinfo-ctor.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = 'bb33dee77ec94d415ac02b38496984548ea68f4717be9bfd4e39b1f232e95280'
+          echo "CANDIDATE=$DLL" >> "$GITHUB_ENV"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Read-only exact-reference Device ctor inspection
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/device-inspect"; mkdir -p "$E"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t Device "$CANDIDATE" > "$E/Device.cs" 2> "$E/Device.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Device "$CANDIDATE" > "$E/Device.il" 2> "$E/Device.il.stderr"
+          test ! -s "$E/Device.cs.stderr"; test ! -s "$E/Device.il.stderr"
+          python3 - "$E/Device.cs" "$E/Device.il" <<'PY' | tee "$E/device-ctor-inspect.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          e=il.find('} // end of method Device::.ctor'); assert e>=0, 'Device ctor IL end not found'
+          b=il.rfind('.method ',0,e); assert b>=0, 'Device ctor IL start not found'
+          ctor=il[b:e]
+          Path(sys.argv[2]+'.ctor.txt').write_text(ctor)
+          lines=ctor.splitlines()
+          hits=[i for i,x in enumerate(lines) if 'maxHPEffect' in x]
+          print('CANDIDATE_SHA256 bb33dee77ec94d415ac02b38496984548ea68f4717be9bfd4e39b1f232e95280')
+          print('DEVICE_CTOR_TOKEN 0x0600033A')
+          print('MAXHPEFFECT_REF_COUNT',len(hits))
+          assert len(hits)==1,(hits,ctor)
+          i=hits[0]
+          lo=max(0,i-8); hi=min(len(lines),i+9)
+          print('=== MAXHPEFFECT_IL_CONTEXT ===')
+          for j in range(lo,hi): print(f'{j:04d}: {lines[j]}')
+          print('=== DEVICE_CTOR_IL ===')
+          print(ctor)
+          bad=['System.Private.CoreLib','Unmanaged memory load','Method not found @']
+          for x in bad: print(f'{x}_COUNT'.replace(' ','_').upper(),ctor.count(x))
+          print('DEVICE_CTOR_READONLY_INSPECT_PASS maxHPEffect_refs=1 mutation=0')
+          PY
+
+      - name: Upload read-only Device evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BB33-DEVICE-CTOR-READONLY-INSPECT
+          path: ${{ runner.temp }}/device-inspect/
+          retention-days: 90
