@@ -1,0 +1,86 @@
+name: Stage9.1 2ad9 Almanac ctor natural runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-2ad9-almanac-ctor-natural-runtime.yml'
+      - 'Tools/Stage9AlmanacRuntimeAudit/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+      - name: Download qualified Almanac candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34954938662
+          name: Stage9.1-8F43-ALMANAC-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/stage9-almanac/candidate
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-almanac/r3-cache
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-almanac/editor-parts
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-almanac/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-almanac-ctor.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          SHA=$(awk '{print $1}' "$SUM")
+          test "$SHA" = '2ad9b7db97262c5a2e3177a605704350cfe73f33a2ff15832defc254db3cdb3d'
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$SHA"
+          echo "ALMANAC_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "ALMANAC_SHA=$SHA" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $SHA"
+      - name: Run one-launch exact-R3 natural SkillProgress path
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh \
+            "$RUNNER_TEMP/stage9-almanac" "$ALMANAC_CANDIDATE" "$ALMANAC_SHA"
+      - name: Audit Almanac natural runtime and prefetch next blockers
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-almanac/evidence"; LOG="$E/playmode.log"; test -f "$LOG"
+          python3 Tools/Stage9AlmanacRuntimeAudit/audit.py "$LOG" "$ALMANAC_SHA" | tee "$E/almanac-ctor-natural-runtime-audit.txt"
+      - name: Upload Almanac natural runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-2AD9-ALMANAC-CTOR-NATURAL-RUNTIME
+          path: ${{ runner.temp }}/stage9-almanac/evidence/
+          retention-days: 90
