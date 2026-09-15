@@ -1,0 +1,27 @@
+name: Stage9.1 70ab complex ctor metadata prefetch
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-70ab-complex-ctor-metadata-prefetch.yml','Tools/Stage9MethodPrefetchProbe/**']
+permissions: {contents: read, actions: read}
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34965475052, name: Stage9.1-19DF-WINDOW-Q-CTOR-QUALIFIED, path: '${{ runner.temp }}/input'}
+      - name: Probe complex ctor identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/complex-ctor-prefetch"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-window-q-ctor.dll' -print -quit); test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '70ab5511b293d87d69caadc42a029bbe08b09d6b60c1ee8af443686bc481a4da'
+          dotnet run --project Tools/Stage9MethodPrefetchProbe/Stage9MethodPrefetchProbe.csproj -c Release -- "$IN" \
+            'System0::.ctor:0' 'Administrator::.ctor:0' 'System3::.ctor:0' 'SuppliesInfo::.ctor:1' 'TextLink::.ctor:0' 'LevelItem::.ctor:0' | tee "$E/complex-ctors.txt"
+          grep -q '^READONLY_METHOD_PREFETCH_PASS mutation=0$' "$E/complex-ctors.txt"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-70AB-COMPLEX-CTOR-METADATA-PREFETCH, path: '${{ runner.temp }}/complex-ctor-prefetch/', retention-days: 90}
