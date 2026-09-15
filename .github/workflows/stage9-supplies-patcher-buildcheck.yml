@@ -1,0 +1,25 @@
+name: Stage9.1 Supplies patcher buildcheck
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-supplies-patcher-buildcheck.yml'
+      - 'Tools/Stage9SuppliesCtorPatch/**'
+
+permissions:
+  contents: read
+
+jobs:
+  buildcheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build dormant Supplies ctor patcher only
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet build Tools/Stage9SuppliesCtorPatch/Stage9SuppliesCtorPatch.csproj -c Release --nologo
+          echo 'SUPPLIES_PATCHER_BUILDCHECK_PASS mutation=0 runtime=0'
