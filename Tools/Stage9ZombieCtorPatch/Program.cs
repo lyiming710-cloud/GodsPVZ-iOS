@@ -305,3 +305,5 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     Console.WriteLine($"FIELD_METADATA_ISOLATION_PASS unchanged_fields={ExpectedFields} changed_fields=0");
     Console.WriteLine("FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1");
 }
+
+return 0;
