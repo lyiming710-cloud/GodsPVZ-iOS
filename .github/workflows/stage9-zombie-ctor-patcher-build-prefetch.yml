@@ -1,0 +1,26 @@
+name: Stage9.1 Zombie ctor patcher build prefetch
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-zombie-ctor-patcher-build-prefetch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile dormant Zombie ctor patcher only
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet build Tools/Stage9ZombieCtorPatch/Stage9ZombieCtorPatch.csproj -c Release --nologo | tee "$RUNNER_TEMP/zombie-ctor-patcher-build.txt"
+          grep -q 'Build succeeded.' "$RUNNER_TEMP/zombie-ctor-patcher-build.txt"
+          test -f Tools/Stage9ZombieCtorPatch/bin/Release/net10.0/Stage9ZombieCtorPatch.dll
+          echo 'ZOMBIE_CTOR_PATCHER_BUILD_PREFETCH_PASS candidate_generated=0 unity_runs=0'
