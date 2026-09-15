@@ -1,0 +1,49 @@
+name: Stage9.1 Zombie ctor natural runtime re-audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-zombie-ctor-natural-runtime-reaudit.yml'
+      - 'Tools/Stage9ZombieCtorRuntime/reaudit-zombie-natural-runtime.py'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reaudit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download sealed SkillProgress v2 runtime evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34922788006
+          name: Stage9.1-SKILLPROGRESS-V2-FIVE-STATE-RUNTIME
+          path: ${{ runner.temp }}/baseline
+      - name: Download Zombie ctor runtime evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34925548959
+          name: Stage9.1-ZOMBIE-CTOR-RUNTIME
+          path: ${{ runner.temp }}/current
+      - name: Re-audit natural runtime logs only
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/reaudit"; mkdir -p "$O"
+          python3 Tools/Stage9ZombieCtorRuntime/reaudit-zombie-natural-runtime.py \
+            "$RUNNER_TEMP/baseline" "$RUNNER_TEMP/current" "$O/zombie-ctor-natural-runtime-reaudit.txt"
+      - name: Upload re-audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ZOMBIE-CTOR-NATURAL-RUNTIME-REAUDIT
+          path: ${{ runner.temp }}/reaudit/
+          retention-days: 90
