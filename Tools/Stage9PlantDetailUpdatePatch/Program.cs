@@ -96,7 +96,14 @@ if (Sha(coreModulePath) != ExpectedCoreModuleSha) throw new InvalidDataException
 Console.WriteLine($"INPUT_SHA256 {Sha(input)}");
 Console.WriteLine($"UNITY_COREMODULE_SHA256 {Sha(coreModulePath)}");
 
-using var exactCore = ModuleDefinition.ReadModule(coreModulePath, new ReaderParameters { InMemory=true, ReadingMode=ReadingMode.Immediate });
+var exactResolver = new DefaultAssemblyResolver();
+exactResolver.AddSearchDirectory(Path.GetDirectoryName(coreModulePath)!);
+using var exactCore = ModuleDefinition.ReadModule(coreModulePath, new ReaderParameters
+{
+    InMemory = true,
+    ReadingMode = ReadingMode.Immediate,
+    AssemblyResolver = exactResolver
+});
 var exactVector3 = exactCore.GetType("UnityEngine.Vector3") ?? throw new InvalidDataException("UnityEngine.Vector3 missing from exact CoreModule");
 var getForwardDef = exactVector3.Methods.Single(m => m.Name == "get_forward" && m.IsStatic && m.Parameters.Count == 0 && m.ReturnType.FullName == "UnityEngine.Vector3");
 
