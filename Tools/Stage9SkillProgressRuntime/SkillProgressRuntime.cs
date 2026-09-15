@@ -105,14 +105,15 @@ public class Stage9SkillProgressRuntime
         Assert.IsNotNull(layerText);
 
         // Skill is a plain CLR class; its parameterless constructor only initializes
-        // normal managed defaults. Ready path needs chargedLayer=1.
+        // normal managed defaults.
         var skill = Activator.CreateInstance(skillT);
         Assert.IsNotNull(skill);
-        SF(skillT, skill, "chargedLayer", 1);
+        var chargeTypeField = skillT.GetField("ChargeType", F);
+        Assert.IsNotNull(chargeTypeField);
 
         // Prefer a real Board-scene Plant. A fresh strict Board commonly has none,
-        // so fall back to a CLR-only shell. Ready path reads only skillOngoing and
-        // does not invoke UnityEngine.Object/Component APIs on this Plant instance.
+        // so fall back to a CLR-only shell. The exercised branches only read/write
+        // plain Plant fields and do not invoke UnityEngine.Object/Component APIs on it.
         object plant = null;
         string plantSource = "none";
         foreach (var o in Resources.FindObjectsOfTypeAll(plantT))
@@ -137,28 +138,81 @@ public class Stage9SkillProgressRuntime
         var oldPSkill = RF(detailT, detail, "p_skill");
         var oldPlant = RF(detailT, detail, "plant");
         var oldSkillOngoing = RF(plantT, plant, "skillOngoing");
-        SF(plantT, plant, "skillOngoing", false);
+        var oldSkillRemainTime = RF(plantT, plant, "skillRemainTime");
         Debug.Log("STAGE9_SKILLPROGRESS_PLANT_SOURCE source=" + plantSource);
         SF(detailT, detail, "p_skill", skill);
         SF(detailT, detail, "plant", plant);
 
         var target = detailT.GetMethod("Update_SkillProgress", F, null, Type.EmptyTypes, null);
         Assert.IsNotNull(target);
+
+        void InvokePhase(string phase)
+        {
+            try
+            {
+                target.Invoke(detail, null);
+                Debug.Log("STAGE9_SKILLPROGRESS_PHASE phase=" + phase + " ok=1");
+            }
+            catch (TargetInvocationException ex)
+            {
+                Debug.LogError("STAGE9_SKILLPROGRESS_PHASE phase=" + phase + " ok=0 inner=" + (ex.InnerException ?? ex));
+                throw ex.InnerException ?? ex;
+            }
+        }
+
         try
         {
-            target.Invoke(detail, null);
-            Debug.Log("STAGE9_SKILLPROGRESS_READY_INVOKE ok=1");
-        }
-        catch (TargetInvocationException ex)
-        {
-            Debug.LogError("STAGE9_SKILLPROGRESS_READY_INVOKE ok=0 inner=" + (ex.InnerException ?? ex));
-            throw ex.InnerException ?? ex;
+            // Ready: chargedLayer > 0 and skill is not ongoing.
+            SF(skillT, skill, "chargedLayer", 1);
+            SF(plantT, plant, "skillOngoing", false);
+            try
+            {
+                target.Invoke(detail, null);
+                Debug.Log("STAGE9_SKILLPROGRESS_READY_INVOKE ok=1");
+                Debug.Log("STAGE9_SKILLPROGRESS_PHASE phase=ready ok=1");
+            }
+            catch (TargetInvocationException ex)
+            {
+                Debug.LogError("STAGE9_SKILLPROGRESS_READY_INVOKE ok=0 inner=" + (ex.InnerException ?? ex));
+                Debug.LogError("STAGE9_SKILLPROGRESS_PHASE phase=ready ok=0 inner=" + (ex.InnerException ?? ex));
+                throw ex.InnerException ?? ex;
+            }
+
+            // Active charging: non-passive ChargeType, ratio and current/max text path.
+            SF(skillT, skill, "chargedLayer", 0);
+            chargeTypeField.SetValue(skill, Enum.ToObject(chargeTypeField.FieldType, 0));
+            SF(skillT, skill, "chargeTicking", 0.25f);
+            SF(skillT, skill, "maxChargeTicking", 0.5f);
+            SF(plantT, plant, "skillOngoing", false);
+            InvokePhase("active_charge");
+
+            // Passive charging: ChargeType.Passively == 3.
+            chargeTypeField.SetValue(skill, Enum.ToObject(chargeTypeField.FieldType, 3));
+            SF(skillT, skill, "chargedLayer", 0);
+            SF(plantT, plant, "skillOngoing", false);
+            InvokePhase("passive");
+
+            // Ongoing with another charged layer available.
+            SF(skillT, skill, "chargedLayer", 2);
+            SF(skillT, skill, "duration", 0.5f);
+            SF(plantT, plant, "skillOngoing", true);
+            SF(plantT, plant, "skillRemainTime", 0.25f);
+            InvokePhase("ongoing_high");
+
+            // Ongoing with no extra layer beyond the active one.
+            SF(skillT, skill, "chargedLayer", 1);
+            SF(plantT, plant, "skillOngoing", true);
+            SF(plantT, plant, "skillRemainTime", 0.25f);
+            InvokePhase("ongoing_low");
+
+            Debug.Log("STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5");
         }
         finally
         {
             SF(detailT, detail, "p_skill", oldPSkill);
             SF(detailT, detail, "plant", oldPlant);
             SF(plantT, plant, "skillOngoing", oldSkillOngoing);
+            SF(plantT, plant, "skillRemainTime", oldSkillRemainTime);
         }
 
         yield return null;
