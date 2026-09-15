@@ -110,27 +110,24 @@ jobs:
           test ! -s "$E/ZombieInfo.cs.stderr"; test ! -s "$E/ZombieInfo.il.stderr"
           python3 - "$E/ZombieInfo.cs" "$E/ZombieInfo.il" <<'PY' | tee "$E/exact-ref-gate.txt"
           from pathlib import Path
-          import re,sys
+          import sys
           cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
-          m=re.search(r'(?:public|private|protected|internal)\s+ZombieInfo\s*\(\s*\)',cs); assert m, 'ZombieInfo ctor not found'
-          o=cs.index('{',m.end()); d=0; target=None
-          for i in range(o,len(cs)):
-              d+=(cs[i]=='{')-(cs[i]=='}')
-              if d==0: target=cs[m.start():i+1]; break
-          assert target is not None
-          Path(sys.argv[1]+'.ctor.txt').write_text(target)
+          Path(sys.argv[1]+'.type.txt').write_text(cs)
           bad=['Unmanaged memory load','System.IntPtr','System.Private.CoreLib','Method not found @','Unknown result type','Not implemented instruction','Warning: Method ends']
-          for x in bad: assert x not in target,(x,target)
+          for x in bad: assert x not in cs,(x,cs)
           good=['healthPoint = 270','attackPoint = 100','speedRating = 3','new bool[10]','painterID = -1']
-          for x in good: assert x in target,(x,target)
-          e=il.find('} // end of method ZombieInfo::.ctor'); assert e>=0
-          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ib)
+          for x in good: assert x in cs,(x,cs)
+          e=il.find('} // end of method ZombieInfo::.ctor'); assert e>=0, il
+          b=il.rfind('.method ',0,e); assert b>=0, il
+          ib=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ib)
           for x in ['System.IntPtr','Unmanaged memory load','System.Private.CoreLib','Method not found @']:
               assert x not in ib,(x,ib)
           assert 'newarr' in ib and 'System.Boolean' in ib, ib
           assert 'System.Object::.ctor' in ib, ib
-          print('ZOMBIEINFO_CTOR_EXACT_REF_PASS token=0x06000152 native_defaults=1 typed_bool_array=1 object_base_ctor=1 invalid_diagnostics=0 unmanaged_scaffolding=0 corelib_pollution=0')
-          print('=== TARGET_CSHARP ==='); print(target)
+          assert 'ldc.i8' not in ib, ib
+          print('ZOMBIEINFO_CTOR_EXACT_REF_PASS token=0x06000152 native_defaults=1 typed_bool_array=1 object_base_ctor=1 ldc_i8=0 invalid_diagnostics=0 unmanaged_scaffolding=0 corelib_pollution=0')
+          print('=== TYPE_CSHARP ==='); print(cs)
+          print('=== CTOR_IL ==='); print(ib)
           PY
 
       - name: Upload qualified ZombieInfo ctor candidate
