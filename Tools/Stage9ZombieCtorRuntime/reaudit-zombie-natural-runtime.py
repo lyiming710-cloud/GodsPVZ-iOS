@@ -32,13 +32,13 @@ def candidate_sha(root: Path) -> str:
 def counts(text: str) -> dict[str, int]:
     lines = text.splitlines()
     return {
-        "zombie_invalid": len(re.findall(r"InvalidProgramException: Invalid IL code in Zombie:\\.ctor", text)),
+        "zombie_invalid": len(re.findall(r"InvalidProgramException: Invalid IL code in Zombie:\.ctor", text)),
         "zombie_fieldaccess": sum("FieldAccessException" in x and "Zombie:.ctor" in x for x in lines),
         "zombie_missingmethod": sum("MissingMethodException" in x and "Zombie:.ctor" in x for x in lines),
-        "zombieinfo_invalid": len(re.findall(r"InvalidProgramException: Invalid IL code in ZombieInfo:\\.ctor", text)),
+        "zombieinfo_invalid": len(re.findall(r"InvalidProgramException: Invalid IL code in ZombieInfo:\.ctor", text)),
         "device_fieldaccess": sum("FieldAccessException" in x and "Device:.ctor" in x for x in lines),
         "supplies_fieldaccess": sum("FieldAccessException" in x and "SuppliesInitialValue:.ctor" in x for x in lines),
-        "almanac_zombie_window_invalid": len(re.findall(r"InvalidProgramException: Invalid IL code in Almanac_ZombieWindow:\\.ctor", text)),
+        "almanac_zombie_window_invalid": len(re.findall(r"InvalidProgramException: Invalid IL code in Almanac_ZombieWindow:\.ctor", text)),
         "corelib_text": text.count("System.Private.CoreLib"),
         "zerovector_text": text.count("zeroVector"),
     }
