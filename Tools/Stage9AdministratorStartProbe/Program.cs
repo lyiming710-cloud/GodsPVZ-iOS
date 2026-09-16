@@ -75,5 +75,12 @@ var modeLoads = target.Body.Instructions.Count(i => i.Operand is FieldReference 
 Console.WriteLine($"SWITCH_DAMAGE_FINGERPRINT image_base_ldc_i8={imageBaseLiterals} unmanaged_load_strings={unmanagedDiagnostics} indirect_jump_strings={indirectDiagnostics} conv_i={convI} mode_field_refs={modeLoads}");
 if (imageBaseLiterals < 2 || unmanagedDiagnostics < 1 || indirectDiagnostics < 1 || convI < 1 || modeLoads < 1)
     throw new InvalidDataException("Administrator.Start switch damage fingerprint drift");
-Console.WriteLine($"READONLY_ADMINISTRATOR_START_PROBE_PASS mutation=0 token=0x{TargetToken:X8} rid={target.MetadataToken.RID} switch_damage=1");
+
+var nativeUniqueRids = new[] {1607, 7, 115, 561, 129, 9, 136, 158, 522, 340, 604};
+foreach (var rid in nativeUniqueRids)
+{
+    var m = methods.Single(x => x.MetadataToken.RID == rid);
+    Console.WriteLine($"NATIVE_OWN_CALL_RID rid={rid} token=0x{m.MetadataToken.ToUInt32():X8} method={m.FullName}");
+}
+Console.WriteLine($"READONLY_ADMINISTRATOR_START_PROBE_PASS mutation=0 token=0x{TargetToken:X8} rid={target.MetadataToken.RID} switch_damage=1 native_call_rids={nativeUniqueRids.Length}");
 return 0;
