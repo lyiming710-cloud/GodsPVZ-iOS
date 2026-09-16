@@ -39,52 +39,29 @@ jobs:
           mkdir -p "$RUNNER_TEMP/administrator-start/evidence"
           echo "ADMINISTRATOR_START_INPUT=$IN" >> "$GITHUB_ENV"
           echo "INPUT_SHA256 $ACTUAL" | tee "$RUNNER_TEMP/administrator-start/evidence/input.sha256.txt"
-          printf 'source_run_id=%s\nsource_artifact=%s\nsource_candidate_sha256=%s\nworkflow_commit=%s\n' \
-            "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT" "$ACTUAL" "$GITHUB_SHA" \
-            > "$RUNNER_TEMP/administrator-start/evidence/provenance.txt"
+          printf 'source_run_id=%s\nsource_artifact=%s\nsource_candidate_sha256=%s\nworkflow_commit=%s\n' "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT" "$ACTUAL" "$GITHUB_SHA" > "$RUNNER_TEMP/administrator-start/evidence/provenance.txt"
 
-      - name: Apply exact Cecil signature fix and reopen diagnostics
+      - name: Apply exact Cecil signature fix and MemberRef diagnostic
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('Tools/Stage9AdministratorStartPatch/Program.cs')
-          s = p.read_text()
-          old = 'var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");'
-          new = 'var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");'
-          if old in s:
-              s = s.replace(old, new, 1)
-              print('PATCHER_SIGNATURE_FIX applied=1 token=0x0A0001EC return=!0')
-          elif new in s:
-              print('PATCHER_SIGNATURE_FIX applied=0 already_fixed=1 token=0x0A0001EC return=!0')
-          else:
-              raise SystemExit('expected List<GameObject>.get_Item signature assertion not found')
-
-          old_gate = '    if (MemberRefs(module) != beforeMemberRefs) throw new InvalidDataException("MemberRef metadata set changed");'
-          new_gate = '''    var afterMemberRefs = MemberRefs(module);
-    if (afterMemberRefs != beforeMemberRefs)
-    {
-        var beforeLines = beforeMemberRefs.Split('\\n', StringSplitOptions.RemoveEmptyEntries);
-        var afterLines = afterMemberRefs.Split('\\n', StringSplitOptions.RemoveEmptyEntries);
-        var removed = beforeLines.Except(afterLines, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-        var added = afterLines.Except(beforeLines, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-        Console.WriteLine($"MEMBERREF_DIFF removed={removed.Length} added={added.Length}");
-        foreach (var x in removed) Console.WriteLine("MEMBERREF_REMOVED " + x);
-        foreach (var x in added) Console.WriteLine("MEMBERREF_ADDED " + x);
-        throw new InvalidDataException("MemberRef metadata set changed");
-    }'''
-          if old_gate in s:
-              s = s.replace(old_gate, new_gate, 1)
-              print('MEMBERREF_DIAGNOSTIC injected=1')
-          elif 'MEMBERREF_DIFF removed=' in s:
-              print('MEMBERREF_DIAGNOSTIC injected=0 already_present=1')
-          else:
-              raise SystemExit('expected MemberRef reopen gate not found')
+          p=Path('Tools/Stage9AdministratorStartPatch/Program.cs')
+          s=p.read_text()
+          old='var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");'
+          new='var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");'
+          if old in s: s=s.replace(old,new,1); print('PATCHER_SIGNATURE_FIX applied=1 token=0x0A0001EC return=!0')
+          elif new in s: print('PATCHER_SIGNATURE_FIX applied=0 already_fixed=1 token=0x0A0001EC return=!0')
+          else: raise SystemExit('expected get_Item signature assertion not found')
+          old_gate='    if (MemberRefs(module) != beforeMemberRefs) throw new InvalidDataException("MemberRef metadata set changed");'
+          new_gate='    var afterMemberRefs = MemberRefs(module);\n    if (afterMemberRefs != beforeMemberRefs) { var b = beforeMemberRefs.Split("\\n", StringSplitOptions.RemoveEmptyEntries); var a = afterMemberRefs.Split("\\n", StringSplitOptions.RemoveEmptyEntries); var removed = b.Except(a, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray(); var added = a.Except(b, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray(); Console.WriteLine($"MEMBERREF_DIFF removed={removed.Length} added={added.Length}"); foreach (var x in removed) Console.WriteLine("MEMBERREF_REMOVED " + x); foreach (var x in added) Console.WriteLine("MEMBERREF_ADDED " + x); throw new InvalidDataException("MemberRef metadata set changed"); }'
+          if old_gate in s: s=s.replace(old_gate,new_gate,1); print('MEMBERREF_DIAGNOSTIC injected=1')
+          elif 'MEMBERREF_DIFF removed=' in s: print('MEMBERREF_DIAGNOSTIC already_present=1')
+          else: raise SystemExit('expected MemberRef gate not found')
           p.write_text(s)
           PY
           git diff --check
-          git diff -- Tools/Stage9AdministratorStartPatch/Program.cs
 
       - name: Build dedicated Cecil patcher
         shell: bash
@@ -93,14 +70,12 @@ jobs:
           dotnet restore Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj
           dotnet build -c Release --no-restore Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj
 
-      - name: Patch Administrator.Start and run embedded reopen/isolation gates
+      - name: Patch Administrator.Start and run embedded reopen isolation gates
         shell: bash
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/administrator-start/GodsPVZRuntime1-administrator-start.dll"
-          dotnet run -c Release --no-build --project Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj -- \
-            "$ADMINISTRATOR_START_INPUT" "$OUT" "$EXPECTED_INPUT_SHA" \
-            | tee "$RUNNER_TEMP/administrator-start/evidence/patcher-audit.txt"
+          dotnet run -c Release --no-build --project Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj -- "$ADMINISTRATOR_START_INPUT" "$OUT" "$EXPECTED_INPUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/patcher-audit.txt"
           test -s "$OUT"
           OUT_SHA=$(sha256sum "$OUT" | awk '{print $1}')
           echo "OUTPUT_SHA256 $OUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/output.sha256.txt"
@@ -117,32 +92,7 @@ jobs:
           grep -F 'SEMANTIC_ISOLATION_PASS unchanged_method_headers=2317 changed_method_bodies=1 target=0x06000004 unchanged_fields=2802' "$LOG"
           grep -F 'METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_refs_unchanged=1 type_refs_unchanged=1 system_private_corelib_refs=0' "$LOG"
           grep -F 'ADMINISTRATOR_START_STRUCTURE_GATE_PASS valid_range_gate=1 foreach_try_finally=1 SetGloveButtons_zero_arg=1 mode0_save_chain=1 mode3_private_board_field=0 mode4_order=load_then_start tail_gamepause=1' "$LOG"
-          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\n' \
-            "$EXPECTED_INPUT_SHA" "$ADMINISTRATOR_START_OUTPUT_SHA" \
-            | tee "$RUNNER_TEMP/administrator-start/evidence/static-qualified.txt"
-
-      - name: Persist verified patcher fix
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('Tools/Stage9AdministratorStartPatch/Program.cs')
-          s=p.read_text()
-          start=s.find('    var afterMemberRefs = MemberRefs(module);')
-          if start >= 0:
-              end=s.find('    if (TypeRefs(module) != beforeTypeRefs)', start)
-              if end < 0: raise SystemExit('diagnostic block end not found')
-              s=s[:start]+'    if (MemberRefs(module) != beforeMemberRefs) throw new InvalidDataException("MemberRef metadata set changed");\n'+s[end:]
-              p.write_text(s)
-          PY
-          if ! git diff --quiet -- Tools/Stage9AdministratorStartPatch/Program.cs; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add Tools/Stage9AdministratorStartPatch/Program.cs
-            git commit -m 'fix: match Cecil List<T>.get_Item generic return signature [skip ci]'
-            git push origin HEAD:stage9-admin-start-static
-          fi
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\n' "$EXPECTED_INPUT_SHA" "$ADMINISTRATOR_START_OUTPUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/static-qualified.txt"
 
       - name: Upload static-qualified Administrator.Start candidate
         uses: actions/upload-artifact@v4
