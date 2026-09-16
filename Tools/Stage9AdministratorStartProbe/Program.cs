@@ -60,6 +60,10 @@ if (mode.DeclaringType != type || mode.Name != "mode") throw new InvalidDataExce
 Console.WriteLine($"TYPE token=0x{type.MetadataToken.ToUInt32():X8} rid={type.MetadataToken.RID}");
 Console.WriteLine($"METHOD token=0x{TargetToken:X8} rid={target.MetadataToken.RID} rva=0x{target.RVA:X} code_size={target.Body.CodeSize} maxstack={target.Body.MaxStackSize} locals={target.Body.Variables.Count} initlocals={target.Body.InitLocals} handlers={target.Body.ExceptionHandlers.Count}");
 Console.WriteLine($"FIELD token=0x{ModeFieldToken:X8} name={mode.Name} type={mode.FieldType.FullName}");
+foreach (var f in type.Fields)
+    Console.WriteLine($"ADMIN_FIELD token=0x{f.MetadataToken.ToUInt32():X8} rid={f.MetadataToken.RID} name={f.Name} type={f.FieldType.FullName} static={f.IsStatic}");
+foreach (var m in type.Methods)
+    Console.WriteLine($"ADMIN_METHOD token=0x{m.MetadataToken.ToUInt32():X8} rid={m.MetadataToken.RID} name={m.Name} signature={m.FullName}");
 foreach (var v in target.Body.Variables) Console.WriteLine($"LOCAL index={v.Index} type={v.VariableType.FullName}");
 for (int i=0;i<target.Body.Instructions.Count;i++)
 {
@@ -76,11 +80,21 @@ Console.WriteLine($"SWITCH_DAMAGE_FINGERPRINT image_base_ldc_i8={imageBaseLitera
 if (imageBaseLiterals < 2 || unmanagedDiagnostics < 1 || indirectDiagnostics < 1 || convI < 1 || modeLoads < 1)
     throw new InvalidDataException("Administrator.Start switch damage fingerprint drift");
 
+var targetMethodRefs = target.Body.Instructions
+    .Where(i => i.Operand is MethodReference)
+    .Select(i => (MethodReference)i.Operand)
+    .GroupBy(m => m.FullName + "@" + Scope(m.DeclaringType.Scope))
+    .Select(g => g.First())
+    .OrderBy(m => m.FullName)
+    .ToList();
+foreach (var m in targetMethodRefs)
+    Console.WriteLine($"START_METHOD_REF method={m.FullName} scope={Scope(m.DeclaringType.Scope)}");
+
 var nativeUniqueRids = new[] {1607, 7, 115, 561, 129, 9, 136, 158, 522, 340, 604};
 foreach (var rid in nativeUniqueRids)
 {
     var m = methods.Single(x => x.MetadataToken.RID == rid);
     Console.WriteLine($"NATIVE_OWN_CALL_RID rid={rid} token=0x{m.MetadataToken.ToUInt32():X8} method={m.FullName}");
 }
-Console.WriteLine($"READONLY_ADMINISTRATOR_START_PROBE_PASS mutation=0 token=0x{TargetToken:X8} rid={target.MetadataToken.RID} switch_damage=1 native_call_rids={nativeUniqueRids.Length}");
+Console.WriteLine($"READONLY_ADMINISTRATOR_START_PROBE_PASS mutation=0 token=0x{TargetToken:X8} rid={target.MetadataToken.RID} switch_damage=1 native_call_rids={nativeUniqueRids.Length} admin_fields={type.Fields.Count} admin_methods={type.Methods.Count}");
 return 0;
