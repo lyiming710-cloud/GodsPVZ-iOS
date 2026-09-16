@@ -1,0 +1,102 @@
+name: Stage9.1 Administrator Start natural runtime
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths: ['.github/workflows/stage9-administrator-start-natural-runtime.yml']
+permissions: {contents: read, actions: read}
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: '${{ secrets.UNITY_EMAIL }}'
+      UNITY_PASSWORD: '${{ secrets.UNITY_PASSWORD }}'
+      STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS: 900
+      STATIC_RUN_ID: '35124677911'
+      EXPECTED_CANDIDATE_SHA: 4a5ffb77704be653aa66001c020562b152afe7586386beb50d3e18225f1cabd3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+      - name: Download static-qualified Administrator.Start candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: '${{ env.STATIC_RUN_ID }}'
+          name: Stage9.1-ADMINISTRATOR-START-STATIC-QUALIFIED
+          path: '${{ runner.temp }}/stage9-administrator-start/candidate'
+      - name: Download exact R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: '${{ runner.temp }}/stage9-administrator-start/r3-cache'
+      - name: Download exact Unity China Editor
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: 34668863583
+          pattern: 'Stage9.1-unity-china-editor-part-*'
+          merge-multiple: true
+          path: '${{ runner.temp }}/stage9-administrator-start/editor-parts'
+      - name: Resolve and lock static-qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-administrator-start/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-administrator-start.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output.sha256.txt' -print -quit)
+          QUAL=$(find "$D" -type f -name 'static-qualified.txt' -print -quit)
+          test -n "$DLL"; test -n "$SUM"; test -n "$QUAL"
+          SHA=$(awk '/OUTPUT_SHA256/{print $2}' "$SUM")
+          test "$SHA" = "$EXPECTED_CANDIDATE_SHA"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$SHA"
+          grep -Fx 'STATIC_QUALIFIED=1' "$QUAL"
+          echo "ADMINISTRATOR_START_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "ADMINISTRATOR_START_SHA=$SHA" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $SHA"
+      - name: Run one-launch exact-R3 natural SkillProgress path
+        shell: bash
+        run: bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh "$RUNNER_TEMP/stage9-administrator-start" "$ADMINISTRATOR_START_CANDIDATE" "$ADMINISTRATOR_START_SHA"
+      - name: Audit Administrator.Start natural runtime and identify next blocker
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-administrator-start/evidence"; LOG="$E/playmode.log"; test -f "$LOG"
+          python3 Tools/Stage9TextLinkUpdateRuntimeAudit/audit.py "$LOG" "$ADMINISTRATOR_START_SHA" | tee "$E/regression-runtime-audit.txt"
+          grep -Fx 'NEXT_ADMINISTRATOR_START_INVALID_IL_COUNT 0' "$E/regression-runtime-audit.txt"
+          python3 - "$LOG" "$ADMINISTRATOR_START_SHA" <<'PY' | tee "$E/administrator-start-direct-runtime-audit.txt"
+          from pathlib import Path
+          import re,sys
+          p=Path(sys.argv[1]); sha=sys.argv[2]; lines=p.read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          def invalid(m): return len(re.findall(r'InvalidProgramException: Invalid IL code in '+re.escape(m),text))
+          def same_line(exc,method): return sum(exc in x and method in x for x in lines)
+          vals={
+            'ADMINISTRATOR_START_INVALID_IL_COUNT':invalid('Administrator:Start'),
+            'ADMINISTRATOR_START_FIELDACCESS_COUNT':same_line('FieldAccessException','Administrator:Start'),
+            'ADMINISTRATOR_START_MISSINGMETHOD_COUNT':same_line('MissingMethodException','Administrator:Start'),
+            'ADMINISTRATOR_START_TYPELOAD_COUNT':same_line('TypeLoadException','Administrator:Start'),
+          }
+          for k,v in vals.items(): print(k,v)
+          assert all(v==0 for v in vals.values()),vals
+          required=['STAGE9_SKILLPROGRESS_SAVE_READY ok=1','STAGE9_SKILLPROGRESS_BOARD_READY ok=1','STAGE9_SKILLPROGRESS_READY_INVOKE ok=1','STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5']
+          for marker in required: assert marker in lines,marker
+          print(f'ADMINISTRATOR_START_NATURAL_RUNTIME_PASS candidate={sha} direct_invalid=0 direct_fieldaccess=0 direct_missingmethod=0 direct_typeload=0 five_state_paths=5')
+          PY
+          python3 Tools/Stage9RuntimeTriage/first-invalid.py "$LOG" | tee "$E/first-invalid-triage.txt"
+      - name: Upload Administrator.Start natural runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-NATURAL-RUNTIME
+          path: '${{ runner.temp }}/stage9-administrator-start/evidence/'
+          retention-days: 90
+          if-no-files-found: error
