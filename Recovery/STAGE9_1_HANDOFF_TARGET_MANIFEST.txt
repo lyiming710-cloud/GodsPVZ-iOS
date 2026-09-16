@@ -1,0 +1,41 @@
+GodsPVZ Stage9.1 handoff target manifest
+Snapshot: 2026-09-16 UTC
+Repository: lyiming710-cloud/GodsPVZ-iOS
+Branch: high-fidelity
+
+[TARGET]
+type=managed_method
+identity=Administrator.Start()
+methoddef=0x06000004
+rid=4
+current_status=development_candidate_unqualified
+sealed_baseline=HF55
+
+[LOCKS]
+input_sha256=26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+preimage_sha256=b6aa91789131594a0b1ac89a83197f026261ea6e9867df34cc2b8b15b46b8089
+native_sha256=3d83a514d37c18b7d91df7ceba17803bb0ac3cbd670dab15e823af4be8b58d02
+
+[REQUIRED_REPOSITORY_FILES]
+path=Tools/Stage9AdministratorStartPatch/Program.cs|role=single-target-Cecil-recovery-patcher|blob=4cadc2d6c6839a371419011ccc56de8877f6e73f
+path=Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj|role=Mono.Cecil-build-project|blob=78dcebeb05b88ac2e927cff7445297920ada6919
+path=Tools/Stage9AdministratorStartDependencyProbe/Program.cs|role=preimage-token-dependency-probe|blob=b6363e5cdfa161f84772f0f8d8c9d591d49cad44
+path=Tools/Stage9AdministratorStartRefProbe/Program.cs|role=exact-reference-probe|blob=b175a42c2f5d00ef473ce67b6e789fd426e4b6ba
+path=Tools/Stage9AdministratorStartProbe/Program.cs|role=native-metadata-readonly-probe|blob=e55b7c1959aa75dc7425acebc0ada07a98714164
+path=Tools/Stage9NativeProbe/Administrator.Start.native-evidence.md|role=PC-native-authority-evidence|blob=583fc8b826d2678048a7d64c37c5204bae7be8a7
+path=.github/workflows/stage9-2606-administrator-start-dependency-probe.yml|role=dependency-probe-workflow|blob=16842cb8a8708d4b455782885280829f95d6628b
+path=.github/workflows/stage9-2606-administrator-start-exact-ref-probe.yml|role=exact-ref-probe-workflow|blob=3d0112cf86a7a95cb82c5f0971dcec94bff2b9d1
+path=.github/workflows/stage9-2606-administrator-start-readonly-probe.yml|role=readonly-probe-workflow|blob=8ebd4316de475314585d5355d490e428c05e5080
+path=.github/workflows/stage9-2606-textlink-update-natural-runtime.yml|role=previous-natural-runtime-reference|blob=3ca747ecca65239ae10b3484e1ac3d8e674d74aa
+
+[HANDOFF_FILES_IN_THIS_UPLOAD]
+path=Recovery/HANDOFF_CURRENT.md|role=current-entrypoint|action=replaced-old-current-snapshot
+path=Recovery/STAGE9_1_ADMINISTRATOR_START_HANDOFF.md|role=target-specific-handoff-document|action=created
+path=Recovery/STAGE9_1_HANDOFF_SOURCE_AND_BUILD_PROVENANCE.txt|role=source-build-runtime-provenance|action=created
+path=Recovery/STAGE9_1_HANDOFF_TARGET_MANIFEST.txt|role=machine-readable-target-file-map|action=created
+path=Recovery/STAGE9_1_HANDOFF_SHA256SUMS.txt|role=external-input-and-artifact-digests|action=created
+
+[NEXT_GATE]
+build_and_execute_patch_then_static_qualify_then_exact_R3_natural_runtime
+do_not_seal_HF56
+do_not_modify_HF55
