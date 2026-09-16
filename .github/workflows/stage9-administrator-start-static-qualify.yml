@@ -41,7 +41,7 @@ jobs:
           echo "INPUT_SHA256 $ACTUAL" | tee "$RUNNER_TEMP/administrator-start/evidence/input.sha256.txt"
           printf 'source_run_id=%s\nsource_artifact=%s\nsource_candidate_sha256=%s\nworkflow_commit=%s\n' "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT" "$ACTUAL" "$GITHUB_SHA" > "$RUNNER_TEMP/administrator-start/evidence/provenance.txt"
 
-      - name: Apply exact Cecil signature fix and MemberRef diagnostic
+      - name: Apply Cecil semantic-audit corrections
         shell: bash
         run: |
           set -euo pipefail
@@ -49,19 +49,39 @@ jobs:
           from pathlib import Path
           p=Path('Tools/Stage9AdministratorStartPatch/Program.cs')
           s=p.read_text()
-          old='var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");'
-          new='var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");'
-          if old in s: s=s.replace(old,new,1); print('PATCHER_SIGNATURE_FIX applied=1 token=0x0A0001EC return=!0')
-          elif new in s: print('PATCHER_SIGNATURE_FIX applied=0 already_fixed=1 token=0x0A0001EC return=!0')
-          else: raise SystemExit('expected get_Item signature assertion not found')
-          old_gate='    if (MemberRefs(module) != beforeMemberRefs) throw new InvalidDataException("MemberRef metadata set changed");'
-          new_gate='    var afterMemberRefs = MemberRefs(module);\n    if (afterMemberRefs != beforeMemberRefs) { var b = beforeMemberRefs.Split("\\n", StringSplitOptions.RemoveEmptyEntries); var a = afterMemberRefs.Split("\\n", StringSplitOptions.RemoveEmptyEntries); var removed = b.Except(a, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray(); var added = a.Except(b, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray(); Console.WriteLine($"MEMBERREF_DIFF removed={removed.Length} added={added.Length}"); foreach (var x in removed) Console.WriteLine("MEMBERREF_REMOVED " + x); foreach (var x in added) Console.WriteLine("MEMBERREF_ADDED " + x); throw new InvalidDataException("MemberRef metadata set changed"); }'
-          if old_gate in s: s=s.replace(old_gate,new_gate,1); print('MEMBERREF_DIAGNOSTIC injected=1')
-          elif 'MEMBERREF_DIFF removed=' in s: print('MEMBERREF_DIAGNOSTIC already_present=1')
-          else: raise SystemExit('expected MemberRef gate not found')
+          replacements=[
+            ('var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");',
+             'var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");'),
+            ('if (o is MethodReference mr) return "M:" + MethodRefSig(mr);',
+             'if (o is MethodReference mr) return $"M:{mr.FullName}@{Scope(mr.DeclaringType.Scope)}";'),
+            ('if (o is FieldReference fr) return $"F:{fr.FullName}@{Scope(fr.DeclaringType.Scope)}#0x{Raw(fr):X8}";',
+             'if (o is FieldReference fr) return $"F:{fr.FullName}@{Scope(fr.DeclaringType.Scope)}";'),
+            ('if (o is TypeReference tr) return $"T:{TypeSig(tr)}#0x{Raw(tr):X8}";',
+             'if (o is TypeReference tr) return $"T:{TypeSig(tr)}";'),
+            ('static string MemberRefs(ModuleDefinition m) => string.Join("\\n", m.GetMemberReferences().Select(r => $"0x{Raw(r):X8}|{r.FullName}|{Scope(r.DeclaringType.Scope)}").OrderBy(x => x, StringComparer.Ordinal));',
+             'static string MemberRefs(ModuleDefinition m) => string.Join("\\n", m.GetMemberReferences().Select(r => $"{r.FullName}|{Scope(r.DeclaringType.Scope)}").OrderBy(x => x, StringComparer.Ordinal));'),
+            ('static string TypeRefs(ModuleDefinition m) => string.Join("\\n", m.GetTypeReferences().Select(r => $"0x{Raw(r):X8}|{r.FullName}|{Scope(r.Scope)}").OrderBy(x => x, StringComparer.Ordinal));',
+             'static string TypeRefs(ModuleDefinition m) => string.Join("\\n", m.GetTypeReferences().Select(r => $"{r.FullName}|{Scope(r.Scope)}").OrderBy(x => x, StringComparer.Ordinal));'),
+            ('Console.WriteLine("METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_refs_unchanged=1 type_refs_unchanged=1 system_private_corelib_refs=0");',
+             'Console.WriteLine("METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1 system_private_corelib_refs=0");')
+          ]
+          applied=[]
+          for old,new in replacements:
+              if old in s:
+                  s=s.replace(old,new,1); applied.append(old[:55])
+              elif new in s:
+                  pass
+              else:
+                  raise SystemExit('expected source pattern missing: '+old[:100])
+          needle='    if (target.Body.Instructions.Any(i => i.Operand is FieldReference f && f.DeclaringType.FullName.StartsWith("System.Collections.Generic.List`1", StringComparison.Ordinal) && f.Name is "_items" or "_size" or "_version"))\n        throw new InvalidDataException("List<T> private internals introduced");'
+          extra=needle+'\n    if (target.Body.Instructions.Any(i => i.Operand is MemberReference r && r.FullName.Contains("UnityEngine.Vector3::zeroVector", StringComparison.Ordinal))) throw new InvalidDataException("zeroVector scaffolding introduced");\n    if (target.Body.Instructions.Any(i => i.OpCode.Code is Code.Calli or Code.Localloc or Code.Cpblk or Code.Initblk or Code.Ldind_I or Code.Ldind_I1 or Code.Ldind_I2 or Code.Ldind_I4 or Code.Ldind_I8 or Code.Ldind_R4 or Code.Ldind_R8 or Code.Ldind_Ref or Code.Ldind_U1 or Code.Ldind_U2 or Code.Ldind_U4 or Code.Stind_I or Code.Stind_I1 or Code.Stind_I2 or Code.Stind_I4 or Code.Stind_I8 or Code.Stind_R4 or Code.Stind_R8 or Code.Stind_Ref)) throw new InvalidDataException("unmanaged scaffolding introduced");'
+          if needle in s and 'zeroVector scaffolding introduced' not in s:
+              s=s.replace(needle,extra,1)
           p.write_text(s)
+          print(f'SEMANTIC_AUDIT_PATCH applied={len(applied)} token_independent_refs=1 token_independent_operands=1 target_pollution_gates=1')
           PY
           git diff --check
+          git diff -- Tools/Stage9AdministratorStartPatch/Program.cs | tee "$RUNNER_TEMP/administrator-start/evidence/audit-source-adjustment.patch"
 
       - name: Build dedicated Cecil patcher
         shell: bash
@@ -90,9 +110,9 @@ jobs:
           grep -F 'ADMINISTRATOR_START_PREIMAGE_PASS' "$LOG"
           grep -F 'REOPEN_ADMINISTRATOR_START_PASS' "$LOG"
           grep -F 'SEMANTIC_ISOLATION_PASS unchanged_method_headers=2317 changed_method_bodies=1 target=0x06000004 unchanged_fields=2802' "$LOG"
-          grep -F 'METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_refs_unchanged=1 type_refs_unchanged=1 system_private_corelib_refs=0' "$LOG"
+          grep -F 'METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1 system_private_corelib_refs=0' "$LOG"
           grep -F 'ADMINISTRATOR_START_STRUCTURE_GATE_PASS valid_range_gate=1 foreach_try_finally=1 SetGloveButtons_zero_arg=1 mode0_save_chain=1 mode3_private_board_field=0 mode4_order=load_then_start tail_gamepause=1' "$LOG"
-          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\n' "$EXPECTED_INPUT_SHA" "$ADMINISTRATOR_START_OUTPUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/static-qualified.txt"
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\nmemberref_gate=semantic-set\ntyperef_gate=semantic-set\n' "$EXPECTED_INPUT_SHA" "$ADMINISTRATOR_START_OUTPUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/static-qualified.txt"
 
       - name: Upload static-qualified Administrator.Start candidate
         uses: actions/upload-artifact@v4
