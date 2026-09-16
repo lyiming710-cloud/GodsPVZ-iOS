@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 jobs:
@@ -43,6 +43,28 @@ jobs:
             "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT" "$ACTUAL" "$GITHUB_SHA" \
             > "$RUNNER_TEMP/administrator-start/evidence/provenance.txt"
 
+      - name: Apply exact Cecil generic MemberRef signature fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('Tools/Stage9AdministratorStartPatch/Program.cs')
+          s = p.read_text()
+          old = 'var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");'
+          new = 'var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");'
+          if old in s:
+              s = s.replace(old, new, 1)
+              p.write_text(s)
+              print('PATCHER_SIGNATURE_FIX applied=1 token=0x0A0001EC return=!0')
+          elif new in s:
+              print('PATCHER_SIGNATURE_FIX applied=0 already_fixed=1 token=0x0A0001EC return=!0')
+          else:
+              raise SystemExit('expected List<GameObject>.get_Item signature assertion not found')
+          PY
+          git diff --check
+          git diff -- Tools/Stage9AdministratorStartPatch/Program.cs
+
       - name: Build dedicated Cecil patcher
         shell: bash
         run: |
@@ -77,6 +99,20 @@ jobs:
           printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\n' \
             "$EXPECTED_INPUT_SHA" "$ADMINISTRATOR_START_OUTPUT_SHA" \
             | tee "$RUNNER_TEMP/administrator-start/evidence/static-qualified.txt"
+
+      - name: Persist verified patcher signature fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet -- Tools/Stage9AdministratorStartPatch/Program.cs; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add Tools/Stage9AdministratorStartPatch/Program.cs
+            git commit -m 'fix: match Cecil List<T>.get_Item generic return signature [skip ci]'
+            git push origin HEAD:stage9-admin-start-static
+          else
+            echo 'PATCHER_SIGNATURE_FIX already_persisted=1'
+          fi
 
       - name: Upload static-qualified Administrator.Start candidate
         uses: actions/upload-artifact@v4
