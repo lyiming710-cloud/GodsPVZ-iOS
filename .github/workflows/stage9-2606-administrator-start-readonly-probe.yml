@@ -20,6 +20,7 @@ jobs:
           DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
           test -n "$DLL"
           dotnet run --project Tools/Stage9AdministratorStartProbe/Stage9AdministratorStartProbe.csproj -c Release -- "$DLL" '26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022' | tee "$RUNNER_TEMP/administrator-start-probe.txt"
-          grep -q '^READONLY_ADMINISTRATOR_START_PROBE_PASS mutation=0 token=0x06000004 rid=4 switch_damage=1$' "$RUNNER_TEMP/administrator-start-probe.txt"
+          grep -q '^READONLY_ADMINISTRATOR_START_PROBE_PASS mutation=0 token=0x06000004 rid=4 switch_damage=1 native_call_rids=11$' "$RUNNER_TEMP/administrator-start-probe.txt"
+          test "$(grep -c '^NATIVE_OWN_CALL_RID ' "$RUNNER_TEMP/administrator-start-probe.txt")" = 11
       - uses: actions/upload-artifact@v4
         with: {name: Stage9.1-2606-ADMINISTRATOR-START-READONLY-PROBE, path: '${{ runner.temp }}/administrator-start-probe.txt', retention-days: 90}
