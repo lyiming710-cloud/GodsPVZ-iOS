@@ -17,9 +17,9 @@ jobs:
       UNITY_EMAIL: '${{ secrets.UNITY_EMAIL }}'
       UNITY_PASSWORD: '${{ secrets.UNITY_PASSWORD }}'
       STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS: 900
-      STATIC_RUN_ID: '35213963264'
-      STATIC_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-STATIC-QUALIFIED
-      EXPECTED_CANDIDATE_SHA: ad2743f5fc185ccb3b13bd5b4149db341377aebb016ed9f376f5b52b8ce3329f
+      STATIC_RUN_ID: '35217162411'
+      STATIC_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-BOARDACCESS-STATIC-QUALIFIED
+      EXPECTED_CANDIDATE_SHA: 2ba80feb6cd332148b950953675ac6e8d38b57f0c5944114503eea4caa442d83
     steps:
       - uses: actions/checkout@v4
 
@@ -61,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           D="$RUNNER_TEMP/stage9-administrator-update/candidate"
-          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-administrator-update.dll' -print -quit)
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-administrator-update-boardaccess.dll' -print -quit)
           SUM=$(find "$D" -type f -name 'output.sha256.txt' -print -quit)
           QUAL=$(find "$D" -type f -name 'static-qualified.txt' -print -quit)
           test -n "$DLL"; test -n "$SUM"; test -n "$QUAL"
@@ -72,6 +72,8 @@ jobs:
           grep -Fx 'target=Administrator.Update' "$QUAL"
           grep -Fx 'token=0x06000006' "$QUAL"
           grep -Fx 'metadata_directory_unchanged=1' "$QUAL"
+          grep -Fx 'repair=IL_00F3_private_board_ldfld_to_Board_OnPlay_callvirt' "$QUAL"
+          grep -Fx 'board_onplay_token=0x0600016F' "$QUAL"
           grep -Fx 'start_runtime_pass_run=35212942551' "$QUAL"
           echo "ADMINISTRATOR_UPDATE_CANDIDATE=$DLL" >> "$GITHUB_ENV"
           echo "ADMINISTRATOR_UPDATE_SHA=$SHA" >> "$GITHUB_ENV"
