@@ -1,0 +1,74 @@
+name: Stage9 Administrator.Start body patch feasibility
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-body-feasibility.yml'
+  workflow_dispatch:
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      BASELINE_RUN_ID: '34990527235'
+      BASELINE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      BASELINE_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - name: Download baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.BASELINE_RUN_ID }}
+          name: ${{ env.BASELINE_ARTIFACT }}
+          path: ${{ runner.temp }}/feas/input
+      - name: Probe locals and reusable signatures
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/feas/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$BASELINE_SHA"
+          mkdir -p "$RUNNER_TEMP/feas/src" "$RUNNER_TEMP/feas/evidence"
+          cat > "$RUNNER_TEMP/feas/src/probe.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/feas/src/Program.cs" <<'EOF'
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          using Mono.Cecil;
+          using CecilModule = Mono.Cecil.ModuleDefinition;
+          using CecilType = Mono.Cecil.TypeDefinition;
+          static IEnumerable<CecilType> All(IEnumerable<CecilType> roots){foreach(var t in roots){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          var path=args[0];
+          using var mod=CecilModule.ReadModule(path,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var methods=All(mod.Types).SelectMany(t=>t.Methods).ToList();
+          var start=methods.Single(m=>Raw(m)==0x06000004);
+          Console.WriteLine($"START code={start.Body.CodeSize} locals={start.Body.Variables.Count} maxstack={start.Body.MaxStackSize} eh={start.Body.ExceptionHandlers.Count}");
+          foreach(var v in start.Body.Variables) Console.WriteLine($"START_LOCAL index={v.Index} type={v.VariableType.FullName}");
+          string[] want={"System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>","System.Int32","Board"};
+          Console.WriteLine("=== EXACT_3_LOCAL_METHODS ===");
+          foreach(var m in methods.Where(m=>m.HasBody && m.Body.Variables.Count==3 && m.Body.Variables.Select(v=>v.VariableType.FullName).SequenceEqual(want))) Console.WriteLine($"MATCH token=0x{Raw(m):X8} {m.FullName}");
+          Console.WriteLine("=== METHODS_CONTAINING_ALL_WANTED_TYPES ===");
+          foreach(var m in methods.Where(m=>m.HasBody && want.All(w=>m.Body.Variables.Any(v=>v.VariableType.FullName==w)))) Console.WriteLine($"CONTAINS token=0x{Raw(m):X8} {m.FullName} locals={m.Body.Variables.Count}");
+          using var fs=File.OpenRead(path); using var pe=new PEReader(fs); var md=pe.GetMetadataReader();
+          foreach(var m in methods.Where(m=>m.HasBody && m.Body.Variables.Count==3 && m.Body.Variables.Select(v=>v.VariableType.FullName).SequenceEqual(want))){
+            var h=MetadataTokens.MethodDefinitionHandle((int)(Raw(m)&0x00FFFFFF)); var d=md.GetMethodDefinition(h); var b=pe.GetMethodBody(d.RelativeVirtualAddress);
+            Console.WriteLine($"MATCH_LOCALSIG owner=0x{Raw(m):X8} token=0x{MetadataTokens.GetToken(b.LocalSignature):X8}");
+          }
+          var sd=md.GetMethodDefinition(MetadataTokens.MethodDefinitionHandle(4)); var sb=pe.GetMethodBody(sd.RelativeVirtualAddress);
+          Console.WriteLine($"START_RAW rva=0x{sd.RelativeVirtualAddress:X} ilsize={sb.GetILBytes().Length} localsig=0x{MetadataTokens.GetToken(sb.LocalSignature):X8} maxstack={sb.MaxStack} eh={sb.ExceptionRegions.Length}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/feas/src/probe.csproj" -- "$DLL" | tee "$RUNNER_TEMP/feas/evidence/body-feasibility.txt"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-BODY-FEASIBILITY
+          path: ${{ runner.temp }}/feas/evidence/
+          retention-days: 30
