@@ -1,0 +1,130 @@
+name: Stage9 Administrator.Start raw metadata probe
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-administrator-start-raw-metadata-probe.yml'
+  workflow_dispatch:
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      BASELINE_RUN_ID: '34990527235'
+      BASELINE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      BASELINE_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+      CANDIDATE_RUN_ID: '35177326350'
+      CANDIDATE_ARTIFACT: Stage9.1-ADMINISTRATOR-START-STATIC-QUALIFIED
+      CANDIDATE_SHA: ebe634571d107fb46599d9a3d28382317d09594136399316ea5b9cd16fc0003c
+    steps:
+      - name: Download baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.BASELINE_RUN_ID }}
+          name: ${{ env.BASELINE_ARTIFACT }}
+          path: ${{ runner.temp }}/rawmeta/baseline
+      - name: Download candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.CANDIDATE_RUN_ID }}
+          name: ${{ env.CANDIDATE_ARTIFACT }}
+          path: ${{ runner.temp }}/rawmeta/candidate
+      - name: Compare raw metadata rows and Start operands
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=$(find "$RUNNER_TEMP/rawmeta/baseline" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          CAND=$(find "$RUNNER_TEMP/rawmeta/candidate" -type f -name 'GodsPVZRuntime1-administrator-start.dll' -print -quit)
+          test -n "$BASE"; test -n "$CAND"
+          test "$(sha256sum "$BASE"|awk '{print $1}')" = "$BASELINE_SHA"
+          test "$(sha256sum "$CAND"|awk '{print $1}')" = "$CANDIDATE_SHA"
+          mkdir -p "$RUNNER_TEMP/rawmeta/src" "$RUNNER_TEMP/rawmeta/evidence"
+          cat > "$RUNNER_TEMP/rawmeta/src/rawmeta.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+            <ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup>
+          </Project>
+          EOF
+          cat > "$RUNNER_TEMP/rawmeta/src/Program.cs" <<'EOF'
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+
+          static string Hex(byte[] b)=>Convert.ToHexString(b);
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots){foreach(var t in roots){yield return t;foreach(var n in AllTypes(t.NestedTypes))yield return n;}}
+          static string ParentInfo(MetadataReader md, EntityHandle h){
+            var tok=MetadataTokens.GetToken(h);
+            return h.Kind switch {
+              HandleKind.TypeSpecification => $"TypeSpec token=0x{tok:X8} sig={Hex(md.GetBlobBytes(md.GetTypeSpecification((TypeSpecificationHandle)h).Signature))}",
+              HandleKind.TypeReference => TypeRef(md,(TypeReferenceHandle)h,tok),
+              HandleKind.TypeDefinition => TypeDef(md,(TypeDefinitionHandle)h,tok),
+              _ => $"{h.Kind} token=0x{tok:X8}"
+            };
+          }
+          static string TypeRef(MetadataReader md, TypeReferenceHandle h, int tok){var t=md.GetTypeReference(h);return $"TypeRef token=0x{tok:X8} name={md.GetString(t.Namespace)}.{md.GetString(t.Name)} scope={t.ResolutionScope.Kind}:0x{MetadataTokens.GetToken(t.ResolutionScope):X8}";}
+          static string TypeDef(MetadataReader md, TypeDefinitionHandle h, int tok){var t=md.GetTypeDefinition(h);return $"TypeDef token=0x{tok:X8} name={md.GetString(t.Namespace)}.{md.GetString(t.Name)}";}
+
+          static void DumpRaw(string label,string path){
+            using var fs=File.OpenRead(path); using var pe=new PEReader(fs); var md=pe.GetMetadataReader();
+            Console.WriteLine($"=== {label} RAW ===");
+            Console.WriteLine($"COUNTS MemberRef={md.GetTableRowCount(TableIndex.MemberRef)} TypeSpec={md.GetTableRowCount(TableIndex.TypeSpec)} StandAloneSig={md.GetTableRowCount(TableIndex.StandAloneSig)} MethodDef={md.GetTableRowCount(TableIndex.MethodDef)} Field={md.GetTableRowCount(TableIndex.Field)}");
+            var wanted=new HashSet<string>{"GetEnumerator","get_Current","MoveNext","Dispose","get_Item"};
+            foreach(var h in md.MemberReferences){
+              var r=md.GetMemberReference(h); var name=md.GetString(r.Name); if(!wanted.Contains(name)) continue;
+              var tok=MetadataTokens.GetToken(h); var sig=Hex(md.GetBlobBytes(r.Signature));
+              Console.WriteLine($"MR token=0x{tok:X8} name={name} parent=[{ParentInfo(md,r.Parent)}] sig={sig}");
+            }
+            var mh=MetadataTokens.MethodDefinitionHandle(4); var m=md.GetMethodDefinition(mh); var body=pe.GetMethodBody(m.RelativeVirtualAddress);
+            Console.WriteLine($"START_BODY rva=0x{m.RelativeVirtualAddress:X} maxstack={body.MaxStack} initlocals={body.LocalVariablesInitialized} localSig=0x{MetadataTokens.GetToken(body.LocalSignature):X8} ilSize={body.GetILBytes().Length} eh={body.ExceptionRegions.Length}");
+            if(!body.LocalSignature.IsNil){var ss=md.GetStandaloneSignature(body.LocalSignature);Console.WriteLine($"START_LOCALSIG token=0x{MetadataTokens.GetToken(body.LocalSignature):X8} sig={Hex(md.GetBlobBytes(ss.Signature))}");}
+          }
+
+          static void DumpCecil(string label,string path){
+            using var m=ModuleDefinition.ReadModule(path,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+            var methods=AllTypes(m.Types).SelectMany(t=>t.Methods).ToList();
+            Console.WriteLine($"=== {label} CECIL USES ===");
+            foreach(var owner in methods.Where(x=>x.HasBody && (Raw(x)==0x06000004 || Raw(x)==0x06000142 || Raw(x)==0x06000425))){
+              foreach(var i in owner.Body.Instructions){
+                if(i.Operand is MethodReference r && r.Name is "GetEnumerator" or "get_Current" or "MoveNext" or "Dispose" or "get_Item")
+                  Console.WriteLine($"USE owner=0x{Raw(owner):X8} {owner.FullName} il=IL_{i.Offset:X4} op={i.OpCode.Code} ref=0x{Raw(r):X8} full={r.FullName} declKind={r.DeclaringType.GetType().Name}");
+              }
+            }
+          }
+
+          DumpRaw("BASELINE",args[0]); DumpRaw("CANDIDATE",args[1]); DumpCecil("BASELINE",args[0]); DumpCecil("CANDIDATE",args[1]);
+          EOF
+          dotnet run --project "$RUNNER_TEMP/rawmeta/src/rawmeta.csproj" -- "$BASE" "$CAND" | tee "$RUNNER_TEMP/rawmeta/evidence/raw-metadata-compare.txt"
+          python3 - "$RUNNER_TEMP/rawmeta/evidence/raw-metadata-compare.txt" <<'PY' | tee "$RUNNER_TEMP/rawmeta/evidence/raw-metadata-verdict.txt"
+          from pathlib import Path
+          import sys,re
+          s=Path(sys.argv[1]).read_text()
+          parts=s.split('=== CANDIDATE RAW ===')
+          assert len(parts)==2
+          base=parts[0]; rest=parts[1]
+          cand=rest.split('=== BASELINE CECIL USES ===')[0]
+          def focus(x,name): return [ln for ln in x.splitlines() if ln.startswith('MR ') and f'name={name} ' in ln and ('UnityEngine.GameObject' in ln or name=='GetEnumerator')]
+          for name in ['GetEnumerator','get_Current','MoveNext','Dispose','get_Item']:
+              b=focus(base,name); c=focus(cand,name)
+              print(name,'baseline_count',len(b),'candidate_count',len(c))
+              for ln in b: print(' BASE',ln)
+              for ln in c: print(' CAND',ln)
+          print('RAW_METADATA_PROBE_COMPLETE=1')
+          PY
+      - name: Upload raw metadata evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-RAW-METADATA-PROBE
+          path: ${{ runner.temp }}/rawmeta/evidence/
+          retention-days: 30
+          if-no-files-found: error
