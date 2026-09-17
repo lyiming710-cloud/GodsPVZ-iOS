@@ -115,9 +115,9 @@ static string OpSig(object? o, MethodDefinition owner)
     if (o is null) return "";
     if (o is Instruction i) return $"I#{owner.Body.Instructions.IndexOf(i)}";
     if (o is Instruction[] sw) return "SW[" + string.Join(',', sw.Select(i => owner.Body.Instructions.IndexOf(i))) + "]";
-    if (o is MethodReference mr) return "M:" + MethodRefSig(mr);
-    if (o is FieldReference fr) return $"F:{fr.FullName}@{Scope(fr.DeclaringType.Scope)}#0x{Raw(fr):X8}";
-    if (o is TypeReference tr) return $"T:{TypeSig(tr)}#0x{Raw(tr):X8}";
+    if (o is MethodReference mr) return $"M:{mr.FullName}@{Scope(mr.DeclaringType.Scope)}";
+    if (o is FieldReference fr) return $"F:{fr.FullName}@{Scope(fr.DeclaringType.Scope)}";
+    if (o is TypeReference tr) return $"T:{TypeSig(tr)}";
     if (o is VariableDefinition v) return $"V:{v.Index}:{TypeSig(v.VariableType)}";
     if (o is ParameterDefinition p) return $"P:{p.Index}:{TypeSig(p.ParameterType)}";
     if (o is string s) return "S:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(s));
@@ -171,8 +171,8 @@ static void RequireField(FieldReference f, uint token, string declaringType, str
         throw new InvalidDataException($"field dependency drift token=0x{token:X8} actual={f.FullName}");
 }
 static string AssemblyRefs(ModuleDefinition m) => string.Join("\n", m.AssemblyReferences.Select(a => a.FullName).OrderBy(x => x, StringComparer.Ordinal));
-static string MemberRefs(ModuleDefinition m) => string.Join("\n", m.GetMemberReferences().Select(r => $"0x{Raw(r):X8}|{r.FullName}|{Scope(r.DeclaringType.Scope)}").OrderBy(x => x, StringComparer.Ordinal));
-static string TypeRefs(ModuleDefinition m) => string.Join("\n", m.GetTypeReferences().Select(r => $"0x{Raw(r):X8}|{r.FullName}|{Scope(r.Scope)}").OrderBy(x => x, StringComparer.Ordinal));
+static string MemberRefs(ModuleDefinition m) => string.Join("\n", m.GetMemberReferences().Select(r => $"{r.FullName}|{Scope(r.DeclaringType.Scope)}").OrderBy(x => x, StringComparer.Ordinal));
+static string TypeRefs(ModuleDefinition m) => string.Join("\n", m.GetTypeReferences().Select(r => $"{r.FullName}|{Scope(r.Scope)}").OrderBy(x => x, StringComparer.Ordinal));
 
 var input = Path.GetFullPath(args[0]);
 var output = Path.GetFullPath(args[1]);
@@ -250,7 +250,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     var getCurrent = M(EnumeratorGetCurrentRefToken, "System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "get_Current", "UnityEngine.GameObject");
     var moveNext = M(EnumeratorMoveNextRefToken, "System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "MoveNext", "System.Boolean");
     var dispose = M(EnumeratorDisposeRefToken, "System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "Dispose", "System.Void");
-    var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");
+    var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");
 
     var startPlantData = M(StartPlantDataToken, "Administrator", "Start_植物存档数据", "System.Void");
     var startZombiePickerData = M(StartZombiePickerDataToken, "Administrator", "Start_出怪挑选器数据", "System.Void");
@@ -327,7 +327,7 @@ using (var module = ModuleDefinition.ReadModule(input, new ReaderParameters { In
     A(validStart);
     A(Instruction.Create(OpCodes.Ldarg_0));
     A(Instruction.Create(OpCodes.Ldfld, systems));
-    A(Instruction.Create(OpCodes.Call, getEnumerator));
+    A(Instruction.Create(OpCodes.Callvirt, getEnumerator));
     A(Instruction.Create(OpCodes.Stloc, enumLocal));
     A(tryStart);
     A(loopBody);
@@ -440,6 +440,8 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     if (target.Body.Instructions.Any(i => i.Operand is FieldReference f && Raw(f) == 0x040001B4)) throw new InvalidDataException("private BoardManager.board access introduced");
     if (target.Body.Instructions.Any(i => i.Operand is FieldReference f && f.DeclaringType.FullName.StartsWith("System.Collections.Generic.List`1", StringComparison.Ordinal) && f.Name is "_items" or "_size" or "_version"))
         throw new InvalidDataException("List<T> private internals introduced");
+    if (target.Body.Instructions.Any(i => i.Operand is MemberReference r && r.FullName.Contains("UnityEngine.Vector3::zeroVector", StringComparison.Ordinal))) throw new InvalidDataException("zeroVector scaffolding introduced");
+    if (target.Body.Instructions.Any(i => i.OpCode.Code is Code.Calli or Code.Localloc or Code.Cpblk or Code.Initblk or Code.Ldind_I or Code.Ldind_I1 or Code.Ldind_I2 or Code.Ldind_I4 or Code.Ldind_I8 or Code.Ldind_R4 or Code.Ldind_R8 or Code.Ldind_Ref or Code.Ldind_U1 or Code.Ldind_U2 or Code.Ldind_U4 or Code.Stind_I or Code.Stind_I1 or Code.Stind_I2 or Code.Stind_I4 or Code.Stind_I8 or Code.Stind_R4 or Code.Stind_R8 or Code.Stind_Ref)) throw new InvalidDataException("unmanaged scaffolding introduced");
 
     int Calls(uint tok) => target.Body.Instructions.Count(i => i.Operand is MethodReference m && Raw(m) == tok);
     int Fields(uint tok) => target.Body.Instructions.Count(i => i.Operand is FieldReference f && Raw(f) == tok);
@@ -453,12 +455,16 @@ using (var module = ModuleDefinition.ReadModule(output, new ReaderParameters { I
     if (mode4LoadIndex < 0 || mode4StartIndex < 0 || mode4LoadIndex >= mode4StartIndex) throw new InvalidDataException($"mode4 native call order drift load={mode4LoadIndex} start={mode4StartIndex}");
     if (Fields(GLawnAppFieldToken) != 1 || Fields(LawnAppSavesManagerFieldToken) != 1 || Fields(SavesManagerPlayerSaveFieldToken) != 1 || Calls(SystemSkipLevelStart0Token) != 1)
         throw new InvalidDataException("mode0 save chain gate failed");
-    if (Calls(ListGetEnumeratorRefToken) != 1 || Calls(EnumeratorGetCurrentRefToken) != 1 || Calls(EnumeratorMoveNextRefToken) != 1 || Calls(EnumeratorDisposeRefToken) != 1 || Calls(ListGetItemRefToken) != 4)
-        throw new InvalidDataException("List<GameObject> API gate failed");
+    int CallsExternal(string declaringType, string name) => target.Body.Instructions.Count(i => i.Operand is MethodReference m && m.DeclaringType.FullName == declaringType && m.Name == name);
+    if (CallsExternal("System.Collections.Generic.List`1<UnityEngine.GameObject>", "GetEnumerator") != 1 || CallsExternal("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "get_Current") != 1 || CallsExternal("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "MoveNext") != 1 || CallsExternal("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "Dispose") != 1 || CallsExternal("System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item") != 4)
+        throw new InvalidDataException("List<GameObject> API semantic gate failed");
+    var getEnumeratorInstruction = target.Body.Instructions.Single(i => i.Operand is MethodReference m && m.DeclaringType.FullName == "System.Collections.Generic.List`1<UnityEngine.GameObject>" && m.Name == "GetEnumerator");
+    if (getEnumeratorInstruction.OpCode.Code != Code.Callvirt) throw new InvalidDataException($"List<GameObject>.GetEnumerator opcode drift actual={getEnumeratorInstruction.OpCode.Code}");
+    Console.WriteLine("LIST_GAMEOBJECT_FOREACH_GATE_PASS getenumerator_opcode=callvirt getcurrent_call=1 movenext_call=1 dispose_call=1");
 
     Console.WriteLine($"REOPEN_ADMINISTRATOR_START_PASS token=0x{TargetToken:X8} code_size={target.Body.CodeSize} locals={target.Body.Variables.Count} instructions={target.Body.Instructions.Count} handlers={target.Body.ExceptionHandlers.Count} initlocals={target.Body.InitLocals}");
     Console.WriteLine($"SEMANTIC_ISOLATION_PASS unchanged_method_headers={ExpectedMethods} changed_method_bodies=1 target=0x{TargetToken:X8} unchanged_fields={ExpectedFields}");
-    Console.WriteLine("METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_refs_unchanged=1 type_refs_unchanged=1 system_private_corelib_refs=0");
+    Console.WriteLine("METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1 system_private_corelib_refs=0");
     Console.WriteLine("ADMINISTRATOR_START_STRUCTURE_GATE_PASS valid_range_gate=1 foreach_try_finally=1 SetGloveButtons_zero_arg=1 mode0_save_chain=1 mode3_private_board_field=0 mode4_order=load_then_start tail_gamepause=1");
 }
 return 0;
