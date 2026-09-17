@@ -1,0 +1,109 @@
+name: Stage9 Administrator.Update static qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-administrator-update-static.yml'
+      - 'Tools/Stage9AdministratorUpdateInPlacePatch/**'
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_RUN_ID: '35199938922'
+      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-START-INDEXED-STATIC-QUALIFIED
+      EXPECTED_INPUT_SHA: cda6bc387f0376b044ca3c95b40bcadf9d7e1ae16bed2fcc5030baaa176c7b01
+      EXPECTED_OUTPUT_SHA: ad2743f5fc185ccb3b13bd5b4149db341377aebb016ed9f376f5b52b8ce3329f
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact Start-qualified ancestor
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: '${{ env.SOURCE_RUN_ID }}'
+          name: '${{ env.SOURCE_ARTIFACT }}'
+          path: '${{ runner.temp }}/update/input'
+
+      - name: Lock ancestor and apply Update byte repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/update/input" -type f -name 'GodsPVZRuntime1-administrator-start-indexed.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          mkdir -p "$RUNNER_TEMP/update/evidence"
+          OUT="$RUNNER_TEMP/update/GodsPVZRuntime1-administrator-update.dll"
+          python3 Tools/Stage9AdministratorUpdateInPlacePatch/patch.py "$IN" "$OUT" | tee "$RUNNER_TEMP/update/evidence/update-patch-audit.txt"
+          test -s "$OUT"
+          test "$(sha256sum "$OUT"|awk '{print $1}')" = "$EXPECTED_OUTPUT_SHA"
+          echo "UPDATE_OUTPUT=$OUT" >> "$GITHUB_ENV"
+
+      - name: Read-only Cecil reopen gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/update/verifier"
+          cat > "$RUNNER_TEMP/update/verifier/verifier.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+            <ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup>
+          </Project>
+          EOF
+          cat > "$RUNNER_TEMP/update/verifier/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> ts){foreach(var t in ts){yield return t;foreach(var n in AllTypes(t.NestedTypes))yield return n;}}
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          using var m=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var types=AllTypes(m.Types).ToList();
+          var methods=types.SelectMany(t=>t.Methods).ToList();
+          var fields=types.SelectMany(t=>t.Fields).ToList();
+          if(methods.Count!=2317||fields.Count!=2802) throw new Exception($"definition count drift methods={methods.Count} fields={fields.Count}");
+          if(m.AssemblyReferences.Any(a=>a.Name=="System.Private.CoreLib")) throw new Exception("corelib pollution");
+          var update=methods.Single(x=>Raw(x)==0x06000006);
+          if(update.DeclaringType.FullName!="Administrator"||update.Name!="Update"||!update.HasBody) throw new Exception("Update identity drift");
+          if(update.Body.CodeSize!=492||update.Body.Variables.Count!=22||update.Body.ExceptionHandlers.Count!=0) throw new Exception($"Update body shape drift code={update.Body.CodeSize} locals={update.Body.Variables.Count} eh={update.Body.ExceptionHandlers.Count}");
+          var byOff=update.Body.Instructions.ToDictionary(i=>i.Offset);
+          if(byOff[0xD4].OpCode.Code!=Code.Ldc_I4_M1) throw new Exception("IL_00D4 is not ldc.i4.m1");
+          for(int off=0xD5;off<=0xDC;off++) if(byOff[off].OpCode.Code!=Code.Nop) throw new Exception($"padding drift IL_{off:X4}");
+          var st=byOff[0xDD];
+          if(st.OpCode.Code!=Code.Stfld||st.Operand is not FieldReference fr||Raw(fr)!=0x0400000A||fr.DeclaringType.FullName!="Administrator"||fr.Name!="mode"||fr.FieldType.FullName!="System.Int32") throw new Exception("IL_00DD stfld mode drift");
+          var start=methods.Single(x=>Raw(x)==0x06000004);
+          if(start.Body.Variables.Count!=1||start.Body.Variables[0].VariableType.FullName!="System.Int32") throw new Exception("Start ancestor local drift");
+          var bad=start.Body.Instructions.Where(i=>i.Operand is MethodReference mr && (mr.DeclaringType.FullName.Contains("List`1/Enumerator<UnityEngine.GameObject>")||(mr.DeclaringType.FullName=="System.Collections.Generic.List`1<UnityEngine.GameObject>"&&mr.Name=="GetEnumerator"))).ToList();
+          if(bad.Count!=0) throw new Exception("Start malformed enumerator regression");
+          Console.WriteLine($"READONLY_REOPEN_ADMINISTRATOR_UPDATE_PASS token=0x{Raw(update):X8} code_size={update.Body.CodeSize} locals={update.Body.Variables.Count} handlers={update.Body.ExceptionHandlers.Count} il00d4=ldc.i4.m1 il00dd=stfld_mode");
+          Console.WriteLine($"START_ANCESTOR_REGRESSION_GATE_PASS token=0x{Raw(start):X8} malformed_enumerator_refs={bad.Count} locals={start.Body.Variables.Count}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/update/verifier/verifier.csproj" -- "$UPDATE_OUTPUT" | tee "$RUNNER_TEMP/update/evidence/reopen-audit.txt"
+
+      - name: Enforce Administrator.Update static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="$RUNNER_TEMP/update/evidence/update-patch-audit.txt"
+          R="$RUNNER_TEMP/update/evidence/reopen-audit.txt"
+          grep -F 'ADMINISTRATOR_UPDATE_INPLACE_PATCH_PASS target=0x06000006' "$P"
+          grep -F 'ADMINISTRATOR_UPDATE_NATIVE_SEMANTICS_PASS' "$P"
+          grep -F 'METADATA_DIRECTORY_UNCHANGED_PASS' "$P"
+          grep -F 'READONLY_REOPEN_ADMINISTRATOR_UPDATE_PASS token=0x06000006' "$R"
+          grep -F 'START_ANCESTOR_REGRESSION_GATE_PASS token=0x06000004 malformed_enumerator_refs=0' "$R"
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Update\ntoken=0x06000006\nwrite_mode=inplace-byte-patch\nmetadata_directory_unchanged=1\nrepair=IL_00D4_ldc.i8_4294967295_to_ldc.i4.m1_nop8\nnative_evidence_sha256=13f85136116347b993ef4733341830e2a3a9f63dca9c8203cbb960114193bd76\nstart_runtime_pass_run=35212942551\n' "$EXPECTED_INPUT_SHA" "$EXPECTED_OUTPUT_SHA" | tee "$RUNNER_TEMP/update/evidence/static-qualified.txt"
+          printf 'INPUT_SHA256 %s\nOUTPUT_SHA256 %s\n' "$EXPECTED_INPUT_SHA" "$EXPECTED_OUTPUT_SHA" > "$RUNNER_TEMP/update/evidence/output.sha256.txt"
+
+      - name: Upload Administrator.Update static-qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-UPDATE-STATIC-QUALIFIED
+          path: |
+            ${{ runner.temp }}/update/GodsPVZRuntime1-administrator-update.dll
+            ${{ runner.temp }}/update/evidence/
+          retention-days: 90
+          if-no-files-found: error
