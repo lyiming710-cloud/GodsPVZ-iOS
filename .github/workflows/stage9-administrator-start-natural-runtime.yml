@@ -17,20 +17,20 @@ jobs:
       UNITY_EMAIL: '${{ secrets.UNITY_EMAIL }}'
       UNITY_PASSWORD: '${{ secrets.UNITY_PASSWORD }}'
       STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS: 900
-      STATIC_RUN_ID: '35177326350'
-      EXPECTED_CANDIDATE_SHA: ebe634571d107fb46599d9a3d28382317d09594136399316ea5b9cd16fc0003c
+      STATIC_RUN_ID: '35199938922'
+      EXPECTED_CANDIDATE_SHA: cda6bc387f0376b044ca3c95b40bcadf9d7e1ae16bed2fcc5030baaa176c7b01
     steps:
       - uses: actions/checkout@v4
       - name: Ensure runner disk space conditionally
         shell: bash
         run: bash Tools/Stage9CI/conditional-free-space.sh 24
-      - name: Download static-qualified Administrator.Start candidate
+      - name: Download indexed static-qualified Administrator.Start candidate
         uses: actions/download-artifact@v4
         with:
           github-token: '${{ github.token }}'
           repository: '${{ github.repository }}'
           run-id: '${{ env.STATIC_RUN_ID }}'
-          name: Stage9.1-ADMINISTRATOR-START-STATIC-QUALIFIED
+          name: Stage9.1-ADMINISTRATOR-START-INDEXED-STATIC-QUALIFIED
           path: '${{ runner.temp }}/stage9-administrator-start/candidate'
       - name: Download exact R3 archive
         uses: actions/download-artifact@v4
@@ -50,20 +50,22 @@ jobs:
           pattern: 'Stage9.1-unity-china-editor-part-*'
           merge-multiple: true
           path: '${{ runner.temp }}/stage9-administrator-start/editor-parts'
-      - name: Resolve and lock static-qualified candidate
+      - name: Resolve and lock indexed static-qualified candidate
         shell: bash
         run: |
           set -euo pipefail
           D="$RUNNER_TEMP/stage9-administrator-start/candidate"
-          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-administrator-start.dll' -print -quit)
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-administrator-start-indexed.dll' -print -quit)
           SUM=$(find "$D" -type f -name 'output.sha256.txt' -print -quit)
           QUAL=$(find "$D" -type f -name 'static-qualified.txt' -print -quit)
           test -n "$DLL"; test -n "$SUM"; test -n "$QUAL"
-          SHA=$(awk '/OUTPUT_SHA256/{print $2}' "$SUM")
+          SHA=$(awk '/^OUTPUT_SHA256 /{print $2}' "$SUM")
           test "$SHA" = "$EXPECTED_CANDIDATE_SHA"
           test "$(sha256sum "$DLL"|awk '{print $1}')" = "$SHA"
           grep -Fx 'STATIC_QUALIFIED=1' "$QUAL"
-          grep -Fx 'getenumerator_opcode=callvirt' "$QUAL"
+          grep -Fx 'metadata_directory_unchanged=1' "$QUAL"
+          grep -Fx 'local_signature=0x11000114' "$QUAL"
+          grep -Fx 'list_gameobject_enumerator_refs=0' "$QUAL"
           echo "ADMINISTRATOR_START_CANDIDATE=$DLL" >> "$GITHUB_ENV"
           echo "ADMINISTRATOR_START_SHA=$SHA" >> "$GITHUB_ENV"
           echo "RUNTIME_CANDIDATE_SHA256 $SHA"
