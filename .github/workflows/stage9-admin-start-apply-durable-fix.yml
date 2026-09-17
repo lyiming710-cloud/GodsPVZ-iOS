@@ -1,0 +1,87 @@
+name: Apply durable Administrator.Start fix
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-apply-durable-fix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply durable source and workflow corrections
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('Tools/Stage9AdministratorStartPatch/Program.cs')
+          s = p.read_text()
+          replacements = [
+            ('if (o is MethodReference mr) return "M:" + MethodRefSig(mr);', 'if (o is MethodReference mr) return $"M:{mr.FullName}@{Scope(mr.DeclaringType.Scope)}";'),
+            ('if (o is FieldReference fr) return $"F:{fr.FullName}@{Scope(fr.DeclaringType.Scope)}#0x{Raw(fr):X8}";', 'if (o is FieldReference fr) return $"F:{fr.FullName}@{Scope(fr.DeclaringType.Scope)}";'),
+            ('if (o is TypeReference tr) return $"T:{TypeSig(tr)}#0x{Raw(tr):X8}";', 'if (o is TypeReference tr) return $"T:{TypeSig(tr)}";'),
+            ('static string MemberRefs(ModuleDefinition m) => string.Join("\\n", m.GetMemberReferences().Select(r => $"0x{Raw(r):X8}|{r.FullName}|{Scope(r.DeclaringType.Scope)}").OrderBy(x => x, StringComparer.Ordinal));', 'static string MemberRefs(ModuleDefinition m) => string.Join("\\n", m.GetMemberReferences().Select(r => $"{r.FullName}|{Scope(r.DeclaringType.Scope)}").OrderBy(x => x, StringComparer.Ordinal));'),
+            ('static string TypeRefs(ModuleDefinition m) => string.Join("\\n", m.GetTypeReferences().Select(r => $"0x{Raw(r):X8}|{r.FullName}|{Scope(r.Scope)}").OrderBy(x => x, StringComparer.Ordinal));', 'static string TypeRefs(ModuleDefinition m) => string.Join("\\n", m.GetTypeReferences().Select(r => $"{r.FullName}|{Scope(r.Scope)}").OrderBy(x => x, StringComparer.Ordinal));'),
+            ('var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "UnityEngine.GameObject", "System.Int32");', 'var getItem = M(ListGetItemRefToken, "System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item", "!0", "System.Int32");'),
+            ('A(Instruction.Create(OpCodes.Call, getEnumerator));', 'A(Instruction.Create(OpCodes.Callvirt, getEnumerator));'),
+            ('Console.WriteLine("METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_refs_unchanged=1 type_refs_unchanged=1 system_private_corelib_refs=0");', 'Console.WriteLine("METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1 system_private_corelib_refs=0");'),
+            ('    if (Calls(ListGetEnumeratorRefToken) != 1 || Calls(EnumeratorGetCurrentRefToken) != 1 || Calls(EnumeratorMoveNextRefToken) != 1 || Calls(EnumeratorDisposeRefToken) != 1 || Calls(ListGetItemRefToken) != 4)\n        throw new InvalidDataException("List<GameObject> API gate failed");',
+             '    int CallsExternal(string declaringType, string name) => target.Body.Instructions.Count(i => i.Operand is MethodReference m && m.DeclaringType.FullName == declaringType && m.Name == name);\n    if (CallsExternal("System.Collections.Generic.List`1<UnityEngine.GameObject>", "GetEnumerator") != 1 || CallsExternal("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "get_Current") != 1 || CallsExternal("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "MoveNext") != 1 || CallsExternal("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>", "Dispose") != 1 || CallsExternal("System.Collections.Generic.List`1<UnityEngine.GameObject>", "get_Item") != 4)\n        throw new InvalidDataException("List<GameObject> API semantic gate failed");\n    var getEnumeratorInstruction = target.Body.Instructions.Single(i => i.Operand is MethodReference m && m.DeclaringType.FullName == "System.Collections.Generic.List`1<UnityEngine.GameObject>" && m.Name == "GetEnumerator");\n    if (getEnumeratorInstruction.OpCode.Code != Code.Callvirt) throw new InvalidDataException($"List<GameObject>.GetEnumerator opcode drift actual={getEnumeratorInstruction.OpCode.Code}");\n    Console.WriteLine("LIST_GAMEOBJECT_FOREACH_GATE_PASS getenumerator_opcode=callvirt getcurrent_call=1 movenext_call=1 dispose_call=1");')
+          ]
+          for old, new in replacements:
+              if old not in s:
+                  if new in s:
+                      continue
+                  raise SystemExit('missing expected Program.cs pattern: ' + old[:140])
+              s = s.replace(old, new, 1)
+
+          needle = '    if (target.Body.Instructions.Any(i => i.Operand is FieldReference f && f.DeclaringType.FullName.StartsWith("System.Collections.Generic.List`1", StringComparison.Ordinal) && f.Name is "_items" or "_size" or "_version"))\n        throw new InvalidDataException("List<T> private internals introduced");'
+          extra = needle + '\n    if (target.Body.Instructions.Any(i => i.Operand is MemberReference r && r.FullName.Contains("UnityEngine.Vector3::zeroVector", StringComparison.Ordinal))) throw new InvalidDataException("zeroVector scaffolding introduced");\n    if (target.Body.Instructions.Any(i => i.OpCode.Code is Code.Calli or Code.Localloc or Code.Cpblk or Code.Initblk or Code.Ldind_I or Code.Ldind_I1 or Code.Ldind_I2 or Code.Ldind_I4 or Code.Ldind_I8 or Code.Ldind_R4 or Code.Ldind_R8 or Code.Ldind_Ref or Code.Ldind_U1 or Code.Ldind_U2 or Code.Ldind_U4 or Code.Stind_I or Code.Stind_I1 or Code.Stind_I2 or Code.Stind_I4 or Code.Stind_I8 or Code.Stind_R4 or Code.Stind_R8 or Code.Stind_Ref)) throw new InvalidDataException("unmanaged scaffolding introduced");'
+          if 'zeroVector scaffolding introduced' not in s:
+              if needle not in s:
+                  raise SystemExit('missing pollution gate insertion point')
+              s = s.replace(needle, extra, 1)
+          p.write_text(s)
+
+          w = Path('.github/workflows/stage9-administrator-start-static-qualify.yml')
+          y = w.read_text()
+          # Narrow automatic runs to meaningful inputs.
+          y = y.replace('on:\n  push:\n  workflow_dispatch:', "on:\n  push:\n    branches: [stage9-admin-start-static]\n    paths:\n      - 'Tools/Stage9AdministratorStartPatch/**'\n      - '.github/workflows/stage9-administrator-start-static-qualify.yml'\n  workflow_dispatch:", 1)
+          start = y.find('      - name: Apply Cecil semantic-audit corrections\n')
+          end = y.find('      - name: Build dedicated Cecil patcher\n')
+          if start >= 0 and end > start:
+              durable = '''      - name: Verify durable patch source\n        shell: bash\n        run: |\n          set -euo pipefail\n          git diff --check\n          grep -F 'OpCodes.Callvirt, getEnumerator' Tools/Stage9AdministratorStartPatch/Program.cs\n          grep -F '"get_Item", "!0", "System.Int32"' Tools/Stage9AdministratorStartPatch/Program.cs\n          grep -F 'member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1' Tools/Stage9AdministratorStartPatch/Program.cs\n'''
+              y = y[:start] + durable + y[end:]
+          elif 'name: Verify durable patch source' not in y:
+              raise SystemExit('static workflow hotpatch block not found')
+          marker = "          grep -F 'ADMINISTRATOR_START_STRUCTURE_GATE_PASS valid_range_gate=1 foreach_try_finally=1 SetGloveButtons_zero_arg=1 mode0_save_chain=1 mode3_private_board_field=0 mode4_order=load_then_start tail_gamepause=1' \"$LOG\"\n"
+          marker2 = marker + "          grep -F 'LIST_GAMEOBJECT_FOREACH_GATE_PASS getenumerator_opcode=callvirt getcurrent_call=1 movenext_call=1 dispose_call=1' \"$LOG\"\n"
+          if 'LIST_GAMEOBJECT_FOREACH_GATE_PASS getenumerator_opcode=callvirt' not in y:
+              if marker not in y:
+                  raise SystemExit('static workflow marker insertion point not found')
+              y = y.replace(marker, marker2, 1)
+          w.write_text(y)
+          PY
+          git diff --check
+          git diff -- Tools/Stage9AdministratorStartPatch/Program.cs .github/workflows/stage9-administrator-start-static-qualify.yml
+      - name: Commit durable fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Tools/Stage9AdministratorStartPatch/Program.cs .github/workflows/stage9-administrator-start-static-qualify.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix(stage9): make Administrator.Start patch durable'
+          git push origin HEAD:stage9-admin-start-static
