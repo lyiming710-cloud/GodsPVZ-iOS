@@ -1,0 +1,118 @@
+name: Stage9 Administrator.Start in-place static qualify
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-inplace-static.yml'
+      - 'Tools/Stage9AdministratorStartInPlacePatch/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_RUN_ID: '34990527235'
+      SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      EXPECTED_INPUT_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact qualified baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/inplace/input
+
+      - name: Lock baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/inplace/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN" | awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          echo "BASELINE_DLL=$IN" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/inplace/evidence"
+          echo "INPUT_SHA256 $EXPECTED_INPUT_SHA" | tee "$RUNNER_TEMP/inplace/evidence/input.sha256.txt"
+
+      - name: Build temporary Cecil body assembler
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/inplace/assembler"
+          cp Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj "$RUNNER_TEMP/inplace/assembler/assembler.csproj"
+          cp Tools/Stage9AdministratorStartPatch/Program.cs "$RUNNER_TEMP/inplace/assembler/Program.cs"
+          python3 - "$RUNNER_TEMP/inplace/assembler/Program.cs" <<'PY'
+          from pathlib import Path
+          import sys
+          p=Path(sys.argv[1]); s=p.read_text()
+          replacements=[
+          ('''    var enumLocal = new VariableDefinition(getEnumerator.ReturnType);\n    var modeIndex = new VariableDefinition(module.TypeSystem.Int32);\n    body.Variables.Add(enumLocal);\n    body.Variables.Add(modeIndex);''',
+           '''    var enumLocal = new VariableDefinition(getEnumerator.ReturnType);\n    var gameObjectType = ((GenericInstanceType)systems.FieldType).GenericArguments[0];\n    var unusedGameObject1 = new VariableDefinition(gameObjectType);\n    var unusedGameObject2 = new VariableDefinition(gameObjectType);\n    body.Variables.Add(enumLocal);\n    body.Variables.Add(unusedGameObject1);\n    body.Variables.Add(unusedGameObject2);'''),
+          ('''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Ldfld, mode));\n    A(Instruction.Create(OpCodes.Ldc_I4_1));\n    A(Instruction.Create(OpCodes.Add));\n    A(Instruction.Create(OpCodes.Stloc, modeIndex));\n    A(Instruction.Create(OpCodes.Ldloc, modeIndex));\n    A(Instruction.Create(OpCodes.Ldc_I4_5));''',
+           '''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Ldfld, mode));\n    A(Instruction.Create(OpCodes.Ldc_I4_1));\n    A(Instruction.Create(OpCodes.Add));\n    A(Instruction.Create(OpCodes.Ldc_I4_5));'''),
+          ('''    A(Instruction.Create(OpCodes.Ldloc, modeIndex));\n    A(Instruction.Create(OpCodes.Switch, new[] { caseMinus1, case0, case1, case2, case3, case4 }));''',
+           '''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Ldfld, mode));\n    A(Instruction.Create(OpCodes.Ldc_I4_1));\n    A(Instruction.Create(OpCodes.Add));\n    A(Instruction.Create(OpCodes.Switch, new[] { caseMinus1, case0, case1, case2, case3, case4 }));'''),
+          ('''    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, unityImplicit)); A(Instruction.Create(OpCodes.Brfalse, mode3NullBoard));\n    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, boardOnPlay)); A(Instruction.Create(OpCodes.Br, mode3BoardReady));\n    A(mode3NullBoard); A(Instruction.Create(OpCodes.Ldnull));\n    A(mode3BoardReady);\n    var boardTemp = new VariableDefinition(startBoardConfig.Parameters[0].ParameterType);\n    body.Variables.Add(boardTemp);\n    A(Instruction.Create(OpCodes.Stloc, boardTemp));\n    A(Instruction.Create(OpCodes.Ldarg_0)); A(Instruction.Create(OpCodes.Ldloc, boardTemp)); A(Instruction.Create(OpCodes.Call, startBoardConfig));''',
+           '''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, unityImplicit)); A(Instruction.Create(OpCodes.Brfalse, mode3NullBoard));\n    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, boardOnPlay)); A(Instruction.Create(OpCodes.Br, mode3BoardReady));\n    A(mode3NullBoard); A(Instruction.Create(OpCodes.Ldnull));\n    A(mode3BoardReady);\n    A(Instruction.Create(OpCodes.Call, startBoardConfig));''')]
+          for old,new in replacements:
+              assert old in s, old[:120]
+              s=s.replace(old,new,1)
+          p.write_text(s)
+          print('ASSEMBLER_TRANSFORM_PASS no_mode_local=1 no_board_local=1 reused_local_shape=0x11000101')
+          PY
+          dotnet restore "$RUNNER_TEMP/inplace/assembler/assembler.csproj"
+          dotnet build -c Release --no-restore "$RUNNER_TEMP/inplace/assembler/assembler.csproj"
+          TMP="$RUNNER_TEMP/inplace/GodsPVZRuntime1-temp-cecil.dll"
+          dotnet run -c Release --no-build --project "$RUNNER_TEMP/inplace/assembler/assembler.csproj" -- "$BASELINE_DLL" "$TMP" "$EXPECTED_INPUT_SHA" | tee "$RUNNER_TEMP/inplace/evidence/temp-assembler-audit.txt"
+          test -s "$TMP"
+          echo "TEMP_DLL=$TMP" >> "$GITHUB_ENV"
+
+      - name: Build in-place writer
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore Tools/Stage9AdministratorStartInPlacePatch/Stage9AdministratorStartInPlacePatch.csproj
+          dotnet build -c Release --no-restore Tools/Stage9AdministratorStartInPlacePatch/Stage9AdministratorStartInPlacePatch.csproj
+
+      - name: Patch only Administrator.Start body allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/inplace/GodsPVZRuntime1-administrator-start-inplace.dll"
+          dotnet run -c Release --no-build --project Tools/Stage9AdministratorStartInPlacePatch/Stage9AdministratorStartInPlacePatch.csproj -- "$BASELINE_DLL" "$TEMP_DLL" "$OUT" | tee "$RUNNER_TEMP/inplace/evidence/inplace-writer-audit.txt"
+          test -s "$OUT"
+          SHA=$(sha256sum "$OUT" | awk '{print $1}')
+          echo "OUTPUT_SHA256 $SHA" | tee "$RUNNER_TEMP/inplace/evidence/output.sha256.txt"
+          echo "INPLACE_OUTPUT=$OUT" >> "$GITHUB_ENV"
+          echo "INPLACE_OUTPUT_SHA=$SHA" >> "$GITHUB_ENV"
+
+      - name: Enforce metadata-preserving gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG="$RUNNER_TEMP/inplace/evidence/inplace-writer-audit.txt"
+          grep -F 'INPLACE_PATCH_BYTES_PASS target=0x06000004' "$LOG"
+          grep -F 'METADATA_DIRECTORY_UNCHANGED_PASS' "$LOG"
+          grep -F 'OUTPUT_BODY_PASS' "$LOG"
+          grep -F 'REOPEN_INPLACE_START_PASS' "$LOG"
+          grep -Fx 'ADMINISTRATOR_START_INPLACE_STATIC_PASS=1' "$LOG"
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\nwrite_mode=inplace-method-body\nmetadata_directory_unchanged=1\nlocal_signature=0x11000101\ngetenumerator_token=0x0A0000FB\n' "$EXPECTED_INPUT_SHA" "$INPLACE_OUTPUT_SHA" | tee "$RUNNER_TEMP/inplace/evidence/static-qualified.txt"
+
+      - name: Upload metadata-preserving candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-INPLACE-STATIC-QUALIFIED
+          path: |
+            ${{ runner.temp }}/inplace/GodsPVZRuntime1-administrator-start-inplace.dll
+            ${{ runner.temp }}/inplace/evidence/
+          retention-days: 90
+          if-no-files-found: error
