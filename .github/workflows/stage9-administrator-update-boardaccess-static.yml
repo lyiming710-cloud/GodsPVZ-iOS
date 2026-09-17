@@ -1,0 +1,107 @@
+name: Stage9 Administrator.Update board-access static qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-administrator-update-boardaccess-static.yml'
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SOURCE_RUN_ID: '35213963264'
+      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-STATIC-QUALIFIED
+      EXPECTED_INPUT_SHA: ad2743f5fc185ccb3b13bd5b4149db341377aebb016ed9f376f5b52b8ce3329f
+      EXPECTED_OUTPUT_SHA: 2ba80feb6cd332148b950953675ac6e8d38b57f0c5944114503eea4caa442d83
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact Update ancestor
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: '${{ env.SOURCE_RUN_ID }}'
+          name: '${{ env.SOURCE_ARTIFACT }}'
+          path: '${{ runner.temp }}/boardaccess/input'
+      - name: Lock ancestor and apply board-access byte repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/boardaccess/input" -type f -name 'GodsPVZRuntime1-administrator-update.dll' -print -quit)
+          QUAL=$(find "$RUNNER_TEMP/boardaccess/input" -type f -name 'static-qualified.txt' -print -quit)
+          test -n "$IN"; test -n "$QUAL"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          grep -Fx 'STATIC_QUALIFIED=1' "$QUAL"
+          grep -Fx 'target=Administrator.Update' "$QUAL"
+          mkdir -p "$RUNNER_TEMP/boardaccess/evidence"
+          OUT="$RUNNER_TEMP/boardaccess/GodsPVZRuntime1-administrator-update-boardaccess.dll"
+          python3 Tools/Stage9AdministratorUpdateBoardAccessPatch/patch.py "$IN" "$OUT" | tee "$RUNNER_TEMP/boardaccess/evidence/boardaccess-patch-audit.txt"
+          test "$(sha256sum "$OUT"|awk '{print $1}')" = "$EXPECTED_OUTPUT_SHA"
+          echo "BOARDACCESS_OUTPUT=$OUT" >> "$GITHUB_ENV"
+      - name: Read-only Cecil reopen gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/boardaccess/verifier"
+          cat > "$RUNNER_TEMP/boardaccess/verifier/verifier.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/boardaccess/verifier/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> ts){foreach(var t in ts){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Tok(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          using var m=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var types=All(m.Types).ToList(); var methods=types.SelectMany(t=>t.Methods).ToList(); var fields=types.SelectMany(t=>t.Fields).ToList();
+          if(methods.Count!=2317||fields.Count!=2802) throw new Exception($"definition count drift methods={methods.Count} fields={fields.Count}");
+          if(m.AssemblyReferences.Any(a=>a.Name=="System.Private.CoreLib")) throw new Exception("corelib pollution");
+          var u=methods.Single(x=>Tok(x)==0x06000006);
+          if(u.DeclaringType.FullName!="Administrator"||u.Name!="Update"||u.Body.CodeSize!=492||u.Body.Variables.Count!=22||u.Body.ExceptionHandlers.Count!=0) throw new Exception("Update shape drift");
+          var by=u.Body.Instructions.ToDictionary(i=>i.Offset);
+          if(by[0xD4].OpCode.Code!=Code.Ldc_I4_M1) throw new Exception("mode fix regression");
+          for(int off=0xD5;off<=0xDC;off++) if(by[off].OpCode.Code!=Code.Nop) throw new Exception($"mode padding drift IL_{off:X4}");
+          if(by[0xDD].OpCode.Code!=Code.Stfld||by[0xDD].Operand is not FieldReference mode||Tok(mode)!=0x0400000A) throw new Exception("mode stfld regression");
+          if(by[0xF3].OpCode.Code!=Code.Callvirt||by[0xF3].Operand is not MethodReference bop||Tok(bop)!=0x0600016F||bop.DeclaringType.FullName!="BoardManager"||bop.Name!="Board_OnPlay"||bop.ReturnType.FullName!="Board") throw new Exception("Board_OnPlay replacement drift");
+          if(u.Body.Instructions.Any(i=>i.Operand is FieldReference fr && Tok(fr)==0x040001B4)) throw new Exception("private BoardManager.board access remains in Update");
+          if(by[0x105].OpCode.Code!=Code.Ldfld||by[0x105].Operand is not FieldReference gp||Tok(gp)!=0x040003BB||gp.Name!="gamePause") throw new Exception("gamePause tail drift");
+          var bm=types.Single(t=>t.FullName=="BoardManager");
+          var boardField=bm.Fields.Single(f=>Tok(f)==0x040001B4);
+          var onplay=bm.Methods.Single(x=>Tok(x)==0x0600016F);
+          var oi=onplay.Body.Instructions;
+          if(!onplay.IsPublic||onplay.IsStatic||onplay.ReturnType.FullName!="Board"||oi.Count!=3||oi[0].OpCode.Code!=Code.Ldarg_0||oi[1].OpCode.Code!=Code.Ldfld||oi[1].Operand is not FieldReference ofr||Tok(ofr)!=0x040001B4||oi[2].OpCode.Code!=Code.Ret) throw new Exception("Board_OnPlay equivalence drift");
+          var start=methods.Single(x=>Tok(x)==0x06000004);
+          var bad=start.Body.Instructions.Where(i=>i.Operand is MethodReference mr && (mr.DeclaringType.FullName.Contains("List`1/Enumerator<UnityEngine.GameObject>")||(mr.DeclaringType.FullName=="System.Collections.Generic.List`1<UnityEngine.GameObject>"&&mr.Name=="GetEnumerator"))).ToList();
+          if(bad.Count!=0) throw new Exception("Start enumerator regression");
+          Console.WriteLine("READONLY_REOPEN_ADMINISTRATOR_UPDATE_BOARDACCESS_PASS token=0x06000006 il00f3=callvirt_Board_OnPlay private_board_refs=0 mode_fix=1 gamePause_tail=1");
+          Console.WriteLine("BOARD_ONPLAY_EQUIVALENCE_GATE_PASS token=0x0600016F body=ldarg.0+ldfld_board+ret public=1 return=Board");
+          Console.WriteLine($"START_ANCESTOR_REGRESSION_GATE_PASS token=0x{Tok(start):X8} malformed_enumerator_refs={bad.Count}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/boardaccess/verifier/verifier.csproj" -- "$BOARDACCESS_OUTPUT" | tee "$RUNNER_TEMP/boardaccess/evidence/reopen-audit.txt"
+      - name: Enforce static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="$RUNNER_TEMP/boardaccess/evidence/boardaccess-patch-audit.txt"
+          R="$RUNNER_TEMP/boardaccess/evidence/reopen-audit.txt"
+          grep -F 'ADMINISTRATOR_UPDATE_BOARDACCESS_PATCH_PASS target=0x06000006' "$P"
+          grep -F 'BOARD_ACCESS_EQUIVALENCE_PASS' "$P"
+          grep -F 'METADATA_DIRECTORY_UNCHANGED_PASS' "$P"
+          grep -F 'READONLY_REOPEN_ADMINISTRATOR_UPDATE_BOARDACCESS_PASS token=0x06000006' "$R"
+          grep -F 'BOARD_ONPLAY_EQUIVALENCE_GATE_PASS token=0x0600016F' "$R"
+          grep -F 'START_ANCESTOR_REGRESSION_GATE_PASS token=0x06000004 malformed_enumerator_refs=0' "$R"
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Update\ntoken=0x06000006\nwrite_mode=inplace-byte-patch\nmetadata_directory_unchanged=1\nrepair=IL_00F3_private_board_ldfld_to_Board_OnPlay_callvirt\nboard_onplay_token=0x0600016F\nupdate_first_runtime_run=35214125010\nstart_runtime_pass_run=35212942551\n' "$EXPECTED_INPUT_SHA" "$EXPECTED_OUTPUT_SHA" | tee "$RUNNER_TEMP/boardaccess/evidence/static-qualified.txt"
+          printf 'INPUT_SHA256 %s\nOUTPUT_SHA256 %s\n' "$EXPECTED_INPUT_SHA" "$EXPECTED_OUTPUT_SHA" > "$RUNNER_TEMP/boardaccess/evidence/output.sha256.txt"
+      - name: Upload board-access static-qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-UPDATE-BOARDACCESS-STATIC-QUALIFIED
+          path: |
+            ${{ runner.temp }}/boardaccess/GodsPVZRuntime1-administrator-update-boardaccess.dll
+            ${{ runner.temp }}/boardaccess/evidence/
+          retention-days: 90
+          if-no-files-found: error
