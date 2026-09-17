@@ -1,0 +1,20 @@
+name: Trigger Stage9.1 pinned package bundle
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/trigger-stage9-package-bundle.yml'
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch existing Stage9.1 package bundle workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run stage9-package-bundle.yml --repo "${{ github.repository }}" --ref high-fidelity
