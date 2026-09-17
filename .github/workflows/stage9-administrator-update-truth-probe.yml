@@ -17,6 +17,8 @@ jobs:
       SOURCE_RUN_ID: '34990527235'
       SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
       EXPECTED_INPUT_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+      START_RUNTIME_RUN_ID: '35177397625'
+      START_RUNTIME_ARTIFACT: Stage9.1-ADMINISTRATOR-START-NATURAL-RUNTIME
     steps:
       - name: Download exact baseline
         uses: actions/download-artifact@v4
@@ -26,6 +28,43 @@ jobs:
           run-id: ${{ env.SOURCE_RUN_ID }}
           name: ${{ env.SOURCE_ARTIFACT }}
           path: ${{ runner.temp }}/update-probe/input
+      - name: Download latest Administrator.Start runtime evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.START_RUNTIME_RUN_ID }}
+          name: ${{ env.START_RUNTIME_ARTIFACT }}
+          path: ${{ runner.temp }}/update-probe/start-runtime
+      - name: Extract remaining generic List MissingMethod context
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/update-probe/evidence"
+          LOG=$(find "$RUNNER_TEMP/update-probe/start-runtime" -type f -name 'playmode.log' -print -quit)
+          test -n "$LOG"
+          python3 - "$LOG" <<'PY' | tee "$RUNNER_TEMP/update-probe/evidence/remaining-list-missingmethod.txt"
+          from pathlib import Path
+          import sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
+          hits=[]
+          for i,line in enumerate(lines):
+              if 'MissingMethodException' in line:
+                  lo=max(0,i-5); hi=min(len(lines),i+12)
+                  block='\n'.join(f'{n+1}: {lines[n]}' for n in range(lo,hi))
+                  hits.append((i+1,line,block))
+          print(f'MISSINGMETHOD_TOTAL {len(hits)}')
+          for j,(line_no,line,block) in enumerate(hits,1):
+              print(f'=== MISSINGMETHOD_HIT {j} line={line_no} ===')
+              print(block)
+          list_hits=[h for h in hits if 'List' in h[1] or 'List' in h[2]]
+          print(f'LIST_RELATED_MISSINGMETHOD_TOTAL {len(list_hits)}')
+          for j,(line_no,line,block) in enumerate(list_hits,1):
+              print(f'=== LIST_HIT {j} line={line_no} ===')
+              print(block)
+          if not list_hits:
+              raise SystemExit('no List-related MissingMethod found in runtime evidence')
+          PY
       - name: Probe Administrator.Update metadata and IL
         shell: bash
         run: |
@@ -65,7 +104,7 @@ jobs:
           Console.WriteLine("=== UNIQUE DEPENDENCIES ===");
           foreach(var d in m.Body.Instructions.Select(i=>i.Operand).OfType<IMetadataTokenProvider>().Where(x=>x is MethodReference or FieldReference or TypeReference).GroupBy(x=>$"{x.GetType().Name}|0x{Raw(x):X8}|{x}").Select(g=>g.First()).OrderBy(x=>Raw(x))) Console.WriteLine($"DEP {d.GetType().Name} token=0x{Raw(d):X8} value={d}");
           Console.WriteLine("=== CALLERS ===");
-          foreach(var owner in types.SelectMany(t=>t.Methods).Where(x=>x.HasBody)) foreach(var i in owner.Body.Instructions) if(i.Operand is MethodReference r && (r.Resolve()==m || Raw(r)==Raw(m))) Console.WriteLine($"CALLER token=0x{Raw(owner):X8} {owner.FullName} op={i.OpCode.Code} at=IL_{i.Offset:X4}");
+          foreach(var owner in types.SelectMany(t=>t.Methods).Where(x=>x.HasBody)) foreach(var i in owner.Body.Instructions) if(i.Operand is MethodReference r && Raw(r)==Raw(m)) Console.WriteLine($"CALLER token=0x{Raw(owner):X8} {owner.FullName} op={i.OpCode.Code} at=IL_{i.Offset:X4}");
           EOF
           dotnet run --project "$RUNNER_TEMP/update-probe/src/probe.csproj" -- "$DLL" | tee "$RUNNER_TEMP/update-probe/evidence/administrator-update-truth.txt"
       - name: Upload truth evidence
