@@ -1,10 +1,14 @@
 name: Stage9.1 Administrator Start natural runtime
+
 on:
   workflow_dispatch:
   push:
     branches: [stage9-admin-start-static]
-    paths: ['.github/workflows/stage9-administrator-start-natural-runtime.yml']
+    paths:
+      - '.github/workflows/stage9-administrator-start-natural-runtime.yml'
+
 permissions: {contents: read, actions: read}
+
 jobs:
   runtime:
     runs-on: ubuntu-24.04
@@ -13,8 +17,8 @@ jobs:
       UNITY_EMAIL: '${{ secrets.UNITY_EMAIL }}'
       UNITY_PASSWORD: '${{ secrets.UNITY_PASSWORD }}'
       STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS: 900
-      STATIC_RUN_ID: '35124677911'
-      EXPECTED_CANDIDATE_SHA: 4a5ffb77704be653aa66001c020562b152afe7586386beb50d3e18225f1cabd3
+      STATIC_RUN_ID: '35177326350'
+      EXPECTED_CANDIDATE_SHA: ebe634571d107fb46599d9a3d28382317d09594136399316ea5b9cd16fc0003c
     steps:
       - uses: actions/checkout@v4
       - name: Ensure runner disk space conditionally
@@ -59,6 +63,7 @@ jobs:
           test "$SHA" = "$EXPECTED_CANDIDATE_SHA"
           test "$(sha256sum "$DLL"|awk '{print $1}')" = "$SHA"
           grep -Fx 'STATIC_QUALIFIED=1' "$QUAL"
+          grep -Fx 'getenumerator_opcode=callvirt' "$QUAL"
           echo "ADMINISTRATOR_START_CANDIDATE=$DLL" >> "$GITHUB_ENV"
           echo "ADMINISTRATOR_START_SHA=$SHA" >> "$GITHUB_ENV"
           echo "RUNTIME_CANDIDATE_SHA256 $SHA"
@@ -78,18 +83,25 @@ jobs:
           import re,sys
           p=Path(sys.argv[1]); sha=sys.argv[2]; lines=p.read_text(errors='replace').splitlines(); text='\n'.join(lines)
           def invalid(m): return len(re.findall(r'InvalidProgramException: Invalid IL code in '+re.escape(m),text))
-          def same_line(exc,method): return sum(exc in x and method in x for x in lines)
+          def exception_near_method(exc, method):
+              hits=0
+              for i,line in enumerate(lines):
+                  if exc not in line: continue
+                  window='\n'.join(lines[i:i+8])
+                  if method in window: hits+=1
+              return hits
           vals={
             'ADMINISTRATOR_START_INVALID_IL_COUNT':invalid('Administrator:Start'),
-            'ADMINISTRATOR_START_FIELDACCESS_COUNT':same_line('FieldAccessException','Administrator:Start'),
-            'ADMINISTRATOR_START_MISSINGMETHOD_COUNT':same_line('MissingMethodException','Administrator:Start'),
-            'ADMINISTRATOR_START_TYPELOAD_COUNT':same_line('TypeLoadException','Administrator:Start'),
+            'ADMINISTRATOR_START_FIELDACCESS_COUNT':exception_near_method('FieldAccessException','Administrator:Start'),
+            'ADMINISTRATOR_START_MISSINGMETHOD_COUNT':exception_near_method('MissingMethodException','Administrator:Start'),
+            'ADMINISTRATOR_START_TYPELOAD_COUNT':exception_near_method('TypeLoadException','Administrator:Start'),
+            'LIST_GAMEOBJECT_GETENUMERATOR_MISSINGMETHOD_COUNT':len(re.findall(r'MissingMethodException:.*List<UnityEngine\.GameObject>\.GetEnumerator',text)),
           }
           for k,v in vals.items(): print(k,v)
           assert all(v==0 for v in vals.values()),vals
           required=['STAGE9_SKILLPROGRESS_SAVE_READY ok=1','STAGE9_SKILLPROGRESS_BOARD_READY ok=1','STAGE9_SKILLPROGRESS_READY_INVOKE ok=1','STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5']
           for marker in required: assert marker in lines,marker
-          print(f'ADMINISTRATOR_START_NATURAL_RUNTIME_PASS candidate={sha} direct_invalid=0 direct_fieldaccess=0 direct_missingmethod=0 direct_typeload=0 five_state_paths=5')
+          print(f'ADMINISTRATOR_START_NATURAL_RUNTIME_PASS candidate={sha} direct_invalid=0 direct_fieldaccess=0 direct_missingmethod=0 direct_typeload=0 list_getenumerator_missingmethod=0 five_state_paths=5')
           PY
           python3 Tools/Stage9RuntimeTriage/first-invalid.py "$LOG" | tee "$E/first-invalid-triage.txt"
       - name: Upload Administrator.Start natural runtime evidence
