@@ -1,0 +1,144 @@
+name: Stage9.1 GlobalStaticVars BGMVolume natural runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-bgmvolume-natural-runtime.yml'
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: '${{ secrets.UNITY_EMAIL }}'
+      UNITY_PASSWORD: '${{ secrets.UNITY_PASSWORD }}'
+      STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS: 900
+      STATIC_RUN_ID: '35236211080'
+      STATIC_ARTIFACT: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+      EXPECTED_CANDIDATE_SHA: 047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+
+      - name: Download static-qualified BGMVolume candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: '${{ env.STATIC_RUN_ID }}'
+          name: '${{ env.STATIC_ARTIFACT }}'
+          path: '${{ runner.temp }}/stage9-bgmvolume/candidate'
+
+      - name: Download exact R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: '${{ runner.temp }}/stage9-bgmvolume/r3-cache'
+
+      - name: Download exact Unity China Editor
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: 34668863583
+          pattern: 'Stage9.1-unity-china-editor-part-*'
+          merge-multiple: true
+          path: '${{ runner.temp }}/stage9-bgmvolume/editor-parts'
+
+      - name: Resolve and lock static-qualified BGMVolume candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-bgmvolume/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-bgmvolume.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output.sha256.txt' -print -quit)
+          QUAL=$(find "$D" -type f -name 'static-qualified.txt' -print -quit)
+          test -n "$DLL"; test -n "$SUM"; test -n "$QUAL"
+          SHA=$(awk '/^OUTPUT_SHA256 /{print $2}' "$SUM")
+          test "$SHA" = "$EXPECTED_CANDIDATE_SHA"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$SHA"
+          grep -Fx 'STATIC_QUALIFIED=1' "$QUAL"
+          grep -Fx 'target=GlobalStaticVars.BGMVolume' "$QUAL"
+          grep -Fx 'token=0x06000139' "$QUAL"
+          grep -Fx 'metadata_directory_unchanged=1' "$QUAL"
+          grep -Fx 'repair=IL_0032_ldc_i4_0_to_ldnull_plus_nops' "$QUAL"
+          grep -Fx 'administrator_update_runtime_pass_run=35218539954' "$QUAL"
+          grep -Fx 'administrator_start_runtime_pass_run=35212942551' "$QUAL"
+          echo "BGMVOLUME_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "BGMVOLUME_SHA=$SHA" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $SHA"
+
+      - name: Run one-launch exact-R3 natural SkillProgress path
+        shell: bash
+        run: bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh "$RUNNER_TEMP/stage9-bgmvolume" "$BGMVOLUME_CANDIDATE" "$BGMVOLUME_SHA"
+
+      - name: Audit BGMVolume natural runtime and identify next blocker
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-bgmvolume/evidence"; LOG="$E/playmode.log"; test -f "$LOG"
+          python3 Tools/Stage9TextLinkUpdateRuntimeAudit/audit.py "$LOG" "$BGMVOLUME_SHA" | tee "$E/regression-runtime-audit.txt"
+          grep -Fx 'NEXT_ADMINISTRATOR_START_INVALID_IL_COUNT 0' "$E/regression-runtime-audit.txt"
+          grep -Fx 'NEXT_ADMINISTRATOR_UPDATE_INVALID_IL_COUNT 0' "$E/regression-runtime-audit.txt"
+          grep -Fx 'NEXT_BGMVOLUME_INVALID_IL_COUNT 0' "$E/regression-runtime-audit.txt"
+          python3 - "$LOG" "$BGMVOLUME_SHA" <<'PY' | tee "$E/bgmvolume-direct-runtime-audit.txt"
+          from pathlib import Path
+          import re,sys
+          p=Path(sys.argv[1]); sha=sys.argv[2]
+          lines=p.read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          def invalid(m): return len(re.findall(r'InvalidProgramException: Invalid IL code in '+re.escape(m),text))
+          def exception_near_method(exc, method):
+              hits=0
+              for i,line in enumerate(lines):
+                  if exc not in line: continue
+                  window='\n'.join(lines[i:i+8])
+                  if method in window: hits+=1
+              return hits
+          vals={
+            'BGMVOLUME_INVALID_IL_COUNT':invalid('GlobalStaticVars:BGMVolume'),
+            'BGMVOLUME_FIELDACCESS_COUNT':exception_near_method('FieldAccessException','GlobalStaticVars:BGMVolume'),
+            'BGMVOLUME_MISSINGMETHOD_COUNT':exception_near_method('MissingMethodException','GlobalStaticVars:BGMVolume'),
+            'BGMVOLUME_TYPELOAD_COUNT':exception_near_method('TypeLoadException','GlobalStaticVars:BGMVolume'),
+            'ADMINISTRATOR_UPDATE_INVALID_IL_COUNT':invalid('Administrator:Update'),
+            'ADMINISTRATOR_UPDATE_FIELDACCESS_COUNT':exception_near_method('FieldAccessException','Administrator:Update'),
+            'ADMINISTRATOR_UPDATE_MISSINGMETHOD_COUNT':exception_near_method('MissingMethodException','Administrator:Update'),
+            'ADMINISTRATOR_UPDATE_TYPELOAD_COUNT':exception_near_method('TypeLoadException','Administrator:Update'),
+            'ADMINISTRATOR_START_INVALID_IL_COUNT':invalid('Administrator:Start'),
+            'ADMINISTRATOR_START_FIELDACCESS_COUNT':exception_near_method('FieldAccessException','Administrator:Start'),
+            'ADMINISTRATOR_START_MISSINGMETHOD_COUNT':exception_near_method('MissingMethodException','Administrator:Start'),
+            'ADMINISTRATOR_START_TYPELOAD_COUNT':exception_near_method('TypeLoadException','Administrator:Start'),
+            'LIST_GAMEOBJECT_GETENUMERATOR_MISSINGMETHOD_COUNT':len(re.findall(r'MissingMethodException:.*List<UnityEngine\.GameObject>\.GetEnumerator',text)),
+          }
+          for k,v in vals.items(): print(k,v)
+          assert all(v==0 for v in vals.values()),vals
+          required=[
+            'STAGE9_SKILLPROGRESS_SAVE_READY ok=1',
+            'STAGE9_SKILLPROGRESS_BOARD_READY ok=1',
+            'STAGE9_SKILLPROGRESS_READY_INVOKE ok=1',
+            'STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5'
+          ]
+          for marker in required: assert marker in lines,marker
+          print(f'BGMVOLUME_NATURAL_RUNTIME_PASS candidate={sha} bgm_invalid=0 bgm_fieldaccess=0 bgm_missingmethod=0 bgm_typeload=0 update_regression=0 start_regression=0 list_getenumerator_missingmethod=0 five_state_paths=5')
+          PY
+          python3 Tools/Stage9RuntimeTriage/first-invalid.py "$LOG" | tee "$E/first-invalid-triage.txt"
+
+      - name: Upload BGMVolume natural runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BGMVOLUME-NATURAL-RUNTIME
+          path: '${{ runner.temp }}/stage9-bgmvolume/evidence/'
+          retention-days: 90
+          if-no-files-found: error
