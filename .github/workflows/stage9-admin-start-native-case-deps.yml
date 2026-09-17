@@ -1,0 +1,73 @@
+name: Stage9 Administrator.Start native case dependency probe
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-native-case-deps.yml'
+  workflow_dispatch:
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      SOURCE_RUN_ID: '34990527235'
+      SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      EXPECTED_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - name: Download exact baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/cases/input
+      - name: Probe managed identities and nearby recovered IL
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/cases/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED_SHA"
+          mkdir -p "$RUNNER_TEMP/cases/src" "$RUNNER_TEMP/cases/evidence"
+          cat > "$RUNNER_TEMP/cases/src/probe.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/cases/src/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots){foreach(var t in roots){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          static string Op(object? o)=>o switch{null=>"",Instruction i=>$"IL_{i.Offset:X4}",Instruction[] a=>string.Join(",",a.Select(x=>$"IL_{x.Offset:X4}")),IMetadataTokenProvider p=>$"0x{Raw(p):X8} {p}",VariableDefinition v=>$"V{v.Index}:{v.VariableType.FullName}",ParameterDefinition p=>$"P{p.Index}:{p.ParameterType.FullName}",_=>o.ToString()??""};
+          using var mod=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var types=All(mod.Types).ToList();
+          string[] names={"Administrator","System1","System3","ResourceManager","InternalResourceLoader","SuppliesInitialValue"};
+          foreach(var n in names){
+            var t=types.SingleOrDefault(x=>x.FullName==n); if(t is null){Console.WriteLine($"TYPE_MISSING {n}");continue;}
+            Console.WriteLine($"=== TYPE {n} token=0x{Raw(t):X8} ===");
+            foreach(var f in t.Fields.OrderBy(Raw)) Console.WriteLine($"FIELD token=0x{Raw(f):X8} static={f.IsStatic} type={f.FieldType.FullName} name={f.Name}");
+            foreach(var m in t.Methods.OrderBy(Raw)) Console.WriteLine($"METHOD token=0x{Raw(m):X8} static={m.IsStatic} full={m.FullName} body={m.HasBody} code={(m.HasBody?m.Body.CodeSize:-1)} locals={(m.HasBody?m.Body.Variables.Count:-1)}");
+          }
+          Console.WriteLine("=== FOCUS METHODS ===");
+          uint[] focus={0x06000008,0x0600000A,0x06000081,0x0600009E,0x06000231,0x0600020A,0x06000154,0x0600025C};
+          foreach(var tok in focus){
+            var p=mod.LookupToken(new MetadataToken(tok)); Console.WriteLine($"FOCUS token=0x{tok:X8} kind={p?.GetType().Name??"null"} value={p}");
+            if(p is MethodDefinition m && m.HasBody){
+              foreach(var v in m.Body.Variables) Console.WriteLine($" LOCAL {v.Index} {v.VariableType.FullName}");
+              foreach(var i in m.Body.Instructions) Console.WriteLine($" IL_{i.Offset:X4}: {i.OpCode.Code} {Op(i.Operand)}");
+            }
+          }
+          Console.WriteLine("=== CALL SITES OF FOCUS ===");
+          foreach(var owner in types.SelectMany(t=>t.Methods).Where(m=>m.HasBody)) foreach(var i in owner.Body.Instructions) if(i.Operand is MethodReference r && focus.Contains(Raw(r))) Console.WriteLine($"CALL owner=0x{Raw(owner):X8} {owner.FullName} il=IL_{i.Offset:X4} op={i.OpCode.Code} target=0x{Raw(r):X8} {r.FullName}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/cases/src/probe.csproj" -- "$DLL" | tee "$RUNNER_TEMP/cases/evidence/native-case-deps.txt"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-NATIVE-CASE-DEPS
+          path: ${{ runner.temp }}/cases/evidence/
+          retention-days: 30
