@@ -1,10 +1,11 @@
+# retrigger raw metadata probe
 name: Stage9 Administrator.Start raw metadata probe
 
 on:
   push:
     branches: [stage9-admin-start-static]
     paths:
-      - '.github/workflows/stage9-administrator-start-raw-metadata-probe.yml'
+      - '.github/workflows/stage9-admin-start-raw-metadata-probe.yml'
   workflow_dispatch:
 
 permissions: {contents: read, actions: read}
@@ -107,7 +108,7 @@ jobs:
           dotnet run --project "$RUNNER_TEMP/rawmeta/src/rawmeta.csproj" -- "$BASE" "$CAND" | tee "$RUNNER_TEMP/rawmeta/evidence/raw-metadata-compare.txt"
           python3 - "$RUNNER_TEMP/rawmeta/evidence/raw-metadata-compare.txt" <<'PY' | tee "$RUNNER_TEMP/rawmeta/evidence/raw-metadata-verdict.txt"
           from pathlib import Path
-          import sys,re
+          import sys
           s=Path(sys.argv[1]).read_text()
           parts=s.split('=== CANDIDATE RAW ===')
           assert len(parts)==2
