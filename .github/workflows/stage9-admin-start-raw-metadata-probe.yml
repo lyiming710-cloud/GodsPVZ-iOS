@@ -1,4 +1,3 @@
-# retrigger raw metadata probe
 name: Stage9 Administrator.Start raw metadata probe
 
 on:
@@ -60,10 +59,12 @@ jobs:
           using System.Reflection.PortableExecutable;
           using Mono.Cecil;
           using Mono.Cecil.Cil;
+          using CecilTypeDefinition = Mono.Cecil.TypeDefinition;
+          using CecilModuleDefinition = Mono.Cecil.ModuleDefinition;
 
           static string Hex(byte[] b)=>Convert.ToHexString(b);
           static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
-          static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots){foreach(var t in roots){yield return t;foreach(var n in AllTypes(t.NestedTypes))yield return n;}}
+          static IEnumerable<CecilTypeDefinition> AllTypes(IEnumerable<CecilTypeDefinition> roots){foreach(var t in roots){yield return t;foreach(var n in AllTypes(t.NestedTypes))yield return n;}}
           static string ParentInfo(MetadataReader md, EntityHandle h){
             var tok=MetadataTokens.GetToken(h);
             return h.Kind switch {
@@ -92,12 +93,12 @@ jobs:
           }
 
           static void DumpCecil(string label,string path){
-            using var m=ModuleDefinition.ReadModule(path,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+            using var m=CecilModuleDefinition.ReadModule(path,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
             var methods=AllTypes(m.Types).SelectMany(t=>t.Methods).ToList();
             Console.WriteLine($"=== {label} CECIL USES ===");
             foreach(var owner in methods.Where(x=>x.HasBody && (Raw(x)==0x06000004 || Raw(x)==0x06000142 || Raw(x)==0x06000425))){
               foreach(var i in owner.Body.Instructions){
-                if(i.Operand is MethodReference r && r.Name is "GetEnumerator" or "get_Current" or "MoveNext" or "Dispose" or "get_Item")
+                if(i.Operand is MethodReference r && (r.Name is "GetEnumerator" or "get_Current" or "MoveNext" or "Dispose" or "get_Item"))
                   Console.WriteLine($"USE owner=0x{Raw(owner):X8} {owner.FullName} il=IL_{i.Offset:X4} op={i.OpCode.Code} ref=0x{Raw(r):X8} full={r.FullName} declKind={r.DeclaringType.GetType().Name}");
               }
             }
@@ -114,9 +115,9 @@ jobs:
           assert len(parts)==2
           base=parts[0]; rest=parts[1]
           cand=rest.split('=== BASELINE CECIL USES ===')[0]
-          def focus(x,name): return [ln for ln in x.splitlines() if ln.startswith('MR ') and f'name={name} ' in ln and ('UnityEngine.GameObject' in ln or name=='GetEnumerator')]
           for name in ['GetEnumerator','get_Current','MoveNext','Dispose','get_Item']:
-              b=focus(base,name); c=focus(cand,name)
+              b=[ln for ln in base.splitlines() if ln.startswith('MR ') and f'name={name} ' in ln]
+              c=[ln for ln in cand.splitlines() if ln.startswith('MR ') and f'name={name} ' in ln]
               print(name,'baseline_count',len(b),'candidate_count',len(c))
               for ln in b: print(' BASE',ln)
               for ln in c: print(' CAND',ln)
