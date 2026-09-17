@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
-      SOURCE_RUN_ID: '35213963264'
-      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-STATIC-QUALIFIED
-      EXPECTED_SHA: ad2743f5fc185ccb3b13bd5b4149db341377aebb016ed9f376f5b52b8ce3329f
+      SOURCE_RUN_ID: '35217162411'
+      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-BOARDACCESS-STATIC-QUALIFIED
+      EXPECTED_SHA: 2ba80feb6cd332148b950953675ac6e8d38b57f0c5944114503eea4caa442d83
     steps:
       - uses: actions/checkout@v4
       - name: Download Update candidate
@@ -27,11 +27,11 @@ jobs:
           run-id: '${{ env.SOURCE_RUN_ID }}'
           name: '${{ env.SOURCE_ARTIFACT }}'
           path: '${{ runner.temp }}/probe/input'
-      - name: Probe BoardManager and Update IL
+      - name: Probe BoardManager accessors and Update IL
         shell: bash
         run: |
           set -euo pipefail
-          DLL=$(find "$RUNNER_TEMP/probe/input" -type f -name 'GodsPVZRuntime1-administrator-update.dll' -print -quit)
+          DLL=$(find "$RUNNER_TEMP/probe/input" -type f -name 'GodsPVZRuntime1-administrator-update-boardaccess.dll' -print -quit)
           test -n "$DLL"
           test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED_SHA"
           mkdir -p "$RUNNER_TEMP/probe/src"
@@ -47,21 +47,17 @@ jobs:
           using var m=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
           var types=All(m.Types).ToList(); var methods=types.SelectMany(t=>t.Methods).ToList();
           var bm=types.Single(t=>t.FullName=="BoardManager");
-          Console.WriteLine($"BOARDMANAGER token=0x{Tok(bm):X8} attrs={bm.Attributes}");
           foreach(var f in bm.Fields) Console.WriteLine($"BM_FIELD token=0x{Tok(f):X8} attrs={f.Attributes} type={f.FieldType.FullName} name={f.Name}");
-          foreach(var x in bm.Methods.OrderBy(x=>Tok(x))) Console.WriteLine($"BM_METHOD token=0x{Tok(x):X8} attrs={x.Attributes} ret={x.ReturnType.FullName} name={x.Name} params=[{string.Join(",",x.Parameters.Select(p=>p.ParameterType.FullName))}]");
-          var bop=methods.Single(x=>Tok(x)==0x0600016F);
-          Console.WriteLine($"BOARD_ONPLAY token=0x{Tok(bop):X8} code={bop.Body.CodeSize} locals={bop.Body.Variables.Count} handlers={bop.Body.ExceptionHandlers.Count}");
-          foreach(var i in bop.Body.Instructions) Console.WriteLine($"BOARD_ONPLAY_IL IL_{i.Offset:X4} {i.OpCode.Code} {Op(i.Operand)}");
-          var u=methods.Single(x=>Tok(x)==0x06000006);
-          Console.WriteLine($"UPDATE token=0x{Tok(u):X8} code={u.Body.CodeSize} locals={u.Body.Variables.Count}");
-          foreach(var i in u.Body.Instructions){
-            var interesting=i.Offset>=0x70 && i.Offset<=0x130;
-            if(i.Operand is FieldReference fr && fr.DeclaringType.FullName=="BoardManager") interesting=true;
-            if(i.Operand is MethodReference mr && (mr.DeclaringType.FullName=="BoardManager"||mr.DeclaringType.FullName=="Board")) interesting=true;
-            if(!interesting) continue;
-            Console.WriteLine($"UPDATE_IL IL_{i.Offset:X4} {i.OpCode.Code} {Op(i.Operand)}");
+          foreach(var token in new uint[]{0x06000169,0x0600016F}){
+            var x=methods.Single(v=>Tok(v)==token);
+            Console.WriteLine($"ACCESSOR token=0x{Tok(x):X8} attrs={x.Attributes} ret={x.ReturnType.FullName} name={x.Name} code={x.Body.CodeSize} locals={x.Body.Variables.Count} handlers={x.Body.ExceptionHandlers.Count}");
+            foreach(var i in x.Body.Instructions) Console.WriteLine($"ACCESSOR_IL token=0x{Tok(x):X8} IL_{i.Offset:X4} {i.OpCode.Code} {Op(i.Operand)}");
           }
-          Console.WriteLine("ADMINISTRATOR_UPDATE_BOARD_ACCESS_PROBE_PASS mutation=0");
+          var u=methods.Single(x=>Tok(x)==0x06000006);
+          foreach(var i in u.Body.Instructions){
+            if(i.Offset>=0x1D0 || (i.Operand is FieldReference fr && fr.DeclaringType.FullName=="BoardManager") || (i.Operand is MethodReference mr && mr.DeclaringType.FullName=="BoardManager"))
+              Console.WriteLine($"UPDATE_IL IL_{i.Offset:X4} {i.OpCode.Code} {Op(i.Operand)}");
+          }
+          Console.WriteLine("ADMINISTRATOR_UPDATE_INSTANCE_ACCESS_PROBE_PASS mutation=0");
           EOF
           dotnet run --project "$RUNNER_TEMP/probe/src/probe.csproj" -- "$DLL"
