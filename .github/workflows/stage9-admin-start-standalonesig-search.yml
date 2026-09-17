@@ -1,0 +1,75 @@
+name: Stage9 Administrator.Start StandAloneSig search
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-standalonesig-search.yml'
+  workflow_dispatch:
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      SOURCE_RUN_ID: '34990527235'
+      SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      EXPECTED_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - name: Download exact baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/sig/input
+      - name: Search all StandAloneSig rows
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/sig/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED_SHA"
+          mkdir -p "$RUNNER_TEMP/sig/src" "$RUNNER_TEMP/sig/evidence"
+          cat > "$RUNNER_TEMP/sig/src/sig.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/sig/src/Program.cs" <<'EOF'
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          static string Hex(byte[] b)=>Convert.ToHexString(b);
+          using var fs=File.OpenRead(args[0]); using var pe=new PEReader(fs); var md=pe.GetMetadataReader();
+          const string enumType="151155011209";      // valuetype List`1/Enumerator<GameObject> in untouched baseline
+          const string boardType="1281A4";           // class Board TypeDefOrRef encoding in baseline/candidate
+          const string exact="0703151155011209081281A4"; // locals: Enumerator<GameObject>, int32, Board
+          Console.WriteLine($"STANDALONESIG_COUNT {md.GetTableRowCount(TableIndex.StandAloneSig)}");
+          int exactCount=0, bothCount=0, enumCount=0;
+          for(int rid=1;rid<=md.GetTableRowCount(TableIndex.StandAloneSig);rid++){
+            var h=MetadataTokens.StandaloneSignatureHandle(rid); var s=md.GetStandaloneSignature(h); var hex=Hex(md.GetBlobBytes(s.Signature));
+            if(hex==exact){exactCount++;Console.WriteLine($"EXACT token=0x{MetadataTokens.GetToken(h):X8} sig={hex}");}
+            if(hex.Contains(enumType,StringComparison.Ordinal)){enumCount++;Console.WriteLine($"ENUM token=0x{MetadataTokens.GetToken(h):X8} sig={hex}");}
+            if(hex.Contains(enumType,StringComparison.Ordinal)&&hex.Contains(boardType,StringComparison.Ordinal)){bothCount++;Console.WriteLine($"ENUM_BOARD token=0x{MetadataTokens.GetToken(h):X8} sig={hex}");}
+          }
+          Console.WriteLine($"EXACT_COUNT {exactCount}");
+          Console.WriteLine($"ENUM_COUNT {enumCount}");
+          Console.WriteLine($"ENUM_BOARD_COUNT {bothCount}");
+          Console.WriteLine("=== METHOD LOCAL SIG USES OF ENUMERATOR ===");
+          for(int rid=1;rid<=md.GetTableRowCount(TableIndex.MethodDef);rid++){
+            var h=MetadataTokens.MethodDefinitionHandle(rid); var d=md.GetMethodDefinition(h); if(d.RelativeVirtualAddress==0) continue;
+            MethodBodyBlock b; try{b=pe.GetMethodBody(d.RelativeVirtualAddress);}catch{continue;}
+            if(b.LocalSignature.IsNil) continue;
+            var sh=md.GetStandaloneSignature(b.LocalSignature); var hex=Hex(md.GetBlobBytes(sh.Signature));
+            if(hex.Contains(enumType,StringComparison.Ordinal)) Console.WriteLine($"METHOD method=0x{MetadataTokens.GetToken(h):X8} localsig=0x{MetadataTokens.GetToken(b.LocalSignature):X8} sig={hex}");
+          }
+          EOF
+          dotnet run --project "$RUNNER_TEMP/sig/src/sig.csproj" -- "$DLL" | tee "$RUNNER_TEMP/sig/evidence/standalonesig-search.txt"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-STANDALONESIG-SEARCH
+          path: ${{ runner.temp }}/sig/evidence/
+          retention-days: 30
