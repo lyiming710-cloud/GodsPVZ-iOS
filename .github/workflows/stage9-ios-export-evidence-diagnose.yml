@@ -25,23 +25,39 @@ jobs:
           name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
           path: evidence
 
-      - name: Print deterministic failure diagnosis
+      - name: Print concise deterministic diagnosis
         shell: bash
         run: |
           set -euo pipefail
-          echo '=== files ==='
-          find evidence -maxdepth 2 -type f -printf '%P\n' | sort
-          echo '=== exit ==='
+          LOG=evidence/ios-export.log
+          echo '=== EXIT ==='
           cat evidence/ios-export-exit.txt || true
-          echo '=== target/architecture evidence ==='
-          grep -nEi -C 4 'STAGE9_IOS_TARGET|architecture=|GetArchitecture|ARMv7|armv7|activeBuildTarget|SwitchActiveBuildTarget' evidence/ios-export.log || true
-          echo '=== stdout ==='
-          cat evidence/ios-export.stdout || true
-          echo '=== stderr ==='
-          cat evidence/ios-export.stderr || true
-          echo '=== error/exception/build context ==='
-          grep -nEi -C 8 'error|exception|failed|failure|BuildFailed|BuildPlayer|IL2CPP|Bee|Burst|Xcode|iOS|ARMv7|armv7' evidence/ios-export.log | tail -n 800 || true
-          echo '=== final 600 log lines ==='
-          tail -n 600 evidence/ios-export.log || true
-          echo '=== disk before export ==='
-          cat evidence/disk-before-ios-export.txt || true
+          echo '=== TARGET ==='
+          grep -n -m 3 -E 'STAGE9_IOS_TARGET|activeBuildTarget|architecture=' "$LOG" || true
+          echo '=== ARMV7 ==='
+          grep -n -m 5 -Ei 'ARMv7|armv7|32[- ]bit' "$LOG" || true
+          echo '=== FIRST MATERIAL FAILURE AFTER TARGET ==='
+          python3 - "$LOG" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
+          start=next((i for i,l in enumerate(lines) if 'STAGE9_IOS_TARGET' in l),0)
+          pats=[
+              re.compile(r'armv7|32[- ]bit',re.I),
+              re.compile(r'BuildFailedException|Build failure|BuildPlayer.*failed|build.*failed',re.I),
+              re.compile(r'Unhandled exception|Exception:',re.I),
+              re.compile(r'IL2CPP.*(error|failed)|Bee.*(error|failed)|error CS\d+',re.I),
+          ]
+          hit=None
+          for i in range(start,len(lines)):
+              if any(p.search(lines[i]) for p in pats):
+                  hit=i; break
+          if hit is None:
+              print('NO_MATERIAL_FAILURE_MATCH')
+          else:
+              print(f'FIRST_MATCH_LINE={hit+1}')
+              a=max(start,hit-15); b=min(len(lines),hit+55)
+              for j in range(a,b): print(f'{j+1}: {lines[j]}')
+          PY
+          echo '=== TAIL80 ==='
+          tail -n 80 "$LOG" || true
