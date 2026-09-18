@@ -1,0 +1,402 @@
+name: Stage9.1 CURRENT BASELINE iOS XCODE EXPORT
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      R3_SHA256: 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc'
+      FINAL_DLL_SHA256: '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+      FINAL_DLL_RUN_ID: '35236211080'
+      PACKAGE_GUID_RUN_ID: '35238895838'
+      PACKAGE_CLOSURE_RUN_ID: '35239319822'
+      PACKAGE_BUNDLE_RUN_ID: '35239547918'
+      EDITOR_RUN_ID: '34668863583'
+      IOS_MODULE_RUN_ID: '35332956511'
+      IOS_MODULE_SHA256: '2c2e259415ab0f940889b6b5bf55c56bc2710bbd823ddc05c5ab67ebc137a16e'
+      UNITY_VERSION: '2022.3.44f1c1'
+      UNITY_CHANGESET: 'c3ae09b9f03c'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare export workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          mkdir -p "$OUT/evidence"
+          if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
+            echo 'UNITY_EMAIL or UNITY_PASSWORD secret missing' >&2
+            exit 41
+          fi
+          cat > "$OUT/evidence/input-locks.txt" <<EOF
+          workflow_head=$GITHUB_SHA
+          r3_sha256=$R3_SHA256
+          final_dll_sha256=$FINAL_DLL_SHA256
+          final_dll_run=$FINAL_DLL_RUN_ID
+          package_guid_run=$PACKAGE_GUID_RUN_ID
+          package_closure_run=$PACKAGE_CLOSURE_RUN_ID
+          package_bundle_run=$PACKAGE_BUNDLE_RUN_ID
+          editor_run=$EDITOR_RUN_ID
+          ios_module_run=$IOS_MODULE_RUN_ID
+          ios_module_sha256=$IOS_MODULE_SHA256
+          unity_version=$UNITY_VERSION
+          unity_changeset=$UNITY_CHANGESET
+          EOF
+
+      - name: Download exact R3 parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          PARTS="$OUT/r3-parts"
+          E="$OUT/evidence"
+          mkdir -p "$PARTS"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/r3-parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a	67108864
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2	67108864
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2	67108864
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f	67108864
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc	67108864
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263	67108864
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c	67108864
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec	67108864
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8	67108864
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a	67108864
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994	67108864
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325	48568114
+          EOF
+          : > "$E/r3-download.tsv"
+          while IFS=$'\t' read -r idx fid sha size; do
+            f="$PARTS/GodsPVZ-Stage9.1-preimport-r3-2026-09-12.tar.zst.${idx}.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            got_sha="$(sha256sum "$f" | awk '{print $1}')"
+            got_size="$(stat -c %s "$f")"
+            printf '%s\t%s\t%s\n' "$idx" "$got_sha" "$got_size" | tee -a "$E/r3-download.tsv"
+            [ "$got_sha" = "$sha" ] || exit 42
+            [ "$got_size" = "$size" ] || exit 43
+          done < "$OUT/r3-parts.tsv"
+
+      - name: Reconstruct exact R3 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          ARCHIVE="$OUT/r3.tar.zst"
+          ROOT="$OUT/r3"
+          mkdir -p "$ROOT"
+          cat "$OUT/r3-parts"/*.part > "$ARCHIVE"
+          GOT="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
+          echo "$GOT" > "$E/r3-sha256.txt"
+          [ "$GOT" = "$R3_SHA256" ] || exit 44
+          zstd -t "$ARCHIVE" 2> "$E/r3-zstd-test.txt"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$ROOT"
+          PROJECT="$ROOT/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          test -d "$PROJECT"
+          grep -qx 'm_EditorVersion: 2022.3.44f1c1' "$PROJECT/ProjectSettings/ProjectVersion.txt"
+          test -f "$PROJECT/Assets/Scenes/MainMenu.unity"
+          test -f "$PROJECT/Assets/Scenes/Board.unity"
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 45
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          rm -rf "$OUT/r3-parts" "$ARCHIVE"
+
+      - name: Download final runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.FINAL_DLL_RUN_ID }}
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: ${{ runner.temp }}/stage9-ios-export/final-dll
+
+      - name: Download package GUID evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_GUID_RUN_ID }}
+          name: HF46-package-reference-evidence
+          path: ${{ runner.temp }}/stage9-ios-export/package-guid-evidence
+
+      - name: Download pinned package bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_BUNDLE_RUN_ID }}
+          name: Stage9.1-pinned-unity-packages
+          path: ${{ runner.temp }}/stage9-ios-export/package-bundle
+
+      - name: Download package dependency closure
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_CLOSURE_RUN_ID }}
+          name: Stage9.1-package-dependency-closure
+          path: ${{ runner.temp }}/stage9-ios-export/package-closure
+
+      - name: Integrate current Stage9.1 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          DLL="$OUT/final-dll/GodsPVZRuntime1-bgmvolume.dll"
+          test -f "$DLL"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 46
+          cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
+          cp "$GITHUB_WORKSPACE/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/"
+
+          python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" <<'PY'
+          import shutil,sys
+          from pathlib import Path
+          dst=Path(sys.argv[3]); dst.mkdir(parents=True,exist_ok=True)
+          names=[]
+          for root in map(Path,sys.argv[1:3]):
+              if not root.is_dir(): raise SystemExit('missing package source: '+str(root))
+              for src in sorted(p for p in root.iterdir() if p.is_dir()):
+                  target=dst/src.name
+                  if target.exists(): shutil.rmtree(target)
+                  shutil.copytree(src,target)
+                  names.append(src.name)
+          print('embedded package copies',len(names))
+          PY
+
+          python3 - "$OUT/package-guid-evidence/package-guid-map.json" "$PROJECT/Packages" "$E/package-guid-preflight.txt" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          d=json.load(open(sys.argv[1])); root=Path(sys.argv[2]); out=Path(sys.argv[3])
+          assert d['resolved']==67 and d['expected']==67 and not d['failures']
+          bad=[]; n=0
+          for m in d['mapping']:
+              meta=root/m['package']/m['meta_path']
+              if not meta.is_file(): bad.append((m['fullName'],'missing')); continue
+              mm=re.search(r'(?m)^guid:\s*([0-9a-fA-F]{32})\s*$',meta.read_text(errors='replace'))
+              got=mm.group(1).lower() if mm else ''
+              n+=1
+              if got!=m['monoscript_guid'].lower(): bad.append((m['fullName'],got,m['monoscript_guid']))
+          out.write_text(f'resolved={n}/67\nfailures={len(bad)}\n'+repr(bad)+'\n')
+          if n!=67 or bad: raise SystemExit(47)
+          PY
+          rm -f "$PROJECT/Packages/packages-lock.json"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EDITOR_RUN_ID }}
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-ios-export/editor-parts
+
+      - name: Reconstruct exact Unity China Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          ROOT="$OUT/editor-root"
+          mkdir -p "$ROOT"
+          COUNT="$(find "$OUT/editor-parts" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          [ "$COUNT" = '15' ] || exit 48
+          cat "$OUT/editor-parts"/Unity-China-2022.3.44f1c1.tar.xz.part-* > "$OUT/editor.tar.xz"
+          SHA="$(sha256sum "$OUT/editor.tar.xz" | awk '{print $1}')"
+          echo "$SHA" > "$E/editor-sha256.txt"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 49
+          tar -xJf "$OUT/editor.tar.xz" -C "$ROOT"
+          UNITY="$ROOT/Editor/Unity"
+          chmod +x "$UNITY"
+          V="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
+          echo "$V" > "$E/editor-version-before-ios-module.txt"
+          [ "$V" = "$UNITY_VERSION" ] || exit 50
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$OUT/editor-parts" "$OUT/editor.tar.xz"
+
+      - name: Download validated China iOS module
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.IOS_MODULE_RUN_ID }}
+          name: Stage9.1-unity-china-ios-module-c3ae09b9f03c
+          path: ${{ runner.temp }}/stage9-ios-export/ios-module
+
+      - name: Overlay validated iOS module
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          ROOT="$OUT/editor-root"
+          MOD="$OUT/ios-module/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
+          test -f "$MOD"
+          GOT="$(sha256sum "$MOD" | awk '{print $1}')"
+          echo "$GOT" > "$E/ios-module-sha256.txt"
+          [ "$GOT" = "$IOS_MODULE_SHA256" ] || exit 51
+          tar -xJf "$MOD" -C "$ROOT"
+          IOS="$ROOT/Editor/Data/PlaybackEngines/iOSSupport"
+          test -d "$IOS"
+          test -f "$IOS/UnityEditor.iOS.Extensions.dll"
+          test -f "$IOS/Trampoline/Libraries/libiPhone-lib.a"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          V="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
+          echo "$V" > "$E/editor-version-after-ios-module.txt"
+          [ "$V" = "$UNITY_VERSION" ] || exit 52
+
+      - name: Acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$E/license-activate.log" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/license-activate-exit.txt"
+          [ "$RC" -eq 0 ] || exit 53
+          touch "$OUT/seat-acquired.flag"
+
+      - name: First current-baseline import
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/import-exit.txt"
+          [ "$RC" -eq 0 ] || exit 54
+          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import.log"; then exit 55; fi
+
+      - name: Explicitly migrate package script references
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZPackageReferenceMigrator.RunBatch -logFile "$E/package-migration.log"
+          test -f "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          grep -q '^resolved=67/67$' "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+
+      - name: Export unsigned iOS Xcode project
+        shell: bash
+        env:
+          GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-ios-export/xcode
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZIOSBuild.BuildIOS -logFile "$E/ios-export.log" > "$E/ios-export.stdout" 2> "$E/ios-export.stderr"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/ios-export-exit.txt"
+          [ "$RC" -eq 0 ] || exit 56
+          test -d "$OUT/xcode"
+
+      - name: Audit Xcode and IL2CPP export
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          X="$OUT/xcode"
+          PBX="$X/Unity-iPhone.xcodeproj/project.pbxproj"
+          test -f "$PBX"
+          test -d "$X/Classes"
+          test -d "$X/Libraries"
+          test -d "$X/Data"
+          test -d "$X/Il2CppOutputProject"
+          test -f "$X/Il2CppOutputProject/Source/il2cppOutput/Assembly-CSharp.cpp"
+          test -f "$X/Data/Managed/Metadata/global-metadata.dat"
+          grep -Eq 'PRODUCT_BUNDLE_IDENTIFIER[[:space:]]*=[[:space:]]*"?com\.tipsGodsStudio\.godsPVZ"?;' "$PBX"
+          grep -Eq 'IPHONEOS_DEPLOYMENT_TARGET[[:space:]]*=[[:space:]]*12(\.0)?;' "$PBX"
+          grep -q 'GodsPVZ iOS Xcode export succeeded' "$E/ios-export.log"
+          CPP_COUNT="$(find "$X/Il2CppOutputProject/Source/il2cppOutput" -maxdepth 1 -type f -name '*.cpp' | wc -l | tr -d ' ')"
+          FILE_COUNT="$(find "$X" -type f | wc -l | tr -d ' ')"
+          SIZE="$(du -sb "$X" | awk '{print $1}')"
+          {
+            echo 'IOS_XCODE_EXPORT=PASS'
+            echo "unity_version=$UNITY_VERSION"
+            echo "final_dll_sha256=$FINAL_DLL_SHA256"
+            echo "ios_module_sha256=$IOS_MODULE_SHA256"
+            echo 'bundle_id=com.tipsGodsStudio.godsPVZ'
+            echo 'deployment_target=12.0'
+            echo 'scenes=Assets/Scenes/MainMenu.unity,Assets/Scenes/Board.unity'
+            echo "il2cpp_cpp_count=$CPP_COUNT"
+            echo "xcode_file_count=$FILE_COUNT"
+            echo "xcode_size_bytes=$SIZE"
+          } | tee "$E/RESULT.txt"
+          sha256sum "$X/Data/Managed/Metadata/global-metadata.dat" > "$E/generated-global-metadata.sha256"
+          sha256sum "$X/Il2CppOutputProject/Source/il2cppOutput/Assembly-CSharp.cpp" > "$E/generated-assembly-csharp-cpp.sha256"
+          grep -E 'PRODUCT_BUNDLE_IDENTIFIER|IPHONEOS_DEPLOYMENT_TARGET' "$PBX" | sort -u > "$E/pbx-settings.txt"
+          find "$X" -maxdepth 3 -type f | sort > "$E/xcode-inventory.txt"
+          tar --zstd -cf "$OUT/GodsPVZ-Stage9.1-unsigned-Xcode.tar.zst" -C "$OUT" xcode
+          sha256sum "$OUT/GodsPVZ-Stage9.1-unsigned-Xcode.tar.zst" > "$E/xcode-archive.sha256"
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --return-ulf > "$E/license-return.log" 2>&1
+            RC=$?
+            set -e
+            echo "$RC" > "$E/license-return-exit.txt"
+          fi
+
+      - name: Upload export evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
+          path: ${{ runner.temp }}/stage9-ios-export/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Upload unsigned Xcode project archive
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9.1-unsigned-Xcode
+          path: ${{ runner.temp }}/stage9-ios-export/GodsPVZ-Stage9.1-unsigned-Xcode.tar.zst
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
