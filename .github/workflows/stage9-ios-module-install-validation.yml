@@ -26,6 +26,23 @@ jobs:
       MODULE_SHA256: '2c2e259415ab0f940889b6b5bf55c56bc2710bbd823ddc05c5ab67ebc137a16e'
 
     steps:
+      - name: Reclaim runner disk for exact Unity Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== disk before cleanup ==='
+          df -h
+          # The validation only needs bash/curl/python/Unity. Remove large hosted-runner
+          # SDKs that are unrelated to this gate so the preserved Editor can be
+          # reconstructed without competing with Android/.NET/Haskell toolchains.
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+          docker system prune -af || true
+          echo '=== disk after cleanup ==='
+          df -h
+
       - name: Download preserved exact Editor parts
         uses: actions/download-artifact@v4
         with:
@@ -36,7 +53,7 @@ jobs:
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-ios-module/editor-parts
 
-      - name: Reconstruct exact f1c1 Editor
+      - name: Reconstruct exact f1c1 Editor with bounded disk usage
         shell: bash
         run: |
           set -euo pipefail
@@ -45,22 +62,39 @@ jobs:
           PARTS="$OUT/editor-parts"
           ROOT="$OUT/editor-root"
           mkdir -p "$E" "$ROOT"
-          COUNT="$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+
+          mapfile -t FILES < <(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | sort)
+          COUNT="${#FILES[@]}"
           echo "$COUNT" > "$E/editor-part-count.txt"
           [ "$COUNT" = '15' ] || exit 31
-          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* > "$OUT/editor.tar.xz"
-          GOT="$(sha256sum "$OUT/editor.tar.xz" | awk '{print $1}')"
+          du -sh "$PARTS" > "$E/editor-parts-du-before.txt"
+          df -h "$RUNNER_TEMP" > "$E/disk-before-editor-reconstruct.txt"
+
+          # Verify the exact compressed byte stream without first creating a second
+          # ~4 GB editor.tar.xz copy. This preserves the original integrity gate.
+          GOT="$({ for part in "${FILES[@]}"; do cat "$part"; done; } | sha256sum | awk '{print $1}')"
           echo "$GOT" > "$E/editor-sha256.txt"
           [ "$GOT" = "$EDITOR_SHA256" ] || exit 32
-          xz -t "$OUT/editor.tar.xz"
-          tar -xJf "$OUT/editor.tar.xz" -C "$ROOT"
+
+          # Stream the already-verified split archive directly into tar. Delete each
+          # part only after its bytes have entered the pipe, so disk use falls while
+          # the Editor expands instead of holding parts + full archive + extraction.
+          {
+            for part in "${FILES[@]}"; do
+              cat "$part"
+              rm -f "$part"
+            done
+          } | tar -xJf - -C "$ROOT"
+          rmdir "$PARTS" 2>/dev/null || true
+          df -h "$RUNNER_TEMP" > "$E/disk-after-editor-reconstruct.txt"
+          du -sh "$ROOT" > "$E/editor-root-du.txt"
+
           UNITY="$ROOT/Editor/Unity"
           chmod +x "$UNITY"
           BEFORE="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
           echo "$BEFORE" > "$E/editor-version-before-module.txt"
           [ "$BEFORE" = "$EDITOR_VERSION" ] || exit 33
           printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
-          rm -rf "$PARTS" "$OUT/editor.tar.xz"
 
       - name: Download and overlay exact-changeset China iOS module
         shell: bash
@@ -70,6 +104,7 @@ jobs:
           E="$OUT/evidence"
           ROOT="$OUT/editor-root"
           MOD="$OUT/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
+          df -h "$RUNNER_TEMP" > "$E/disk-before-ios-module.txt"
           curl -fL --retry 5 --retry-delay 3 -o "$MOD" "$MODULE_URL"
           GOT="$(sha256sum "$MOD" | awk '{print $1}')"
           echo "$GOT" > "$E/module-sha256.txt"
@@ -86,6 +121,8 @@ jobs:
           test -d "$IOS/il2cpp"
           find "$IOS" -type f | sort > "$E/ios-support-files.txt"
           find "$IOS" -type f | wc -l | tr -d ' ' > "$E/ios-support-file-count.txt"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-ios-module.txt"
+          du -sh "$IOS" > "$E/ios-support-du.txt"
 
           UNITY="$(cat "$OUT/unity-path.txt")"
           AFTER="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
