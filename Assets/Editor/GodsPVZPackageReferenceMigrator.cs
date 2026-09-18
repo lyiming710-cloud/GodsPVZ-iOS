@@ -19,11 +19,23 @@ public static class GodsPVZPackageReferenceMigrator
     private const string RuntimeDllPath = "Assets/Plugins/Assembly-CSharp.dll";
     private const string RuntimeDllOriginalSha256 = "047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee";
     private const string RuntimeDllDllKindSha256 = "9295bcb90857502af5ab802839b5c560f9e4d956b99dfaeae4350bd5fa5754a3";
-    private const string RuntimeDllIosLinkerSha256 = "c4a034bf3ff7103bba7a97dfaca734f4a03884388f2202cabc54e5614a8e84c6";
+    private const string RuntimeDllIosLinkerSha256 = "3a9b38e7b4c941b11d5683f74a547540fd2e5c891318f1f2ca79dbb88ecdafa8";
+
     private const int DamageAddElementRva = 0x14e70;
+    private const int DamageLocalSigOldToken = unchecked((int)0x110000D7);
+    private const int DamageLocalSigNewToken = unchecked((int)0x11000367);
+
     private const int DamageGetCurrentIlOffset = 0x19;
     private const int DamageGetCurrentOldToken = unchecked((int)0x0A0000C3);
     private const int DamageGetCurrentNewToken = unchecked((int)0x0A0000E7);
+
+    private const int DamageMoveNextIlOffset = 0x76;
+    private const int DamageMoveNextOldToken = unchecked((int)0x0A0000C4);
+    private const int DamageMoveNextNewToken = unchecked((int)0x0A0000E9);
+
+    private const int DamageDisposeIlOffset = 0x89;
+    private const int DamageDisposeOldToken = unchecked((int)0x0A0000C5);
+    private const int DamageDisposeNewToken = unchecked((int)0x0A000223);
 
     static GodsPVZPackageReferenceMigrator()
     {
@@ -85,6 +97,19 @@ public static class GodsPVZPackageReferenceMigrator
         throw new InvalidDataException($"RVA 0x{rva:x} is outside all PE sections.");
     }
 
+    private static int ValidateCallAndGetTokenOffset(byte[] bytes, int codeOffset, int ilOffset, int expectedToken, string label)
+    {
+        var opcodeOffset = codeOffset + ilOffset;
+        if (bytes[opcodeOffset] != 0x28)
+            throw new InvalidDataException($"{label} is not call (0x28): 0x{bytes[opcodeOffset]:x2}");
+
+        var tokenOffset = opcodeOffset + 1;
+        var actual = ReadInt32LE(bytes, tokenOffset);
+        if (actual != expectedToken)
+            throw new InvalidDataException($"Unexpected {label} MemberRef token: 0x{actual:x8}; expected 0x{expectedToken:x8}");
+        return tokenOffset;
+    }
+
     private static void EnsureRuntimeDllForIosLinker()
     {
         if (!File.Exists(RuntimeDllPath))
@@ -116,63 +141,65 @@ public static class GodsPVZPackageReferenceMigrator
             if (characteristics != 0x0122)
                 throw new InvalidDataException($"Unexpected Stage9.1 COFF Characteristics before DLL-kind repair: 0x{characteristics:x4}");
 
-            // Formal proof run 35363174000 established that IMAGE_FILE_DLL is
-            // the only PE-byte change needed to turn the recovered Console-kind
-            // assembly (with null CLI EntryPoint) into a DLL-kind assembly.
+            // Formal proof run 35363174000: only IMAGE_FILE_DLL is needed to
+            // make this null-entrypoint assembly a DLL instead of a Console EXE.
             bytes[characteristicsOffset + 1] = (byte)(bytes[characteristicsOffset + 1] | 0x20);
 
             var dllKindSha = Sha256(bytes);
             if (dllKindSha != RuntimeDllDllKindSha256)
                 throw new InvalidOperationException("Stage9.1 PE DLL-kind repair produced an unexpected SHA256: " + dllKindSha);
         }
-        else
+        else if (characteristics != 0x2122)
         {
-            if (characteristics != 0x2122)
-                throw new InvalidDataException($"Unexpected Stage9.1 COFF Characteristics for pre-repaired DLL: 0x{characteristics:x4}");
+            throw new InvalidDataException($"Unexpected Stage9.1 COFF Characteristics for pre-repaired DLL: 0x{characteristics:x4}");
         }
 
-        // Run 35363783833 proved that the PE-kind repair gets UnityLinker past
-        // ResolveFromAssemblyStep. The next fatal is isolated to
-        // Damage.AddElement(Element) IL_0019, whose recovered MemberRef 0x00c3
-        // uses an ownerless GenericParameter in List<Element>.Enumerator<!0>.
-        // The same assembly already contains canonical MemberRef 0x00e7 for
-        // Element List<Element>.Enumerator<Element>.get_Current(), used by 14
-        // other Element enumeration sites. Proof run 35368679101 established
-        // that replacing only this token's low byte (c3 -> e7) plus the PE DLL
-        // bit changes exactly two bytes total and keeps all 2317 MethodDefs.
+        // Run 35368894455 proved UnityLinker passes after repairing get_Current,
+        // but IL2CPP DataModel then crashes in AddGenericParameter while walking
+        // the remaining recovered Enumerator<!0> generic-instance metadata in
+        // Damage.AddElement. Canonical metadata already present in the same DLL:
+        //   local sig 0x11000367 = [Enumerator<Element>, Element]
+        //   get_Current 0x0A0000E7
+        //   MoveNext    0x0A0000E9
+        //   Dispose     0x0A000223
+        // Proof run 35370920531 established that selecting those existing rows,
+        // plus IMAGE_FILE_DLL, changes exactly seven bytes and preserves all 2317
+        // MethodDefs while removing every orphan GenericParameter from this method.
         var methodBody = RvaToFileOffset(bytes, pe, DamageAddElementRva);
-        var first = bytes[methodBody];
-        int methodHeaderSize;
-        if ((first & 0x3) == 0x2)
-        {
-            methodHeaderSize = 1;
-        }
-        else
-        {
-            var flagsAndSize = ReadUInt16LE(bytes, methodBody);
-            if ((flagsAndSize & 0x3) != 0x3)
-                throw new InvalidDataException($"Unexpected Damage.AddElement method header: 0x{flagsAndSize:x4}");
-            methodHeaderSize = ((flagsAndSize >> 12) & 0xF) * 4;
-        }
+        var flagsAndSize = ReadUInt16LE(bytes, methodBody);
+        if ((flagsAndSize & 0x3) != 0x3)
+            throw new InvalidDataException($"Unexpected Damage.AddElement method header: 0x{flagsAndSize:x4}");
+        var methodHeaderSize = ((flagsAndSize >> 12) & 0xF) * 4;
+        if (methodHeaderSize != 12)
+            throw new InvalidDataException($"Unexpected Damage.AddElement fat-header size: {methodHeaderSize}");
+
+        var localSigOffset = methodBody + 8;
+        var oldLocalSig = ReadInt32LE(bytes, localSigOffset);
+        if (oldLocalSig != DamageLocalSigOldToken)
+            throw new InvalidDataException($"Unexpected Damage.AddElement LocalVarSig token: 0x{oldLocalSig:x8}");
 
         var code = methodBody + methodHeaderSize;
-        var opcodeOffset = code + DamageGetCurrentIlOffset;
-        var tokenOffset = opcodeOffset + 1;
-        if (bytes[opcodeOffset] != 0x28)
-            throw new InvalidDataException($"Damage.AddElement IL_0019 is not call (0x28): 0x{bytes[opcodeOffset]:x2}");
+        var getCurrentTokenOffset = ValidateCallAndGetTokenOffset(bytes, code, DamageGetCurrentIlOffset, DamageGetCurrentOldToken, "Damage.AddElement IL_0019");
+        var moveNextTokenOffset = ValidateCallAndGetTokenOffset(bytes, code, DamageMoveNextIlOffset, DamageMoveNextOldToken, "Damage.AddElement IL_0076");
+        var disposeTokenOffset = ValidateCallAndGetTokenOffset(bytes, code, DamageDisposeIlOffset, DamageDisposeOldToken, "Damage.AddElement IL_0089");
 
-        var oldToken = ReadInt32LE(bytes, tokenOffset);
-        if (oldToken != DamageGetCurrentOldToken)
-            throw new InvalidDataException($"Unexpected Damage.AddElement IL_0019 MemberRef token: 0x{oldToken:x8}");
-
-        WriteInt32LE(bytes, tokenOffset, DamageGetCurrentNewToken);
+        WriteInt32LE(bytes, localSigOffset, DamageLocalSigNewToken);
+        WriteInt32LE(bytes, getCurrentTokenOffset, DamageGetCurrentNewToken);
+        WriteInt32LE(bytes, moveNextTokenOffset, DamageMoveNextNewToken);
+        WriteInt32LE(bytes, disposeTokenOffset, DamageDisposeNewToken);
 
         var afterSha = Sha256(bytes);
         if (afterSha != RuntimeDllIosLinkerSha256)
-            throw new InvalidOperationException("Stage9.1 two-byte iOS linker repair produced an unexpected SHA256: " + afterSha);
+            throw new InvalidOperationException("Stage9.1 seven-byte iOS generic repair produced an unexpected SHA256: " + afterSha);
 
         File.WriteAllBytes(RuntimeDllPath, bytes);
-        Debug.Log($"STAGE9_IOS_DLL_REPAIR Console->Dll pe_offset=0x{characteristicsOffset + 1:x}; Damage.AddElement IL_0019 MemberRef 0x{DamageGetCurrentOldToken:x8}->0x{DamageGetCurrentNewToken:x8} token_offset=0x{tokenOffset:x}; sha256={afterSha}");
+        Debug.Log(
+            $"STAGE9_IOS_DLL_REPAIR complete sha256={afterSha}; " +
+            $"PE_DLL=0x{characteristicsOffset + 1:x}; " +
+            $"Damage.LocalVarSig 0x{DamageLocalSigOldToken:x8}->0x{DamageLocalSigNewToken:x8} at 0x{localSigOffset:x}; " +
+            $"get_Current 0x{DamageGetCurrentOldToken:x8}->0x{DamageGetCurrentNewToken:x8} at 0x{getCurrentTokenOffset:x}; " +
+            $"MoveNext 0x{DamageMoveNextOldToken:x8}->0x{DamageMoveNextNewToken:x8} at 0x{moveNextTokenOffset:x}; " +
+            $"Dispose 0x{DamageDisposeOldToken:x8}->0x{DamageDisposeNewToken:x8} at 0x{disposeTokenOffset:x}");
     }
 
     private static void TryMigrate()
@@ -235,16 +262,14 @@ public static class GodsPVZPackageReferenceMigrator
             if (!ReferenceEquals(text, original) && text != original) { File.WriteAllText(path, text); files++; }
         }
 
-        // Run in the dedicated migration Unity invocation. The runtime-qualified
-        // artifact remains untouched; only the reconstructed project's iOS work
-        // copy receives the two formally proven byte repairs before a forced
-        // import. The separate export Unity invocation then starts from it.
+        // The qualified runtime artifact remains untouched. Only the reconstructed
+        // iOS project work copy receives the formally proven PE/token repairs.
         EnsureRuntimeDllForIosLinker();
 
         Directory.CreateDirectory("Library");
         File.WriteAllText(Marker, $"resolved={resolved}/{expected}\nreferences={refs}\nfiles={files}\ndll_sha256={RuntimeDllIosLinkerSha256}\n");
         AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-        Debug.Log($"GodsPVZ: migrated {refs} package script references in {files} files ({resolved}/{expected} types resolved); iOS linker DLL repair applied.");
+        Debug.Log($"GodsPVZ: migrated {refs} package script references in {files} files ({resolved}/{expected} types resolved); iOS metadata repair applied.");
     }
 }
 #endif
