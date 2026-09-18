@@ -1,0 +1,124 @@
+name: Stage9.1 final DLL entrypoint audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-final-dll-entrypoint-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+
+      - name: Audit PE CLI header and Cecil metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=dll/GodsPVZRuntime1-bgmvolume.dll
+          test -f "$DLL"
+          SHA=$(sha256sum "$DLL" | awk '{print $1}')
+          test "$SHA" = '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+          mkdir -p diagnostics
+          OUT=diagnostics/final-runtime-entrypoint-audit.txt
+          : > "$OUT"
+          echo "sha256=$SHA" | tee -a "$OUT"
+          file "$DLL" | tee -a "$OUT"
+
+          python3 - "$DLL" <<'PY' | tee -a "$OUT"
+          import struct,sys
+          p=sys.argv[1]
+          b=open(p,'rb').read()
+          def u16(o): return struct.unpack_from('<H',b,o)[0]
+          def u32(o): return struct.unpack_from('<I',b,o)[0]
+          pe=u32(0x3c)
+          assert b[pe:pe+4]==b'PE\0\0'
+          coff=pe+4
+          nsec=u16(coff+2)
+          optsz=u16(coff+16)
+          opt=coff+20
+          magic=u16(opt)
+          dd=opt+(96 if magic==0x10b else 112)
+          cli_rva=u32(dd+14*8); cli_size=u32(dd+14*8+4)
+          sec=opt+optsz
+          def rva_to_off(rva):
+              for i in range(nsec):
+                  s=sec+i*40
+                  vsize=u32(s+8); va=u32(s+12); rawsz=u32(s+16); raw=u32(s+20)
+                  if va <= rva < va+max(vsize,rawsz): return raw+(rva-va)
+              raise ValueError(hex(rva))
+          co=rva_to_off(cli_rva)
+          flags=u32(co+16); ep=u32(co+20)
+          print(f'pe_magic=0x{magic:04x}')
+          print(f'cli_rva=0x{cli_rva:08x} cli_size={cli_size}')
+          print(f'cli_flags=0x{flags:08x}')
+          print(f'cli_entrypoint_token_or_rva=0x{ep:08x}')
+          print(f'cli_native_entrypoint={bool(flags & 0x10)}')
+          if ep and not (flags & 0x10):
+              print(f'managed_entrypoint_table=0x{ep>>24:02x} rid={ep & 0x00ffffff}')
+          PY
+
+          TMP=$(mktemp -d)
+          cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using Mono.Cecil;
+          class P {
+            static int Main(string[] args) {
+              try {
+                using var a=AssemblyDefinition.ReadAssembly(args[0], new ReaderParameters { ReadSymbols=false, InMemory=true });
+                var m=a.MainModule;
+                Console.WriteLine($"assembly={a.Name.FullName}");
+                Console.WriteLine($"module_kind={m.Kind}");
+                Console.WriteLine($"module_architecture={m.Architecture}");
+                Console.WriteLine($"module_attributes={m.Attributes}");
+                Console.WriteLine($"entrypoint_null={a.EntryPoint == null}");
+                if (a.EntryPoint != null) {
+                  Console.WriteLine($"entrypoint={a.EntryPoint.FullName}");
+                  Console.WriteLine($"entrypoint_token=0x{a.EntryPoint.MetadataToken.ToUInt32():x8}");
+                  Console.WriteLine($"entrypoint_declaring_type_null={a.EntryPoint.DeclaringType == null}");
+                  Console.WriteLine($"entrypoint_declaring_type={a.EntryPoint.DeclaringType?.FullName ?? "<null>"}");
+                  Console.WriteLine($"entrypoint_has_body={a.EntryPoint.HasBody}");
+                }
+                Console.WriteLine($"types={m.Types.Count}");
+                return 0;
+              } catch (Exception ex) {
+                Console.WriteLine("cecil_exception="+ex);
+                return 2;
+              }
+            }
+          }
+          CS
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DLL" | tee -a "$GITHUB_WORKSPACE/$OUT"
+          cd "$GITHUB_WORKSPACE"
+          cat "$OUT"
+
+      - name: Commit audit report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/final-runtime-entrypoint-audit.txt
+          git commit -m 'diagnostics: audit final runtime DLL entrypoint' || exit 0
+          git push origin HEAD:stage9-admin-start-static
