@@ -1,0 +1,621 @@
+run_id=35368894455
+
+=== package-migration.log exists=True ===
+lines=809 material_hits=1
+
+--- gap; resume 457 ---
+457: [MODES] ModeService[none].Initialize
+458: [MODES] ModeService[none].LoadModes
+459: [MODES] Loading mode Default (0) for mode-current-id-GodsPVZ
+460: [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+461: ProgressiveSceneManager::Cancel()
+462: Unloading 88 Unused Serialized files (Serialized files now loaded: 0)
+463: Unloading 165 unused Assets / (4.9 MB). Loaded Objects now: 3731.
+464: Memory consumption went from 149.0 MB to 144.0 MB.
+465: Total: 7.892135 ms (FindLiveObjects: 0.376471 ms CreateObjectMapping: 0.072368 ms MarkObjects: 4.206861 ms  DeleteObjects: 3.235564 ms)
+466: 
+467: STAGE9_IOS_DLL_REPAIR Console->Dll pe_offset=0x97; Damage.AddElement IL_0019 MemberRef 0x0a0000c3->0x0a0000e7 token_offset=0x13096; sha256=c4a034bf3ff7103bba7a97dfaca734f4a03884388f2202cabc54e5614a8e84c6
+468: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+469: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+470: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+471: UnityEngine.Debug:Log (object)
+472: GodsPVZPackageReferenceMigrator:EnsureRuntimeDllForIosLinker () (at Assets/Editor/GodsPVZPackageReferenceMigrator.cs:175)
+473: GodsPVZPackageReferenceMigrator:TryMigrate () (at Assets/Editor/GodsPVZPackageReferenceMigrator.cs:242)
+474: GodsPVZPackageReferenceMigrator:RunBatch () (at Assets/Editor/GodsPVZPackageReferenceMigrator.cs:36)
+475: 
+476: (Filename: Assets/Editor/GodsPVZPackageReferenceMigrator.cs Line: 175)
+477: 
+478: The following files have the same name as another file, but only differ in casing and will be ignored:
+479: 	Assets/Texture2D/background.png.meta
+480: 	Assets/AnimationClip/idle.anim.meta
+481: 	Assets/AnimationClip/Idle.anim.meta
+482: 	Assets/AnimationClip/exit.anim.meta
+483: 	Assets/AnimationClip/Exit.anim.meta
+484: 	Assets/AnimationClip/enter.anim.meta
+485: 	Assets/AnimationClip/Enter.anim.meta
+486: 	Assets/AnimationClip/Enter.anim
+487: 	Assets/AnimationClip/enter.anim
+488: 	Assets/AnimationClip/Exit.anim
+489: 	Assets/AnimationClip/exit.anim
+490: 	Assets/Sprite/background.asset
+491: 	Assets/Sprite/Background.asset
+492: 	Assets/Sprite/background.asset.meta
+493: 	Assets/Sprite/Background.asset.meta
+494: 	Assets/Sprite/Background_0.asset
+495: 	Assets/Sprite/background_0.asset
+496: 	Assets/Sprite/background_0.asset.meta
+497: 	Assets/Sprite/Background_0.asset.meta
+498: 	Assets/AnimationClip/idle.anim
+499: 	Assets/AnimationClip/Idle.anim
+500: 	Assets/Texture2D/background.png
+501: 	Assets/Texture2D/Background.png
+
+--- gap; resume 730 ---
+730: [Performance] Menu.RegisterMenuInterface                                                                                     :       26 samples, Peak.   761 ns (4.1x), Avg.   186 ns, Total. 4.828 us (0.0%)
+731: [Performance] Gizmo.RebuildRenderers                                                                                         :        1 samples, Peak.  44.8 ms (1.0x), Avg.  44.8 ms, Total. 44.77 ms (0.3%)
+732: [Performance] Gizmo.AddGizmoRenderers                                                                                        :       90 samples, Peak.  1.77 ms (49.4x), Avg.  35.8 us, Total. 3.225 ms (0.0%)
+733: [Performance] Application.editorInitializingProject                                                                          :        1 samples, Peak.  20.1 ms (1.0x), Avg.  20.1 ms, Total. 20.08 ms (0.1%)
+734: [Performance] Application.InitializeMenu                                                                                     :        1 samples, Peak.  94.1 ms (1.0x), Avg.  94.1 ms, Total. 94.09 ms (0.5%)
+735: [Performance] Menu.RebuildAll                                                                                                :        1 samples, Peak.  94.1 ms (1.0x), Avg.  94.1 ms, Total. 94.08 ms (0.5%)
+736: [Performance] Menu.BuildRegisteredMenuInterfaces                                                                             :        1 samples, Peak.  93.6 ms (1.0x), Avg.  93.6 ms, Total. 93.61 ms (0.5%)
+737: [Performance] Menu.FilterMenuItem                                                                                            :      752 samples, Peak.  45.7 ms (654.0x), Avg.  69.9 us, Total. 52.57 ms (0.3%)
+738: [Performance] UpdateAllMenus                                                                                                 :        1 samples, Peak.   391 us (1.0x), Avg.   391 us, Total. 390.9 us (0.0%)
+739: [Performance] EditorSceneManager.sceneClosing: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnSceneClosing           :        1 samples, Peak.   190 us (1.0x), Avg.   190 us, Total. 190.1 us (0.0%)
+740: [Performance] GUIView.RepaintAll.PlayerLoopController                                                                        :        1 samples, Peak.   691 ns (1.0x), Avg.   691 ns, Total. 691.0 ns (0.0%)
+741: [Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneTemplate.SceneTemplateService.OnNewSceneCreated           :        1 samples, Peak.   256 us (1.0x), Avg.   256 us, Total. 255.8 us (0.0%)
+742: [Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnNewSceneCreated     :        1 samples, Peak.   148 us (1.0x), Avg.   148 us, Total. 147.9 us (0.0%)
+743: [Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneManagement.StageNavigationManager.OnNewSceneCreated       :        1 samples, Peak.  76.2 us (1.0x), Avg.  76.2 us, Total. 76.22 us (0.0%)
+744: [Performance] Application.InvokeFinishedLoadingProject                                                                       :        1 samples, Peak.  14.5 ms (1.0x), Avg.  14.5 ms, Total. 14.47 ms (0.1%)
+745: [Performance] ProcessService.OnProjectLoaded                                                                                 :        1 samples, Peak.  72.6 us (1.0x), Avg.  72.6 us, Total. 72.64 us (0.0%)
+746: [Performance] VersionControl.Task.Wait                                                                                       :        1 samples, Peak.  15.9 us (1.0x), Avg.  15.9 us, Total. 15.90 us (0.0%)
+747: [Performance] AssetDatabase.Refresh                                                                                          :        1 samples, Peak.  2.33 s (1.0x), Avg.  2.33 s, Total. 2.334 s (13.5%)
+748: [Performance] ShaderImporter.SourceAssetModified                                                                             :        1 samples, Peak.   711 ns (1.0x), Avg.   711 ns, Total. 711.0 ns (0.0%)
+749: [Performance] ShaderIncludeImporter.SourceAssetModified                                                                      :        1 samples, Peak.   901 ns (1.0x), Avg.   901 ns, Total. 901.0 ns (0.0%)
+750: [Performance] Package.AsyncRequest                                                                                           :        4 samples, Peak.   289 us (3.9x), Avg.  73.2 us, Total. 292.8 us (0.0%)
+751: [Performance] PresetManagerPostProcessor.OnPreprocessAsset                                                                   :        1 samples, Peak.   193 us (1.0x), Avg.   193 us, Total. 192.6 us (0.0%)
+752: [Performance] CancelSplashScreenOnAssetChange.OnPreprocessAsset                                                              :        1 samples, Peak.   113 us (1.0x), Avg.   113 us, Total. 112.7 us (0.0%)
+753: [Performance] ShaderGraphAssetPostProcessor.OnPreprocessAsset                                                                :        1 samples, Peak.   143 us (1.0x), Avg.   143 us, Total. 143.1 us (0.0%)
+754: [Performance] SpritePostProcess.OnPreprocessAsset                                                                            :        1 samples, Peak.  1.24 ms (1.0x), Avg.  1.24 ms, Total. 1.235 ms (0.0%)
+755: [Performance] AssetDatabase.ImportAssets                                                                                     :        1 samples, Peak.   681 ns (1.0x), Avg.   681 ns, Total. 681.0 ns (0.0%)
+756: [Performance] TMPro_TexturePostProcessor.OnPostprocessAllAssets                                                              :        2 samples, Peak.   542 us (1.0x), Avg.   534 us, Total. 1.068 ms (0.0%)
+757: [Performance] BuilderAssetPostprocessor.OnPostprocessAllAssets                                                               :        2 samples, Peak.  2.23 ms (1.0x), Avg.  2.23 ms, Total. 4.452 ms (0.0%)
+758: [Performance] ArtifactBrowserPostProcessor.OnPostprocessAllAssets                                                            :        2 samples, Peak.   496 us (1.0x), Avg.   495 us, Total. 989.1 us (0.0%)
+759: [Performance] AssetEvents.OnPostprocessAllAssets                                                                             :        4 samples, Peak.   127 us (1.4x), Avg.  88.3 us, Total. 353.3 us (0.0%)
+760: [Performance] AudioMixerPostprocessor.OnPostprocessAllAssets                                                                 :        2 samples, Peak.   225 us (1.0x), Avg.   224 us, Total. 448.8 us (0.0%)
+761: [Performance] StyleCatalogPostProcessor.OnPostprocessAllAssets                                                               :        2 samples, Peak.  13.4 ms (1.0x), Avg.  13.4 ms, Total. 26.88 ms (0.2%)
+762: [Performance] BuildCatalog                                                                                                   :        1 samples, Peak.  12.7 ms (1.0x), Avg.  12.7 ms, Total. 12.67 ms (0.1%)
+763: [Performance] ModelImporterPostProcessor.OnPostprocessAllAssets                                                              :        2 samples, Peak.   700 us (1.0x), Avg.   698 us, Total. 1.397 ms (0.0%)
+764: [Performance] MaterialPostprocessor.OnPostprocessAllAssets                                                                   :        4 samples, Peak.   558 us (1.1x), Avg.   487 us, Total. 1.947 ms (0.0%)
+765: [Performance] RetainedModeAssetPostprocessor.OnPostprocessAllAssets                                                          :        2 samples, Peak.  1.57 ms (1.0x), Avg.  1.57 ms, Total. 3.133 ms (0.0%)
+766: [Performance] AssetChangedListener.OnPostprocessAllAssets                                                                    :        2 samples, Peak.   972 us (1.0x), Avg.   971 us, Total. 1.942 ms (0.0%)
+767: [Performance] PostProcessor.OnPostprocessAllAssets                                                                           :        2 samples, Peak.   160 us (1.0x), Avg.   159 us, Total. 318.2 us (0.0%)
+768: [Performance] ShaderGraphAssetPostProcessor.OnPostprocessAllAssets                                                           :        2 samples, Peak.   931 us (1.0x), Avg.   930 us, Total. 1.861 ms (0.0%)
+769: [Performance] SpeedTreePostProcessor.OnPostprocessAllAssets                                                                  :        2 samples, Peak.   133 us (1.0x), Avg.   132 us, Total. 264.4 us (0.0%)
+770: [Performance] TextAssetPostProcessor.OnPostprocessAllAssets                                                                  :        2 samples, Peak.   282 us (1.0x), Avg.   280 us, Total. 560.7 us (0.0%)
+771: [Performance] SpriteLibraryAssetPostprocessor.OnPostprocessAllAssets                                                         :        2 samples, Peak.   165 us (1.0x), Avg.   164 us, Total. 327.6 us (0.0%)
+772: [Performance] SpriteEditorTexturePostprocessor.OnPostprocessAllAssets                                                        :        2 samples, Peak.   176 us (1.0x), Avg.   175 us, Total. 350.8 us (0.0%)
+773: [Performance] EditorApplication.quitting: Unity.Burst.Editor.BurstLoader.OnEditorApplicationQuitting                         :        1 samples, Peak.  24.0 us (1.0x), Avg.  24.0 us, Total. 24.05 us (0.0%)
+774: [Performance] EditorApplication.quitting: callback in UnityEditor.TextCore.Text.EditorEventCallbacks                         :        1 samples, Peak.   106 ms (1.0x), Avg.   106 ms, Total. 106.4 ms (0.6%)
+775: [Performance] Application.Shutdown.PauseProfilerSession                                                                      :        1 samples, Peak.  39.7 us (1.0x), Avg.  39.7 us, Total. 39.71 us (0.0%)
+776: [Performance] Application.Shutdown.PauseAssetImportWorkers                                                                   :        1 samples, Peak.   168 us (1.0x), Avg.   168 us, Total. 167.9 us (0.0%)
+777: [Performance] Application.Shutdown.SaveAssets                                                                                :        1 samples, Peak.  2.76 ms (1.0x), Avg.  2.76 ms, Total. 2.762 ms (0.0%)
+778: [Performance] BuilderAssetModificationProcessor.OnWillSaveAssets                                                             :        1 samples, Peak.   349 us (1.0x), Avg.   349 us, Total. 349.3 us (0.0%)
+779: [Performance] TerrainModificationProcessor.OnWillSaveAssets                                                                  :        1 samples, Peak.   479 us (1.0x), Avg.   479 us, Total. 478.9 us (0.0%)
+780: [Performance] Application.Shutdown.CleanupRenderPipeline                                                                     :        1 samples, Peak.  5.19 us (1.0x), Avg.  5.19 us, Total. 5.187 us (0.0%)
+781: [Performance] Application.Shutdown.StopPreloadManager                                                                        :        1 samples, Peak.  10.1 ms (1.0x), Avg.  10.1 ms, Total. 10.08 ms (0.1%)
+782: [Performance] Application.Shutdown.DestroyWorld                                                                              :        1 samples, Peak.   478 us (1.0x), Avg.   478 us, Total. 477.5 us (0.0%)
+783: [Performance] Application.Shutdown.CleanupAfterLoad                                                                          :        1 samples, Peak.   107 ms (1.0x), Avg.   107 ms, Total. 107.4 ms (0.6%)
+784: [Performance] Application.Shutdown.Progress                                                                                  :        1 samples, Peak.  13.4 us (1.0x), Avg.  13.4 us, Total. 13.36 us (0.0%)
+785: [Performance] Application.Shutdown.GICleanupManagers                                                                         :        1 samples, Peak.  1.22 ms (1.0x), Avg.  1.22 ms, Total. 1.217 ms (0.0%)
+786: [Performance] Application.Shutdown.MenuCleanupClass                                                                          :        1 samples, Peak.   218 us (1.0x), Avg.   218 us, Total. 217.5 us (0.0%)
+787: [Performance] Application.Shutdown.ADBSaveStateBeforeShutdown                                                                :        1 samples, Peak.  10.8 us (1.0x), Avg.  10.8 us, Total. 10.79 us (0.0%)
+788: [Performance] Application.Shutdown.RemoteShutdown                                                                            :        1 samples, Peak.  1.90 us (1.0x), Avg.  1.90 us, Total. 1.903 us (0.0%)
+789: [Performance] Application.Shutdown.CleanupVCProvider                                                                         :        1 samples, Peak.  6.22 us (1.0x), Avg.  6.22 us, Total. 6.219 us (0.0%)
+790: [Performance] Application.Shutdown.InputShutdown                                                                             :        1 samples, Peak.  1.85 us (1.0x), Avg.  1.85 us, Total. 1.853 us (0.0%)
+791: [Performance] Application.Shutdown.GizmoManagerDestroy                                                                       :        1 samples, Peak.   679 us (1.0x), Avg.   679 us, Total. 679.2 us (0.0%)
+792: [Performance] Application.Shutdown.ProfilerSession                                                                           :        1 samples, Peak.   135 us (1.0x), Avg.   135 us, Total. 135.0 us (0.0%)
+793: [Performance] Application.Shutdown.ReleaseGfxWindowOnAllGUIViews                                                             :        1 samples, Peak.   912 ns (1.0x), Avg.   912 ns, Total. 912.0 ns (0.0%)
+794: [Performance] Application.Shutdown.CleanupEngine                                                                             :        1 samples, Peak.  47.5 ms (1.0x), Avg.  47.5 ms, Total. 47.46 ms (0.3%)
+795: [Performance] Application.Shutdown.CleanupAssetDatabase                                                                      :        1 samples, Peak.  10.4 ms (1.0x), Avg.  10.4 ms, Total. 10.40 ms (0.1%)
+796: [Performance] Application.Shutdown.ScriptCompilationCleanUp                                                                  :        1 samples, Peak.  4.29 s (1.0x), Avg.  4.29 s, Total. 4.291 s (24.8%)
+797: [Performance] Application.Shutdown.DestroyJobSystem                                                                          :        1 samples, Peak.  78.5 us (1.0x), Avg.  78.5 us, Total. 78.51 us (0.0%)
+798: [Performance] Application.Shutdown.CleanupPersistentManager                                                                  :        1 samples, Peak.  1.38 ms (1.0x), Avg.  1.38 ms, Total. 1.376 ms (0.0%)
+799: [Performance] Application.Shutdown.CleanupAsyncReadManager                                                                   :        1 samples, Peak.   993 us (1.0x), Avg.   993 us, Total. 992.8 us (0.0%)
+800: [Performance] Application.Shutdown.CleanupMono                                                                               :        1 samples, Peak.   118 ms (1.0x), Avg.   118 ms, Total. 118.0 ms (0.7%)
+801: [Performance] Application.Shutdown.CleanupStdConverters                                                                      :        1 samples, Peak.  12.6 us (1.0x), Avg.  12.6 us, Total. 12.63 us (0.0%)
+802: [Performance] Application.Shutdown.UnloadAllPlatformSupportModuleNativeDlls                                                  :        1 samples, Peak.   641 ns (1.0x), Avg.   641 ns, Total. 641.0 ns (0.0%)
+803: [Performance] Application.Shutdown.UnloadAllPlatformSupportNativeLibraries                                                   :        1 samples, Peak.   434 ms (1.0x), Avg.   434 ms, Total. 433.9 ms (2.5%)
+804: [Performance] Application.Shutdown.CleanupAutoDocumentation                                                                  :        1 samples, Peak.   249 us (1.0x), Avg.   249 us, Total. 249.1 us (0.0%)
+805: [Performance] Application.Shutdown.ShaderNameManagerDestroy                                                                  :        1 samples, Peak.  47.7 us (1.0x), Avg.  47.7 us, Total. 47.72 us (0.0%)
+806: [Performance] Application.Shutdown.CleanupCacheServer                                                                        :        1 samples, Peak.   301 ns (1.0x), Avg.   301 ns, Total. 301.0 ns (0.0%)
+807: [Performance] Application.Shutdown.Virtualization_Shutdown                                                                   :        1 samples, Peak.   641 ns (1.0x), Avg.   641 ns, Total. 641.0 ns (0.0%)
+808: [Performance] Application.Shutdown.DevConnections                                                                            :        1 samples, Peak.  69.9 us (1.0x), Avg.  69.9 us, Total. 69.94 us (0.0%)
+809: Exiting batchmode successfully now!
+
+=== ios-export.log exists=True ===
+lines=16591 material_hits=13
+
+--- gap; resume 6329 ---
+6329: [MODES] ModeService[none].LoadModes
+6330: [MODES] Loading mode Default (0) for mode-current-id-GodsPVZ
+6331: [Licensing::Client] Successfully resolved entitlement details
+6332: [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+6333: ProgressiveSceneManager::Cancel()
+6334: Unloading 888 Unused Serialized files (Serialized files now loaded: 0)
+6335: Unloading 131 unused Assets / (3.0 MB). Loaded Objects now: 3746.
+6336: Memory consumption went from 331.7 MB to 328.7 MB.
+6337: Total: 11.003407 ms (FindLiveObjects: 0.304554 ms CreateObjectMapping: 0.056795 ms MarkObjects: 8.895335 ms  DeleteObjects: 1.744851 ms)
+6338: 
+6339: STAGE9_IOS_STRIPPING level=Minimal
+6340: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+6341: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+6342: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+6343: UnityEngine.Debug:Log (object)
+6344: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:45)
+6345: 
+6346: (Filename: Assets/Editor/GodsPVZIOSBuild.cs Line: 45)
+6347: 
+6348: STAGE9_IOS_TARGET active=iOS architecture=1
+6349: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+6350: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+6351: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+6352: UnityEngine.Debug:Log (object)
+6353: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:54)
+6354: 
+6355: (Filename: Assets/Editor/GodsPVZIOSBuild.cs Line: 54)
+6356: 
+6357: Start importing ProjectSettings/ProjectSettings.asset using Guid(00000000000000004000000000000000) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+6358:  -> (artifact id: 'b596a9b8026b15af6543e285579999bc') in 0.002304 seconds
+6359: Refreshing native plugins compatible for Editor in 0.69 ms, found 1 plugins.
+6360: Preloading 0 native plugins for Editor in 0.00 ms.
+6361: Asset Pipeline Refresh (id=a36fcd3f61743bd7195f767f12fa8f18): Total: 0.074 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+6362: Local keyword BLIT_DECODE_HDR doesn't exist in the shader.
+6363: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+6364: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+6365: UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+6366: UnityEngine.Debug:LogErrorFormat (string,object[])
+6367: UnityEngine.Rendering.LocalKeyword:.ctor (UnityEngine.Shader,string) (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Shaders/LocalKeyword.bindings.cs:38)
+6368: UnityEngine.Rendering.Blitter:Initialize (UnityEngine.Shader,UnityEngine.Shader) (at ./Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blitter.cs:61)
+6369: UnityEngine.Rendering.Universal.Renderer2D:.ctor (UnityEngine.Rendering.Universal.Renderer2DData) (at ./Packages/com.unity.render-pipelines.universal/Runtime/2D/Renderer2D.cs:110)
+6370: UnityEngine.Rendering.Universal.Renderer2DData:Create () (at ./Packages/com.unity.render-pipelines.universal/Runtime/2D/Renderer2DData.cs:154)
+6371: UnityEngine.Rendering.Universal.ScriptableRendererData:InternalCreateRenderer () (at ./Packages/com.unity.render-pipelines.universal/Runtime/ScriptableRendererData.cs:75)
+6372: UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset:GetRenderer (int) (at ./Packages/com.unity.render-pipelines.universal/Runtime/Data/UniversalRenderPipelineAsset.cs:898)
+6373: UnityEditor.Rendering.Universal.ShaderBuildPreprocessor:GetSupportedShaderFeaturesFromRenderers (UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset&,System.Collections.Generic.List`1<UnityEditor.Rendering.Universal.ShaderFeatures>&,UnityEditor.Rendering.Universal.ShaderFeatures,System.Collections.Generic.List`1<UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusionSettings>&,bool,bool&,bool&) (at ./Packages/com.unity.render-pipelines.universal/Editor/ShaderBuildPreprocessor.cs:460)
+
+--- gap; resume 6378 ---
+6378: UnityEditor.Build.BuildPipelineInterfaces/<>c__DisplayClass16_0:<OnBuildPreProcess>b__1 (UnityEditor.Build.IPreprocessBuildWithReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:499)
+6379: UnityEditor.Build.BuildPipelineInterfaces:InvokeCallbackInterfacesPair<UnityEditor.Build.IPreprocessBuild, UnityEditor.Build.IPreprocessBuildWithReport> (System.Collections.Generic.List`1<UnityEditor.Build.IPreprocessBuild>,System.Action`1<UnityEditor.Build.IPreprocessBuild>,System.Collections.Generic.List`1<UnityEditor.Build.IPreprocessBuildWithReport>,System.Action`1<UnityEditor.Build.IPreprocessBuildWithReport>,bool) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:465)
+6380: UnityEditor.Build.BuildPipelineInterfaces:OnBuildPreProcess (UnityEditor.Build.Reporting.BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:497)
+6381: UnityEditor.BuildPipeline:BuildPlayerInternal (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+6382: UnityEditor.BuildPipeline:BuildPlayer (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+6383: UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+6384: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+6385: 
+6386: (Filename: /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Shaders/LocalKeyword.bindings.cs Line: 38)
+6387: 
+6388: MissingReferenceException: The variable m_AtlasTextures of TMP_FontAsset doesn't exist anymore.
+6389: You probably need to reassign the m_AtlasTextures variable of the 'TMP_FontAsset' script in the inspector.
+6390:   at (wrapper managed-to-native) UnityEngine.Texture.GetDataWidth(UnityEngine.Texture)
+6391:   at UnityEngine.Texture.get_width () [0x00001] in /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Graphics/Texture.bindings.cs:42 
+6392:   at TMPro.TMP_PreBuildProcessor.OnPreprocessBuild (UnityEditor.Build.Reporting.BuildReport report) [0x0001d] in ./Packages/com.unity.textmeshpro/Scripts/Editor/TMP_PreBuildProcessor.cs:23 
+6393:   at UnityEditor.Build.BuildPipelineInterfaces+<>c__DisplayClass16_0.<OnBuildPreProcess>b__1 (UnityEditor.Build.IPreprocessBuildWithReport bpp) [0x00000] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:499 
+6394:   at UnityEditor.Build.BuildPipelineInterfaces.InvokeCallbackInterfacesPair[T1,T2] (System.Collections.Generic.List`1[T] oneInterfaces, System.Action`1[T] invocationOne, System.Collections.Generic.List`1[T] twoInterfaces, System.Action`1[T] invocationTwo, System.Boolean exitOnFailure) [0x000ff] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:465 
+6395: UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+6396: UnityEngine.DebugLogHandler:LogException(Exception, Object)
+6397: UnityEngine.Logger:LogException(Exception, Object)
+6398: UnityEngine.Debug:LogException(Exception)
+6399: UnityEditor.Build.BuildPipelineInterfaces:InvokeCallbackInterfacesPair(List`1, Action`1, List`1, Action`1, Boolean) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:478)
+6400: UnityEditor.Build.BuildPipelineInterfaces:OnBuildPreProcess(BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:497)
+6401: UnityEditor.BuildPipeline:BuildPlayerInternalNoCheck(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[], Boolean)
+6402: UnityEditor.BuildPipeline:BuildPlayerInternal(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+6403: UnityEditor.BuildPipeline:BuildPlayer(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+6404: UnityEditor.BuildPipeline:BuildPlayer(BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+6405: GodsPVZIOSBuild:BuildIOS() (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+6406: 
+6407: (Filename: ./Packages/com.unity.textmeshpro/Scripts/Editor/TMP_PreBuildProcessor.cs Line: 23)
+6408: 
+6409: Start importing Assets/MonoBehaviour/New Universal Render Pipeline Asset.asset using Guid(22c2bf3291e4d8f4db5d66a87a6f8123) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+6410:  -> (artifact id: '67757367d0b9823224f6038896ec6948') in 0.018268 seconds
+6411: Refreshing native plugins compatible for Editor in 1.12 ms, found 1 plugins.
+6412: Preloading 0 native plugins for Editor in 0.00 ms.
+6413: Asset Pipeline Refresh (id=3fe78ca286593e3d1ad144644dbec766): Total: 0.279 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+6414: info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+6415:       Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc -
+6416: info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+6417:       Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+6418: info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+6419:       Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+6420: info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+6421:       Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc - - 200 - application/grpc 11.4280ms
+6422: Starting: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/bee_backend --dont-print-to-structured-log --ipc --defer-dag-verification --dagfile="Library/Bee/900b0aESkipCompile.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssembliesAndTypeDB
+6423: WorkingDir: /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject
+6424: ExitCode: 4 Duration: 0s560ms
+6425: [             ] Require frontend run.  Library/Bee/900b0aESkipCompile.dag couldn't be loaded
+6426: Starting: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/Tools/netcorerun/netcorerun "/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/Tools/BuildPipeline/ScriptCompilationBuildProgram.exe" "Library/Bee/900b0aESkipCompile.dag.json" "Library/Bee/900b0aESkipCompile-inputdata.json" "Library/Bee/buildprogram0.traceevents"
+6427: WorkingDir: /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject
+6428: ExitCode: 0 Duration: 0s291ms
+6429: Starting: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/bee_backend --dont-print-to-structured-log --ipc --defer-dag-verification --dagfile="Library/Bee/900b0aESkipCompile.dag" --continue-on-failure --dagfilejson="Library/Bee/900b0aESkipCompile.dag.json" --profile="Library/Bee/backend2.traceevents" ScriptAssembliesAndTypeDB
+6430: WorkingDir: /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject
+6431: ExitCode: 0 Duration: 4s134ms
+6432: Finished compiling graph: 4 nodes, 5 flattened edges (5 ToBuild, 0 ToUse), maximum node priority 3
+6433: [2/3        3s] BuildPlayerDataGenerator Library/BuildPlayerData/Editor/TypeDb-All.json
+6434: *** Tundra build success (3.95 seconds), 1 items updated, 3 evaluated
+6435: Total cache size 43607014
+6436: Total cache size after purge 43607014
+6437: The following files have the same name as another file, but only differ in casing and will be ignored:
+6438: 	Assets/Texture2D/background.png.meta
+6439: 	Assets/AnimationClip/idle.anim.meta
+6440: 	Assets/AnimationClip/Idle.anim.meta
+6441: 	Assets/AnimationClip/exit.anim.meta
+
+--- gap; resume 13987 ---
+13987: [1044/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/Raw/jsons/DeviceData/DeviceInfo/1.json
+13988: [1045/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/Raw/jsons/PlantData/PlantsInitialValue.json
+13989: [1046/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/Raw/jsons/BoardData/EnemySelecter.json
+13990: [1047/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/Raw/jsons/DeviceData/DeviceInfo/8.json
+13991: [1048/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/globalgamemanagers.assets.resS
+13992: [1049/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/globalgamemanagers.assets
+13993: [1050/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/globalgamemanagers
+13994: [1051/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/ScriptingAssemblies.json
+13995: [1052/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Data/RuntimeInitializeOnLoads.json
+13996: [1053/3155  6s] UnityLinker /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Library/Bee/artifacts/unitylinker_fi2v.traceevents
+13997: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/UnityLinker --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.ARModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/M ... [LONG LINE OMITTED]
+13998: [1054/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/debug-mono-symfile.c
+13999: [1055/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/debug-mono-ppdb.h
+14000: [1056/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/debug-internals.h
+14001: [1057/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/dynamic-stream.c
+14002: [1058/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/dynamic-stream-internals.h
+14003: [1059/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/mono-endian.h
+14004: [1060/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/domain.c
+14005: [1061/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/dynamic-image-internals.h
+14006: [1062/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/decimal-ms.h
+14007: [1063/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/decimal-ms.c
+14008: [1064/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/debug-mono-symfile.h
+14009: [1065/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/exception.c
+14010: [1066/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/exception-internals.h
+14011: [1067/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/debug-mono-ppdb.c
+14012: [1068/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/utils/mono-counters.c
+14013: [1069/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/security-manager.c
+14014: [1070/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/domain-internals.h
+14015: [1071/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/exception.h
+14016: [1072/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/environment.h
+14017: [1073/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/fdhandle.h
+14018: [1074/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/file-mmap-posix.c
+14019: [1075/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/file-mmap-windows.c
+14020: [1076/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/file-mmap.h
+14021: [1077/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/filewatcher.c
+14022: [1078/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/filewatcher.h
+14023: [1079/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/console-io.h
+14024: [1080/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/image.h
+14025: [1081/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/gc-stats.c
+14026: [1082/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/coree-internals.h
+14027: [1083/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/class-inlines.h
+14028: [1084/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/environment.c
+14029: [1085/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/security-core-clr.h
+14030: [1086/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/security-core-clr.c
+14031: [1087/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/external/mono/mono/metadata/sgen-dynarray.h
+
+--- gap; resume 16076 ---
+16076: [3132/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/ConsoleExtension.h
+16077: [3133/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/ClassLibraryPAL/brotli/enc/static_dict.h
+16078: [3134/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/ClassLibraryPAL/brotli/enc/histogram_inc.h
+16079: [3135/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/CrashHelpers.cpp
+16080: [3136/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/ClassLibraryPAL/brotli/enc/literal_cost.h
+16081: [3137/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/Cryptography.h
+16082: [3138/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/icalls/mscorlib/System.Runtime.Versioning/VersioningHelper.cpp
+16083: [3139/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/icalls/mscorlib/System.Security.Cryptography/RNGCryptoServiceProvider.h
+16084: [3140/3155  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/Il2CppOutputProject/IL2CPP/libil2cpp/os/ClassLibraryPAL/brotli/enc/static_dict.c
+16085: *** Tundra requires additional run (15.63 seconds), 3140 items updated, 3155 evaluated
+16086: *** Additional run caused by: contents change of Library/Bee/artifacts/iOS/ManagedStripped
+16087: Starting: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/Tools/netcorerun/netcorerun "/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/iOSPlayerBuildProgram.exe" "/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Bee:/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/Tools/BuildPipeline" "Library/Bee/Player681f012a.dag.json" "Library/Bee/Player681f012a-inputdata.json" "Library/Bee/buildprogram1.traceevents"
+16088: WorkingDir: /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject
+16089: ExitCode: 4 Duration: 15s
+16090: ExitCode: 0 Duration: 0s543ms
+16091: Starting: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/bee_backend --dont-print-to-structured-log --ipc --dagfile="Library/Bee/Player681f012a.dag" --dagfilejson="Library/Bee/Player681f012a.dag.json" --profile="Library/Bee/backend3.traceevents" Player
+16092: WorkingDir: /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject
+16093: Finished compiling graph: 3262 nodes, 6637 flattened edges (6637 ToBuild, 0 ToUse), maximum node priority 70
+16094: [           0s] Delete 5 artifact files that are no longer in use. (like Library/Bee/artifacts/csharpactions/dummy-FeaturesChecked.txt_o4jj.info)
+16095: [   1/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.AudioModule-FeaturesChecked.txt_7cmq.info
+16096: [   2/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.CoreModule-FeaturesChecked.txt_8i9v.info
+16097: [   3/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.DirectorModule-FeaturesChecked.txt_lju8.info
+16098: [   5/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.GameCenterModule-FeaturesChecked.txt_80u5.info
+16099: [   6/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.GridModule-FeaturesChecked.txt_3xfm.info
+16100: [   7/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.IMGUIModule-FeaturesChecked.txt_8gri.info
+16101: [   8/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.InputLegacyModule-FeaturesChecked.txt_snto.info
+16102: [   9/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.InputModule-FeaturesChecked.txt_bdsz.info
+16103: [  10/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.JSONSerializeModule-FeaturesChecked.txt_h3yy.info
+16104: [  11/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.ParticleSystemModule-FeaturesChecked.txt_mx5j.info
+16105: [  12/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.Physics2DModule-FeaturesChecked.txt_y7rc.info
+16106: [  13/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.PhysicsModule-FeaturesChecked.txt_oloo.info
+16107: [  14/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.PropertiesModule-FeaturesChecked.txt_8j0m.info
+16108: [  15/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.AssetBundleModule-FeaturesChecked.txt_vyp7.info
+16109: [  16/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.SpriteMaskModule-FeaturesChecked.txt_2cst.info
+16110: [  17/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.SpriteShapeModule-FeaturesChecked.txt_t9x7.info
+16111: [  18/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.SubsystemsModule-FeaturesChecked.txt_harr.info
+16112: [  19/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.TerrainModule-FeaturesChecked.txt_yqfb.info
+16113: [  20/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.TextCoreFontEngineModule-FeaturesChecked.txt_u5c4.info
+16114: [  21/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.TextCoreTextEngineModule-FeaturesChecked.txt_4y5l.info
+16115: [  22/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.TextRenderingModule-FeaturesChecked.txt_4zn4.info
+16116: [  23/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.TilemapModule-FeaturesChecked.txt_z4wr.info
+16117: [  24/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.UI-FeaturesChecked.txt_tk32.info
+16118: [  25/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.UIElementsModule-FeaturesChecked.txt_wkb5.info
+16119: [  26/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.UIModule-FeaturesChecked.txt_9bym.info
+16120: [  27/3261  0s] WriteText Library/Bee/artifacts/csharpactions/UnityEngine.UnityAnalyticsModule-FeaturesChecked.txt_e6dx.info
+
+--- gap; resume 16205 ---
+16205: [ 115/3261  0s] ExtractUsedFeatures Library/Bee/artifacts/iOS/Features/mscorlib-FeaturesChecked.txt
+16206: [ 117/3261  0s] ClassRegistrationGenerator /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Library/Bee/artifacts/iOS/il2cppOutput/UnityClassRegistration.cpp
+16207: [ 118/3261  0s] GenerateNativePluginsForAssemblies Library/Bee/artifacts/iOS/AsyncPluginsFromLinker
+16208: [ 119/3261  0s] ICallRegistrationGenerator /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Library/Bee/artifacts/iOS/il2cppOutput/UnityICallRegistration.cpp
+16209: [2199/3261  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/UnityFramework/PrivacyInfo.xcprivacy
+16210: [2200/3261  0s] CopyFiles /home/runner/work/_temp/stage9-ios-export/xcode/UnityFramework/ApplePrivacyManifestsMerge.txt
+16211: [2201/3261  0s] IL2CPP_CodeGen /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Library/Bee/artifacts/il2cpp_conv_br7l.traceevents
+16212: ##### CommandLine
+16213: "/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/il2cpp" @"Library/Bee/artifacts/rsp/10044570512716554951.rsp"
+16214: ##### Contents of Library/Bee/artifacts/rsp/10044570512716554951.rsp
+16215: --convert-to-cpp --assembly="Library/Bee/artifacts/iOS/ManagedStripped/GodsPVZRuntime1.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/Mono.Security.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/System.Configuration.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/System.Core.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/System.Xml.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/System.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/Unity.2D.Animation.Runtime.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/Unity.Burst.Unsafe.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/Unity.Burst.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/Unity.Collections.LowLevel.ILSupport.dll" --assembly="Library/Bee/artifacts/iOS/ManagedStripped/Unity.Collections.dll" --assembly="Library/Bee/artifacts/iOS/Ma ... [LONG LINE OMITTED]
+16216: ##### ExitCode
+16217: 255
+16218: ##### Output
+16219: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/il2cpp @Library/Bee/artifacts/rsp/10044570512716554951.rsp
+16220: Error: IL2CPP error (no further information about what managed code was being converted is available)
+16221: System.AggregateException: One or more errors occurred. (Object reference not set to an instance of an object.)
+16222:  ---> System.NullReferenceException: Object reference not set to an instance of an object.
+16223:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.AssemblyCollections.AddGenericParameter(GenericParameter genericParameter, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 365
+16224:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessTypeReference(AssemblyCollections collections, TypeReference typeReference, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 238
+16225:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessGenericInstanceType(AssemblyCollections collections, GenericInstanceType genericInstanceType, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 270
+16226:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessTypeReference(AssemblyCollections collections, TypeReference typeReference, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 251
+16227:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessMethod(AssemblyCollections collections, MethodDefinition method) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 79
+16228:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessType(AssemblyCollections collections, TypeDefinition type) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 49
+16229:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessModule(AssemblyCollections collections, ModuleDefinition module) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 34
+16230:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.Collect(AssemblyDefinition assembly, Boolean exportsOnly) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 19
+16231:    at Unity.IL2CPP.DataModel.BuildLogic.DataModelBuilder.<>c__DisplayClass18_0.<BuildCecilSourcedData>b__0(UnderConstruction`2 asm) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/DataModelBuilder.cs:line 250
+16232:    at Unity.IL2CPP.DataModel.BuildLogic.Utils.ParallelHelpers.<>c__DisplayClass6_0`2.<MapParallel>b__0(ValueTuple`2 item) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic.Utils/ParallelHelpers.cs:line 72
+16233:    at System.Threading.Tasks.Parallel.<>c__DisplayClass44_0`2.<PartitionerForEachWorker>b__1(IEnumerator& partitionState, Int32 timeout, Boolean& replicationDelegateYieldedBeforeCompletion)
+16234: --- End of stack trace from previous location ---
+16235:    at System.Threading.Tasks.Parallel.<>c__DisplayClass44_0`2.<PartitionerForEachWorker>b__1(IEnumerator& partitionState, Int32 timeout, Boolean& replicationDelegateYieldedBeforeCompletion)
+16236:    at System.Threading.Tasks.TaskReplicator.Replica`1.ExecuteAction(Boolean& yieldedBeforeCompletion)
+16237:    at System.Threading.Tasks.TaskReplicator.Replica.Execute()
+16238:    --- End of inner exception stack trace ---
+16239:    at System.Threading.Tasks.TaskReplicator.Run[TState](ReplicatableUserAction`1 action, ParallelOptions options, Boolean stopOnFirstFailure)
+16240:    at System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+16241: --- End of stack trace from previous location ---
+16242:    at System.Threading.Tasks.Parallel.ThrowSingleCancellationExceptionOrOtherException(ICollection exceptions, CancellationToken cancelToken, Exception otherException)
+16243:    at System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+16244:    at System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+16245:    at System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, Action`1 body)
+16246:    at Unity.IL2CPP.DataModel.BuildLogic.Utils.ParallelHelpers.MapParallel[TSource,TResult](ReadOnlyCollection`1 source, Func`2 func)
+16247:    at Unity.IL2CPP.DataModel.BuildLogic.DataModelBuilder.BuildCecilSourcedData(ReadOnlyCollection`1 assemblies, ReadOnlyCollection`1& stage1Data) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/DataModelBuilder.cs:line 229
+16248:    at Unity.IL2CPP.DataModel.BuildLogic.DataModelBuilder.Build() in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/DataModelBuilder.cs:line 57
+16249:    at Unity.IL2CPP.AssemblyConversion.Phases.InitializePhase.Run(AssemblyConversionContext context) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion/Phases/InitializePhase.cs:line 19
+16250:    at Unity.IL2CPP.AssemblyConversion.Classic.ClassicConverter.Run(AssemblyConversionContext context) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion.Classic/ClassicConverter.cs:line 11
+16251:    at Unity.IL2CPP.AssemblyConversion.AssemblyConverter.ConvertAssemblies(AssemblyConversionContext context, ConversionMode conversionMode) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion/AssemblyConverter.cs:line 38
+16252:    at Unity.IL2CPP.AssemblyConversion.AssemblyConverter.ConvertAssemblies(TinyProfiler2 tinyProfiler, AssemblyConversionInputData data, AssemblyConversionParameters parameters, AssemblyConversionInputDataForTopLevelAccess dataForTopLevel) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion/AssemblyConverter.cs:line 13
+16253: *** Tundra build failed (6.53 seconds), 116 items updated, 2202 evaluated
+16254: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/il2cpp @Library/Bee/artifacts/rsp/10044570512716554951.rsp
+16255: Error: IL2CPP error (no further information about what managed code was being converted is available)
+16256: System.AggregateException: One or more errors occurred. (Object reference not set to an instance of an object.)
+16257:  ---> System.NullReferenceException: Object reference not set to an instance of an object.
+16258:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.AssemblyCollections.AddGenericParameter(GenericParameter genericParameter, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 365
+16259:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessTypeReference(AssemblyCollections collections, TypeReference typeReference, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 238
+16260:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessGenericInstanceType(AssemblyCollections collections, GenericInstanceType genericInstanceType, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 270
+16261:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessTypeReference(AssemblyCollections collections, TypeReference typeReference, IGenericInstance genericInstance) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 251
+16262:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessMethod(AssemblyCollections collections, MethodDefinition method) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 79
+16263:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessType(AssemblyCollections collections, TypeDefinition type) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 49
+16264:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.ProcessModule(AssemblyCollections collections, ModuleDefinition module) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 34
+16265:    at Unity.IL2CPP.DataModel.BuildLogic.ReferencesCollector.Collect(AssemblyDefinition assembly, Boolean exportsOnly) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/ReferencesCollector.cs:line 19
+16266:    at Unity.IL2CPP.DataModel.BuildLogic.DataModelBuilder.<>c__DisplayClass18_0.<BuildCecilSourcedData>b__0(UnderConstruction`2 asm) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/DataModelBuilder.cs:line 250
+16267:    at Unity.IL2CPP.DataModel.BuildLogic.Utils.ParallelHelpers.<>c__DisplayClass6_0`2.<MapParallel>b__0(ValueTuple`2 item) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic.Utils/ParallelHelpers.cs:line 72
+16268:    at System.Threading.Tasks.Parallel.<>c__DisplayClass44_0`2.<PartitionerForEachWorker>b__1(IEnumerator& partitionState, Int32 timeout, Boolean& replicationDelegateYieldedBeforeCompletion)
+16269: --- End of stack trace from previous location ---
+16270:    at System.Threading.Tasks.Parallel.<>c__DisplayClass44_0`2.<PartitionerForEachWorker>b__1(IEnumerator& partitionState, Int32 timeout, Boolean& replicationDelegateYieldedBeforeCompletion)
+16271:    at System.Threading.Tasks.TaskReplicator.Replica`1.ExecuteAction(Boolean& yieldedBeforeCompletion)
+16272:    at System.Threading.Tasks.TaskReplicator.Replica.Execute()
+16273:    --- End of inner exception stack trace ---
+16274:    at System.Threading.Tasks.TaskReplicator.Run[TState](ReplicatableUserAction`1 action, ParallelOptions options, Boolean stopOnFirstFailure)
+16275:    at System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+16276: --- End of stack trace from previous location ---
+16277:    at System.Threading.Tasks.Parallel.ThrowSingleCancellationExceptionOrOtherException(ICollection exceptions, CancellationToken cancelToken, Exception otherException)
+16278:    at System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+16279:    at System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+16280:    at System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, Action`1 body)
+16281:    at Unity.IL2CPP.DataModel.BuildLogic.Utils.ParallelHelpers.MapParallel[TSource,TResult](ReadOnlyCollection`1 source, Func`2 func)
+16282:    at Unity.IL2CPP.DataModel.BuildLogic.DataModelBuilder.BuildCecilSourcedData(ReadOnlyCollection`1 assemblies, ReadOnlyCollection`1& stage1Data) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/DataModelBuilder.cs:line 229
+16283:    at Unity.IL2CPP.DataModel.BuildLogic.DataModelBuilder.Build() in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP.DataModel/BuildLogic/DataModelBuilder.cs:line 57
+16284:    at Unity.IL2CPP.AssemblyConversion.Phases.InitializePhase.Run(AssemblyConversionContext context) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion/Phases/InitializePhase.cs:line 19
+16285:    at Unity.IL2CPP.AssemblyConversion.Classic.ClassicConverter.Run(AssemblyConversionContext context) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion.Classic/ClassicConverter.cs:line 11
+16286:    at Unity.IL2CPP.AssemblyConversion.AssemblyConverter.ConvertAssemblies(AssemblyConversionContext context, ConversionMode conversionMode) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion/AssemblyConverter.cs:line 38
+16287:    at Unity.IL2CPP.AssemblyConversion.AssemblyConverter.ConvertAssemblies(TinyProfiler2 tinyProfiler, AssemblyConversionInputData data, AssemblyConversionParameters parameters, AssemblyConversionInputDataForTopLevelAccess dataForTopLevel) in /Users/bokken/build/output/unity/il2cpp/Unity.IL2CPP/AssemblyConversion/AssemblyConverter.cs:line 13
+16288: �Ƭx
+16289: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+16290: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+16291: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+
+--- gap; resume 16313 ---
+16313: UnityEditor.iOS.iOSBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs)
+16314: UnityEditor.Modules.DefaultBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs,UnityEditor.BuildProperties&) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/DefaultBuildPostprocessor.cs:30)
+16315: UnityEditor.PostprocessBuildPlayer:Postprocess (UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,string,string,string,int,int,UnityEditor.BuildOptions,UnityEditor.RuntimeClassRegistry,UnityEditor.Build.Reporting.BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/PostprocessBuildPlayer.cs:370)
+16316: UnityEditor.BuildPipeline:BuildPlayerInternal (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+16317: UnityEditor.BuildPipeline:BuildPlayer (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+16318: UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+16319: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+16320: 
+16321: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 554)
+16322: 
+16323: BuildFailedException: Player build failed: 7 errors
+16324:   at UnityEditor.Modules.BeeBuildPostprocessor.PostProcess (UnityEditor.Modules.BuildPostProcessArgs args) [0x00213] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:725 
+16325:   at UnityEditor.iOS.iOSBuildPostprocessor.PostProcess (UnityEditor.Modules.BuildPostProcessArgs args) [0x002a2] in <79f92961ce95431198853209e383707d>:0 
+16326: UnityEditor.BuildPipeline:BuildPlayerInternalNoCheck(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[], Boolean)
+16327: UnityEditor.BuildPipeline:BuildPlayerInternal(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+16328: UnityEditor.BuildPipeline:BuildPlayer(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+16329: UnityEditor.BuildPipeline:BuildPlayer(BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+16330: GodsPVZIOSBuild:BuildIOS() (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+16331: 
+16332: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 725)
+16333: 
+16334: ExitCode: 3 Duration: 6s742ms
+16335: Unloading 205 Unused Serialized files (Serialized files now loaded: 0)
+16336: Unloading 1226 unused Assets / (27.5 MB). Loaded Objects now: 3902.
+16337: Memory consumption went from 0.55 GB to 0.52 GB.
+16338: Total: 50.448875 ms (FindLiveObjects: 0.510952 ms CreateObjectMapping: 0.328159 ms MarkObjects: 26.557039 ms  DeleteObjects: 23.051383 ms)
+16339: 
+16340: Build Finished, Result: Failure.
+16341: Total cache size 52720769
+16342: Total cache size after purge 52720769
+16343: ##utp:{"type":"PlayerBuildInfo","version":2,"phase":"Immediate","time":1789749988249,"processId":7210,"steps":[{"description":"Preprocess Player","duration":17231},{"description":"Prepare For Build","duration":1},{"description":"ProducePlayerScriptAssemblies","duration":27190},{"description":"Verify Build setup","duration":53},{"description":"Prepare assets for target platform","duration":3050},{"description":"Prepare splash screen","duration":952},{"description":"Building scenes","duration":16378},{"description":"Build scripts DLLs","duration":58},{"description":"Build GlobalGameManagers file","duration":481},{"description":"Writing asset files","duration":20946},{"description":"Building Resources/unity_builtin_extra","duration":4055},{"description":"Write data build dirty tracking information","duration":992},{"description":"Postprocess built player","duration":24312}],"duration":11569 ... [LONG LINE OMITTED]
+16344: [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+16345: Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+16346: Loaded scene 'Temp/__Backupscenes/0.backup'
+16347: 	Deserialize:            0.647 ms
+16348: 	Integration:            124.954 ms
+16349: 	Integration of assets:  0.001 ms
+16350: 	Thread Wait Time:       0.432 ms
+16351: 	Total Operation Time:   126.035 ms
+16352: Unloading 0 unused Assets / (20.3 KB). Loaded Objects now: 3894.
+16353: Memory consumption went from 0.51 GB to 0.51 GB.
+16354: Total: 7.169127 ms (FindLiveObjects: 0.390102 ms CreateObjectMapping: 0.068592 ms MarkObjects: 6.687519 ms  DeleteObjects: 0.022313 ms)
+16355: 
+16356: GodsPVZ iOS export summary: result=Failed, errors=8, warnings=350, size=838124103, output=/home/runner/work/_temp/stage9-ios-export/xcode
+16357: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+16358: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+16359: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+16360: UnityEngine.Debug:Log (object)
+16361: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:84)
+16362: 
+16363: (Filename: Assets/Editor/GodsPVZIOSBuild.cs Line: 84)
+16364: 
+16365: Exception: iOS Unity build failed: Failed, errors=8
+16366:   at GodsPVZIOSBuild.BuildIOS () [0x002d0] in /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Editor/GodsPVZIOSBuild.cs:92 
+16367: 
+16368: (Filename: Assets/Editor/GodsPVZIOSBuild.cs Line: 92)
+16369: 
+16370: executeMethod method GodsPVZIOSBuild.BuildIOS threw exception.
+16371: [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+16372: [Licensing::IpcConnector] License Notification channel disconnected successfully.
+16373: [Licensing::IpcConnector] License Client channel disconnected successfully.
+16374: info: Microsoft.Hosting.Lifetime[0]
+16375:       Application is shutting down...
+16376: info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+16377:       ALC ILPP context 2 is unloading
+16378: Cleanup mono
+16379: debugger-agent: Unable to listen on 48
+16380: [usbmuxd] Stop listen thread
+16381: [usbmuxd] Listen thread exiting
+16382: [Performance] Application.InitializeProject                                                                                  :        1 samples, Peak.   207 s (1.0x), Avg.   207 s, Total. 206.6 s (62.7%)
+16383: [Performance] Application.PackageManager.StartServer                                                                         :        1 samples, Peak.  2.84 ms (1.0x), Avg.  2.84 ms, Total. 2.837 ms (0.0%)
+16384: [Performance] Application.AcquireProjectLock                                                                                 :        1 samples, Peak.   679 us (1.0x), Avg.   679 us, Total. 678.9 us (0.0%)
+16385: [Performance] Application.InitializeEngineNoGraphics                                                                         :        1 samples, Peak.   139 ms (1.0x), Avg.   139 ms, Total. 139.0 ms (0.0%)
+16386: [Performance] Application.PackageManager.Initialize                                                                          :        1 samples, Peak.   100 ms (1.0x), Avg.   100 ms, Total. 100.3 ms (0.0%)
+16387: [Performance] Connecting to Package Manager                                                                                  :       11 samples, Peak.  24.3 us (8.3x), Avg.  2.92 us, Total. 32.08 us (0.0%)
+16388: [Performance] Application.EngineGraphics.Initialize                                                                          :        1 samples, Peak.  37.7 ms (1.0x), Avg.  37.7 ms, Total. 37.66 ms (0.0%)
+16389: [Performance] Application.GI.Initialize                                                                                      :        1 samples, Peak.   534 us (1.0x), Avg.   534 us, Total. 534.3 us (0.0%)
+16390: [Performance] Application.LoadAllDefaultResourcesFromEditor                                                                  :        1 samples, Peak.  1.34 ms (1.0x), Avg.  1.34 ms, Total. 1.340 ms (0.0%)
+16391: [Performance] Application.LoadMonoAssemblies                                                                                 :        1 samples, Peak.   414 ms (1.0x), Avg.   414 ms, Total. 414.3 ms (0.1%)
+16392: [Performance] RestoreManagedReferences                                                                                       :        2 samples, Peak.  51.1 ms (2.0x), Avg.  25.6 ms, Total. 51.12 ms (0.0%)
+16393: [Performance] InitializeOnLoad MixerEffectDefinitionReloader                                                                 :        2 samples, Peak.  2.08 ms (1.2x), Avg.  1.79 ms, Total. 3.576 ms (0.0%)
+16394: [Performance] InitializeOnLoad SettingsService                                                                               :        2 samples, Peak.  12.1 us (1.3x), Avg.  9.65 us, Total. 19.31 us (0.0%)
+16395: [Performance] InitializeOnLoad AssetStoreContext                                                                             :        2 samples, Peak.  15.0 ms (1.0x), Avg.  14.8 ms, Total. 29.68 ms (0.0%)
+16396: [Performance] InitializeOnLoad CloudBuild                                                                                    :        2 samples, Peak.  7.62 us (1.3x), Avg.  6.04 us, Total. 12.09 us (0.0%)
+16397: [Performance] InitializeOnLoad ManagedDebuggerWindow                                                                         :        2 samples, Peak.   367 us (1.4x), Avg.   260 us, Total. 520.8 us (0.0%)
+16398: [Performance] InitializeOnLoad SceneSearch                                                                                   :        2 samples, Peak.  63.4 us (1.1x), Avg.  57.8 us, Total. 115.6 us (0.0%)
+16399: [Performance] InitializeOnLoad ObjectSelectorSearch                                                                          :        2 samples, Peak.   160 us (1.1x), Avg.   144 us, Total. 288.4 us (0.0%)
+
+--- gap; resume 16512 ---
+16512: [Performance] RetainedModeAssetPostprocessor.OnPostprocessAllAssets                                                          :        6 samples, Peak.  2.94 ms (2.4x), Avg.  1.21 ms, Total. 7.264 ms (0.0%)
+16513: [Performance] AssetChangedListener.OnPostprocessAllAssets                                                                    :        6 samples, Peak.  7.20 ms (2.8x), Avg.  2.61 ms, Total. 15.65 ms (0.0%)
+16514: [Performance] PostProcessor.OnPostprocessAllAssets                                                                           :        6 samples, Peak.  12.3 ms (2.9x), Avg.  4.20 ms, Total. 25.21 ms (0.0%)
+16515: [Performance] ShaderGraphAssetPostProcessor.OnPostprocessAllAssets                                                           :        6 samples, Peak.  69.9 ms (2.9x), Avg.  24.1 ms, Total. 144.7 ms (0.0%)
+16516: [Performance] SpeedTreePostProcessor.OnPostprocessAllAssets                                                                  :        6 samples, Peak.  16.4 ms (3.0x), Avg.  5.54 ms, Total. 33.23 ms (0.0%)
+16517: [Performance] TextAssetPostProcessor.OnPostprocessAllAssets                                                                  :        6 samples, Peak.  10.7 ms (3.0x), Avg.  3.56 ms, Total. 21.38 ms (0.0%)
+16518: [Performance] SpriteLibraryAssetPostprocessor.OnPostprocessAllAssets                                                         :        6 samples, Peak.   316 us (2.9x), Avg.   108 us, Total. 647.8 us (0.0%)
+16519: [Performance] SpriteEditorTexturePostprocessor.OnPostprocessAllAssets                                                        :        6 samples, Peak.   318 us (1.7x), Avg.   187 us, Total. 1.123 ms (0.0%)
+16520: [Performance] SyncVS.PostprocessSyncProject                                                                                  :        3 samples, Peak.  1.31 ms (2.7x), Avg.   489 us, Total. 1.466 ms (0.0%)
+16521: [Performance] Application.ImportPackagesAndSetTemplateWhenCreatingProject                                                    :        1 samples, Peak.  13.7 ms (1.0x), Avg.  13.7 ms, Total. 13.66 ms (0.0%)
+16522: [Performance] Application.SyncCurrentColorSpace                                                                              :        1 samples, Peak.  1.64 s (1.0x), Avg.  1.64 s, Total. 1.643 s (0.5%)
+16523: [Performance] Application.OnUsbDevicesChanged                                                                                :        1 samples, Peak.   145 us (1.0x), Avg.   145 us, Total. 144.7 us (0.0%)
+16524: [Performance] Application.AssetInstanceCacheUpdate                                                                           :        1 samples, Peak.   251 ns (1.0x), Avg.   251 ns, Total. 251.0 ns (0.0%)
+16525: [Performance] Application.UnityExtensions.Initialize                                                                         :        1 samples, Peak.  5.80 ms (1.0x), Avg.  5.80 ms, Total. 5.804 ms (0.0%)
+16526: [Performance] CodeEditorProjectSync.SyncEditorProject                                                                        :        1 samples, Peak.   164 us (1.0x), Avg.   164 us, Total. 163.9 us (0.0%)
+16527: [Performance] Application.ExecuteStartups                                                                                    :        1 samples, Peak.  76.8 ms (1.0x), Avg.  76.8 ms, Total. 76.77 ms (0.0%)
+16528: [Performance] Menu.RegisterMenuInterface                                                                                     :       26 samples, Peak.  1.35 us (4.8x), Avg.   283 ns, Total. 7.351 us (0.0%)
+16529: [Performance] Gizmo.RebuildRenderers                                                                                         :        2 samples, Peak.  75.0 ms (1.7x), Avg.  43.7 ms, Total. 87.33 ms (0.0%)
+16530: [Performance] Gizmo.AddGizmoRenderers                                                                                        :      180 samples, Peak.  1.76 ms (55.3x), Avg.  31.9 us, Total. 5.735 ms (0.0%)
+16531: [Performance] Application.editorInitializingProject                                                                          :        1 samples, Peak.  17.3 ms (1.0x), Avg.  17.3 ms, Total. 17.32 ms (0.0%)
+16532: [Performance] Application.InitializeMenu                                                                                     :        1 samples, Peak.  89.7 ms (1.0x), Avg.  89.7 ms, Total. 89.67 ms (0.0%)
+16533: [Performance] Menu.RebuildAll                                                                                                :        1 samples, Peak.  89.7 ms (1.0x), Avg.  89.7 ms, Total. 89.66 ms (0.0%)
+16534: [Performance] Menu.BuildRegisteredMenuInterfaces                                                                             :        1 samples, Peak.  89.2 ms (1.0x), Avg.  89.2 ms, Total. 89.18 ms (0.0%)
+16535: [Performance] Menu.FilterMenuItem                                                                                            :      755 samples, Peak.  42.3 ms (747.6x), Avg.  56.6 us, Total. 42.72 ms (0.0%)
+16536: [Performance] UpdateAllMenus                                                                                                 :        1 samples, Peak.   375 us (1.0x), Avg.   375 us, Total. 375.2 us (0.0%)
+16537: [Performance] EditorSceneManager.sceneClosing: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnSceneClosing           :        6 samples, Peak.   190 us (5.5x), Avg.  34.5 us, Total. 207.1 us (0.0%)
+16538: [Performance] GUIView.RepaintAll.PlayerLoopController                                                                        :        4 samples, Peak.   303 us (3.9x), Avg.  77.3 us, Total. 309.2 us (0.0%)
+16539: [Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneTemplate.SceneTemplateService.OnNewSceneCreated           :        3 samples, Peak.   243 us (3.0x), Avg.  82.0 us, Total. 245.9 us (0.0%)
+16540: [Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnNewSceneCreated     :        3 samples, Peak.   136 us (2.8x), Avg.  48.8 us, Total. 146.4 us (0.0%)
+16541: [Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneManagement.StageNavigationManager.OnNewSceneCreated       :        3 samples, Peak.  56.6 us (2.9x), Avg.  19.6 us, Total. 58.68 us (0.0%)
+16542: [Performance] Application.InvokeFinishedLoadingProject                                                                       :        1 samples, Peak.  12.9 ms (1.0x), Avg.  12.9 ms, Total. 12.86 ms (0.0%)
+16543: [Performance] ProcessService.OnProjectLoaded                                                                                 :        1 samples, Peak.  62.8 us (1.0x), Avg.  62.8 us, Total. 62.81 us (0.0%)
+16544: [Performance] BuilderAssetModificationProcessor.OnWillSaveAssets                                                             :        3 samples, Peak.   302 us (2.7x), Avg.   112 us, Total. 336.2 us (0.0%)
+16545: [Performance] TerrainModificationProcessor.OnWillSaveAssets                                                                  :        3 samples, Peak.   483 us (2.9x), Avg.   164 us, Total. 490.9 us (0.0%)
+16546: [Performance] ShaderImporter.SourceAssetModified                                                                             :        2 samples, Peak.   852 ns (1.1x), Avg.   806 ns, Total. 1.613 us (0.0%)
+16547: [Performance] ShaderIncludeImporter.SourceAssetModified                                                                      :        2 samples, Peak.  1.21 us (1.0x), Avg.  1.19 us, Total. 2.383 us (0.0%)
+16548: [Performance] Inspector.InitOrRebuild                                                                                        :        4 samples, Peak.  21.0 ms (3.8x), Avg.  5.50 ms, Total. 22.01 ms (0.0%)
+16549: [Performance] GenerateAssemblyTypeInfos                                                                                      :        2 samples, Peak.   128 ms (1.6x), Avg.  81.6 ms, Total. 163.3 ms (0.0%)
+16550: [Performance] AssetDatabase.Refresh                                                                                          :        1 samples, Peak.   142 ms (1.0x), Avg.   142 ms, Total. 141.8 ms (0.0%)
+16551: [Performance] EditorSceneManager.sceneOpened: UnityEditor.SceneTemplate.SceneTemplateService.OnSceneOpened                   :        2 samples, Peak.  1.32 ms (2.0x), Avg.   663 us, Total. 1.325 ms (0.0%)
+16552: [Performance] EditorSceneManager.sceneOpened: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnSceneOpened             :        2 samples, Peak.  2.28 ms (2.0x), Avg.  1.14 ms, Total. 2.289 ms (0.0%)
+16553: [Performance] EditorSceneManager.sceneOpened: UnityEditor.SceneManagement.StageNavigationManager.OnSceneOpened               :        2 samples, Peak.  39.2 us (1.9x), Avg.  20.6 us, Total. 41.14 us (0.0%)
+16554: [Performance] UnityBuildPostprocessor.OnProcessScene                                                                         :        2 samples, Peak.  3.73 ms (2.0x), Avg.  1.89 ms, Total. 3.771 ms (0.0%)
+16555: [Performance] Application.Shutdown.SaveDefaultWindowPreferences                                                              :        1 samples, Peak.   770 us (1.0x), Avg.   770 us, Total. 770.3 us (0.0%)
+16556: [Performance] Application.Shutdown.SaveSceneManagerSetup                                                                     :        1 samples, Peak.   147 us (1.0x), Avg.   147 us, Total. 146.9 us (0.0%)
+16557: [Performance] Application.Shutdown.CleanupAllContainerWindows                                                                :        1 samples, Peak.   302 us (1.0x), Avg.   302 us, Total. 301.8 us (0.0%)
+16558: [Performance] EditorApplication.quitting: Unity.Burst.Editor.BurstLoader.OnEditorApplicationQuitting                         :        1 samples, Peak.  25.6 us (1.0x), Avg.  25.6 us, Total. 25.60 us (0.0%)
+16559: [Performance] EditorApplication.quitting: callback in UnityEditor.TextCore.Text.EditorEventCallbacks                         :        1 samples, Peak.   351 ms (1.0x), Avg.   351 ms, Total. 350.8 ms (0.1%)
+16560: [Performance] Application.Shutdown.PauseProfilerSession                                                                      :        1 samples, Peak.  1.93 ms (1.0x), Avg.  1.93 ms, Total. 1.930 ms (0.0%)
+16561: [Performance] Application.Shutdown.PauseAssetImportWorkers                                                                   :        1 samples, Peak.   254 us (1.0x), Avg.   254 us, Total. 254.3 us (0.0%)
+16562: [Performance] Application.Shutdown.SaveAssets                                                                                :        1 samples, Peak.  3.03 ms (1.0x), Avg.  3.03 ms, Total. 3.026 ms (0.0%)
+16563: [Performance] Application.Shutdown.CleanupRenderPipeline                                                                     :        1 samples, Peak.  3.69 us (1.0x), Avg.  3.69 us, Total. 3.686 us (0.0%)
+16564: [Performance] Application.Shutdown.StopPreloadManager                                                                        :        1 samples, Peak.  10.1 ms (1.0x), Avg.  10.1 ms, Total. 10.09 ms (0.0%)
+16565: [Performance] Application.Shutdown.DestroyWorld                                                                              :        1 samples, Peak.   412 us (1.0x), Avg.   412 us, Total. 411.5 us (0.0%)
+16566: [Performance] Application.Shutdown.CleanupAfterLoad                                                                          :        1 samples, Peak.   116 ms (1.0x), Avg.   116 ms, Total. 116.2 ms (0.0%)
+16567: [Performance] Application.Shutdown.Progress                                                                                  :        1 samples, Peak.   989 us (1.0x), Avg.   989 us, Total. 989.3 us (0.0%)
+16568: [Performance] Application.Shutdown.GICleanupManagers                                                                         :        1 samples, Peak.  12.7 ms (1.0x), Avg.  12.7 ms, Total. 12.70 ms (0.0%)
+16569: [Performance] Application.Shutdown.MenuCleanupClass                                                                          :        1 samples, Peak.  6.88 ms (1.0x), Avg.  6.88 ms, Total. 6.882 ms (0.0%)
+16570: [Performance] Application.Shutdown.ADBSaveStateBeforeShutdown                                                                :        1 samples, Peak.  12.4 us (1.0x), Avg.  12.4 us, Total. 12.37 us (0.0%)
+16571: [Performance] Application.Shutdown.RemoteShutdown                                                                            :        1 samples, Peak.   981 ns (1.0x), Avg.   981 ns, Total. 981.0 ns (0.0%)
+16572: [Performance] Application.Shutdown.CleanupVCProvider                                                                         :        1 samples, Peak.  16.3 us (1.0x), Avg.  16.3 us, Total. 16.32 us (0.0%)
+16573: [Performance] Application.Shutdown.InputShutdown                                                                             :        1 samples, Peak.   303 us (1.0x), Avg.   303 us, Total. 302.9 us (0.0%)
+16574: [Performance] Application.Shutdown.GizmoManagerDestroy                                                                       :        1 samples, Peak.  1.18 ms (1.0x), Avg.  1.18 ms, Total. 1.179 ms (0.0%)
+16575: [Performance] Application.Shutdown.ProfilerSession                                                                           :        1 samples, Peak.  1.59 ms (1.0x), Avg.  1.59 ms, Total. 1.594 ms (0.0%)
+16576: [Performance] Application.Shutdown.ReleaseGfxWindowOnAllGUIViews                                                             :        1 samples, Peak.   501 ns (1.0x), Avg.   501 ns, Total. 501.0 ns (0.0%)
+16577: [Performance] Application.Shutdown.CleanupEngine                                                                             :        1 samples, Peak.   320 ms (1.0x), Avg.   320 ms, Total. 319.9 ms (0.1%)
+16578: [Performance] Application.Shutdown.CleanupAssetDatabase                                                                      :        1 samples, Peak.  18.4 ms (1.0x), Avg.  18.4 ms, Total. 18.38 ms (0.0%)
+16579: [Performance] Application.Shutdown.ScriptCompilationCleanUp                                                                  :        1 samples, Peak.   384 ms (1.0x), Avg.   384 ms, Total. 383.8 ms (0.1%)
+16580: [Performance] Application.Shutdown.DestroyJobSystem                                                                          :        1 samples, Peak.  1.66 ms (1.0x), Avg.  1.66 ms, Total. 1.664 ms (0.0%)
+16581: [Performance] Application.Shutdown.CleanupPersistentManager                                                                  :        1 samples, Peak.  22.5 ms (1.0x), Avg.  22.5 ms, Total. 22.46 ms (0.0%)
+16582: [Performance] Application.Shutdown.CleanupAsyncReadManager                                                                   :        1 samples, Peak.   516 us (1.0x), Avg.   516 us, Total. 515.8 us (0.0%)
+16583: [Performance] Application.Shutdown.CleanupMono                                                                               :        1 samples, Peak.  1.11 s (1.0x), Avg.  1.11 s, Total. 1.107 s (0.3%)
+16584: [Performance] Application.Shutdown.CleanupStdConverters                                                                      :        1 samples, Peak.   184 us (1.0x), Avg.   184 us, Total. 183.9 us (0.0%)
+16585: [Performance] Application.Shutdown.UnloadAllPlatformSupportModuleNativeDlls                                                  :        1 samples, Peak.   165 us (1.0x), Avg.   165 us, Total. 165.4 us (0.0%)
+16586: [Performance] Application.Shutdown.UnloadAllPlatformSupportNativeLibraries                                                   :        1 samples, Peak.   664 ms (1.0x), Avg.   664 ms, Total. 664.3 ms (0.2%)
+16587: [Performance] Application.Shutdown.CleanupAutoDocumentation                                                                  :        1 samples, Peak.  7.96 ms (1.0x), Avg.  7.96 ms, Total. 7.961 ms (0.0%)
+16588: [Performance] Application.Shutdown.ShaderNameManagerDestroy                                                                  :        1 samples, Peak.   219 us (1.0x), Avg.   219 us, Total. 218.6 us (0.0%)
+16589: [Performance] Application.Shutdown.CleanupCacheServer                                                                        :        1 samples, Peak.   301 ns (1.0x), Avg.   301 ns, Total. 301.0 ns (0.0%)
+16590: [Performance] Application.Shutdown.Virtualization_Shutdown                                                                   :        1 samples, Peak.   162 us (1.0x), Avg.   162 us, Total. 161.6 us (0.0%)
+16591: [Performance] Application.Shutdown.DevConnections                                                                            :        1 samples, Peak.  59.2 us (1.0x), Avg.  59.2 us, Total. 59.19 us (0.0%)
+
+=== ios-export.stdout exists=True ===
+lines=4 material_hits=0
+
+--- gap; resume 1 ---
+1: 
+2: Aborting batchmode due to failure:
+3: executeMethod method GodsPVZIOSBuild.BuildIOS threw exception.
+4: 
+
+=== ios-export.stderr exists=True ===
+lines=0 material_hits=0
+
+=== ios-export-exit.txt exists=True ===
+lines=1 material_hits=0
+
+--- gap; resume 1 ---
+1: 1
