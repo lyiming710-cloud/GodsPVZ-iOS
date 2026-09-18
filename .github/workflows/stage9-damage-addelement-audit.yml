@@ -1,0 +1,140 @@
+name: Stage9.1 Damage.AddElement metadata audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-damage-addelement-audit.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+
+      - name: Inspect Damage.AddElement IL and method/type references
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=dll/GodsPVZRuntime1-bgmvolume.dll
+          test -f "$DLL"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+          TMP=$(mktemp -d)
+          cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+
+          class P {
+            static IEnumerable<TypeDefinition> AllTypes(TypeDefinition t) {
+              yield return t;
+              foreach (var n in t.NestedTypes) foreach (var x in AllTypes(n)) yield return x;
+            }
+            static IEnumerable<TypeDefinition> AllTypes(ModuleDefinition m) => m.Types.SelectMany(AllTypes);
+
+            static string Safe(Func<string> f) { try { return f() ?? "<null>"; } catch(Exception ex) { return "<EX:"+ex.GetType().Name+":"+ex.Message+">"; } }
+            static string TypeInfo(TypeReference t, int depth=0) {
+              if (t == null) return "<TYPE_NULL>";
+              if (depth > 5) return "<depth>";
+              var bits = new List<string>();
+              bits.Add("kind="+t.GetType().Name);
+              bits.Add("full="+Safe(()=>t.FullName));
+              bits.Add("name="+(t.Name ?? "<null>"));
+              bits.Add("ns="+(t.Namespace ?? "<null>"));
+              bits.Add("scope="+(t.Scope==null?"<null>":Safe(()=>t.Scope.ToString())));
+              bits.Add("module="+(t.Module==null?"<null>":t.Module.Name));
+              bits.Add("decl="+(t.DeclaringType==null?"<null>":Safe(()=>t.DeclaringType.FullName)));
+              if (t is TypeSpecification ts) bits.Add("element={"+TypeInfo(ts.ElementType,depth+1)+"}");
+              if (t is GenericInstanceType gi) {
+                bits.Add("gargs=["+string.Join(" | ", gi.GenericArguments.Select(a=>TypeInfo(a,depth+1)))+"]");
+              }
+              return string.Join("; ", bits);
+            }
+            static string MethodInfo(MethodReference m) {
+              if (m == null) return "<METHOD_NULL>";
+              var bits = new List<string>();
+              bits.Add("kind="+m.GetType().Name);
+              bits.Add("token="+m.MetadataToken.ToString());
+              bits.Add("full="+Safe(()=>m.FullName));
+              bits.Add("name="+(m.Name??"<null>"));
+              bits.Add("decl={"+TypeInfo(m.DeclaringType)+"}");
+              bits.Add("ret={"+TypeInfo(m.ReturnType)+"}");
+              bits.Add("hasThis="+m.HasThis+" explicitThis="+m.ExplicitThis+" callconv="+m.CallingConvention);
+              bits.Add("params=["+string.Join(" | ",m.Parameters.Select((p,i)=>i+":"+TypeInfo(p.ParameterType)))+"]");
+              if (m is GenericInstanceMethod gm) bits.Add("gargs=["+string.Join(" | ",gm.GenericArguments.Select(TypeInfo))+"]");
+              try {
+                var r=m.Resolve();
+                bits.Add("resolve="+(r==null?"<null>":r.FullName));
+              } catch(Exception ex) { bits.Add("resolveEX="+ex.GetType().FullName+":"+ex.Message); }
+              return string.Join("; ",bits);
+            }
+            static void Main(string[] args) {
+              var dll=Path.GetFullPath(args[0]);
+              using var a=AssemblyDefinition.ReadAssembly(dll,new ReaderParameters{ReadSymbols=false,InMemory=true});
+              var m=a.MainModule;
+              Console.WriteLine("assembly="+a.Name.FullName);
+              Console.WriteLine("module_kind="+m.Kind);
+              var candidates=AllTypes(m).Where(t=>t.Name=="Damage" || t.FullName.EndsWith(".Damage") || t.FullName=="Damage").ToList();
+              Console.WriteLine("damage_type_candidates="+candidates.Count);
+              foreach(var t in candidates) Console.WriteLine("TYPE token="+t.MetadataToken+" full="+t.FullName+" base="+TypeInfo(t.BaseType));
+              var methods=candidates.SelectMany(t=>t.Methods).Where(x=>x.Name=="AddElement").ToList();
+              Console.WriteLine("AddElement_candidates="+methods.Count);
+              foreach(var md in methods) {
+                Console.WriteLine("\n=== METHOD ===");
+                Console.WriteLine("token="+md.MetadataToken+" full="+md.FullName+" RVA=0x"+md.RVA.ToString("x")+" hasBody="+md.HasBody);
+                Console.WriteLine("return="+TypeInfo(md.ReturnType));
+                for(int i=0;i<md.Parameters.Count;i++) Console.WriteLine("param["+i+"]="+TypeInfo(md.Parameters[i].ParameterType));
+                if (!md.HasBody) continue;
+                Console.WriteLine("codeSize="+md.Body.CodeSize+" maxStack="+md.Body.MaxStackSize+" initLocals="+md.Body.InitLocals);
+                for(int i=0;i<md.Body.Variables.Count;i++) Console.WriteLine("local["+i+"]="+TypeInfo(md.Body.Variables[i].VariableType));
+                Console.WriteLine("--- IL ---");
+                foreach(var ins in md.Body.Instructions) {
+                  string op;
+                  if (ins.Operand is MethodReference mr) op="METHOD {"+MethodInfo(mr)+"}";
+                  else if (ins.Operand is TypeReference tr) op="TYPE {"+TypeInfo(tr)+"}";
+                  else if (ins.Operand is FieldReference fr) {
+                    op="FIELD {token="+fr.MetadataToken+" full="+Safe(()=>fr.FullName)+" decl={"+TypeInfo(fr.DeclaringType)+"} type={"+TypeInfo(fr.FieldType)+"}}";
+                  }
+                  else op=ins.Operand==null?"":Safe(()=>ins.Operand.ToString());
+                  Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode,-12} {op}");
+                }
+              }
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DLL" > "$GITHUB_WORKSPACE/diagnostics/damage-addelement-metadata.txt"
+          cd "$GITHUB_WORKSPACE"
+          cat diagnostics/damage-addelement-metadata.txt
+
+      - name: Commit metadata audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/damage-addelement-metadata.txt
+          git commit -m 'diagnostics: audit Damage.AddElement metadata operands' || exit 0
+          git push origin HEAD:stage9-admin-start-static
