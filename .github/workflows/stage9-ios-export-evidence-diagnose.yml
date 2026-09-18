@@ -25,36 +25,25 @@ jobs:
           name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
           path: evidence
 
-      - name: Print final fatal diagnosis
+      - name: Extract UnityLinker null-reference stack
         shell: bash
         run: |
           set -euo pipefail
           LOG=evidence/ios-export.log
-          echo '=== EXIT ==='
+          echo '=== EXIT/TARGET ==='
           cat evidence/ios-export-exit.txt || true
-          echo '=== TARGET ==='
           grep -n -m 3 -E 'STAGE9_IOS_TARGET|activeBuildTarget|architecture=' "$LOG" || true
-          echo '=== ALL HIGH-SIGNAL FAILURE LINES (LAST 160) ==='
-          grep -nEi 'MissingReferenceException|BuildFailedException|Build completed|Build failure|BuildPlayer|Error building Player|Exception:|IL2CPP.*(error|failed)|Bee.*(error|failed)|error CS[0-9]+|Xcode|PBX|post.?process|failed|failure' "$LOG" | tail -n 160 || true
-          echo '=== LAST MATERIAL FAILURE CONTEXT ==='
+          echo '=== UNITYLINKER NRE CONTEXT ==='
           python3 - "$LOG" <<'PY'
           from pathlib import Path
-          import re,sys
+          import sys
           lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
-          pats=[
-              re.compile(r'MissingReferenceException|BuildFailedException|Build completed|Build failure|BuildPlayer.*failed|Error building Player',re.I),
-              re.compile(r'Unhandled exception|Exception:',re.I),
-              re.compile(r'IL2CPP.*(error|failed)|Bee.*(error|failed)|error CS\d+',re.I),
-              re.compile(r'Xcode.*(error|failed)|PBX.*(error|failed)|post.?process.*(error|failed)',re.I),
-          ]
-          hits=[i for i,l in enumerate(lines) if any(p.search(l) for p in pats)]
-          if not hits:
-              print('NO_MATERIAL_FAILURE_MATCH')
-          else:
-              hit=hits[-1]
-              print(f'LAST_MATCH_LINE={hit+1}')
-              for j in range(max(0,hit-35), min(len(lines),hit+80)):
+          hits=[i for i,l in enumerate(lines) if 'System.NullReferenceException' in l]
+          print('nre_count=',len(hits))
+          for k,i in enumerate(hits,1):
+              print(f'--- NRE {k} line {i+1} ---')
+              for j in range(max(0,i-20),min(len(lines),i+45)):
                   print(f'{j+1}: {lines[j]}')
           PY
-          echo '=== LOG TAIL 250 ==='
-          tail -n 250 "$LOG" || true
+          echo '=== UNITYLINKER COMMAND/RESULT WINDOW ==='
+          sed -n '11960,12025p' "$LOG" || true
