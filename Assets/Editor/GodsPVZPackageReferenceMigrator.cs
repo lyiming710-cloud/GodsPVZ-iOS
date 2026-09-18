@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 
 [InitializeOnLoad]
-internal static class GodsPVZPackageReferenceMigrator
+public static class GodsPVZPackageReferenceMigrator
 {
     [Serializable] private sealed class Root { public PackageEntry[] packages; }
     [Serializable] private sealed class PackageEntry { public string dll; public string guid; public MapEntry[] mapping; }
@@ -22,6 +22,13 @@ internal static class GodsPVZPackageReferenceMigrator
     }
 
     [MenuItem("GodsPVZ/Recovery/Migrate Package Script References")]
+    public static void RunBatch()
+    {
+        TryMigrate();
+        if (!File.Exists(Marker))
+            throw new InvalidOperationException("GodsPVZ package-reference migration did not produce its completion marker.");
+    }
+
     private static void TryMigrate()
     {
         if (File.Exists(Marker)) return;
