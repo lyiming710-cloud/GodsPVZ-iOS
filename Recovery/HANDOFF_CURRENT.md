@@ -4,7 +4,9 @@
 仓库：`lyiming710-cloud/GodsPVZ-iOS`
 当前工作分支：`stage9-admin-start-static`
 替换旧交接文件前 HEAD：`43ac13c6ea6f848df6d99440be6a3a6f9557006e`
-旧交接删除提交：`af3fc5ce9b5d118f00bbecb60b787b78cda53546`
+旧交接删除基点：`af3fc5ce9b5d118f00bbecb60b787b78cda53546`
+
+2026-09-18 清理：已删除 Administrator.Start 专用旧交接、R2/旧 First Import 状态及 2026-09-16 handoff manifest/provenance/SHA 快照；保留原始 HF/Recovery 审计证据。
 
 ## 1. 当前项目结论
 
@@ -34,7 +36,7 @@ Stage9.1 当前已经不再停留在 `Administrator.Start()` 恢复阶段。Admi
 
 当前 authoritative exact-R3 natural runtime：
 
-- run：`35236388436`
+- run：`35237045119`
 - final DLL SHA256：`047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee`
 - `INVALID_IL_TOTAL=0`
 - `Administrator.Start` anomaly count = 0
@@ -114,6 +116,8 @@ authoritative pinned bundle run：
 ## 7. 下一位接手者的唯一正确下一阶段
 
 **下一 gate：正式 Unity import / compile。**
+
+当前执行工作流：`.github/workflows/stage9-current-baseline-formal-import.yml`。该 gate 明确锁定 exact R3、final DLL `047054e0...d43ee`、67/67 GUID evidence、dependency closure 与 pinned package bundle；第一轮仅因工作流未预建 `Assets/Editor/` 目录而在 Unity 启动前失败，已修正路径并重新触发，不属于项目/程序集/package blocker。
 
 执行顺序：
 
