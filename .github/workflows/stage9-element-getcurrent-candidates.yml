@@ -1,4 +1,4 @@
-name: Stage9.1 Element get_Current candidates
+name: Stage9.1 remaining orphan generic audit
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           run-id: '35236211080'
           name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
           path: dll
-      - name: Enumerate Element get_Current refs
+      - name: Audit canonical Element enumerator and Board.Start orphan local
         shell: bash
         run: |
           set -euo pipefail
@@ -42,32 +42,56 @@ jobs:
           class P {
             static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t; foreach(var n in t.NestedTypes) foreach(var x in AT(n)) yield return x;}
             static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
-            static string Arg(TypeReference t){
-              if(t is GenericParameter gp) return $"GP:{gp.Name}:owner={(gp.Owner==null?"null":gp.Owner.ToString())}:scope={(gp.Scope==null?"null":gp.Scope.ToString())}";
-              return t?.FullName??"<null>";
+            static string TI(TypeReference t){
+              if(t==null) return "<null>";
+              if(t is GenericParameter gp) return $"{gp.FullName}[owner={(gp.Owner==null?"null":gp.Owner.ToString())},scope={(gp.Scope==null?"null":gp.Scope.ToString())}]";
+              if(t is GenericInstanceType gi) return gi.FullName+" args=["+string.Join("|",gi.GenericArguments.Select(TI))+"]";
+              return t.FullName;
+            }
+            static string OP(object o){
+              if(o is MethodReference mr) return $"METHOD token={mr.MetadataToken} full={mr.FullName} decl={TI(mr.DeclaringType)}";
+              if(o is FieldReference fr) return $"FIELD token={fr.MetadataToken} full={fr.FullName}";
+              if(o is VariableDefinition vd) return $"LOCAL index={vd.Index} type={TI(vd.VariableType)}";
+              if(o is ParameterDefinition pd) return $"PARAM index={pd.Index} type={TI(pd.ParameterType)}";
+              return o?.ToString()??"";
+            }
+            static void Dump(MethodDefinition md){
+              Console.WriteLine($"\n=== {md.FullName} token={md.MetadataToken} RVA=0x{md.RVA:x} ===");
+              for(int i=0;i<md.Body.Variables.Count;i++) Console.WriteLine($"local[{i}]={TI(md.Body.Variables[i].VariableType)}");
+              foreach(var ins in md.Body.Instructions) Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode,-12} {OP(ins.Operand)}");
             }
             static void Main(string[] a){
               using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true});
-              var found=new List<string>();
-              foreach(var t in AT(asm.MainModule)) foreach(var md in t.Methods) if(md.HasBody) foreach(var i in md.Body.Instructions) if(i.Operand is MethodReference mr && mr.Name=="get_Current" && mr.ReturnType.FullName=="Element"){
-                string g="";
-                if(mr.DeclaringType is GenericInstanceType gi) g=string.Join("|",gi.GenericArguments.Select(Arg));
-                found.Add($"owner={md.FullName}\nil=IL_{i.Offset:x4}\nmemberref={mr.MetadataToken}\ndecl_token={mr.DeclaringType.MetadataToken}\ndecl={mr.DeclaringType.FullName}\ngargs={g}\n");
+              var all=AT(asm.MainModule).ToList();
+              var em=all.Single(t=>t.FullName=="ElementManager");
+              var effect=em.Methods.Single(m=>m.Name=="Effect" && m.Parameters.Count==1 && m.Parameters[0].ParameterType.FullName=="Element");
+              Dump(effect);
+              var board=all.Single(t=>t.FullName=="Board");
+              var start=board.Methods.Single(m=>m.Name=="Start" && m.Parameters.Count==0);
+              Dump(start);
+              Console.WriteLine("\n=== Element enumerator canonical refs used by ElementManager.Effect ===");
+              foreach(var ins in effect.Body.Instructions.Where(i=>i.Operand is MethodReference)){
+                var mr=(MethodReference)ins.Operand;
+                if(mr.DeclaringType.FullName.Contains("List`1/Enumerator<Element>"))
+                  Console.WriteLine($"IL_{ins.Offset:x4} {mr.Name} token={mr.MetadataToken} declToken={mr.DeclaringType.MetadataToken} full={mr.FullName}");
               }
-              Console.WriteLine("count="+found.Count);
-              foreach(var s in found) Console.WriteLine(s);
+              Console.WriteLine("\n=== Board.Start local2 uses ===");
+              foreach(var ins in start.Body.Instructions){
+                if(ins.Operand is VariableDefinition v && v.Index==2) Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode} {OP(v)}");
+                else if((ins.OpCode.Code==Code.Ldloc_2)||(ins.OpCode.Code==Code.Stloc_2)||(ins.OpCode.Code==Code.Ldloca_S && ins.Operand is VariableDefinition vv && vv.Index==2)) Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode} {OP(ins.Operand)}");
+              }
             }
           }
           CS
           mkdir -p "$GITHUB_WORKSPACE/diagnostics"
-          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/element-getcurrent-candidates.txt"
-          cd "$GITHUB_WORKSPACE"; cat diagnostics/element-getcurrent-candidates.txt
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/remaining-orphan-generic-audit.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/remaining-orphan-generic-audit.txt
       - name: Commit report
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/element-getcurrent-candidates.txt
-          git commit -m 'diagnostics: enumerate Element get_Current references' || exit 0
+          git add diagnostics/remaining-orphan-generic-audit.txt
+          git commit -m 'diagnostics: audit remaining orphan generic sites' || exit 0
           git push origin HEAD:stage9-admin-start-static
