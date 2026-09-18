@@ -340,10 +340,29 @@ jobs:
           grep -q '^resolved=67/67$' "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
           df -h "$RUNNER_TEMP" > "$E/disk-before-ios-export.txt"
 
+      - name: Prepare software graphics for original 8192 TMP atlas
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-export"
+          E="$OUT/evidence"
+          if ! command -v xvfb-run >/dev/null 2>&1 || ! command -v glxinfo >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends xvfb mesa-utils libgl1-mesa-dri
+          fi
+          export LIBGL_ALWAYS_SOFTWARE=1
+          xvfb-run -a -s '-screen 0 1280x720x24' glxinfo -B > "$E/software-gl-renderer.txt" 2>&1
+          xvfb-run -a -s '-screen 0 1280x720x24' glxinfo -l > "$E/software-gl-limits.txt" 2>&1
+          MAX_TEXTURE_SIZE="$(sed -n 's/.*GL_MAX_TEXTURE_SIZE[^0-9]*\([0-9][0-9]*\).*/\1/p' "$E/software-gl-limits.txt" | head -n1)"
+          echo "GL_MAX_TEXTURE_SIZE=$MAX_TEXTURE_SIZE" | tee "$E/software-gl-max-texture.txt"
+          [ -n "$MAX_TEXTURE_SIZE" ] || exit 57
+          [ "$MAX_TEXTURE_SIZE" -ge 8192 ] || exit 58
+
       - name: Export unsigned iOS Xcode project
         shell: bash
         env:
           GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-ios-export/xcode
+          LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-ios-export"
@@ -351,7 +370,7 @@ jobs:
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
           set +e
-          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZIOSBuild.BuildIOS -logFile "$E/ios-export.log" > "$E/ios-export.stdout" 2> "$E/ios-export.stderr"
+          xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -buildTarget iOS -projectPath "$PROJECT" -executeMethod GodsPVZIOSBuild.BuildIOS -logFile "$E/ios-export.log" > "$E/ios-export.stdout" 2> "$E/ios-export.stderr"
           RC=$?
           set -e
           echo "$RC" > "$E/ios-export-exit.txt"
