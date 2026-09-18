@@ -1,0 +1,107 @@
+name: Stage9.1 apply iOS DLL header fix
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-apply-ios-dll-header-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Patch formal export workflow deterministically
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/stage9-current-baseline-ios-xcode-export.yml')
+          s=p.read_text()
+          old='''          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 46
+          cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
+'''
+          new='''          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 46
+          TARGET_DLL="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          cp "$DLL" "$TARGET_DLL"
+
+          # The recovered runtime DLL is method-for-method qualified, but its PE
+          # COFF header is incorrectly marked Console while the CLI entrypoint is
+          # null. UnityLinker therefore routes it through ProcessExecutable and
+          # dereferences the missing EntryPoint. Repair only IMAGE_FILE_DLL
+          # (0x2000) in the project working copy. Proof run 35363174000 showed
+          # this changes exactly one byte and preserves all 2317 MethodDefs.
+          python3 - "$TARGET_DLL" "$E/ios-dll-header-repair.txt" <<'PYDLL'
+          import hashlib,struct,sys
+          path,report=sys.argv[1:]
+          b=bytearray(open(path,'rb').read())
+          before=bytes(b)
+          def u16(o): return struct.unpack_from('<H',b,o)[0]
+          def u32(o): return struct.unpack_from('<I',b,o)[0]
+          pe=u32(0x3c)
+          assert b[pe:pe+4]==b'PE\\0\\0'
+          coff=pe+4
+          chars_off=coff+18
+          chars=u16(chars_off)
+          assert chars==0x0122, hex(chars)
+          nsec=u16(coff+2)
+          optsz=u16(coff+16)
+          opt=coff+20
+          magic=u16(opt)
+          dd=opt+(96 if magic==0x10b else 112)
+          cli_rva=u32(dd+14*8)
+          sec=opt+optsz
+          def rva_to_off(rva):
+              for i in range(nsec):
+                  q=sec+i*40
+                  vsize=u32(q+8); va=u32(q+12); rawsz=u32(q+16); raw=u32(q+20)
+                  if va <= rva < va+max(vsize,rawsz): return raw+(rva-va)
+              raise ValueError(hex(rva))
+          cli=rva_to_off(cli_rva)
+          cli_flags=u32(cli+16); ep=u32(cli+20)
+          assert cli_flags==1, hex(cli_flags)
+          assert ep==0, hex(ep)
+          struct.pack_into('<H',b,chars_off,chars|0x2000)
+          diffs=[(i,before[i],b[i]) for i in range(len(b)) if before[i]!=b[i]]
+          assert len(diffs)==1 and diffs[0][0]==chars_off+1, diffs
+          sha=hashlib.sha256(b).hexdigest()
+          assert sha=='9295bcb90857502af5ab802839b5c560f9e4d956b99dfaeae4350bd5fa5754a3', sha
+          open(path,'wb').write(b)
+          open(report,'w').write(
+              f'original_sha256={hashlib.sha256(before).hexdigest()}\\n'
+              f'patched_sha256={sha}\\n'
+              f'coff_characteristics_offset=0x{chars_off:x}\\n'
+              f'coff_characteristics_before=0x{chars:04x}\\n'
+              f'coff_characteristics_after=0x{chars|0x2000:04x}\\n'
+              f'cli_entrypoint_token_or_rva=0x{ep:08x}\\n'
+              f'byte_diff_count={len(diffs)}\\n'
+              f'byte_diff_offset=0x{diffs[0][0]:x} {diffs[0][1]:02x}->{diffs[0][2]:02x}\\n')
+          PYDLL
+          [ "$(sha256sum "$TARGET_DLL" | awk '{print $1}')" = '9295bcb90857502af5ab802839b5c560f9e4d956b99dfaeae4350bd5fa5754a3' ] || exit 56
+          cat "$E/ios-dll-header-repair.txt"
+
+          mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
+'''
+          if old not in s:
+              raise SystemExit('formal integration block not found exactly once')
+          if s.count(old)!=1:
+              raise SystemExit(f'unexpected integration block count: {s.count(old)}')
+          p.write_text(s.replace(old,new,1))
+          PY
+
+          git diff --check
+          git diff -- .github/workflows/stage9-current-baseline-ios-xcode-export.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/stage9-current-baseline-ios-xcode-export.yml
+          git commit -m 'ci: repair recovered DLL PE kind before iOS import'
+          git push origin HEAD:stage9-admin-start-static
