@@ -1,0 +1,41 @@
+name: Chain Stage9.1 export 35353200355 to macOS IPA
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-chain-run-35353200355-to-macos.yml
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      EXPORT_RUN_ID: '35353200355'
+    steps:
+      - name: Wait for locked iOS export and dispatch macOS compile on success
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 360); do
+            STATUS="$(gh run view "$EXPORT_RUN_ID" --repo "$GITHUB_REPOSITORY" --json status --jq .status)"
+            if [ "$STATUS" = completed ]; then
+              CONCLUSION="$(gh run view "$EXPORT_RUN_ID" --repo "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)"
+              echo "export_run_id=$EXPORT_RUN_ID conclusion=$CONCLUSION"
+              [ "$CONCLUSION" = success ] || exit 1
+              gh workflow run stage9-current-baseline-macos-unsigned-ipa.yml \
+                --repo "$GITHUB_REPOSITORY" \
+                --ref stage9-admin-start-static \
+                -f export_run_id="$EXPORT_RUN_ID"
+              echo "MACOS_DISPATCH=PASS export_run_id=$EXPORT_RUN_ID"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for export run $EXPORT_RUN_ID" >&2
+          exit 2
