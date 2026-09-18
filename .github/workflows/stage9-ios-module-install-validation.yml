@@ -32,9 +32,6 @@ jobs:
           set -euo pipefail
           echo '=== disk before cleanup ==='
           df -h
-          # The validation only needs bash/curl/python/Unity. Remove large hosted-runner
-          # SDKs that are unrelated to this gate so the preserved Editor can be
-          # reconstructed without competing with Android/.NET/Haskell toolchains.
           sudo rm -rf /usr/local/lib/android || true
           sudo rm -rf /usr/share/dotnet || true
           sudo rm -rf /opt/ghc || true
@@ -70,15 +67,10 @@ jobs:
           du -sh "$PARTS" > "$E/editor-parts-du-before.txt"
           df -h "$RUNNER_TEMP" > "$E/disk-before-editor-reconstruct.txt"
 
-          # Verify the exact compressed byte stream without first creating a second
-          # ~4 GB editor.tar.xz copy. This preserves the original integrity gate.
           GOT="$({ for part in "${FILES[@]}"; do cat "$part"; done; } | sha256sum | awk '{print $1}')"
           echo "$GOT" > "$E/editor-sha256.txt"
           [ "$GOT" = "$EDITOR_SHA256" ] || exit 32
 
-          # Stream the already-verified split archive directly into tar. Delete each
-          # part only after its bytes have entered the pipe, so disk use falls while
-          # the Editor expands instead of holding parts + full archive + extraction.
           {
             for part in "${FILES[@]}"; do
               cat "$part"
@@ -104,6 +96,8 @@ jobs:
           E="$OUT/evidence"
           ROOT="$OUT/editor-root"
           MOD="$OUT/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
+          IOS="$ROOT/Editor/Data/PlaybackEngines/iOSSupport"
+
           df -h "$RUNNER_TEMP" > "$E/disk-before-ios-module.txt"
           curl -fL --retry 5 --retry-delay 3 -o "$MOD" "$MODULE_URL"
           GOT="$(sha256sum "$MOD" | awk '{print $1}')"
@@ -111,18 +105,50 @@ jobs:
           stat -c '%s' "$MOD" > "$E/module-size.txt"
           printf '%s\n' "$MODULE_URL" > "$E/module-source-url.txt"
           [ "$GOT" = "$MODULE_SHA256" ] || exit 34
-          xz -t "$MOD"
-          tar -xJf "$MOD" -C "$ROOT"
-          IOS="$ROOT/Editor/Data/PlaybackEngines/iOSSupport"
-          test -d "$IOS"
-          test -f "$IOS/UnityEditor.iOS.Extensions.dll"
-          test -f "$IOS/UnityEditor.iOS.Extensions.Common.dll"
-          test -f "$IOS/Trampoline/Libraries/libiPhone-lib.a"
-          test -d "$IOS/il2cpp"
-          find "$IOS" -type f | sort > "$E/ios-support-files.txt"
-          find "$IOS" -type f | wc -l | tr -d ' ' > "$E/ios-support-file-count.txt"
+
+          set +e
+          xz -t "$MOD" > "$E/module-xz-test.stdout" 2> "$E/module-xz-test.stderr"
+          XZ_RC=$?
+          set -e
+          echo "$XZ_RC" > "$E/module-xz-test-exit.txt"
+          [ "$XZ_RC" -eq 0 ] || exit 40
+
+          set +e
+          tar -xJf "$MOD" -C "$ROOT" > "$E/module-extract.stdout" 2> "$E/module-extract.stderr"
+          TAR_RC=$?
+          set -e
+          echo "$TAR_RC" > "$E/module-extract-exit.txt"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-ios-module-extract.txt"
+          [ "$TAR_RC" -eq 0 ] || exit 41
+
+          find "$ROOT/Editor/Data/PlaybackEngines" -maxdepth 3 -type d 2>/dev/null | sort > "$E/playback-engine-dirs.txt" || true
+          find "$ROOT" -type d -iname '*ios*support*' 2>/dev/null | sort > "$E/ios-support-candidate-dirs.txt" || true
+
+          {
+            for p in \
+              "$IOS" \
+              "$IOS/UnityEditor.iOS.Extensions.dll" \
+              "$IOS/UnityEditor.iOS.Extensions.Common.dll" \
+              "$IOS/Trampoline/Libraries/libiPhone-lib.a" \
+              "$IOS/il2cpp"; do
+              if [ -e "$p" ]; then
+                printf 'PRESENT\t%s\n' "$p"
+              else
+                printf 'MISSING\t%s\n' "$p"
+              fi
+            done
+          } > "$E/expected-ios-paths.txt"
+
+          if [ -d "$IOS" ]; then
+            find "$IOS" -type f | sort > "$E/ios-support-files.txt"
+            find "$IOS" -type f | wc -l | tr -d ' ' > "$E/ios-support-file-count.txt"
+            du -sh "$IOS" > "$E/ios-support-du.txt"
+          else
+            : > "$E/ios-support-files.txt"
+            echo 0 > "$E/ios-support-file-count.txt"
+            echo 'MISSING_EXPECTED_IOS_SUPPORT_DIRECTORY' > "$E/ios-support-du.txt"
+          fi
           df -h "$RUNNER_TEMP" > "$E/disk-after-ios-module.txt"
-          du -sh "$IOS" > "$E/ios-support-du.txt"
 
           UNITY="$(cat "$OUT/unity-path.txt")"
           AFTER="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
