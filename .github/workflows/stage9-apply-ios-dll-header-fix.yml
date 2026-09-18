@@ -29,17 +29,16 @@ jobs:
           old='''          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 46
           cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
-'''
+          '''
           new='''          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 46
           TARGET_DLL="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           cp "$DLL" "$TARGET_DLL"
 
-          # The recovered runtime DLL is method-for-method qualified, but its PE
-          # COFF header is incorrectly marked Console while the CLI entrypoint is
-          # null. UnityLinker therefore routes it through ProcessExecutable and
-          # dereferences the missing EntryPoint. Repair only IMAGE_FILE_DLL
-          # (0x2000) in the project working copy. Proof run 35363174000 showed
-          # this changes exactly one byte and preserves all 2317 MethodDefs.
+          # The runtime-qualified assembly has no CLI entrypoint but its PE COFF
+          # header is incorrectly marked Console. UnityLinker therefore sends it
+          # through ProcessExecutable. Repair only IMAGE_FILE_DLL (0x2000) in the
+          # project copy. Proof run 35363174000 changed exactly one byte and kept
+          # all 2317 MethodDefs unchanged.
           python3 - "$TARGET_DLL" "$E/ios-dll-header-repair.txt" <<'PYDLL'
           import hashlib,struct,sys
           path,report=sys.argv[1:]
@@ -90,11 +89,9 @@ jobs:
           cat "$E/ios-dll-header-repair.txt"
 
           mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
-'''
-          if old not in s:
-              raise SystemExit('formal integration block not found exactly once')
-          if s.count(old)!=1:
-              raise SystemExit(f'unexpected integration block count: {s.count(old)}')
+          '''
+          if s.count(old) != 1:
+              raise SystemExit(f'formal integration block count={s.count(old)}')
           p.write_text(s.replace(old,new,1))
           PY
 
