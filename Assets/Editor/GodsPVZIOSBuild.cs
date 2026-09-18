@@ -34,6 +34,18 @@ public static class GodsPVZIOSBuild
         PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
         PlayerSettings.iOS.targetOSVersionString = "12.0";
 
+        // The recovered Assembly-CSharp has already passed the Stage9.1 runtime
+        // qualification gates.  Do not ask UnityLinker to perform more managed
+        // stripping than IL2CPP requires while producing the iOS player: the
+        // failing export dies inside UnityTypeReferenceStep while traversing
+        // type/interface references in ManagedStripped.  Keep this as a build
+        // configuration change only; the qualified gameplay DLL is untouched.
+        PlayerSettings.SetManagedStrippingLevel(BuildTargetGroup.iOS, ManagedStrippingLevel.Minimal);
+        var stripping = PlayerSettings.GetManagedStrippingLevel(BuildTargetGroup.iOS);
+        Debug.Log($"STAGE9_IOS_STRIPPING level={stripping}");
+        if (stripping != ManagedStrippingLevel.Minimal)
+            throw new InvalidOperationException($"Stage9.1 iOS managed stripping lock failed: expected Minimal, got {stripping}.");
+
         // Unity's documented architecture values are 0=None, 1=ARM64,
         // 2=Universal. Xcode 12+ no longer accepts the ARMv7 half of the
         // recovered project's legacy iOS architecture state, so lock ARM64.
