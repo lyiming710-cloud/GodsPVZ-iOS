@@ -280,6 +280,130 @@ jobs:
           echo ATTEMPTED > "$OUT/import-attempted.flag"
           exit 0
 
+      - name: Run explicit package-reference migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZPackageReferenceMigrator.RunBatch -logFile "$E/package-migration.log" > "$E/package-migration-stdout.txt" 2> "$E/package-migration-stderr.txt"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/package-migration-exit.txt"
+          [ "$RC" -eq 0 ] || exit 81
+          grep -q 'GodsPVZ: migrated' "$E/package-migration.log" || grep -q 'resolved=67/67' "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          grep -q '^resolved=67/67        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt" 2>/dev/null || true)"
+          RC="$(cat "$E/import-exit.txt" 2>/dev/null || echo 255)"
+          python3 - "$E/Editor.log" "$RC" "$PROJECT" "$FINAL_DLL_SHA256" "$E/RESULT.json" "$E/package-reference-post-audit.txt" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          logp=Path(sys.argv[1]); rc=int(sys.argv[2]); project=Path(sys.argv[3]); finalsha=sys.argv[4]
+          resultp=Path(sys.argv[5]); refaudit=Path(sys.argv[6])
+          log=logp.read_text(encoding='utf-8',errors='replace') if logp.is_file() else ''
+          lines=log.splitlines()
+          pats={
+            'compile_errors':re.compile(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',re.I),
+            'package_errors':re.compile(r'Failed to resolve packages|Package resolution failed|\[Package Manager\].*(?:error|failed)',re.I),
+            'assembly_collisions':re.compile(r'Multiple precompiled assemblies|Assembly with name .* already exists',re.I),
+            'serialization_errors':re.compile(r'YAML parse error|SerializedFile.*error|PPtr.*failed',re.I),
+            'missing_script_errors':re.compile(r'referenced script .* is missing|The referenced script on this Behaviour',re.I),
+            'license_errors':re.compile(r'No valid Unity Editor license found|Machine bindings don.t match',re.I),
+            'fatal_errors':re.compile(r'Aborting batchmode due to failure|Fatal Error|Crash!!!',re.I),
+          }
+          counts={k:sum(1 for x in lines if p.search(x)) for k,p in pats.items()}
+          marker=project/'Library/GodsPVZ.package-reference-migration.done'
+          marker_text=marker.read_text(errors='replace') if marker.is_file() else ''
+          marker_ok='resolved=67/67' in marker_text
+          mapp=project/'Recovery/package-script-map-editor.json'
+          old_count=0
+          if mapp.is_file():
+              d=json.loads(mapp.read_text())
+              exts={'.unity','.prefab','.asset','.mat','.controller','.anim','.overridecontroller'}
+              needles=[]
+              for pkg in d.get('packages',[]):
+                  for m in pkg.get('mapping') or []:
+                      needles.append(f"{{fileID: {m['fileID']}, guid: {pkg['guid']}, type: 3}}")
+              for p in project.joinpath('Assets').rglob('*'):
+                  if p.is_file() and p.suffix.lower() in exts:
+                      try: t=p.read_text(errors='replace')
+                      except: continue
+                      old_count += sum(t.count(n) for n in needles)
+          refaudit.write_text(f'marker_ok={int(marker_ok)}\nold_package_refs={old_count}\nmarker={marker_text}')
+          import hashlib
+          dll=project/'Assets/Plugins/Assembly-CSharp.dll'
+          h=hashlib.sha256(dll.read_bytes()).hexdigest() if dll.is_file() else ''
+          lock=project/'Packages/packages-lock.json'
+          passed=(rc==0 and sum(counts.values())==0 and (project/'Library').is_dir() and marker_ok and old_count==0 and h==finalsha and lock.is_file())
+          result={
+            'current_formal_import_pass':passed,
+            'classification':'CURRENT_BASELINE_FORMAL_IMPORT_PASS' if passed else 'CURRENT_BASELINE_FORMAL_IMPORT_BLOCKED',
+            'unity_exit_code':rc,
+            'diagnostic_counts':counts,
+            'package_migration_marker_ok':marker_ok,
+            'old_package_reference_count':old_count,
+            'final_dll_sha256':h,
+            'expected_final_dll_sha256':finalsha,
+            'packages_lock_present':lock.is_file(),
+            'library_present':(project/'Library').is_dir(),
+          }
+          resultp.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          PY
+          if [ -n "$PROJECT" ] && [ -f "$PROJECT/Packages/packages-lock.json" ]; then
+            cp "$PROJECT/Packages/packages-lock.json" "$E/packages-lock.json"
+          fi
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --return-ulf > /dev/null 2>&1
+            RC=$?
+            set -e
+            echo "$RC" > "$E/license-return-exit.txt"
+          fi
+
+      - name: Upload current formal import evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-CURRENT-BASELINE-FORMAL-UNITY-IMPORT
+          path: ${{ runner.temp }}/stage9-current-import/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Enforce current formal import result
+        if: always()
+        shell: bash
+        run: |
+          R="$RUNNER_TEMP/stage9-current-import/evidence/RESULT.json"
+          [ -f "$R" ] || exit 90
+          python3 - "$R" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print(json.dumps(d,indent=2,sort_keys=True))
+          if not d.get('current_formal_import_pass',False): raise SystemExit(91)
+          PY
+ "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          echo PACKAGE_REFERENCE_EXPLICIT_MIGRATION_PASS > "$E/package-migration-gate.txt"
+
       - name: Audit current formal import
         if: always()
         shell: bash
