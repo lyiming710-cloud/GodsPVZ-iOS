@@ -187,10 +187,32 @@ Formal validation:
 
 HF55 deliberately does not claim to repair `Zombie.Path_Test()` or `Zombie.DestroyZombie()`.
 
-## HF56 / Unity gate
+## HF56 / Stage9.1 Unity gate
 
-Use only the formal HF55 DLL above as managed input. Open HF56 only for a residual method or minimal dependency cluster that satisfies all three gates: concrete managed reconstruction damage, real gameplay reachability, and original-PC-native behavior/dependency closure.
+HF55 remains the only sealed formal high-fidelity baseline:
 
-Primary residual candidates are `Zombie.Path_Test()` and `Zombie.DestroyZombie()`, but neither is pre-authorized. Before any native-pointer attribution, reconcile formal restored-DLL identity, original PC/APK method identity and Cpp2IL generated-reference identity by name/signature/neighbor sequence; never infer a native slot directly from a regenerated reference token.
+`dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655`
 
-If no further minimal native-backed managed candidate closes cleanly, stop opening HF stages and resume the deterministic Unity path: integrate the formal HF55 cumulative DLL into Stage9.1, finish the 67/67 package-script reference closure, then validate exact Unity `2022.3.44f1c1` import/compile before MainMenu/Board runtime testing. Do not invent gameplay behavior merely to advance the HF number.
+Stage9.1 has a separately runtime-qualified development DLL:
+
+`047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee`
+
+This development DLL has exact-R3 natural-runtime evidence closing the current `Administrator.Start`, `Administrator.Update`, and `GlobalStaticVars.BGMVolume` Invalid-IL chain. It does not automatically authorize or rename HF56.
+
+The package-script blocker previously described here is closed for the current Unity gate:
+
+- exact package-script evidence: `67/67` resolved;
+- dependency closure: `10` resolved, `4` controlled overrides, `0` unresolved;
+- pinned direct package bundle generated;
+- exact R3 remains the fixed project input;
+- Unity remains fixed at `2022.3.44f1c1`.
+
+The active deterministic gate is:
+
+`.github/workflows/stage9-current-baseline-formal-import.yml`
+
+That gate reconstructs exact R3, overlays the runtime-qualified Stage9.1 DLL, embeds the pinned direct package bundle and dependency closure, verifies all 67 exact MonoScript GUID mappings, runs a fresh Unity import/compile, requires the package-reference migration marker to report `67/67`, and scans serialized assets for zero remaining recovered-package references.
+
+Do not reopen `Administrator.Start`, `Administrator.Update`, `BGMVolume`, generic List enumerator work, or floating package-version resolution unless new deterministic Unity/runtime evidence proves a regression. Do not open HF56 merely because the current Stage9.1 Unity gate passes; a new HF stage still requires a concrete native-backed residual reconstruction target.
+
+The authoritative execution handoff is `Recovery/HANDOFF_CURRENT.md`. Historical HF evidence above remains preserved for auditability, but superseded handoff snapshots have been removed.
