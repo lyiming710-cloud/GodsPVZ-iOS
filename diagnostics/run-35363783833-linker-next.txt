@@ -1,0 +1,115 @@
+run_id=35363783833
+ios_export_lines=14394 material_hits=45 final_center=14065
+migration:467: STAGE9_IOS_DLL_KIND Console->Dll offset=0x97 sha256=9295bcb90857502af5ab802839b5c560f9e4d956b99dfaeae4350bd5fa5754a3
+
+=== FINAL LINKER CONTEXT ===
+14045:    at Mono.Linker.Steps.MarkStep.MarkMethodBody(MethodBody body) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 2800
+14046:    at Unity.Linker.Steps.UnityMarkStep.MarkMethodBody(MethodBody body) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 359
+14047:    at Mono.Linker.Steps.MarkStep.ProcessMethod(MethodDefinition method, DependencyInfo& reason) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 2429
+14048:    at Unity.Linker.Steps.UnityMarkStep.ProcessMethod(MethodDefinition method, DependencyInfo& reason) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 222
+14049:    at Mono.Linker.Steps.MarkStep.ProcessQueue() in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 391
+14050:    --- End of inner exception stack trace ---
+14051:    at Mono.Linker.Steps.MarkStep.ProcessQueue() in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 393
+14052:    at Mono.Linker.Steps.MarkStep.ProcessPrimaryQueue() in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 376
+14053:    at Mono.Linker.Steps.MarkStep.Process()
+14054:    at Unity.Linker.Steps.UnityMarkStep.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 255
+14055:    at Unity.Linker.UnityPipeline.ProcessStep(LinkContext context, IStep step) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityPipeline.cs:line 22
+14056:    at Mono.Linker.Pipeline.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker/Pipeline.cs:line 128
+14057:    at Unity.Linker.UnityDriver.UnityRun(UnityLinkContext context, UnityPipeline p, LinkRequest linkerOptions, TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 160
+14058:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling(TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 100
+14059:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 68
+14060:    at Unity.Linker.UnityDriver.RunDriver() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 49
+14061: *** Tundra build failed (7.97 seconds), 1058 items updated, 1057 evaluated
+14062: ExitCode: 3 Duration: 8s111ms
+14063: Building Library/Bee/artifacts/iOS/ManagedStripped failed with output:
+14064: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/UnityLinker --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.ARModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/M ... [LONG LINE OMITTED]
+14065: Fatal error in Unity CIL Linker
+14066: Mono.Linker.LinkerFatalErrorException: ILLink: error IL1005: .Damage.AddElement(Element): Error processing method '.Damage.AddElement(Element)' in assembly 'GodsPVZRuntime1.dll'
+14067:  ---> System.NullReferenceException: Object reference not set to an instance of an object.
+14068:    at Unity.Cecil.Awesome.Comparers.TypeReferenceEqualityComparer.GetHashCodeFor(TypeReference obj) in /Users/bokken/build/output/unity/il2cpp/Unity.Cecil.Awesome/Comparers/TypeReferenceEqualityComparer.cs:line 307
+14069:    at Unity.Cecil.Awesome.Comparers.TypeReferenceEqualityComparer.GetHashCodeFor(TypeReference obj) in /Users/bokken/build/output/unity/il2cpp/Unity.Cecil.Awesome/Comparers/TypeReferenceEqualityComparer.cs:line 250
+14070:    at Unity.Cecil.Awesome.Comparers.MethodReferenceComparer.GetHashCodeFor(MethodReference obj) in /Users/bokken/build/output/unity/il2cpp/Unity.Cecil.Awesome/Comparers/MethodReferenceComparer.cs:line 286
+14071:    at System.Collections.Generic.HashSet`1.AddIfNotPresent(T value, Int32& location)
+14072:    at Unity.Linker.Steps.Marking.UnresolvedStubMarking.HandleUnresolvedMethod(MethodReference reference) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/Marking/UnresolvedStubMarking.cs:line 118
+14073:    at Unity.Linker.Steps.UnityMarkStep.HandleUnresolvedMethod(MethodReference reference) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 213
+14074:    at Mono.Linker.Steps.MarkStep.MarkMethod(MethodReference reference, DependencyInfo reason, IMemberDefinition sourceLocationMember) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 2311
+14075:    at Mono.Linker.Steps.MarkStep.MarkInstruction(Instruction instruction, MethodDefinition method, Boolean& requiresReflectionMethodBodyScanner) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 2867
+14076:    at Mono.Linker.Steps.MarkStep.MarkMethodBody(MethodBody body) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 2800
+14077:    at Unity.Linker.Steps.UnityMarkStep.MarkMethodBody(MethodBody body) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 359
+14078:    at Mono.Linker.Steps.MarkStep.ProcessMethod(MethodDefinition method, DependencyInfo& reason) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 2429
+14079:    at Unity.Linker.Steps.UnityMarkStep.ProcessMethod(MethodDefinition method, DependencyInfo& reason) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 222
+14080:    at Mono.Linker.Steps.MarkStep.ProcessQueue() in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 391
+14081:    --- End of inner exception stack trace ---
+14082:    at Mono.Linker.Steps.MarkStep.ProcessQueue() in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 393
+14083:    at Mono.Linker.Steps.MarkStep.ProcessPrimaryQueue() in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/MarkStep.cs:line 376
+14084:    at Mono.Linker.Steps.MarkStep.Process()
+14085:    at Unity.Linker.Steps.UnityMarkStep.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker.Steps/UnityMarkStep.cs:line 255
+14086:    at Unity.Linker.UnityPipeline.ProcessStep(LinkContext context, IStep step) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityPipeline.cs:line 22
+14087:    at Mono.Linker.Pipeline.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker/Pipeline.cs:line 128
+14088:    at Unity.Linker.UnityDriver.UnityRun(UnityLinkContext context, UnityPipeline p, LinkRequest linkerOptions, TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 160
+14089:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling(TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 100
+14090:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 68
+14091:    at Unity.Linker.UnityDriver.RunDriver() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 49
+14092: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+14093: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+14094: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+14095: UnityEngine.Debug:LogError (object)
+14096: UnityEditor.Modules.BeeBuildPostprocessor:DefaultResultProcessor (Bee.BinLog.NodeFinishedMessage,bool,bool) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:537)
+14097: UnityEditor.Modules.BeeBuildPostprocessor:UnityLinkerResultProcessor (Bee.BinLog.NodeFinishedMessage) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:500)
+14098: UnityEditor.Modules.BeeBuildPostprocessor:ReportBuildResults () (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:546)
+14099: UnityEditor.Modules.BeeBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:706)
+14100: UnityEditor.iOS.iOSBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs)
+14101: UnityEditor.Modules.DefaultBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs,UnityEditor.BuildProperties&) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/DefaultBuildPostprocessor.cs:30)
+14102: UnityEditor.PostprocessBuildPlayer:Postprocess (UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,string,string,string,int,int,UnityEditor.BuildOptions,UnityEditor.RuntimeClassRegistry,UnityEditor.Build.Reporting.BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/PostprocessBuildPlayer.cs:370)
+14103: UnityEditor.BuildPipeline:BuildPlayerInternal (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+14104: UnityEditor.BuildPipeline:BuildPlayer (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+14105: UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+14106: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+14107: 
+14108: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 537)
+14109: 
+14110: warning: Unknown file extension: so
+14111: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+14112: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+14113: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+14114: UnityEngine.Debug:LogWarning (object)
+14115: UnityEditor.Modules.BeeBuildPostprocessor:ReportBuildResults () (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:554)
+14116: UnityEditor.Modules.BeeBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:706)
+14117: UnityEditor.iOS.iOSBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs)
+14118: UnityEditor.Modules.DefaultBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs,UnityEditor.BuildProperties&) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/DefaultBuildPostprocessor.cs:30)
+14119: UnityEditor.PostprocessBuildPlayer:Postprocess (UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,string,string,string,int,int,UnityEditor.BuildOptions,UnityEditor.RuntimeClassRegistry,UnityEditor.Build.Reporting.BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/PostprocessBuildPlayer.cs:370)
+14120: UnityEditor.BuildPipeline:BuildPlayerInternal (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+14121: UnityEditor.BuildPipeline:BuildPlayer (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+14122: UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+14123: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+14124: 
+14125: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 554)
+14126: 
+14127: BuildFailedException: Player build failed: 7 errors
+14128:   at UnityEditor.Modules.BeeBuildPostprocessor.PostProcess (UnityEditor.Modules.BuildPostProcessArgs args) [0x00213] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:725 
+14129:   at UnityEditor.iOS.iOSBuildPostprocessor.PostProcess (UnityEditor.Modules.BuildPostProcessArgs args) [0x002a2] in <79f92961ce95431198853209e383707d>:0 
+14130: UnityEditor.BuildPipeline:BuildPlayerInternalNoCheck(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[], Boolean)
+14131: UnityEditor.BuildPipeline:BuildPlayerInternal(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+14132: UnityEditor.BuildPipeline:BuildPlayer(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+14133: UnityEditor.BuildPipeline:BuildPlayer(BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+14134: GodsPVZIOSBuild:BuildIOS() (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+14135: 
+14136: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 725)
+14137: 
+14138: Unloading 205 Unused Serialized files (Serialized files now loaded: 0)
+14139: Unloading 1226 unused Assets / (27.4 MB). Loaded Objects now: 3902.
+14140: Memory consumption went from 0.55 GB to 0.52 GB.
+14141: Total: 79.272877 ms (FindLiveObjects: 0.524920 ms CreateObjectMapping: 0.482010 ms MarkObjects: 37.315421 ms  DeleteObjects: 40.948833 ms)
+14142: 
+14143: Build Finished, Result: Failure.
+14144: Total cache size 52720769
+14145: Total cache size after purge 52720769
+14146: ##utp:{"type":"PlayerBuildInfo","version":2,"phase":"Immediate","time":1789747212769,"processId":7384,"steps":[{"description":"Preprocess Player","duration":10675},{"description":"Prepare For Build","duration":1},{"description":"ProducePlayerScriptAssemblies","duration":40536},{"description":"Verify Build setup","duration":42},{"description":"Prepare assets for target platform","duration":4962},{"description":"Prepare splash screen","duration":1248},{"description":"Building scenes","duration":14550},{"description":"Build scripts DLLs","duration":66},{"description":"Build GlobalGameManagers file","duration":388},{"description":"Writing asset files","duration":20025},{"description":"Building Resources/unity_builtin_extra","duration":6994},{"description":"Write data build dirty tracking information","duration":1541},{"description":"Postprocess built player","duration":9683}],"duration":1107 ... [LONG LINE OMITTED]
+14147: [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+14148: Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+14149: Loaded scene 'Temp/__Backupscenes/0.backup'
+14150: 	Deserialize:            1.185 ms
+14151: 	Integration:            259.024 ms
+14152: 	Integration of assets:  0.002 ms
+14153: 	Thread Wait Time:       0.038 ms
+14154: 	Total Operation Time:   260.249 ms
