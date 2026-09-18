@@ -8,7 +8,7 @@ on:
       - .github/workflows/stage9-ios-export-evidence-diagnose.yml
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 jobs:
@@ -16,39 +16,94 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Download failed export evidence
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download fourth-export evidence
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: lyiming710-cloud/GodsPVZ-iOS
-          run-id: '35353200355'
+          run-id: '35359524630'
           name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
           path: evidence
 
-      - name: Extract third-export fatal chain
+      - name: Build compact fatal report
         shell: bash
         run: |
           set -euo pipefail
           LOG=evidence/ios-export.log
-          echo '=== EXIT / GRAPHICS / TARGET ==='
-          cat evidence/ios-export-exit.txt || true
-          cat evidence/software-gl-max-texture.txt || true
-          grep -n -m 8 -E 'STAGE9_IOS_TARGET|activeBuildTarget|architecture=' "$LOG" || true
-          echo '=== ERROR SUMMARY ==='
-          grep -nE 'NullReferenceException|MissingReferenceException|BuildFailedException|UnityLinker|ManagedStripped|IL2CPP|Exception:|error CS|^Error|Build completed|Player build failed|BuildFailed|Failed' "$LOG" | tail -n 240 || true
-          echo '=== CONTEXT AROUND LAST MATERIAL ERRORS ==='
-          python3 - "$LOG" <<'PY'
+          OUT=diagnostics/run-35359524630-fatal.txt
+          mkdir -p diagnostics
+          python3 - "$LOG" "$OUT" <<'PY'
           from pathlib import Path
           import re,sys
-          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
-          pat=re.compile(r'NullReferenceException|MissingReferenceException|BuildFailedException|UnityLinker|ManagedStripped|IL2CPP|Player build failed|BuildFailed|Exception:',re.I)
-          hits=[i for i,l in enumerate(lines) if pat.search(l)]
-          print('material_hits=',len(hits),'lines=',len(lines))
-          for i in hits[-12:]:
-              print(f'--- context line {i+1} ---')
-              for j in range(max(0,i-18),min(len(lines),i+38)):
-                  print(f'{j+1}: {lines[j]}')
-          print('=== LOG TAIL 260 ===')
-          for j in range(max(0,len(lines)-260),len(lines)):
-              print(f'{j+1}: {lines[j]}')
+
+          log=Path(sys.argv[1])
+          out=Path(sys.argv[2])
+          lines=log.read_text(errors='replace').splitlines()
+
+          pats={
+              'stripping': re.compile(r'STAGE9_IOS_STRIPPING|managedStripping|ManagedStrippingLevel',re.I),
+              'nullref': re.compile(r'System\.NullReferenceException|NullReferenceException',re.I),
+              'linker': re.compile(r'UnityLinker|UnityTypeReferenceStep|ManagedStripped|Unity\.Linker',re.I),
+              'buildfail': re.compile(r'BuildFailedException|Player build failed|Build completed|iOS Unity build failed',re.I),
+              'tmp': re.compile(r'wryh\+pico12num|TMP_PreBuildProcessor|MissingReferenceException',re.I),
+          }
+          hits={k:[i for i,l in enumerate(lines) if p.search(l)] for k,p in pats.items()}
+
+          selected=[]
+          def add_context(i,before,after,label):
+              if i is None: return
+              a=max(0,i-before); b=min(len(lines),i+after+1)
+              selected.append((a,b,label,i))
+
+          # Preserve the exact last linker/nullref/failure chain while keeping report compact.
+          add_context(hits['stripping'][-1] if hits['stripping'] else None, 8, 12, 'LAST STRIPPING SETTING')
+          add_context(hits['nullref'][-1] if hits['nullref'] else None, 35, 85, 'LAST NULLREFERENCE')
+          add_context(hits['linker'][-1] if hits['linker'] else None, 45, 85, 'LAST UNITYLINKER')
+          add_context(hits['buildfail'][-1] if hits['buildfail'] else None, 45, 65, 'LAST BUILD FAILURE')
+          add_context(hits['tmp'][-1] if hits['tmp'] else None, 8, 12, 'LAST TMP/MISSINGREF')
+
+          # Merge overlapping ranges so the same stack is not repeated.
+          ranges=[]
+          for a,b,label,i in sorted(selected):
+              if ranges and a <= ranges[-1][1]+2:
+                  ranges[-1][1]=max(ranges[-1][1],b)
+                  ranges[-1][2].append(label)
+              else:
+                  ranges.append([a,b,[label]])
+
+          with out.open('w',encoding='utf-8') as f:
+              f.write('run_id=35359524630\n')
+              f.write(f'log_lines={len(lines)}\n')
+              for k,v in hits.items(): f.write(f'{k}_hits={len(v)}\n')
+              f.write('\n=== KEY MATCHES ===\n')
+              union_pat=re.compile(r'STAGE9_IOS_STRIPPING|managedStripping|ManagedStrippingLevel|System\.NullReferenceException|NullReferenceException|UnityLinker|UnityTypeReferenceStep|ManagedStripped|BuildFailedException|Player build failed|Build completed|wryh\+pico12num|TMP_PreBuildProcessor|MissingReferenceException',re.I)
+              key=[(i,l) for i,l in enumerate(lines) if union_pat.search(l)]
+              for i,l in key[-160:]: f.write(f'{i+1}: {l}\n')
+              for n,(a,b,labels) in enumerate(ranges,1):
+                  f.write(f'\n=== CONTEXT {n}: {" + ".join(labels)} lines {a+1}-{b} ===\n')
+                  for j in range(a,b): f.write(f'{j+1}: {lines[j]}\n')
+              f.write('\n=== FINAL 120 LINES ===\n')
+              for j in range(max(0,len(lines)-120),len(lines)):
+                  f.write(f'{j+1}: {lines[j]}\n')
+          print(out)
           PY
+          wc -l "$OUT"
+          tail -n 80 "$OUT"
+
+      - name: Commit compact report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/run-35359524630-fatal.txt
+          if git diff --cached --quiet; then
+            echo 'No diagnostic change to commit.'
+            exit 0
+          fi
+          git commit -m 'diagnostics: capture run 35359524630 fatal stack'
+          git push origin HEAD:stage9-admin-start-static
