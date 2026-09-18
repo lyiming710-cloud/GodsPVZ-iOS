@@ -31,7 +31,8 @@ jobs:
           tar -tJf ios-support.tar.xz > evidence/module/tar-list.txt
           tar -xJf ios-support.tar.xz -C extracted
           du -sh extracted | tee evidence/module/extracted-size.txt
-          find extracted -maxdepth 5 -type f -printf '%P\n' | sort | head -5000 > evidence/module/files-head.txt
+          find extracted -maxdepth 5 -type f -printf '%P\n' | sort > evidence/module/files-all.txt
+          sed -n '1,5000p' evidence/module/files-all.txt > evidence/module/files-head.txt
 
           find extracted -type f \( \
             -iname 'ivy.xml' -o -iname 'package.json' -o -iname '*install*.ini' -o \
@@ -45,21 +46,24 @@ jobs:
             grep -aEin '2022\.3\.44|f1c1|f1|c3ae09b9f03c|changeset|revision|version|editor' "$f" >> evidence/module/version-grep.txt 2>/dev/null || true
           done < evidence/module/metadata-files.txt
 
-          # Also scan all small text-like files for exact identity strings, once on extracted tree.
           grep -RIl --binary-files=without-match -E '2022\.3\.44f1c1|2022\.3\.44f1|c3ae09b9f03c' extracted 2>/dev/null \
-            | sort | head -500 > evidence/module/identity-hit-files.txt || true
+            | sort > evidence/module/identity-hit-files-all.txt || true
+          sed -n '1,500p' evidence/module/identity-hit-files-all.txt > evidence/module/identity-hit-files.txt
           : > evidence/module/identity-hits.txt
           while IFS= read -r f; do
             echo "===== ${f#extracted/} =====" >> evidence/module/identity-hits.txt
             grep -aEin '2022\.3\.44f1c1|2022\.3\.44f1|c3ae09b9f03c' "$f" >> evidence/module/identity-hits.txt 2>/dev/null || true
           done < evidence/module/identity-hit-files.txt
 
+          find extracted -type d -path '*PlaybackEngines/iOSSupport*' | sort > evidence/module/iossupport-dirs-all.txt
+          sed -n '1,100p' evidence/module/iossupport-dirs-all.txt > evidence/module/iossupport-dirs.txt
+
           echo '--- metadata files ---'
           cat evidence/module/metadata-files.txt || true
           echo '--- identity hits ---'
           sed -n '1,400p' evidence/module/identity-hits.txt
           echo '--- iOSSupport roots ---'
-          find extracted -type d -path '*PlaybackEngines/iOSSupport*' | head -100 | tee evidence/module/iossupport-dirs.txt
+          cat evidence/module/iossupport-dirs.txt
 
       - name: Compatibility verdict
         shell: bash
@@ -81,7 +85,6 @@ jobs:
             'PACKAGE_METADATA_MENTIONS_F1=' + ('YES' if '2022.3.44f1' in alltext else 'NO'),
             'PACKAGE_METADATA_MENTIONS_CHANGESET=' + ('YES' if 'c3ae09b9f03c' in alltext.lower() else 'NO'),
           ]
-          # Identity gate: same changeset is necessary, but absence of explicit metadata binding means install-test remains required.
           if 'PlaybackEngines/iOSSupport' not in tarlist:
               verdict='REJECT_NO_IOS_SUPPORT_PAYLOAD'
           elif 'c3ae09b9f03c' in alltext.lower():
