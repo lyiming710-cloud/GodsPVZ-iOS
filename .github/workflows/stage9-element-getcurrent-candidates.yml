@@ -1,0 +1,73 @@
+name: Stage9.1 Element get_Current candidates
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-element-getcurrent-candidates.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Enumerate Element get_Current refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          class P {
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t; foreach(var n in t.NestedTypes) foreach(var x in AT(n)) yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static string Arg(TypeReference t){
+              if(t is GenericParameter gp) return $"GP:{gp.Name}:owner={(gp.Owner==null?"null":gp.Owner.ToString())}:scope={(gp.Scope==null?"null":gp.Scope.ToString())}";
+              return t?.FullName??"<null>";
+            }
+            static void Main(string[] a){
+              using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true});
+              var found=new List<string>();
+              foreach(var t in AT(asm.MainModule)) foreach(var md in t.Methods) if(md.HasBody) foreach(var i in md.Body.Instructions) if(i.Operand is MethodReference mr && mr.Name=="get_Current" && mr.ReturnType.FullName=="Element"){
+                string g="";
+                if(mr.DeclaringType is GenericInstanceType gi) g=string.Join("|",gi.GenericArguments.Select(Arg));
+                found.Add($"owner={md.FullName}\nil=IL_{i.Offset:x4}\nmemberref={mr.MetadataToken}\ndecl_token={mr.DeclaringType.MetadataToken}\ndecl={mr.DeclaringType.FullName}\ngargs={g}\n");
+              }
+              Console.WriteLine("count="+found.Count);
+              foreach(var s in found) Console.WriteLine(s);
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/element-getcurrent-candidates.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/element-getcurrent-candidates.txt
+      - name: Commit report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/element-getcurrent-candidates.txt
+          git commit -m 'diagnostics: enumerate Element get_Current references' || exit 0
+          git push origin HEAD:stage9-admin-start-static
