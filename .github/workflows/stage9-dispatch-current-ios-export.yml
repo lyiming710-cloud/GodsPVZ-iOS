@@ -19,7 +19,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          echo 'Dispatch reason: run 5 with proven one-byte Assembly-CSharp PE DLL-kind repair in package migration.'
+          echo 'Dispatch reason: run 6 with two-byte iOS-only Assembly-CSharp repair: PE DLL bit plus Damage.AddElement IL_0019 MemberRef c3->e7.'
           gh workflow run stage9-current-baseline-ios-xcode-export.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref stage9-admin-start-static
