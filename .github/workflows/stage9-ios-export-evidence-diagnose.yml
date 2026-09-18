@@ -1,0 +1,45 @@
+name: Stage9.1 iOS export evidence diagnose
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-ios-export-evidence-diagnose.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download failed export evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35339764011'
+          name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
+          path: evidence
+
+      - name: Print deterministic failure diagnosis
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== files ==='
+          find evidence -maxdepth 2 -type f -printf '%P\n' | sort
+          echo '=== exit ==='
+          cat evidence/ios-export-exit.txt || true
+          echo '=== stdout ==='
+          cat evidence/ios-export.stdout || true
+          echo '=== stderr ==='
+          cat evidence/ios-export.stderr || true
+          echo '=== error/exception/build context ==='
+          grep -nEi -C 6 'error|exception|failed|failure|BuildFailed|BuildPlayer|IL2CPP|Bee|Burst|Xcode|iOS' evidence/ios-export.log | tail -n 600 || true
+          echo '=== final 500 log lines ==='
+          tail -n 500 evidence/ios-export.log || true
+          echo '=== disk before export ==='
+          cat evidence/disk-before-ios-export.txt || true
