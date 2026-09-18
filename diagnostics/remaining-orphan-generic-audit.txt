@@ -1,0 +1,167 @@
+
+=== System.Void ElementManager::Effect(Element) token=[Method:0x0123] RVA=0x16758 ===
+local[0]=System.Single
+local[1]=System.Single
+local[2]=System.Collections.Generic.List`1/Enumerator<Element> args=[Element]
+local[3]=Element
+local[4]=System.Int32
+local[5]=System.Int32
+IL_0000: ldc.r4       0
+IL_0005: stloc.0      
+IL_0006: ldarg.0      
+IL_0007: ldfld        FIELD token=[Field:0x014d] full=Zombie ElementManager::zombie
+IL_000c: ldnull       
+IL_000d: call         METHOD token=[MemberRef:0x0006] full=System.Boolean UnityEngine.Object::op_Inequality(UnityEngine.Object,UnityEngine.Object) decl=UnityEngine.Object
+IL_0012: brfalse.s    IL_0020: ldarg.0
+IL_0014: ldarg.0      
+IL_0015: ldfld        FIELD token=[Field:0x014d] full=Zombie ElementManager::zombie
+IL_001a: callvirt     METHOD token=[Method:0x044d] full=System.Single Zombie::GetER() decl=Zombie
+IL_001f: stloc.0      
+IL_0020: ldarg.0      
+IL_0021: ldfld        FIELD token=[Field:0x014e] full=Plant ElementManager::plant
+IL_0026: ldnull       
+IL_0027: call         METHOD token=[MemberRef:0x0006] full=System.Boolean UnityEngine.Object::op_Inequality(UnityEngine.Object,UnityEngine.Object) decl=UnityEngine.Object
+IL_002c: brfalse.s    IL_003a: ldarg.1
+IL_002e: ldarg.0      
+IL_002f: ldfld        FIELD token=[Field:0x014e] full=Plant ElementManager::plant
+IL_0034: callvirt     METHOD token=[Method:0x036a] full=System.Single Plant::GetER() decl=Plant
+IL_0039: stloc.0      
+IL_003a: ldarg.1      
+IL_003b: ldfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_0040: ldc.r4       1
+IL_0045: ldloc.0      
+IL_0046: ldc.r4       0.01
+IL_004b: mul          
+IL_004c: sub          
+IL_004d: mul          
+IL_004e: stloc.1      
+IL_004f: ldarg.0      
+IL_0050: ldfld        FIELD token=[Field:0x014f] full=System.Collections.Generic.List`1<Element> ElementManager::elements
+IL_0055: callvirt     METHOD token=[MemberRef:0x00c2] full=System.Collections.Generic.List`1/Enumerator<!0> System.Collections.Generic.List`1<Element>::GetEnumerator() decl=System.Collections.Generic.List`1<Element> args=[Element]
+IL_005a: stloc.2      
+IL_005b: br           IL_00ed: ldloca.s V_2
+IL_0060: ldloca.s     LOCAL index=2 type=System.Collections.Generic.List`1/Enumerator<Element> args=[Element]
+IL_0062: call         METHOD token=[MemberRef:0x00e7] full=Element System.Collections.Generic.List`1/Enumerator<Element>::get_Current() decl=System.Collections.Generic.List`1/Enumerator<Element> args=[Element]
+IL_0067: stloc.3      
+IL_0068: ldloc.3      
+IL_0069: ldfld        FIELD token=[Field:0x0146] full=ElementType Element::type
+IL_006e: ldarg.1      
+IL_006f: ldfld        FIELD token=[Field:0x0146] full=ElementType Element::type
+IL_0074: bne.un.s     IL_00ed: ldloca.s V_2
+IL_0076: ldloc.3      
+IL_0077: ldfld        FIELD token=[Field:0x0149] full=System.Single Element::burstTime
+IL_007c: ldc.r4       0
+IL_0081: ble.un.s     IL_0088: ldloc.3
+IL_0083: leave        IL_0109: ret
+IL_0088: ldloc.3      
+IL_0089: ldfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_008e: call         METHOD token=[MemberRef:0x00de] full=System.Int32 System.Math::Sign(System.Single) decl=System.Math
+IL_0093: stloc.s      LOCAL index=4 type=System.Int32
+IL_0095: ldloc.3      
+IL_0096: dup          
+IL_0097: ldfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_009c: ldloc.1      
+IL_009d: add          
+IL_009e: stfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_00a3: ldloc.3      
+IL_00a4: ldfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_00a9: call         METHOD token=[MemberRef:0x00de] full=System.Int32 System.Math::Sign(System.Single) decl=System.Math
+IL_00ae: stloc.s      LOCAL index=5 type=System.Int32
+IL_00b0: ldloc.s      LOCAL index=4 type=System.Int32
+IL_00b2: ldloc.s      LOCAL index=5 type=System.Int32
+IL_00b4: mul          
+IL_00b5: ldc.i4.0     
+IL_00b6: bge.s        IL_00d3: ldloc.3
+IL_00b8: ldarg.1      
+IL_00b9: ldfld        FIELD token=[Field:0x014b] full=System.Boolean Element::shuttle_able
+IL_00be: brtrue.s     IL_00cd: ldloc.3
+IL_00c0: ldloc.3      
+IL_00c1: ldc.r4       0
+IL_00c6: stfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_00cb: br.s         IL_00d3: ldloc.3
+IL_00cd: ldloc.3      
+IL_00ce: callvirt     METHOD token=[Method:0x0120] full=System.Void Element::Shuttle() decl=Element
+IL_00d3: ldloc.3      
+IL_00d4: ldfld        FIELD token=[Field:0x0147] full=System.Single Element::point
+IL_00d9: call         METHOD token=[MemberRef:0x00e8] full=System.Single System.MathF::Abs(System.Single) decl=System.MathF
+IL_00de: ldc.r4       15000
+IL_00e3: blt.un.s     IL_00eb: leave.s IL_0109
+IL_00e5: ldloc.3      
+IL_00e6: callvirt     METHOD token=[Method:0x011d] full=System.Void Element::Burst() decl=Element
+IL_00eb: leave.s      IL_0109: ret
+IL_00ed: ldloca.s     LOCAL index=2 type=System.Collections.Generic.List`1/Enumerator<Element> args=[Element]
+IL_00ef: call         METHOD token=[MemberRef:0x00e9] full=System.Boolean System.Collections.Generic.List`1/Enumerator<Element>::MoveNext() decl=System.Collections.Generic.List`1/Enumerator<Element> args=[Element]
+IL_00f4: brtrue       IL_0060: ldloca.s V_2
+IL_00f9: leave.s      IL_0109: ret
+IL_00fb: ldloca.s     LOCAL index=2 type=System.Collections.Generic.List`1/Enumerator<Element> args=[Element]
+IL_00fd: constrained. System.Collections.Generic.List`1/Enumerator<Element>
+IL_0103: callvirt     METHOD token=[MemberRef:0x00cd] full=System.Void System.IDisposable::Dispose() decl=System.IDisposable
+IL_0108: endfinally   
+IL_0109: ret          
+
+=== System.Void Board::Start() token=[Method:0x02a8] RVA=0x37908 ===
+local[0]=Map
+local[1]=UnityEngine.Camera
+local[2]=!!0[owner=null,scope=null]
+IL_0000: ldarg.0      
+IL_0001: ldfld        FIELD token=[Field:0x03d9] full=MouseManager Board::mouseManager
+IL_0006: brfalse      IL_0016: nop
+IL_000b: ldarg.0      
+IL_000c: ldfld        FIELD token=[Field:0x03d9] full=MouseManager Board::mouseManager
+IL_0011: callvirt     METHOD token=[Method:0x01e2] full=System.Void MouseManager::ResetStart() decl=MouseManager
+IL_0016: nop          
+IL_0017: ldarg.0      
+IL_0018: ldfld        FIELD token=[Field:0x03b4] full=BoardConfig Board::boardConfig
+IL_001d: brfalse      IL_00c0: ret
+IL_0022: ldarg.0      
+IL_0023: ldarg.0      
+IL_0024: ldfld        FIELD token=[Field:0x03b4] full=BoardConfig Board::boardConfig
+IL_0029: callvirt     METHOD token=[Method:0x0157] full=Map BoardConfig::CreateMap() decl=BoardConfig
+IL_002e: stfld        FIELD token=[Field:0x03b5] full=Map Board::map
+IL_0033: ldarg.0      
+IL_0034: ldfld        FIELD token=[Field:0x03b5] full=Map Board::map
+IL_0039: stloc        LOCAL index=0 type=Map
+IL_003d: ldloc        LOCAL index=0 type=Map
+IL_0041: brfalse      IL_00bf: nop
+IL_0046: call         METHOD token=[MemberRef:0x0003] full=UnityEngine.Camera UnityEngine.Camera::get_main() decl=UnityEngine.Camera
+IL_004b: stloc        LOCAL index=1 type=UnityEngine.Camera
+IL_004f: ldloc        LOCAL index=1 type=UnityEngine.Camera
+IL_0053: brfalse      IL_006a: nop
+IL_0058: ldloc        LOCAL index=1 type=UnityEngine.Camera
+IL_005c: ldloc        LOCAL index=0 type=Map
+IL_0060: ldfld        FIELD token=[Field:0x037f] full=System.Single Map::cameraSize
+IL_0065: callvirt     METHOD token=[MemberRef:0x0025] full=System.Void UnityEngine.Camera::set_orthographicSize(System.Single) decl=UnityEngine.Camera
+IL_006a: nop          
+IL_006b: ldarg.0      
+IL_006c: ldfld        FIELD token=[Field:0x03db] full=SunManager Board::sunManager
+IL_0071: brfalse      IL_008c: nop
+IL_0076: ldarg.0      
+IL_0077: ldfld        FIELD token=[Field:0x03db] full=SunManager Board::sunManager
+IL_007c: ldarg.0      
+IL_007d: ldfld        FIELD token=[Field:0x03b4] full=BoardConfig Board::boardConfig
+IL_0082: ldfld        FIELD token=[Field:0x019b] full=System.Int32 BoardConfig::baseSunPoint
+IL_0087: stfld        FIELD token=[Field:0x033e] full=System.Int32 SunManager::sunPoint
+IL_008c: nop          
+IL_008d: ldarg.0      
+IL_008e: ldfld        FIELD token=[Field:0x03c0] full=UnityEngine.SpriteRenderer Board::background
+IL_0093: brfalse      IL_00be: nop
+IL_0098: ldloc        LOCAL index=0 type=Map
+IL_009c: ldfld        FIELD token=[Field:0x037e] full=SenarioState Map::senarioState
+IL_00a1: call         METHOD token=[Method:0x0213] full=System.String ResourceManager::GetBoardBackgroundSpritePath(SenarioState) decl=ResourceManager
+IL_00a6: call         METHOD token=[MethodSpec:0x0005] full=!!0 InternalResourceLoader::Load<UnityEngine.Sprite>(System.String) decl=InternalResourceLoader
+IL_00ab: stloc        LOCAL index=2 type=!!0[owner=null,scope=null]
+IL_00af: ldarg.0      
+IL_00b0: ldfld        FIELD token=[Field:0x03c0] full=UnityEngine.SpriteRenderer Board::background
+IL_00b5: ldloc        LOCAL index=2 type=!!0[owner=null,scope=null]
+IL_00b9: callvirt     METHOD token=[MemberRef:0x0027] full=System.Void UnityEngine.SpriteRenderer::set_sprite(UnityEngine.Sprite) decl=UnityEngine.SpriteRenderer
+IL_00be: nop          
+IL_00bf: nop          
+IL_00c0: ret          
+
+=== Element enumerator canonical refs used by ElementManager.Effect ===
+IL_0062 get_Current token=[MemberRef:0x00e7] declToken=[TypeSpec:0x0030] full=Element System.Collections.Generic.List`1/Enumerator<Element>::get_Current()
+IL_00ef MoveNext token=[MemberRef:0x00e9] declToken=[TypeSpec:0x0030] full=System.Boolean System.Collections.Generic.List`1/Enumerator<Element>::MoveNext()
+
+=== Board.Start local2 uses ===
+IL_00ab: stloc LOCAL index=2 type=!!0[owner=null,scope=null]
+IL_00b5: ldloc LOCAL index=2 type=!!0[owner=null,scope=null]
