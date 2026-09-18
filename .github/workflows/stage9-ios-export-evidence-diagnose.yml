@@ -21,7 +21,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: lyiming710-cloud/GodsPVZ-iOS
-          run-id: '35339764011'
+          run-id: '35342840940'
           name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
           path: evidence
 
@@ -33,13 +33,15 @@ jobs:
           find evidence -maxdepth 2 -type f -printf '%P\n' | sort
           echo '=== exit ==='
           cat evidence/ios-export-exit.txt || true
+          echo '=== target/architecture evidence ==='
+          grep -nEi -C 4 'STAGE9_IOS_TARGET|architecture=|GetArchitecture|ARMv7|armv7|activeBuildTarget|SwitchActiveBuildTarget' evidence/ios-export.log || true
           echo '=== stdout ==='
           cat evidence/ios-export.stdout || true
           echo '=== stderr ==='
           cat evidence/ios-export.stderr || true
           echo '=== error/exception/build context ==='
-          grep -nEi -C 6 'error|exception|failed|failure|BuildFailed|BuildPlayer|IL2CPP|Bee|Burst|Xcode|iOS' evidence/ios-export.log | tail -n 600 || true
-          echo '=== final 500 log lines ==='
-          tail -n 500 evidence/ios-export.log || true
+          grep -nEi -C 8 'error|exception|failed|failure|BuildFailed|BuildPlayer|IL2CPP|Bee|Burst|Xcode|iOS|ARMv7|armv7' evidence/ios-export.log | tail -n 800 || true
+          echo '=== final 600 log lines ==='
+          tail -n 600 evidence/ios-export.log || true
           echo '=== disk before export ==='
           cat evidence/disk-before-ios-export.txt || true
