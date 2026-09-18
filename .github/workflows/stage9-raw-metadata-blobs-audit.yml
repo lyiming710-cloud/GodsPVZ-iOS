@@ -44,20 +44,18 @@ jobs:
               using var fs=File.OpenRead(Path.GetFullPath(args[0]));
               using var pe=new PEReader(fs);
               var r=pe.GetMetadataReader();
-              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count} TypeSpecs={r.TypeSpecifications.Count} StandaloneSigs={r.StandaloneSignatures.Count}");
+              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count} TypeSpecs={r.TypeSpecifications.Count}");
               DumpMethod(pe,r,0x0600010b,"Damage.AddElement");
               DumpMethod(pe,r,0x060002a8,"Board.Start");
               foreach(var tok in new[]{0x0A0000C2,0x0A0000C3,0x0A0000C4,0x0A0000C5,0x0A0000E7,0x0A0000E9}) DumpMemberRef(r,tok);
-              Console.WriteLine("=== TypeSpec 0x1B000029 and 0x1B000030 ===");
               foreach(var tok in new[]{0x1B000029,0x1B000030}){
                 var h=(TypeSpecificationHandle)MetadataTokens.Handle(tok);
                 var ts=r.GetTypeSpecification(h);
-                Console.WriteLine($"token=0x{tok:x8} sig_blob_offset=0x{MetadataTokens.GetHeapOffset(ts.Signature):x} sig={Hex(r.GetBlobBytes(ts.Signature))}");
+                Console.WriteLine($"TypeSpec token=0x{tok:x8} sig={Hex(r.GetBlobBytes(ts.Signature))}");
               }
-              Console.WriteLine("=== MethodSpec 0x2B000005 ===");
               var msh=(MethodSpecificationHandle)MetadataTokens.Handle(0x2B000005);
               var ms=r.GetMethodSpecification(msh);
-              Console.WriteLine($"method={MetadataTokens.GetToken(ms.Method):x8} inst_blob_offset=0x{MetadataTokens.GetHeapOffset(ms.Signature):x} inst={Hex(r.GetBlobBytes(ms.Signature))}");
+              Console.WriteLine($"MethodSpec 0x2b000005 method=0x{MetadataTokens.GetToken(ms.Method):x8} inst={Hex(r.GetBlobBytes(ms.Signature))}");
             }
             static void DumpMethod(PEReader pe,MetadataReader r,int tok,string name){
               var h=(MethodDefinitionHandle)MetadataTokens.Handle(tok);
@@ -67,31 +65,33 @@ jobs:
               Console.WriteLine($"localSigToken=0x{MetadataTokens.GetToken(body.LocalSignature):x8}");
               if(!body.LocalSignature.IsNil){
                 var ss=r.GetStandaloneSignature(body.LocalSignature);
-                Console.WriteLine($"localSigBlobOffset=0x{MetadataTokens.GetHeapOffset(ss.Signature):x} bytes={Hex(r.GetBlobBytes(ss.Signature))}");
+                Console.WriteLine($"localSig={Hex(r.GetBlobBytes(ss.Signature))}");
               }
-              Console.WriteLine($"ilSize={body.GetILBytes().Length} il={Hex(body.GetILBytes().ToArray())}");
+              var il=body.GetILBytes();
+              Console.WriteLine($"ilSize={il.Length} il={Hex(il)}");
             }
             static void DumpMemberRef(MetadataReader r,int tok){
               var h=(MemberReferenceHandle)MetadataTokens.Handle(tok);
               var mr=r.GetMemberReference(h);
               var parent=mr.Parent;
-              Console.WriteLine($"=== MemberRef 0x{tok:x8} name={r.GetString(mr.Name)} parent=0x{MetadataTokens.GetToken(parent):x8} sigBlobOffset=0x{MetadataTokens.GetHeapOffset(mr.Signature):x} sig={Hex(r.GetBlobBytes(mr.Signature))} ===");
+              Console.WriteLine($"MemberRef 0x{tok:x8} name={r.GetString(mr.Name)} parent=0x{MetadataTokens.GetToken(parent):x8} sig={Hex(r.GetBlobBytes(mr.Signature))}");
               if(parent.Kind==HandleKind.TypeSpecification){
                 var ts=r.GetTypeSpecification((TypeSpecificationHandle)parent);
-                Console.WriteLine($"parentTypeSpecBlobOffset=0x{MetadataTokens.GetHeapOffset(ts.Signature):x} parentSig={Hex(r.GetBlobBytes(ts.Signature))}");
+                Console.WriteLine($"  parentTypeSpec={Hex(r.GetBlobBytes(ts.Signature))}");
               }
             }
           }
           CS
           mkdir -p "$GITHUB_WORKSPACE/diagnostics"
-          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/raw-metadata-blobs.txt"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/raw-metadata-blobs.txt"
           cd "$GITHUB_WORKSPACE"; cat diagnostics/raw-metadata-blobs.txt
       - name: Commit report
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/raw-metadata-blobs.txt
+          git add diagnostics/raw-metadata-blobs.txt || true
           git commit -m 'diagnostics: dump raw malformed metadata blobs' || exit 0
           git push origin HEAD:stage9-admin-start-static
