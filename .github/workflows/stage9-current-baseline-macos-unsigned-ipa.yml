@@ -50,7 +50,7 @@ jobs:
           E="$OUT/evidence"
           ARCHIVE="$OUT/input/GodsPVZ-Stage9.1-unsigned-Xcode.tar.zst"
           test -f "$ARCHIVE"
-          sha256sum "$ARCHIVE" > "$E/input-xcode-archive.sha256"
+          shasum -a 256 "$ARCHIVE" > "$E/input-xcode-archive.sha256"
           command -v zstd >/dev/null 2>&1 || brew install zstd
           zstd -t "$ARCHIVE" 2> "$E/input-xcode-zstd-test.txt"
           zstd -dc "$ARCHIVE" | tar -xf - -C "$OUT/work"
@@ -105,7 +105,7 @@ jobs:
           IFS=$'\t' read -r MODE NAME < "$OUT/build-entry.txt"
           ENTRY_ARGS=()
           if [ "$MODE" = scheme ]; then
-            ENTRY_ARGS=(-scheme "$NAME")
+            ENTRY_ARGS=(-scheme "$NAME" -destination 'generic/platform=iOS')
           else
             ENTRY_ARGS=(-target "$NAME")
           fi
@@ -115,7 +115,6 @@ jobs:
             "${ENTRY_ARGS[@]}" \
             -configuration Release \
             -sdk iphoneos \
-            -destination 'generic/platform=iOS' \
             -derivedDataPath "$DERIVED" \
             ARCHS=arm64 \
             ONLY_ACTIVE_ARCH=NO \
@@ -140,17 +139,20 @@ jobs:
           DERIVED="$(cat "$OUT/derived-path.txt")"
           PRODUCTS="$DERIVED/Build/Products/Release-iphoneos"
           test -d "$PRODUCTS"
-          mapfile -t APPS < <(find "$PRODUCTS" -maxdepth 1 -type d -name '*.app' | sort)
-          printf '%s\n' "${APPS[@]}" > "$E/app-candidates.txt"
-          [ "${#APPS[@]}" -ge 1 ] || exit 63
+          find "$PRODUCTS" -maxdepth 1 -type d -name '*.app' | sort > "$E/app-candidates.txt"
+          test -s "$E/app-candidates.txt" || exit 63
           APP=""
-          for a in "${APPS[@]}"; do
+          while IFS= read -r a; do
             if [ -f "$a/Info.plist" ]; then
               bid="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$a/Info.plist" 2>/dev/null || true)"
-              if [ "$bid" = "$EXPECTED_BUNDLE_ID" ]; then APP="$a"; break; fi
+              if [ "$bid" = "$EXPECTED_BUNDLE_ID" ]; then
+                APP="$a"
+                break
+              fi
             fi
-          done
-          if [ -z "$APP" ]; then APP="${APPS[0]}"; fi
+          done < "$E/app-candidates.txt"
+          if [ -z "$APP" ]; then APP="$(head -n 1 "$E/app-candidates.txt")"; fi
+          test -n "$APP"
           INFO="$APP/Info.plist"
           test -f "$INFO"
           BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO")"
