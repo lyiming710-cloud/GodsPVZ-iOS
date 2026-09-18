@@ -19,6 +19,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          echo 'Dispatch reason: retry after c2e1c58816fe3936e9fd704a361b3aea40fca00e sets iOS managed stripping to Minimal.'
           gh workflow run stage9-current-baseline-ios-xcode-export.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref stage9-admin-start-static
