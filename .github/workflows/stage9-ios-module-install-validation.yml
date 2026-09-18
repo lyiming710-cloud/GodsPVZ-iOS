@@ -1,0 +1,312 @@
+name: Stage9.1 exact iOS module install validation
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-ios-module-install-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      EDITOR_RUN_ID: '34668863583'
+      EDITOR_SHA256: '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+      EDITOR_VERSION: '2022.3.44f1c1'
+      CHANGESET: 'c3ae09b9f03c'
+      MODULE_URL: 'https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz'
+      MODULE_SHA256: '2c2e259415ab0f940889b6b5bf55c56bc2710bbd823ddc05c5ab67ebc137a16e'
+
+    steps:
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EDITOR_RUN_ID }}
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-ios-module/editor-parts
+
+      - name: Reconstruct exact f1c1 Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module"
+          E="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          ROOT="$OUT/editor-root"
+          mkdir -p "$E" "$ROOT"
+          COUNT="$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          echo "$COUNT" > "$E/editor-part-count.txt"
+          [ "$COUNT" = '15' ] || exit 31
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* > "$OUT/editor.tar.xz"
+          GOT="$(sha256sum "$OUT/editor.tar.xz" | awk '{print $1}')"
+          echo "$GOT" > "$E/editor-sha256.txt"
+          [ "$GOT" = "$EDITOR_SHA256" ] || exit 32
+          xz -t "$OUT/editor.tar.xz"
+          tar -xJf "$OUT/editor.tar.xz" -C "$ROOT"
+          UNITY="$ROOT/Editor/Unity"
+          chmod +x "$UNITY"
+          BEFORE="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
+          echo "$BEFORE" > "$E/editor-version-before-module.txt"
+          [ "$BEFORE" = "$EDITOR_VERSION" ] || exit 33
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$PARTS" "$OUT/editor.tar.xz"
+
+      - name: Download and overlay exact-changeset China iOS module
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module"
+          E="$OUT/evidence"
+          ROOT="$OUT/editor-root"
+          MOD="$OUT/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
+          curl -fL --retry 5 --retry-delay 3 -o "$MOD" "$MODULE_URL"
+          GOT="$(sha256sum "$MOD" | awk '{print $1}')"
+          echo "$GOT" > "$E/module-sha256.txt"
+          stat -c '%s' "$MOD" > "$E/module-size.txt"
+          printf '%s\n' "$MODULE_URL" > "$E/module-source-url.txt"
+          [ "$GOT" = "$MODULE_SHA256" ] || exit 34
+          xz -t "$MOD"
+          tar -xJf "$MOD" -C "$ROOT"
+          IOS="$ROOT/Editor/Data/PlaybackEngines/iOSSupport"
+          test -d "$IOS"
+          test -f "$IOS/UnityEditor.iOS.Extensions.dll"
+          test -f "$IOS/UnityEditor.iOS.Extensions.Common.dll"
+          test -f "$IOS/Trampoline/Libraries/libiPhone-lib.a"
+          test -d "$IOS/il2cpp"
+          find "$IOS" -type f | sort > "$E/ios-support-files.txt"
+          find "$IOS" -type f | wc -l | tr -d ' ' > "$E/ios-support-file-count.txt"
+
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          AFTER="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
+          echo "$AFTER" > "$E/editor-version-after-module.txt"
+          [ "$AFTER" = "$EDITOR_VERSION" ] || exit 35
+
+      - name: Create minimal Unity API probe project
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module"
+          PROJECT="$OUT/probe-project"
+          mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Packages" "$PROJECT/ProjectSettings"
+          cat > "$PROJECT/Packages/manifest.json" <<'EOF'
+          {"dependencies":{}}
+          EOF
+          cat > "$PROJECT/ProjectSettings/ProjectVersion.txt" <<'EOF'
+          m_EditorVersion: 2022.3.44f1c1
+          m_EditorVersionWithRevision: 2022.3.44f1c1 (c3ae09b9f03c)
+          EOF
+          cat > "$PROJECT/Assets/Editor/Stage9IOSModuleProbe.cs" <<'CS'
+          using System;
+          using System.IO;
+          using System.Reflection;
+          using System.Text;
+          using UnityEditor;
+          using UnityEngine;
+
+          public static class Stage9IOSModuleProbe
+          {
+              [Serializable]
+              public class Result
+              {
+                  public string unityVersion;
+                  public bool buildPipelineMethodFound;
+                  public bool buildPipelineSupported;
+                  public bool switchMethodFound;
+                  public bool switchActiveBuildTarget;
+                  public string activeBuildTarget;
+                  public bool moduleManagerFound;
+                  public string moduleManagerEvidence;
+                  public bool pass;
+              }
+
+              static string ProbeModuleManager(out bool found)
+              {
+                  var sb = new StringBuilder();
+                  var t = typeof(Editor).Assembly.GetType("UnityEditor.Modules.ModuleManager");
+                  found = t != null;
+                  if (t == null) return "ModuleManager type not found";
+                  foreach (var m in t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+                  {
+                      if (m.Name.IndexOf("Support", StringComparison.OrdinalIgnoreCase) < 0 &&
+                          m.Name.IndexOf("Module", StringComparison.OrdinalIgnoreCase) < 0) continue;
+                      sb.Append(m.Name).Append('(');
+                      var ps = m.GetParameters();
+                      for (int i = 0; i < ps.Length; i++)
+                      {
+                          if (i != 0) sb.Append(',');
+                          sb.Append(ps[i].ParameterType.Name);
+                      }
+                      sb.AppendLine(")");
+                      try
+                      {
+                          if (m.ReturnType == typeof(bool) && ps.Length == 1 && ps[0].ParameterType == typeof(string))
+                          {
+                              foreach (var arg in new [] { "iOS", "iPhone" })
+                              {
+                                  var v = (bool)m.Invoke(null, new object[] { arg });
+                                  sb.Append("  ").Append(arg).Append('=').AppendLine(v.ToString());
+                              }
+                          }
+                      }
+                      catch (Exception ex) { sb.Append("  invoke-error=").AppendLine(ex.GetBaseException().Message); }
+                  }
+                  return sb.ToString();
+              }
+
+              public static void Run()
+              {
+                  var r = new Result();
+                  r.unityVersion = Application.unityVersion;
+
+                  var bp = typeof(BuildPipeline).GetMethod(
+                      "IsBuildTargetSupported",
+                      BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
+                      null,
+                      new [] { typeof(BuildTargetGroup), typeof(BuildTarget) },
+                      null);
+                  r.buildPipelineMethodFound = bp != null;
+                  if (bp != null)
+                      r.buildPipelineSupported = (bool)bp.Invoke(null, new object[] { BuildTargetGroup.iOS, BuildTarget.iOS });
+
+                  var sw = typeof(EditorUserBuildSettings).GetMethod(
+                      "SwitchActiveBuildTarget",
+                      BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
+                      null,
+                      new [] { typeof(BuildTargetGroup), typeof(BuildTarget) },
+                      null);
+                  r.switchMethodFound = sw != null;
+                  if (sw != null)
+                      r.switchActiveBuildTarget = (bool)sw.Invoke(null, new object[] { BuildTargetGroup.iOS, BuildTarget.iOS });
+                  r.activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
+                  r.moduleManagerEvidence = ProbeModuleManager(out r.moduleManagerFound);
+
+                  r.pass = r.unityVersion == "2022.3.44f1c1" &&
+                           r.buildPipelineMethodFound && r.buildPipelineSupported &&
+                           r.switchMethodFound && r.switchActiveBuildTarget &&
+                           EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS;
+
+                  var outPath = Environment.GetEnvironmentVariable("STAGE9_IOS_PROBE_OUT");
+                  if (String.IsNullOrEmpty(outPath)) outPath = Path.Combine(Directory.GetCurrentDirectory(), "Stage9IOSModuleProbe.json");
+                  File.WriteAllText(outPath, JsonUtility.ToJson(r, true));
+                  Debug.Log("STAGE9_IOS_MODULE_PROBE " + JsonUtility.ToJson(r));
+                  if (!r.pass) throw new Exception("Stage9 iOS module compatibility probe failed: " + outPath);
+              }
+          }
+          CS
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+
+      - name: Acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
+            echo 'UNITY credentials missing' >&2
+            exit 36
+          fi
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$E/license-activate.log" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/license-activate-exit.txt"
+          [ "$RC" -eq 0 ] || exit 37
+          touch "$OUT/seat-acquired.flag"
+
+      - name: Ask exact f1c1 Editor whether iOS target is usable
+        shell: bash
+        env:
+          STAGE9_IOS_PROBE_OUT: ${{ runner.temp }}/stage9-ios-module/evidence/ios-module-probe.json
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod Stage9IOSModuleProbe.Run -logFile "$E/unity-ios-module-probe.log" > "$E/unity-ios-module-probe.stdout" 2> "$E/unity-ios-module-probe.stderr"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/unity-ios-module-probe-exit.txt"
+          [ "$RC" -eq 0 ] || exit 38
+          test -s "$E/ios-module-probe.json"
+          python3 - "$E/ios-module-probe.json" <<'PY'
+          import json,sys
+          p=sys.argv[1]
+          d=json.load(open(p))
+          print(json.dumps(d,indent=2,sort_keys=True))
+          required={
+            'unityVersion':'2022.3.44f1c1',
+            'buildPipelineMethodFound':True,
+            'buildPipelineSupported':True,
+            'switchMethodFound':True,
+            'switchActiveBuildTarget':True,
+            'activeBuildTarget':'iOS',
+            'pass':True,
+          }
+          bad={k:(d.get(k),v) for k,v in required.items() if d.get(k)!=v}
+          if bad:
+              print('MISMATCH',bad)
+              raise SystemExit(39)
+          PY
+          cat > "$E/VERDICT.txt" <<EOF
+          IOS_MODULE_INSTALL_VALIDATION=PASS
+          EDITOR_VERSION=$EDITOR_VERSION
+          EDITOR_CHANGESET=$CHANGESET
+          MODULE_URL_VERSION=2022.3.44f1
+          MODULE_URL_CHANGESET=$CHANGESET
+          MODULE_SHA256=$MODULE_SHA256
+          BUILD_PIPELINE_IOS_SUPPORTED=YES
+          SWITCH_ACTIVE_BUILD_TARGET_IOS=YES
+          EOF
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module"
+          E="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --return-ulf > "$E/license-return.log" 2>&1
+            RC=$?
+            set -e
+            echo "$RC" > "$E/license-return-exit.txt"
+          fi
+
+      - name: Upload compatibility evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-MODULE-INSTALL-VALIDATION
+          path: ${{ runner.temp }}/stage9-ios-module/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Preserve validated China iOS module archive
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-unity-china-ios-module-c3ae09b9f03c
+          path: ${{ runner.temp }}/stage9-ios-module/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
