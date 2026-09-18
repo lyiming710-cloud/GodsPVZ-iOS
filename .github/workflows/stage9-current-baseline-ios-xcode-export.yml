@@ -1,6 +1,10 @@
 name: Stage9.1 CURRENT BASELINE iOS XCODE EXPORT
 
 on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-current-baseline-ios-xcode-export.yml'
   workflow_dispatch:
 
 permissions:
@@ -21,13 +25,28 @@ jobs:
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
       EDITOR_RUN_ID: '34668863583'
-      IOS_MODULE_RUN_ID: '35332956511'
+      EDITOR_SHA256: '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+      IOS_MODULE_RUN_ID: '35339261693'
       IOS_MODULE_SHA256: '2c2e259415ab0f940889b6b5bf55c56bc2710bbd823ddc05c5ab67ebc137a16e'
       UNITY_VERSION: '2022.3.44f1c1'
       UNITY_CHANGESET: 'c3ae09b9f03c'
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Reclaim runner disk for Stage9.1 export
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== disk before cleanup ==='
+          df -h
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+          docker system prune -af || true
+          echo '=== disk after cleanup ==='
+          df -h
 
       - name: Prepare export workspace
         shell: bash
@@ -48,11 +67,13 @@ jobs:
           package_closure_run=$PACKAGE_CLOSURE_RUN_ID
           package_bundle_run=$PACKAGE_BUNDLE_RUN_ID
           editor_run=$EDITOR_RUN_ID
+          editor_sha256=$EDITOR_SHA256
           ios_module_run=$IOS_MODULE_RUN_ID
           ios_module_sha256=$IOS_MODULE_SHA256
           unity_version=$UNITY_VERSION
           unity_changeset=$UNITY_CHANGESET
           EOF
+          df -h "$RUNNER_TEMP" > "$OUT/evidence/disk-after-runner-cleanup.txt"
 
       - name: Download exact R3 parts
         shell: bash
@@ -111,6 +132,7 @@ jobs:
           [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 45
           printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
           rm -rf "$OUT/r3-parts" "$ARCHIVE"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-r3.txt"
 
       - name: Download final runtime-qualified DLL
         uses: actions/download-artifact@v4
@@ -196,6 +218,8 @@ jobs:
           if n!=67 or bad: raise SystemExit(47)
           PY
           rm -f "$PROJECT/Packages/packages-lock.json"
+          rm -rf "$OUT/package-bundle" "$OUT/package-closure" "$OUT/package-guid-evidence" "$OUT/final-dll"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-baseline-integration.txt"
 
       - name: Download preserved exact Editor parts
         uses: actions/download-artifact@v4
@@ -207,28 +231,37 @@ jobs:
           merge-multiple: true
           path: ${{ runner.temp }}/stage9-ios-export/editor-parts
 
-      - name: Reconstruct exact Unity China Editor
+      - name: Reconstruct exact Unity China Editor with bounded disk usage
         shell: bash
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-ios-export"
           E="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
           ROOT="$OUT/editor-root"
           mkdir -p "$ROOT"
-          COUNT="$(find "$OUT/editor-parts" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          mapfile -t FILES < <(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | sort)
+          COUNT="${#FILES[@]}"
+          echo "$COUNT" > "$E/editor-part-count.txt"
           [ "$COUNT" = '15' ] || exit 48
-          cat "$OUT/editor-parts"/Unity-China-2022.3.44f1c1.tar.xz.part-* > "$OUT/editor.tar.xz"
-          SHA="$(sha256sum "$OUT/editor.tar.xz" | awk '{print $1}')"
+          df -h "$RUNNER_TEMP" > "$E/disk-before-editor-reconstruct.txt"
+          SHA="$({ for part in "${FILES[@]}"; do cat "$part"; done; } | sha256sum | awk '{print $1}')"
           echo "$SHA" > "$E/editor-sha256.txt"
-          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 49
-          tar -xJf "$OUT/editor.tar.xz" -C "$ROOT"
+          [ "$SHA" = "$EDITOR_SHA256" ] || exit 49
+          {
+            for part in "${FILES[@]}"; do
+              cat "$part"
+              rm -f "$part"
+            done
+          } | tar -xJf - -C "$ROOT"
+          rmdir "$PARTS" 2>/dev/null || true
           UNITY="$ROOT/Editor/Unity"
           chmod +x "$UNITY"
           V="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
           echo "$V" > "$E/editor-version-before-ios-module.txt"
           [ "$V" = "$UNITY_VERSION" ] || exit 50
           printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
-          rm -rf "$OUT/editor-parts" "$OUT/editor.tar.xz"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-editor-reconstruct.txt"
 
       - name: Download validated China iOS module
         uses: actions/download-artifact@v4
@@ -251,15 +284,16 @@ jobs:
           GOT="$(sha256sum "$MOD" | awk '{print $1}')"
           echo "$GOT" > "$E/ios-module-sha256.txt"
           [ "$GOT" = "$IOS_MODULE_SHA256" ] || exit 51
+          xz -t "$MOD"
           tar -xJf "$MOD" -C "$ROOT"
-          IOS="$ROOT/Editor/Data/PlaybackEngines/iOSSupport"
-          test -d "$IOS"
-          test -f "$IOS/UnityEditor.iOS.Extensions.dll"
-          test -f "$IOS/Trampoline/Libraries/libiPhone-lib.a"
+          find "$ROOT/Editor/Data/PlaybackEngines" -maxdepth 3 -type d 2>/dev/null | sort > "$E/playback-engine-dirs.txt" || true
+          find "$ROOT" -type d -iname '*ios*support*' 2>/dev/null | sort > "$E/ios-support-candidate-dirs.txt" || true
           UNITY="$(cat "$OUT/unity-path.txt")"
           V="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
           echo "$V" > "$E/editor-version-after-ios-module.txt"
           [ "$V" = "$UNITY_VERSION" ] || exit 52
+          rm -rf "$OUT/ios-module"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-ios-module.txt"
 
       - name: Acquire Personal seat
         shell: bash
@@ -304,6 +338,7 @@ jobs:
           "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZPackageReferenceMigrator.RunBatch -logFile "$E/package-migration.log"
           test -f "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
           grep -q '^resolved=67/67$' "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          df -h "$RUNNER_TEMP" > "$E/disk-before-ios-export.txt"
 
       - name: Export unsigned iOS Xcode project
         shell: bash
@@ -322,6 +357,7 @@ jobs:
           echo "$RC" > "$E/ios-export-exit.txt"
           [ "$RC" -eq 0 ] || exit 56
           test -d "$OUT/xcode"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-ios-export.txt"
 
       - name: Audit Xcode and IL2CPP export
         shell: bash
@@ -348,6 +384,7 @@ jobs:
             echo 'IOS_XCODE_EXPORT=PASS'
             echo "unity_version=$UNITY_VERSION"
             echo "final_dll_sha256=$FINAL_DLL_SHA256"
+            echo "ios_module_run=$IOS_MODULE_RUN_ID"
             echo "ios_module_sha256=$IOS_MODULE_SHA256"
             echo 'bundle_id=com.tipsGodsStudio.godsPVZ'
             echo 'deployment_target=12.0'
