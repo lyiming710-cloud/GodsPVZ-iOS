@@ -163,6 +163,7 @@ jobs:
           cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 70
 
+          mkdir -p "$PROJECT/Assets/Editor"
           cp "$GITHUB_WORKSPACE/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs"
           mkdir -p "$PROJECT/Recovery"
           cp "$GITHUB_WORKSPACE/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/package-script-map-editor.json"
