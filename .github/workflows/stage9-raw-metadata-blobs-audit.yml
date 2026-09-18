@@ -44,7 +44,7 @@ jobs:
               using var fs=File.OpenRead(Path.GetFullPath(args[0]));
               using var pe=new PEReader(fs);
               var r=pe.GetMetadataReader();
-              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count}");
+              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count} StandaloneSigs={r.StandaloneSignatures.Count}");
               DumpMethod(pe,r,0x0600010b,"Damage.AddElement");
               DumpMethod(pe,r,0x060002a8,"Board.Start");
               foreach(var tok in new[]{0x0A0000C2,0x0A0000C3,0x0A0000C4,0x0A0000C5,0x0A0000E7,0x0A0000E9}) DumpMemberRef(r,tok);
@@ -56,6 +56,19 @@ jobs:
               var msh=(MethodSpecificationHandle)MetadataTokens.Handle(0x2B000005);
               var ms=r.GetMethodSpecification(msh);
               Console.WriteLine($"MethodSpec 0x2b000005 method=0x{MetadataTokens.GetToken(ms.Method):x8} inst={Hex(r.GetBlobBytes(ms.Signature))}");
+
+              var wanted="07 02 15 11 55 01 12 80 ac 12 80 ac";
+              Console.WriteLine("=== StandAloneSig exact canonical Damage locals ===");
+              int matches=0;
+              foreach(var sh in r.StandaloneSignatures){
+                var ss=r.GetStandaloneSignature(sh);
+                var hex=Hex(r.GetBlobBytes(ss.Signature));
+                if(hex==wanted){
+                  matches++;
+                  Console.WriteLine($"match token=0x{MetadataTokens.GetToken(sh):x8} sig={hex}");
+                }
+              }
+              Console.WriteLine($"canonicalDamageLocalSigMatches={matches}");
             }
             static void DumpMethod(PEReader pe,MetadataReader r,int tok,string name){
               var h=(MethodDefinitionHandle)MetadataTokens.Handle(tok);
