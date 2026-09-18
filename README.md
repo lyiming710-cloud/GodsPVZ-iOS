@@ -2,32 +2,39 @@
 
 Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by the repository owner.
 
-## Confirmed source build
+## Locked source/build identity
 
 - Unity: `2022.3.44f1c1`
 - Android package: `com.tipsGodsStudio.godsPVZ`
-- IL2CPP metadata: `31.1`
-- Android CodeRegistration: `0x2772B68`
-- Android MetadataRegistration: `0x285F870`
-- Recovered `Assembly-CSharp.dll`: 2317 MethodDef rows, 2297 methods with CIL bodies, about 1.29 MB of CIL code
-- Cpp2IL reported `2319 / 2319` target methods successfully recovered
-- 173 serialized game script types have been mapped from AssetRipper `.cs` GUIDs to the recovered Assembly-CSharp managed DLL local file IDs
+- IL2CPP metadata layout: `31.1`
+- Assembly-CSharp MethodDef invariant: `2317`
+- Formal sealed high-fidelity baseline: **HF55**
+- HF55 SHA256: `dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655`
 
-## Exact Unity package versions recovered from embedded build paths
+The PC x86-64 IL2CPP build remains the primary gameplay-semantic authority; the Android build is the independent mobile/native reference.
 
-- `com.unity.ugui@1.0.0`
-- `com.unity.textmeshpro@3.0.6`
-- `com.unity.render-pipelines.core@14.0.11`
-- `com.unity.render-pipelines.universal@14.0.11`
-- `com.unity.2d.animation@9.1.1`
-- `com.unity.2d.tilemap.extras@3.1.2`
-- `com.unity.burst@1.8.17`
-- `com.unity.collections@1.2.4`
-- `com.unity.mathematics@1.2.6`
-- `com.unity.visualscripting@1.9.4`
+## Current Stage9.1 development baseline
 
-## Current phase
+The current runtime-qualified development DLL is:
 
-The game assembly is recovered and the Unity resources/scenes have been exported locally. The current task is replacing recovered package-DLL script references with the original Unity package script GUIDs, then running an iOS IL2CPP build. The repository intentionally does not claim a working IPA until the Unity build and device launch are verified.
+`047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee`
 
-See `Recovery/STATUS.md` for the detailed recovery state.
+Exact-R3 natural runtime has closed the current `Administrator.Start`, `Administrator.Update`, and `GlobalStaticVars.BGMVolume` Invalid-IL chain with no regression in the five-state SkillProgress path.
+
+Package restoration is also closed for the current Unity gate:
+
+- package-script GUID evidence: **67/67 resolved**
+- dependency closure: **10 resolved / 4 controlled overrides / 0 unresolved**
+- pinned direct Unity package bundle generated
+- exact R3 project input preserved
+- exact Unity China Editor `2022.3.44f1c1` preserved
+
+## Current gate
+
+The active gate is `.github/workflows/stage9-current-baseline-formal-import.yml`.
+
+It reconstructs exact R3, overlays the runtime-qualified development DLL, embeds the pinned direct packages plus dependency closure, verifies the 67 exact MonoScript GUID mappings, and then runs a fresh Unity import/compile gate. It also requires the package-reference migration marker to report `67/67` and scans serialized assets for zero remaining old recovered-package references.
+
+A working IPA is **not** claimed until import/compile, scene/runtime validation, iOS IL2CPP export, Xcode build, packaging, and device validation all pass.
+
+See `Recovery/HANDOFF_CURRENT.md` for the authoritative current handoff. Historical recovery/audit evidence is retained separately and should not be treated as current execution guidance.
