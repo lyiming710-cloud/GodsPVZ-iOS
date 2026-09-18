@@ -1,0 +1,147 @@
+run_id=35359524630
+log_lines=13643 stripping_hits=1 nullref_hits=2 type_ref_hits=0 buildfail_hits=2 tmp_hits=5
+
+=== ISOLATED MATERIAL LINES ===
+
+--- gap; resume at log line 6321 ---
+6321: Total: 11.589652 ms (FindLiveObjects: 0.284021 ms CreateObjectMapping: 0.064226 ms MarkObjects: 9.415825 ms  DeleteObjects: 1.824878 ms)
+6322: 
+6323: STAGE9_IOS_STRIPPING level=Minimal
+6324: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+6325: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+6326: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+
+--- gap; resume at log line 6370 ---
+6370: (Filename: /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Shaders/LocalKeyword.bindings.cs Line: 38)
+6371: 
+6372: MissingReferenceException: The variable m_AtlasTextures of TMP_FontAsset doesn't exist anymore.
+6373: You probably need to reassign the m_AtlasTextures variable of the 'TMP_FontAsset' script in the inspector.
+6374:   at (wrapper managed-to-native) UnityEngine.Texture.GetDataWidth(UnityEngine.Texture)
+6375:   at UnityEngine.Texture.get_width () [0x00001] in /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Graphics/Texture.bindings.cs:42 
+6376:   at TMPro.TMP_PreBuildProcessor.OnPreprocessBuild (UnityEditor.Build.Reporting.BuildReport report) [0x0001d] in ./Packages/com.unity.textmeshpro/Scripts/Editor/TMP_PreBuildProcessor.cs:23 
+6377:   at UnityEditor.Build.BuildPipelineInterfaces+<>c__DisplayClass16_0.<OnBuildPreProcess>b__1 (UnityEditor.Build.IPreprocessBuildWithReport bpp) [0x00000] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:499 
+6378:   at UnityEditor.Build.BuildPipelineInterfaces.InvokeCallbackInterfacesPair[T1,T2] (System.Collections.Generic.List`1[T] oneInterfaces, System.Action`1[T] invocationOne, System.Collections.Generic.List`1[T] twoInterfaces, System.Action`1[T] invocationTwo, System.Boolean exitOnFailure) [0x000ff] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/BuildPipelineInterfaces.cs:465 
+6379: UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+
+--- gap; resume at log line 6389 ---
+6389: GodsPVZIOSBuild:BuildIOS() (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+6390: 
+6391: (Filename: ./Packages/com.unity.textmeshpro/Scripts/Editor/TMP_PreBuildProcessor.cs Line: 23)
+6392: 
+6393: Start importing Assets/MonoBehaviour/New Universal Render Pipeline Asset.asset using Guid(22c2bf3291e4d8f4db5d66a87a6f8123) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+6394:  -> (artifact id: '67757367d0b9823224f6038896ec6948') in 0.008363 seconds
+
+--- gap; resume at log line 13313 ---
+13313: [ 268/3155  1s] UnityLinker /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Library/Bee/artifacts/unitylinker_fi2v.traceevents
+13314: ##### CommandLine
+13315: "/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/UnityLinker" --allowed-assembly="/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AIModule.dll" --allowed-assembly="/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.ARModule.dll" --allowed-assembly="/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll" --allowed-assembly="/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll" --allowed-assembly="/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variatio ... [LONG LINE OMITTED]
+13316: ##### ExitCode
+13317: 1
+13318: ##### Output
+13319: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/UnityLinker --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.ARModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/M ... [LONG LINE OMITTED]
+13320: Fatal error in Unity CIL Linker
+13321: System.NullReferenceException: Object reference not set to an instance of an object.
+13322:    at Mono.Linker.Steps.ResolveFromAssemblyStep.ProcessExecutable(AssemblyDefinition assembly) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/ResolveFromAssemblyStep.cs:line 160
+13323:    at Mono.Linker.Steps.BaseStep.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/BaseStep.cs:line 60
+13324:    at Unity.Linker.UnityPipeline.ProcessStep(LinkContext context, IStep step) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityPipeline.cs:line 22
+13325:    at Mono.Linker.Pipeline.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker/Pipeline.cs:line 128
+13326:    at Unity.Linker.UnityDriver.UnityRun(UnityLinkContext context, UnityPipeline p, LinkRequest linkerOptions, TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 160
+13327:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling(TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 100
+13328:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 68
+13329:    at Unity.Linker.UnityDriver.RunDriver() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 49
+13330: *** Tundra build failed (3.31 seconds), 268 items updated, 267 evaluated
+13331: ExitCode: 3 Duration: 3s448ms
+13332: Building Library/Bee/artifacts/iOS/ManagedStripped failed with output:
+13333: /home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/il2cpp/build/deploy/UnityLinker --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.ARModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll --allowed-assembly=/home/runner/work/_temp/stage9-ios-export/editor-root/Editor/Data/PlaybackEngines/iOSSupport/Variations/il2cpp/M ... [LONG LINE OMITTED]
+13334: Fatal error in Unity CIL Linker
+13335: System.NullReferenceException: Object reference not set to an instance of an object.
+13336:    at Mono.Linker.Steps.ResolveFromAssemblyStep.ProcessExecutable(AssemblyDefinition assembly) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/ResolveFromAssemblyStep.cs:line 160
+13337:    at Mono.Linker.Steps.BaseStep.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker.Steps/BaseStep.cs:line 60
+13338:    at Unity.Linker.UnityPipeline.ProcessStep(LinkContext context, IStep step) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityPipeline.cs:line 22
+13339:    at Mono.Linker.Pipeline.Process(LinkContext context) in /Users/bokken/build/output/unity/il2cpp/repos/monolinker/src/linker/Linker/Pipeline.cs:line 128
+13340:    at Unity.Linker.UnityDriver.UnityRun(UnityLinkContext context, UnityPipeline p, LinkRequest linkerOptions, TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 160
+13341:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling(TinyProfiler2 tinyProfiler, ILogger customLogger) in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 100
+13342:    at Unity.Linker.UnityDriver.RunDriverWithoutErrorHandling() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 68
+13343:    at Unity.Linker.UnityDriver.RunDriver() in /Users/bokken/build/output/unity/il2cpp/UnityLinker/Linker/UnityDriver.cs:line 49
+13344: ��
+13345: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+13346: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+13347: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+13348: UnityEngine.Debug:LogError (object)
+13349: UnityEditor.Modules.BeeBuildPostprocessor:DefaultResultProcessor (Bee.BinLog.NodeFinishedMessage,bool,bool) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:537)
+13350: UnityEditor.Modules.BeeBuildPostprocessor:UnityLinkerResultProcessor (Bee.BinLog.NodeFinishedMessage) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:500)
+13351: UnityEditor.Modules.BeeBuildPostprocessor:ReportBuildResults () (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:546)
+13352: UnityEditor.Modules.BeeBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:706)
+13353: UnityEditor.iOS.iOSBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs)
+13354: UnityEditor.Modules.DefaultBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs,UnityEditor.BuildProperties&) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/DefaultBuildPostprocessor.cs:30)
+13355: UnityEditor.PostprocessBuildPlayer:Postprocess (UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,string,string,string,int,int,UnityEditor.BuildOptions,UnityEditor.RuntimeClassRegistry,UnityEditor.Build.Reporting.BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/PostprocessBuildPlayer.cs:370)
+13356: UnityEditor.BuildPipeline:BuildPlayerInternal (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+13357: UnityEditor.BuildPipeline:BuildPlayer (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+13358: UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+13359: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+13360: 
+13361: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 537)
+13362: 
+13363: warning: Unknown file extension: so
+13364: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+13365: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+13366: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+13367: UnityEngine.Debug:LogWarning (object)
+13368: UnityEditor.Modules.BeeBuildPostprocessor:ReportBuildResults () (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:554)
+13369: UnityEditor.Modules.BeeBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:706)
+13370: UnityEditor.iOS.iOSBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs)
+13371: UnityEditor.Modules.DefaultBuildPostprocessor:PostProcess (UnityEditor.Modules.BuildPostProcessArgs,UnityEditor.BuildProperties&) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/DefaultBuildPostprocessor.cs:30)
+13372: UnityEditor.PostprocessBuildPlayer:Postprocess (UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,string,string,string,int,int,UnityEditor.BuildOptions,UnityEditor.RuntimeClassRegistry,UnityEditor.Build.Reporting.BuildReport) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline/PostprocessBuildPlayer.cs:370)
+13373: UnityEditor.BuildPipeline:BuildPlayerInternal (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+13374: UnityEditor.BuildPipeline:BuildPlayer (string[],string,string,UnityEditor.BuildTargetGroup,UnityEditor.BuildTarget,int,UnityEditor.BuildOptions,string[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+13375: UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+13376: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+13377: 
+13378: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 554)
+13379: 
+13380: BuildFailedException: Player build failed: 7 errors
+13381:   at UnityEditor.Modules.BeeBuildPostprocessor.PostProcess (UnityEditor.Modules.BuildPostProcessArgs args) [0x00213] in /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs:725 
+13382:   at UnityEditor.iOS.iOSBuildPostprocessor.PostProcess (UnityEditor.Modules.BuildPostProcessArgs args) [0x002a2] in <79f92961ce95431198853209e383707d>:0 
+13383: UnityEditor.BuildPipeline:BuildPlayerInternalNoCheck(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[], Boolean)
+13384: UnityEditor.BuildPipeline:BuildPlayerInternal(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:518)
+13385: UnityEditor.BuildPipeline:BuildPlayer(String[], String, String, BuildTargetGroup, BuildTarget, Int32, BuildOptions, String[]) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:383)
+13386: UnityEditor.BuildPipeline:BuildPlayer(BuildPlayerOptions) (at /home/bokken/sharedspace/ra_2022.3/Editor/Mono/BuildPipeline.bindings.cs:347)
+13387: GodsPVZIOSBuild:BuildIOS() (at Assets/Editor/GodsPVZIOSBuild.cs:76)
+13388: 
+13389: (Filename: /home/bokken/sharedspace/ra_2022.3/Editor/Mono/Modules/BeeBuildPostprocessor.cs Line: 725)
+13390: 
+13391: Unloading 205 Unused Serialized files (Serialized files now loaded: 0)
+13392: Total cache size 52720769
+13393: Total cache size after purge 52720769
+13394: Unloading 1226 unused Assets / (27.6 MB). Loaded Objects now: 3902.
+13395: Memory consumption went from 0.55 GB to 0.52 GB.
+
+--- gap; resume at log line 13409 ---
+13409: Memory consumption went from 0.51 GB to 0.51 GB.
+13410: Total: 9.352081 ms (FindLiveObjects: 0.454124 ms CreateObjectMapping: 0.095231 ms MarkObjects: 8.775565 ms  DeleteObjects: 0.026419 ms)
+13411: 
+13412: GodsPVZ iOS export summary: result=Failed, errors=8, warnings=409, size=838124103, output=/home/runner/work/_temp/stage9-ios-export/xcode
+13413: UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/Scripting/StackTrace.cs:37)
+13414: UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+13415: UnityEngine.Logger:Log (UnityEngine.LogType,object)
+13416: UnityEngine.Debug:Log (object)
+13417: GodsPVZIOSBuild:BuildIOS () (at Assets/Editor/GodsPVZIOSBuild.cs:84)
+13418: 
+13419: (Filename: Assets/Editor/GodsPVZIOSBuild.cs Line: 84)
+13420: 
+13421: Exception: iOS Unity build failed: Failed, errors=8
+13422:   at GodsPVZIOSBuild.BuildIOS () [0x002d0] in /home/runner/work/_temp/stage9-ios-export/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Editor/GodsPVZIOSBuild.cs:92 
+13423: 
+13424: (Filename: Assets/Editor/GodsPVZIOSBuild.cs Line: 92)
+13425: 
+13426: executeMethod method GodsPVZIOSBuild.BuildIOS threw exception.
+13427: [PhysX] Initialized MultithreadedTaskDispatcher with 2 workers.
+13428: [Licensing::IpcConnector] License Notification channel disconnected successfully.
+13429: [Licensing::IpcConnector] License Client channel disconnected successfully.
+13430: Cleanup mono
+13431: debugger-agent: Unable to listen on 48
+13432: [usbmuxd] Stop listen thread
+13433: [usbmuxd] Listen thread exiting
+13434: [Performance] Application.InitializeProject                                                                                  :        1 samples, Peak.   285 s (1.0x), Avg.   285 s, Total. 284.6 s (59.9%)
+13435: [Performance] Application.PackageManager.StartServer                                                                         :        1 samples, Peak.  2.84 ms (1.0x), Avg.  2.84 ms, Total. 2.843 ms (0.0%)
+13436: [Performance] Application.AcquireProjectLock                                                                                 :        1 samples, Peak.  1.89 ms (1.0x), Avg.  1.89 ms, Total. 1.893 ms (0.0%)
