@@ -44,7 +44,7 @@ jobs:
               using var fs=File.OpenRead(Path.GetFullPath(args[0]));
               using var pe=new PEReader(fs);
               var r=pe.GetMetadataReader();
-              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count} TypeSpecs={r.TypeSpecifications.Count}");
+              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count}");
               DumpMethod(pe,r,0x0600010b,"Damage.AddElement");
               DumpMethod(pe,r,0x060002a8,"Board.Start");
               foreach(var tok in new[]{0x0A0000C2,0x0A0000C3,0x0A0000C4,0x0A0000C5,0x0A0000E7,0x0A0000E9}) DumpMemberRef(r,tok);
