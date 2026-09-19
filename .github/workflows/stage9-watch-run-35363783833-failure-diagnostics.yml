@@ -1,4 +1,4 @@
-name: Watch Stage9.1 run 35412031380 failure diagnostics
+name: Watch Stage9.1 run 35413261723 diagnostics
 
 on:
   push:
@@ -8,32 +8,30 @@ on:
 
 permissions:
   actions: read
-  contents: write
+  contents: read
 
 jobs:
   watch:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      EXPORT_RUN_ID: '35412031380'
+      EXPORT_RUN_ID: '35413261723'
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: stage9-admin-start-static
-
-      - name: Wait and capture compact diagnostics only on failure
+      - name: Wait and capture compact diagnostics
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p diagnostics
           for i in $(seq 1 420); do
             STATUS="$(gh run view "$EXPORT_RUN_ID" --repo "$GITHUB_REPOSITORY" --json status --jq .status)"
             if [ "$STATUS" = completed ]; then
               CONCLUSION="$(gh run view "$EXPORT_RUN_ID" --repo "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)"
               echo "export_run_id=$EXPORT_RUN_ID conclusion=$CONCLUSION"
+              echo "run_id=$EXPORT_RUN_ID" > diagnostics/status.txt
+              echo "conclusion=$CONCLUSION" >> diagnostics/status.txt
               if [ "$CONCLUSION" = success ]; then
-                echo 'No failure diagnostics required.'
                 exit 0
               fi
               break
@@ -42,16 +40,16 @@ jobs:
           done
 
           rm -rf evidence
-          mkdir -p evidence diagnostics
+          mkdir -p evidence
           gh run download "$EXPORT_RUN_ID" --repo "$GITHUB_REPOSITORY" \
             -n Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE -D evidence
 
           python3 - <<'PY'
           from pathlib import Path
           import re
-          run='35412031380'
+          run='35413261723'
           root=Path('evidence')
-          out=Path('diagnostics/run-35412031380-fatal.txt')
+          out=Path('diagnostics/fatal.txt')
           candidates=['package-migration.log','ios-export.log','ios-export.stdout','ios-export.stderr','ios-export-exit.txt']
           rx=re.compile(r'STAGE9_IOS_DLL_REPAIR|STAGE9_IOS_DLL_KIND|STAGE9_IOS_STRIPPING|Fatal error in Unity CIL Linker|ILLink: error|UnityLinker|IL2CPP|DataModel|ReferencesCollector|AddGenericParameter|NullReferenceException|AggregateException|UnityTypeReferenceStep|ResolveFromAssemblyStep|ProcessExecutable|UnresolvedStubMarking|ManagedStripped|Tundra build failed|BuildFailedException|Player build failed|MissingReferenceException|TMP_PreBuildProcessor|error CS|Exception:|iOS Unity build failed',re.I)
           with out.open('w',encoding='utf-8') as f:
@@ -77,8 +75,12 @@ jobs:
           print(out)
           PY
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/run-35412031380-fatal.txt
-          git commit -m 'diagnostics: capture run 35412031380 failure' || exit 0
-          git push origin HEAD:stage9-admin-start-static
+      - name: Upload watcher diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-run-35413261723-watch-diagnostics
+          path: diagnostics
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
