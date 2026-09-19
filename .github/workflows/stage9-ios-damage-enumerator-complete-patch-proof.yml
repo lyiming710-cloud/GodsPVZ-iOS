@@ -1,0 +1,157 @@
+name: Stage9.1 complete Damage enumerator metadata repair proof
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-ios-damage-enumerator-complete-patch-proof.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+
+      - name: Apply minimal PE plus Damage metadata repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=dll/GodsPVZRuntime1-bgmvolume.dll
+          DST=dll/Assembly-CSharp-ios-damage-enumerator-fix.dll
+          cp "$SRC" "$DST"
+          test "$(sha256sum "$SRC" | awk '{print $1}')" = '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+          mkdir -p diagnostics
+          python3 - "$SRC" "$DST" diagnostics/ios-damage-enumerator-complete-patch-proof.txt <<'PY'
+          import hashlib,struct,sys
+          src,dst,report=sys.argv[1:]
+          orig=open(src,'rb').read(); b=bytearray(orig)
+          def u16(o): return struct.unpack_from('<H',b,o)[0]
+          def u32(o): return struct.unpack_from('<I',b,o)[0]
+          def w32(o,v): struct.pack_into('<I',b,o,v)
+          pe=u32(0x3c); assert b[pe:pe+4]==b'PE\0\0'
+          coff=pe+4; nsec=u16(coff+2); optsz=u16(coff+16); chars=coff+18
+          assert u16(chars)==0x0122
+          struct.pack_into('<H',b,chars,u16(chars)|0x2000)
+          sec=coff+20+optsz
+          def rva_to_off(rva):
+              for i in range(nsec):
+                  s=sec+i*40
+                  vsize=u32(s+8); va=u32(s+12); rawsz=u32(s+16); raw=u32(s+20)
+                  if va <= rva < va+max(vsize,rawsz): return raw+(rva-va)
+              raise ValueError(hex(rva))
+          body=rva_to_off(0x14e70)
+          flags=u16(body); assert (flags&3)==3
+          hsize=((flags>>12)&0xf)*4; assert hsize==12
+          code=body+hsize
+          # Replace malformed local signature [Enumerator<!0>, Element]
+          # with canonical existing StandAloneSig [Enumerator<Element>, Element].
+          localsig_off=body+8
+          assert u32(localsig_off)==0x110000d7, hex(u32(localsig_off))
+          w32(localsig_off,0x11000367)
+          # Canonicalize all three enumerator method operands.
+          patches=[
+              (0x19,0x28,0x0A0000C3,0x0A0000E7,'get_Current'),
+              (0x76,0x28,0x0A0000C4,0x0A0000E9,'MoveNext'),
+              (0x89,0x28,0x0A0000C5,0x0A000223,'Dispose'),
+          ]
+          rows=[]
+          for il,opcode,old,new,name in patches:
+              assert b[code+il]==opcode, (name,hex(b[code+il]))
+              to=code+il+1
+              assert u32(to)==old, (name,hex(u32(to)))
+              w32(to,new)
+              rows.append((name,to,old,new))
+          diffs=[(i,orig[i],b[i]) for i in range(len(b)) if orig[i]!=b[i]]
+          open(dst,'wb').write(b)
+          sha=hashlib.sha256(b).hexdigest()
+          with open(report,'w') as f:
+              f.write(f'original_sha256={hashlib.sha256(orig).hexdigest()}\n')
+              f.write(f'candidate_sha256={sha}\n')
+              f.write(f'method_file_offset=0x{body:x} code_file_offset=0x{code:x}\n')
+              f.write(f'pe_dll_byte_offset=0x{chars+1:x}\n')
+              f.write(f'localSig_offset=0x{localsig_off:x} 0x110000d7->0x11000367\n')
+              for name,to,old,new in rows: f.write(f'{name}_token_offset=0x{to:x} 0x{old:08x}->0x{new:08x}\n')
+              f.write(f'byte_diff_count={len(diffs)}\n')
+              for i,x,y in diffs: f.write(f'diff=0x{i:x} {x:02x}->{y:02x}\n')
+          print(open(report).read())
+          PY
+
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          class P {
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t; foreach(var n in t.NestedTypes) foreach(var x in AT(n)) yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static int Count(TypeDefinition t)=>t.Methods.Count+t.NestedTypes.Sum(Count);
+            static bool Orphan(TypeReference t){
+              if(t is GenericParameter gp) return gp.Owner==null;
+              if(t is TypeSpecification ts && Orphan(ts.ElementType)) return true;
+              if(t is GenericInstanceType gi) return gi.GenericArguments.Any(Orphan);
+              return false;
+            }
+            static void Main(string[] a){
+              using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true}); var m=asm.MainModule;
+              var md=AT(m).Single(t=>t.FullName=="Damage").Methods.Single(x=>x.Name=="AddElement"&&x.Parameters.Count==1);
+              Console.WriteLine("module_kind="+m.Kind);
+              Console.WriteLine("methoddefs="+m.Types.Sum(Count));
+              Console.WriteLine("method="+md.FullName+" token="+md.MetadataToken);
+              for(int i=0;i<md.Body.Variables.Count;i++) Console.WriteLine($"local[{i}]={md.Body.Variables[i].VariableType.FullName} orphan={Orphan(md.Body.Variables[i].VariableType)}");
+              foreach(var off in new[]{0x19,0x76,0x89}){
+                var ins=md.Body.Instructions.Single(x=>x.Offset==off);
+                var mr=(MethodReference)ins.Operand;
+                Console.WriteLine($"IL_{off:x4} token=0x{mr.MetadataToken.ToUInt32():x8} name={mr.Name} decl={mr.DeclaringType.FullName} orphan={Orphan(mr.DeclaringType)}");
+              }
+              if(m.Kind!=ModuleKind.Dll) throw new Exception("not DLL");
+              if(m.Types.Sum(Count)!=2317) throw new Exception("MethodDef drift");
+              if(md.Body.Variables.Count!=2 || md.Body.Variables[0].VariableType.FullName!="System.Collections.Generic.List`1/Enumerator<Element>" || md.Body.Variables[1].VariableType.FullName!="Element") throw new Exception("locals not canonical");
+              var expected=new Dictionary<int,uint>{{0x19,0x0A0000E7},{0x76,0x0A0000E9},{0x89,0x0A000223}};
+              foreach(var kv in expected){var mr=(MethodReference)md.Body.Instructions.Single(x=>x.Offset==kv.Key).Operand; if(mr.MetadataToken.ToUInt32()!=kv.Value||Orphan(mr.DeclaringType)) throw new Exception("bad operand "+kv.Key);}
+              if(md.Body.Variables.Any(v=>Orphan(v.VariableType))) throw new Exception("orphan local remains");
+            }
+          }
+          CS
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DST" | tee -a "$GITHUB_WORKSPACE/diagnostics/ios-damage-enumerator-complete-patch-proof.txt"
+          cd "$GITHUB_WORKSPACE"
+          cat diagnostics/ios-damage-enumerator-complete-patch-proof.txt
+
+      - name: Upload candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-DAMAGE-ENUMERATOR-COMPLETE-FIX
+          path: dll/Assembly-CSharp-ios-damage-enumerator-fix.dll
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Commit proof report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/ios-damage-enumerator-complete-patch-proof.txt
+          git commit -m 'diagnostics: prove complete Damage enumerator metadata repair' || exit 0
+          git push origin HEAD:stage9-admin-start-static
