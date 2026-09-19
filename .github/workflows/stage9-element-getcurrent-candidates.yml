@@ -1,4 +1,4 @@
-name: Stage9.1 remaining orphan generic audit
+name: Stage9.1 canonical Damage enumerator metadata audit
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           run-id: '35236211080'
           name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
           path: dll
-      - name: Audit canonical Element enumerator and Board.Start orphan local
+      - name: Locate canonical Enumerator Element refs and local signature
         shell: bash
         run: |
           set -euo pipefail
@@ -42,56 +42,49 @@ jobs:
           class P {
             static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t; foreach(var n in t.NestedTypes) foreach(var x in AT(n)) yield return x;}
             static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
-            static string TI(TypeReference t){
-              if(t==null) return "<null>";
-              if(t is GenericParameter gp) return $"{gp.FullName}[owner={(gp.Owner==null?"null":gp.Owner.ToString())},scope={(gp.Scope==null?"null":gp.Scope.ToString())}]";
-              if(t is GenericInstanceType gi) return gi.FullName+" args=["+string.Join("|",gi.GenericArguments.Select(TI))+"]";
-              return t.FullName;
+            static ushort U16(byte[] b,int o)=>(ushort)(b[o]|(b[o+1]<<8));
+            static int I32(byte[] b,int o)=>b[o]|(b[o+1]<<8)|(b[o+2]<<16)|(b[o+3]<<24);
+            static int R2F(byte[] b,int rva){
+              int pe=I32(b,0x3c), coff=pe+4, n=U16(b,coff+2), os=U16(b,coff+16), sec=coff+20+os;
+              for(int i=0;i<n;i++){int s=sec+i*40, vs=I32(b,s+8), va=I32(b,s+12), rs=I32(b,s+16), ro=I32(b,s+20), span=Math.Max(vs,rs); if(rva>=va&&rva<va+span)return ro+(rva-va);} throw new Exception("rva");
             }
-            static string OP(object o){
-              if(o is MethodReference mr) return $"METHOD token={mr.MetadataToken} full={mr.FullName} decl={TI(mr.DeclaringType)}";
-              if(o is FieldReference fr) return $"FIELD token={fr.MetadataToken} full={fr.FullName}";
-              if(o is VariableDefinition vd) return $"LOCAL index={vd.Index} type={TI(vd.VariableType)}";
-              if(o is ParameterDefinition pd) return $"PARAM index={pd.Index} type={TI(pd.ParameterType)}";
-              return o?.ToString()??"";
-            }
-            static void Dump(MethodDefinition md){
-              Console.WriteLine($"\n=== {md.FullName} token={md.MetadataToken} RVA=0x{md.RVA:x} ===");
-              for(int i=0;i<md.Body.Variables.Count;i++) Console.WriteLine($"local[{i}]={TI(md.Body.Variables[i].VariableType)}");
-              foreach(var ins in md.Body.Instructions) Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode,-12} {OP(ins.Operand)}");
-            }
+            static int LocalSigToken(byte[] b, MethodDefinition m){int o=R2F(b,m.RVA); byte f=b[o]; if((f&3)==2)return 0; int hs=((U16(b,o)>>12)&0xf)*4; if(hs<12)throw new Exception("fat header too small"); return I32(b,o+8);}
+            static bool IsElemEnum(TypeReference t){return t is GenericInstanceType gi && gi.ElementType.FullName=="System.Collections.Generic.List`1/Enumerator" && gi.GenericArguments.Count==1 && gi.GenericArguments[0].FullName=="Element";}
             static void Main(string[] a){
-              using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true});
-              var all=AT(asm.MainModule).ToList();
-              var em=all.Single(t=>t.FullName=="ElementManager");
-              var effect=em.Methods.Single(m=>m.Name=="Effect" && m.Parameters.Count==1 && m.Parameters[0].ParameterType.FullName=="Element");
-              Dump(effect);
-              var board=all.Single(t=>t.FullName=="Board");
-              var start=board.Methods.Single(m=>m.Name=="Start" && m.Parameters.Count==0);
-              Dump(start);
-              Console.WriteLine("\n=== Element enumerator canonical refs used by ElementManager.Effect ===");
-              foreach(var ins in effect.Body.Instructions.Where(i=>i.Operand is MethodReference)){
-                var mr=(MethodReference)ins.Operand;
-                if(mr.DeclaringType.FullName.Contains("List`1/Enumerator<Element>"))
-                  Console.WriteLine($"IL_{ins.Offset:x4} {mr.Name} token={mr.MetadataToken} declToken={mr.DeclaringType.MetadataToken} full={mr.FullName}");
+              string p=Path.GetFullPath(a[0]); var raw=File.ReadAllBytes(p);
+              using var asm=AssemblyDefinition.ReadAssembly(p,new ReaderParameters{InMemory=true}); var all=AT(asm.MainModule).ToList();
+              var damage=all.Single(t=>t.FullName=="Damage").Methods.Single(m=>m.Name=="AddElement");
+              Console.WriteLine($"damage token={damage.MetadataToken} rva=0x{damage.RVA:x} localSig=0x{LocalSigToken(raw,damage):x8}");
+              for(int i=0;i<damage.Body.Variables.Count;i++) Console.WriteLine($"damage local[{i}]={damage.Body.Variables[i].VariableType.FullName}");
+              Console.WriteLine("=== canonical MemberRefs Enumerator<Element> ===");
+              var seen=new HashSet<uint>();
+              foreach(var t in all) foreach(var m in t.Methods) if(m.HasBody) foreach(var ins in m.Body.Instructions) if(ins.Operand is MethodReference mr && IsElemEnum(mr.DeclaringType) && (mr.Name=="get_Current"||mr.Name=="MoveNext"||mr.Name=="Dispose")){
+                uint tok=mr.MetadataToken.ToUInt32(); if(seen.Add(tok)) Console.WriteLine($"token=0x{tok:x8} name={mr.Name} full={mr.FullName} owner={m.FullName} il=IL_{ins.Offset:x4}");
               }
-              Console.WriteLine("\n=== Board.Start local2 uses ===");
-              foreach(var ins in start.Body.Instructions){
-                if(ins.Operand is VariableDefinition v && v.Index==2) Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode} {OP(v)}");
-                else if((ins.OpCode.Code==Code.Ldloc_2)||(ins.OpCode.Code==Code.Stloc_2)||(ins.OpCode.Code==Code.Ldloca_S && ins.Operand is VariableDefinition vv && vv.Index==2)) Console.WriteLine($"IL_{ins.Offset:x4}: {ins.OpCode} {OP(ins.Operand)}");
+              Console.WriteLine("=== methods with exact locals [Enumerator<Element>, Element] ===");
+              int count=0;
+              foreach(var t in all) foreach(var m in t.Methods) if(m.HasBody && m.Body.Variables.Count==2 && IsElemEnum(m.Body.Variables[0].VariableType) && m.Body.Variables[1].VariableType.FullName=="Element"){
+                count++; Console.WriteLine($"method={m.FullName} token={m.MetadataToken} rva=0x{m.RVA:x} localSig=0x{LocalSigToken(raw,m):x8}");
               }
+              Console.WriteLine("exactLocalCandidates="+count);
+              Console.WriteLine("=== methods whose first locals begin [Enumerator<Element>, Element] ===");
+              count=0;
+              foreach(var t in all) foreach(var m in t.Methods) if(m.HasBody && m.Body.Variables.Count>=2 && IsElemEnum(m.Body.Variables[0].VariableType) && m.Body.Variables[1].VariableType.FullName=="Element"){
+                count++; Console.WriteLine($"method={m.FullName} locals={m.Body.Variables.Count} token={m.MetadataToken} localSig=0x{LocalSigToken(raw,m):x8}");
+              }
+              Console.WriteLine("prefixLocalCandidates="+count);
             }
           }
           CS
           mkdir -p "$GITHUB_WORKSPACE/diagnostics"
-          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/remaining-orphan-generic-audit.txt"
-          cd "$GITHUB_WORKSPACE"; cat diagnostics/remaining-orphan-generic-audit.txt
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/canonical-damage-enumerator-metadata.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/canonical-damage-enumerator-metadata.txt
       - name: Commit report
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/remaining-orphan-generic-audit.txt
-          git commit -m 'diagnostics: audit remaining orphan generic sites' || exit 0
+          git add diagnostics/canonical-damage-enumerator-metadata.txt
+          git commit -m 'diagnostics: locate canonical Damage enumerator metadata' || exit 0
           git push origin HEAD:stage9-admin-start-static
