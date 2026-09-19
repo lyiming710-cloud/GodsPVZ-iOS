@@ -1,0 +1,15 @@
+damage token=[Method:0x010b] rva=0x14e70 localSig=0x110000d7
+damage local[0]=System.Collections.Generic.List`1/Enumerator<!0>
+damage local[1]=Element
+=== canonical MemberRefs Enumerator<Element> ===
+token=0x0a0000e7 name=get_Current full=Element System.Collections.Generic.List`1/Enumerator<Element>::get_Current() owner=System.Void ElementManager::Effect(Element) il=IL_0062
+token=0x0a0000e9 name=MoveNext full=System.Boolean System.Collections.Generic.List`1/Enumerator<Element>::MoveNext() owner=System.Void ElementManager::Effect(Element) il=IL_00ef
+token=0x0a000223 name=Dispose full=System.Void System.Collections.Generic.List`1/Enumerator<Element>::Dispose() owner=System.Void Zombie::SetUIs() il=IL_0677
+=== methods with exact locals [Enumerator<Element>, Element] ===
+method=System.Boolean Zombie::Hurt_Real(Damage,Projectile) token=[Method:0x045d] rva=0x5b6e8 localSig=0x11000367
+exactLocalCandidates=1
+=== methods whose first locals begin [Enumerator<Element>, Element] ===
+method=System.Void ElementManager::Update() locals=4 token=[Method:0x0125] localSig=0x110000ee
+method=Element ElementManager::GetElement(ElementType) locals=3 token=[Method:0x0127] localSig=0x110000f0
+method=System.Boolean Zombie::Hurt_Real(Damage,Projectile) locals=2 token=[Method:0x045d] localSig=0x11000367
+prefixLocalCandidates=3
