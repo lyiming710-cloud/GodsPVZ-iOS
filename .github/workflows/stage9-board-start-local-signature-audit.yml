@@ -1,0 +1,66 @@
+name: Stage9.1 Board.Start local signature audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-board-start-local-signature-audit.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Find canonical Board.Start locals
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          class P {
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in AT(n))yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static ushort U16(byte[] b,int o)=>(ushort)(b[o]|(b[o+1]<<8));
+            static int I32(byte[] b,int o)=>b[o]|(b[o+1]<<8)|(b[o+2]<<16)|(b[o+3]<<24);
+            static int R2F(byte[] b,int rva){int pe=I32(b,0x3c),coff=pe+4,n=U16(b,coff+2),os=U16(b,coff+16),sec=coff+20+os;for(int i=0;i<n;i++){int s=sec+i*40,vs=I32(b,s+8),va=I32(b,s+12),rs=I32(b,s+16),ro=I32(b,s+20);if(rva>=va&&rva<va+Math.Max(vs,rs))return ro+rva-va;}throw new Exception();}
+            static int LST(byte[] b,MethodDefinition m){int o=R2F(b,m.RVA);if((b[o]&3)==2)return 0;return I32(b,o+8);}
+            static string L(MethodDefinition m)=>string.Join(" | ",m.Body.Variables.Select(v=>v.VariableType.FullName));
+            static void Main(string[] a){string p=Path.GetFullPath(a[0]);var raw=File.ReadAllBytes(p);using var asm=AssemblyDefinition.ReadAssembly(p,new ReaderParameters{InMemory=true});var all=AT(asm.MainModule).ToList();
+              var bs=all.Single(t=>t.FullName=="Board").Methods.Single(m=>m.Name=="Start"&&m.Parameters.Count==0); Console.WriteLine($"Board.Start token={bs.MetadataToken} rva=0x{bs.RVA:x} localSig=0x{LST(raw,bs):x8} locals={L(bs)}");
+              Console.WriteLine("=== exact [Map, Camera, Sprite] ===");int n=0;foreach(var t in all)foreach(var m in t.Methods)if(m.HasBody&&m.Body.Variables.Count==3&&m.Body.Variables[0].VariableType.FullName=="Map"&&m.Body.Variables[1].VariableType.FullName=="UnityEngine.Camera"&&m.Body.Variables[2].VariableType.FullName=="UnityEngine.Sprite"){n++;Console.WriteLine($"method={m.FullName} token={m.MetadataToken} localSig=0x{LST(raw,m):x8}");}Console.WriteLine("exact="+n);
+              Console.WriteLine("=== signatures containing Sprite local ===");n=0;foreach(var t in all)foreach(var m in t.Methods)if(m.HasBody&&m.Body.Variables.Any(v=>v.VariableType.FullName=="UnityEngine.Sprite")){n++;Console.WriteLine($"method={m.FullName} token={m.MetadataToken} localSig=0x{LST(raw,m):x8} locals={L(m)}");}Console.WriteLine("spriteLocalMethods="+n);
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/board-start-local-signature-audit.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/board-start-local-signature-audit.txt
+      - name: Commit report
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/board-start-local-signature-audit.txt
+          git commit -m 'diagnostics: audit Board.Start canonical locals' || exit 0
+          git push origin HEAD:stage9-admin-start-static
