@@ -1,0 +1,99 @@
+name: Stage9.1 Board.Start local signature patch proof
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-ios-board-start-local-patch-proof.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Prove nine-byte combined iOS metadata repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=dll/GodsPVZRuntime1-bgmvolume.dll
+          DST=dll/Assembly-CSharp-ios-board-local-proof.dll
+          cp "$SRC" "$DST"
+          mkdir -p diagnostics
+          python3 - "$SRC" "$DST" diagnostics/ios-board-start-local-patch-proof.txt <<'PY'
+          import hashlib,struct,sys
+          src,dst,report=sys.argv[1:]
+          orig=open(src,'rb').read(); b=bytearray(orig)
+          assert hashlib.sha256(orig).hexdigest()=='047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+          def u16(o):return struct.unpack_from('<H',b,o)[0]
+          def u32(o):return struct.unpack_from('<I',b,o)[0]
+          def w32(o,v):struct.pack_into('<I',b,o,v)
+          # Existing formally proven PE + Damage fixes.
+          assert u16(0x96)==0x0122; struct.pack_into('<H',b,0x96,0x2122)
+          assert u32(0x13078)==0x110000d7; w32(0x13078,0x11000367)
+          assert u32(0x13096)==0x0a0000c3; w32(0x13096,0x0a0000e7)
+          assert u32(0x130f3)==0x0a0000c4; w32(0x130f3,0x0a0000e9)
+          assert u32(0x13106)==0x0a0000c5; w32(0x13106,0x0a000223)
+          # Board.Start LocalVarSig 0x11000220 blob:
+          #   07 03 12 81 88 12 15 1e 00
+          # last 2 bytes are MVAR 0; Sprite TypeRef 0x01000017 encodes as CLASS 0x5d.
+          board_off=0x11ac35
+          assert bytes(b[board_off:board_off+2])==bytes.fromhex('1e 00')
+          b[board_off:board_off+2]=bytes.fromhex('12 5d')
+          open(dst,'wb').write(b)
+          sha=hashlib.sha256(b).hexdigest()
+          assert sha=='f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321',sha
+          diffs=[(i,orig[i],b[i]) for i in range(len(b)) if orig[i]!=b[i]]
+          assert len(diffs)==9,diffs
+          with open(report,'w') as f:
+              f.write(f'original_sha256={hashlib.sha256(orig).hexdigest()}\ncombined_sha256={sha}\n')
+              f.write('Board.Start localSigToken=0x11000220 raw_before=07 03 12 81 88 12 15 1e 00\n')
+              f.write('Board.Start raw_after=07 03 12 81 88 12 15 12 5d\n')
+              f.write('Sprite TypeRef=0x01000017 TypeDefOrRef-compressed=0x5d\n')
+              f.write(f'board_patch_offset=0x{board_off:x} 1e00->125d\nbyte_diff_count={len(diffs)}\n')
+              for i,x,y in diffs:f.write(f'diff=0x{i:x} {x:02x}->{y:02x}\n')
+          PY
+
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;using System.IO;using System.Linq;using System.Collections.Generic;using Mono.Cecil;
+          class P{
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in AT(n))yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static int C(TypeDefinition t)=>t.Methods.Count+t.NestedTypes.Sum(C);
+            static void Main(string[] a){using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true});var m=asm.MainModule;var all=AT(m).ToList();var bs=all.Single(t=>t.FullName=="Board").Methods.Single(x=>x.Name=="Start"&&x.Parameters.Count==0);Console.WriteLine("module_kind="+m.Kind);Console.WriteLine("methoddefs="+m.Types.Sum(C));for(int i=0;i<bs.Body.Variables.Count;i++)Console.WriteLine($"Board.Start local[{i}]={bs.Body.Variables[i].VariableType.FullName}");if(m.Kind!=ModuleKind.Dll||m.Types.Sum(C)!=2317)throw new Exception("global invariant");if(bs.Body.Variables.Count!=3||bs.Body.Variables[0].VariableType.FullName!="Map"||bs.Body.Variables[1].VariableType.FullName!="UnityEngine.Camera"||bs.Body.Variables[2].VariableType.FullName!="UnityEngine.Sprite")throw new Exception("Board locals not repaired");}
+          }
+          CS
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DST" | tee -a "$GITHUB_WORKSPACE/diagnostics/ios-board-start-local-patch-proof.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/ios-board-start-local-patch-proof.txt
+      - name: Upload candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-BOARD-START-LOCAL-PROOF
+          path: dll/Assembly-CSharp-ios-board-local-proof.dll
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Commit proof report
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/ios-board-start-local-patch-proof.txt
+          git commit -m 'diagnostics: prove Board.Start two-byte local repair' || exit 0
+          git push origin HEAD:stage9-admin-start-static
