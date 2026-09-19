@@ -1,0 +1,66 @@
+name: Stage9.1 Board.Start raw local signature audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-board-start-raw-signature-audit.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Dump Board.Start signature and Sprite encodings
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          class P {
+            static string H(byte[] b)=>BitConverter.ToString(b).Replace("-"," ").ToLowerInvariant();
+            static void Main(string[] a){
+              using var fs=File.OpenRead(Path.GetFullPath(a[0])); using var pe=new PEReader(fs); var r=pe.GetMetadataReader();
+              var mh=(MethodDefinitionHandle)MetadataTokens.Handle(0x060002a8); var md=r.GetMethodDefinition(mh); var body=pe.GetMethodBody(md.RelativeVirtualAddress); var sh=body.LocalSignature; var ss=r.GetStandaloneSignature(sh);
+              Console.WriteLine($"Board.Start rva=0x{md.RelativeVirtualAddress:x} localSigToken=0x{MetadataTokens.GetToken(sh):x8} blobHeapOffset=0x{MetadataTokens.GetHeapOffset(ss.Signature):x} blob={H(r.GetBlobBytes(ss.Signature))}");
+              Console.WriteLine("=== TypeRefs named Sprite ===");
+              foreach(var h in r.TypeReferences){var tr=r.GetTypeReference(h);if(r.GetString(tr.Name)=="Sprite")Console.WriteLine($"token=0x{MetadataTokens.GetToken(h):x8} ns={r.GetString(tr.Namespace)} scope=0x{MetadataTokens.GetToken(tr.ResolutionScope):x8}");}
+              Console.WriteLine("=== MemberRef set_sprite signatures ===");
+              foreach(var h in r.MemberReferences){var mr=r.GetMemberReference(h);if(r.GetString(mr.Name)=="set_sprite")Console.WriteLine($"token=0x{MetadataTokens.GetToken(h):x8} parent=0x{MetadataTokens.GetToken(mr.Parent):x8} sig={H(r.GetBlobBytes(mr.Signature))}");}
+              Console.WriteLine("=== MethodSpec Load<Sprite> ===");
+              foreach(var h in r.MethodSpecifications){var ms=r.GetMethodSpecification(h);var b=r.GetBlobBytes(ms.Signature);if(b.Contains((byte)0x12))Console.WriteLine($"token=0x{MetadataTokens.GetToken(h):x8} method=0x{MetadataTokens.GetToken(ms.Method):x8} inst={H(b)}");}
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/board-start-raw-signature-audit.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/board-start-raw-signature-audit.txt
+      - name: Commit report
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/board-start-raw-signature-audit.txt
+          git commit -m 'diagnostics: audit Board.Start raw signature bytes' || exit 0
+          git push origin HEAD:stage9-admin-start-static
