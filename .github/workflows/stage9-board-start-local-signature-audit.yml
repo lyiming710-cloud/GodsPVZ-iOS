@@ -1,4 +1,4 @@
-name: Stage9.1 Board.Start local signature audit
+name: Stage9.1 Board.Start prefix local signature audit
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           run-id: '35236211080'
           name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
           path: dll
-      - name: Find canonical Board.Start locals
+      - name: Find prefix-compatible Board.Start locals
         shell: bash
         run: |
           set -euo pipefail
@@ -48,19 +48,19 @@ jobs:
             static string L(MethodDefinition m)=>string.Join(" | ",m.Body.Variables.Select(v=>v.VariableType.FullName));
             static void Main(string[] a){string p=Path.GetFullPath(a[0]);var raw=File.ReadAllBytes(p);using var asm=AssemblyDefinition.ReadAssembly(p,new ReaderParameters{InMemory=true});var all=AT(asm.MainModule).ToList();
               var bs=all.Single(t=>t.FullName=="Board").Methods.Single(m=>m.Name=="Start"&&m.Parameters.Count==0); Console.WriteLine($"Board.Start token={bs.MetadataToken} rva=0x{bs.RVA:x} localSig=0x{LST(raw,bs):x8} locals={L(bs)}");
-              Console.WriteLine("=== exact [Map, Camera, Sprite] ===");int n=0;foreach(var t in all)foreach(var m in t.Methods)if(m.HasBody&&m.Body.Variables.Count==3&&m.Body.Variables[0].VariableType.FullName=="Map"&&m.Body.Variables[1].VariableType.FullName=="UnityEngine.Camera"&&m.Body.Variables[2].VariableType.FullName=="UnityEngine.Sprite"){n++;Console.WriteLine($"method={m.FullName} token={m.MetadataToken} localSig=0x{LST(raw,m):x8}");}Console.WriteLine("exact="+n);
-              Console.WriteLine("=== signatures containing Sprite local ===");n=0;foreach(var t in all)foreach(var m in t.Methods)if(m.HasBody&&m.Body.Variables.Any(v=>v.VariableType.FullName=="UnityEngine.Sprite")){n++;Console.WriteLine($"method={m.FullName} token={m.MetadataToken} localSig=0x{LST(raw,m):x8} locals={L(m)}");}Console.WriteLine("spriteLocalMethods="+n);
+              Console.WriteLine("=== prefix [Map, Camera, Sprite] ===");int n=0;foreach(var t in all)foreach(var m in t.Methods)if(m.HasBody&&m.Body.Variables.Count>=3&&m.Body.Variables[0].VariableType.FullName=="Map"&&m.Body.Variables[1].VariableType.FullName=="UnityEngine.Camera"&&m.Body.Variables[2].VariableType.FullName=="UnityEngine.Sprite"){n++;Console.WriteLine($"method={m.FullName} locals={m.Body.Variables.Count} token={m.MetadataToken} localSig=0x{LST(raw,m):x8} all={L(m)}");}Console.WriteLine("prefix="+n);
+              Console.WriteLine("=== methods with [Camera, Sprite] adjacent ===");n=0;foreach(var t in all)foreach(var m in t.Methods)if(m.HasBody){for(int i=0;i+1<m.Body.Variables.Count;i++)if(m.Body.Variables[i].VariableType.FullName=="UnityEngine.Camera"&&m.Body.Variables[i+1].VariableType.FullName=="UnityEngine.Sprite"){n++;Console.WriteLine($"method={m.FullName} at={i},{i+1} localSig=0x{LST(raw,m):x8} all={L(m)}");break;}}Console.WriteLine("cameraSpriteAdjacent="+n);
             }
           }
           CS
           mkdir -p "$GITHUB_WORKSPACE/diagnostics"
-          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/board-start-local-signature-audit.txt"
-          cd "$GITHUB_WORKSPACE"; cat diagnostics/board-start-local-signature-audit.txt
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/board-start-prefix-signature-audit.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/board-start-prefix-signature-audit.txt
       - name: Commit report
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/board-start-local-signature-audit.txt
-          git commit -m 'diagnostics: audit Board.Start canonical locals' || exit 0
+          git add diagnostics/board-start-prefix-signature-audit.txt
+          git commit -m 'diagnostics: audit Board.Start prefix-compatible locals' || exit 0
           git push origin HEAD:stage9-admin-start-static
