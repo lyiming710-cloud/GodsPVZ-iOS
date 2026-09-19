@@ -79,7 +79,7 @@ jobs:
                     if(ins.Operand is FieldReference fr && (HasOrphan(fr.DeclaringType)||HasOrphan(fr.FieldType)))hits.Add($"IL_FIELD owner={md.FullName} il=IL_{ins.Offset:x4} op={ins.OpCode} field={fr.FullName} decl={TI(fr.DeclaringType)} type={TI(fr.FieldType)}");
                     if(ins.Operand is MethodReference mr){
                       bool bad=HasOrphan(mr.DeclaringType)||HasOrphan(mr.ReturnType)||mr.Parameters.Any(x=>HasOrphan(x.ParameterType));
-                      if(mr is GenericInstanceMethod gm)bad|=gm.GenericArguments.Any(HasOrphan);
+                      if(mr is GenericInstanceMethod gm)bad|=gm.GenericArguments.Any(x=>HasOrphan(x));
                       if(bad)hits.Add($"IL_METHOD owner={md.FullName} il=IL_{ins.Offset:x4} op={ins.OpCode} token={mr.MetadataToken} method={mr.FullName} decl={TI(mr.DeclaringType)} ret={TI(mr.ReturnType)}");
                     }
                   }
@@ -91,13 +91,18 @@ jobs:
           }
           CS
           mkdir -p "$GITHUB_WORKSPACE/diagnostics"
-          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DLL" > "$GITHUB_WORKSPACE/diagnostics/global-orphan-generic-audit.txt"
+          set +e
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DLL" 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/global-orphan-generic-audit.txt"
+          rc=${PIPESTATUS[0]}
+          set -e
           cd "$GITHUB_WORKSPACE"; cat diagnostics/global-orphan-generic-audit.txt
+          exit "$rc"
       - name: Commit report
+        if: always()
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/global-orphan-generic-audit.txt
+          git add diagnostics/global-orphan-generic-audit.txt || true
           git commit -m 'diagnostics: audit remaining orphan generic metadata' || exit 0
           git push origin HEAD:stage9-admin-start-static
