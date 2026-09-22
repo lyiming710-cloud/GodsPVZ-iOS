@@ -20,7 +20,8 @@ public static class GodsPVZPackageReferenceMigrator
     private const string RuntimeDllOriginalSha256 = "047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee";
     private const string RuntimeDllDllKindSha256 = "9295bcb90857502af5ab802839b5c560f9e4d956b99dfaeae4350bd5fa5754a3";
     private const string RuntimeDllDamageRepairSha256 = "3a9b38e7b4c941b11d5683f74a547540fd2e5c891318f1f2ca79dbb88ecdafa8";
-    private const string RuntimeDllIosFinalSha256 = "f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321";
+    private const string RuntimeDllIosPreBuffSha256 = "f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321";
+    private const string RuntimeDllIosFinalSha256 = "f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433";
 
     private const int DamageAddElementRva = 0x14e70;
     private const int DamageLocalSigOldToken = unchecked((int)0x110000D7);
@@ -49,6 +50,17 @@ public static class GodsPVZPackageReferenceMigrator
     private const byte BoardStartSpriteLocalOld1 = 0x00;
     private const byte BoardStartSpriteLocalNew0 = 0x12;
     private const byte BoardStartSpriteLocalNew1 = 0x5d;
+
+    // Run 8 reached IL2CPP DataModel and failed resolving MemberRef 0x0A0000B4:
+    // List<Buff>.GetEnumerator(). The Parent TypeSpec is already correct; only
+    // the MemberRef signature points to a concrete Enumerator<Buff> return blob.
+    // Reuse the canonical definition-level Enumerator<!0> blob already present
+    // in this exact DLL by changing the two-byte #Blob index 0x1A81 -> 0x1C24.
+    private const int BuffGetEnumeratorSignatureIndexOffset = 0xC99DE;
+    private const byte BuffGetEnumeratorSignatureOld0 = 0x81;
+    private const byte BuffGetEnumeratorSignatureOld1 = 0x1A;
+    private const byte BuffGetEnumeratorSignatureNew0 = 0x24;
+    private const byte BuffGetEnumeratorSignatureNew1 = 0x1C;
 
     static GodsPVZPackageReferenceMigrator()
     {
@@ -137,11 +149,12 @@ public static class GodsPVZPackageReferenceMigrator
         }
         if (beforeSha != RuntimeDllOriginalSha256 &&
             beforeSha != RuntimeDllDllKindSha256 &&
-            beforeSha != RuntimeDllDamageRepairSha256)
+            beforeSha != RuntimeDllDamageRepairSha256 &&
+            beforeSha != RuntimeDllIosPreBuffSha256)
             throw new InvalidOperationException("Unexpected Stage9.1 runtime DLL before iOS metadata repair: " + beforeSha);
 
-        if (bytes.Length <= BoardStartSpriteLocalBlobOffset + 1)
-            throw new InvalidDataException("Stage9.1 runtime DLL is too small for the proven Board.Start metadata offset.");
+        if (bytes.Length <= Math.Max(BoardStartSpriteLocalBlobOffset + 1, BuffGetEnumeratorSignatureIndexOffset + 1))
+            throw new InvalidDataException("Stage9.1 runtime DLL is too small for the proven metadata offsets.");
 
         var pe = ReadInt32LE(bytes, 0x3c);
         if (pe < 0 || pe + 24 > bytes.Length || bytes[pe] != (byte)'P' || bytes[pe + 1] != (byte)'E' || bytes[pe + 2] != 0 || bytes[pe + 3] != 0)
@@ -169,11 +182,13 @@ public static class GodsPVZPackageReferenceMigrator
             throw new InvalidDataException($"Unexpected Stage9.1 COFF Characteristics for pre-repaired DLL: 0x{characteristics:x4}");
         }
 
+        var currentSha = Sha256(bytes);
+
         // Run 35368894455 proved UnityLinker passes after the first Damage fix,
         // but IL2CPP then crashed while walking the remaining Enumerator<!0>.
         // Formal proof run 35411975011 selected canonical rows already present in
         // this DLL and established a seven-byte repair with 2317 MethodDefs intact.
-        if (Sha256(bytes) != RuntimeDllDamageRepairSha256)
+        if (currentSha == RuntimeDllDllKindSha256)
         {
             var methodBody = RvaToFileOffset(bytes, pe, DamageAddElementRva);
             var flagsAndSize = ReadUInt16LE(bytes, methodBody);
@@ -198,9 +213,13 @@ public static class GodsPVZPackageReferenceMigrator
             WriteInt32LE(bytes, moveNextTokenOffset, DamageMoveNextNewToken);
             WriteInt32LE(bytes, disposeTokenOffset, DamageDisposeNewToken);
 
-            var damageSha = Sha256(bytes);
-            if (damageSha != RuntimeDllDamageRepairSha256)
-                throw new InvalidOperationException("Stage9.1 seven-byte Damage metadata repair produced an unexpected SHA256: " + damageSha);
+            currentSha = Sha256(bytes);
+            if (currentSha != RuntimeDllDamageRepairSha256)
+                throw new InvalidOperationException("Stage9.1 seven-byte Damage metadata repair produced an unexpected SHA256: " + currentSha);
+        }
+        else if (currentSha != RuntimeDllDamageRepairSha256 && currentSha != RuntimeDllIosPreBuffSha256)
+        {
+            throw new InvalidOperationException("Unexpected Stage9.1 runtime DLL at Damage repair gate: " + currentSha);
         }
 
         // Run 35412031380 removed the generic-instance failure but IL2CPP still
@@ -212,30 +231,73 @@ public static class GodsPVZPackageReferenceMigrator
         // candidate remains a DLL with 2317 MethodDefs and Board.Start locals
         // [Map, Camera, Sprite]. A full Cecil metadata audit of that candidate
         // reports orphan_hits=0.
-        if (bytes[BoardStartSpriteLocalBlobOffset] != BoardStartSpriteLocalOld0 ||
-            bytes[BoardStartSpriteLocalBlobOffset + 1] != BoardStartSpriteLocalOld1)
-            throw new InvalidDataException(
-                $"Unexpected Board.Start local signature bytes at 0x{BoardStartSpriteLocalBlobOffset:x}: " +
-                $"{bytes[BoardStartSpriteLocalBlobOffset]:x2} {bytes[BoardStartSpriteLocalBlobOffset + 1]:x2}");
+        if (currentSha == RuntimeDllDamageRepairSha256)
+        {
+            if (bytes[BoardStartSpriteLocalBlobOffset] != BoardStartSpriteLocalOld0 ||
+                bytes[BoardStartSpriteLocalBlobOffset + 1] != BoardStartSpriteLocalOld1)
+                throw new InvalidDataException(
+                    $"Unexpected Board.Start local signature bytes at 0x{BoardStartSpriteLocalBlobOffset:x}: " +
+                    $"{bytes[BoardStartSpriteLocalBlobOffset]:x2} {bytes[BoardStartSpriteLocalBlobOffset + 1]:x2}");
 
-        bytes[BoardStartSpriteLocalBlobOffset] = BoardStartSpriteLocalNew0;
-        bytes[BoardStartSpriteLocalBlobOffset + 1] = BoardStartSpriteLocalNew1;
+            bytes[BoardStartSpriteLocalBlobOffset] = BoardStartSpriteLocalNew0;
+            bytes[BoardStartSpriteLocalBlobOffset + 1] = BoardStartSpriteLocalNew1;
+            currentSha = Sha256(bytes);
+            if (currentSha != RuntimeDllIosPreBuffSha256)
+                throw new InvalidOperationException("Stage9.1 nine-byte iOS metadata repair produced an unexpected SHA256: " + currentSha);
+
+            Debug.Log(
+                $"STAGE9_IOS_DLL_REPAIR complete sha256={currentSha}; " +
+                $"PE_DLL=0x{characteristicsOffset + 1:x}; " +
+                "Damage.LocalVarSig/Enumerator refs canonicalized; " +
+                $"Board.Start local2 MVAR0->UnityEngine.Sprite at 0x{BoardStartSpriteLocalBlobOffset:x}");
+        }
+
+        currentSha = Sha256(bytes);
+        if (currentSha != RuntimeDllIosPreBuffSha256)
+            throw new InvalidOperationException("Unexpected Stage9.1 runtime DLL before Buff.GetEnumerator repair: " + currentSha);
+
+        if (bytes[BuffGetEnumeratorSignatureIndexOffset] != BuffGetEnumeratorSignatureOld0 ||
+            bytes[BuffGetEnumeratorSignatureIndexOffset + 1] != BuffGetEnumeratorSignatureOld1)
+            throw new InvalidDataException(
+                $"Unexpected Buff.GetEnumerator signature-index bytes at 0x{BuffGetEnumeratorSignatureIndexOffset:x}: " +
+                $"{bytes[BuffGetEnumeratorSignatureIndexOffset]:x2} {bytes[BuffGetEnumeratorSignatureIndexOffset + 1]:x2}");
+
+        bytes[BuffGetEnumeratorSignatureIndexOffset] = BuffGetEnumeratorSignatureNew0;
+        bytes[BuffGetEnumeratorSignatureIndexOffset + 1] = BuffGetEnumeratorSignatureNew1;
 
         var afterSha = Sha256(bytes);
         if (afterSha != RuntimeDllIosFinalSha256)
-            throw new InvalidOperationException("Stage9.1 nine-byte iOS metadata repair produced an unexpected SHA256: " + afterSha);
+            throw new InvalidOperationException("Stage9.1 Buff.GetEnumerator metadata repair produced an unexpected SHA256: " + afterSha);
 
         File.WriteAllBytes(RuntimeDllPath, bytes);
         Debug.Log(
             $"STAGE9_IOS_DLL_REPAIR complete sha256={afterSha}; " +
-            $"PE_DLL=0x{characteristicsOffset + 1:x}; " +
-            "Damage.LocalVarSig/Enumerator refs canonicalized; " +
-            $"Board.Start local2 MVAR0->UnityEngine.Sprite at 0x{BoardStartSpriteLocalBlobOffset:x}");
+            "Buff.GetEnumerator MemberRef=0x0A0000B4 Signature=0x1A81->0x1C24; " +
+            "byte_diff_from_run8=2");
     }
 
     private static void TryMigrate()
     {
-        if (File.Exists(Marker)) return;
+        if (File.Exists(Marker))
+        {
+            if (!File.Exists(RuntimeDllPath))
+                throw new FileNotFoundException("Stage9.1 runtime DLL is missing while migration marker exists.", RuntimeDllPath);
+
+            var currentDllSha = Sha256(File.ReadAllBytes(RuntimeDllPath));
+            if (currentDllSha == RuntimeDllIosFinalSha256)
+                return;
+
+            EnsureRuntimeDllForIosLinker();
+            var markerText = File.ReadAllText(Marker);
+            if (Regex.IsMatch(markerText, @"(?m)^dll_sha256=.*$"))
+                markerText = Regex.Replace(markerText, @"(?m)^dll_sha256=.*$", "dll_sha256=" + RuntimeDllIosFinalSha256);
+            else
+                markerText += (markerText.EndsWith("\n", StringComparison.Ordinal) ? "" : "\n") + "dll_sha256=" + RuntimeDllIosFinalSha256 + "\n";
+            File.WriteAllText(Marker, markerText);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            Debug.Log("GodsPVZ: upgraded existing package migration marker to the final iOS metadata repair.");
+            return;
+        }
         if (!File.Exists(MapPath)) { Debug.LogWarning("GodsPVZ: package script map not found yet."); return; }
 
         var root = JsonUtility.FromJson<Root>(File.ReadAllText(MapPath));
