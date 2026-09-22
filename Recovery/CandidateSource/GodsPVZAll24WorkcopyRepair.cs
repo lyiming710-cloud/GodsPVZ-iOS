@@ -46,8 +46,8 @@ internal static class GodsPVZAll24WorkcopyRepair
 
     private static readonly TransformRow[] TransformRows =
     {
-        new TransformRow(unchecked((int)0x0A000149), unchecked((int)0x0A000008)), // Component.get_transform
-        new TransformRow(unchecked((int)0x0A000284), unchecked((int)0x0A00002C)), // GameObject.get_transform
+        new TransformRow(unchecked((int)0x0A000149), unchecked((int)0x0A000008)),
+        new TransformRow(unchecked((int)0x0A000284), unchecked((int)0x0A00002C)),
     };
 
     private sealed class TransformIlSite
@@ -135,7 +135,7 @@ internal static class GodsPVZAll24WorkcopyRepair
                 throw new InvalidDataException(String.Format("{0}: unexpected opcode 0x{1:X2}", site.Label, opcode));
             if (token != site.Token)
                 throw new InvalidDataException(String.Format("{0}: operand 0x{1:X8} != expected 0x{2:X8}", site.Label, token, site.Token));
-            bytes[site.FileOffset] = 0x6F; // callvirt
+            bytes[site.FileOffset] = 0x6F;
         }
 
         var afterSha = Sha256(bytes);
@@ -209,7 +209,7 @@ internal static class GodsPVZAll24WorkcopyRepair
             var cli = RvaToFileOffset(bytes, pe, cliRva);
             var metadataRva = ReadInt32LE(bytes, cli + 8);
             var metadata = RvaToFileOffset(bytes, pe, metadataRva);
-            if (ReadInt32LE(bytes, metadata) != unchecked((int)0x424A5342)) // BSJB little-endian
+            if (ReadInt32LE(bytes, metadata) != unchecked((int)0x424A5342))
                 throw new InvalidDataException("Invalid CLI metadata signature.");
 
             var versionLength = ReadInt32LE(bytes, metadata + 12);
@@ -231,9 +231,13 @@ internal static class GodsPVZAll24WorkcopyRepair
             }
 
             int tablesOffset;
+            int strings;
+            int blobs;
             if (!streams.TryGetValue("#~", out tablesOffset)) throw new InvalidDataException("Missing #~ stream.");
-            if (!streams.TryGetValue("#Strings", out stringsOffset)) throw new InvalidDataException("Missing #Strings stream.");
-            if (!streams.TryGetValue("#Blob", out blobOffset)) throw new InvalidDataException("Missing #Blob stream.");
+            if (!streams.TryGetValue("#Strings", out strings)) throw new InvalidDataException("Missing #Strings stream.");
+            if (!streams.TryGetValue("#Blob", out blobs)) throw new InvalidDataException("Missing #Blob stream.");
+            stringsOffset = strings;
+            blobOffset = blobs;
 
             var heapSizes = bytes[tablesOffset + 6];
             var valid = ReadUInt64LE(bytes, tablesOffset + 8);
@@ -266,9 +270,10 @@ internal static class GodsPVZAll24WorkcopyRepair
             sizes[8] = 2 + 2 + StringIndexSize;
             sizes[9] = TableIndexSize(rows, 2) + typeDefOrRefSize;
 
-            memberRefTableOffset = q;
+            var memberRefStart = q;
             for (var table = 0; table < 10; table++)
-                memberRefTableOffset += rows[table] * sizes[table];
+                memberRefStart += rows[table] * sizes[table];
+            memberRefTableOffset = memberRefStart;
         }
 
         internal MemberRefRow GetMemberRef(int token)
@@ -305,6 +310,8 @@ internal static class GodsPVZAll24WorkcopyRepair
             var start = blobOffset + index;
             int prefix;
             var length = ReadCompressedUInt(bytes, start, out prefix);
+            if (length < 0 || start + prefix + length > bytes.Length)
+                throw new InvalidDataException("#Blob entry exceeds file bounds.");
             var result = new byte[length];
             Buffer.BlockCopy(bytes, start + prefix, result, 0, length);
             return result;
@@ -360,6 +367,7 @@ internal static class GodsPVZAll24WorkcopyRepair
 
     private static int ReadCompressedUInt(byte[] bytes, int offset, out int prefix)
     {
+        if (offset < 0 || offset >= bytes.Length) throw new InvalidDataException("Compressed integer offset outside file.");
         var a = bytes[offset];
         if ((a & 0x80) == 0)
         {
@@ -368,11 +376,13 @@ internal static class GodsPVZAll24WorkcopyRepair
         }
         if ((a & 0xC0) == 0x80)
         {
+            if (offset + 1 >= bytes.Length) throw new InvalidDataException("Truncated 2-byte compressed integer.");
             prefix = 2;
             return ((a & 0x3F) << 8) | bytes[offset + 1];
         }
         if ((a & 0xE0) == 0xC0)
         {
+            if (offset + 3 >= bytes.Length) throw new InvalidDataException("Truncated 4-byte compressed integer.");
             prefix = 4;
             return ((a & 0x1F) << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
         }
@@ -411,7 +421,7 @@ internal static class GodsPVZAll24WorkcopyRepair
     {
         var lo = unchecked((uint)ReadInt32LE(bytes, offset));
         var hi = unchecked((uint)ReadInt32LE(bytes, offset + 4));
-        return lo | ((ulong)hi << 32);
+        return ((ulong)lo) | ((ulong)hi << 32);
     }
 
     private static void WriteInt32LE(byte[] bytes, int offset, int value)
