@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "status": "AUDIT_SPEC_ONLY_NO_PRODUCTION_PATCH",
+  "formal_runtime_sha256": "047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee",
+  "methoddef_invariant": 2317,
+  "source_evidence": {
+    "repair_checklist": "GodsPVZ-Stage9.1-Repair-Checklist-2026-09-22.md",
+    "rule": "Only the three entries explicitly marked native-sampled are included. The other exception-return scan hits remain unconfirmed and must not be bulk-repaired."
+  },
+  "native_interpretation": "For each target below, the saved original-PC native sample terminates the corresponding exceptional path through an exception helper followed by int3. The recovered managed path instead constructs an exception object and returns that object through the method return path. Candidate repair must restore exceptional termination while leaving normal return paths unchanged.",
+  "targets": [
+    {
+      "id": "L001",
+      "token": "0x0600008C",
+      "method": "Grid System2::FindGrid(System.Int32,System.Int32)",
+      "native_pc_address": "0x000000018030BCB0",
+      "priority": "P0_CORE_GRID",
+      "exception_type": "System.NullReferenceException",
+      "recovered_sequence": [
+        {"offset": "IL_021F", "opcode": "newobj", "operand": "System.Void System.NullReferenceException::.ctor()"},
+        {"offset": "IL_0224", "opcode_family": "stloc", "local": "V_22"},
+        {"offset": "IL_0228", "opcode_family": "ldloc", "local": "V_22"},
+        {"offset": "IL_022C", "opcode": "ret"}
+      ],
+      "native_sample_classification": "exception_helper_then_int3_not_normal_return"
+    },
+    {
+      "id": "L002",
+      "token": "0x060000D4",
+      "method": "System.Boolean AttackRange::TestInCircles_Position(UnityEngine.Vector3)",
+      "native_pc_address": "0x00000001802FFAE0",
+      "priority": "P0_CORE_COMBAT_RANGE",
+      "exception_type": "System.NullReferenceException",
+      "recovered_sequence": [
+        {"offset": "IL_0189", "opcode": "newobj", "operand": "System.Void System.NullReferenceException::.ctor()"},
+        {"offset": "IL_018E", "opcode_family": "stloc", "local": "V_17"},
+        {"offset": "IL_0192", "opcode_family": "ldloc", "local": "V_17"},
+        {"offset": "IL_0196", "opcode": "ret"}
+      ],
+      "native_sample_classification": "exception_helper_then_int3_not_normal_return",
+      "related_native_evidence": "HF16-AttackRange-TestInRange-Evidence.md identifies native 0x1802FFAE0 as this exact helper target used by AttackRange.TestInRange<T>."
+    },
+    {
+      "id": "L156",
+      "token": "0x06000903",
+      "method": "System.String FlashTools.Examples.PurpleFlowerLogic::GetRandomIdleSequence(FTRuntime.SwfClipController)",
+      "native_pc_address": "0x00000001803C5870",
+      "priority": "P2_DEMO_CODE",
+      "exception_type": "System.IndexOutOfRangeException",
+      "recovered_sequence": [
+        {"offset": "IL_00AE", "opcode": "newobj", "operand": "System.Void System.IndexOutOfRangeException::.ctor()"},
+        {"offset": "IL_00B3", "opcode_family": "stloc", "local": "V_7"},
+        {"offset": "IL_00B7", "opcode_family": "ldloc", "local": "V_7"},
+        {"offset": "IL_00BB", "opcode": "ret"}
+      ],
+      "native_sample_classification": "exception_helper_then_int3_not_normal_return"
+    }
+  ],
+  "mandatory_prewrite_gates": [
+    "Lookup by MethodDef token; do not patch by raw file offset.",
+    "Exact newobj/stloc/ldloc/ret sequence and exception constructor must match.",
+    "stloc and ldloc must refer to the same local variable.",
+    "No external branch or switch target may enter the stloc/ldloc instructions that would be replaced.",
+    "Record all branch targets to the trailing ret; the ret must be preserved for any normal predecessor.",
+    "No EH try/handler/filter boundary may be silently invalidated by the rewrite.",
+    "Normal-path instructions before the exceptional tail are byte/semantic-diff reviewed independently.",
+    "Reopen with Cecil and ILSpy; verify method return type, stack, locals, branches and EH.",
+    "Real Unity/IL2CPP and scene regression are mandatory before promotion."
+  ],
+  "non_bulk_rule": "Do not apply this rule to the other 154 scan hits until their native branch has been independently classified."
+}
