@@ -1,0 +1,100 @@
+{
+  "schema": "stage9.1-exception-return-evidence-backfill-v1",
+  "date": "2026-09-22",
+  "scope": {
+    "static_hit_first": 1,
+    "static_hit_last": 157,
+    "static_hit_count": 157,
+    "formal_hf_range_checked": "HF3-HF55",
+    "formal_hf_exact_methoddef_token_overlap_count": 0
+  },
+  "classes": {
+    "native_confirmed_exception_tail": [
+      {
+        "id": "L001",
+        "token": "0x0600008C",
+        "method": "System2.FindGrid(int,int)",
+        "priority": "P0",
+        "exception": "System.NullReferenceException"
+      },
+      {
+        "id": "L002",
+        "token": "0x060000D4",
+        "method": "AttackRange.TestInCircles_Position(UnityEngine.Vector3)",
+        "priority": "P0",
+        "exception": "System.NullReferenceException"
+      },
+      {
+        "id": "L156",
+        "token": "0x06000903",
+        "method": "FlashTools.Examples.PurpleFlowerLogic.GetRandomIdleSequence(FTRuntime.SwfClipController)",
+        "priority": "P2",
+        "exception": "System.IndexOutOfRangeException"
+      }
+    ],
+    "explicit_hf_residual": [
+      {
+        "id": "L059",
+        "token": "0x060002A5",
+        "method": "EnemyPath.DistanceStatistics",
+        "evidence_stage": "HF49",
+        "note": "HF49 formally repaired EnemyPath.ArrivalTest and explicitly retained DistanceStatistics as a residual candidate; this does not yet prove the L059 exception-tail semantics."
+      }
+    ],
+    "native_backed_call_reachable_only": [
+      {
+        "id": "L070",
+        "token": "0x0600046A",
+        "method": "Zombie.Path_Finding",
+        "priority": "P0/P1",
+        "note": "Reached by multiple already native-backed Zombie runtime paths. Reachability/centrality evidence only; the internal suspicious tail is not yet native-closed."
+      }
+    ],
+    "native_backed_callee_identity_only": [
+      {
+        "id": "L003",
+        "token": "0x060000D7",
+        "method": "AttackRange.TestInRects_Rect(UnityEngine.Rect)",
+        "evidence_stage": "HF16",
+        "note": "HF16 identifies this as the native Rect primitive called by TestInRange<T>; identity/call evidence does not prove the L003 exception-tail control flow."
+      }
+    ],
+    "adjacent_native_sibling_only": [
+      {
+        "ids": ["L094", "L095"],
+        "tokens": ["0x06000704", "0x06000706"],
+        "sibling_formal_token": "0x06000705",
+        "sibling_stage": "HF53",
+        "note": "Different Window_Q.PopupNewWindow overloads. Do not transfer HF53 closure across MethodDef tokens."
+      },
+      {
+        "ids": ["L012"],
+        "tokens": ["0x0600013B"],
+        "sibling_formal_tokens": ["0x0600013D", "0x0600013E"],
+        "sibling_stages": ["HF53", "HF34"],
+        "note": "Different GlobalStaticVars.CreateAudioAtPoint overloads."
+      }
+    ],
+    "shared_generic_no_direct_pc_pointer": [
+      "L146", "L147", "L148", "L149", "L150", "L151", "L152", "L153", "L154", "L155"
+    ]
+  },
+  "rules": {
+    "exact_token_required_for_formal_hf_overlap": true,
+    "caller_or_callee_relationship_is_not_method_closure": true,
+    "adjacent_rid_or_overload_is_not_method_closure": true,
+    "bulk_throw_rewrite_forbidden": true,
+    "locked_authoritative_runtime_must_not_be_modified": true,
+    "production_promotion_requires_native_control_flow_and_structural_audit": true
+  },
+  "recommended_verification_order": [
+    "L003-L009",
+    "L014",
+    "L048-L059",
+    "L060-L075",
+    "L083",
+    "remaining gameplay methods",
+    "save-and-ui methods",
+    "TMP/FTRuntime/example methods"
+  ]
+}
