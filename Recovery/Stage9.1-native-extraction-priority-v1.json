@@ -1,0 +1,86 @@
+{
+  "schema": "stage9.1-native-extraction-priority-v1",
+  "date": "2026-09-22",
+  "source": {
+    "artifact": "original PC GameAssembly.dll",
+    "sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+    "architecture": "x86_64-pe",
+    "expected_image_base": "0x180000000"
+  },
+  "policy": {
+    "purpose": "read-only native evidence extraction",
+    "may_patch_managed_dll": false,
+    "may_promote_without_manual_native_control_flow_review": false,
+    "exact_methoddef_identity_required": true,
+    "shared_native_address_must_be_recorded": true
+  },
+  "targets": [
+    {
+      "id": "L003",
+      "token": "0x060000D7",
+      "method": "AttackRange.TestInRects_Rect(UnityEngine.Rect)",
+      "pc_va": "0x1803000A0",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1",
+      "existing_evidence": "HF16 proves native identity/call reachability only; internal exception tail not closed"
+    },
+    {
+      "id": "L004",
+      "token": "0x060000D9",
+      "method": "AttackRange.TestInRange_Device(Device)",
+      "pc_va": "0x1802FFCC0",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1"
+    },
+    {
+      "id": "L005",
+      "token": "0x060000DA",
+      "method": "AttackRange.TestInRange_Plant(Plant)",
+      "pc_va": "0x1802FFDF0",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1",
+      "shared_pc_va_group": "attackrange-testinrange-plant-zombie"
+    },
+    {
+      "id": "L006",
+      "token": "0x060000DB",
+      "method": "AttackRange.TestInRange_Projectile(Projectile)",
+      "pc_va": "0x1802FFF20",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1"
+    },
+    {
+      "id": "L007",
+      "token": "0x060000DC",
+      "method": "AttackRange.TestInRange_Zombie(Zombie)",
+      "pc_va": "0x1802FFDF0",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1",
+      "shared_pc_va_group": "attackrange-testinrange-plant-zombie"
+    },
+    {
+      "id": "L008",
+      "token": "0x060000DD",
+      "method": "AttackRange.RestraintTargetPosition(UnityEngine.Vector3)",
+      "pc_va": "0x1802FFA20",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1"
+    },
+    {
+      "id": "L009",
+      "token": "0x060000DE",
+      "method": "AttackRange.RestraintTargetPosition_Circle(UnityEngine.Vector3)",
+      "pc_va": "0x1802FF490",
+      "recovered_exception": "System.IndexOutOfRangeException",
+      "priority": "P0/P1"
+    }
+  ],
+  "required_outputs_per_unique_pc_va": [
+    "PE image-base and section mapping",
+    "containing x64 .pdata RUNTIME_FUNCTION entry",
+    "bounded raw byte window beginning at target VA",
+    "disassembly with absolute virtual addresses when an available disassembler is present",
+    "native exception-helper/trap path classification",
+    "evidence note distinguishing method boundary from contiguous runtime-function/funclet boundaries"
+  ]
+}
