@@ -55,20 +55,51 @@ static class Stage9MemberRefAudit
     private static string MethodSig(MethodReference m) =>
         $"{m.ReturnType.FullName} {m.DeclaringType.FullName}::{m.Name}({string.Join(",", m.Parameters.Select(p => p.ParameterType.FullName))})";
 
-    private static bool StructuralMatch(MethodReference m, string family) => family switch
+    private static TypeReference? GenericArg0(TypeReference t) =>
+        t is GenericInstanceType gi && gi.GenericArguments.Count >= 1 ? gi.GenericArguments[0] : null;
+
+    private static bool IsTypeVar0(TypeReference t) =>
+        t is GenericParameter gp && gp.Type == GenericParameterType.Type && gp.Position == 0;
+
+    private static bool Var0OrEquivalent(TypeReference actual, TypeReference? contextArg) =>
+        IsTypeVar0(actual) ||
+        (contextArg is not null && (actual.FullName == contextArg.FullName ||
+                                    (IsTypeVar0(contextArg) && IsTypeVar0(actual))));
+
+    // Mono.Cecil may expose the same canonical MemberRef in either definition-level
+    // form (!0) or context-inflated closed form (Buff, Device, Plant, ...).  Both are
+    // semantically acceptable here.  The raw candidate builder separately locks the
+    // underlying signature blob to the canonical VAR !0 encoding.
+    private static bool StructuralMatch(MethodReference m, string family)
     {
-        "GetEnumerator" => m.Name == "GetEnumerator" && m.Parameters.Count == 0 &&
-                           m.ReturnType.FullName.Contains("System.Collections.Generic.List`1/Enumerator", StringComparison.Ordinal) &&
-                           m.ReturnType.FullName.Contains("!0", StringComparison.Ordinal),
-        "get_Current" => m.Name == "get_Current" && m.Parameters.Count == 0 &&
-                         m.ReturnType.FullName.Contains("!0", StringComparison.Ordinal),
-        "Insert" => m.Name == "Insert" && m.Parameters.Count == 2 &&
-                    m.Parameters[0].ParameterType.MetadataType == MetadataType.Int32 &&
-                    m.Parameters[1].ParameterType.FullName.Contains("!0", StringComparison.Ordinal),
-        "get_transform" => m.Name == "get_transform" && m.Parameters.Count == 0 &&
-                           m.ReturnType.FullName == "UnityEngine.Transform",
-        _ => false,
-    };
+        var declaringArg = GenericArg0(m.DeclaringType);
+        return family switch
+        {
+            "GetEnumerator" =>
+                m.Name == "GetEnumerator" && m.Parameters.Count == 0 &&
+                m.ReturnType.FullName.Contains("System.Collections.Generic.List`1/Enumerator", StringComparison.Ordinal) &&
+                (GenericArg0(m.ReturnType) is TypeReference retArg
+                    ? Var0OrEquivalent(retArg, declaringArg)
+                    : m.ReturnType.FullName.Contains("!0", StringComparison.Ordinal)),
+
+            "get_Current" =>
+                m.Name == "get_Current" && m.Parameters.Count == 0 &&
+                m.DeclaringType.FullName.Contains("System.Collections.Generic.List`1/Enumerator", StringComparison.Ordinal) &&
+                Var0OrEquivalent(m.ReturnType, declaringArg),
+
+            "Insert" =>
+                m.Name == "Insert" && m.Parameters.Count == 2 &&
+                m.DeclaringType.FullName.Contains("System.Collections.Generic.List`1", StringComparison.Ordinal) &&
+                m.Parameters[0].ParameterType.MetadataType == MetadataType.Int32 &&
+                Var0OrEquivalent(m.Parameters[1].ParameterType, declaringArg),
+
+            "get_transform" =>
+                m.Name == "get_transform" && m.Parameters.Count == 0 &&
+                m.ReturnType.FullName == "UnityEngine.Transform",
+
+            _ => false,
+        };
+    }
 
     public static int Main(string[] args)
     {
