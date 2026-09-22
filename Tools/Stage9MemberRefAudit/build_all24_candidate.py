@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the locked Stage9.1 all-24 MemberRef *candidate* without dnfile.
 
-This is intentionally candidate tooling.  It parses PE/CLI metadata tables
+This is intentionally candidate tooling. It parses PE/CLI metadata tables
 itself, discovers MemberRef row/column offsets from the #~ stream, validates the
 known B001 anchor, applies only the locked normalization rules, and refuses to
 write unless the resulting file SHA256 is the already-proven all-24 candidate.
@@ -238,7 +238,7 @@ def main() -> int:
             raise SystemExit(f"transform parent mismatch bad=0x{bad_token:08X} canonical=0x{canonical_token:08X}")
         if md.string(can["name"]) != "get_transform" or md.blob(can["signature"]) != CANONICAL_BLOBS["get_transform"][1]:
             raise SystemExit(f"canonical get_transform row invalid 0x{canonical_token:08X}")
-        old_name, old_sig = md.string(bad["name"]), md.blob(bad["signature"])
+        old_name = md.string(bad["name"])
         if old_name not in ("transform","get_transform"):
             raise SystemExit(f"unexpected transform row name {old_name!r}")
         for field,width in (("name",md.string_ix),("signature",md.blob_ix)):
@@ -249,12 +249,18 @@ def main() -> int:
             new = bytes(data[off:off+width])
             patches.append({"kind":"memberref-"+field,"token":f"0x{bad_token:08X}","canonical_token":f"0x{canonical_token:08X}","file_offset":off,"width":width,"old":old.hex(),"new":new.hex()})
 
+    # The whole-file input hash already locks these bytes, but verify the IL
+    # operand token explicitly as an additional local semantic gate before
+    # changing ldfld -> callvirt.
     for off, token, label2 in TRANSFORM_IL:
         old = data[off]
+        operand = u32(data, off + 1)
         if old not in (0x7B,0x6F):
             raise SystemExit(f"{label2}: unexpected opcode 0x{old:02x} at 0x{off:x}")
+        if operand != token:
+            raise SystemExit(f"{label2}: operand token 0x{operand:08X} != expected 0x{token:08X}")
         data[off] = 0x6F
-        patches.append({"kind":"il-opcode","token":f"0x{token:08X}","label":label2,"file_offset":off,"width":1,"old":f"{old:02x}","new":"6f"})
+        patches.append({"kind":"il-opcode","token":f"0x{token:08X}","label":label2,"file_offset":off,"width":1,"old":f"{old:02x}","new":"6f","operand_token_verified":True})
 
     after = sha256(data)
     diffs = [i for i,(x,y) in enumerate(zip(original,data)) if x != y]
