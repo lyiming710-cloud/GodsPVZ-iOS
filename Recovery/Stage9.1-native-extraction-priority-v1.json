@@ -12,7 +12,8 @@
     "may_patch_managed_dll": false,
     "may_promote_without_manual_native_control_flow_review": false,
     "exact_methoddef_identity_required": true,
-    "shared_native_address_must_be_recorded": true
+    "shared_native_address_must_be_recorded": true,
+    "legacy_helper_issue_zero_does_not_close_exception_tail": true
   },
   "targets": [
     {
@@ -73,6 +74,15 @@
       "pc_va": "0x1802FF490",
       "recovered_exception": "System.IndexOutOfRangeException",
       "priority": "P0/P1"
+    },
+    {
+      "id": "L014",
+      "token": "0x0600015B",
+      "method": "BoardConfig.GetGridPosition(int,int)",
+      "pc_va": "0x18030EC90",
+      "recovered_exception": "System.NullReferenceException",
+      "priority": "P0/P1",
+      "existing_evidence": "historical HF18/HF19 centrality rescan records 19 native incoming references and helper=0; Stage9.1 exception-tail scan therefore covers a loss mode not closed by the older helper scan"
     }
   ],
   "required_outputs_per_unique_pc_va": [
