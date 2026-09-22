@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "status": "CANDIDATE_ONLY_PENDING_INDEPENDENT_RESOLVE",
+  "locked": {
+    "formal_runtime_sha256": "047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee",
+    "run8_workcopy_sha256": "f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321",
+    "b001_only_sha256": "f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433",
+    "getenumerator_family_candidate_sha256": "f01cbf6cc768b48388d8f37fe665914e8f5954902a1f0328357965d762c24bc5",
+    "all24_static_candidate_sha256": "b07254d5c4077e013bbc934734f7b0949c0942a4e667d6d2b23d2af6c830f720",
+    "methoddef_count": 2317,
+    "run8_size": 1201152,
+    "all24_diff_byte_positions_from_run8": 50
+  },
+  "canonical_signatures": {
+    "GetEnumerator": {
+      "blob_index": "0x1C24",
+      "blob_hex": "20 00 15 11 55 01 13 00",
+      "meaning": "instance Enumerator<!0> GetEnumerator()"
+    },
+    "get_Current": {
+      "blob_index": "0x4630",
+      "blob_hex": "20 00 13 00",
+      "meaning": "instance !0 get_Current()"
+    },
+    "Insert": {
+      "blob_index": "0x0976",
+      "blob_hex": "20 02 01 08 13 00",
+      "meaning": "instance void Insert(int32,!0)"
+    },
+    "get_transform": {
+      "blob_hex": "20 00 12 11",
+      "meaning": "instance UnityEngine.Transform get_transform()",
+      "canonical_same_parent_tokens": {
+        "UnityEngine.Component": "0x0A000008",
+        "UnityEngine.GameObject": "0x0A00002C"
+      }
+    }
+  },
+  "memberrefs": [
+    {"token":"0x0A0000B4","family":"GetEnumerator","expected_il_uses":11,"production_status":"B001_FORMAL"},
+    {"token":"0x0A0000B5","family":"get_Current","expected_il_uses":11},
+    {"token":"0x0A0000C3","family":"get_Current","expected_il_uses":0},
+    {"token":"0x0A0000C9","family":"GetEnumerator","expected_il_uses":5},
+    {"token":"0x0A0000CA","family":"get_Current","expected_il_uses":5},
+    {"token":"0x0A0000D0","family":"GetEnumerator","expected_il_uses":3},
+    {"token":"0x0A0000D1","family":"get_Current","expected_il_uses":3},
+    {"token":"0x0A0000D6","family":"GetEnumerator","expected_il_uses":9},
+    {"token":"0x0A0000D7","family":"get_Current","expected_il_uses":9},
+    {"token":"0x0A0000E4","family":"GetEnumerator","expected_il_uses":1},
+    {"token":"0x0A0000E5","family":"get_Current","expected_il_uses":1},
+    {"token":"0x0A0000E7","family":"get_Current","expected_il_uses":15},
+    {"token":"0x0A0000FB","family":"GetEnumerator","expected_il_uses":2},
+    {"token":"0x0A0000FC","family":"get_Current","expected_il_uses":2},
+    {"token":"0x0A000140","family":"Insert","expected_il_uses":2},
+    {"token":"0x0A000141","family":"GetEnumerator","expected_il_uses":1},
+    {"token":"0x0A000142","family":"get_Current","expected_il_uses":1},
+    {"token":"0x0A000149","family":"get_transform","owner":"UnityEngine.Component","expected_il_uses":2},
+    {"token":"0x0A000162","family":"GetEnumerator","expected_il_uses":1},
+    {"token":"0x0A000163","family":"get_Current","expected_il_uses":1},
+    {"token":"0x0A00021D","family":"GetEnumerator","expected_il_uses":1},
+    {"token":"0x0A00021E","family":"get_Current","expected_il_uses":1},
+    {"token":"0x0A00022B","family":"Insert","expected_il_uses":1},
+    {"token":"0x0A000284","family":"get_transform","owner":"UnityEngine.GameObject","expected_il_uses":1}
+  ],
+  "transform_il_patches": [
+    {"method_token":"0x060001BC","method":"EnemyManager.PlayBoardAudio(System.Int32)","il_offset":"0x19","file_offset":"0x1E569","memberref_token":"0x0A000149","old_opcode":"0x7B","new_opcode":"0x6F","old":"ldfld","new":"callvirt"},
+    {"method_token":"0x06000617","method":"FlagMeter.Update()","il_offset":"0x2A","file_offset":"0x83E4E","memberref_token":"0x0A000149","old_opcode":"0x7B","new_opcode":"0x6F","old":"ldfld","new":"callvirt"},
+    {"method_token":"0x06000617","method":"FlagMeter.Update()","il_offset":"0x77","file_offset":"0x83E9B","memberref_token":"0x0A000284","old_opcode":"0x7B","new_opcode":"0x6F","old":"ldfld","new":"callvirt"}
+  ],
+  "raw_patch_policy": {
+    "generic_memberref_signature_offsets": "DISCOVER_FROM_METADATA_TABLE_AT_RUNTIME_DO_NOT_HARDCODE_UNPROVEN_OFFSETS",
+    "transform_memberref_row_offsets": "DISCOVER_FROM_METADATA_TABLE_AT_RUNTIME_DO_NOT_HARDCODE_UNPROVEN_OFFSETS",
+    "unknown_input_hash": "REJECT",
+    "formal_runtime_artifact": "NEVER_OVERWRITE",
+    "production_promotion": "REQUIRE_INDEPENDENT_24_OF_24_RESOLVE_PLUS_ORPHAN_ZERO_PLUS_EXACT_DIFF_VALIDATION"
+  }
+}
