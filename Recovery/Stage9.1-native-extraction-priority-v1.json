@@ -16,171 +16,42 @@
     "legacy_helper_issue_zero_does_not_close_exception_tail": true
   },
   "targets": [
-    {
-      "id": "L003",
-      "token": "0x060000D7",
-      "method": "AttackRange.TestInRects_Rect(UnityEngine.Rect)",
-      "pc_va": "0x1803000A0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1",
-      "existing_evidence": "HF16 proves native identity/call reachability only; internal exception tail not closed"
-    },
-    {
-      "id": "L004",
-      "token": "0x060000D9",
-      "method": "AttackRange.TestInRange_Device(Device)",
-      "pc_va": "0x1802FFCC0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L005",
-      "token": "0x060000DA",
-      "method": "AttackRange.TestInRange_Plant(Plant)",
-      "pc_va": "0x1802FFDF0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1",
-      "shared_pc_va_group": "attackrange-testinrange-plant-zombie"
-    },
-    {
-      "id": "L006",
-      "token": "0x060000DB",
-      "method": "AttackRange.TestInRange_Projectile(Projectile)",
-      "pc_va": "0x1802FFF20",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L007",
-      "token": "0x060000DC",
-      "method": "AttackRange.TestInRange_Zombie(Zombie)",
-      "pc_va": "0x1802FFDF0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1",
-      "shared_pc_va_group": "attackrange-testinrange-plant-zombie"
-    },
-    {
-      "id": "L008",
-      "token": "0x060000DD",
-      "method": "AttackRange.RestraintTargetPosition(UnityEngine.Vector3)",
-      "pc_va": "0x1802FFA20",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L009",
-      "token": "0x060000DE",
-      "method": "AttackRange.RestraintTargetPosition_Circle(UnityEngine.Vector3)",
-      "pc_va": "0x1802FF490",
-      "recovered_exception": "System.IndexOutOfRangeException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L014",
-      "token": "0x0600015B",
-      "method": "BoardConfig.GetGridPosition(int,int)",
-      "pc_va": "0x18030EC90",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1",
-      "existing_evidence": "historical HF18/HF19 centrality rescan records 19 native incoming references and helper=0; Stage9.1 exception-tail scan therefore covers a loss mode not closed by the older helper scan"
-    },
-    {
-      "id": "L048",
-      "token": "0x0600027A",
-      "method": "ZombieManager.CreateNewZombie(int)",
-      "pc_va": "0x180341990",
-      "recovered_exception": "System.IndexOutOfRangeException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L049",
-      "token": "0x0600027C",
-      "method": "ZombieManager.PlaceNewZombie(int,int,int)",
-      "pc_va": "0x1803421E0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L050",
-      "token": "0x06000284",
-      "method": "Map.AstarText(List<EnemyPath>,int,EnemyPath,List<NodeAstar>,int,int)",
-      "pc_va": "0x18032B0A0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L051",
-      "token": "0x06000286",
-      "method": "Map.CreateAstarMap(int,int)",
-      "pc_va": "0x18032BC80",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L052",
-      "token": "0x0600028B",
-      "method": "Map.GetGridPassablePoint(int,int)",
-      "pc_va": "0x18032BE20",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L053",
-      "token": "0x0600028C",
-      "method": "Map.PathFingding(Zombie)",
-      "pc_va": "0x18032C490",
-      "recovered_exception": "System.IndexOutOfRangeException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L054",
-      "token": "0x06000295",
-      "method": "Grid.GetPassablePoint()",
-      "pc_va": "0x18032A110",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L055",
-      "token": "0x06000297",
-      "method": "Grid.CanPlacing(Device)",
-      "pc_va": "0x180329AA0",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L056",
-      "token": "0x060002A0",
-      "method": "NodeAstar.Find(List<NodeAstar>,int,int,int)",
-      "pc_va": "0x18032D950",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L057",
-      "token": "0x060002A1",
-      "method": "NodeAstar.FindNeighbors(List<NodeAstar>,int,int,NodeAstar)",
-      "pc_va": "0x18032D4E0",
-      "recovered_exception": "System.IndexOutOfRangeException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L058",
-      "token": "0x060002A2",
-      "method": "NodeAstar.FindMinF(List<NodeAstar>)",
-      "pc_va": "0x18032D410",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1"
-    },
-    {
-      "id": "L059",
-      "token": "0x060002A5",
-      "method": "EnemyPath.DistanceStatistics(List<EnemyPath>,int,int)",
-      "pc_va": "0x180329830",
-      "recovered_exception": "System.NullReferenceException",
-      "priority": "P0/P1",
-      "existing_evidence": "HF49 residual scan reports invalid stack/type reconstruction and active calls from Zombie.CreateStartPrePath and Zombie.ZC_SnowbeastSeekBait; exception-tail semantics still require native closure"
-    }
+    {"id":"L003","token":"0x060000D7","method":"AttackRange.TestInRects_Rect(UnityEngine.Rect)","pc_va":"0x1803000A0","recovered_exception":"System.NullReferenceException","priority":"P0/P1","existing_evidence":"HF16 proves native identity/call reachability only; internal exception tail not closed"},
+    {"id":"L004","token":"0x060000D9","method":"AttackRange.TestInRange_Device(Device)","pc_va":"0x1802FFCC0","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L005","token":"0x060000DA","method":"AttackRange.TestInRange_Plant(Plant)","pc_va":"0x1802FFDF0","recovered_exception":"System.NullReferenceException","priority":"P0/P1","shared_pc_va_group":"attackrange-testinrange-plant-zombie"},
+    {"id":"L006","token":"0x060000DB","method":"AttackRange.TestInRange_Projectile(Projectile)","pc_va":"0x1802FFF20","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L007","token":"0x060000DC","method":"AttackRange.TestInRange_Zombie(Zombie)","pc_va":"0x1802FFDF0","recovered_exception":"System.NullReferenceException","priority":"P0/P1","shared_pc_va_group":"attackrange-testinrange-plant-zombie"},
+    {"id":"L008","token":"0x060000DD","method":"AttackRange.RestraintTargetPosition(UnityEngine.Vector3)","pc_va":"0x1802FFA20","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L009","token":"0x060000DE","method":"AttackRange.RestraintTargetPosition_Circle(UnityEngine.Vector3)","pc_va":"0x1802FF490","recovered_exception":"System.IndexOutOfRangeException","priority":"P0/P1"},
+    {"id":"L014","token":"0x0600015B","method":"BoardConfig.GetGridPosition(int,int)","pc_va":"0x18030EC90","recovered_exception":"System.NullReferenceException","priority":"P0/P1","existing_evidence":"historical HF18/HF19 centrality rescan records 19 native incoming references and helper=0; Stage9.1 exception-tail scan therefore covers a loss mode not closed by the older helper scan"},
+    {"id":"L048","token":"0x0600027A","method":"ZombieManager.CreateNewZombie(int)","pc_va":"0x180341990","recovered_exception":"System.IndexOutOfRangeException","priority":"P0/P1"},
+    {"id":"L049","token":"0x0600027C","method":"ZombieManager.PlaceNewZombie(int,int,int)","pc_va":"0x1803421E0","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L050","token":"0x06000284","method":"Map.AstarText(List<EnemyPath>,int,EnemyPath,List<NodeAstar>,int,int)","pc_va":"0x18032B0A0","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L051","token":"0x06000286","method":"Map.CreateAstarMap(int,int)","pc_va":"0x18032BC80","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L052","token":"0x0600028B","method":"Map.GetGridPassablePoint(int,int)","pc_va":"0x18032BE20","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L053","token":"0x0600028C","method":"Map.PathFingding(Zombie)","pc_va":"0x18032C490","recovered_exception":"System.IndexOutOfRangeException","priority":"P0/P1"},
+    {"id":"L054","token":"0x06000295","method":"Grid.GetPassablePoint()","pc_va":"0x18032A110","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L055","token":"0x06000297","method":"Grid.CanPlacing(Device)","pc_va":"0x180329AA0","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L056","token":"0x060002A0","method":"NodeAstar.Find(List<NodeAstar>,int,int,int)","pc_va":"0x18032D950","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L057","token":"0x060002A1","method":"NodeAstar.FindNeighbors(List<NodeAstar>,int,int,NodeAstar)","pc_va":"0x18032D4E0","recovered_exception":"System.IndexOutOfRangeException","priority":"P0/P1"},
+    {"id":"L058","token":"0x060002A2","method":"NodeAstar.FindMinF(List<NodeAstar>)","pc_va":"0x18032D410","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L059","token":"0x060002A5","method":"EnemyPath.DistanceStatistics(List<EnemyPath>,int,int)","pc_va":"0x180329830","recovered_exception":"System.NullReferenceException","priority":"P0/P1","existing_evidence":"HF49 residual scan reports invalid stack/type reconstruction and active calls from Zombie.CreateStartPrePath and Zombie.ZC_SnowbeastSeekBait; exception-tail semantics still require native closure"},
+    {"id":"L060","token":"0x06000326","method":"Device.GetDamage(Projectile)","pc_va":"0x180348F10","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L061","token":"0x06000338","method":"Device.TestPlacing(int,int)","pc_va":"0x18034BDF0","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L062","token":"0x06000339","method":"Device.TryPlacing(int,int)","pc_va":"0x18034BE30","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L063","token":"0x06000361","method":"Plant.EnemySeeking_plural(int)","pc_va":"0x18034FED0","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L064","token":"0x06000374","method":"Plant.GetParameter_int(int)","pc_va":"0x180351550","recovered_exception":"System.IndexOutOfRangeException","priority":"P0/P1"},
+    {"id":"L065","token":"0x060003B7","method":"Plant.TryUseSkills()","pc_va":"0x18035B410","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L066","token":"0x060003C6","method":"Project.PositionRevision_Camera(UnityEngine.Vector3)","pc_va":"0x180377F30","recovered_exception":"System.NullReferenceException","priority":"P1"},
+    {"id":"L067","token":"0x060003FC","method":"Projectile.TestOutofMap()","pc_va":"0x18037CA40","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L068","token":"0x0600043B","method":"Zombie.FindPlant_Grid(Grid)","pc_va":"0x18035FC20","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L069","token":"0x0600043F","method":"Zombie.GetArmor2Position()","pc_va":"0x180360520","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L070","token":"0x0600046A","method":"Zombie.Path_Finding()","pc_va":"0x180365EA0","recovered_exception":"System.NullReferenceException","priority":"P0","existing_evidence":"HF6 native-backed Zombie.Update path state machine calls Path_Finding; active gameplay reachability is established but internal exception-tail semantics are not"},
+    {"id":"L071","token":"0x06000487","method":"Zombie.TrySeekTragetPlant()","pc_va":"0x18036AB90","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L072","token":"0x06000488","method":"Zombie.TryShooting()","pc_va":"0x18036AD70","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L073","token":"0x0600048A","method":"Zombie.CanAttack_Plant(Plant)","pc_va":"0x18035DE50","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L074","token":"0x0600049C","method":"Zombie.ZC_LadderTestPlace()","pc_va":"0x180370C70","recovered_exception":"System.NullReferenceException","priority":"P0/P1"},
+    {"id":"L075","token":"0x060004A3","method":"Zombie.ZC_PoleTestJump()","pc_va":"0x180371750","recovered_exception":"System.NullReferenceException","priority":"P0/P1"}
   ],
   "required_outputs_per_unique_pc_va": [
     "PE image-base and section mapping",
