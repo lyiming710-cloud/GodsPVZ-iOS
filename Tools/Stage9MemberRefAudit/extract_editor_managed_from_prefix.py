@@ -2,10 +2,11 @@
 """Extract the minimum Unity managed resolver inputs from a *prefix* of the
 preserved Unity China 2022.3.44f1c1 tar.xz archive.
 
-The editor archive was split as raw consecutive 256 MiB chunks.  XZ can emit
+The editor archive was split as raw consecutive 256 MiB chunks. XZ can emit
 all complete decompressed data that precedes a truncated tail, so this tool
-scans the tar stream and stops immediately once the requested DLLs are found.
-It never treats an expected truncated-stream error as proof of archive damage.
+scans the tar stream and stops immediately once the *exact Editor-managed*
+resolver inputs are found. It never treats an expected truncated-stream error
+as proof of archive damage.
 
 Usage:
   python3 extract_editor_managed_from_prefix.py PART_DIR OUT_DIR
@@ -15,9 +16,9 @@ PART_DIR must contain consecutive files named:
   Unity-China-2022.3.44f1c1.tar.xz.part-01
   ...
 
-The default targets are basename matches for mscorlib.dll and
-UnityEngine.CoreModule.dll.  All matching archive paths and SHA256 values are
-recorded in OUT_DIR/extraction-report.json.
+All basename matches are recorded for diagnostics, but only the exact expected
+Editor path suffixes count as resolver inputs. This prevents accidentally using
+a PlaybackEngine/API-profile copy with the same basename.
 """
 from __future__ import annotations
 
@@ -25,7 +26,6 @@ import hashlib
 import io
 import json
 import lzma
-import os
 from pathlib import Path
 import re
 import sys
@@ -35,7 +35,11 @@ from typing import BinaryIO
 ARCHIVE_FULL_SHA256 = "0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14"
 ARCHIVE_FULL_SIZE = 3_906_640_940
 PART_SIZE = 268_435_456
-TARGETS = {"mscorlib.dll", "UnityEngine.CoreModule.dll"}
+EXPECTED_PATH_SUFFIXES = {
+    "mscorlib.dll": "Editor/Data/MonoBleedingEdge/lib/mono/unityjit-linux/mscorlib.dll",
+    "UnityEngine.CoreModule.dll": "Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll",
+}
+TARGETS = set(EXPECTED_PATH_SUFFIXES)
 PART_RE = re.compile(r"^Unity-China-2022\.3\.44f1c1\.tar\.xz\.part-(\d{2})$")
 
 
@@ -115,9 +119,16 @@ def discover_parts(root: Path) -> list[Path]:
     return [p for _, p in found]
 
 
-def safe_output_name(member_name: str) -> str:
-    # Preserve basename only; report keeps the exact archive path.
-    return Path(member_name).name
+def normalized_member_path(name: str) -> str:
+    return name.replace("\\", "/").lstrip("./")
+
+
+def exact_target_for(member_name: str) -> str | None:
+    norm = normalized_member_path(member_name)
+    for base, suffix in EXPECTED_PATH_SUFFIXES.items():
+        if norm == suffix or norm.endswith("/" + suffix):
+            return base
+    return None
 
 
 def main() -> int:
@@ -130,7 +141,7 @@ def main() -> int:
 
     parts = discover_parts(part_dir)
     report: dict[str, object] = {
-        "schema": 1,
+        "schema": 2,
         "expected_full_archive_sha256": ARCHIVE_FULL_SHA256,
         "expected_full_archive_size": ARCHIVE_FULL_SIZE,
         "part_count_available": len(parts),
@@ -139,13 +150,14 @@ def main() -> int:
             {"name": p.name, "size": p.stat().st_size, "sha256": sha256_file(p)}
             for p in parts
         ],
-        "targets": sorted(TARGETS),
-        "matches": [],
+        "expected_path_suffixes": EXPECTED_PATH_SUFFIXES,
+        "basename_matches": [],
+        "selected": {},
         "complete_targets": False,
         "stream_end": None,
     }
 
-    found: dict[str, dict[str, object]] = {}
+    selected: dict[str, dict[str, object]] = {}
     concat = ConcatenatedParts(parts)
     buffered = io.BufferedReader(concat, buffer_size=1024 * 1024)
     xz = lzma.LZMAFile(buffered, mode="rb")
@@ -160,33 +172,44 @@ def main() -> int:
             if source is None:
                 continue
             data = source.read()
-            out = out_dir / safe_output_name(member.name)
-            # Do not silently overwrite a different match with the same basename.
             digest = hashlib.sha256(data).hexdigest()
-            if out.exists() and sha256_file(out) != digest:
-                out = out_dir / (base + "." + digest[:12])
-            out.write_bytes(data)
+            exact = exact_target_for(member.name)
             rec = {
                 "basename": base,
-                "archive_path": member.name,
+                "archive_path": normalized_member_path(member.name),
                 "size": len(data),
                 "sha256": digest,
-                "output": out.name,
+                "exact_editor_target": exact is not None,
             }
-            found[base] = rec
-            cast_matches = report["matches"]
-            assert isinstance(cast_matches, list)
-            cast_matches.append(rec)
-            print(f"FOUND {base} path={member.name} size={len(data)} sha256={digest}")
-            if TARGETS.issubset(found):
+            matches = report["basename_matches"]
+            assert isinstance(matches, list)
+            matches.append(rec)
+            print(
+                f"CANDIDATE {base} path={member.name} size={len(data)} "
+                f"sha256={digest} exact_editor_target={exact is not None}"
+            )
+            if exact is None:
+                continue
+
+            out = out_dir / exact
+            out.write_bytes(data)
+            selected[exact] = {
+                **rec,
+                "output": out.name,
+                "expected_path_suffix": EXPECTED_PATH_SUFFIXES[exact],
+            }
+            report["selected"] = selected
+            print(f"SELECTED {exact} path={member.name} sha256={digest}")
+
+            if TARGETS.issubset(selected):
                 report["complete_targets"] = True
-                report["stream_end"] = "stopped-after-all-targets-found"
+                report["stream_end"] = "stopped-after-exact-editor-targets-found"
                 break
         else:
-            report["stream_end"] = "tar-stream-ended-before-all-targets"
+            report["stream_end"] = "tar-stream-ended-before-exact-editor-targets"
     except (EOFError, lzma.LZMAError, tarfile.ReadError) as exc:
-        # With a raw prefix, truncated-tail failure is expected.  It is only a
-        # successful extraction when every requested target was already emitted.
+        # With a raw prefix, truncated-tail failure is expected. It is only a
+        # successful extraction when every exact requested target was emitted.
         report["stream_end"] = f"expected-prefix-truncation:{type(exc).__name__}:{exc}"
     finally:
         try:
@@ -202,7 +225,7 @@ def main() -> int:
         except Exception:
             pass
 
-    missing = sorted(TARGETS.difference(found))
+    missing = sorted(TARGETS.difference(selected))
     report["missing_targets"] = missing
     report_path = out_dir / "extraction-report.json"
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
