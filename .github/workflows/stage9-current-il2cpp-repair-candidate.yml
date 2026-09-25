@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      INPUT_RUN_ID: '36124380136'
-      INPUT_ARTIFACT: 'Stage9.1-59bb-native2-candidate'
-      INPUT_SHA256: '18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd'
+      INPUT_RUN_ID: '36111677154'
+      INPUT_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
+      INPUT_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -35,7 +35,7 @@ jobs:
           set -euo pipefail
           SDK="$(dotnet --list-sdks | awk '/^8\./{v=$1} END{print v}')"
           printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK" > global.json
-          IN="$RUNNER_TEMP/in/Assembly-CSharp-59bb-native2.dll"
+          IN="$RUNNER_TEMP/in/Assembly-CSharp-all24-orphan-clean.dll"
           OUT="$RUNNER_TEMP/out"
           mkdir -p "$OUT"
           [ "$(sha256sum "$IN"|awk '{print $1}')" = "$INPUT_SHA256" ]
@@ -46,7 +46,8 @@ jobs:
           cat > "$OUT/provenance.txt" <<EOF
           base_run=$INPUT_RUN_ID
           base_sha256=$INPUT_SHA256
-          zombie_mouse_methoddef=0x060001E0
+          repaired_methods=0x060001DE,0x0600017F,0x060001E0,0x060001B2
+          # 0x060001E0
           zombie_mouse_pc_va=0x18031EE10
           enemy_selecter_methoddef=0x060001B2
           enemy_selecter_pc_va=0x180316AB0
