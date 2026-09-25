@@ -20,6 +20,8 @@ jobs:
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       R3_SHA256: 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc'
       R3_ARCHIVE_RUN_ID: '34747460206'
+      R3_ARCHIVE_ARTIFACT_ID: '10314333890'
+      R3_ARCHIVE_ARTIFACT_ZIP_SHA256: '1c2183569b5d2273cdbf209992223d9f6a5d3cc0090bdbb8f68c8bf4ad448a78'
       BASE_RUNTIME_SHA256: '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
@@ -65,6 +67,9 @@ jobs:
           cat > "$OUT/evidence/input-locks.txt" <<EOF
           workflow_head=$GITHUB_SHA
           r3_sha256=$R3_SHA256
+          r3_archive_run=$R3_ARCHIVE_RUN_ID
+          r3_archive_artifact_id=$R3_ARCHIVE_ARTIFACT_ID
+          r3_archive_artifact_zip_sha256=$R3_ARCHIVE_ARTIFACT_ZIP_SHA256
           base_runtime_sha256=$BASE_RUNTIME_SHA256
           base_runtime_run=$BASE_RUNTIME_RUN_ID
           b001_sha256=$B001_SHA256
