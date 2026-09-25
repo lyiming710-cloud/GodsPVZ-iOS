@@ -112,7 +112,7 @@ jobs:
           unzip -qq "$CZIP" -d "$OUT/candidate"
           rm -f "$CZIP"
 
-          CAND="$OUT/candidate/Assembly-CSharp-59bb-native2.dll"
+          CAND="$OUT/candidate/Assembly-CSharp-native3.dll"
           test -f "$CAND"
           ACTUAL="$(sha256sum "$CAND" | awk '{print $1}')"
           [ "$ACTUAL" = "$TEST_DLL_SHA256" ] || exit 43
@@ -134,7 +134,448 @@ jobs:
           SLOG="$OUT/semantic-gate/semantic-memberref-audit.log"
           test -f "$SLOG"
           grep -q '^BASELINE_TARGET_TOKEN_CHECK=24/24$' "$SLOG"
-          grep -q '^EXPECTED_NATIVE2_USE_DELTAS=4/4$' "$SLOG"
+          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=6/6
+          grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' "$SLOG"
+          grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' "$SLOG"
+          grep -q '^METHOD_IDENTITY_DRIFT=0$' "$SLOG"
+          grep -q '^FIELD_IDENTITY_DRIFT=0$' "$SLOG"
+          grep -q '^NON_TARGET_METHOD_SEMANTIC_DIFFS=0$' "$SLOG"
+          grep -q '^TRANSFORM_REPAIR_SITES=3/3$' "$SLOG"
+          grep -q '^ORPHAN_GENERIC_HITS=0$' "$SLOG"
+          grep -q '^STAGE9_SEMANTIC_MEMBERREF_AUDIT_OK$' "$SLOG"
+          grep -q "^candidate_sha256=$TEST_DLL_SHA256$" "$OUT/semantic-gate/GATE-SUMMARY.txt"
+          grep -q '^audit_status=PASS$' "$OUT/semantic-gate/GATE-SUMMARY.txt"
+
+          printf 'candidate_artifact_zip_sha256=%s\ncandidate_sha256=%s\nsemantic_gate_artifact_zip_sha256=%s\nsemantic_gate=PASS\n' \
+            "$ACTUAL_CZIP" "$ACTUAL" "$ACTUAL_SZIP" > "$OUT/evidence/candidate-provenance.txt"
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.R3_ARCHIVE_RUN_ID }}
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-native2-ios/r3-cache
+
+      - name: Reconstruct exact R3 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          mapfile -t R3_ARCHIVES < <(find "$OUT/r3-cache" -maxdepth 1 -type f -name '*.tar.zst' | sort)
+          [ "${#R3_ARCHIVES[@]}" = '1' ] || exit 45
+          ARCHIVE="${R3_ARCHIVES[0]}"
+          cat > "$OUT/r3-parts.tsv" <<'EOF'
+          00	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a	67108864
+          01	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2	67108864
+          02	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2	67108864
+          03	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f	67108864
+          04	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc	67108864
+          05	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263	67108864
+          06	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c	67108864
+          07	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec	67108864
+          08	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8	67108864
+          09	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a	67108864
+          10	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994	67108864
+          11	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325	48568114
+          EOF
+          python3 - "$ARCHIVE" "$OUT/r3-parts.tsv" "$E/r3-download.tsv" <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          archive=Path(sys.argv[1]); spec=Path(sys.argv[2]); out=Path(sys.argv[3])
+          rows=[]
+          for line in spec.read_text().splitlines():
+              idx,sha,size=line.strip().split('\t')
+              rows.append((idx,sha,int(size)))
+          with archive.open('rb') as f, out.open('w',encoding='utf-8') as w:
+              for idx,expected_sha,expected_size in rows:
+                  remain=expected_size; h=hashlib.sha256(); got_size=0
+                  while remain:
+                      b=f.read(min(1024*1024,remain))
+                      if not b: raise SystemExit(45)
+                      h.update(b); n=len(b); remain-=n; got_size+=n
+                  got_sha=h.hexdigest()
+                  w.write(f'{idx}\t{got_sha}\t{got_size}\n')
+                  if got_sha!=expected_sha: raise SystemExit(45)
+                  if got_size!=expected_size: raise SystemExit(46)
+              if f.read(1): raise SystemExit(45)
+          PY
+          ROOT="$OUT/r3"
+          mkdir -p "$ROOT"
+          GOT="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
+          echo "$GOT" > "$E/r3-sha256.txt"
+          [ "$GOT" = "$R3_SHA256" ] || exit 47
+          zstd -t "$ARCHIVE" 2> "$E/r3-zstd-test.txt"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$ROOT"
+          PROJECT="$ROOT/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          test -d "$PROJECT"
+          grep -qx 'm_EditorVersion: 2022.3.44f1c1' "$PROJECT/ProjectSettings/ProjectVersion.txt"
+          test -f "$PROJECT/Assets/Scenes/MainMenu.unity"
+          test -f "$PROJECT/Assets/Scenes/Board.unity"
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 48
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          rm -rf "$OUT/r3-cache" "$ARCHIVE"
+          df -h "$RUNNER_TEMP" > "$E/disk-after-r3.txt"
+
+      - name: Download base runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.BASE_RUNTIME_RUN_ID }}
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: ${{ runner.temp }}/stage9-native2-ios/base-runtime
+
+      - name: Download package GUID evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_GUID_RUN_ID }}
+          name: HF46-package-reference-evidence
+          path: ${{ runner.temp }}/stage9-native2-ios/package-guid-evidence
+
+      - name: Download pinned package bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_BUNDLE_RUN_ID }}
+          name: Stage9.1-pinned-unity-packages
+          path: ${{ runner.temp }}/stage9-native2-ios/package-bundle
+
+      - name: Download package dependency closure
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_CLOSURE_RUN_ID }}
+          name: Stage9.1-package-dependency-closure
+          path: ${{ runner.temp }}/stage9-native2-ios/package-closure
+
+      - name: Integrate baseline and embedded packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          DLL="$OUT/base-runtime/GodsPVZRuntime1-bgmvolume.dll"
+          test -f "$DLL"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = "$BASE_RUNTIME_SHA256" ] || exit 49
+          cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
+          cp "$GITHUB_WORKSPACE/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/"
+          python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" <<'PY'
+          import shutil,sys
+          from pathlib import Path
+          dst=Path(sys.argv[3]); dst.mkdir(parents=True,exist_ok=True)
+          for root in map(Path,sys.argv[1:3]):
+              if not root.is_dir(): raise SystemExit('missing package source: '+str(root))
+              for src in sorted(p for p in root.iterdir() if p.is_dir()):
+                  target=dst/src.name
+                  if target.exists(): shutil.rmtree(target)
+                  shutil.copytree(src,target)
+          PY
+          python3 - "$OUT/package-guid-evidence/package-guid-map.json" "$PROJECT/Packages" "$E/package-guid-preflight.txt" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          d=json.load(open(sys.argv[1])); root=Path(sys.argv[2]); out=Path(sys.argv[3])
+          assert d['resolved']==67 and d['expected']==67 and not d['failures']
+          bad=[]; n=0
+          for m in d['mapping']:
+              meta=root/m['package']/m['meta_path']
+              if not meta.is_file(): bad.append((m['fullName'],'missing')); continue
+              mm=re.search(r'(?m)^guid:\s*([0-9a-fA-F]{32})\s*$',meta.read_text(errors='replace'))
+              got=mm.group(1).lower() if mm else ''
+              n+=1
+              if got!=m['monoscript_guid'].lower(): bad.append((m['fullName'],got,m['monoscript_guid']))
+          out.write_text(f'resolved={n}/67\nfailures={len(bad)}\n'+repr(bad)+'\n')
+          if n!=67 or bad: raise SystemExit(50)
+          PY
+          rm -f "$PROJECT/Packages/packages-lock.json"
+          rm -rf "$OUT/package-bundle" "$OUT/package-closure" "$OUT/package-guid-evidence" "$OUT/base-runtime"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EDITOR_RUN_ID }}
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-native2-ios/editor-parts
+
+      - name: Reconstruct exact Unity China Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          ROOT="$OUT/editor-root"
+          mkdir -p "$ROOT"
+          mapfile -t FILES < <(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | sort)
+          [ "${#FILES[@]}" = '15' ] || exit 51
+          SHA="$({ for part in "${FILES[@]}"; do cat "$part"; done; } | sha256sum | awk '{print $1}')"
+          echo "$SHA" > "$E/editor-sha256.txt"
+          [ "$SHA" = "$EDITOR_SHA256" ] || exit 52
+          {
+            for part in "${FILES[@]}"; do cat "$part"; rm -f "$part"; done
+          } | tar -xJf - -C "$ROOT"
+          rmdir "$PARTS" 2>/dev/null || true
+          UNITY="$ROOT/Editor/Unity"
+          chmod +x "$UNITY"
+          V="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
+          echo "$V" > "$E/editor-version-before-ios-module.txt"
+          [ "$V" = "$UNITY_VERSION" ] || exit 53
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+
+      - name: Download validated China iOS module
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.IOS_MODULE_RUN_ID }}
+          name: Stage9.1-unity-china-ios-module-c3ae09b9f03c
+          path: ${{ runner.temp }}/stage9-native2-ios/ios-module
+
+      - name: Overlay validated iOS module
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          ROOT="$OUT/editor-root"
+          MOD="$OUT/ios-module/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
+          test -f "$MOD"
+          GOT="$(sha256sum "$MOD" | awk '{print $1}')"
+          echo "$GOT" > "$E/ios-module-sha256.txt"
+          [ "$GOT" = "$IOS_MODULE_SHA256" ] || exit 54
+          xz -t "$MOD"
+          tar -xJf "$MOD" -C "$ROOT"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          V="$($UNITY -version 2>&1 | grep -Eo '2022\.3\.44f1c1|2022\.3\.44f1' | head -n1 || true)"
+          [ "$V" = "$UNITY_VERSION" ] || exit 55
+          rm -rf "$OUT/ios-module"
+
+      - name: Acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$E/license-activate.log" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/license-activate-exit.txt"
+          [ "$RC" -eq 0 ] || exit 56
+          touch "$OUT/seat-acquired.flag"
+
+      - name: First baseline import
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import-before-migration.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/import-before-migration-exit.txt"
+          [ "$RC" -eq 0 ] || exit 57
+          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import-before-migration.log"; then exit 58; fi
+
+      - name: Complete 67 of 67 package migration and B001 gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZPackageReferenceMigrator.RunBatch -logFile "$E/package-migration.log"
+          MARKER="$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          test -f "$MARKER"
+          grep -q '^resolved=67/67$' "$MARKER"
+          GOT="$(sha256sum "$PLUGIN" | awk '{print $1}')"
+          echo "b001_workcopy_sha256=$GOT" | tee "$E/b001-workcopy.txt"
+          [ "$GOT" = "$B001_SHA256" ] || exit 59
+
+      - name: Inject static-qualified native2 test DLL after migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          CAND="$OUT/candidate/Assembly-CSharp-native3.dll"
+          [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$B001_SHA256" ] || exit 60
+          [ "$(sha256sum "$CAND" | awk '{print $1}')" = "$TEST_DLL_SHA256" ] || exit 61
+          rm -f "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs.meta"
+          cp "$CAND" "$PLUGIN"
+          GOT="$(sha256sum "$PLUGIN" | awk '{print $1}')"
+          [ "$GOT" = "$TEST_DLL_SHA256" ] || exit 62
+          {
+            echo "before=$B001_SHA256"
+            echo "after=$GOT"
+            echo 'migrator_project_copy_removed_after_67_of_67=true'
+            echo 'semantic_gate=PASS'
+            echo 'production_source_modified=false'
+          } > "$E/test-dll-injection.txt"
+
+      - name: Reimport exact native2 work copy without migrator
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import-after-native2.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/import-after-native2-exit.txt"
+          [ "$RC" -eq 0 ] || exit 63
+          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import-after-native2.log"; then exit 64; fi
+          GOT="$(sha256sum "$PLUGIN" | awk '{print $1}')"
+          echo "$GOT" > "$E/test-dll-after-reimport.sha256"
+          [ "$GOT" = "$TEST_DLL_SHA256" ] || exit 65
+
+      - name: Prepare software graphics for original 8192 TMP atlas
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          if ! command -v xvfb-run >/dev/null 2>&1 || ! command -v glxinfo >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends xvfb mesa-utils libgl1-mesa-dri
+          fi
+          export LIBGL_ALWAYS_SOFTWARE=1
+          xvfb-run -a -s '-screen 0 1280x720x24' glxinfo -B > "$E/software-gl-renderer.txt" 2>&1
+          xvfb-run -a -s '-screen 0 1280x720x24' glxinfo -l > "$E/software-gl-limits.txt" 2>&1
+          MAX_TEXTURE_SIZE="$(sed -n 's/.*GL_MAX_TEXTURE_SIZE[^0-9]*\([0-9][0-9]*\).*/\1/p' "$E/software-gl-limits.txt" | head -n1)"
+          echo "GL_MAX_TEXTURE_SIZE=$MAX_TEXTURE_SIZE" | tee "$E/software-gl-max-texture.txt"
+          [ -n "$MAX_TEXTURE_SIZE" ] || exit 66
+          [ "$MAX_TEXTURE_SIZE" -ge 8192 ] || exit 67
+
+      - name: Export unsigned iOS Xcode project with native2 candidate
+        shell: bash
+        env:
+          GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-native2-ios/xcode
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ] || exit 68
+          set +e
+          xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -buildTarget iOS -projectPath "$PROJECT" -executeMethod GodsPVZIOSBuild.BuildIOS -logFile "$E/ios-export.log" > "$E/ios-export.stdout" 2> "$E/ios-export.stderr"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/ios-export-exit.txt"
+          [ "$RC" -eq 0 ] || exit 69
+          test -d "$OUT/xcode"
+
+      - name: Audit Xcode and IL2CPP export
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          X="$OUT/xcode"
+          PBX="$X/Unity-iPhone.xcodeproj/project.pbxproj"
+          test -f "$PBX"
+          test -d "$X/Classes"
+          test -d "$X/Libraries"
+          test -d "$X/Data"
+          test -d "$X/Il2CppOutputProject"
+          test -f "$X/Il2CppOutputProject/Source/il2cppOutput/Assembly-CSharp.cpp"
+          test -f "$X/Data/Managed/Metadata/global-metadata.dat"
+          grep -Eq 'PRODUCT_BUNDLE_IDENTIFIER[[:space:]]*=[[:space:]]*"?com\.tipsGodsStudio\.godsPVZ"?;' "$PBX"
+          grep -Eq 'IPHONEOS_DEPLOYMENT_TARGET[[:space:]]*=[[:space:]]*12(\.0)?;' "$PBX"
+          grep -q 'GodsPVZ iOS Xcode export succeeded' "$E/ios-export.log"
+          CPP_COUNT="$(find "$X/Il2CppOutputProject/Source/il2cppOutput" -maxdepth 1 -type f -name '*.cpp' | wc -l | tr -d ' ')"
+          FILE_COUNT="$(find "$X" -type f | wc -l | tr -d ' ')"
+          SIZE="$(du -sb "$X" | awk '{print $1}')"
+          {
+            echo 'IOS_XCODE_EXPORT=PASS'
+            echo "unity_version=$UNITY_VERSION"
+            echo "test_dll_sha256=$TEST_DLL_SHA256"
+            echo 'semantic_memberref_gate=PASS'
+            echo 'semantic_targets=24/24'
+            echo 'semantic_resolve_keys=23/23'
+            echo 'orphan_generic_hits=0'
+            echo 'bundle_id=com.tipsGodsStudio.godsPVZ'
+            echo 'deployment_target=12.0'
+            echo 'scenes=Assets/Scenes/MainMenu.unity,Assets/Scenes/Board.unity'
+            echo "il2cpp_cpp_count=$CPP_COUNT"
+            echo "xcode_file_count=$FILE_COUNT"
+            echo "xcode_size_bytes=$SIZE"
+            echo 'production_promotion=NO_ISOLATED_GATE_ONLY'
+          } | tee "$E/RESULT.txt"
+          sha256sum "$X/Data/Managed/Metadata/global-metadata.dat" > "$E/generated-global-metadata.sha256"
+          sha256sum "$X/Il2CppOutputProject/Source/il2cppOutput/Assembly-CSharp.cpp" > "$E/generated-assembly-csharp-cpp.sha256"
+          grep -E 'PRODUCT_BUNDLE_IDENTIFIER|IPHONEOS_DEPLOYMENT_TARGET' "$PBX" | sort -u > "$E/pbx-settings.txt"
+          tar --zstd -cf "$OUT/GodsPVZ-Stage9.1-native2-unsigned-Xcode.tar.zst" -C "$OUT" xcode
+          sha256sum "$OUT/GodsPVZ-Stage9.1-native2-unsigned-Xcode.tar.zst" > "$E/xcode-archive.sha256"
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-native2-ios"
+          E="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --return-ulf > "$E/license-return.log" 2>&1
+            RC=$?
+            set -e
+            echo "$RC" > "$E/license-return-exit.txt"
+          fi
+
+      - name: Upload real Unity gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-native2-REAL-UNITY-IOS-EVIDENCE
+          path: ${{ runner.temp }}/stage9-native2-ios/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Upload unsigned Xcode project archive
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9.1-native2-unsigned-Xcode
+          path: ${{ runner.temp }}/stage9-native2-ios/GodsPVZ-Stage9.1-native2-unsigned-Xcode.tar.zst
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+ "$SLOG"
           grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' "$SLOG"
           grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' "$SLOG"
           grep -q '^METHOD_IDENTITY_DRIFT=0$' "$SLOG"
@@ -421,7 +862,7 @@ jobs:
           E="$OUT/evidence"
           PROJECT="$(cat "$OUT/project-path.txt")"
           PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
-          CAND="$OUT/candidate/Assembly-CSharp-59bb-native2.dll"
+          CAND="$OUT/candidate/Assembly-CSharp-native3.dll"
           [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$B001_SHA256" ] || exit 60
           [ "$(sha256sum "$CAND" | awk '{print $1}')" = "$TEST_DLL_SHA256" ] || exit 61
           rm -f "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs.meta"
