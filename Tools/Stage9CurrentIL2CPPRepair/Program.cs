@@ -437,8 +437,15 @@ static class Program
         var sha = Sha(input); Console.WriteLine("INPUT sha256=" + sha);
         if (sha != ExpectedInputSha) { Console.Error.WriteLine("INPUT_HASH_MISMATCH"); return 3; }
 
+        
         using (var asm = AssemblyDefinition.ReadAssembly(input, new ReaderParameters { InMemory = true, ReadSymbols = false }))
         {
+            foreach(var mr in asm.MainModule.GetMemberReferences().OfType<MethodReference>())
+            {
+                if(mr.FullName.Contains("Zombie", StringComparison.Ordinal) || mr.FullName.Contains("Enemy", StringComparison.Ordinal))
+                    Console.WriteLine($"DIAG_MR token=0x{mr.MetadataToken.ToUInt32():X8} {mr.FullName}");
+            }
+
             if (asm.MainModule.Kind != ModuleKind.Dll) throw new Exception("ModuleKind must remain Dll");
             if (All(asm.MainModule.Types).Sum(t => t.Methods.Count) != 2317) throw new Exception("MethodDef invariant");
 
