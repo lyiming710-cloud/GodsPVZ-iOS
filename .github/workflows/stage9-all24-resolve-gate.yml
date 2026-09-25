@@ -1,0 +1,189 @@
+name: Stage9 All24 Resolve Gate
+
+on:
+  push:
+    branches:
+      - stage9-local-audit-tools
+    paths:
+      - '.github/workflows/stage9-all24-resolve-gate.yml'
+      - 'Tools/Stage9MemberRefAudit/**'
+      - 'Recovery/Stage9.1-unity-china-editor-artifact-map-2026-09-22.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  resolve24:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      RUN8_ARTIFACT_ID: '10574264630'
+      RUN8_ARTIFACT_SHA256: '68469c45adb5470fd9c23e7a4dde536ae56f08d2a99d4a22c5092a06bec2ac7b'
+      RUN8_DLL_SHA256: 'f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321'
+      EXPECTED_ALL24: 'b07254d5c4077e013bbc934734f7b0949c0942a4e667d6d2b23d2af6c830f720'
+    steps:
+      - name: Checkout isolated audit branch
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Download locked run8 input and locate exact DLL
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p _stage9/run8 _stage9/editor-zips _stage9/evidence
+          curl -fL --retry 4 --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${RUN8_ARTIFACT_ID}/zip" \
+            -o _stage9/run8-artifact.zip
+          ACTUAL_ZIP="$(sha256sum _stage9/run8-artifact.zip | awk '{print $1}')"
+          test "$ACTUAL_ZIP" = "$RUN8_ARTIFACT_SHA256" || {
+            echo "run8 artifact ZIP digest mismatch: $ACTUAL_ZIP" >&2
+            exit 20
+          }
+          unzip -qq _stage9/run8-artifact.zip -d _stage9/run8
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected = "f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321"
+          matches=[]
+          for p in Path('_stage9/run8').rglob('*'):
+              if not p.is_file():
+                  continue
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for chunk in iter(lambda:f.read(1024*1024), b''):
+                      h.update(chunk)
+              if h.hexdigest()==expected:
+                  matches.append(p)
+          if len(matches)!=1:
+              raise SystemExit(f"expected exactly one run8 DLL hash match, got {len(matches)}: {matches}")
+          Path('_stage9/RUN8_DLL_PATH.txt').write_text(str(matches[0].resolve())+'\n', encoding='utf-8')
+          print(matches[0])
+          PY
+
+      - name: Incrementally download exact Unity China Editor parts and run strict gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          INPUT_DLL="$(cat _stage9/RUN8_DLL_PATH.txt)"
+          PART_DIR="$PWD/_stage9/editor-zips"
+          EVIDENCE="$PWD/_stage9/evidence"
+
+          IDS=(
+            10291010405 10290566804 10290227183 10289937489 10290681584
+            10290277222 10290152214 10290272178 10290227214
+            10289887742 10290327149 10289867619 10290921338
+            10290601759 10290092389
+          )
+          DIGESTS=(
+            f524c5ef2cb155f97200648ce4045c5cc8f1ba5755d9ad27b943082d0c87c3bf
+            99b01ce99438852085342a155f3c1663211bd8a3fc72d9508e1978ee3b34beda
+            d7baccb4db5ace2d2a703e54cff0ca042679bc0b7e11f7e64d2e81e2c0f5f360
+            4e635332b1a063c986ffa5cfd551d58a9c75a2d113641ca60f76b25f4a3001a3
+            f65d751856592a48859d02abdd1cdec36ec81d6e4f8dd52702d75bd093d357ca
+            b4c81b66430eaf0c1c02eeb668132b9f6539a1d3ae21b5e31b9a8599652e7919
+            6aec55d508fe0bc32fdc70c9b2de3553028420ae3a747414b041eaa69b580178
+            b7a4be336e49515406d05fce23f61838dd108b63dfbb76219e6a5a29a34ad8
+            8d30963e8e1d5477d1144921ec2deb09e8da12065c989e34738a2274c1e2b5b4
+            dc62517e58e11f8579e5fc01a606d5829f5fdf017ce2e26267e827fcb5533732
+            d3f9613cea084e4f4baa3af98ca517803946de7951338b5940672af28d54f2a9
+            6facbca6caa55fa63ac34ec06ccfc7e56c2bc86d8c719e9eb9cb55497b4d6f14
+            709a2dd31670773a6fff88461b0ee9506b2b59a7598b160ed199f72f365139cb
+            aaf0c8351fba1251b67ae71fb15a51dd69457f41143cf9627a49ed6ae8e36535
+            f57a47dd3409fd0c998b4d317830ca0ab0a6973f4812c2e2a34ccd8079b05f3d
+          )
+
+          download_part() {
+            local idx="$1" id="${IDS[$1]}" expected="${DIGESTS[$1]}"
+            local out="$PART_DIR/part-$(printf '%02d' "$idx").zip"
+            if [[ -f "$out" ]]; then return 0; fi
+            echo "Downloading editor artifact part $idx (artifact $id)"
+            curl -fL --retry 4 --retry-delay 2 \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" \
+              -o "$out"
+            local actual
+            actual="$(sha256sum "$out" | awk '{print $1}')"
+            test "$actual" = "$expected" || {
+              echo "artifact part $idx ZIP digest mismatch: $actual != $expected" >&2
+              exit 21
+            }
+          }
+
+          preserve_small_evidence() {
+            local src="$1" dst="$2"
+            mkdir -p "$dst"
+            for f in GATE-SUMMARY.txt all24-builder-manifest.json all24-builder.stdout.json \
+                     editor-prefix-extractor.log memberref-strict-resolve.log dotnet-restore.log \
+                     Assembly-CSharp-all24-candidate.dll; do
+              [[ -f "$src/$f" ]] && cp "$src/$f" "$dst/$f"
+            done
+            if [[ -d "$src/editor-managed-resolver" ]]; then
+              mkdir -p "$dst/editor-managed-resolver"
+              cp -f "$src/editor-managed-resolver"/*.dll "$dst/editor-managed-resolver/" 2>/dev/null || true
+              cp -f "$src/editor-managed-resolver"/*.json "$dst/editor-managed-resolver/" 2>/dev/null || true
+            fi
+          }
+
+          batches=("0 1 2 3 4" "5 6 7 8" "9 10 11 12" "13 14")
+          attempt=0
+          passed=0
+          for batch in "${batches[@]}"; do
+            attempt=$((attempt+1))
+            for idx in $batch; do download_part "$idx"; done
+            out="$PWD/_stage9/gate-attempt-$attempt"
+            rm -rf "$out"
+            set +e
+            bash Tools/Stage9MemberRefAudit/run_local_all24_gate.sh "$INPUT_DLL" "$PART_DIR" "$out"
+            rc=$?
+            set -e
+            preserve_small_evidence "$out" "$EVIDENCE/attempt-$attempt"
+            if [[ "$rc" -eq 0 ]]; then
+              passed=1
+              echo "$attempt" > "$EVIDENCE/PASS_ATTEMPT.txt"
+              break
+            fi
+            if [[ "$rc" -eq 36 ]]; then
+              echo "Attempt $attempt needs more contiguous Editor prefix parts."
+              rm -rf "$out"
+              continue
+            fi
+            echo "Strict gate failed with non-prefix status rc=$rc" >&2
+            exit "$rc"
+          done
+
+          test "$passed" -eq 1 || {
+            echo "All preserved Editor parts were consumed but strict Resolve gate did not pass" >&2
+            exit 60
+          }
+
+          PASS_ATTEMPT="$(cat "$EVIDENCE/PASS_ATTEMPT.txt")"
+          PASS_DIR="$EVIDENCE/attempt-$PASS_ATTEMPT"
+          grep -q '^candidate_sha256=b07254d5c4077e013bbc934734f7b0949c0942a4e667d6d2b23d2af6c830f720$' "$PASS_DIR/GATE-SUMMARY.txt"
+          grep -q '^audit_status=PASS$' "$PASS_DIR/GATE-SUMMARY.txt"
+          grep -q '^ORPHAN_GENERIC_HITS=0$' "$PASS_DIR/memberref-strict-resolve.log"
+          grep -q '^RESOLVE_SUMMARY ok=24 dependency_missing=0 hard_fail=0 require_resolve=True$' "$PASS_DIR/memberref-strict-resolve.log"
+          echo 'STAGE9_ACTIONS_ALL24_RESOLVE_GATE_PASS'
+
+      - name: Upload compact gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-all24-strict-resolve-evidence
+          path: _stage9/evidence
+          if-no-files-found: warn
+          retention-days: 30
