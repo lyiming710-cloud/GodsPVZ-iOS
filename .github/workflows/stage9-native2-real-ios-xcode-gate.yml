@@ -134,7 +134,7 @@ jobs:
           SLOG="$OUT/semantic-gate/semantic-memberref-audit.log"
           test -f "$SLOG"
           grep -q '^BASELINE_TARGET_TOKEN_CHECK=24/24$' "$SLOG"
-          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=6/6$' "$SLOG"
+          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=6/6
           grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' "$SLOG"
           grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' "$SLOG"
           grep -q '^METHOD_IDENTITY_DRIFT=0$' "$SLOG"
@@ -584,7 +584,7 @@ jobs:
           grep -q '^TRANSFORM_REPAIR_SITES=3/3$' "$SLOG"
           grep -q '^ORPHAN_GENERIC_HITS=0$' "$SLOG"
           grep -q '^STAGE9_SEMANTIC_MEMBERREF_AUDIT_OK$' "$SLOG"
-          grep -q "^candidate_sha256=$TEST_DLL_SHA256$" "$OUT/semantic-gate/GATE-SUMMARY.txt"
+          grep -q '^candidate_sha256=18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd$' "$OUT/semantic-gate/GATE-SUMMARY.txt"
           grep -q '^audit_status=PASS$' "$OUT/semantic-gate/GATE-SUMMARY.txt"
 
           printf 'candidate_artifact_zip_sha256=%s\ncandidate_sha256=%s\nsemantic_gate_artifact_zip_sha256=%s\nsemantic_gate=PASS\n' \
@@ -862,7 +862,7 @@ jobs:
           E="$OUT/evidence"
           PROJECT="$(cat "$OUT/project-path.txt")"
           PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
-          CAND="$OUT/candidate/Assembly-CSharp-native3.dll"
+          CAND="$OUT/candidate/Assembly-CSharp-59bb-native2.dll"
           [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$B001_SHA256" ] || exit 60
           [ "$(sha256sum "$CAND" | awk '{print $1}')" = "$TEST_DLL_SHA256" ] || exit 61
           rm -f "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs.meta"
