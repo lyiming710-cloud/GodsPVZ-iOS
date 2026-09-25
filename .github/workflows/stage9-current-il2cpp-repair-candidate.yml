@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      INPUT_RUN_ID: '36111677154'
-      INPUT_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
-      INPUT_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
+      INPUT_RUN_ID: '36124380136'
+      INPUT_ARTIFACT: 'Stage9.1-59bb-native2-candidate'
+      INPUT_SHA256: '18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -35,21 +35,21 @@ jobs:
           set -euo pipefail
           SDK="$(dotnet --list-sdks | awk '/^8\./{v=$1} END{print v}')"
           printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK" > global.json
-          IN="$RUNNER_TEMP/in/Assembly-CSharp-all24-orphan-clean.dll"
+          IN="$RUNNER_TEMP/in/Assembly-CSharp-59bb-native2.dll"
           OUT="$RUNNER_TEMP/out"
           mkdir -p "$OUT"
           [ "$(sha256sum "$IN"|awk '{print $1}')" = "$INPUT_SHA256" ]
           dotnet restore Tools/Stage9CurrentIL2CPPRepair/Stage9CurrentIL2CPPRepair.csproj
-          dotnet run -c Release --no-restore --project Tools/Stage9CurrentIL2CPPRepair/Stage9CurrentIL2CPPRepair.csproj -- "$IN" "$OUT/Assembly-CSharp-59bb-native2.dll" | tee "$OUT/repair.log"
+          dotnet run -c Release --no-restore --project Tools/Stage9CurrentIL2CPPRepair/Stage9CurrentIL2CPPRepair.csproj -- "$IN" "$OUT/Assembly-CSharp-native3.dll" | tee "$OUT/repair.log"
           grep -q '^STAGE9_CURRENT_IL2CPP_REPAIR_OK$' "$OUT/repair.log"
-          sha256sum "$OUT/Assembly-CSharp-59bb-native2.dll" | tee "$OUT/SHA256SUMS.txt"
+          sha256sum "$OUT/Assembly-CSharp-native3.dll" | tee "$OUT/SHA256SUMS.txt"
           cat > "$OUT/provenance.txt" <<EOF
           base_run=$INPUT_RUN_ID
           base_sha256=$INPUT_SHA256
-          mouse_methoddef=0x060001DE
-          mouse_pc_va=0x18031EA60
-          device_methoddef=0x0600017F
-          device_pc_va=0x180313B90
+          zombie_mouse_methoddef=0x060001E0
+          zombie_mouse_pc_va=0x18031EE10
+          enemy_selecter_methoddef=0x060001B2
+          enemy_selecter_pc_va=0x180316AB0
           original_pc_gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
           production_modified=false
           EOF
@@ -59,16 +59,18 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/out"
           dotnet restore Tools/Stage9MethodILDump/Stage9MethodILDump.csproj
-          dotnet run -c Release --no-restore --project Tools/Stage9MethodILDump/Stage9MethodILDump.csproj -- "$OUT/Assembly-CSharp-59bb-native2.dll" | tee "$OUT/method-audit.txt"
+          dotnet run -c Release --no-restore --project Tools/Stage9MethodILDump/Stage9MethodILDump.csproj -- "$OUT/Assembly-CSharp-native3.dll" | tee "$OUT/method-audit.txt"
           grep -q '^STAGE9_METHOD_IL_DUMP_OK$' "$OUT/method-audit.txt"
           ! grep -q 'Warning: Method ends with non empty stack' "$OUT/method-audit.txt"
           grep -q 'METHOD token=0x060001DE' "$OUT/method-audit.txt"
           grep -q 'METHOD token=0x0600017F' "$OUT/method-audit.txt"
+          grep -q 'METHOD token=0x060001E0' "$OUT/method-audit.txt"
+          grep -q 'METHOD token=0x060001B2' "$OUT/method-audit.txt"
           grep -q 'full=Zombie MouseManager::GetZombieUnderMouse(System.Int32)' "$OUT/method-audit.txt"
           grep -q 'full=EnemySelecter EnemyManager::CreateEnemySelecter()' "$OUT/method-audit.txt"
       - name: Upload isolated repair candidate
         uses: actions/upload-artifact@v4
         with:
-          name: Stage9.1-59bb-native2-candidate
+          name: Stage9.1-native3-candidate
           path: ${{ runner.temp }}/out/
           retention-days: 30
