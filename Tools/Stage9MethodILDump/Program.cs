@@ -10,6 +10,8 @@ static class Stage9MethodILDump
     {
         new("MouseManager", "GetPlantUnderMouse"),
         new("DeviceManager", "Start_BoardEntry"),
+        new("MouseManager", "GetZombieUnderMouse"),
+        new("EnemyManager", "CreateEnemySelecter"),
     };
 
     private static string Sha256(string path) =>
