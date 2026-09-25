@@ -24,21 +24,28 @@ static class Stage9SemanticMemberRefAudit
         new(0x0A00022B, "Insert", 1),        new(0x0A000284, "get_transform", 1),
     };
 
+    private const uint DeviceStartBoardEntry = 0x0600017F;
+    private const uint MouseGetPlantUnderMouse = 0x060001DE;
     private const uint MouseGetZombieUnderMouse = 0x060001E0;
     private const uint EnemyCreateEnemySelecter = 0x060001B2;
 
     private static readonly HashSet<uint> AllowedChangedMethods = new()
     {
+        DeviceStartBoardEntry,
+        MouseGetPlantUnderMouse,
         MouseGetZombieUnderMouse,
         EnemyCreateEnemySelecter,
     };
 
-    // These deltas are the exact native-backed foreach uses introduced when
-    // repairing MouseManager.GetZombieUnderMouse and EnemyManager.CreateEnemySelecter relative to 18e44.
+    // These six +1 deltas are the exact native-backed uses introduced across the 4 repaired methods.
     private static readonly Dictionary<(string Key, uint Method), int> AllowedUseDeltas = new()
     {
-        [("GetEnumerator|ZombieInfo", EnemyCreateEnemySelecter)] = 1,
-        [("get_Current|ZombieInfo", EnemyCreateEnemySelecter)] = 1,
+        [("GetEnumerator|BoardEntry", DeviceStartBoardEntry)] = 1,
+        [("get_Current|BoardEntry", DeviceStartBoardEntry)] = 1,
+        [("GetEnumerator|Plant", MouseGetPlantUnderMouse)] = 1,
+        [("get_Current|Plant", MouseGetPlantUnderMouse)] = 1,
+        [("GetEnumerator|Zombie", MouseGetZombieUnderMouse)] = 1,
+        [("get_Current|Zombie", MouseGetZombieUnderMouse)] = 1,
     };
 
     private static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
