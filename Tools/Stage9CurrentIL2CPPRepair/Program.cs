@@ -7,6 +7,8 @@ static class Program
     const string ExpectedInputSha = "59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33";
     const uint MouseToken = 0x060001DE;
     const uint DeviceToken = 0x0600017F;
+    const uint ZombieMouseToken = 0x060001E0;
+    const uint EnemySelecterToken = 0x060001B2;
 
     static IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots)
     {
@@ -17,15 +19,6 @@ static class Program
     static FieldDefinition F(ModuleDefinition m, uint tok) => All(m.Types).SelectMany(t=>t.Fields).Single(x=>x.MetadataToken.ToUInt32()==tok);
     static MethodReference MR(ModuleDefinition m, uint tok) => m.GetMemberReferences().OfType<MethodReference>().Single(x=>x.MetadataToken.ToUInt32()==tok);
     static FieldReference FR(ModuleDefinition m, uint tok) => m.GetMemberReferences().OfType<FieldReference>().Single(x=>x.MetadataToken.ToUInt32()==tok);
-
-    static MethodReference FindMR(ModuleDefinition m, string declContains, string name) =>
-        m.GetMemberReferences().OfType<MethodReference>().First(x => x.DeclaringType.FullName.Contains(declContains, StringComparison.Ordinal) && x.Name == name);
-
-    static FieldDefinition FindF(ModuleDefinition m, string typeName, string fieldName) =>
-        All(m.Types).First(t => t.Name == typeName).Fields.First(f => f.Name == fieldName);
-
-    static MethodDefinition FindM(ModuleDefinition m, string typeName, string methodName) =>
-        All(m.Types).First(t => t.Name == typeName).Methods.First(me => me.Name == methodName);
 
     static TypeReference GenericArg0(TypeReference t)
     {
@@ -155,23 +148,27 @@ static class Program
 
     static void RepairZombieMouse(ModuleDefinition m)
     {
-        var md = FindM(m, "MouseManager", "GetZombieUnderMouse");
-        var board = FindF(m, "MouseManager", "board");
-        var mousePos = FindF(m, "MouseManager", "mouseWorldPosition");
-        var zombieManager = FindF(m, "Board", "zombieManager");
-        var zombieList = FindF(m, "ZombieManager", "zombieList");
+        var md = M(m, ZombieMouseToken);
+        if (md.FullName != "Zombie MouseManager::GetZombieUnderMouse(System.Int32)")
+            throw new Exception("zombie mouse identity mismatch: " + md.FullName);
 
-        var fX = FindF(m, "Zombie", "fX");
-        var fY = FindF(m, "Zombie", "fY");
-        var fW = FindF(m, "Zombie", "fW");
-        var fD = FindF(m, "Zombie", "fD");
-        var fH = FindF(m, "Zombie", "fH");
+        var board = F(m, 0x04000230);
+        var mousePos = F(m, 0x0400023A);
+        var zombieManager = F(m, 0x0400035F);
+        var zombieList = F(m, 0x04000362);
 
-        var canAttacked = FindM(m, "Zombie", "CanAttacked");
+        var fX = F(m, 0x040005AD);
+        var fY = F(m, 0x040005AE);
+        var fW = F(m, 0x040005B1);
+        var fD = F(m, 0x040005B2);
+        var fH = F(m, 0x040005B3);
+
+        var canAttacked = M(m, 0x06000431);
         var objNe = MR(m, 0x0A000006);
-        var getEnum = FindMR(m, "List`1<Zombie>", "GetEnumerator");
-        var getCurrent = FindMR(m, "Enumerator<Zombie>", "get_Current");
-        var dispose = FindMR(m, "Enumerator<Zombie>", "Dispose");
+        var getEnum = MR(m, 0x0A0000D6); // List<Zombie>::GetEnumerator() in 59bb
+        var getCurrent = MR(m, 0x0A0000D7); // Enumerator<Zombie>::get_Current() in 59bb
+        var moveNext = MR(m, 0x0A0000D9); // Enumerator<Zombie>::MoveNext() in 59bb
+        var dispose = MR(m, 0x0A000157); // Enumerator<Zombie>::Dispose() in 59bb
 
         var zombieType = md.ReturnType;
         var listElement = GenericArg0(zombieList.FieldType);
@@ -179,7 +176,6 @@ static class Program
             throw new Exception("zombie list element mismatch: " + listElement.FullName + " != " + zombieType.FullName);
 
         var enumType = ClosedEnumerator(getEnum, zombieType);
-        var moveNext = MoveNext(m, enumType);
         var vectorX = new FieldReference("x", m.TypeSystem.Single, mousePos.FieldType);
         var vectorY = new FieldReference("y", m.TypeSystem.Single, mousePos.FieldType);
 
@@ -322,41 +318,42 @@ static class Program
 
     static void RepairEnemySelecter(ModuleDefinition m)
     {
-        var md = FindM(m, "EnemyManager", "CreateEnemySelecter");
-        var board = FindF(m, "EnemyManager", "board");
-        var sBoard = FindF(m, "EnemySelecter", "board");
-        var sEnemyManager = FindF(m, "EnemySelecter", "enemyManager");
-        var zombieSelects = FindF(m, "EnemySelecter", "zombieSelects");
+        var md = M(m, EnemySelecterToken);
+        if (md.FullName != "EnemySelecter EnemyManager::CreateEnemySelecter()")
+            throw new Exception("enemy selecter identity mismatch: " + md.FullName);
 
-        var ctorSelecter = FindM(m, "EnemySelecter", ".ctor");
-        var loadAllInfo = FindM(m, "ResourceManager", "Load_zombieInfo_all");
-        var ctorZombieSelect = FindM(m, "ZombieSelect", ".ctor");
+        var board = F(m, 0x0400021E);
+        var sBoard = F(m, 0x04000209);
+        var sEnemyManager = F(m, 0x0400020A);
+        var zombieSelects = F(m, 0x04000207);
 
-        var addZombieSelect = FindMR(m, "List`1<ZombieSelect>", "Add");
-        var getEnumInfo = FindMR(m, "List`1<ZombieInfo>", "GetEnumerator");
-        var getCurrentInfo = FindMR(m, "Enumerator<ZombieInfo>", "get_Current");
-        var moveNextInfo = FindMR(m, "Enumerator<ZombieInfo>", "MoveNext");
-        var disposeInfo = FindMR(m, "Enumerator<ZombieInfo>", "Dispose");
+        var ctorSelecter = M(m, 0x060001AE);
+        var loadAllInfo = M(m, 0x06000231);
+        var ctorZombieSelect = M(m, 0x060001A5);
+
+        var addZombieSelect = MR(m, 0x0A000138); // List<ZombieSelect>::Add(!0) in 59bb
+        var getItemInfo = MR(m, 0x0A00005D); // List<ZombieInfo>::get_Item(int) in 59bb
 
         var selecterType = md.ReturnType;
         var infoListType = loadAllInfo.ReturnType;
         var infoType = GenericArg0(infoListType);
-        var infoEnumType = ClosedEnumerator(getEnumInfo, infoType);
+
+        var getCountInfo = new MethodReference("get_Count", m.TypeSystem.Int32, infoListType) { HasThis = true };
 
         var body = new MethodBody(md) { InitLocals = true, MaxStackSize = 8 };
         md.Body = body;
 
         var selecter = new VariableDefinition(selecterType);
         var infoList = new VariableDefinition(infoListType);
-        var en = new VariableDefinition(infoEnumType);
         var info = new VariableDefinition(infoType);
         var zs = new VariableDefinition(ctorZombieSelect.DeclaringType);
+        var idx = new VariableDefinition(m.TypeSystem.Int32);
 
         body.Variables.Add(selecter);
         body.Variables.Add(infoList);
-        body.Variables.Add(en);
         body.Variables.Add(info);
         body.Variables.Add(zs);
+        body.Variables.Add(idx);
 
         var il = body.GetILProcessor();
 
@@ -368,20 +365,19 @@ static class Program
         Emit(il, OpCodes.Call, loadAllInfo);
         Emit(il, OpCodes.Stloc, infoList);
 
-        // en = infoList.GetEnumerator();
-        Emit(il, OpCodes.Ldloc, infoList);
-        Emit(il, OpCodes.Callvirt, getEnumInfo);
-        Emit(il, OpCodes.Stloc, en);
+        // idx = 0;
+        Emit(il, OpCodes.Ldc_I4_0);
+        Emit(il, OpCodes.Stloc, idx);
 
-        var bodyStart = Instruction.Create(OpCodes.Ldloca, en);
-        var test = Instruction.Create(OpCodes.Ldloca, en);
-        var finallyStart = Instruction.Create(OpCodes.Ldloca, en);
-        var afterFinally = Instruction.Create(OpCodes.Ldloc, selecter);
-        var tryStart = Instruction.Create(OpCodes.Br, test);
-        il.Append(tryStart);
+        var loopTest = Instruction.Create(OpCodes.Ldloc, idx);
+        var loopStart = Instruction.Create(OpCodes.Ldloc, infoList);
+        var afterLoop = Instruction.Create(OpCodes.Ldarg_0);
 
-        il.Append(bodyStart);
-        Emit(il, OpCodes.Call, getCurrentInfo);
+        Emit(il, OpCodes.Br, loopTest);
+
+        il.Append(loopStart);
+        Emit(il, OpCodes.Ldloc, idx);
+        Emit(il, OpCodes.Callvirt, getItemInfo);
         Emit(il, OpCodes.Stloc, info);
 
         // zs = new ZombieSelect(info);
@@ -395,23 +391,21 @@ static class Program
         Emit(il, OpCodes.Ldloc, zs);
         Emit(il, OpCodes.Callvirt, addZombieSelect);
 
-        il.Append(test);
-        Emit(il, OpCodes.Call, moveNextInfo);
-        Emit(il, OpCodes.Brtrue, bodyStart);
-        Emit(il, OpCodes.Leave, afterFinally);
+        // idx++;
+        Emit(il, OpCodes.Ldloc, idx);
+        Emit(il, OpCodes.Ldc_I4_1);
+        Emit(il, OpCodes.Add);
+        Emit(il, OpCodes.Stloc, idx);
 
-        il.Append(finallyStart);
-        Emit(il, OpCodes.Call, disposeInfo);
-        Emit(il, OpCodes.Endfinally);
+        il.Append(loopTest);
+        Emit(il, OpCodes.Ldloc, infoList);
+        Emit(il, OpCodes.Callvirt, getCountInfo);
+        Emit(il, OpCodes.Blt, loopStart);
 
-        il.Append(afterFinally);
-
-        // selecter.board = this.board;
-        Emit(il, OpCodes.Ldarg_0);
+        il.Append(afterLoop);
         Emit(il, OpCodes.Ldfld, board);
         Emit(il, OpCodes.Stfld, sBoard);
 
-        // selecter.enemyManager = this;
         Emit(il, OpCodes.Ldloc, selecter);
         Emit(il, OpCodes.Ldarg_0);
         Emit(il, OpCodes.Stfld, sEnemyManager);
@@ -419,15 +413,7 @@ static class Program
         Emit(il, OpCodes.Ldloc, selecter);
         Emit(il, OpCodes.Ret);
 
-        body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally)
-        {
-            TryStart = tryStart,
-            TryEnd = finallyStart,
-            HandlerStart = finallyStart,
-            HandlerEnd = afterFinally
-        });
-
-        Console.WriteLine("REPAIRED token=0x060001B2 native=0x180316AB0 enum=" + infoEnumType.FullName);
+        Console.WriteLine("REPAIRED token=0x060001B2 native=0x180316AB0 clean_for_loop(ZombieInfo)");
     }
 
     public static int Main(string[] args)
@@ -437,15 +423,8 @@ static class Program
         var sha = Sha(input); Console.WriteLine("INPUT sha256=" + sha);
         if (sha != ExpectedInputSha) { Console.Error.WriteLine("INPUT_HASH_MISMATCH"); return 3; }
 
-        
         using (var asm = AssemblyDefinition.ReadAssembly(input, new ReaderParameters { InMemory = true, ReadSymbols = false }))
         {
-            foreach(var mr in asm.MainModule.GetMemberReferences().OfType<MethodReference>())
-            {
-                if(mr.FullName.Contains("Zombie", StringComparison.Ordinal) || mr.FullName.Contains("Enemy", StringComparison.Ordinal))
-                    Console.WriteLine($"DIAG_MR token=0x{mr.MetadataToken.ToUInt32():X8} {mr.FullName}");
-            }
-
             if (asm.MainModule.Kind != ModuleKind.Dll) throw new Exception("ModuleKind must remain Dll");
             if (All(asm.MainModule.Types).Sum(t => t.Methods.Count) != 2317) throw new Exception("MethodDef invariant");
 
@@ -462,12 +441,12 @@ static class Program
         {
             if (check.MainModule.Kind != ModuleKind.Dll) throw new Exception("output ModuleKind");
             if (All(check.MainModule.Types).Sum(t => t.Methods.Count) != 2317) throw new Exception("output MethodDef invariant");
-            if (!M(check.MainModule, MouseToken).HasBody || !M(check.MainModule, DeviceToken).HasBody)
+            if (!M(check.MainModule, MouseToken).HasBody || !M(check.MainModule, DeviceToken).HasBody || !M(check.MainModule, ZombieMouseToken).HasBody || !M(check.MainModule, EnemySelecterToken).HasBody)
                 throw new Exception("target body missing");
             var mouse = M(check.MainModule, MouseToken);
             var device = M(check.MainModule, DeviceToken);
-            var zmouse = FindM(check.MainModule, "MouseManager", "GetZombieUnderMouse");
-            var es = FindM(check.MainModule, "EnemyManager", "CreateEnemySelecter");
+            var zmouse = M(check.MainModule, ZombieMouseToken);
+            var es = M(check.MainModule, EnemySelecterToken);
 
             if (mouse.Body.Variables.Any(v => v.VariableType.FullName.Contains("<!0>", StringComparison.Ordinal) || v.VariableType.FullName == "!0"))
                 throw new Exception("mouse ownerless generic local remains");
@@ -482,7 +461,7 @@ static class Program
         Console.WriteLine("OUTPUT sha256=" + Sha(output));
         Console.WriteLine("METHODDEF_INVARIANT=2317");
         Console.WriteLine("WRITE_SCOPE=ONLY_0x060001DE_0x0600017F_0x060001E0_0x060001B2");
-        Console.WriteLine("CLOSED_FOREACH_ENUMERATORS=Plant,BoardEntry,Zombie,ZombieInfo");
+        Console.WriteLine("CLOSED_FOREACH_ENUMERATORS=Plant,BoardEntry,Zombie");
         Console.WriteLine("STAGE9_CURRENT_IL2CPP_REPAIR_OK");
         return 0;
     }
