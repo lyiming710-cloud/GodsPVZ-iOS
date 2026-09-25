@@ -1,0 +1,72 @@
+name: Stage9.1 current IL2CPP native-backed repair candidate
+on:
+  push:
+    branches: [stage9-local-audit-tools]
+    paths:
+      - '.github/workflows/stage9-current-il2cpp-repair-candidate.yml'
+      - 'Tools/Stage9CurrentIL2CPPRepair/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  build-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      INPUT_RUN_ID: '36111677154'
+      INPUT_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
+      INPUT_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.INPUT_RUN_ID }}
+          name: ${{ env.INPUT_ARTIFACT }}
+          path: ${{ runner.temp }}/in
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build patcher and candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK="$(dotnet --list-sdks | awk '/^8\./{v=$1} END{print v}')"
+          printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK" > global.json
+          IN="$RUNNER_TEMP/in/Assembly-CSharp-all24-orphan-clean.dll"
+          OUT="$RUNNER_TEMP/out"
+          mkdir -p "$OUT"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = "$INPUT_SHA256" ]
+          dotnet restore Tools/Stage9CurrentIL2CPPRepair/Stage9CurrentIL2CPPRepair.csproj
+          dotnet run -c Release --no-restore --project Tools/Stage9CurrentIL2CPPRepair/Stage9CurrentIL2CPPRepair.csproj -- "$IN" "$OUT/Assembly-CSharp-59bb-native2.dll" | tee "$OUT/repair.log"
+          grep -q '^STAGE9_CURRENT_IL2CPP_REPAIR_OK$' "$OUT/repair.log"
+          sha256sum "$OUT/Assembly-CSharp-59bb-native2.dll" | tee "$OUT/SHA256SUMS.txt"
+          cat > "$OUT/provenance.txt" <<EOF
+          base_run=$INPUT_RUN_ID
+          base_sha256=$INPUT_SHA256
+          mouse_methoddef=0x060001DE
+          mouse_pc_va=0x18031EA60
+          device_methoddef=0x0600017F
+          device_pc_va=0x180313B90
+          original_pc_gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
+          production_modified=false
+          EOF
+      - name: Audit repaired methods with Cecil dumper
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/out"
+          dotnet restore Tools/Stage9MethodILDump/Stage9MethodILDump.csproj
+          dotnet run -c Release --no-restore --project Tools/Stage9MethodILDump/Stage9MethodILDump.csproj -- "$OUT/Assembly-CSharp-59bb-native2.dll" | tee "$OUT/method-audit.txt"
+          grep -q '^STAGE9_METHOD_IL_DUMP_OK$' "$OUT/method-audit.txt"
+          ! grep -q 'Warning: Method ends with non empty stack' "$OUT/method-audit.txt"
+          grep -q 'METHOD token=0x060001DE' "$OUT/method-audit.txt"
+          grep -q 'METHOD token=0x0600017F' "$OUT/method-audit.txt"
+      - name: Upload isolated repair candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-59bb-native2-candidate
+          path: ${{ runner.temp }}/out/
+          retention-days: 30
