@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - stage9-local-audit-tools
+      - native3-blocker-repair
     paths:
       - '.github/workflows/stage9-native2-semantic-memberref-gate.yml'
   workflow_dispatch:
@@ -18,12 +19,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      BASE_RUN_ID: '36111677154'
-      BASE_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
-      BASE_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
-      CANDIDATE_RUN_ID: '36124380136'
-      CANDIDATE_ARTIFACT: 'Stage9.1-59bb-native2-candidate'
-      CANDIDATE_SHA256: '18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd'
+      BASE_RUN_ID: '36124380136'
+      BASE_ARTIFACT: 'Stage9.1-59bb-native2-candidate'
+      BASE_SHA256: '18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd'
+      CANDIDATE_RUN_ID: '36154127556'
+      CANDIDATE_ARTIFACT: 'Stage9.1-native3-candidate'
+      CANDIDATE_SHA256: '6d93e869dc95c5bf6621f8f62f9e2812134b81525abe60161f483a53064927b9'
       RESOLVER_EVIDENCE_ARTIFACT_ID: '10853191869'
       RESOLVER_EVIDENCE_SHA256: 'efb8ef74f996f2faac0e72d7cf4530dcd98783b1ac16c74cfeb3459b11184271'
       EXPECTED_MSCORLIB_SHA256: '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
@@ -151,7 +152,30 @@ jobs:
 
           test "$rc" -eq 0
           grep -q '^BASELINE_TARGET_TOKEN_CHECK=24/24$' _semantic/out/semantic-memberref-audit.log
-          grep -q '^EXPECTED_NATIVE2_USE_DELTAS=4/4$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=2/2
+          grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^SEMANTIC_TARGET_KEYS=23$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^METHOD_IDENTITY_DRIFT=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^FIELD_IDENTITY_DRIFT=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^NON_TARGET_METHOD_SEMANTIC_DIFFS=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^TRANSFORM_REPAIR_SITES=3/3$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^ORPHAN_GENERIC_HITS=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^STAGE9_SEMANTIC_MEMBERREF_AUDIT_OK$' _semantic/out/semantic-memberref-audit.log
+          echo 'audit_status=PASS' >> _semantic/out/GATE-SUMMARY.txt
+          echo 'next_gate=REAL_UNITY_IOS_IL2CPP' >> _semantic/out/GATE-SUMMARY.txt
+          echo 'production_modified=false' >> _semantic/out/GATE-SUMMARY.txt
+          echo 'STAGE9_NATIVE3_SEMANTIC_MEMBERREF_GATE_PASS'
+
+      - name: Upload semantic gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-native2-semantic-memberref-gate
+          path: _semantic/out
+          if-no-files-found: warn
+          retention-days: 30
+ _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_TARGET_KEYS=23$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' _semantic/out/semantic-memberref-audit.log
