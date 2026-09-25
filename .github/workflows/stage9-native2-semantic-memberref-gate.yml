@@ -1,6 +1,11 @@
 name: Stage9.1 native2 semantic MemberRef gate
 
 on:
+  push:
+    branches:
+      - stage9-local-audit-tools
+    paths:
+      - '.github/workflows/stage9-native2-semantic-memberref-gate.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,9 +20,9 @@ jobs:
       BASE_RUN_ID: '36111677154'
       BASE_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
       BASE_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
-      CANDIDATE_RUN_ID: '36122456943'
+      CANDIDATE_RUN_ID: '36124380136'
       CANDIDATE_ARTIFACT: 'Stage9.1-59bb-native2-candidate'
-      CANDIDATE_SHA256: 'b7d2b4e324cf18e278bfbd487da8ae4997c3cacffe59d9adfd991dabd8db9630'
+      CANDIDATE_SHA256: '18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd'
       RESOLVER_EVIDENCE_ARTIFACT_ID: '10853191869'
       RESOLVER_EVIDENCE_SHA256: 'efb8ef74f996f2faac0e72d7cf4530dcd98783b1ac16c74cfeb3459b11184271'
       EXPECTED_MSCORLIB_SHA256: '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
@@ -145,13 +150,14 @@ jobs:
 
           test "$rc" -eq 0
           grep -q '^BASELINE_TARGET_TOKEN_CHECK=24/24$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^EXPECTED_NATIVE2_USE_DELTAS=4/4$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_TARGET_KEYS=23$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' _semantic/out/semantic-memberref-audit.log
           grep -q '^METHOD_IDENTITY_DRIFT=0$' _semantic/out/semantic-memberref-audit.log
           grep -q '^FIELD_IDENTITY_DRIFT=0$' _semantic/out/semantic-memberref-audit.log
           grep -q '^NON_TARGET_METHOD_SEMANTIC_DIFFS=0$' _semantic/out/semantic-memberref-audit.log
-          grep -q '^TRANSFORM_BAD_USES=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^TRANSFORM_REPAIR_SITES=3/3$' _semantic/out/semantic-memberref-audit.log
           grep -q '^ORPHAN_GENERIC_HITS=0$' _semantic/out/semantic-memberref-audit.log
           grep -q '^STAGE9_SEMANTIC_MEMBERREF_AUDIT_OK$' _semantic/out/semantic-memberref-audit.log
           echo 'audit_status=PASS' >> _semantic/out/GATE-SUMMARY.txt
