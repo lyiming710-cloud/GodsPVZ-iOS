@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      BASE_RUN_ID: '36124380136'
-      BASE_ARTIFACT: 'Stage9.1-59bb-native2-candidate'
-      BASE_SHA256: '18e44a5a50f1da09cf2f1fc0aace0c18d5cf981606bedaacc879b96e8d2f18bd'
-      CANDIDATE_RUN_ID: '36154127556'
+      BASE_RUN_ID: '36111677154'
+      BASE_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
+      BASE_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
+      CANDIDATE_RUN_ID: '36155470169'
       CANDIDATE_ARTIFACT: 'Stage9.1-native3-candidate'
-      CANDIDATE_SHA256: '6d93e869dc95c5bf6621f8f62f9e2812134b81525abe60161f483a53064927b9'
+      CANDIDATE_SHA256: 'ff0e46f11d7cd7038fd8d366765d23ac46e9176f1251f284ac18543cd378fda7'
       RESOLVER_EVIDENCE_ARTIFACT_ID: '10853191869'
       RESOLVER_EVIDENCE_SHA256: 'efb8ef74f996f2faac0e72d7cf4530dcd98783b1ac16c74cfeb3459b11184271'
       EXPECTED_MSCORLIB_SHA256: '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
@@ -152,7 +152,7 @@ jobs:
 
           test "$rc" -eq 0
           grep -q '^BASELINE_TARGET_TOKEN_CHECK=24/24$' _semantic/out/semantic-memberref-audit.log
-          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=2/2$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=6/6$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_TARGET_KEYS=23$' _semantic/out/semantic-memberref-audit.log
           grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' _semantic/out/semantic-memberref-audit.log
