@@ -53,7 +53,7 @@ jobs:
           original_pc_gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
           production_modified=false
           EOF
-      - name: Audit repaired methods with Cecil dumper
+      - name: Audit repaired and current blocker methods with Cecil dumper
         shell: bash
         run: |
           set -euo pipefail
@@ -64,6 +64,8 @@ jobs:
           ! grep -q 'Warning: Method ends with non empty stack' "$OUT/method-audit.txt"
           grep -q 'METHOD token=0x060001DE' "$OUT/method-audit.txt"
           grep -q 'METHOD token=0x0600017F' "$OUT/method-audit.txt"
+          grep -q 'full=Zombie MouseManager::GetZombieUnderMouse(System.Int32)' "$OUT/method-audit.txt"
+          grep -q 'full=System.Void EnemyManager::CreateEnemySelecter()' "$OUT/method-audit.txt"
       - name: Upload isolated repair candidate
         uses: actions/upload-artifact@v4
         with:
