@@ -1,7 +1,7 @@
 name: Stage9.1 current IL2CPP native-backed repair candidate
 on:
   push:
-    branches: [stage9-local-audit-tools]
+    branches: [stage9-local-audit-tools, native3-blocker-repair]
     paths:
       - '.github/workflows/stage9-current-il2cpp-repair-candidate.yml'
       - 'Tools/Stage9CurrentIL2CPPRepair/**'
@@ -65,7 +65,7 @@ jobs:
           grep -q 'METHOD token=0x060001DE' "$OUT/method-audit.txt"
           grep -q 'METHOD token=0x0600017F' "$OUT/method-audit.txt"
           grep -q 'full=Zombie MouseManager::GetZombieUnderMouse(System.Int32)' "$OUT/method-audit.txt"
-          grep -q 'full=System.Void EnemyManager::CreateEnemySelecter()' "$OUT/method-audit.txt"
+          grep -q 'full=EnemySelecter EnemyManager::CreateEnemySelecter()' "$OUT/method-audit.txt"
       - name: Upload isolated repair candidate
         uses: actions/upload-artifact@v4
         with:
