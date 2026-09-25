@@ -24,23 +24,21 @@ static class Stage9SemanticMemberRefAudit
         new(0x0A00022B, "Insert", 1),        new(0x0A000284, "get_transform", 1),
     };
 
-    private const uint DeviceStartBoardEntry = 0x0600017F;
-    private const uint MouseGetPlantUnderMouse = 0x060001DE;
+    private const uint MouseGetZombieUnderMouse = 0x060001E0;
+    private const uint EnemyCreateEnemySelecter = 0x060001B2;
 
     private static readonly HashSet<uint> AllowedChangedMethods = new()
     {
-        DeviceStartBoardEntry,
-        MouseGetPlantUnderMouse,
+        MouseGetZombieUnderMouse,
+        EnemyCreateEnemySelecter,
     };
 
-    // These four +1 deltas are the exact native-backed foreach uses introduced when
-    // replacing the two malformed recovered bodies. No other all24 semantic use may drift.
+    // These deltas are the exact native-backed foreach uses introduced when
+    // repairing MouseManager.GetZombieUnderMouse and EnemyManager.CreateEnemySelecter relative to 18e44.
     private static readonly Dictionary<(string Key, uint Method), int> AllowedUseDeltas = new()
     {
-        [("GetEnumerator|BoardEntry", DeviceStartBoardEntry)] = 1,
-        [("get_Current|BoardEntry", DeviceStartBoardEntry)] = 1,
-        [("GetEnumerator|Plant", MouseGetPlantUnderMouse)] = 1,
-        [("get_Current|Plant", MouseGetPlantUnderMouse)] = 1,
+        [("GetEnumerator|ZombieInfo", EnemyCreateEnemySelecter)] = 1,
+        [("get_Current|ZombieInfo", EnemyCreateEnemySelecter)] = 1,
     };
 
     private static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> roots)
@@ -389,9 +387,9 @@ static class Stage9SemanticMemberRefAudit
                 }
             }
         }
-        Console.WriteLine($"EXPECTED_NATIVE2_USE_DELTAS={exactUseDeltaPasses}/{AllowedUseDeltas.Count}");
+        Console.WriteLine($"EXPECTED_NATIVE3_USE_DELTAS={exactUseDeltaPasses}/{AllowedUseDeltas.Count}");
         if (exactUseDeltaPasses != AllowedUseDeltas.Count)
-            failures.Add($"expected native2 use deltas {exactUseDeltaPasses}/{AllowedUseDeltas.Count}");
+            failures.Add($"expected native3 use deltas {exactUseDeltaPasses}/{AllowedUseDeltas.Count}");
 
         var candidateResolvedKeys = new HashSet<string>(StringComparer.Ordinal);
         var resolveRowsOk = 0;
