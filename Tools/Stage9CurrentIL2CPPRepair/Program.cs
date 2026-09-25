@@ -18,7 +18,24 @@ static class Program
     static MethodReference MR(ModuleDefinition m, uint tok) => m.GetMemberReferences().OfType<MethodReference>().Single(x=>x.MetadataToken.ToUInt32()==tok);
     static FieldReference FR(ModuleDefinition m, uint tok) => m.GetMemberReferences().OfType<FieldReference>().Single(x=>x.MetadataToken.ToUInt32()==tok);
 
-    static MethodReference MoveNext(ModuleDefinition m, TypeReference enumType) => new("MoveNext", m.TypeSystem.Boolean, enumType) { HasThis=true };
+    static TypeReference GenericArg0(TypeReference t)
+    {
+        if (t is not GenericInstanceType gi || gi.GenericArguments.Count < 1)
+            throw new Exception("expected closed generic type: " + t.FullName);
+        return gi.GenericArguments[0];
+    }
+
+    static TypeReference ClosedEnumerator(MethodReference getEnumerator, TypeReference concreteElement)
+    {
+        if (getEnumerator.ReturnType is not GenericInstanceType gi)
+            throw new Exception("GetEnumerator return is not GenericInstanceType: " + getEnumerator.ReturnType.FullName);
+        var closed = new GenericInstanceType(gi.ElementType);
+        closed.GenericArguments.Add(concreteElement);
+        return closed;
+    }
+
+    static MethodReference MoveNext(ModuleDefinition m, TypeReference closedEnumType) =>
+        new("MoveNext", m.TypeSystem.Boolean, closedEnumType) { HasThis=true };
 
     static void Emit(ILProcessor il, OpCode op) => il.Append(Instruction.Create(op));
     static void Emit(ILProcessor il, OpCode op, Instruction x) => il.Append(Instruction.Create(op,x));
@@ -38,11 +55,13 @@ static class Program
         var pGridY=F(m,0x040004A1); var fX=F(m,0x040004A4); var fY=F(m,0x040004A5);
         var fW=F(m,0x040004A8); var fD=F(m,0x040004A9); var fH=F(m,0x040004AA);
         var objNe=MR(m,0x0A000006); var getEnum=MR(m,0x0A0000D0); var getCurrent=MR(m,0x0A0000D1); var dispose=MR(m,0x0A000156);
-        var enumType=getEnum.ReturnType;
+        var plantType=md.ReturnType;
+        var listElement=GenericArg0(plants.FieldType);
+        if (listElement.FullName != plantType.FullName) throw new Exception($"plant list element mismatch: {listElement.FullName} != {plantType.FullName}");
+        var enumType=ClosedEnumerator(getEnum, plantType);
         var moveNext=MoveNext(m,enumType);
         var vectorX=new FieldReference("x",m.TypeSystem.Single,mousePos.FieldType);
         var vectorY=new FieldReference("y",m.TypeSystem.Single,mousePos.FieldType);
-        var plantType=md.ReturnType;
 
         var body=new MethodBody(md){InitLocals=true,MaxStackSize=8}; md.Body=body;
         var result=new VariableDefinition(plantType); var en=new VariableDefinition(enumType); var plant=new VariableDefinition(plantType);
@@ -74,7 +93,7 @@ static class Program
         il.Append(finallyStart); Emit(il,OpCodes.Call,dispose); Emit(il,OpCodes.Endfinally);
         il.Append(afterFinally); Emit(il,OpCodes.Ret);
         body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally){TryStart=tryStart,TryEnd=finallyStart,HandlerStart=finallyStart,HandlerEnd=afterFinally});
-        Console.WriteLine("REPAIRED token=0x060001DE native=0x18031EA60 semantics=foreach(board.plantManager.plants), GridY, fX/fY/fW/fD/fH, mouseWorldPosition.x/y");
+        Console.WriteLine($"REPAIRED token=0x060001DE native=0x18031EA60 enum={enumType.FullName} semantics=foreach(board.plantManager.plants), GridY, fX/fY/fW/fD/fH, mouseWorldPosition.x/y");
     }
 
     static void RepairDevice(ModuleDefinition m)
@@ -87,8 +106,11 @@ static class Program
         var atk=F(m,0x040001DB); var hp=F(m,0x040001DC); var def=F(m,0x040001DD);
         var objNe=MR(m,0x0A000006); var strNe=MR(m,0x0A0000AD); var empty=FR(m,0x0A00000F);
         var getEnum=MR(m,0x0A0000E4); var getCurrent=MR(m,0x0A0000E5); var add=MR(m,0x0A0000A3); var dispose=MR(m,0x0A0000A4);
-        var getValue=M(m,0x06000607); var enumType=getEnum.ReturnType; var moveNext=MoveNext(m,enumType);
-        var entryType=getCurrent.ReturnType;
+        var getValue=M(m,0x06000607);
+        var entryType=GenericArg0(boardEntries.FieldType);
+        if (entryType.FullName != "BoardEntry") throw new Exception("boardEntries element mismatch: "+entryType.FullName);
+        var enumType=ClosedEnumerator(getEnum, entryType);
+        var moveNext=MoveNext(m,enumType);
 
         var body=new MethodBody(md){InitLocals=true,MaxStackSize=8}; md.Body=body;
         var en=new VariableDefinition(enumType); var entry=new VariableDefinition(entryType); body.Variables.Add(en); body.Variables.Add(entry);
@@ -119,7 +141,7 @@ static class Program
         il.Append(finallyStart); Emit(il,OpCodes.Call,dispose); Emit(il,OpCodes.Endfinally);
         il.Append(afterFinally); il.Append(ret);
         body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally){TryStart=tryStart,TryEnd=finallyStart,HandlerStart=finallyStart,HandlerEnd=afterFinally});
-        Console.WriteLine("REPAIRED token=0x0600017F native=0x180313B90 semantics=foreach(board.boardConfig.boardEntries), must/select, key, boardEntryType 33=Hp 34=Def 35=Atk");
+        Console.WriteLine($"REPAIRED token=0x0600017F native=0x180313B90 enum={enumType.FullName} entry={entryType.FullName} semantics=foreach(board.boardConfig.boardEntries), must/select, key, boardEntryType 33=Hp 34=Def 35=Atk");
     }
 
     public static int Main(string[] args)
@@ -139,7 +161,10 @@ static class Program
             if(check.MainModule.Kind!=ModuleKind.Dll) throw new Exception("output ModuleKind");
             if(All(check.MainModule.Types).Sum(t=>t.Methods.Count)!=2317) throw new Exception("output MethodDef invariant");
             if(!M(check.MainModule,MouseToken).HasBody || !M(check.MainModule,DeviceToken).HasBody) throw new Exception("target body missing");
+            var mouse=M(check.MainModule,MouseToken); var device=M(check.MainModule,DeviceToken);
+            if(mouse.Body.Variables.Any(v=>v.VariableType.FullName.Contains("<!0>",StringComparison.Ordinal) || v.VariableType.FullName=="!0")) throw new Exception("mouse ownerless generic local remains");
+            if(device.Body.Variables.Any(v=>v.VariableType.FullName.Contains("<!0>",StringComparison.Ordinal) || v.VariableType.FullName=="!0")) throw new Exception("device ownerless generic local remains");
         }
-        Console.WriteLine($"OUTPUT sha256={Sha(output)}"); Console.WriteLine("METHODDEF_INVARIANT=2317"); Console.WriteLine("WRITE_SCOPE=ONLY_0x060001DE_0x0600017F"); Console.WriteLine("STAGE9_CURRENT_IL2CPP_REPAIR_OK"); return 0;
+        Console.WriteLine($"OUTPUT sha256={Sha(output)}"); Console.WriteLine("METHODDEF_INVARIANT=2317"); Console.WriteLine("WRITE_SCOPE=ONLY_0x060001DE_0x0600017F"); Console.WriteLine("CLOSED_FOREACH_ENUMERATORS=Plant,BoardEntry"); Console.WriteLine("STAGE9_CURRENT_IL2CPP_REPAIR_OK"); return 0;
     }
 }
