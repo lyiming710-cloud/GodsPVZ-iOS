@@ -1,0 +1,113 @@
+name: Stage9.2 native6 candidate materialization gate
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native6-materialization-gate.yml'
+      - 'scripts/codespaces/materialize_native6.sh'
+      - 'scripts/codespaces/Patcher/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NATIVE4_SOURCE_RUN_ID: '36228526004'
+      NATIVE4_SOURCE_ARTIFACT_ID: '10902205446'
+      NATIVE4_SOURCE_ARTIFACT_NAME: 'Stage9.1-native4-six-method-qualified'
+      NATIVE4_SOURCE_ARTIFACT_DIGEST: 'sha256:2559b777fd8faa39ce63f990f544148869fc0bbd544420b5511eb75faa05ea37'
+      NATIVE4_SHA256: '11c1a9648ea67cb0ac66b84ddde50cb4ef46d24152f67515a99afb526a2d4b4e'
+      NATIVE6_SHA256: '70a45b9add1e402ba8aeea5c1bf315cf62a0c7d0f39481528c88b0cc4c0688ee'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Download exact formally-qualified native4 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE4_SOURCE_RUN_ID }}
+          name: ${{ env.NATIVE4_SOURCE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native4-qualified
+
+      - name: Recover exact native4 DLL from artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t HITS < <(find "$RUNNER_TEMP/native4-qualified" -type f -name 'Assembly-CSharp-native4-six-method.dll' | sort)
+          [ "${#HITS[@]}" = '1' ] || { echo "Expected exactly one native4 DLL, got ${#HITS[@]}" >&2; exit 1; }
+          ACTUAL="$(sha256sum "${HITS[0]}" | awk '{print $1}')"
+          [ "$ACTUAL" = "$NATIVE4_SHA256" ] || { echo "native4 SHA mismatch: $ACTUAL" >&2; exit 1; }
+          mkdir -p Tools/Stage9Native4Recovery/candidate
+          cp "${HITS[0]}" Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native4-six-method.dll
+          echo "NATIVE4_ARTIFACT_INPUT_PASS"
+
+      - name: Fetch pinned Cecil and locked recovery inputs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
+
+      - name: Materialize and verify native6 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/codespaces/materialize_native6.sh
+          scripts/codespaces/materialize_native6.sh \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native4-six-method.dll \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native6-ladder.dll \
+            | tee "$RUNNER_TEMP/native6-materialize.log"
+          [ "$(sha256sum Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native6-ladder.dll | awk '{print $1}')" = "$NATIVE6_SHA256" ]
+
+      - name: Record provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p Tools/Stage9Native4Recovery/evidence/native6-materialization
+          E=Tools/Stage9Native4Recovery/evidence/native6-materialization
+          cp "$RUNNER_TEMP/native6-materialize.log" "$E/materialize.log"
+          cat > "$E/PROVENANCE.txt" <<EOF
+          status=EXPERIMENTAL_MATERIALIZATION_ONLY
+          workflow_head=$GITHUB_SHA
+          source_native4_run=$NATIVE4_SOURCE_RUN_ID
+          source_native4_artifact_id=$NATIVE4_SOURCE_ARTIFACT_ID
+          source_native4_artifact_name=$NATIVE4_SOURCE_ARTIFACT_NAME
+          source_native4_artifact_digest=$NATIVE4_SOURCE_ARTIFACT_DIGEST
+          source_native4_dll_sha256=$NATIVE4_SHA256
+          native6_expected_sha256=$NATIVE6_SHA256
+          native6_actual_sha256=$(sha256sum Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native6-ladder.dll | awk '{print $1}')
+          patcher_program_sha256=$(sha256sum scripts/codespaces/Patcher/Program.cs | awk '{print $1}')
+          patcher_project_sha256=$(sha256sum scripts/codespaces/Patcher/Patcher.csproj | awk '{print $1}')
+          production_promotion=NO
+          semantic_formalization=NO
+          unity_export=NOT_RUN
+          EOF
+          cat "$E/PROVENANCE.txt"
+
+      - name: Upload materialized candidate and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.2-native6-materialized-experimental
+          path: |
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native6-ladder.dll
+            Tools/Stage9Native4Recovery/evidence/native6-materialization/
+          if-no-files-found: error
+          retention-days: 30
