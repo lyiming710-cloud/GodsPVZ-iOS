@@ -2,7 +2,9 @@ name: Stage9.2 native6 REAL Unity iOS Xcode Gate
 
 on:
   push:
-    branches: [stage9-native3-codex-recovery]
+    branches:
+      - stage9-native3-codex-recovery
+      - takeover/stage9-native6-repro-2026-09-27
     paths:
       - '.github/workflows/stage9-native6-real-ios-xcode-gate.yml'
       - 'Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native6-ladder.dll'
@@ -27,9 +29,12 @@ jobs:
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
       TEST_DLL_SHA256: '70a45b9add1e402ba8aeea5c1bf315cf62a0c7d0f39481528c88b0cc4c0688ee'
-      TEST_CANDIDATE_RUN_ID: 'repo-native6'
-      TEST_CANDIDATE_ARTIFACT_ID: 'repo-native6'
-      TEST_CANDIDATE_ARTIFACT_SHA256: '70a45b9add1e402ba8aeea5c1bf315cf62a0c7d0f39481528c88b0cc4c0688ee'
+      TEST_CANDIDATE_RUN_ID: '36263525365'
+      TEST_CANDIDATE_ARTIFACT_ID: '10913271279'
+      TEST_CANDIDATE_ARTIFACT_NAME: 'Stage9.2-native6-materialized-experimental'
+      TEST_CANDIDATE_ARTIFACT_SHA256: 'c95eb6a12d67d605f620cdc904661d54fcc8e848981f19a719c2079f0bcf594b'
+      TEST_CANDIDATE_SOURCE_NATIVE4_SHA256: '11c1a9648ea67cb0ac66b84ddde50cb4ef46d24152f67515a99afb526a2d4b4e'
+      TEST_CANDIDATE_PATCHER_SHA256: 'f5101317bd3b6609ae7cd0b6f0f4dc2496cc77a1d09adbafd1ccfc630bb35329'
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -77,7 +82,11 @@ jobs:
           test_dll_sha256=$TEST_DLL_SHA256
           test_candidate_run=$TEST_CANDIDATE_RUN_ID
           test_candidate_artifact_id=$TEST_CANDIDATE_ARTIFACT_ID
-          test_candidate_artifact_sha256=$TEST_CANDIDATE_ARTIFACT_SHA256
+          test_candidate_artifact_name=$TEST_CANDIDATE_ARTIFACT_NAME
+          test_candidate_artifact_zip_sha256=$TEST_CANDIDATE_ARTIFACT_SHA256
+          test_candidate_source_native4_sha256=$TEST_CANDIDATE_SOURCE_NATIVE4_SHA256
+          test_candidate_patcher_sha256=$TEST_CANDIDATE_PATCHER_SHA256
+          native6_semantic_formalization=NO
           editor_run=$EDITOR_RUN_ID
           editor_sha256=$EDITOR_SHA256
           ios_module_run=$IOS_MODULE_RUN_ID
@@ -87,20 +96,42 @@ jobs:
           production_promotion=NO_ISOLATED_GATE_ONLY
           EOF
 
-      - name: Verify exact native6 candidate DLL
+      - name: Download materialized experimental native6 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.TEST_CANDIDATE_RUN_ID }}
+          name: ${{ env.TEST_CANDIDATE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/stage9-native4-ios/native6-qualified
+
+      - name: Verify exact native6 candidate and provenance
         shell: bash
         run: |
           set -euo pipefail
-          CAND="Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native6-ladder.dll"
-          [ -f "$CAND" ] || { echo "Candidate missing: $CAND"; exit 1; }
-          ACTUAL=$(sha256sum "$CAND" | awk '{print $1}')
+          OUT="$RUNNER_TEMP/stage9-native4-ios"
+          SRC="$OUT/native6-qualified"
+          mapfile -t CANDS < <(find "$SRC" -type f -name 'Assembly-CSharp-native6-ladder.dll' | sort)
+          [ "${#CANDS[@]}" = '1' ] || { echo "Expected one native6 DLL, got ${#CANDS[@]}" >&2; exit 42; }
+          CAND="${CANDS[0]}"
+          ACTUAL="$(sha256sum "$CAND" | awk '{print $1}')"
           echo "Expected: $TEST_DLL_SHA256"
           echo "Actual:   $ACTUAL"
-          [ "$ACTUAL" = "$TEST_DLL_SHA256" ] || { echo "SHA256 mismatch!"; exit 1; }
-          OUT="$RUNNER_TEMP/stage9-native4-ios"
-          mkdir -p "$OUT/candidate" "$OUT/evidence"
+          [ "$ACTUAL" = "$TEST_DLL_SHA256" ] || { echo "SHA256 mismatch" >&2; exit 43; }
+          mapfile -t PROOFS < <(find "$SRC" -type f -name 'PROVENANCE.txt' | sort)
+          [ "${#PROOFS[@]}" = '1' ] || { echo "Expected one provenance file, got ${#PROOFS[@]}" >&2; exit 44; }
+          PROOF="${PROOFS[0]}"
+          grep -qx 'status=EXPERIMENTAL_MATERIALIZATION_ONLY' "$PROOF"
+          grep -qx "source_native4_dll_sha256=$TEST_CANDIDATE_SOURCE_NATIVE4_SHA256" "$PROOF"
+          grep -qx "native6_actual_sha256=$TEST_DLL_SHA256" "$PROOF"
+          grep -qx "patcher_program_sha256=$TEST_CANDIDATE_PATCHER_SHA256" "$PROOF"
+          grep -qx 'semantic_formalization=NO' "$PROOF"
+          grep -qx 'production_promotion=NO' "$PROOF"
           cp "$CAND" "$OUT/candidate/Assembly-CSharp-native6-ladder.dll"
-          echo "NATIVE6_QUALIFIED_INPUT_PREFLIGHT_PASS"
+          cp "$PROOF" "$OUT/evidence/native6-materialization-provenance.txt"
+          rm -rf "$SRC"
+          echo "NATIVE6_MATERIALIZED_INPUT_PREFLIGHT_PASS"
+
       - name: Download exact cached R3 archive
         uses: actions/download-artifact@v4
         with:
@@ -365,7 +396,7 @@ jobs:
           echo "b001_workcopy_sha256=$GOT" | tee "$E/b001-workcopy.txt"
           [ "$GOT" = "$B001_SHA256" ] || exit 59
 
-      - name: Inject static-qualified native6 test DLL after migration
+      - name: Inject materialized experimental native6 DLL after migration
         shell: bash
         run: |
           set -euo pipefail
@@ -384,11 +415,13 @@ jobs:
             echo "before=$B001_SHA256"
             echo "after=$GOT"
             echo 'migrator_project_copy_removed_after_67_of_67=true'
-            echo 'semantic_gate=PASS'
+            echo 'formal_native4_semantic_gate=PASS'
+            echo 'native6_semantic_formalization=NO'
             echo 'production_source_modified=false'
           } > "$E/test-dll-injection.txt"
           echo "NATIVE6_CANDIDATE_INJECTED_PASS"
-      - name: Reimport exact native4 work copy without migrator
+
+      - name: Reimport exact native6 work copy without migrator
         shell: bash
         run: |
           set -euo pipefail
@@ -398,12 +431,12 @@ jobs:
           PROJECT="$(cat "$OUT/project-path.txt")"
           PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           set +e
-          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import-after-native4.log"
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import-after-native6.log"
           RC=$?
           set -e
-          echo "$RC" > "$E/import-after-native4-exit.txt"
+          echo "$RC" > "$E/import-after-native6-exit.txt"
           [ "$RC" -eq 0 ] || exit 63
-          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import-after-native4.log"; then exit 64; fi
+          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import-after-native6.log"; then exit 64; fi
           GOT="$(sha256sum "$PLUGIN" | awk '{print $1}')"
           echo "$GOT" > "$E/test-dll-after-reimport.sha256"
           [ "$GOT" = "$TEST_DLL_SHA256" ] || exit 65
@@ -472,10 +505,11 @@ jobs:
             echo 'IOS_XCODE_EXPORT=PASS'
             echo "unity_version=$UNITY_VERSION"
             echo "test_dll_sha256=$TEST_DLL_SHA256"
-            echo 'semantic_memberref_gate=PASS'
-            echo 'semantic_targets=24/24'
-            echo 'semantic_resolve_keys=23/23'
-            echo 'orphan_generic_hits=0'
+            echo 'formal_native4_semantic_memberref_gate=PASS'
+            echo 'formal_native4_semantic_targets=24/24'
+            echo 'formal_native4_semantic_resolve_keys=23/23'
+            echo 'formal_native4_orphan_generic_hits=0'
+            echo 'native6_semantic_formalization=NO'
             echo 'bundle_id=com.tipsGodsStudio.godsPVZ'
             echo 'deployment_target=12.0'
             echo 'scenes=Assets/Scenes/MainMenu.unity,Assets/Scenes/Board.unity'
@@ -511,7 +545,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Stage9.1-native4-REAL-UNITY-IOS-EVIDENCE
+          name: Stage9.2-native6-REAL-UNITY-IOS-EVIDENCE
           path: ${{ runner.temp }}/stage9-native4-ios/evidence/
           if-no-files-found: warn
           retention-days: 90
