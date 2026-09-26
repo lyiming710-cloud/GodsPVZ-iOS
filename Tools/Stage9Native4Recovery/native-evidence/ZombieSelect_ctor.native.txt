@@ -1,0 +1,67 @@
+ZombieSelect_ctor RID=421 VA=0x180325270 END=0x180325351 SIZE=225 UNWIND=0x181a88ef4
+0000000180325270  48895c2408               mov        qword ptr [rsp + 8], rbx
+0000000180325275  57                       push       rdi
+0000000180325276  4883ec20                 sub        rsp, 0x20
+000000018032527A  803d27f99b0100           cmp        byte ptr [rip + 0x19bf927], 0
+0000000180325281  488bfa                   mov        rdi, rdx
+0000000180325284  488bd9                   mov        rbx, rcx
+0000000180325287  7513                     jne        0x18032529c
+0000000180325289  488d0d90428a01           lea        rcx, [rip + 0x18a4290]
+0000000180325290  e85bacf2ff               call       0x18024fef0
+0000000180325295  c6050cf99b0101           mov        byte ptr [rip + 0x19bf90c], 1
+000000018032529C  488b0d7d428a01           mov        rcx, qword ptr [rip + 0x18a427d]
+00000001803252A3  ba0a000000               mov        edx, 0xa
+00000001803252A8  e833a1f2ff               call       0x18024f3e0
+00000001803252AD  488d4b30                 lea        rcx, [rbx + 0x30]
+00000001803252B1  48894330                 mov        qword ptr [rbx + 0x30], rax
+00000001803252B5  488bd0                   mov        rdx, rax
+00000001803252B8  e8a3a0f2ff               call       0x18024f360
+00000001803252BD  33d2                     xor        edx, edx
+00000001803252BF  488bcb                   mov        rcx, rbx
+00000001803252C2  e8a9cefdff               call       0x180302170
+00000001803252C7  4885ff                   test       rdi, rdi
+00000001803252CA  7479                     je         0x180325345
+00000001803252CC  8b4710                   mov        eax, dword ptr [rdi + 0x10]
+00000001803252CF  33d2                     xor        edx, edx
+00000001803252D1  894310                   mov        dword ptr [rbx + 0x10], eax
+00000001803252D4  c6431400                 mov        byte ptr [rbx + 0x14], 0
+00000001803252D8  8b4740                   mov        eax, dword ptr [rdi + 0x40]
+00000001803252DB  894318                   mov        dword ptr [rbx + 0x18], eax
+00000001803252DE  8b4744                   mov        eax, dword ptr [rdi + 0x44]
+00000001803252E1  89431c                   mov        dword ptr [rbx + 0x1c], eax
+00000001803252E4  895320                   mov        dword ptr [rbx + 0x20], edx
+00000001803252E7  8b474c                   mov        eax, dword ptr [rdi + 0x4c]
+00000001803252EA  894324                   mov        dword ptr [rbx + 0x24], eax
+00000001803252ED  b801000000               mov        eax, 1
+00000001803252F2  385720                   cmp        byte ptr [rdi + 0x20], dl
+00000001803252F5  7504                     jne        0x1803252fb
+00000001803252F7  0fb64721                 movzx      eax, byte ptr [rdi + 0x21]
+00000001803252FB  85c0                     test       eax, eax
+00000001803252FD  0f95c0                   setne      al
+0000000180325300  884328                   mov        byte ptr [rbx + 0x28], al
+0000000180325303  488b4f50                 mov        rcx, qword ptr [rdi + 0x50]
+0000000180325307  4885c9                   test       rcx, rcx
+000000018032530A  7439                     je         0x180325345
+000000018032530C  3b5118                   cmp        edx, dword ptr [rcx + 0x18]
+000000018032530F  733a                     jae        0x18032534b
+0000000180325311  4c8b4330                 mov        r8, qword ptr [rbx + 0x30]
+0000000180325315  4d85c0                   test       r8, r8
+0000000180325318  742b                     je         0x180325345
+000000018032531A  413b5018                 cmp        edx, dword ptr [r8 + 0x18]
+000000018032531E  732b                     jae        0x18032534b
+0000000180325320  4863c2                   movsxd     rax, edx
+0000000180325323  807c082000               cmp        byte ptr [rax + rcx + 0x20], 0
+0000000180325328  4863c2                   movsxd     rax, edx
+000000018032532B  0f95c1                   setne      cl
+000000018032532E  ffc2                     inc        edx
+0000000180325330  42884c0020               mov        byte ptr [rax + r8 + 0x20], cl
+0000000180325335  83fa0a                   cmp        edx, 0xa
+0000000180325338  7cc9                     jl         0x180325303
+000000018032533A  488b5c2430               mov        rbx, qword ptr [rsp + 0x30]
+000000018032533F  4883c420                 add        rsp, 0x20
+0000000180325343  5f                       pop        rdi
+0000000180325344  c3                       ret
+0000000180325345  e806aef2ff               call       0x180250150
+000000018032534A  cc                       int3
+000000018032534B  e8f0adf2ff               call       0x180250140
+0000000180325350  cc                       int3

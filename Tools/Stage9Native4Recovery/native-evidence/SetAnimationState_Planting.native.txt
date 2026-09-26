@@ -1,0 +1,54 @@
+SetAnimationState_Planting RID=927 VA=0x180358310 END=0x1803583ee SIZE=222 UNWIND=0x181a88eec
+0000000180358310  4053                     push       rbx
+0000000180358312  4883ec20                 sub        rsp, 0x20
+0000000180358316  803d0bca980100           cmp        byte ptr [rip + 0x198ca0b], 0
+000000018035831D  488bd9                   mov        rbx, rcx
+0000000180358320  751f                     jne        0x180358341
+0000000180358322  488d0dc72a8701           lea        rcx, [rip + 0x1872ac7]
+0000000180358329  e8c27befff               call       0x18024fef0
+000000018035832E  488d0da3a78601           lea        rcx, [rip + 0x186a7a3]
+0000000180358335  e8b67befff               call       0x18024fef0
+000000018035833A  c605e7c9980101           mov        byte ptr [rip + 0x198c9e7], 1
+0000000180358341  488b4b70                 mov        rcx, qword ptr [rbx + 0x70]
+0000000180358345  4885c9                   test       rcx, rcx
+0000000180358348  0f849a000000             je         0x1803583e8
+000000018035834E  33d2                     xor        edx, edx
+0000000180358350  e8fbbf0300               call       0x180394350
+0000000180358355  488b8b78010000           mov        rcx, qword ptr [rbx + 0x178]
+000000018035835C  4885c9                   test       rcx, rcx
+000000018035835F  0f8483000000             je         0x1803583e8
+0000000180358365  4533c0                   xor        r8d, r8d
+0000000180358368  b201                     mov        dl, 1
+000000018035836A  e86137fc00               call       0x18131bad0
+000000018035836F  488b8b68010000           mov        rcx, qword ptr [rbx + 0x168]
+0000000180358376  4885c9                   test       rcx, rcx
+0000000180358379  746d                     je         0x1803583e8
+000000018035837B  f30f1093c0000000         movss      xmm2, dword ptr [rbx + 0xc0]
+0000000180358383  4533c9                   xor        r9d, r9d
+0000000180358386  488b15632a8701           mov        rdx, qword ptr [rip + 0x1872a63]
+000000018035838D  e81e37f800               call       0x1812dbab0
+0000000180358392  837b7c04                 cmp        dword ptr [rbx + 0x7c], 4
+0000000180358396  7443                     je         0x1803583db
+0000000180358398  837b7c31                 cmp        dword ptr [rbx + 0x7c], 0x31
+000000018035839C  743d                     je         0x1803583db
+000000018035839E  837b7c02                 cmp        dword ptr [rbx + 0x7c], 2
+00000001803583A2  c683b500000001           mov        byte ptr [rbx + 0xb5], 1
+00000001803583A9  752a                     jne        0x1803583d5
+00000001803583AB  488b8b68010000           mov        rcx, qword ptr [rbx + 0x168]
+00000001803583B2  c7839000000001000000     mov        dword ptr [rbx + 0x90], 1
+00000001803583BC  4885c9                   test       rcx, rcx
+00000001803583BF  7427                     je         0x1803583e8
+00000001803583C1  488b1510a78601           mov        rdx, qword ptr [rip + 0x186a710]
+00000001803583C8  4533c0                   xor        r8d, r8d
+00000001803583CB  4883c420                 add        rsp, 0x20
+00000001803583CF  5b                       pop        rbx
+00000001803583D0  e92b38f800               jmp        0x1812dbc00
+00000001803583D5  4883c420                 add        rsp, 0x20
+00000001803583D9  5b                       pop        rbx
+00000001803583DA  c3                       ret
+00000001803583DB  c683b500000000           mov        byte ptr [rbx + 0xb5], 0
+00000001803583E2  4883c420                 add        rsp, 0x20
+00000001803583E6  5b                       pop        rbx
+00000001803583E7  c3                       ret
+00000001803583E8  e8637defff               call       0x180250150
+00000001803583ED  cc                       int3
