@@ -34,8 +34,7 @@ fi
 if [[ -e "$LEGACY_ROOT" || -L "$LEGACY_ROOT" ]]; then
   [[ "$(realpath "$LEGACY_ROOT")" == "$REPO_ROOT" ]] || fail "$LEGACY_ROOT already points elsewhere"
 else
-  if [[ -w /workspaces 2>/dev/null ]]; then
-    mkdir -p /workspaces
+  if [[ -d /workspaces && -w /workspaces ]]; then
     ln -s "$REPO_ROOT" "$LEGACY_ROOT"
   else
     sudo mkdir -p /workspaces
