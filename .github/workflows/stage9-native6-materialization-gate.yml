@@ -13,6 +13,10 @@ permissions:
   contents: read
   actions: read
 
+concurrency:
+  group: stage9-native6-materialization-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   materialize:
     runs-on: ubuntu-latest
