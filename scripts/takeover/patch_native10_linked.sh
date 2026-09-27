@@ -12,8 +12,7 @@ fail(){ echo "[native10-linked] ERROR: $*" >&2; exit 1; }
 [[ -f "$CECIL" ]] || fail "Mono.Cecil missing"
 TMP9="${OUTPUT}.native9.tmp"
 rm -f "$TMP9" "$TMP9".run* "$OUTPUT" "$OUTPUT".run*
-chmod +x "$REPO_ROOT/scripts/takeover/patch_native9_linked.sh"
-"$REPO_ROOT/scripts/takeover/patch_native9_linked.sh" "$INPUT" "$TMP9" | tee "${OUTPUT}.native9.log"
+bash "$REPO_ROOT/scripts/takeover/patch_native9_linked.sh" "$INPUT" "$TMP9" | tee "${OUTPUT}.native9.log"
 [[ "$(sha "$TMP9")" == "$EXPECTED_LINKED_NATIVE9_SHA" ]] || fail "linked native9 SHA mismatch: $(sha "$TMP9")"
 A="$OUTPUT.run1"; B="$OUTPUT.run2"
 dotnet run --project "$PATCHER" -- "$TMP9" "$A" linked | tee "$OUTPUT.run1.log"

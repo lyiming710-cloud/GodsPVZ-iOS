@@ -1,0 +1,145 @@
+MVID=1e1677dd-338e-4e02-9b90-022f43606077
+TYPE token=0x02000015 VFXAnimationEvent
+FIELD token=0x040000CF name=particleState type=ParticleState
+FIELD token=0x040000D0 name=plant type=Plant
+FIELD token=0x040000D1 name=zombie type=Zombie
+FIELD token=0x040000D2 name=projectile type=Projectile
+FIELD token=0x040000D3 name=original type=System.Boolean
+FIELD token=0x040000D4 name=duration type=System.Single
+FIELD token=0x040000D5 name=type type=System.String
+METHOD token=0x060000C3 System.Void VFXAnimationEvent::Update() body=415 gp=0
+METHOD token=0x060000C4 System.Void VFXAnimationEvent::Binding(T,System.Boolean,System.Single,System.String) body=360 gp=1
+METHOD token=0x060000C5 System.Void VFXAnimationEvent::Close() body=495 gp=0
+METHOD token=0x060000C6 System.Void VFXAnimationEvent::SetSorting(ParticleState,T) body=655 gp=1
+METHOD token=0x060000C7 System.Void VFXAnimationEvent::LoopAddAnimation(UnityEngine.Transform,System.Collections.Generic.List`1<UnityEngine.GameObject>) body=1092 gp=0
+METHOD token=0x060000C8 System.Void VFXAnimationEvent::.ctor() body=23 gp=0
+TARGET token=0x060000C4 rid=196 System.Void VFXAnimationEvent::Binding(T,System.Boolean,System.Single,System.String) code_size=360 il=104 locals=19 eh=0
+GENERIC T attrs=NonVariant
+LOCAL V_0 System.Boolean
+LOCAL V_1 T
+LOCAL V_2 System.Single
+LOCAL V_3 VFXAnimationEvent
+LOCAL V_4 System.String
+LOCAL V_5 System.Boolean
+LOCAL V_6 System.Boolean
+LOCAL V_7 System.IntPtr
+LOCAL V_8 System.IntPtr
+LOCAL V_9 System.Object
+LOCAL V_10 System.Object
+LOCAL V_11 T
+LOCAL V_12 System.Boolean
+LOCAL V_13 System.Object
+LOCAL V_14 System.Boolean
+LOCAL V_15 System.Object
+LOCAL V_16 System.Boolean
+LOCAL V_17 System.Boolean
+LOCAL V_18 UnityEngine.GameObject
+TARGET_IL_BEGIN
+IL_0000: br IL_00F6
+IL_0005: ldarg P_0:T
+IL_0009: ldc.i4 0
+IL_000E: ceq
+IL_0010: stloc V_6:System.Boolean
+IL_0014: ldloc V_6:System.Boolean
+IL_0018: brtrue IL_00F5
+IL_001D: br IL_0022
+IL_0022: ldtoken Plant [0x02000078]
+IL_0027: call System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle) [0x0A00004C]
+IL_002C: stloc V_8:System.IntPtr
+IL_0030: ldarg P_0:T
+IL_0034: stloc V_7:System.IntPtr
+IL_0038: ldstr Unmanaged memory load: [v66 @ rdx_v3 (Il2CppClass<Plant>)+130]
+IL_003D: pop
+IL_003E: ldc.i4.0
+IL_003F: conv.i
+IL_0040: stloc V_13:System.Object
+IL_0044: ldstr Unmanaged memory load: [v63 @ r8_v2 (Il2CppClass<T>)+130]
+IL_0049: pop
+IL_004A: ldc.i4.0
+IL_004B: conv.i
+IL_004C: ldstr Unmanaged memory load: [v66 @ rdx_v3 (Il2CppClass<Plant>)+130]
+IL_0051: pop
+IL_0052: ldc.i4.0
+IL_0053: conv.i
+IL_0054: clt
+IL_0056: stloc V_14:System.Boolean
+IL_005A: ldloc V_14:System.Boolean
+IL_005E: brtrue IL_00AB
+IL_0063: br IL_0068
+IL_0068: ldstr Unmanaged memory load: [v63 @ r8_v2 (Il2CppClass<T>)+C8]
+IL_006D: pop
+IL_006E: ldc.i4.0
+IL_006F: conv.i
+IL_0070: stloc V_15:System.Object
+IL_0074: ldstr Unmanaged memory load: [v149 @ rax_v12+FFFFFFF8+v113 @ rax_v4*8]
+IL_0079: pop
+IL_007A: ldc.i4.0
+IL_007B: conv.i
+IL_007C: ldtoken Plant [0x02000078]
+IL_0081: call System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle) [0x0A00004C]
+IL_0086: ceq
+IL_0088: ldc.i4.0
+IL_0089: ceq
+IL_008B: stloc V_16:System.Boolean
+IL_008F: ldloc V_16:System.Boolean
+IL_0093: brtrue IL_00AB
+IL_0098: br IL_009D
+IL_009D: ldc.i4 1
+IL_00A2: stloc V_10:System.Object
+IL_00A6: br IL_0123
+IL_00AB: ldc.i4 0
+IL_00B0: stloc V_10:System.Object
+IL_00B4: br IL_0123
+IL_00B9: ldarg P_0:T
+IL_00BD: stloc V_11:T
+IL_00C1: br IL_0145
+IL_00C6: ldarg.0
+IL_00C7: ldloc V_11:T
+IL_00CB: stfld Plant VFXAnimationEvent::plant [0x040000D0]
+IL_00D0: ldarg.0
+IL_00D1: call UnityEngine.GameObject UnityEngine.Component::get_gameObject() [0x0A000009]
+IL_00D6: stloc V_18:UnityEngine.GameObject
+IL_00DA: br IL_00DF
+IL_00DF: ldstr Unmanaged memory load: [v78 @ rbx_v5 (T)+1D0]
+IL_00E4: pop
+IL_00E5: ldc.i4.0
+IL_00E6: conv.i
+IL_00E7: ldloc V_18:UnityEngine.GameObject
+IL_00EB: call System.Void System.Collections.Generic.List`1<UnityEngine.GameObject>::Add(!0) [0x0A000086]
+IL_00F0: br IL_00F5
+IL_00F5: ret
+IL_00F6: ldarg.0
+IL_00F7: ldloc V_4:System.String
+IL_00FB: stfld System.String VFXAnimationEvent::type [0x040000D5]
+IL_0100: ldarg.0
+IL_0101: ldarg P_2:System.Single
+IL_0105: stfld System.Single VFXAnimationEvent::duration [0x040000D4]
+IL_010A: ldarg P_1:System.Boolean
+IL_010E: ldc.i4.0
+IL_010F: ceq
+IL_0111: stloc V_5:System.Boolean
+IL_0115: ldloc V_5:System.Boolean
+IL_0119: brtrue IL_00F5
+IL_011E: br IL_0005
+IL_0123: ldloc V_10:System.Object
+IL_0127: ldc.i4 0
+IL_012C: ceq
+IL_012E: stloc V_17:System.Boolean
+IL_0132: ldnull
+IL_0133: stloc V_11:T
+IL_0137: ldloc V_17:System.Boolean
+IL_013B: brtrue IL_0145
+IL_0140: br IL_00B9
+IL_0145: ldloc V_11:T
+IL_0149: ldc.i4 0
+IL_014E: ceq
+IL_0150: stloc V_12:System.Boolean
+IL_0154: ldloc V_12:System.Boolean
+IL_0158: brtrue IL_00F5
+IL_015D: br IL_00C6
+IL_0162: ldstr Warning: Method ends with non empty stack (-38), the output could be wrong!
+IL_0167: pop
+TARGET_IL_END
+RELATED_GENERIC_CALLS_BEGIN
+RELATED_GENERIC_CALLS_END
+INSPECT_METHOD_PASS
