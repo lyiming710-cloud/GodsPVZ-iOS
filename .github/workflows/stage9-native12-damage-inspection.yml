@@ -1,0 +1,44 @@
+name: Stage9.7 native12 Damage CalculateAD metadata inspection
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths: ['.github/workflows/stage9-native12-damage-inspection.yml','scripts/takeover/InspectNative12/**']
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      NATIVE10_RUN_ID: '36310022174'
+      NATIVE10_ARTIFACT_NAME: 'Stage9.5-native10-warptext-experimental'
+      NATIVE10_SHA256: '7708dd46a22838b02112995a953993e410de73bb17393282dcae96161f3b0cd2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-dotnet@v4
+        with: {dotnet-version: '9.0.x'}
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE10_RUN_ID }}
+          name: ${{ env.NATIVE10_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native10
+      - name: Verify and inspect
+        shell: bash
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          mapfile -t D < <(find "$RUNNER_TEMP/native10" -type f -name 'Assembly-CSharp-native10-warptext.dll' | sort)
+          [ "${#D[@]}" = 1 ]
+          [ "$(sha256sum "${D[0]}"|awk '{print $1}')" = "$NATIVE10_SHA256" ]
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          dotnet run --project scripts/takeover/InspectNative12/InspectNative12.csproj -- "${D[0]}" | tee "$RUNNER_TEMP/native12-inspect.txt"
+          grep -qx INSPECT_NATIVE12_PASS "$RUNNER_TEMP/native12-inspect.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.7-native12-damage-inspection
+          path: ${{ runner.temp }}/native12-inspect.txt
+          retention-days: 30
