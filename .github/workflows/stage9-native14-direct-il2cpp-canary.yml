@@ -1,0 +1,198 @@
+name: Stage9.9 native14 DIRECT post-Linker IL2CPP canary
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native14-direct-il2cpp-canary.yml'
+      - 'scripts/takeover/patch_native14_linked.sh'
+      - 'scripts/takeover/PatcherNative14/**'
+      - 'scripts/takeover/patch_native13_linked.sh'
+      - 'scripts/takeover/PatcherNative13/**'
+      - 'scripts/takeover/native13_donor/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-native14-direct-il2cpp-canary
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SEED_RUN_ID: '36298521805'
+      SEED_ARTIFACT_NAME: 'Stage9.2-native7-postlink-il2cpp-canary'
+      SUPPLEMENT_RUN_ID: '36302168002'
+      SUPPLEMENT_ARTIFACT_NAME: 'Stage9.2-exact-il2cpp-root-supplement'
+      ICALL_SHA256: '85644eb6ebaacf203340a1ed357efa9e6802d447974fdecffe196a25ea440bd4'
+      NATIVE14_UNLINKED_RUN_ID: '36318431640'
+      NATIVE14_UNLINKED_ARTIFACT_ID: '10931900134'
+      NATIVE14_UNLINKED_ARTIFACT_DIGEST: 'sha256:139971ae0209a1f020940449c78dabe2ecd22620c10c26958c5329ddbe9e7779'
+      NATIVE14_UNLINKED_SHA256: '281b7a20d3cc0719b0087be389f10a16e966a85c93bd5f43ef72fd54eaa01614'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download post-Linker seed
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.SEED_RUN_ID }}
+          name: ${{ env.SEED_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/canary
+      - name: Download exact IL2CPP root supplement
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.SUPPLEMENT_RUN_ID }}
+          name: ${{ env.SUPPLEMENT_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/supplement
+      - name: Restore exact IL2CPP distribution and response file
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="$RUNNER_TEMP/canary"; S="$RUNNER_TEMP/supplement"
+          grep -qx 'status=NATIVE7_POST_LINKER_CANARY_SEED' "$C/MANIFEST.txt"
+          GOT="$(sha256sum "$S/il2cpp/libil2cpp/libil2cpp.icalls"|awk '{print $1}')"
+          [ "$GOT" = "$ICALL_SHA256" ]
+          mkdir -p "$C/il2cpp/build"
+          mv "$C/il2cpp-deploy" "$C/il2cpp/build/deploy"
+          cp -a "$S/il2cpp/libil2cpp" "$C/il2cpp/"
+          chmod +x "$C/il2cpp/build/deploy/il2cpp"
+          RSP_BASE="$(sed -n 's/^rsp_basename=//p' "$C/MANIFEST.txt")"
+          python3 - "$C" "$C/Library/Bee/artifacts/rsp/$RSP_BASE.template" "$C/Library/Bee/artifacts/rsp/$RSP_BASE" <<'PY'
+          import sys
+          from pathlib import Path
+          root=str(Path(sys.argv[1]).resolve())
+          Path(sys.argv[3]).write_text(Path(sys.argv[2]).read_text().replace('__PROJECT_ROOT__',root))
+          PY
+          echo "$RSP_BASE" > "$RUNNER_TEMP/rsp-base.txt"
+      - name: Fetch pinned full resolver and Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          test -f Tools/Stage9Native4Recovery/resolver/mscorlib.dll
+          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
+      - name: Compile typed Selector_B donor
+        shell: bash
+        run: |
+          set -euo pipefail
+          M="$RUNNER_TEMP/canary/Library/Bee/artifacts/iOS/ManagedStripped"
+          CORLIB="$GITHUB_WORKSPACE/Tools/Stage9Native4Recovery/resolver/mscorlib.dll"
+          CSC="$(find /usr/share/dotnet/sdk -path '*/Roslyn/bincore/csc.dll' | sort -V | tail -1)"
+          OUT="$RUNNER_TEMP/native13-donor.dll"
+          dotnet "$CSC" /nologo /noconfig /nostdlib+ /target:library /optimize+ /debug- \
+            /out:"$OUT" \
+            /reference:"$CORLIB" \
+            /reference:"$M/System.dll" \
+            /reference:"$M/System.Core.dll" \
+            /reference:"$M/UnityEngine.CoreModule.dll" \
+            /reference:"$M/UnityEngine.InputLegacyModule.dll" \
+            /reference:"$M/UnityEngine.UIModule.dll" \
+            /reference:"$M/UnityEngine.UI.dll" \
+            /reference:"$M/UnityEngine.TextCoreFontEngineModule.dll" \
+            /reference:"$M/UnityEngine.TextCoreTextEngineModule.dll" \
+            /reference:"$M/UnityEngine.TextRenderingModule.dll" \
+            /reference:"$M/Unity.TextMeshPro.dll" \
+            scripts/takeover/native13_donor/TMP_TextSelector_B_Donor.cs
+          test -f "$OUT"
+          sha256sum "$OUT" | tee "$RUNNER_TEMP/native13-donor.sha256"
+      - name: Reconstruct linked native14 from exact stripped native7
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="$RUNNER_TEMP/canary"
+          D="$C/Library/Bee/artifacts/iOS/ManagedStripped/GodsPVZRuntime1.dll"
+          cp "$D" "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll"
+          chmod +x scripts/takeover/patch_native14_linked.sh
+          scripts/takeover/patch_native14_linked.sh \
+            "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll" \
+            "$RUNNER_TEMP/native13-donor.dll" \
+            "$RUNNER_TEMP/GodsPVZRuntime1.native14.stripped.dll" \
+            | tee "$RUNNER_TEMP/native14-linked-patch.log"
+          grep -qx NATIVE14_LINKED_PATCH_PASS "$RUNNER_TEMP/native14-linked-patch.log"
+          cp "$RUNNER_TEMP/GodsPVZRuntime1.native14.stripped.dll" "$D"
+          sha256sum "$D" | tee "$RUNNER_TEMP/native14-linked.sha256"
+      - name: Replay native14 and prove ElementManager closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="$RUNNER_TEMP/canary"; RSP_BASE="$(cat "$RUNNER_TEMP/rsp-base.txt")"
+          rm -rf "$C/Library/Bee/artifacts/iOS/il2cppOutput"
+          mkdir -p "$C/Library/Bee/artifacts/iOS/il2cppOutput/cpp/Symbols" "$C/Library/Bee/artifacts/iOS/il2cppOutput/data"
+          set +e
+          (cd "$C" && ./il2cpp/build/deploy/il2cpp --custom-il2-cpp-root="$C/il2cpp" @"Library/Bee/artifacts/rsp/$RSP_BASE" > "$RUNNER_TEMP/native14-direct.stdout" 2> "$RUNNER_TEMP/native14-direct.stderr")
+          RC=$?
+          set -e
+          echo "$RC" > "$RUNNER_TEMP/native14-direct.exit"
+          cat "$RUNNER_TEMP/native14-direct.stdout" "$RUNNER_TEMP/native14-direct.stderr" > "$RUNNER_TEMP/native14-direct.combined"
+          python3 - "$RUNNER_TEMP/native14-direct.combined" "$RUNNER_TEMP/native14-direct.methods" "$RC" <<'PY'
+          import re,sys
+          from pathlib import Path
+          s=Path(sys.argv[1]).read_text(errors='replace'); rc=int(sys.argv[3])
+          got=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
+          Path(sys.argv[2]).write_text('\n'.join(got)+'\n')
+          repaired={
+            'System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()',
+            'System.Boolean Zombie::ZC_PoleTestJump()',
+            'System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()',
+            'System.Void TMPro.Examples.TMP_TextSelector_A::LateUpdate()',
+            'System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)',
+            'System.Void TMPro.Examples.TMP_TextSelector_B::LateUpdate()',
+            'System.Void ElementManager::CreateNewElements(T)',
+          }
+          anchor='System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid_TestPlace(System.Int32,T,System.Int32,System.Int32)'
+          bad=sorted(repaired.intersection(got))
+          print('NATIVE14_DIRECT_METHOD_ERRORS='+repr(got))
+          if bad: raise SystemExit(f'repaired targets still fail: {bad}')
+          if anchor not in got: raise SystemExit('Map RandomGet scan anchor missing; comparison inconclusive')
+          if 'ICallMappingComponent.Initialize' in s: raise SystemExit('ICall replay regression')
+          if rc != 0 and not got: raise SystemExit(f'non-method IL2CPP failure rc={rc}')
+          print('NATIVE14_DIRECT_TARGET_CLOSURE_PASS')
+          print('NEXT_BLOCKERS='+repr(got))
+          PY
+      - name: Record canary provenance
+        if: always()
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/CANARY-PROVENANCE.txt" <<EOF
+          status=EXPERIMENTAL_DIRECT_IL2CPP_TARGET_CLOSURE
+          workflow_head=$GITHUB_SHA
+          source_seed_run=$SEED_RUN_ID
+          source_supplement_run=$SUPPLEMENT_RUN_ID
+          native14_unlinked_run=$NATIVE14_UNLINKED_RUN_ID
+          native14_unlinked_artifact_id=$NATIVE14_UNLINKED_ARTIFACT_ID
+          native14_unlinked_artifact_digest=$NATIVE14_UNLINKED_ARTIFACT_DIGEST
+          native14_unlinked_sha256=$NATIVE14_UNLINKED_SHA256
+          repaired_target=ElementManager::CreateNewElements<T>
+          full_unity_rebuild=NO
+          production_promotion=NO
+          EOF
+      - name: Upload canary evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.9-native14-direct-il2cpp-canary-evidence
+          path: |
+            ${{ runner.temp }}/CANARY-PROVENANCE.txt
+            ${{ runner.temp }}/native13-donor.sha256
+            ${{ runner.temp }}/native14-linked-*
+            ${{ runner.temp }}/native14-direct.*
+            ${{ runner.temp }}/canary/MANIFEST.txt
+            ${{ runner.temp }}/supplement/LOCK.txt
+          if-no-files-found: warn
+          retention-days: 30
