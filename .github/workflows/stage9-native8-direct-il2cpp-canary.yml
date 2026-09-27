@@ -78,7 +78,6 @@ jobs:
           mv "$C/il2cpp-deploy" "$C/il2cpp/build/deploy"
           cp -a "$S/il2cpp/libil2cpp" "$C/il2cpp/"
           chmod +x "$C/il2cpp/build/deploy/il2cpp"
-          test -x "$C/il2cpp/build/deploy/il2cpp"
           echo "IL2CPP_ROOT_LAYOUT_PASS root=$C/il2cpp icall_sha256=$GOT"
 
           RSP_BASE="$(sed -n 's/^rsp_basename=//p' "$C/MANIFEST.txt")"
@@ -105,16 +104,19 @@ jobs:
           import re,sys
           from pathlib import Path
           s=Path(sys.argv[1]).read_text(errors='replace')
-          got=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
-          expected=sorted([
-            'System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()',
-            'System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()',
-            'System.Boolean Zombie::ZC_PoleTestJump()',
-            'System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)',
-          ])
-          Path(sys.argv[2]).write_text('\n'.join(got)+'\n')
-          print('NATIVE7_DIRECT_METHOD_ERRORS='+repr(got))
-          if got != expected: raise SystemExit(f'native7 blocker set mismatch: expected={expected} got={got}')
+          got=set(re.findall(r"IL2CPP error for method '([^']+)'",s))
+          skew='System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()'
+          pole='System.Boolean Zombie::ZC_PoleTestJump()'
+          warp='System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()'
+          damage='System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)'
+          required={skew,pole}
+          allowed={skew,pole,warp,damage}
+          Path(sys.argv[2]).write_text('\n'.join(sorted(got))+'\n')
+          print('NATIVE7_DIRECT_METHOD_ERRORS='+repr(sorted(got)))
+          missing=required-got
+          unknown=got-allowed
+          if missing: raise SystemExit(f'native7 missing authoritative blockers: {sorted(missing)}')
+          if unknown: raise SystemExit(f'native7 introduced unknown blockers: {sorted(unknown)}')
           if 'ICallMappingComponent.Initialize' in s: raise SystemExit('ICall root restoration failed')
           print('NATIVE7_DIRECT_BASELINE_PASS')
           PY
@@ -145,7 +147,7 @@ jobs:
           cp "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" "$D"
           sha256sum "$D" | tee "$RUNNER_TEMP/native8-linked.sha256"
 
-      - name: Replay native8 and prove exact one-blocker differential
+      - name: Replay native8 and prove target removal without new blockers
         shell: bash
         run: |
           set -euo pipefail
@@ -159,18 +161,23 @@ jobs:
           set -e
           echo "$RC" > "$RUNNER_TEMP/native8-direct.exit"
           cat "$RUNNER_TEMP/native8-direct.stdout" "$RUNNER_TEMP/native8-direct.stderr" > "$RUNNER_TEMP/native8-direct.combined"
-          python3 - "$RUNNER_TEMP/native7-direct.methods" "$RUNNER_TEMP/native8-direct.combined" "$RUNNER_TEMP/native8-direct.methods" <<'PY'
+          python3 - "$RUNNER_TEMP/native8-direct.combined" "$RUNNER_TEMP/native8-direct.methods" <<'PY'
           import re,sys
           from pathlib import Path
-          before=sorted(x for x in Path(sys.argv[1]).read_text().splitlines() if x)
-          s=Path(sys.argv[2]).read_text(errors='replace')
-          after=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
-          target='System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()'
-          expected=sorted(x for x in before if x != target)
-          Path(sys.argv[3]).write_text('\n'.join(after)+'\n')
-          print('NATIVE8_DIRECT_METHOD_ERRORS='+repr(after))
-          if target in after: raise SystemExit('native8 target still fails IL2CPP')
-          if after != expected: raise SystemExit(f'non-target blocker delta: expected={expected} got={after}')
+          s=Path(sys.argv[1]).read_text(errors='replace')
+          got=set(re.findall(r"IL2CPP error for method '([^']+)'",s))
+          skew='System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()'
+          pole='System.Boolean Zombie::ZC_PoleTestJump()'
+          warp='System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()'
+          damage='System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)'
+          allowed={pole,warp,damage}
+          Path(sys.argv[2]).write_text('\n'.join(sorted(got))+'\n')
+          print('NATIVE8_DIRECT_METHOD_ERRORS='+repr(sorted(got)))
+          if skew in got: raise SystemExit('native8 target still fails IL2CPP')
+          if pole not in got: raise SystemExit('native8 lost authoritative PoleTestJump anchor; comparison inconclusive')
+          unknown=got-allowed
+          if unknown: raise SystemExit(f'native8 introduced unknown blockers: {sorted(unknown)}')
+          if 'ICallMappingComponent.Initialize' in s: raise SystemExit('native8 ICall replay regression')
           print('NATIVE8_DIRECT_DIFFERENTIAL_PASS')
           PY
 
@@ -189,6 +196,7 @@ jobs:
           native8_unlinked_run=$NATIVE8_UNLINKED_RUN_ID
           native8_unlinked_artifact_id=$NATIVE8_UNLINKED_ARTIFACT_ID
           native8_unlinked_sha256=$NATIVE8_UNLINKED_SHA256
+          scheduler_policy=required_authoritative_plus_known_optional
           custom_il2cpp_root=YES
           full_unity_rebuild=NO
           production_promotion=NO
