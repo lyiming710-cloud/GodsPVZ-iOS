@@ -1,0 +1,113 @@
+name: Stage9.7 native12 Damage materialization gate
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native12-materialization-gate.yml'
+      - 'scripts/takeover/materialize_native12.sh'
+      - 'scripts/takeover/PatcherNative12/**'
+      - 'Tools/Stage9Native4Recovery/evidence/native12-native-audit/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-native12-materialization-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NATIVE11_SOURCE_RUN_ID: '36310760734'
+      NATIVE11_SOURCE_ARTIFACT_ID: '10929505786'
+      NATIVE11_SOURCE_ARTIFACT_NAME: 'Stage9.6-native11-selector-experimental'
+      NATIVE11_SOURCE_ARTIFACT_DIGEST: 'sha256:daced9f0f9e9e7c25a29ca95c26fa2c946751a41b2be07bbcdcb7ea7e60949db'
+      NATIVE11_SHA256: 'c78fe103cf7b1cccda016ab9f272d668ce3c44fe9450f2ac1d9d97508af5838a'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download exact native11 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE11_SOURCE_RUN_ID }}
+          name: ${{ env.NATIVE11_SOURCE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native11
+      - name: Recover exact native11 input
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t H < <(find "$RUNNER_TEMP/native11" -type f -name 'Assembly-CSharp-native11-selector.dll' | sort)
+          [ "${#H[@]}" = 1 ]
+          GOT="$(sha256sum "${H[0]}"|awk '{print $1}')"
+          [ "$GOT" = "$NATIVE11_SHA256" ] || { echo "native11 SHA mismatch: $GOT" >&2; exit 1; }
+          mkdir -p Tools/Stage9Native4Recovery/candidate
+          cp "${H[0]}" Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll
+      - name: Fetch pinned Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+      - name: Materialize native12 twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/takeover/materialize_native12.sh
+          scripts/takeover/materialize_native12.sh \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native12-damage.dll \
+            | tee "$RUNNER_TEMP/native12-materialize.log"
+          grep -qx NATIVE12_MATERIALIZATION_PASS "$RUNNER_TEMP/native12-materialize.log"
+      - name: Record native12 provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          E=Tools/Stage9Native4Recovery/evidence/native12-materialization
+          mkdir -p "$E"
+          cp "$RUNNER_TEMP/native12-materialize.log" "$E/materialize.log"
+          cp Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native12-damage.dll.run1.log "$E/patcher-run1.log"
+          cp Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native12-damage.dll.run2.log "$E/patcher-run2.log"
+          N12="$(sha256sum Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native12-damage.dll|awk '{print $1}')"
+          cat > "$E/PROVENANCE.txt" <<EOF
+          status=EXPERIMENTAL_TAKEOVER_MATERIALIZATION
+          workflow_head=$GITHUB_SHA
+          source_native11_run=$NATIVE11_SOURCE_RUN_ID
+          source_native11_artifact_id=$NATIVE11_SOURCE_ARTIFACT_ID
+          source_native11_artifact_digest=$NATIVE11_SOURCE_ARTIFACT_DIGEST
+          source_native11_dll_sha256=$NATIVE11_SHA256
+          native12_dll_sha256=$N12
+          target=Damage::CalculateAD<T>
+          target_methoddef=0x06000111
+          pc_refshare_va=0x180434460
+          pc_refshare_sha256=a31476d0aeae5eacae566ddf469ae9a78df098381a45c68fc13de786daf020dd
+          pc_valueshare_va=0x180434280
+          pc_valueshare_sha256=755675ec4a32581a56792b5412fb37861b86e1546236700eb2a5a48b7776b9b4
+          deterministic_run_pair=PASS
+          direct_il2cpp_canary=NOT_RUN
+          full_unity_rebuild=NO
+          production_promotion=NO
+          EOF
+          cat "$E/PROVENANCE.txt"
+      - name: Upload native12 candidate and evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.7-native12-damage-experimental
+          path: |
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native12-damage.dll
+            Tools/Stage9Native4Recovery/evidence/native12-native-audit/
+            Tools/Stage9Native4Recovery/evidence/native12-materialization/
+          if-no-files-found: error
+          retention-days: 30
