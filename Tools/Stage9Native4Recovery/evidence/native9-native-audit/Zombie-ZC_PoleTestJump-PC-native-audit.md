@@ -1,6 +1,6 @@
 # Zombie::ZC_PoleTestJump — direct PC-native audit
 
-Status: **native semantics established; no managed patch and no production promotion**.
+Status: **native semantics established; no production promotion**.
 
 Authority is the original GodsPVZ 1.0.2 PC x86-64 IL2CPP release.
 
@@ -31,7 +31,7 @@ if (poleZombie_jump)
     return false;
 if (isStant)
     return false;
-if (IsDisabled(false))
+if (IsDisabled())
     return false;
 
 float x = fX - rDirection.x * 134.0f;
@@ -59,6 +59,12 @@ else
 
 return p != null; // UnityEngine.Object lifetime-aware inequality semantics
 ```
+
+### IsDisabled signature correction
+
+The locked managed MethodDef `0x06000464` is `System.Boolean Zombie::IsDisabled()` and has **zero managed parameters**. An earlier audit draft described the native call as `IsDisabled(false)` because the x64 call site clears a register before the call. That cleared register belongs to IL2CPP's native calling convention / hidden method metadata plumbing and is not a managed Boolean parameter. The managed reconstruction must therefore emit only `ldarg.0; call Zombie::IsDisabled()`.
+
+This distinction was independently exposed by the direct IL2CPP canary: emitting an extra `ldc.i4.0` before the zero-argument call polluted the evaluation stack and caused a later `ret` failure (`Attempting to return a value ... when there is no value on the stack`).
 
 ## Native field attribution
 
@@ -91,7 +97,7 @@ Reverse lookup through the locked Assembly-CSharp method-pointer table gives:
 
 | PC call target | managed method |
 |---|---|
-| `0x1803659E0` | `Zombie::IsDisabled` (RID 1124) |
+| `0x1803659E0` | `Zombie::IsDisabled()` (`0x06000464`, RID 1124) |
 | `0x18030ED50` | `BoardConfig::GetGridX` (`0x06000159`) |
 | `0x18030EE00` | `BoardConfig::GetGridY` (`0x0600015A`) |
 | `0x180326FE0` | `Board::GetGrid` (`0x060002C4`) |
@@ -105,7 +111,7 @@ The PC constants are directly present in the original image:
 
 The helper at `0x18131F870` implements Unity object truthiness: null returns false; a non-null object performs the Unity lifetime check. The helper at `0x18131F900` implements Unity object inequality semantics; two nulls return false, distinct/non-null live objects return true, and destroyed-object behavior is routed through the same Unity lifetime helper. The final plant result must therefore preserve Unity `Object` truthiness/inequality rather than CLR-only reference comparison.
 
-## Current iOS blocker
+## Current iOS blocker history
 
 The native7 full Unity iOS seed reached IL2CPP and failed this exact method with:
 
@@ -117,4 +123,4 @@ System.ArgumentException: Cannot get stack type for Vector3
 
 This is the same class of Cpp2IL SIMD/vector lifting corruption previously observed in `ZC_LadderTestPlace`: the original PC native performs scalar component arithmetic on `rDirection.x` and `.y`, while the damaged managed body exposes an invalid binary operation whose operand stack contains a full `UnityEngine.Vector3`.
 
-A generic Vector3 opcode rewrite is not acceptable. Recovery should replace only MethodDef `0x060004A3` with a typed body matching the native control flow above, then prove deterministic materialization, non-target isolation, and direct IL2CPP canary behavior before another full Unity export.
+The first native9 reconstructions removed that Vector3 failure but initially emitted an extra managed `false` argument to `IsDisabled()`. The direct post-Linker canary caught the resulting invalid stack before any expensive full Unity rerun. The current reconstruction is required to use the exact zero-argument MethodDef signature and remain isolated to MethodDef `0x060004A3`.
