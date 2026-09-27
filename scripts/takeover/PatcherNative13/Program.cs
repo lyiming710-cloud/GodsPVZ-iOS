@@ -73,7 +73,7 @@ internal static class Program
     {
         var b=new StringBuilder().Append(m.Body.InitLocals).Append('|').Append(m.Body.MaxStackSize).Append('|');
         foreach(var v in m.Body.Variables)b.Append("V:").Append(v.VariableType.FullName).Append(';');
-        foreach(var i in m.Body.Instructions){b.Append(StableOp(i)).Append(':');switch(i.Operand){case null:break;case Instruction x:b.Append('@').Append(Idx(m,x));break;case Instruction[] xs:foreach(var x in xs)b.Append('@').Append(Idx(m,x)).Append(',');break;case VariableDefinition v:b.Append('V').Append(v.Index).Append(':').Append(v.VariableType.FullName);break;case ParameterDefinition p:b.Append('P').Append(p.Index).Append(':').Append(p.ParameterType.FullName);break;case MemberReference mr:b.Append('M').Append(mr.FullName).Append('@').Append(mr.DeclaringType?.Scope?.Name);break;case TypeReference tr:b.Append('T').Append(tr.FullName).Append('@').Append(tr.Scope?.Name);break;default:b.Append(i.Operand);break;}b.Append(';');}
+        foreach(var i in m.Body.Instructions){b.Append(StableOp(i)).Append(':');switch(i.Operand){case null:break;case Instruction x:b.Append('@').Append(Idx(m,x));break;case Instruction[] xs:foreach(var x in xs)b.Append('@').Append(Idx(m,x)).Append(',');break;case VariableDefinition v:b.Append('V').Append(v.Index).Append(':').Append(v.VariableType.FullName);break;case ParameterDefinition p:b.Append('P').Append(p.Index).Append(':').Append(p.ParameterType.FullName);break;case TypeReference tr:b.Append('T').Append(tr.FullName).Append('@').Append(tr.Scope?.Name);break;case MemberReference mr:b.Append('M').Append(mr.FullName).Append('@').Append(mr.DeclaringType?.Scope?.Name);break;default:b.Append(i.Operand);break;}b.Append(';');}
         foreach(var e in m.Body.ExceptionHandlers)b.Append("EH:").Append(e.HandlerType).Append(':').Append(Idx(m,e.TryStart)).Append(':').Append(Idx(m,e.TryEnd)).Append(':').Append(Idx(m,e.HandlerStart)).Append(':').Append(Idx(m,e.HandlerEnd)).Append(':').Append(Idx(m,e.FilterStart)).Append(':').Append(e.CatchType?.FullName).Append(';');
         return b.ToString();
     }
@@ -96,6 +96,19 @@ internal static class Program
         return mod.ImportReference(m);
     }
 
+    static CallSite MapCallSite(ModuleDefinition mod, CallSite cs)
+    {
+        var mapped=new CallSite(mod.ImportReference(cs.ReturnType))
+        {
+            CallingConvention=cs.CallingConvention,
+            HasThis=cs.HasThis,
+            ExplicitThis=cs.ExplicitThis
+        };
+        foreach(var p in cs.Parameters)
+            mapped.Parameters.Add(new ParameterDefinition(p.Name,p.Attributes,mod.ImportReference(p.ParameterType)));
+        return mapped;
+    }
+
     static Instruction CloneSkeleton(ModuleDefinition mod, MethodDefinition target, TypeDefinition donorType,
         Instruction src, Dictionary<VariableDefinition,VariableDefinition> vars, Dictionary<ParameterDefinition,ParameterDefinition> pars,
         Instruction placeholder)
@@ -109,7 +122,7 @@ internal static class Program
         if(o is FieldReference fr) return Instruction.Create(op,MapField(mod,target,donorType,fr));
         if(o is MethodReference mr) return Instruction.Create(op,MapMethod(mod,target,donorType,mr));
         if(o is TypeReference tr) return Instruction.Create(op,mod.ImportReference(tr));
-        if(o is CallSite cs) return Instruction.Create(op,mod.ImportReference(cs));
+        if(o is CallSite cs) return Instruction.Create(op,MapCallSite(mod,cs));
         if(o is string s) return Instruction.Create(op,s);
         if(o is sbyte sb) return Instruction.Create(op,sb);
         if(o is byte by) return Instruction.Create(op,(sbyte)by);
