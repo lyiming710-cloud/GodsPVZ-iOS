@@ -31,7 +31,6 @@ internal static class Program
         var t=Method(reopened.MainModule,TargetToken);
         Console.WriteLine($"NATIVE9_PATCH_PASS input_mvid={mvid} output_mvid={reopened.MainModule.Mvid}");
         Console.WriteLine($"TARGET token=0x{TargetToken:X8} {t.FullName} code_size={t.Body.CodeSize} il={t.Body.Instructions.Count} locals={t.Body.Variables.Count} eh={t.Body.ExceptionHandlers.Count}");
-        DumpTarget(t);
     }
 
     static IEnumerable<TypeDefinition> Types(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in Types(n))yield return x;}
@@ -55,26 +54,6 @@ internal static class Program
     static void EmitFalseReturn(ILProcessor il){il.Emit(OpCodes.Ldc_I4_0);il.Emit(OpCodes.Ret);}
     static void EmitTrueReturn(ILProcessor il){il.Emit(OpCodes.Ldc_I4_1);il.Emit(OpCodes.Ret);}
 
-    static void DumpTarget(MethodDefinition m)
-    {
-        Console.WriteLine("TARGET_IL_BEGIN");
-        foreach(var i in m.Body.Instructions)
-        {
-            string op=i.Operand switch
-            {
-                null => "",
-                Instruction x => $"IL_{x.Offset:X4}",
-                Instruction[] xs => string.Join(",",xs.Select(x=>$"IL_{x.Offset:X4}")),
-                MemberReference mr => mr.FullName,
-                VariableDefinition v => $"V_{v.Index}:{v.VariableType.FullName}",
-                ParameterDefinition p => $"P_{p.Index}:{p.ParameterType.FullName}",
-                _ => i.Operand.ToString()
-            };
-            Console.WriteLine($"IL_{i.Offset:X4}: {i.OpCode} {op}");
-        }
-        Console.WriteLine("TARGET_IL_END");
-    }
-
     static void Patch(ModuleDefinition mod,MethodDefinition m)
     {
         var z=m.DeclaringType;
@@ -89,25 +68,16 @@ internal static class Program
         var fVX=mod.GetMemberReferences().OfType<FieldReference>().FirstOrDefault(x=>x.DeclaringType.Name=="Vector3"&&x.Name=="x")??new FieldReference("x",mod.TypeSystem.Single,fDir.FieldType);
         var fVY=mod.GetMemberReferences().OfType<FieldReference>().FirstOrDefault(x=>x.DeclaringType.Name=="Vector3"&&x.Name=="y")??new FieldReference("y",mod.TypeSystem.Single,fDir.FieldType);
         var isDisabled=Method(mod,0x06000464u);
-        if(isDisabled.Parameters.Count!=0 || isDisabled.ReturnType.FullName!="System.Boolean")
-            throw new InvalidOperationException($"unexpected IsDisabled signature: {isDisabled.FullName}");
+        if(isDisabled.Parameters.Count!=0 || isDisabled.ReturnType.FullName!="System.Boolean") throw new InvalidOperationException($"unexpected IsDisabled signature: {isDisabled.FullName}");
         var getGX=Method(mod,0x06000159u); var getGY=Method(mod,0x0600015Au); var getGrid=Method(mod,0x060002C4u); var getPass=Method(mod,0x06000295u);
         var boardType=(TypeDefinition)fBoard.FieldType.Resolve(); var fBoardConfig=boardType.Fields.Single(x=>x.Name=="boardConfig");
         var gridType=(TypeDefinition)getGrid.ReturnType.Resolve();
         var fBottom=gridType.Fields.Single(x=>x.Name=="plant_bottom"); var fCommon=gridType.Fields.Single(x=>x.Name=="plant_common"); var fSheath=gridType.Fields.Single(x=>x.Name=="plant_sheath");
-        var plantType=fSheath.FieldType;
-
-        var existingObjImplicit=mod.GetMemberReferences().OfType<MethodReference>().First(x=>x.DeclaringType.FullName=="UnityEngine.Object"&&x.Name=="op_Implicit"&&x.Parameters.Count==1);
-        var unityObjectType=existingObjImplicit.DeclaringType;
-        var unityObjectImplicit=new MethodReference("op_Implicit",mod.TypeSystem.Boolean,unityObjectType){HasThis=false};
-        unityObjectImplicit.Parameters.Add(new ParameterDefinition(unityObjectType));
-        var unityObjectInequality=new MethodReference("op_Inequality",mod.TypeSystem.Boolean,unityObjectType){HasThis=false};
-        unityObjectInequality.Parameters.Add(new ParameterDefinition(unityObjectType));
-        unityObjectInequality.Parameters.Add(new ParameterDefinition(unityObjectType));
+        var unityObjectImplicit=mod.GetMemberReferences().OfType<MethodReference>().First(x=>x.DeclaringType.FullName=="UnityEngine.Object"&&x.Name=="op_Implicit"&&x.Parameters.Count==1&&x.ReturnType.FullName=="System.Boolean");
 
         m.Body.Instructions.Clear();m.Body.Variables.Clear();m.Body.ExceptionHandlers.Clear();m.Body.InitLocals=true;m.Body.MaxStackSize=6;
-        var vX=new VariableDefinition(mod.TypeSystem.Single);var vY=new VariableDefinition(mod.TypeSystem.Single);var vGX=new VariableDefinition(mod.TypeSystem.Int32);var vGY=new VariableDefinition(mod.TypeSystem.Int32);var vGrid=new VariableDefinition(getGrid.ReturnType);var vGridPass=new VariableDefinition(mod.TypeSystem.Int32);var vPlant=new VariableDefinition(plantType);
-        foreach(var v in new[]{vX,vY,vGX,vGY,vGrid,vGridPass,vPlant})m.Body.Variables.Add(v);
+        var vX=new VariableDefinition(mod.TypeSystem.Single);var vY=new VariableDefinition(mod.TypeSystem.Single);var vGX=new VariableDefinition(mod.TypeSystem.Int32);var vGY=new VariableDefinition(mod.TypeSystem.Int32);var vGrid=new VariableDefinition(getGrid.ReturnType);var vGridPass=new VariableDefinition(mod.TypeSystem.Int32);
+        foreach(var v in new[]{vX,vY,vGX,vGY,vGrid,vGridPass})m.Body.Variables.Add(v);
         var il=m.Body.GetILProcessor();
 
         var poleOk=il.Create(OpCodes.Nop);
@@ -115,10 +85,9 @@ internal static class Program
         var stantOk=il.Create(OpCodes.Nop);
         var enabled=il.Create(OpCodes.Nop);
         var gridOk=il.Create(OpCodes.Nop);
-        var plantChecks=il.Create(OpCodes.Ldloc,vGrid);
-        var chooseCommon=il.Create(OpCodes.Ldloc,vGrid);
-        var chooseBottom=il.Create(OpCodes.Ldloc,vGrid);
-        var finishPlant=il.Create(OpCodes.Ldloc,vPlant);
+        var plantChecks=il.Create(OpCodes.Nop);
+        var checkCommon=il.Create(OpCodes.Nop);
+        var checkBottom=il.Create(OpCodes.Nop);
 
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fPole);il.Emit(OpCodes.Brtrue,poleOk);EmitFalseReturn(il);il.Append(poleOk);
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fJump);il.Emit(OpCodes.Brfalse,jumpOk);EmitFalseReturn(il);il.Append(jumpOk);
@@ -138,15 +107,14 @@ internal static class Program
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Ldloc,vGridPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Blt,plantChecks);
         EmitTrueReturn(il);
 
-        // PC native tests Unity object lifetime in sheath -> common -> bottom priority.
-        il.Append(plantChecks);il.Emit(OpCodes.Ldfld,fSheath);il.Emit(OpCodes.Stloc,vPlant);
-        il.Emit(OpCodes.Ldloc,vPlant);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brtrue,finishPlant);
-        il.Append(chooseCommon);il.Emit(OpCodes.Ldfld,fCommon);il.Emit(OpCodes.Stloc,vPlant);
-        il.Emit(OpCodes.Ldloc,vPlant);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brtrue,finishPlant);
-        il.Append(chooseBottom);il.Emit(OpCodes.Ldfld,fBottom);il.Emit(OpCodes.Stloc,vPlant);
-        il.Emit(OpCodes.Ldloc,vPlant);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brtrue,finishPlant);
-        il.Emit(OpCodes.Ldnull);il.Emit(OpCodes.Stloc,vPlant);il.Emit(OpCodes.Br,finishPlant);
-
-        il.Append(finishPlant);il.Emit(OpCodes.Ldnull);il.Emit(OpCodes.Call,unityObjectInequality);il.Emit(OpCodes.Ret);
+        // Equivalent to the PC native selected-plant != null result, but deliberately
+        // expressed as explicit Unity Object truthiness branches so every bool return
+        // has a trivial stack shape for the 2022.3 IL2CPP stack analyzer.
+        il.Append(plantChecks);
+        il.Emit(OpCodes.Ldloc,vGrid);il.Emit(OpCodes.Ldfld,fSheath);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brfalse,checkCommon);EmitTrueReturn(il);
+        il.Append(checkCommon);
+        il.Emit(OpCodes.Ldloc,vGrid);il.Emit(OpCodes.Ldfld,fCommon);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brfalse,checkBottom);EmitTrueReturn(il);
+        il.Append(checkBottom);
+        il.Emit(OpCodes.Ldloc,vGrid);il.Emit(OpCodes.Ldfld,fBottom);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Ret);
     }
 }
