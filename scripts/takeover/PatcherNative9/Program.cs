@@ -89,6 +89,8 @@ internal static class Program
         var fVX=mod.GetMemberReferences().OfType<FieldReference>().FirstOrDefault(x=>x.DeclaringType.Name=="Vector3"&&x.Name=="x")??new FieldReference("x",mod.TypeSystem.Single,fDir.FieldType);
         var fVY=mod.GetMemberReferences().OfType<FieldReference>().FirstOrDefault(x=>x.DeclaringType.Name=="Vector3"&&x.Name=="y")??new FieldReference("y",mod.TypeSystem.Single,fDir.FieldType);
         var isDisabled=Method(mod,0x06000464u);
+        if(isDisabled.Parameters.Count!=0 || isDisabled.ReturnType.FullName!="System.Boolean")
+            throw new InvalidOperationException($"unexpected IsDisabled signature: {isDisabled.FullName}");
         var getGX=Method(mod,0x06000159u); var getGY=Method(mod,0x0600015Au); var getGrid=Method(mod,0x060002C4u); var getPass=Method(mod,0x06000295u);
         var boardType=(TypeDefinition)fBoard.FieldType.Resolve(); var fBoardConfig=boardType.Fields.Single(x=>x.Name=="boardConfig");
         var gridType=(TypeDefinition)getGrid.ReturnType.Resolve();
@@ -121,7 +123,7 @@ internal static class Program
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fPole);il.Emit(OpCodes.Brtrue,poleOk);EmitFalseReturn(il);il.Append(poleOk);
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fJump);il.Emit(OpCodes.Brfalse,jumpOk);EmitFalseReturn(il);il.Append(jumpOk);
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fStant);il.Emit(OpCodes.Brfalse,stantOk);EmitFalseReturn(il);il.Append(stantOk);
-        il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldc_I4_0);il.Emit(OpCodes.Call,isDisabled);il.Emit(OpCodes.Brfalse,enabled);EmitFalseReturn(il);il.Append(enabled);
+        il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Call,isDisabled);il.Emit(OpCodes.Brfalse,enabled);EmitFalseReturn(il);il.Append(enabled);
 
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fX);il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldflda,fDir);il.Emit(OpCodes.Ldfld,fVX);il.Emit(OpCodes.Ldc_R4,134f);il.Emit(OpCodes.Mul);il.Emit(OpCodes.Sub);il.Emit(OpCodes.Stloc,vX);
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fY);il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldflda,fDir);il.Emit(OpCodes.Ldfld,fVY);il.Emit(OpCodes.Ldc_R4,134f);il.Emit(OpCodes.Mul);il.Emit(OpCodes.Sub);il.Emit(OpCodes.Stloc,vY);
