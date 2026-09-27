@@ -1,6 +1,12 @@
 name: Stage9.3 native8 DIRECT post-Linker IL2CPP canary
 
 on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native8-direct-il2cpp-canary.yml'
+      - 'scripts/takeover/patch_native8_linked.sh'
+      - 'scripts/takeover/PatcherNative8/**'
   workflow_dispatch:
 
 permissions:
@@ -18,6 +24,11 @@ jobs:
     env:
       SEED_RUN_ID: '36298521805'
       SEED_ARTIFACT_NAME: 'Stage9.2-native7-postlink-il2cpp-canary'
+      SUPPLEMENT_RUN_ID: '36302168002'
+      SUPPLEMENT_ARTIFACT_NAME: 'Stage9.2-exact-il2cpp-root-supplement'
+      SUPPLEMENT_ARTIFACT_ID: '10925548819'
+      SUPPLEMENT_ARTIFACT_DIGEST: 'sha256:38f488d1e77d7972745f049f1b2a5462c89719e3cbab67f12423c2aa1145887b'
+      ICALL_SHA256: '85644eb6ebaacf203340a1ed357efa9e6802d447974fdecffe196a25ea440bd4'
       NATIVE8_UNLINKED_RUN_ID: '36299250329'
       NATIVE8_UNLINKED_ARTIFACT_ID: '10924513054'
       NATIVE8_UNLINKED_SHA256: 'f31775b974b14f6ee420496efb8fe0eb7636132ae55f8d3bee2cb87565a34e07'
@@ -33,7 +44,7 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Download validated native7 post-Linker canary seed
+      - name: Download native7 post-Linker seed
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -42,36 +53,35 @@ jobs:
           name: ${{ env.SEED_ARTIFACT_NAME }}
           path: ${{ runner.temp }}/canary
 
-      - name: Fetch pinned Cecil
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
-          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
+      - name: Download exact IL2CPP root supplement
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.SUPPLEMENT_RUN_ID }}
+          name: ${{ env.SUPPLEMENT_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/supplement
 
-      - name: Verify seed and reconstruct linked native8 twice
+      - name: Restore exact 2022.3.44f1c1 IL2CPP distribution layout
         shell: bash
         run: |
           set -euo pipefail
           C="$RUNNER_TEMP/canary"
+          S="$RUNNER_TEMP/supplement"
           test -f "$C/MANIFEST.txt"
           grep -qx 'status=NATIVE7_POST_LINKER_CANARY_SEED' "$C/MANIFEST.txt"
           grep -qx 'source_native7_sha256=b9dadd905244ccfddfa86f87c2edc1e60d883441632b5bb359ffccab4d2faa29' "$C/MANIFEST.txt"
-          mapfile -t D < <(find "$C/Library/Bee/artifacts/iOS/ManagedStripped" -maxdepth 1 -type f -name 'GodsPVZRuntime1.dll' | sort)
-          [ "${#D[@]}" = 1 ] || { echo "Expected one stripped GodsPVZRuntime1.dll" >&2; exit 1; }
-          cp "${D[0]}" "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll"
-          chmod +x scripts/takeover/patch_native8_linked.sh
-          scripts/takeover/patch_native8_linked.sh \
-            "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll" \
-            "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" \
-            | tee "$RUNNER_TEMP/native8-linked-patch.log"
-          grep -qx NATIVE8_LINKED_PATCH_PASS "$RUNNER_TEMP/native8-linked-patch.log"
-          cp "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" "${D[0]}"
-          sha256sum "${D[0]}" | tee "$RUNNER_TEMP/native8-linked.sha256"
+          test -f "$S/il2cpp/libil2cpp/libil2cpp.icalls"
+          GOT="$(sha256sum "$S/il2cpp/libil2cpp/libil2cpp.icalls" | awk '{print $1}')"
+          [ "$GOT" = "$ICALL_SHA256" ] || { echo "icall SHA mismatch: $GOT" >&2; exit 1; }
+          test -d "$C/il2cpp-deploy"
+          mkdir -p "$C/il2cpp/build"
+          mv "$C/il2cpp-deploy" "$C/il2cpp/build/deploy"
+          cp -a "$S/il2cpp/libil2cpp" "$C/il2cpp/"
+          test -x "$C/il2cpp/build/deploy/il2cpp"
+          echo "IL2CPP_ROOT_LAYOUT_PASS root=$C/il2cpp icall_sha256=$GOT"
 
-      - name: Replay exact IL2CPP response file only
+      - name: Instantiate relocatable response file
         shell: bash
         run: |
           set -euo pipefail
@@ -88,29 +98,137 @@ jobs:
           s=Path(sys.argv[2]).read_text().replace('__PROJECT_ROOT__',root)
           Path(sys.argv[3]).write_text(s)
           PY
+          printf '%s\n' "$RSP_BASE" > "$RUNNER_TEMP/rsp-base.txt"
+
+      - name: Replay native7 baseline directly and lock stable blocker set
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="$RUNNER_TEMP/canary"
+          RSP_BASE="$(cat "$RUNNER_TEMP/rsp-base.txt")"
           rm -rf "$C/Library/Bee/artifacts/iOS/il2cppOutput"
           mkdir -p "$C/Library/Bee/artifacts/iOS/il2cppOutput/cpp/Symbols" "$C/Library/Bee/artifacts/iOS/il2cppOutput/data"
           set +e
           (
             cd "$C"
-            ./il2cpp-deploy/il2cpp @"Library/Bee/artifacts/rsp/$RSP_BASE" > "$RUNNER_TEMP/native8-il2cpp.stdout" 2> "$RUNNER_TEMP/native8-il2cpp.stderr"
+            ./il2cpp/build/deploy/il2cpp \
+              --custom-il2-cpp-root="$C/il2cpp" \
+              @"Library/Bee/artifacts/rsp/$RSP_BASE" \
+              > "$RUNNER_TEMP/native7-direct.stdout" \
+              2> "$RUNNER_TEMP/native7-direct.stderr"
           )
           RC=$?
           set -e
-          echo "$RC" | tee "$RUNNER_TEMP/native8-il2cpp.exit"
-          cat "$RUNNER_TEMP/native8-il2cpp.stdout" "$RUNNER_TEMP/native8-il2cpp.stderr" > "$RUNNER_TEMP/native8-il2cpp.combined"
-          python3 - "$RUNNER_TEMP/native8-il2cpp.combined" "$RC" <<'PY'
+          echo "$RC" > "$RUNNER_TEMP/native7-direct.exit"
+          cat "$RUNNER_TEMP/native7-direct.stdout" "$RUNNER_TEMP/native7-direct.stderr" > "$RUNNER_TEMP/native7-direct.combined"
+          python3 - "$RUNNER_TEMP/native7-direct.combined" "$RUNNER_TEMP/native7-direct.methods" <<'PY'
           import re,sys
           from pathlib import Path
-          p=Path(sys.argv[1]); rc=int(sys.argv[2]); s=p.read_text(errors='replace')
-          methods=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
-          print('IL2CPP_METHOD_ERRORS='+repr(methods))
-          if methods:
-              raise SystemExit('DIRECT_CANARY_METHOD_FAILURE')
-          if rc != 0:
-              raise SystemExit(f'DIRECT_CANARY_NONZERO_RC={rc}')
-          print('NATIVE8_DIRECT_IL2CPP_CANARY_PASS')
+          s=Path(sys.argv[1]).read_text(errors='replace')
+          got=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
+          expected=sorted([
+              'System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()',
+              'System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()',
+              'System.Boolean Zombie::ZC_PoleTestJump()',
+              'System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)',
+          ])
+          Path(sys.argv[2]).write_text('\n'.join(got)+'\n')
+          print('NATIVE7_DIRECT_METHOD_ERRORS='+repr(got))
+          if got != expected:
+              raise SystemExit(f'native7 direct blocker set mismatch: expected={expected} got={got}')
+          if 'ICallMappingComponent.Initialize' in s:
+              raise SystemExit('direct replay still failed in ICall mapping initialization')
+          print('NATIVE7_DIRECT_BASELINE_PASS')
           PY
+
+      - name: Fetch pinned Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
+
+      - name: Reconstruct linked native8 twice from exact stripped native7
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="$RUNNER_TEMP/canary"
+          mapfile -t D < <(find "$C/Library/Bee/artifacts/iOS/ManagedStripped" -maxdepth 1 -type f -name 'GodsPVZRuntime1.dll' | sort)
+          [ "${#D[@]}" = 1 ] || { echo "Expected one stripped GodsPVZRuntime1.dll" >&2; exit 1; }
+          cp "${D[0]}" "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll"
+          chmod +x scripts/takeover/patch_native8_linked.sh
+          scripts/takeover/patch_native8_linked.sh \
+            "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll" \
+            "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" \
+            | tee "$RUNNER_TEMP/native8-linked-patch.log"
+          grep -qx NATIVE8_LINKED_PATCH_PASS "$RUNNER_TEMP/native8-linked-patch.log"
+          cp "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" "${D[0]}"
+          sha256sum "${D[0]}" | tee "$RUNNER_TEMP/native8-linked.sha256"
+
+      - name: Replay native8 and prove one-blocker differential
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="$RUNNER_TEMP/canary"
+          RSP_BASE="$(cat "$RUNNER_TEMP/rsp-base.txt")"
+          rm -rf "$C/Library/Bee/artifacts/iOS/il2cppOutput"
+          mkdir -p "$C/Library/Bee/artifacts/iOS/il2cppOutput/cpp/Symbols" "$C/Library/Bee/artifacts/iOS/il2cppOutput/data"
+          set +e
+          (
+            cd "$C"
+            ./il2cpp/build/deploy/il2cpp \
+              --custom-il2-cpp-root="$C/il2cpp" \
+              @"Library/Bee/artifacts/rsp/$RSP_BASE" \
+              > "$RUNNER_TEMP/native8-direct.stdout" \
+              2> "$RUNNER_TEMP/native8-direct.stderr"
+          )
+          RC=$?
+          set -e
+          echo "$RC" > "$RUNNER_TEMP/native8-direct.exit"
+          cat "$RUNNER_TEMP/native8-direct.stdout" "$RUNNER_TEMP/native8-direct.stderr" > "$RUNNER_TEMP/native8-direct.combined"
+          python3 - "$RUNNER_TEMP/native7-direct.methods" "$RUNNER_TEMP/native8-direct.combined" "$RUNNER_TEMP/native8-direct.methods" <<'PY'
+          import re,sys
+          from pathlib import Path
+          before=sorted(x for x in Path(sys.argv[1]).read_text().splitlines() if x)
+          s=Path(sys.argv[2]).read_text(errors='replace')
+          after=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
+          target='System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()'
+          expected=sorted(x for x in before if x != target)
+          Path(sys.argv[3]).write_text('\n'.join(after)+'\n')
+          print('NATIVE8_DIRECT_METHOD_ERRORS='+repr(after))
+          if target in after:
+              raise SystemExit('native8 target still fails IL2CPP')
+          if after != expected:
+              raise SystemExit(f'native8 non-target blocker delta: expected={expected} got={after}')
+          if 'ICallMappingComponent.Initialize' in s:
+              raise SystemExit('native8 replay failed in ICall mapping initialization')
+          print('NATIVE8_DIRECT_DIFFERENTIAL_PASS')
+          PY
+
+      - name: Record canary provenance
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="$RUNNER_TEMP/CANARY-PROVENANCE.txt"
+          cat > "$P" <<EOF
+          status=EXPERIMENTAL_DIRECT_IL2CPP_CANARY
+          workflow_head=$GITHUB_SHA
+          seed_run=$SEED_RUN_ID
+          supplement_run=$SUPPLEMENT_RUN_ID
+          supplement_artifact_id=$SUPPLEMENT_ARTIFACT_ID
+          supplement_artifact_digest=$SUPPLEMENT_ARTIFACT_DIGEST
+          icall_sha256=$ICALL_SHA256
+          native8_unlinked_run=$NATIVE8_UNLINKED_RUN_ID
+          native8_unlinked_artifact_id=$NATIVE8_UNLINKED_ARTIFACT_ID
+          native8_unlinked_sha256=$NATIVE8_UNLINKED_SHA256
+          custom_il2cpp_root=YES
+          full_unity_rebuild=NO
+          production_promotion=NO
+          EOF
+          cat "$P"
 
       - name: Upload canary evidence
         if: always()
@@ -118,12 +236,20 @@ jobs:
         with:
           name: Stage9.3-native8-direct-il2cpp-canary-evidence
           path: |
+            ${{ runner.temp }}/CANARY-PROVENANCE.txt
+            ${{ runner.temp }}/native7-direct.stdout
+            ${{ runner.temp }}/native7-direct.stderr
+            ${{ runner.temp }}/native7-direct.combined
+            ${{ runner.temp }}/native7-direct.exit
+            ${{ runner.temp }}/native7-direct.methods
             ${{ runner.temp }}/native8-linked-patch.log
             ${{ runner.temp }}/native8-linked.sha256
-            ${{ runner.temp }}/native8-il2cpp.stdout
-            ${{ runner.temp }}/native8-il2cpp.stderr
-            ${{ runner.temp }}/native8-il2cpp.combined
-            ${{ runner.temp }}/native8-il2cpp.exit
+            ${{ runner.temp }}/native8-direct.stdout
+            ${{ runner.temp }}/native8-direct.stderr
+            ${{ runner.temp }}/native8-direct.combined
+            ${{ runner.temp }}/native8-direct.exit
+            ${{ runner.temp }}/native8-direct.methods
             ${{ runner.temp }}/canary/MANIFEST.txt
+            ${{ runner.temp }}/supplement/LOCK.txt
           if-no-files-found: warn
           retention-days: 30
