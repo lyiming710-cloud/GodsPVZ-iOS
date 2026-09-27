@@ -85,7 +85,7 @@ internal static class Program
         var moveNext=MR(mod,"System.Collections.IEnumerator","MoveNext",0,"System.Boolean");
         var current=MR(mod,"System.Collections.IEnumerator","get_Current",0,"System.Object");
         var dispose=MR(mod,"System.IDisposable","Dispose",0,"System.Void");
-        var listAdd=mod.GetMemberReferences().OfType<MethodReference>().First(x=>x.Name=="Add"&&x.DeclaringType.FullName=="System.Collections.Generic.List`1<Element>"&&x.Parameters.Count==1&&x.Parameters[0].ParameterType.FullName=="Element");
+        var listAdd=mod.GetMemberReferences().OfType<MethodReference>().First(x=>x.Name=="Add"&&x.DeclaringType.FullName==fElements.FieldType.FullName&&x.Parameters.Count==1);
         var ienum=moveNext.DeclaringType;
         var idisposable=dispose.DeclaringType;
 
@@ -95,20 +95,17 @@ internal static class Program
         m.Body.Variables.Add(vEnum); m.Body.Variables.Add(vType); m.Body.Variables.Add(vElement); m.Body.Variables.Add(vDisp);
         var il=m.Body.GetILProcessor();
 
-        // Two independent `as` casts, matching the PC reference-sharing body.
         il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldarg_1); il.Emit(OpCodes.Box,gp); il.Emit(OpCodes.Isinst,zombie); il.Emit(OpCodes.Stfld,fZombie);
         il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldarg_1); il.Emit(OpCodes.Box,gp); il.Emit(OpCodes.Isinst,plant); il.Emit(OpCodes.Stfld,fPlant);
 
-        // Enum.GetValues(typeof(ElementType)).GetEnumerator().
         il.Emit(OpCodes.Ldtoken,elementType); il.Emit(OpCodes.Call,typeFromHandle); il.Emit(OpCodes.Call,enumValues); il.Emit(OpCodes.Callvirt,arrayEnumerator); il.Emit(OpCodes.Stloc,vEnum);
 
         var tryStart=il.Create(OpCodes.Ldloc,vEnum);
         var loopBody=il.Create(OpCodes.Ldloc,vEnum);
-        var leaveTry=il.Create(OpCodes.Leave,Instruction.Create(OpCodes.Nop)); // target fixed below
         var handlerStart=il.Create(OpCodes.Ldloc,vEnum);
         var endFinally=il.Create(OpCodes.Endfinally);
         var afterFinally=il.Create(OpCodes.Ret);
-        leaveTry.Operand=afterFinally;
+        var leaveTry=il.Create(OpCodes.Leave,afterFinally);
 
         il.Append(tryStart); il.Emit(OpCodes.Callvirt,moveNext); il.Emit(OpCodes.Brtrue,loopBody); il.Append(leaveTry);
         il.Append(loopBody); il.Emit(OpCodes.Callvirt,current); il.Emit(OpCodes.Unbox_Any,elementType); il.Emit(OpCodes.Stloc,vType);
@@ -118,7 +115,6 @@ internal static class Program
         il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldfld,fElements); il.Emit(OpCodes.Ldloc,vElement); il.Emit(OpCodes.Callvirt,listAdd);
         il.Emit(OpCodes.Br,tryStart);
 
-        // finally { (enumerator as IDisposable)?.Dispose(); }
         il.Append(handlerStart); il.Emit(OpCodes.Isinst,idisposable); il.Emit(OpCodes.Stloc,vDisp); il.Emit(OpCodes.Ldloc,vDisp); il.Emit(OpCodes.Brfalse,endFinally); il.Emit(OpCodes.Ldloc,vDisp); il.Emit(OpCodes.Callvirt,dispose); il.Append(endFinally);
         il.Append(afterFinally);
         m.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally){TryStart=tryStart,TryEnd=handlerStart,HandlerStart=handlerStart,HandlerEnd=afterFinally});
