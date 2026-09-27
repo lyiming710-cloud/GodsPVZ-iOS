@@ -1,0 +1,67 @@
+name: Stage9.9 native14 ElementManager inspection
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native14-element-inspection.yml'
+      - 'scripts/takeover/InspectNative14/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NATIVE12_SOURCE_RUN_ID: '36311519467'
+      NATIVE12_SOURCE_ARTIFACT_NAME: 'Stage9.7-native12-damage-experimental'
+      NATIVE12_SHA256: 'bca4c3cfdd0c54408d64a9155ce35f56182fee56bc75f5f6b1c8a48c625c8218'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download exact native12 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE12_SOURCE_RUN_ID }}
+          name: ${{ env.NATIVE12_SOURCE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native12
+      - name: Recover exact native12 input
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t H < <(find "$RUNNER_TEMP/native12" -type f -name 'Assembly-CSharp-native12-damage.dll' | sort)
+          [ "${#H[@]}" = 1 ]
+          GOT="$(sha256sum "${H[0]}" | awk '{print $1}')"
+          [ "$GOT" = "$NATIVE12_SHA256" ]
+          cp "${H[0]}" "$RUNNER_TEMP/native12.dll"
+      - name: Fetch pinned Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+      - name: Inspect ElementManager blocker
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project scripts/takeover/InspectNative14/InspectNative14.csproj -- "$RUNNER_TEMP/native12.dll" | tee "$RUNNER_TEMP/native14-inspect.txt"
+          grep -qx INSPECT_NATIVE14_PASS "$RUNNER_TEMP/native14-inspect.txt"
+      - name: Upload inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.9-native14-element-inspection
+          path: ${{ runner.temp }}/native14-inspect.txt
+          if-no-files-found: error
+          retention-days: 30
