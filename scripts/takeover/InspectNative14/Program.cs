@@ -30,7 +30,11 @@ internal static class Program
         Console.WriteLine("RELATED_GENERIC_CALLS_BEGIN");
         foreach(var md in Types(m).SelectMany(x=>x.Methods).Where(x=>x.HasBody))
         foreach(var i in md.Body.Instructions)
-            if(i.Operand is GenericInstanceMethod gim && gim.ElementMethod.Resolve()?.MetadataToken.ToUInt32()==target.MetadataToken.ToUInt32())
+            if(i.Operand is GenericInstanceMethod gim &&
+               gim.ElementMethod.Name==target.Name &&
+               gim.ElementMethod.DeclaringType.FullName==type.FullName &&
+               gim.ElementMethod.Parameters.Count==target.Parameters.Count &&
+               gim.ElementMethod.GenericParameters.Count==target.GenericParameters.Count)
                 Console.WriteLine($"CALLER token=0x{md.MetadataToken.ToUInt32():X8} {md.FullName} -> {gim.FullName} args={string.Join(",",gim.GenericArguments.Select(x=>x.FullName))}");
         Console.WriteLine("RELATED_GENERIC_CALLS_END");
         Console.WriteLine("INSPECT_NATIVE14_PASS");
