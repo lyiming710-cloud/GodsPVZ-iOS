@@ -25,7 +25,6 @@ jobs:
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       GH_TOKEN: ${{ github.token }}
-      GATE_WORK_DIR: ${{ runner.temp }}/godspvz-native7-canary-seed
 
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +47,8 @@ jobs:
 
       - name: Build native7 post-Linker checkpoint and prove direct IL2CPP replay
         shell: bash
+        env:
+          GATE_WORK_DIR: ${{ runner.temp }}/godspvz-native7-canary-seed
         run: |
           set -euo pipefail
           chmod +x scripts/takeover/seed_il2cpp_canary.sh
