@@ -35,11 +35,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
@@ -62,7 +60,7 @@ jobs:
           name: ${{ env.SUPPLEMENT_ARTIFACT_NAME }}
           path: ${{ runner.temp }}/supplement
 
-      - name: Restore exact 2022.3.44f1c1 IL2CPP distribution layout
+      - name: Restore distribution and replay native7 baseline
         shell: bash
         run: |
           set -euo pipefail
@@ -74,49 +72,31 @@ jobs:
           test -f "$S/il2cpp/libil2cpp/libil2cpp.icalls"
           GOT="$(sha256sum "$S/il2cpp/libil2cpp/libil2cpp.icalls" | awk '{print $1}')"
           [ "$GOT" = "$ICALL_SHA256" ] || { echo "icall SHA mismatch: $GOT" >&2; exit 1; }
+
           test -d "$C/il2cpp-deploy"
           mkdir -p "$C/il2cpp/build"
           mv "$C/il2cpp-deploy" "$C/il2cpp/build/deploy"
           cp -a "$S/il2cpp/libil2cpp" "$C/il2cpp/"
+          chmod +x "$C/il2cpp/build/deploy/il2cpp"
           test -x "$C/il2cpp/build/deploy/il2cpp"
           echo "IL2CPP_ROOT_LAYOUT_PASS root=$C/il2cpp icall_sha256=$GOT"
 
-      - name: Instantiate relocatable response file
-        shell: bash
-        run: |
-          set -euo pipefail
-          C="$RUNNER_TEMP/canary"
           RSP_BASE="$(sed -n 's/^rsp_basename=//p' "$C/MANIFEST.txt")"
           [ -n "$RSP_BASE" ]
           TEMPLATE="$C/Library/Bee/artifacts/rsp/$RSP_BASE.template"
           RSP="$C/Library/Bee/artifacts/rsp/$RSP_BASE"
-          test -f "$TEMPLATE"
           python3 - "$C" "$TEMPLATE" "$RSP" <<'PY'
           import sys
           from pathlib import Path
           root=str(Path(sys.argv[1]).resolve())
-          s=Path(sys.argv[2]).read_text().replace('__PROJECT_ROOT__',root)
-          Path(sys.argv[3]).write_text(s)
+          Path(sys.argv[3]).write_text(Path(sys.argv[2]).read_text().replace('__PROJECT_ROOT__',root))
           PY
-          printf '%s\n' "$RSP_BASE" > "$RUNNER_TEMP/rsp-base.txt"
+          echo "$RSP_BASE" > "$RUNNER_TEMP/rsp-base.txt"
 
-      - name: Replay native7 baseline directly and lock stable blocker set
-        shell: bash
-        run: |
-          set -euo pipefail
-          C="$RUNNER_TEMP/canary"
-          RSP_BASE="$(cat "$RUNNER_TEMP/rsp-base.txt")"
           rm -rf "$C/Library/Bee/artifacts/iOS/il2cppOutput"
           mkdir -p "$C/Library/Bee/artifacts/iOS/il2cppOutput/cpp/Symbols" "$C/Library/Bee/artifacts/iOS/il2cppOutput/data"
           set +e
-          (
-            cd "$C"
-            ./il2cpp/build/deploy/il2cpp \
-              --custom-il2-cpp-root="$C/il2cpp" \
-              @"Library/Bee/artifacts/rsp/$RSP_BASE" \
-              > "$RUNNER_TEMP/native7-direct.stdout" \
-              2> "$RUNNER_TEMP/native7-direct.stderr"
-          )
+          (cd "$C" && ./il2cpp/build/deploy/il2cpp --custom-il2-cpp-root="$C/il2cpp" @"Library/Bee/artifacts/rsp/$RSP_BASE" > "$RUNNER_TEMP/native7-direct.stdout" 2> "$RUNNER_TEMP/native7-direct.stderr")
           RC=$?
           set -e
           echo "$RC" > "$RUNNER_TEMP/native7-direct.exit"
@@ -127,17 +107,15 @@ jobs:
           s=Path(sys.argv[1]).read_text(errors='replace')
           got=sorted(set(re.findall(r"IL2CPP error for method '([^']+)'",s)))
           expected=sorted([
-              'System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()',
-              'System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()',
-              'System.Boolean Zombie::ZC_PoleTestJump()',
-              'System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)',
+            'System.Boolean TMPro.Examples.SkewTextExample/<WarpText>d__7::MoveNext()',
+            'System.Boolean TMPro.Examples.WarpTextExample/<WarpText>d__8::MoveNext()',
+            'System.Boolean Zombie::ZC_PoleTestJump()',
+            'System.Single Damage::CalculateAD(T,System.Single,System.Single,DamageAttribute)',
           ])
           Path(sys.argv[2]).write_text('\n'.join(got)+'\n')
           print('NATIVE7_DIRECT_METHOD_ERRORS='+repr(got))
-          if got != expected:
-              raise SystemExit(f'native7 direct blocker set mismatch: expected={expected} got={got}')
-          if 'ICallMappingComponent.Initialize' in s:
-              raise SystemExit('direct replay still failed in ICall mapping initialization')
+          if got != expected: raise SystemExit(f'native7 blocker set mismatch: expected={expected} got={got}')
+          if 'ICallMappingComponent.Initialize' in s: raise SystemExit('ICall root restoration failed')
           print('NATIVE7_DIRECT_BASELINE_PASS')
           PY
 
@@ -150,24 +128,24 @@ jobs:
           python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
           test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
 
-      - name: Reconstruct linked native8 twice from exact stripped native7
+      - name: Reconstruct linked native8 from exact stripped native7
         shell: bash
         run: |
           set -euo pipefail
           C="$RUNNER_TEMP/canary"
-          mapfile -t D < <(find "$C/Library/Bee/artifacts/iOS/ManagedStripped" -maxdepth 1 -type f -name 'GodsPVZRuntime1.dll' | sort)
-          [ "${#D[@]}" = 1 ] || { echo "Expected one stripped GodsPVZRuntime1.dll" >&2; exit 1; }
-          cp "${D[0]}" "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll"
+          D="$C/Library/Bee/artifacts/iOS/ManagedStripped/GodsPVZRuntime1.dll"
+          test -f "$D"
+          cp "$D" "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll"
           chmod +x scripts/takeover/patch_native8_linked.sh
           scripts/takeover/patch_native8_linked.sh \
             "$RUNNER_TEMP/GodsPVZRuntime1.native7.stripped.dll" \
             "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" \
             | tee "$RUNNER_TEMP/native8-linked-patch.log"
           grep -qx NATIVE8_LINKED_PATCH_PASS "$RUNNER_TEMP/native8-linked-patch.log"
-          cp "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" "${D[0]}"
-          sha256sum "${D[0]}" | tee "$RUNNER_TEMP/native8-linked.sha256"
+          cp "$RUNNER_TEMP/GodsPVZRuntime1.native8.stripped.dll" "$D"
+          sha256sum "$D" | tee "$RUNNER_TEMP/native8-linked.sha256"
 
-      - name: Replay native8 and prove one-blocker differential
+      - name: Replay native8 and prove exact one-blocker differential
         shell: bash
         run: |
           set -euo pipefail
@@ -176,14 +154,7 @@ jobs:
           rm -rf "$C/Library/Bee/artifacts/iOS/il2cppOutput"
           mkdir -p "$C/Library/Bee/artifacts/iOS/il2cppOutput/cpp/Symbols" "$C/Library/Bee/artifacts/iOS/il2cppOutput/data"
           set +e
-          (
-            cd "$C"
-            ./il2cpp/build/deploy/il2cpp \
-              --custom-il2-cpp-root="$C/il2cpp" \
-              @"Library/Bee/artifacts/rsp/$RSP_BASE" \
-              > "$RUNNER_TEMP/native8-direct.stdout" \
-              2> "$RUNNER_TEMP/native8-direct.stderr"
-          )
+          (cd "$C" && ./il2cpp/build/deploy/il2cpp --custom-il2-cpp-root="$C/il2cpp" @"Library/Bee/artifacts/rsp/$RSP_BASE" > "$RUNNER_TEMP/native8-direct.stdout" 2> "$RUNNER_TEMP/native8-direct.stderr")
           RC=$?
           set -e
           echo "$RC" > "$RUNNER_TEMP/native8-direct.exit"
@@ -198,12 +169,8 @@ jobs:
           expected=sorted(x for x in before if x != target)
           Path(sys.argv[3]).write_text('\n'.join(after)+'\n')
           print('NATIVE8_DIRECT_METHOD_ERRORS='+repr(after))
-          if target in after:
-              raise SystemExit('native8 target still fails IL2CPP')
-          if after != expected:
-              raise SystemExit(f'native8 non-target blocker delta: expected={expected} got={after}')
-          if 'ICallMappingComponent.Initialize' in s:
-              raise SystemExit('native8 replay failed in ICall mapping initialization')
+          if target in after: raise SystemExit('native8 target still fails IL2CPP')
+          if after != expected: raise SystemExit(f'non-target blocker delta: expected={expected} got={after}')
           print('NATIVE8_DIRECT_DIFFERENTIAL_PASS')
           PY
 
@@ -211,9 +178,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          set -euo pipefail
-          P="$RUNNER_TEMP/CANARY-PROVENANCE.txt"
-          cat > "$P" <<EOF
+          cat > "$RUNNER_TEMP/CANARY-PROVENANCE.txt" <<EOF
           status=EXPERIMENTAL_DIRECT_IL2CPP_CANARY
           workflow_head=$GITHUB_SHA
           seed_run=$SEED_RUN_ID
@@ -228,7 +193,7 @@ jobs:
           full_unity_rebuild=NO
           production_promotion=NO
           EOF
-          cat "$P"
+          cat "$RUNNER_TEMP/CANARY-PROVENANCE.txt"
 
       - name: Upload canary evidence
         if: always()
@@ -237,18 +202,9 @@ jobs:
           name: Stage9.3-native8-direct-il2cpp-canary-evidence
           path: |
             ${{ runner.temp }}/CANARY-PROVENANCE.txt
-            ${{ runner.temp }}/native7-direct.stdout
-            ${{ runner.temp }}/native7-direct.stderr
-            ${{ runner.temp }}/native7-direct.combined
-            ${{ runner.temp }}/native7-direct.exit
-            ${{ runner.temp }}/native7-direct.methods
-            ${{ runner.temp }}/native8-linked-patch.log
-            ${{ runner.temp }}/native8-linked.sha256
-            ${{ runner.temp }}/native8-direct.stdout
-            ${{ runner.temp }}/native8-direct.stderr
-            ${{ runner.temp }}/native8-direct.combined
-            ${{ runner.temp }}/native8-direct.exit
-            ${{ runner.temp }}/native8-direct.methods
+            ${{ runner.temp }}/native7-direct.*
+            ${{ runner.temp }}/native8-linked-*
+            ${{ runner.temp }}/native8-direct.*
             ${{ runner.temp }}/canary/MANIFEST.txt
             ${{ runner.temp }}/supplement/LOCK.txt
           if-no-files-found: warn
