@@ -1,0 +1,111 @@
+name: Stage9.6 native11 TMP_TextSelector_A materialization gate
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native11-materialization-gate.yml'
+      - 'scripts/takeover/materialize_native11.sh'
+      - 'scripts/takeover/PatcherNative11/**'
+      - 'Tools/Stage9Native4Recovery/evidence/native11-native-audit/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-native11-materialization-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NATIVE10_SOURCE_RUN_ID: '36310022174'
+      NATIVE10_SOURCE_ARTIFACT_ID: '10928259988'
+      NATIVE10_SOURCE_ARTIFACT_NAME: 'Stage9.5-native10-warptext-experimental'
+      NATIVE10_SOURCE_ARTIFACT_DIGEST: 'sha256:43b35a2c8c56d5a9935cc5bb3117a6067771e0351d9bf080cc1b6494ce3d8817'
+      NATIVE10_SHA256: '7708dd46a22838b02112995a953993e410de73bb17393282dcae96161f3b0cd2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download exact native10 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE10_SOURCE_RUN_ID }}
+          name: ${{ env.NATIVE10_SOURCE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native10
+      - name: Recover exact native10 input
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t H < <(find "$RUNNER_TEMP/native10" -type f -name 'Assembly-CSharp-native10-warptext.dll' | sort)
+          [ "${#H[@]}" = 1 ]
+          GOT="$(sha256sum "${H[0]}"|awk '{print $1}')"
+          [ "$GOT" = "$NATIVE10_SHA256" ] || { echo "native10 SHA mismatch: $GOT" >&2; exit 1; }
+          mkdir -p Tools/Stage9Native4Recovery/candidate
+          cp "${H[0]}" Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native10-warptext.dll
+      - name: Fetch pinned Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+      - name: Materialize native11 twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/takeover/materialize_native11.sh
+          scripts/takeover/materialize_native11.sh \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native10-warptext.dll \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll \
+            | tee "$RUNNER_TEMP/native11-materialize.log"
+          grep -qx NATIVE11_MATERIALIZATION_PASS "$RUNNER_TEMP/native11-materialize.log"
+      - name: Record native11 provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          E=Tools/Stage9Native4Recovery/evidence/native11-materialization
+          mkdir -p "$E"
+          cp "$RUNNER_TEMP/native11-materialize.log" "$E/materialize.log"
+          cp Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll.run1.log "$E/patcher-run1.log"
+          cp Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll.run2.log "$E/patcher-run2.log"
+          N11="$(sha256sum Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll|awk '{print $1}')"
+          cat > "$E/PROVENANCE.txt" <<EOF
+          status=EXPERIMENTAL_TAKEOVER_MATERIALIZATION
+          workflow_head=$GITHUB_SHA
+          source_native10_run=$NATIVE10_SOURCE_RUN_ID
+          source_native10_artifact_id=$NATIVE10_SOURCE_ARTIFACT_ID
+          source_native10_artifact_digest=$NATIVE10_SOURCE_ARTIFACT_DIGEST
+          source_native10_dll_sha256=$NATIVE10_SHA256
+          native11_dll_sha256=$N11
+          target=TMPro.Examples.TMP_TextSelector_A::LateUpdate
+          target_methoddef=0x060007C1
+          pc_native_va=0x1803B8350
+          pc_native_full_sha256=042a4c2e4429f02430a72782f3aa7058e3be947edc322c6791cb9144c2434f55
+          deterministic_run_pair=PASS
+          direct_il2cpp_canary=NOT_RUN
+          full_unity_rebuild=NO
+          production_promotion=NO
+          EOF
+          cat "$E/PROVENANCE.txt"
+      - name: Upload native11 candidate and evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.6-native11-selector-experimental
+          path: |
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native11-selector.dll
+            Tools/Stage9Native4Recovery/evidence/native11-native-audit/
+            Tools/Stage9Native4Recovery/evidence/native11-materialization/
+          if-no-files-found: error
+          retention-days: 30
