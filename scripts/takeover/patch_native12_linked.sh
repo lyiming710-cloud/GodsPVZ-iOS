@@ -5,7 +5,7 @@ INPUT="${1:?usage: patch_native12_linked.sh <postlink-native7.dll> <postlink-nat
 OUTPUT="${2:?usage: patch_native12_linked.sh <postlink-native7.dll> <postlink-native12.dll>}"
 PATCHER="$REPO_ROOT/scripts/takeover/PatcherNative12/PatcherNative12.csproj"
 CECIL="$REPO_ROOT/Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll"
-EXPECTED_LINKED_NATIVE11_SHA="62f95b5f5407632d3cdc5da30bbe69405717503049bdda1096320e7f81aac8a0"
+EXPECTED_LINKED_NATIVE11_SHA="54b41555bc7c124d61ee18b08f3fc10b8ba6b0fc934df9c4a040c95a0cffde5d"
 sha(){ sha256sum "$1"|awk '{print $1}'; }
 fail(){ echo "[native12-linked] ERROR: $*" >&2; exit 1; }
 [[ -f "$INPUT" ]] || fail "input missing"
