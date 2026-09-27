@@ -35,7 +35,6 @@ internal static class Program
 
     static IEnumerable<TypeDefinition> Types(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in Types(n))yield return x;}
     static IEnumerable<TypeDefinition> Types(ModuleDefinition m){foreach(var t in m.Types)foreach(var x in Types(t))yield return x;}
-    static TypeDefinition Type(ModuleDefinition m,string name)=>Types(m).Single(t=>t.Name==name);
     static MethodDefinition Method(ModuleDefinition m,uint token)=>Types(m).SelectMany(t=>t.Methods).Single(x=>x.MetadataToken.ToUInt32()==token);
     static void CheckIdentity(ModuleDefinition m,string stage){var ts=Types(m).ToArray();var mc=ts.Sum(t=>t.Methods.Count);var fc=ts.Sum(t=>t.Fields.Count);if(ts.Length!=ExpectedTypes||mc!=ExpectedMethods||fc!=ExpectedFields)throw new InvalidOperationException($"{stage}: counts {ts.Length}/{mc}/{fc}");}
 
@@ -77,7 +76,13 @@ internal static class Program
         m.Body.Instructions.Clear();m.Body.Variables.Clear();m.Body.ExceptionHandlers.Clear();m.Body.InitLocals=true;m.Body.MaxStackSize=5;
         var vX=new VariableDefinition(mod.TypeSystem.Single);var vY=new VariableDefinition(mod.TypeSystem.Single);var vGX=new VariableDefinition(mod.TypeSystem.Int32);var vGY=new VariableDefinition(mod.TypeSystem.Int32);var vGrid=new VariableDefinition(getGrid.ReturnType);var vGridPass=new VariableDefinition(mod.TypeSystem.Int32);var vPlant=new VariableDefinition(plantType);
         foreach(var v in new[]{vX,vY,vGX,vGY,vGrid,vGridPass,vPlant})m.Body.Variables.Add(v);
-        var il=m.Body.GetILProcessor();var retFalse=il.Create(OpCodes.Ldc_I4_0);var returnTrue=il.Create(OpCodes.Ldc_I4_1);var chooseCommon=il.Create(OpCodes.Ldloc,vGrid);var chooseBottom=il.Create(OpCodes.Ldloc,vGrid);var finishPlant=il.Create(OpCodes.Ldloc,vPlant);
+        var il=m.Body.GetILProcessor();
+        var retFalse=il.Create(OpCodes.Ldc_I4_0);
+        var returnTrue=il.Create(OpCodes.Ldc_I4_1);
+        var plantChecks=il.Create(OpCodes.Ldloc,vGrid);
+        var chooseCommon=il.Create(OpCodes.Ldloc,vGrid);
+        var chooseBottom=il.Create(OpCodes.Ldloc,vGrid);
+        var finishPlant=il.Create(OpCodes.Ldloc,vPlant);
 
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fPole);il.Emit(OpCodes.Brfalse,retFalse);
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fJump);il.Emit(OpCodes.Brtrue,retFalse);
@@ -92,11 +97,11 @@ internal static class Program
         il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fBoard);il.Emit(OpCodes.Ldloc,vGX);il.Emit(OpCodes.Ldloc,vGY);il.Emit(OpCodes.Callvirt,getGrid);il.Emit(OpCodes.Stloc,vGrid);
         il.Emit(OpCodes.Ldloc,vGrid);il.Emit(OpCodes.Brfalse,retFalse);
         il.Emit(OpCodes.Ldloc,vGrid);il.Emit(OpCodes.Callvirt,getPass);il.Emit(OpCodes.Stloc,vGridPass);
-        il.Emit(OpCodes.Ldloc,vGridPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Ldc_R4,100f);il.Emit(OpCodes.Ble_Un,chooseCommon);
-        il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Ldloc,vGridPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Bge_Un,returnTrue);
+        il.Emit(OpCodes.Ldloc,vGridPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Ldc_R4,100f);il.Emit(OpCodes.Ble,plantChecks);
+        il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Ldfld,fPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Ldloc,vGridPass);il.Emit(OpCodes.Conv_R4);il.Emit(OpCodes.Bge,returnTrue);
 
         // PC native tests Unity object lifetime in sheath -> common -> bottom priority.
-        il.Emit(OpCodes.Ldloc,vGrid);il.Emit(OpCodes.Ldfld,fSheath);il.Emit(OpCodes.Stloc,vPlant);
+        il.Append(plantChecks);il.Emit(OpCodes.Ldfld,fSheath);il.Emit(OpCodes.Stloc,vPlant);
         il.Emit(OpCodes.Ldloc,vPlant);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brtrue,finishPlant);
         il.Append(chooseCommon);il.Emit(OpCodes.Ldfld,fCommon);il.Emit(OpCodes.Stloc,vPlant);
         il.Emit(OpCodes.Ldloc,vPlant);il.Emit(OpCodes.Call,unityObjectImplicit);il.Emit(OpCodes.Brtrue,finishPlant);
