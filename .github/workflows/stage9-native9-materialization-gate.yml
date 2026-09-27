@@ -1,0 +1,121 @@
+name: Stage9.4 native9 PoleTestJump materialization gate
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native9-materialization-gate.yml'
+      - 'scripts/takeover/materialize_native9.sh'
+      - 'scripts/takeover/PatcherNative9/**'
+      - 'Tools/Stage9Native4Recovery/evidence/native9-native-audit/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-native9-materialization-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NATIVE8_SOURCE_RUN_ID: '36299250329'
+      NATIVE8_SOURCE_ARTIFACT_ID: '10924513054'
+      NATIVE8_SOURCE_ARTIFACT_NAME: 'Stage9.3-native8-skewtext-experimental'
+      NATIVE8_SOURCE_ARTIFACT_DIGEST: 'sha256:a578d382773574a3bcabb716ecbc51dfc2270d0ce86de5cbaac8f6e6523ab425'
+      NATIVE8_SHA256: 'f31775b974b14f6ee420496efb8fe0eb7636132ae55f8d3bee2cb87565a34e07'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Download exact native8 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE8_SOURCE_RUN_ID }}
+          name: ${{ env.NATIVE8_SOURCE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native8
+
+      - name: Recover exact native8 input
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t H < <(find "$RUNNER_TEMP/native8" -type f -name 'Assembly-CSharp-native8-skewtext.dll' | sort)
+          [ "${#H[@]}" = 1 ] || { echo "Expected exactly one native8 DLL, got ${#H[@]}" >&2; exit 1; }
+          GOT="$(sha256sum "${H[0]}" | awk '{print $1}')"
+          [ "$GOT" = "$NATIVE8_SHA256" ] || { echo "native8 SHA mismatch: $GOT" >&2; exit 1; }
+          mkdir -p Tools/Stage9Native4Recovery/candidate
+          cp "${H[0]}" Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native8-skewtext.dll
+          echo NATIVE8_INPUT_PASS
+
+      - name: Fetch pinned Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
+
+      - name: Materialize native9 twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/takeover/materialize_native9.sh
+          scripts/takeover/materialize_native9.sh \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native8-skewtext.dll \
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native9-polejump.dll \
+            | tee "$RUNNER_TEMP/native9-materialize.log"
+          grep -qx NATIVE9_MATERIALIZATION_PASS "$RUNNER_TEMP/native9-materialize.log"
+
+      - name: Record native9 provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          E=Tools/Stage9Native4Recovery/evidence/native9-materialization
+          mkdir -p "$E"
+          cp "$RUNNER_TEMP/native9-materialize.log" "$E/materialize.log"
+          cp Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native9-polejump.dll.run1.log "$E/patcher-run1.log"
+          cp Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native9-polejump.dll.run2.log "$E/patcher-run2.log"
+          N9="$(sha256sum Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native9-polejump.dll | awk '{print $1}')"
+          cat > "$E/PROVENANCE.txt" <<EOF
+          status=EXPERIMENTAL_TAKEOVER_MATERIALIZATION
+          workflow_head=$GITHUB_SHA
+          source_native8_run=$NATIVE8_SOURCE_RUN_ID
+          source_native8_artifact_id=$NATIVE8_SOURCE_ARTIFACT_ID
+          source_native8_artifact_name=$NATIVE8_SOURCE_ARTIFACT_NAME
+          source_native8_artifact_digest=$NATIVE8_SOURCE_ARTIFACT_DIGEST
+          source_native8_dll_sha256=$NATIVE8_SHA256
+          native9_dll_sha256=$N9
+          target=Zombie::ZC_PoleTestJump
+          target_methoddef=0x060004A3
+          pc_native_va=0x180371750
+          pc_native_sha256=b9cb66024814e677417c73e96cacce5f4636bc12baf7119e2f2f4ae4c16df9ae
+          deterministic_run_pair=PASS
+          direct_il2cpp_canary=NOT_RUN
+          full_unity_rebuild=NO
+          production_promotion=NO
+          EOF
+          cat "$E/PROVENANCE.txt"
+
+      - name: Upload native9 candidate and evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.4-native9-polejump-experimental
+          path: |
+            Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native9-polejump.dll
+            Tools/Stage9Native4Recovery/evidence/native9-native-audit/
+            Tools/Stage9Native4Recovery/evidence/native9-materialization/
+          if-no-files-found: error
+          retention-days: 30
