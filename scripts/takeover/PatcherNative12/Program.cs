@@ -40,6 +40,7 @@ internal static class Program
         var md=t.Methods.Single(x=>x.Name=="CalculateAD"&&x.GenericParameters.Count==1&&x.Parameters.Count==4);
         if(!linked && md.MetadataToken.ToUInt32()!=TargetToken)throw new InvalidOperationException($"target token mismatch 0x{md.MetadataToken.ToUInt32():X8}");
         if(!md.HasBody)throw new InvalidOperationException("target body missing");
+        if(!md.IsStatic)throw new InvalidOperationException("CalculateAD unexpectedly became instance method");
         return md;
     }
     static void CheckIdentity(ModuleDefinition m,string stage){var ts=Types(m).ToArray();int mc=ts.Sum(t=>t.Methods.Count),fc=ts.Sum(t=>t.Fields.Count);if(ts.Length!=ExpectedTypes||mc!=ExpectedMethods||fc!=ExpectedFields)throw new InvalidOperationException($"{stage}: counts {ts.Length}/{mc}/{fc}");}
@@ -79,9 +80,9 @@ internal static class Program
         il.Append(typeCheck);il.Emit(OpCodes.Ldarg_0);il.Emit(OpCodes.Box,gp);il.Emit(OpCodes.Isinst,zombie);il.Emit(OpCodes.Brtrue,armorFormula);
         il.Emit(OpCodes.Ldarg_1);il.Emit(OpCodes.Ret);
 
-        // Preserve the PC comparison including its unordered fall-through behavior:
-        // defense < attack OR unordered -> attack - defense + defense*0.1; otherwise attack*0.1.
-        il.Append(armorFormula);il.Emit(OpCodes.Ldarg_2);il.Emit(OpCodes.Ldarg_1);il.Emit(OpCodes.Bge_Un,lowDamage);
+        // PC x64 uses COMISS defense,attack + JAE. Ordered defense>=attack takes
+        // the 10% branch; unordered falls through to the subtract/add branch.
+        il.Append(armorFormula);il.Emit(OpCodes.Ldarg_2);il.Emit(OpCodes.Ldarg_1);il.Emit(OpCodes.Bge,lowDamage);
         il.Emit(OpCodes.Ldarg_1);il.Emit(OpCodes.Ldarg_2);il.Emit(OpCodes.Sub);il.Emit(OpCodes.Ldarg_2);il.Emit(OpCodes.Ldc_R4,0.1f);il.Emit(OpCodes.Mul);il.Emit(OpCodes.Add);il.Emit(OpCodes.Ret);
         il.Append(lowDamage);il.Emit(OpCodes.Ldarg_1);il.Emit(OpCodes.Ldc_R4,0.1f);il.Emit(OpCodes.Mul);il.Emit(OpCodes.Ret);
     }
