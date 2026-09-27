@@ -11,8 +11,9 @@ internal static class Program
     static IEnumerable<TypeDefinition> Types(ModuleDefinition m){foreach(var t in m.Types)foreach(var x in Types(t))yield return x;}
     static string Operand(Instruction i)=>i.Operand switch{
         null=>"", Instruction x=>$"IL_{x.Offset:X4}", Instruction[] xs=>string.Join(",",xs.Select(x=>$"IL_{x.Offset:X4}")),
-        MemberReference mr=>$"{mr.FullName} [0x{mr.MetadataToken.ToUInt32():X8}]", VariableDefinition v=>$"V_{v.Index}:{v.VariableType.FullName}",
-        ParameterDefinition p=>$"P_{p.Index}:{p.ParameterType.FullName}", TypeReference tr=>$"{tr.FullName} [0x{tr.MetadataToken.ToUInt32():X8}]", _=>i.Operand.ToString()};
+        VariableDefinition v=>$"V_{v.Index}:{v.VariableType.FullName}", ParameterDefinition p=>$"P_{p.Index}:{p.ParameterType.FullName}",
+        TypeReference tr=>$"{tr.FullName} [0x{tr.MetadataToken.ToUInt32():X8}]", MemberReference mr=>$"{mr.FullName} [0x{mr.MetadataToken.ToUInt32():X8}]",
+        _=>i.Operand.ToString()};
     static void Main(string[] args)
     {
         if(args.Length!=1)throw new ArgumentException("usage: InspectNative14 <dll>");
