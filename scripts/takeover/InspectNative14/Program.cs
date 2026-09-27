@@ -14,6 +14,12 @@ internal static class Program
         VariableDefinition v=>$"V_{v.Index}:{v.VariableType.FullName}", ParameterDefinition p=>$"P_{p.Index}:{p.ParameterType.FullName}",
         TypeReference tr=>$"{tr.FullName} [0x{tr.MetadataToken.ToUInt32():X8}]", MemberReference mr=>$"{mr.FullName} [0x{mr.MetadataToken.ToUInt32():X8}]",
         _=>i.Operand.ToString()};
+    static void DumpType(TypeDefinition t)
+    {
+        Console.WriteLine($"DETAIL_TYPE token=0x{t.MetadataToken.ToUInt32():X8} {t.FullName} enum={t.IsEnum} valueType={t.IsValueType}");
+        foreach(var f in t.Fields) Console.WriteLine($"DETAIL_FIELD token=0x{f.MetadataToken.ToUInt32():X8} name={f.Name} type={f.FieldType.FullName} static={f.IsStatic} const={(f.HasConstant?f.Constant:"-")}");
+        foreach(var md in t.Methods) Console.WriteLine($"DETAIL_METHOD token=0x{md.MetadataToken.ToUInt32():X8} {md.FullName} body={(md.HasBody?md.Body.CodeSize:0)} gp={md.GenericParameters.Count}");
+    }
     static void Main(string[] args)
     {
         if(args.Length!=1)throw new ArgumentException("usage: InspectNative14 <dll>");
@@ -37,6 +43,17 @@ internal static class Program
                gim.ElementMethod.GenericParameters.Count==target.GenericParameters.Count)
                 Console.WriteLine($"CALLER token=0x{md.MetadataToken.ToUInt32():X8} {md.FullName} -> {gim.FullName} args={string.Join(",",gim.GenericArguments.Select(x=>x.FullName))}");
         Console.WriteLine("RELATED_GENERIC_CALLS_END");
+        foreach(var name in new[]{"Element","ElementType","Plant","Zombie"}){
+            var hits=Types(m).Where(x=>x.Name==name).ToArray();
+            foreach(var h in hits)DumpType(h);
+        }
+        Console.WriteLine("RELEVANT_MEMBERREFS_BEGIN");
+        foreach(var r in m.GetMemberReferences().OrderBy(x=>x.MetadataToken.ToUInt32())){
+            string s=r.FullName;
+            if(s.Contains("System.Enum")||s.Contains("System.Array")||s.Contains("System.Collections.IEnumerator")||s.Contains("System.IDisposable")||s.Contains("System.Collections.Generic.List`1<Element>"))
+                Console.WriteLine($"MEMBERREF token=0x{r.MetadataToken.ToUInt32():X8} {r.FullName} scope={r.DeclaringType?.Scope?.Name}");
+        }
+        Console.WriteLine("RELEVANT_MEMBERREFS_END");
         Console.WriteLine("INSPECT_NATIVE14_PASS");
     }
 }
