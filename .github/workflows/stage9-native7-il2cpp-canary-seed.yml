@@ -1,0 +1,76 @@
+name: Stage9.2 native7 post-Linker IL2CPP canary seed
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native7-il2cpp-canary-seed.yml'
+      - 'scripts/takeover/seed_il2cpp_canary.sh'
+      - 'scripts/takeover/fetch_actions_artifact.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-native7-il2cpp-canary-seed
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      GH_TOKEN: ${{ github.token }}
+      GATE_WORK_DIR: ${{ runner.temp }}/godspvz-native7-canary-seed
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Reclaim runner disk once for checkpoint seed
+        shell: bash
+        run: |
+          set -euo pipefail
+          df -h
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+          docker system prune -af || true
+          df -h
+
+      - name: Build native7 post-Linker checkpoint and prove direct IL2CPP replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/takeover/seed_il2cpp_canary.sh
+          scripts/takeover/seed_il2cpp_canary.sh | tee "$RUNNER_TEMP/native7-canary-seed.log"
+          grep -q '^CANARY_SEED_PASS ' "$RUNNER_TEMP/native7-canary-seed.log"
+
+      - name: Upload reusable post-Linker IL2CPP canary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.2-native7-postlink-il2cpp-canary
+          path: ${{ runner.temp }}/godspvz-native7-canary-seed/canary/
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
+
+      - name: Upload seed evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.2-native7-postlink-seed-evidence
+          path: |
+            ${{ runner.temp }}/native7-canary-seed.log
+            ${{ runner.temp }}/godspvz-native7-canary-seed/evidence/
+          if-no-files-found: warn
+          retention-days: 90
