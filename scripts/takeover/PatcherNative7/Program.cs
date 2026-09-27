@@ -42,12 +42,39 @@ internal static class Program
 
     static Dictionary<uint,string> Snapshot(ModuleDefinition m) => Types(m).SelectMany(t=>t.Methods).Where(x=>x.HasBody && !Targets.Contains(x.MetadataToken.ToUInt32())).ToDictionary(x=>x.MetadataToken.ToUInt32(), Fingerprint);
     static void CheckNonTargets(ModuleDefinition m, Dictionary<uint,string> before, string stage) { var now=Snapshot(m); if(now.Count!=before.Count) throw new InvalidOperationException($"{stage}: non-target count changed"); foreach(var x in before) if(!now.TryGetValue(x.Key,out var y)||y!=x.Value) throw new InvalidOperationException($"{stage}: non-target changed 0x{x.Key:X8}"); Console.WriteLine($"NON_TARGET_ISOLATION_PASS stage={stage} methods={before.Count}"); }
+
+    // Cecil may widen short branches when reserializing the module. That changes byte offsets
+    // without changing MethodDef semantics, so the reopen isolation gate fingerprints branch
+    // targets by instruction index and normalizes short/long branch opcode pairs.
+    static string StableOpCode(Instruction i)
+    {
+        var n = i.OpCode.Code.ToString();
+        if (i.Operand is Instruction || i.Operand is Instruction[])
+            return n.EndsWith("_S", StringComparison.Ordinal) ? n.Substring(0, n.Length - 2) : n;
+        return n;
+    }
+    static int InstructionIndex(MethodDefinition m, Instruction? i) => i == null ? -1 : m.Body.Instructions.IndexOf(i);
     static string Fingerprint(MethodDefinition m)
     {
         var b=new StringBuilder().Append(m.Body.InitLocals).Append('|').Append(m.Body.MaxStackSize).Append('|');
         foreach(var v in m.Body.Variables) b.Append("V:").Append(v.VariableType.FullName).Append(';');
-        foreach(var i in m.Body.Instructions) { b.Append(i.OpCode.Code).Append(':'); switch(i.Operand) { case null: break; case Instruction x: b.Append('@').Append(x.Offset); break; case Instruction[] xs: foreach(var x in xs)b.Append('@').Append(x.Offset).Append(','); break; case VariableDefinition v: b.Append('V').Append(v.Index).Append(':').Append(v.VariableType.FullName); break; case ParameterDefinition p: b.Append('P').Append(p.Index).Append(':').Append(p.ParameterType.FullName); break; case MemberReference mr: b.Append('M').Append(mr.MetadataToken.ToUInt32().ToString("X8")).Append(':').Append(mr.FullName); break; default: b.Append(i.Operand); break;} b.Append(';'); }
-        foreach(var e in m.Body.ExceptionHandlers) b.Append("EH:").Append(e.HandlerType).Append(':').Append(e.TryStart?.Offset).Append(':').Append(e.TryEnd?.Offset).Append(':').Append(e.HandlerStart?.Offset).Append(':').Append(e.HandlerEnd?.Offset).Append(':').Append(e.FilterStart?.Offset).Append(':').Append(e.CatchType?.FullName).Append(';');
+        foreach(var i in m.Body.Instructions)
+        {
+            b.Append(StableOpCode(i)).Append(':');
+            switch(i.Operand)
+            {
+                case null: break;
+                case Instruction x: b.Append('@').Append(InstructionIndex(m,x)); break;
+                case Instruction[] xs: foreach(var x in xs)b.Append('@').Append(InstructionIndex(m,x)).Append(','); break;
+                case VariableDefinition v: b.Append('V').Append(v.Index).Append(':').Append(v.VariableType.FullName); break;
+                case ParameterDefinition p: b.Append('P').Append(p.Index).Append(':').Append(p.ParameterType.FullName); break;
+                case MemberReference mr: b.Append('M').Append(mr.MetadataToken.ToUInt32().ToString("X8")).Append(':').Append(mr.FullName); break;
+                default: b.Append(i.Operand); break;
+            }
+            b.Append(';');
+        }
+        foreach(var e in m.Body.ExceptionHandlers)
+            b.Append("EH:").Append(e.HandlerType).Append(':').Append(InstructionIndex(m,e.TryStart)).Append(':').Append(InstructionIndex(m,e.TryEnd)).Append(':').Append(InstructionIndex(m,e.HandlerStart)).Append(':').Append(InstructionIndex(m,e.HandlerEnd)).Append(':').Append(InstructionIndex(m,e.FilterStart)).Append(':').Append(e.CatchType?.FullName).Append(';');
         return b.ToString();
     }
     static void Clear(MethodDefinition m,int stack){m.Body.Instructions.Clear();m.Body.Variables.Clear();m.Body.ExceptionHandlers.Clear();m.Body.InitLocals=true;m.Body.MaxStackSize=stack;}
