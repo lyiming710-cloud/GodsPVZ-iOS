@@ -71,12 +71,23 @@ jobs:
           cp "${H[0]}" Tools/Stage9Native4Recovery/candidate/Assembly-CSharp-native12-damage.dll
           echo NATIVE12_INPUT_PASS
 
-      - name: Compile typed Selector_B donor against exact stripped Unity/TMP references
+      - name: Fetch pinned full resolver and Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          test -f Tools/Stage9Native4Recovery/resolver/mscorlib.dll
+          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
+
+      - name: Compile typed Selector_B donor against exact Unity/TMP references
         shell: bash
         run: |
           set -euo pipefail
           M="$RUNNER_TEMP/seed/Library/Bee/artifacts/iOS/ManagedStripped"
-          test -f "$M/mscorlib.dll"
+          CORLIB="$GITHUB_WORKSPACE/Tools/Stage9Native4Recovery/resolver/mscorlib.dll"
+          test -f "$CORLIB"
           test -f "$M/Unity.TextMeshPro.dll"
           test -f "$M/UnityEngine.CoreModule.dll"
           test -f "$M/UnityEngine.InputLegacyModule.dll"
@@ -86,7 +97,7 @@ jobs:
           OUT="$RUNNER_TEMP/native13-donor.dll"
           dotnet "$CSC" /nologo /noconfig /nostdlib+ /target:library /optimize+ /debug- \
             /out:"$OUT" \
-            /reference:"$M/mscorlib.dll" \
+            /reference:"$CORLIB" \
             /reference:"$M/System.dll" \
             /reference:"$M/System.Core.dll" \
             /reference:"$M/UnityEngine.CoreModule.dll" \
@@ -101,15 +112,6 @@ jobs:
           test -f "$OUT"
           sha256sum "$OUT" | tee "$RUNNER_TEMP/native13-donor.sha256"
           echo NATIVE13_DONOR_COMPILE_PASS
-
-      - name: Fetch pinned Cecil
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
-          test -f Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll
 
       - name: Materialize native13 twice
         shell: bash
@@ -142,6 +144,7 @@ jobs:
           source_native12_artifact_digest=$NATIVE12_SOURCE_ARTIFACT_DIGEST
           source_native12_dll_sha256=$NATIVE12_SHA256
           donor_reference_seed_run=$SEED_RUN_ID
+          donor_corlib_sha256=4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be
           native13_dll_sha256=$N13
           target=TMPro.Examples.TMP_TextSelector_B::LateUpdate
           target_methoddef=0x060007C9
