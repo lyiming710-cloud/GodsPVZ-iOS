@@ -9,4 +9,3 @@ out.parent.mkdir(exist_ok=True)
 run(['dotnet','run','--project','scripts/takeover/PatcherNative16','--',str(source),str(out),'fixture'])
 shutil.copy2(work/'original/Native16Fixture.runtimeconfig.json',out.parent)
 run(['dotnet',str(out)])
-
