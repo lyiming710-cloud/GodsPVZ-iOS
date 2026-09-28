@@ -20,14 +20,12 @@ internal static class Program
         var input=Path.GetFullPath(args[0]); var output=Path.GetFullPath(args[1]);
         if(!File.Exists(input)) throw new FileNotFoundException(input);
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
-        var resolver=new DefaultAssemblyResolver();
-        resolver.AddSearchDirectory(Path.Combine(Directory.GetCurrentDirectory(),"Tools/Stage9Native4Recovery/resolver"));
-        resolver.AddSearchDirectory(Path.GetDirectoryName(input)!);
-        if(fixture)resolver.AddSearchDirectory(Path.GetDirectoryName(typeof(object).Assembly.Location)!);
+        var resolver=new LockedResolver(new[]{Path.GetDirectoryName(input)!,Path.Combine(Directory.GetCurrentDirectory(),"Tools/Stage9Native4Recovery/resolver")}.Concat(fixture?new[]{Path.GetDirectoryName(typeof(object).Assembly.Location)!}:Array.Empty<string>()).ToArray());
         using var asm=AssemblyDefinition.ReadAssembly(input,new ReaderParameters{AssemblyResolver=resolver}); var mod=asm.MainModule; var mvid=mod.Mvid;
         if(!linked) CheckIdentity(mod,"input");
         var target=FindTarget(mod,linked); var before=Snapshot(mod,target);
         PatchMap(mod,target); PatchBinding(mod,FindBinding(mod));
+        if(!fixture&&mod.AssemblyReferences.Any(x=>x.Name=="System.Private.CoreLib"))throw new InvalidOperationException("host framework reference leaked into Unity candidate");
         if(!linked) CheckIdentity(mod,"memory"); CheckNonTargets(mod,target,before,"memory");
         asm.Write(output);
         using var reopened=AssemblyDefinition.ReadAssembly(output);
@@ -40,6 +38,18 @@ internal static class Program
     }
 
     static IEnumerable<TypeDefinition> Types(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in Types(n))yield return x;}
+    sealed class LockedResolver:IAssemblyResolver {
+        readonly string[] dirs;readonly Dictionary<string,AssemblyDefinition> cache=new();
+        public LockedResolver(string[] d){dirs=d;}
+        public AssemblyDefinition Resolve(AssemblyNameReference n)=>Resolve(n,new ReaderParameters());
+        public AssemblyDefinition Resolve(AssemblyNameReference n,ReaderParameters p){
+            if(cache.TryGetValue(n.Name,out var a))return a;
+            var file=dirs.Select(d=>Path.Combine(d,n.Name+".dll")).FirstOrDefault(File.Exists);
+            if(file==null)throw new AssemblyResolutionException(n);
+            p.AssemblyResolver=this;a=AssemblyDefinition.ReadAssembly(file,p);cache[n.Name]=a;return a;
+        }
+        public void Dispose(){foreach(var a in cache.Values)a.Dispose();}
+    }
     static IEnumerable<TypeDefinition> Types(ModuleDefinition m){foreach(var t in m.Types)foreach(var x in Types(t))yield return x;}
     static MethodDefinition FindTarget(ModuleDefinition m,bool linked)
     {
