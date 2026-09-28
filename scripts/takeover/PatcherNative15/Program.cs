@@ -14,13 +14,16 @@ internal static class Program
     static void Main(string[] args)
     {
         if(args.Length < 2 || args.Length > 3) throw new ArgumentException("usage: PatcherNative15 <native14.dll> <native15.dll> [linked]");
-        bool linked=args.Length==3 && args[2]=="linked";
+        bool fixture=args.Length==3 && args[2]=="fixture";
+        bool linked=args.Length==3 && (args[2]=="linked"||fixture);
+        if(args.Length==3&&!linked)throw new ArgumentException("unknown mode");
         var input=Path.GetFullPath(args[0]); var output=Path.GetFullPath(args[1]);
         if(!File.Exists(input)) throw new FileNotFoundException(input);
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         var resolver=new DefaultAssemblyResolver();
         resolver.AddSearchDirectory(Path.Combine(Directory.GetCurrentDirectory(),"Tools/Stage9Native4Recovery/resolver"));
         resolver.AddSearchDirectory(Path.GetDirectoryName(input)!);
+        if(fixture)resolver.AddSearchDirectory(Path.GetDirectoryName(typeof(object).Assembly.Location)!);
         using var asm=AssemblyDefinition.ReadAssembly(input,new ReaderParameters{AssemblyResolver=resolver}); var mod=asm.MainModule; var mvid=mod.Mvid;
         if(!linked) CheckIdentity(mod,"input");
         var target=FindTarget(mod,linked); var before=Snapshot(mod,target);
@@ -31,7 +34,7 @@ internal static class Program
         if(reopened.MainModule.Mvid!=mvid) throw new InvalidOperationException($"MVID changed {mvid}->{reopened.MainModule.Mvid}");
         if(!linked) CheckIdentity(reopened.MainModule,"reopened");
         var rt=FindTarget(reopened.MainModule,linked); CheckNonTargets(reopened.MainModule,rt,before,"reopened");
-        if(rt.Body.ExceptionHandlers.Count!=2 || rt.Body.ExceptionHandlers[0].HandlerType!=ExceptionHandlerType.Finally) throw new InvalidOperationException("finally cleanup missing after reopen");
+        if(rt.Body.ExceptionHandlers.Count!=2 || rt.Body.ExceptionHandlers.Any(x=>x.HandlerType!=ExceptionHandlerType.Finally)) throw new InvalidOperationException("finally cleanup missing after reopen");
         Console.WriteLine($"NATIVE15_PATCH_PASS linked={linked} input_mvid={mvid} output_mvid={reopened.MainModule.Mvid}");
         Console.WriteLine($"TARGET token=0x{rt.MetadataToken.ToUInt32():X8} {rt.FullName} code_size={rt.Body.CodeSize} il={rt.Body.Instructions.Count} locals={rt.Body.Variables.Count} eh={rt.Body.ExceptionHandlers.Count} gp={rt.GenericParameters.Count}");
     }
@@ -62,7 +65,7 @@ internal static class Program
     }
     static MethodReference MR(ModuleDefinition m,string decl,string name,int argc,string ret=null)
     {
-        var q=m.GetMemberReferences().OfType<MethodReference>().Where(x=>x.DeclaringType.FullName==decl&&x.Name==name&&x.Parameters.Count==argc);
+        var q=m.GetMemberReferences().OfType<MethodReference>().Concat(Types(m).SelectMany(t=>t.Methods)).Where(x=>x.DeclaringType.FullName==decl&&x.Name==name&&x.Parameters.Count==argc);
         if(ret!=null)q=q.Where(x=>x.ReturnType.FullName==ret);
         return q.First();
     }
