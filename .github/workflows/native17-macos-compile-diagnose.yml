@@ -1,0 +1,114 @@
+name: Native17 macOS compile diagnosis
+
+on:
+  push:
+    branches: [build/native17-macos-ipa-2026-09-28]
+    paths: ['.github/workflows/native17-macos-compile-diagnose.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect-managed-il:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download exact native17 managed candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: '36435550922'
+          name: Stage9-native17-conversion-qualified
+          path: ${{ runner.temp }}/native17-candidate
+      - name: Inspect eight Zombie compile blockers
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL="$RUNNER_TEMP/native17-candidate/Assembly-CSharp-native17.dll"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = '74c7474f0592d3f577f8376d75d26528624798794983b3f07db5fd973e7456b2'
+          mkdir -p "$RUNNER_TEMP/native17-diag"
+          dotnet run --project scripts/codespaces/InspectZombieMethods/InspectZombieMethods.csproj -- "$DLL" | tee "$RUNNER_TEMP/native17-diag/zombie-methods-il.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Native17-Zombie-method-IL
+          path: ${{ runner.temp }}/native17-diag/zombie-methods-il.txt
+          if-no-files-found: error
+
+  enumerate-xcode-errors:
+    runs-on: macos-15
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact Sep 28 Xcode export
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: '36435550922'
+          name: GodsPVZ-Stage9-native17-unsigned-Xcode
+          path: ${{ runner.temp }}/source
+      - name: Extract exact archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          A="$(find "$RUNNER_TEMP/source" -maxdepth 1 -name '*.tar.zst' -type f -print -quit)"
+          test "$(shasum -a 256 "$A" | awk '{print $1}')" = 'e0c9fd7cdba5fdbaf8cbc8863a809b18ea0f9b990e4944e0324361e3ddd9c908'
+          command -v zstd >/dev/null || brew install zstd
+          mkdir -p "$RUNNER_TEMP/diag"
+          zstd -dc "$A" | tar -xf - -C "$RUNNER_TEMP/diag"
+      - name: Compile with unlimited clang diagnostics
+        shell: bash
+        run: |
+          set -uo pipefail
+          X="$RUNNER_TEMP/diag/xcode"
+          LOG="$RUNNER_TEMP/diag/xcodebuild-unlimited-errors.log"
+          set +e
+          xcodebuild \
+            -project "$X/Unity-iPhone.xcodeproj" \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/diag/DerivedData" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
+            DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= PROVISIONING_PROFILE= \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO COMPILER_INDEX_STORE_ENABLE=NO \
+            'OTHER_CPLUSPLUSFLAGS=$(inherited) -ferror-limit=0' \
+            clean build 2>&1 | tee "$LOG"
+          RC=${PIPESTATUS[0]}
+          set -e
+          echo "$RC" > "$RUNNER_TEMP/diag/xcodebuild-exit.txt"
+          python3 - "$LOG" "$RUNNER_TEMP/diag/error-summary.txt" <<'PY'
+          import re,sys,collections,pathlib
+          log=pathlib.Path(sys.argv[1]).read_text(errors='replace')
+          pat=re.compile(r'([^ /]+\.cpp):(\d+):(\d+): error: (.*)')
+          rows=[]; seen=set()
+          for line in log.splitlines():
+              m=pat.search(line)
+              if not m: continue
+              x=m.groups()
+              if x not in seen: seen.add(x); rows.append(x)
+          by=collections.Counter(r[0] for r in rows)
+          out=[f'unique_errors={len(rows)}', f'files={len(by)}']
+          out += [f'{k}\t{v}' for k,v in by.most_common()]
+          out += ['ERRORS'] + ['\t'.join(r) for r in rows]
+          pathlib.Path(sys.argv[2]).write_text('\n'.join(out)+'\n')
+          print('\n'.join(out[:80]))
+          PY
+          exit 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Native17-Xcode-unlimited-error-diagnostics
+          path: |
+            ${{ runner.temp }}/diag/error-summary.txt
+            ${{ runner.temp }}/diag/xcodebuild-exit.txt
+            ${{ runner.temp }}/diag/xcodebuild-unlimited-errors.log
+          if-no-files-found: error
