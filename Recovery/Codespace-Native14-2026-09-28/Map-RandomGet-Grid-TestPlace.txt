@@ -1,0 +1,517 @@
+MVID=1e1677dd-338e-4e02-9b90-022f43606077
+TYPE token=0x02000062 Map
+FIELD token=0x0400037D name=rows type=System.Collections.Generic.List`1<Row>
+FIELD token=0x0400037E name=senarioState type=SenarioState
+FIELD token=0x0400037F name=cameraSize type=System.Single
+METHOD token=0x06000281 System.Void Map::.ctor(System.Int32,System.Int32) body=68 gp=0
+METHOD token=0x06000282 System.Void Map::AstarFindingPath(System.Collections.Generic.List`1<EnemyPath>,NodeAstar,NodeAstar,System.Collections.Generic.List`1<NodeAstar>,System.Int32,System.Int32,System.Int32,BoardConfig) body=1879 gp=0
+METHOD token=0x06000283 System.Void Map::AstarProcess(System.Collections.Generic.List`1<NodeAstar>&,NodeAstar,System.Collections.Generic.List`1<NodeAstar>,System.Int32,System.Int32,System.Int32) body=728 gp=0
+METHOD token=0x06000284 System.Boolean Map::AstarText(System.Collections.Generic.List`1<EnemyPath>,System.Int32,EnemyPath,System.Collections.Generic.List`1<NodeAstar>,System.Int32,System.Int32) body=4168 gp=0
+METHOD token=0x06000285 Map Map::Copy() body=379 gp=0
+METHOD token=0x06000286 System.Collections.Generic.List`1<NodeAstar> Map::CreateAstarMap(System.Int32,System.Int32) body=507 gp=0
+METHOD token=0x06000287 System.Collections.Generic.List`1<Grid> Map::GetMapGrids() body=341 gp=0
+METHOD token=0x06000288 System.Collections.Generic.List`1<Grid> Map::GetMapGrids(System.Int32,System.Int32) body=427 gp=0
+METHOD token=0x06000289 System.Int32 Map::GetMapX() body=93 gp=0
+METHOD token=0x0600028A System.Int32 Map::GetMapY() body=25 gp=0
+METHOD token=0x0600028B System.Int32 Map::GetGridPassablePoint(System.Int32,System.Int32) body=506 gp=0
+METHOD token=0x0600028C System.Collections.Generic.List`1<EnemyPath> Map::PathFingding(Zombie) body=2283 gp=0
+METHOD token=0x0600028D System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid(System.Int32) body=57 gp=0
+METHOD token=0x0600028E System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid(System.Int32,System.Int32,System.Int32) body=669 gp=0
+METHOD token=0x0600028F System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid_TestPlace(System.Int32,T) body=391 gp=1
+METHOD token=0x06000290 System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid_TestPlace(System.Int32,T,System.Int32,System.Int32) body=1552 gp=1
+METHOD token=0x06000291 System.Void Map::TurnScale(System.Int32,System.Int32) body=1189 gp=0
+TARGET token=0x06000290 rid=656 System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid_TestPlace(System.Int32,T,System.Int32,System.Int32) code_size=1552 il=421 locals=67 eh=0
+GENERIC T attrs=NonVariant
+LOCAL V_0 System.Int32
+LOCAL V_1 System.Int32
+LOCAL V_2 Map
+LOCAL V_3 T
+LOCAL V_4 System.Collections.Generic.List`1<Grid>
+LOCAL V_5 System.Boolean
+LOCAL V_6 System.Object
+LOCAL V_7 System.Boolean
+LOCAL V_8 System.Boolean
+LOCAL V_9 System.Boolean
+LOCAL V_10 System.Int32
+LOCAL V_11 Device
+LOCAL V_12 System.Boolean
+LOCAL V_13 System.Boolean
+LOCAL V_14 System.Int32
+LOCAL V_15 System.Int32
+LOCAL V_16 System.Int32
+LOCAL V_17 System.Boolean
+LOCAL V_18 Map
+LOCAL V_19 System.Boolean
+LOCAL V_20 Grid
+LOCAL V_21 System.Boolean
+LOCAL V_22 System.Boolean
+LOCAL V_23 System.Boolean
+LOCAL V_24 System.Boolean
+LOCAL V_25 System.Int32
+LOCAL V_26 System.Object
+LOCAL V_27 System.Boolean
+LOCAL V_28 System.Int32
+LOCAL V_29 System.Boolean
+LOCAL V_30 Grid
+LOCAL V_31 System.Boolean
+LOCAL V_32 System.Collections.Generic.HashSet`1<System.Int32>
+LOCAL V_33 System.Boolean
+LOCAL V_34 System.IntPtr
+LOCAL V_35 System.Collections.Generic.List`1<Grid>
+LOCAL V_36 System.Boolean
+LOCAL V_37 System.Collections.Generic.List`1<Grid>
+LOCAL V_38 System.Boolean
+LOCAL V_39 System.Boolean
+LOCAL V_40 System.Int32
+LOCAL V_41 System.String
+LOCAL V_42 System.Int32
+LOCAL V_43 System.Object
+LOCAL V_44 System.Int32
+LOCAL V_45 System.String
+LOCAL V_46 System.String
+LOCAL V_47 System.Boolean
+LOCAL V_48 System.Boolean
+LOCAL V_49 System.Boolean
+LOCAL V_50 System.IntPtr
+LOCAL V_51 System.IntPtr
+LOCAL V_52 System.Object
+LOCAL V_53 System.Boolean
+LOCAL V_54 System.Object
+LOCAL V_55 System.Object
+LOCAL V_56 System.Boolean
+LOCAL V_57 System.Boolean
+LOCAL V_58 System.Object
+LOCAL V_59 System.Boolean
+LOCAL V_60 System.Boolean
+LOCAL V_61 System.Collections.Generic.List`1/Enumerator<System.Object>
+LOCAL V_62 System.Collections.Generic.List`1/Enumerator<System.Object>
+LOCAL V_63 System.Collections.Generic.List`1<Grid>
+LOCAL V_64 System.Collections.Generic.HashSet`1/Enumerator<System.Int32>
+LOCAL V_65 System.Collections.Generic.HashSet`1/Enumerator<System.Int32>
+LOCAL V_66 System.Int32
+TARGET_IL_BEGIN
+IL_0000: br IL_0497
+IL_0005: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_0009: call System.Void System.Collections.Generic.List`1<Grid>::.ctor() [0x0A0001BC]
+IL_000E: ldarg.0
+IL_000F: ldfld System.Collections.Generic.List`1<Row> Map::rows [0x0400037D]
+IL_0014: ldc.i4 0
+IL_0019: ceq
+IL_001B: stloc V_5:System.Boolean
+IL_001F: nop
+IL_0020: ldloc V_5:System.Boolean
+IL_0024: brtrue IL_0451
+IL_0029: br IL_002E
+IL_002E: ldstr Method not found @1808197F0
+IL_0033: pop
+IL_0034: nop
+IL_0035: nop
+IL_0036: ldarg.0
+IL_0037: stloc V_18:Map
+IL_003B: ldarg P_2:System.Int32
+IL_003F: stloc V_14:System.Int32
+IL_0043: br IL_0548
+IL_0048: ldloc V_15:System.Int32
+IL_004C: stloc V_16:System.Int32
+IL_0050: br IL_04AF
+IL_0055: ldloc V_10:System.Int32
+IL_0059: ldc.i4 0
+IL_005E: ceq
+IL_0060: stloc V_24:System.Boolean
+IL_0064: ldloc V_16:System.Int32
+IL_0068: stloc V_63:System.Collections.Generic.List`1<Grid>
+IL_006C: ldloc V_24:System.Boolean
+IL_0070: brtrue IL_0467
+IL_0075: br IL_007A
+IL_007A: ldstr Unmanaged memory load: [v167 @ stack_-98 (System.Int32)+18]
+IL_007F: pop
+IL_0080: ldc.i4.0
+IL_0081: conv.i
+IL_0082: stloc V_63:System.Collections.Generic.List`1<Grid>
+IL_0086: ldstr Unmanaged memory load: [v167 @ stack_-98 (System.Int32)+18]
+IL_008B: pop
+IL_008C: ldc.i4.0
+IL_008D: conv.i
+IL_008E: ldc.i4 0
+IL_0093: ceq
+IL_0095: stloc V_23:System.Boolean
+IL_0099: ldloc V_23:System.Boolean
+IL_009D: brtrue IL_045C
+IL_00A2: br IL_00A7
+IL_00A7: ldstr Unmanaged memory load: [v167 @ stack_-98 (System.Int32)+18]
+IL_00AC: pop
+IL_00AD: ldc.i4.0
+IL_00AE: conv.i
+IL_00AF: ldloc V_14:System.Int32
+IL_00B3: call !0 System.Collections.Generic.List`1<Grid>::get_Item(System.Int32) [0x0A000078]
+IL_00B8: stloc V_20:Grid
+IL_00BC: ldloc V_20:Grid
+IL_00C0: ldc.i4 0
+IL_00C5: ceq
+IL_00C7: stloc V_21:System.Boolean
+IL_00CB: ldloc V_21:System.Boolean
+IL_00CF: brtrue IL_04CE
+IL_00D4: br IL_00D9
+IL_00D9: ldloc V_20:Grid
+IL_00DD: ldc.i4 28
+IL_00E2: add
+IL_00E3: stloc V_40:System.Int32
+IL_00E7: ldloc V_40:System.Int32
+IL_00EB: call System.String System.Int32::ToString() [0x0A00002A]
+IL_00F0: stloc V_41:System.String
+IL_00F4: ldloc V_20:Grid
+IL_00F8: ldc.i4 32
+IL_00FD: add
+IL_00FE: stloc V_44:System.Int32
+IL_0102: ldloc V_44:System.Int32
+IL_0106: call System.String System.Int32::ToString() [0x0A00002A]
+IL_010B: stloc V_45:System.String
+IL_010F: br IL_0114
+IL_0114: ldloc V_41:System.String
+IL_0118: ldstr ,
+IL_011D: ldloc V_45:System.String
+IL_0121: call System.String System.String::Concat(System.String,System.String,System.String) [0x0A00010B]
+IL_0126: stloc V_46:System.String
+IL_012A: br IL_012F
+IL_012F: ldloc V_46:System.String
+IL_0133: call System.Void UnityEngine.Debug::Log(System.Object) [0x0A000010]
+IL_0138: ldarg P_1:T
+IL_013C: ldc.i4 0
+IL_0141: ceq
+IL_0143: stloc V_49:System.Boolean
+IL_0147: nop
+IL_0148: ldloc V_49:System.Boolean
+IL_014C: brtrue IL_0255
+IL_0151: br IL_0156
+IL_0156: ldarg P_1:T
+IL_015A: stloc V_50:System.IntPtr
+IL_015E: ldtoken Device [0x02000075]
+IL_0163: call System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle) [0x0A00004C]
+IL_0168: stloc V_51:System.IntPtr
+IL_016C: ldstr Unmanaged memory load: [v794 @ rdx_v34 (Il2CppClass<Device>)+130]
+IL_0171: pop
+IL_0172: ldc.i4.0
+IL_0173: conv.i
+IL_0174: stloc V_52:System.Object
+IL_0178: ldstr Unmanaged memory load: [v793 @ r8_v25 (Il2CppClass<T>)+130]
+IL_017D: pop
+IL_017E: ldc.i4.0
+IL_017F: conv.i
+IL_0180: ldstr Unmanaged memory load: [v794 @ rdx_v34 (Il2CppClass<Device>)+130]
+IL_0185: pop
+IL_0186: ldc.i4.0
+IL_0187: conv.i
+IL_0188: clt
+IL_018A: stloc V_53:System.Boolean
+IL_018E: ldloc V_53:System.Boolean
+IL_0192: brtrue IL_01DF
+IL_0197: br IL_019C
+IL_019C: ldstr Unmanaged memory load: [v793 @ r8_v25 (Il2CppClass<T>)+C8]
+IL_01A1: pop
+IL_01A2: ldc.i4.0
+IL_01A3: conv.i
+IL_01A4: stloc V_58:System.Object
+IL_01A8: ldstr Unmanaged memory load: [v836 @ rax_v63+FFFFFFF8+v795 @ rax_v57*8]
+IL_01AD: pop
+IL_01AE: ldc.i4.0
+IL_01AF: conv.i
+IL_01B0: ldtoken Device [0x02000075]
+IL_01B5: call System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle) [0x0A00004C]
+IL_01BA: ceq
+IL_01BC: ldc.i4.0
+IL_01BD: ceq
+IL_01BF: stloc V_59:System.Boolean
+IL_01C3: ldloc V_59:System.Boolean
+IL_01C7: brtrue IL_01DF
+IL_01CC: br IL_01D1
+IL_01D1: ldc.i4 1
+IL_01D6: stloc V_55:System.Object
+IL_01DA: br IL_04D9
+IL_01DF: ldc.i4 0
+IL_01E4: stloc V_55:System.Object
+IL_01E8: br IL_04D9
+IL_01ED: ldarg P_1:T
+IL_01F1: stloc V_11:Device
+IL_01F5: br IL_05F2
+IL_01FA: ldloc V_20:Grid
+IL_01FE: ldloc V_11:Device
+IL_0202: call System.Boolean Grid::CanPlacing(Device) [0x06000297]
+IL_0207: stloc V_12:System.Boolean
+IL_020B: ldloc V_12:System.Boolean
+IL_020F: ldc.i4.0
+IL_0210: ceq
+IL_0212: stloc V_57:System.Boolean
+IL_0216: nop
+IL_0217: ldloc V_57:System.Boolean
+IL_021B: brtrue IL_0255
+IL_0220: br IL_0225
+IL_0225: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_0229: ldc.i4 0
+IL_022E: ceq
+IL_0230: stloc V_13:System.Boolean
+IL_0234: ldloc V_13:System.Boolean
+IL_0238: brtrue IL_04FB
+IL_023D: br IL_0242
+IL_0242: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_0246: ldloc V_20:Grid
+IL_024A: call System.Void System.Collections.Generic.List`1<Grid>::Add(!0) [0x0A0001B9]
+IL_024F: nop
+IL_0250: br IL_0255
+IL_0255: ldloc V_14:System.Int32
+IL_0259: ldc.i4 1
+IL_025E: add
+IL_025F: stloc V_14:System.Int32
+IL_0263: nop
+IL_0264: ldarg.0
+IL_0265: stloc V_18:Map
+IL_0269: br IL_0506
+IL_026E: ldarg P_2:System.Int32
+IL_0272: stloc V_14:System.Int32
+IL_0276: br IL_0548
+IL_027B: ldloca V_62:System.Collections.Generic.List`1/Enumerator<System.Object>
+IL_027F: call System.Void System.Collections.Generic.List`1/Enumerator<Row>::Dispose() [0x0A0001BB]
+IL_0284: br IL_056E
+IL_0289: ldarg P_0:System.Int32
+IL_028D: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_0291: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_0296: cgt
+IL_0298: stloc V_7:System.Boolean
+IL_029C: ldloc V_7:System.Boolean
+IL_02A0: brtrue IL_044C
+IL_02A5: br IL_02AA
+IL_02AA: newobj System.Void System.Collections.Generic.HashSet`1<System.Int32>::.ctor() [0x0A0001BD]
+IL_02AF: stloc V_32:System.Collections.Generic.HashSet`1<System.Int32>
+IL_02B3: nop
+IL_02B4: br IL_02B9
+IL_02B9: ldloc V_32:System.Collections.Generic.HashSet`1<System.Int32>
+IL_02BD: ldc.i4 0
+IL_02C2: ceq
+IL_02C4: stloc V_8:System.Boolean
+IL_02C8: ldloc V_8:System.Boolean
+IL_02CC: brtrue IL_0451
+IL_02D1: br IL_058C
+IL_02D6: ldc.i4 0
+IL_02DB: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_02DF: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_02E4: call System.Int32 UnityEngine.Random::Range(System.Int32,System.Int32) [0x0A00012B]
+IL_02E9: stloc V_42:System.Int32
+IL_02ED: ldloc V_32:System.Collections.Generic.HashSet`1<System.Int32>
+IL_02F1: ldloc V_42:System.Int32
+IL_02F5: call System.Boolean System.Collections.Generic.HashSet`1<System.Int32>::Add(!0) [0x0A0001BE]
+IL_02FA: stloc V_38:System.Boolean
+IL_02FE: br IL_0303
+IL_0303: br IL_058C
+IL_0308: ldstr Method not found @18078B020
+IL_030D: pop
+IL_030E: ldc.i4.0
+IL_030F: conv.i
+IL_0310: stloc V_34:System.IntPtr
+IL_0314: br IL_05AF
+IL_0319: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_031D: ldloc V_10:System.Int32
+IL_0321: call !0 System.Collections.Generic.List`1<Grid>::get_Item(System.Int32) [0x0A000078]
+IL_0326: stloc V_30:Grid
+IL_032A: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_032E: ldc.i4 0
+IL_0333: ceq
+IL_0335: stloc V_33:System.Boolean
+IL_0339: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_033D: stloc V_63:System.Collections.Generic.List`1<Grid>
+IL_0341: ldloc V_33:System.Boolean
+IL_0345: brtrue IL_0482
+IL_034A: br IL_034F
+IL_034F: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_0353: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_version [0x0A0001BF]
+IL_0358: ldc.i4 1
+IL_035D: add
+IL_035E: stloc V_66:System.Int32
+IL_0362: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_0366: ldloc V_66:System.Int32
+IL_036A: stfld System.Int32 System.Collections.Generic.List`1<Grid>::_version [0x0A0001BF]
+IL_036F: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_0373: ldfld !0[] System.Collections.Generic.List`1<Grid>::_items [0x0A0001C0]
+IL_0378: stloc V_63:System.Collections.Generic.List`1<Grid>
+IL_037C: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_0380: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_0385: stloc V_34:System.IntPtr
+IL_0389: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_038D: ldfld !0[] System.Collections.Generic.List`1<Grid>::_items [0x0A0001C0]
+IL_0392: ldc.i4 0
+IL_0397: ceq
+IL_0399: stloc V_31:System.Boolean
+IL_039D: ldloc V_31:System.Boolean
+IL_03A1: brtrue IL_0477
+IL_03A6: br IL_03AB
+IL_03AB: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_03AF: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_03B4: ldloc V_63:System.Collections.Generic.List`1<Grid>
+IL_03B8: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_03BD: clt
+IL_03BF: stloc V_47:System.Boolean
+IL_03C3: ldloc V_47:System.Boolean
+IL_03C7: brtrue IL_03EA
+IL_03CC: br IL_03D1
+IL_03D1: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_03D5: ldloc V_30:Grid
+IL_03D9: call System.Void System.Collections.Generic.List`1<System.Object>::AddWithResize(!0) [0x0A000033]
+IL_03DE: nop
+IL_03DF: ldc.i4.0
+IL_03E0: conv.i
+IL_03E1: stloc V_34:System.IntPtr
+IL_03E5: br IL_05AF
+IL_03EA: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_03EE: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_03F3: ldc.i4 1
+IL_03F8: add
+IL_03F9: stloc V_28:System.Int32
+IL_03FD: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_0401: ldloc V_28:System.Int32
+IL_0405: stfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_040A: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_040E: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_0413: ldloc V_63:System.Collections.Generic.List`1<Grid>
+IL_0417: ldfld System.Int32 System.Collections.Generic.List`1<Grid>::_size [0x0A00007C]
+IL_041C: clt
+IL_041E: ldc.i4.0
+IL_041F: ceq
+IL_0421: stloc V_29:System.Boolean
+IL_0425: ldloc V_29:System.Boolean
+IL_0429: brtrue IL_05D5
+IL_042E: br IL_0433
+IL_0433: ldloc V_30:Grid
+IL_0437: pop
+IL_0438: nop
+IL_0439: br IL_05AF
+IL_043E: ldloca V_65:System.Collections.Generic.HashSet`1/Enumerator<System.Int32>
+IL_0442: call System.Void System.Collections.Generic.HashSet`1/Enumerator<System.Int32>::Dispose() [0x0A0001C1]
+IL_0447: br IL_05E0
+IL_044C: br IL_05ED
+IL_0451: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_0456: throw
+IL_0457: br IL_04FB
+IL_045C: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_0461: throw
+IL_0462: br IL_0467
+IL_0467: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_046C: throw
+IL_046D: ldloc V_63:System.Collections.Generic.List`1<Grid>
+IL_0471: throw
+IL_0472: br IL_05D5
+IL_0477: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_047C: throw
+IL_047D: br IL_0482
+IL_0482: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_0487: throw
+IL_0488: ldloc V_63:System.Collections.Generic.List`1<Grid>
+IL_048C: throw
+IL_048D: br IL_0492
+IL_0492: ldloc V_37:System.Collections.Generic.List`1<Grid>
+IL_0496: ret
+IL_0497: newobj System.Void System.Collections.Generic.List`1<Grid>::.ctor() [0x0A0001BC]
+IL_049C: stloc V_4:System.Collections.Generic.List`1<Grid>
+IL_04A0: nop
+IL_04A1: newobj System.Void System.Collections.Generic.List`1<Grid>::.ctor() [0x0A0001BC]
+IL_04A6: stloc V_35:System.Collections.Generic.List`1<Grid>
+IL_04AA: br IL_0005
+IL_04AF: ldloc V_14:System.Int32
+IL_04B3: ldloc V_16:System.Int32
+IL_04B7: clt
+IL_04B9: ldc.i4.0
+IL_04BA: ceq
+IL_04BC: stloc V_17:System.Boolean
+IL_04C0: ldloc V_17:System.Boolean
+IL_04C4: brtrue IL_026E
+IL_04C9: br IL_0055
+IL_04CE: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_04D3: throw
+IL_04D4: br IL_045C
+IL_04D9: ldloc V_55:System.Object
+IL_04DD: ldc.i4 0
+IL_04E2: ceq
+IL_04E4: stloc V_60:System.Boolean
+IL_04E8: ldnull
+IL_04E9: stloc V_11:Device
+IL_04ED: ldloc V_60:System.Boolean
+IL_04F1: brtrue IL_05F2
+IL_04F6: br IL_01ED
+IL_04FB: newobj System.Void System.NullReferenceException::.ctor() [0x0A000022]
+IL_0500: throw
+IL_0501: br IL_04CE
+IL_0506: ldloc V_18:Map
+IL_050A: call System.Int32 Map::GetMapX() [0x06000289]
+IL_050F: stloc V_25:System.Int32
+IL_0513: ldloc V_26:System.Object
+IL_0517: ldc.i4 1
+IL_051C: add
+IL_051D: stloc V_15:System.Int32
+IL_0521: ldloc V_15:System.Int32
+IL_0525: ldloc V_25:System.Int32
+IL_0529: clt
+IL_052B: ldc.i4.0
+IL_052C: ceq
+IL_052E: stloc V_27:System.Boolean
+IL_0532: ldloc V_25:System.Int32
+IL_0536: stloc V_16:System.Int32
+IL_053A: ldloc V_27:System.Boolean
+IL_053E: brtrue IL_04AF
+IL_0543: br IL_0048
+IL_0548: ldloca V_62:System.Collections.Generic.List`1/Enumerator<System.Object>
+IL_054C: call System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext() [0x0A000024]
+IL_0551: stloc V_19:System.Boolean
+IL_0555: ldloc V_19:System.Boolean
+IL_0559: ldc.i4.0
+IL_055A: ceq
+IL_055C: stloc V_22:System.Boolean
+IL_0560: ldloc V_22:System.Boolean
+IL_0564: brtrue IL_027B
+IL_0569: br IL_0506
+IL_056E: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_0572: ldc.i4 0
+IL_0577: ceq
+IL_0579: stloc V_9:System.Boolean
+IL_057D: nop
+IL_057E: ldloc V_9:System.Boolean
+IL_0582: brtrue IL_0451
+IL_0587: br IL_0289
+IL_058C: ldstr Unmanaged memory load: [v552 @ rax_v31 (System.Collections.Generic.HashSet`1<System.Int32>)+20]
+IL_0591: pop
+IL_0592: ldc.i4.0
+IL_0593: conv.i
+IL_0594: ldarg P_0:System.Int32
+IL_0598: clt
+IL_059A: ldc.i4.0
+IL_059B: ceq
+IL_059D: stloc V_39:System.Boolean
+IL_05A1: ldloc V_39:System.Boolean
+IL_05A5: brtrue IL_0308
+IL_05AA: br IL_02D6
+IL_05AF: ldloca V_65:System.Collections.Generic.HashSet`1/Enumerator<System.Int32>
+IL_05B3: call System.Boolean System.Collections.Generic.HashSet`1/Enumerator<System.Int32>::MoveNext() [0x0A0001C2]
+IL_05B8: stloc V_48:System.Boolean
+IL_05BC: ldloc V_48:System.Boolean
+IL_05C0: ldc.i4.0
+IL_05C1: ceq
+IL_05C3: stloc V_36:System.Boolean
+IL_05C7: ldloc V_36:System.Boolean
+IL_05CB: brtrue IL_043E
+IL_05D0: br IL_0319
+IL_05D5: newobj System.Void System.IndexOutOfRangeException::.ctor() [0x0A00007B]
+IL_05DA: throw
+IL_05DB: br IL_0477
+IL_05E0: ldloc V_4:System.Collections.Generic.List`1<Grid>
+IL_05E4: stloc V_35:System.Collections.Generic.List`1<Grid>
+IL_05E8: br IL_05ED
+IL_05ED: ldloc V_35:System.Collections.Generic.List`1<Grid>
+IL_05F1: ret
+IL_05F2: ldloc V_11:Device
+IL_05F6: ldc.i4 0
+IL_05FB: ceq
+IL_05FD: stloc V_56:System.Boolean
+IL_0601: nop
+IL_0602: ldloc V_56:System.Boolean
+IL_0606: brtrue IL_0255
+IL_060B: br IL_01FA
+TARGET_IL_END
+RELATED_GENERIC_CALLS_BEGIN
+RELATED_GENERIC_CALLS_END
+INSPECT_METHOD_PASS

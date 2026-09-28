@@ -8,7 +8,6 @@ PROGRAM="$REPO_ROOT/scripts/takeover/PatcherNative8/Program.cs"
 PATCHER="$REPO_ROOT/scripts/takeover/PatcherNative8/PatcherNative8.csproj"
 FALLBACKS="$REPO_ROOT/scripts/takeover/PatcherNative8/ReferenceFallbacks.cs"
 CECIL="$REPO_ROOT/Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll"
-LEGACY_ROOT="/workspaces/GodsPVZ-iOS"
 
 fail(){ echo "[native8-linked] ERROR: $*" >&2; exit 1; }
 sha(){ sha256sum "$1" | awk '{print $1}'; }
@@ -18,11 +17,22 @@ sha(){ sha256sum "$1" | awk '{print $1}'; }
 [[ -f "$FALLBACKS" ]] || fail "ReferenceFallbacks.cs missing"
 command -v dotnet >/dev/null 2>&1 || fail "dotnet missing"
 
-if [[ -e "$LEGACY_ROOT" || -L "$LEGACY_ROOT" ]]; then
-  [[ "$(realpath "$LEGACY_ROOT")" == "$REPO_ROOT" ]] || fail "$LEGACY_ROOT points elsewhere"
-else
-  if [[ -d /workspaces && -w /workspaces ]]; then ln -s "$REPO_ROOT" "$LEGACY_ROOT"; else sudo mkdir -p /workspaces; sudo ln -s "$REPO_ROOT" "$LEGACY_ROOT"; fi
-fi
+# Normalize a private build copy: repeated runs must not rewrite tracked source.
+BUILD_DIR="$(mktemp -d)"
+trap 'rm -rf -- "$BUILD_DIR"' EXIT
+cp "$PROGRAM" "$BUILD_DIR/Program.cs"
+cp "$FALLBACKS" "$BUILD_DIR/ReferenceFallbacks.cs"
+cp "$PATCHER" "$BUILD_DIR/PatcherNative8.csproj"
+PROGRAM="$BUILD_DIR/Program.cs"
+PATCHER="$BUILD_DIR/PatcherNative8.csproj"
+python3 - "$PATCHER" "$CECIL" <<'PY'
+from pathlib import Path
+import sys, xml.etree.ElementTree as ET
+p=Path(sys.argv[1]); tree=ET.parse(p)
+ref=tree.getroot().find(".//Reference[@Include='Mono.Cecil']")
+assert ref is not None
+ref.set('HintPath',sys.argv[2]); tree.write(p,encoding='unicode')
+PY
 
 # Same source-binding normalization used by the native8 unlinked materializer.
 python3 - "$PROGRAM" <<'PY'
