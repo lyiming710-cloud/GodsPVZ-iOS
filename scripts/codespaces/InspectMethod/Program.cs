@@ -24,6 +24,7 @@ internal static class Program
     {
         if(args.Length<4||args.Length>5)throw new ArgumentException("usage: InspectMethod <dll> <type> <generic-method> <parameter-count>");
         using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(args[0])); var m=asm.MainModule;
+        Console.WriteLine("ASSEMBLY="+asm.Name.Name);
         var type=Types(m).Single(x=>x.FullName==args[1]);
         Console.WriteLine($"MVID={m.Mvid}"); Console.WriteLine($"TYPE token=0x{type.MetadataToken.ToUInt32():X8} {type.FullName}");
         foreach(var f in type.Fields) Console.WriteLine($"FIELD token=0x{f.MetadataToken.ToUInt32():X8} name={f.Name} type={f.FieldType.FullName}");

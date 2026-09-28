@@ -35,5 +35,15 @@ python3 scripts/codespaces/validate_native17.py
 
 The replay checks native16 hashes and its exact AssignTo failure as the positive
 control, then materializes both candidates twice and invokes real IL2CPP.
-See validation/native17-result.json for the measured outcome. Until that result
-is present, no converter success or full Unity export is claimed.
+At source `659a403a57fd544c24b7c2073aabc55f09a4ea6c`, the complete Codespace
+replay finished in **219.57 seconds**: **NATIVE17_DIRECT_CONVERSION_PASS**,
+IL2CPP **exit 0**, methods **[]**. Native16 was independently reproduced with
+the exact preceding failure. All 2296 non-target MethodBodies were unchanged;
+linked/unlinked output pairs were byte-identical.
+
+- Unlinked SHA256: `74c7474f0592d3f577f8376d75d26528624798794983b3f07db5fd973e7456b2`
+- Linked SHA256: `9bf2d7a033632061e8e71d32c70312c3c234298649495afc384d0dfe7120a125`
+
+Raw logs and hash manifest are in validation/. A fresh full Unity import/export
+is the next independent acceptance stage; direct post-Linker conversion success
+does not claim that stage or device-runtime acceptance.
