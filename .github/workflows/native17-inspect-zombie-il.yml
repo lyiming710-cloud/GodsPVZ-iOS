@@ -1,0 +1,42 @@
+name: Native17 inspect Zombie IL
+
+on:
+  push:
+    branches: [build/native17-macos-ipa-2026-09-28]
+    paths: ['.github/workflows/native17-inspect-zombie-il.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download exact native17 managed candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: '36435550922'
+          name: Stage9-native17-conversion-qualified
+          path: ${{ runner.temp }}/native17-candidate
+      - name: Inspect eight Zombie compile blockers
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL="$RUNNER_TEMP/native17-candidate/Assembly-CSharp-native17.dll"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = '74c7474f0592d3f577f8376d75d26528624798794983b3f07db5fd973e7456b2'
+          mkdir -p "$RUNNER_TEMP/native17-diag"
+          dotnet run --project scripts/codespaces/InspectZombieMethods/InspectZombieMethods.csproj -- "$DLL" | tee "$RUNNER_TEMP/native17-diag/zombie-methods-il.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Native17-Zombie-method-IL
+          path: ${{ runner.temp }}/native17-diag/zombie-methods-il.txt
+          if-no-files-found: error
