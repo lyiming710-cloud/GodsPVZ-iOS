@@ -21,6 +21,9 @@ internal static class Program
         if(!File.Exists(input)) throw new FileNotFoundException(input);
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         var resolver=new LockedResolver(new[]{Path.GetDirectoryName(input)!,Path.Combine(Directory.GetCurrentDirectory(),"Tools/Stage9Native4Recovery/resolver")}.Concat(fixture?new[]{Path.GetDirectoryName(typeof(object).Assembly.Location)!}:new[]{Environment.GetEnvironmentVariable("GODSPVZ_RESOLVER")}).Where(x=>!string.IsNullOrEmpty(x)).ToArray());
+        // Roslyn orders nested fixture types differently from Cecil. Normalize
+        // only the synthetic fixture once, before recording token-keyed snapshots.
+        if(fixture){using var normalized=AssemblyDefinition.ReadAssembly(input,new ReaderParameters{AssemblyResolver=resolver});normalized.Write(input+".normalized");input+=".normalized";}
         using var asm=AssemblyDefinition.ReadAssembly(input,new ReaderParameters{AssemblyResolver=resolver}); var mod=asm.MainModule; var mvid=mod.Mvid;
         if(!linked) CheckIdentity(mod,"input");
         var target=FindTarget(mod,linked); var before=Snapshot(mod,target);
