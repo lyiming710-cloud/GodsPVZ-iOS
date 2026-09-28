@@ -22,13 +22,13 @@ internal static class Program
     }
     static void Main(string[] args)
     {
-        if(args.Length!=4)throw new ArgumentException("usage: InspectMethod <dll> <type> <generic-method> <parameter-count>");
+        if(args.Length<4||args.Length>5)throw new ArgumentException("usage: InspectMethod <dll> <type> <generic-method> <parameter-count>");
         using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(args[0])); var m=asm.MainModule;
         var type=Types(m).Single(x=>x.FullName==args[1]);
         Console.WriteLine($"MVID={m.Mvid}"); Console.WriteLine($"TYPE token=0x{type.MetadataToken.ToUInt32():X8} {type.FullName}");
         foreach(var f in type.Fields) Console.WriteLine($"FIELD token=0x{f.MetadataToken.ToUInt32():X8} name={f.Name} type={f.FieldType.FullName}");
         foreach(var md in type.Methods) Console.WriteLine($"METHOD token=0x{md.MetadataToken.ToUInt32():X8} {md.FullName} body={(md.HasBody?md.Body.CodeSize:0)} gp={md.GenericParameters.Count}");
-        var target=type.Methods.Single(x=>x.Name==args[2]&&(x.GenericParameters.Count==1||type.HasGenericParameters)&&x.Parameters.Count==int.Parse(args[3]));
+        var target=type.Methods.Single(x=>x.Name==args[2]&&(x.GenericParameters.Count==1||type.HasGenericParameters)&&x.Parameters.Count==int.Parse(args[3])&&(args.Length==4||x.Parameters[0].ParameterType.FullName==args[4]));
         Console.WriteLine($"TARGET token=0x{target.MetadataToken.ToUInt32():X8} rid={target.MetadataToken.RID} {target.FullName} code_size={target.Body.CodeSize} il={target.Body.Instructions.Count} locals={target.Body.Variables.Count} eh={target.Body.ExceptionHandlers.Count}");
         foreach(var gp in target.GenericParameters){Console.WriteLine($"GENERIC {gp.Name} attrs={gp.Attributes}");foreach(var c in gp.Constraints)Console.WriteLine($"CONSTRAINT {c.ConstraintType.FullName}");}
         foreach(var v in target.Body.Variables)Console.WriteLine($"LOCAL V_{v.Index} {v.VariableType.FullName}");
