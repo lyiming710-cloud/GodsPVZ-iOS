@@ -20,7 +20,7 @@ internal static class Program
         var input=Path.GetFullPath(args[0]); var output=Path.GetFullPath(args[1]);
         if(!File.Exists(input)) throw new FileNotFoundException(input);
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
-        var resolver=new LockedResolver(new[]{Path.GetDirectoryName(input)!,Path.Combine(Directory.GetCurrentDirectory(),"Tools/Stage9Native4Recovery/resolver")}.Concat(fixture?new[]{Path.GetDirectoryName(typeof(object).Assembly.Location)!}:Array.Empty<string>()).ToArray());
+        var resolver=new LockedResolver(new[]{Path.GetDirectoryName(input)!,Path.Combine(Directory.GetCurrentDirectory(),"Tools/Stage9Native4Recovery/resolver")}.Concat(fixture?new[]{Path.GetDirectoryName(typeof(object).Assembly.Location)!}:new[]{Environment.GetEnvironmentVariable("GODSPVZ_RESOLVER")}).Where(x=>!string.IsNullOrEmpty(x)).ToArray());
         using var asm=AssemblyDefinition.ReadAssembly(input,new ReaderParameters{AssemblyResolver=resolver}); var mod=asm.MainModule; var mvid=mod.Mvid;
         if(!linked) CheckIdentity(mod,"input");
         var target=FindTarget(mod,linked); var before=Snapshot(mod,target);
@@ -52,6 +52,7 @@ internal static class Program
             int push=i.OpCode.StackBehaviourPush==StackBehaviour.Push0?0:i.OpCode.StackBehaviourPush.ToString().Split('_').Length;
             if(i.Operand is MethodReference mr){pop=mr.Parameters.Count+(i.OpCode==OpCodes.Newobj?0:mr.HasThis?1:0);push=i.OpCode==OpCodes.Newobj||mr.ReturnType.MetadataType!=MetadataType.Void?1:0;}
             if(i.OpCode==OpCodes.Ret){pop=m.ReturnType.MetadataType==MetadataType.Void?0:1;push=0;}
+            if(i.OpCode==OpCodes.Leave||i.OpCode==OpCodes.Leave_S){pop=depth;push=0;}
             if(depth<pop)throw new InvalidOperationException("stack underflow "+m.FullName+" "+i);int next=depth-pop+push;
             if(i.OpCode==OpCodes.Ret||i.OpCode==OpCodes.Endfinally){if(next!=0)throw new InvalidOperationException("nonempty terminal stack");continue;}
             if(i.OpCode==OpCodes.Leave||i.OpCode==OpCodes.Leave_S){if(depth!=0)throw new InvalidOperationException("nonempty leave stack");next=0;}

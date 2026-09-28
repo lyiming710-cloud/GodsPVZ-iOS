@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Native15 two-target experiment, with pinned native14 positive control."""
 from pathlib import Path
-import hashlib, json, runpy, subprocess, time
+import hashlib, json, runpy, subprocess, time, os
 root=Path(__file__).resolve().parents[2]
 base=root/'.validation/native15';base.mkdir(parents=True,exist_ok=True)
 report={'status':'RUNNING','full_unity_export':False,'production_promotion':False}
@@ -20,7 +20,7 @@ try:
     for label,source,args in [('unlinked',unlinked,[]),('linked',g['linked14'],['linked'])]:
         first=work/f'native15-{label}.dll';second=work/f'native15-{label}-repeat.dll'
         for output,suffix in [(first,''),(second,'-repeat')]:
-            run(['dotnet','run','--project',str(project),'--',str(source),str(output)]+args,f'native15-{label}{suffix}.log')
+            run(['dotnet','run','--project',str(project),'--',str(source),str(output)]+args,f'native15-{label}{suffix}.log',env=dict(os.environ,GODSPVZ_RESOLVER=str(g['M'])))
         assert first.read_bytes()==second.read_bytes(),label+' materialization not deterministic'
         outputs[label]={'path':str(first),'input_sha256':sha(source),'sha256':sha(first)}
     result=replay('native15',Path(outputs['linked']['path']))
