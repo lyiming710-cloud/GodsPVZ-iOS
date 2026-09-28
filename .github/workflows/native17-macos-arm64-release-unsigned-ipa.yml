@@ -1,0 +1,231 @@
+name: Native17 macOS arm64 Release unsigned IPA
+
+on:
+  push:
+    branches: [build/native17-macos-ipa-2026-09-28]
+    paths: ['.github/workflows/native17-macos-arm64-release-unsigned-ipa.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: native17-macos-arm64-release-unsigned-ipa
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      SOURCE_RUN_ID: '36435550922'
+      SOURCE_ARTIFACT_NAME: GodsPVZ-Stage9-native17-unsigned-Xcode
+      SOURCE_TAR_SHA256: e0c9fd7cdba5fdbaf8cbc8863a809b18ea0f9b990e4944e0324361e3ddd9c908
+      SOURCE_COMMIT: ff088446839f67161045561e4a19e56799a6d039
+      IPA_BASENAME: GodsPVZ-native17-ff088446-arm64-Release-unsigned
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download today's native17 Xcode artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native17-source
+
+      - name: Extract and verify source artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="$RUNNER_TEMP/native17-source"
+          WORK="$RUNNER_TEMP/native17-macos"
+          E="$WORK/evidence"
+          mkdir -p "$WORK" "$E"
+
+          ARCHIVE="$(find "$SRC" -maxdepth 1 -type f -name '*.tar.zst' -print -quit)"
+          test -n "$ARCHIVE"
+          test "$(find "$SRC" -maxdepth 1 -type f -name '*.tar.zst' | wc -l | tr -d ' ')" = '1'
+          GOT="$(shasum -a 256 "$ARCHIVE" | awk '{print $1}')"
+          printf '%s  %s\n' "$GOT" "$ARCHIVE" | tee "$E/source-archive.sha256"
+          test "$GOT" = "$SOURCE_TAR_SHA256"
+
+          if ! command -v zstd >/dev/null 2>&1; then
+            brew install zstd
+          fi
+          mkdir -p "$WORK/extracted"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$WORK/extracted"
+          XCODE="$WORK/extracted/xcode"
+          test -f "$XCODE/Unity-iPhone.xcodeproj/project.pbxproj"
+          test -f "$XCODE/Unity-iPhone.xcodeproj/xcshareddata/xcschemes/Unity-iPhone.xcscheme"
+          printf '%s\n' "$XCODE" > "$WORK/xcode-path.txt"
+
+      - name: Preflight macOS and reject Linux build-path residue
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/native17-macos"
+          E="$WORK/evidence"
+          XCODE="$(cat "$WORK/xcode-path.txt")"
+          PBX="$XCODE/Unity-iPhone.xcodeproj/project.pbxproj"
+
+          uname -a | tee "$E/uname.txt"
+          xcodebuild -version | tee "$E/xcode-version.txt"
+          xcrun --sdk iphoneos --show-sdk-path | tee "$E/iphoneos-sdk-path.txt"
+
+          if grep -nE '/home/runner|/workspaces/|/workspace/|/mnt/|/opt/hostedtoolcache|/usr/local/lib/android' "$PBX" "$XCODE/process_symbols.sh" > "$E/linux-path-hits.txt"; then
+            cat "$E/linux-path-hits.txt"
+            echo 'Linux-only absolute path residue found in Xcode build-control files' >&2
+            exit 21
+          fi
+          : > "$E/linux-path-hits.txt"
+
+          grep -q -- '--architecture=arm64' "$PBX"
+          grep -q 'ARCHS = arm64;' "$PBX"
+          grep -q 'ENABLE_BITCODE = NO;' "$PBX"
+          grep -E -- '--architecture=arm64|ARCHS = arm64;|ENABLE_BITCODE = NO;|IPHONEOS_DEPLOYMENT_TARGET' "$PBX" > "$E/arm64-build-settings.txt"
+
+          HOST_ARCH="$(uname -m)"
+          case "$HOST_ARCH" in
+            arm64) BEE_ARCH=arm64 ;;
+            x86_64) BEE_ARCH=x64 ;;
+            *) echo "Unsupported macOS host architecture: $HOST_ARCH" >&2; exit 22 ;;
+          esac
+          IL2CPP_DIR="$XCODE/Il2CppOutputProject/IL2CPP/build/deploy_$HOST_ARCH"
+          IL2CPP="$IL2CPP_DIR/il2cpp"
+          BEE="$IL2CPP_DIR/bee_backend/mac-$BEE_ARCH/bee_backend"
+          test -x "$IL2CPP"
+          test -x "$BEE"
+          file "$IL2CPP" "$BEE" | tee "$E/host-tools.txt"
+          file "$IL2CPP" | grep -q 'Mach-O'
+          file "$BEE" | grep -q 'Mach-O'
+
+          for LIB in "$XCODE/Libraries/libiPhone-lib.a" "$XCODE/Libraries/baselib.a" "$XCODE/Libraries/libil2cpp.a"; do
+            test -f "$LIB"
+            xcrun lipo -info "$LIB" | tee -a "$E/target-libraries.txt"
+            xcrun lipo -verify_arch arm64 "$LIB"
+          done
+
+          xcodebuild \
+            -project "$XCODE/Unity-iPhone.xcodeproj" \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -showBuildSettings \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
+            DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= PROVISIONING_PROFILE= \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO \
+            > "$E/show-build-settings.txt"
+          grep -E '(^|[[:space:]])(ARCHS|CONFIGURATION|SDKROOT|SUPPORTED_PLATFORMS|PRODUCT_NAME|PRODUCT_BUNDLE_IDENTIFIER|IPHONEOS_DEPLOYMENT_TARGET) =' "$E/show-build-settings.txt" > "$E/show-build-settings-summary.txt" || true
+
+      - name: Build arm64 Release without signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/native17-macos"
+          E="$WORK/evidence"
+          XCODE="$(cat "$WORK/xcode-path.txt")"
+          DERIVED="$WORK/DerivedData"
+
+          set -o pipefail
+          xcodebuild \
+            -project "$XCODE/Unity-iPhone.xcodeproj" \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$DERIVED" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
+            DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= PROVISIONING_PROFILE= \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO COMPILER_INDEX_STORE_ENABLE=NO \
+            clean build 2>&1 | tee "$E/xcodebuild.log"
+
+      - name: Verify unsigned arm64 app and package IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$RUNNER_TEMP/native17-macos"
+          E="$WORK/evidence"
+          PRODUCTS="$WORK/DerivedData/Build/Products/Release-iphoneos"
+          OUT="$WORK/output"
+          mkdir -p "$OUT"
+
+          APP="$(find "$PRODUCTS" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$APP"
+          test "$(find "$PRODUCTS" -maxdepth 1 -type d -name '*.app' | wc -l | tr -d ' ')" = '1'
+          printf '%s\n' "$APP" | tee "$E/app-path.txt"
+
+          PLIST="$APP/Info.plist"
+          EXECUTABLE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$PLIST")"
+          BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$PLIST")"
+          printf 'CFBundleExecutable=%s\nCFBundleIdentifier=%s\n' "$EXECUTABLE" "$BUNDLE_ID" | tee "$E/app-info.txt"
+          test -f "$APP/$EXECUTABLE"
+          file "$APP/$EXECUTABLE" | tee "$E/app-executable-file.txt"
+          xcrun lipo -verify_arch arm64 "$APP/$EXECUTABLE"
+          if xcrun lipo -info "$APP/$EXECUTABLE" | grep -q 'x86_64'; then
+            echo 'Unexpected x86_64 slice in iOS app executable' >&2
+            exit 31
+          fi
+
+          if find "$APP" -type d -name _CodeSignature -print -quit | grep -q .; then
+            echo 'Code signature directory exists in supposedly unsigned app' >&2
+            find "$APP" -type d -name _CodeSignature -print
+            exit 32
+          fi
+          if find "$APP" -name embedded.mobileprovision -print -quit | grep -q .; then
+            echo 'embedded.mobileprovision exists in supposedly unsigned app' >&2
+            exit 33
+          fi
+          if codesign -dv "$APP" >/dev/null 2>&1; then
+            echo 'App unexpectedly has a code signature' >&2
+            exit 34
+          fi
+          echo 'APP_UNSIGNED=PASS' | tee "$E/signing-check.txt"
+
+          PACKAGE="$WORK/package"
+          rm -rf "$PACKAGE"
+          mkdir -p "$PACKAGE/Payload"
+          ditto "$APP" "$PACKAGE/Payload/$(basename "$APP")"
+          IPA="$OUT/$IPA_BASENAME.ipa"
+          (cd "$PACKAGE" && COPYFILE_DISABLE=1 /usr/bin/zip -qry "$IPA" Payload)
+          test -s "$IPA"
+          shasum -a 256 "$IPA" | tee "$E/ipa.sha256"
+          unzip -l "$IPA" | sed -n '1,120p' > "$E/ipa-listing.txt"
+
+          cat > "$E/BUILD-RESULT.txt" <<EOF
+          BUILD=PASS
+          SOURCE_RUN_ID=$SOURCE_RUN_ID
+          SOURCE_COMMIT=$SOURCE_COMMIT
+          SOURCE_ARTIFACT=$SOURCE_ARTIFACT_NAME
+          SOURCE_TAR_SHA256=$SOURCE_TAR_SHA256
+          CONFIGURATION=Release
+          SDK=iphoneos
+          TARGET_ARCH=arm64
+          CODE_SIGNING_ALLOWED=NO
+          APP_UNSIGNED=PASS
+          BUNDLE_ID=$BUNDLE_ID
+          IPA=$(basename "$IPA")
+          EOF
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-native17-arm64-Release-unsigned-IPA
+          path: ${{ runner.temp }}/native17-macos/output/*.ipa
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Upload macOS build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-native17-macOS-build-evidence
+          path: ${{ runner.temp }}/native17-macos/evidence/
+          if-no-files-found: warn
+          include-hidden-files: true
