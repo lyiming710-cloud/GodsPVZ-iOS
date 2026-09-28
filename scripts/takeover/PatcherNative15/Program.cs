@@ -24,7 +24,12 @@ internal static class Program
         using var asm=AssemblyDefinition.ReadAssembly(input,new ReaderParameters{AssemblyResolver=resolver}); var mod=asm.MainModule; var mvid=mod.Mvid;
         if(!linked) CheckIdentity(mod,"input");
         var target=FindTarget(mod,linked); var before=Snapshot(mod,target);
+        var binding=FindBinding(mod);
+        if(!linked&&binding.MetadataToken.ToUInt32()!=0x060000C4)throw new InvalidOperationException("Binding token mismatch");
+        foreach(var t in new[]{target,binding})if(t.GenericParameters[0].HasConstraints||t.GenericParameters[0].Attributes!=GenericParameterAttributes.NonVariant)throw new InvalidOperationException("generic constraint changed");
         PatchMap(mod,target); PatchBinding(mod,FindBinding(mod));
+        foreach(var t in new[]{target,binding}){StackCheck(t);var first=t.Body.Instructions[0];t.Body.Instructions.RemoveAt(0);bool rejected=false;try{StackCheck(t);}catch(InvalidOperationException){rejected=true;}finally{t.Body.Instructions.Insert(0,first);}if(!rejected)throw new InvalidOperationException("stack negative control accepted");}
+        Console.WriteLine("STACK_FLOW_PASS targets=2 negative_controls=2");
         if(!fixture&&mod.AssemblyReferences.Any(x=>x.Name=="System.Private.CoreLib"))throw new InvalidOperationException("host framework reference leaked into Unity candidate");
         if(!linked) CheckIdentity(mod,"memory"); CheckNonTargets(mod,target,before,"memory");
         asm.Write(output);
@@ -32,12 +37,29 @@ internal static class Program
         if(reopened.MainModule.Mvid!=mvid) throw new InvalidOperationException($"MVID changed {mvid}->{reopened.MainModule.Mvid}");
         if(!linked) CheckIdentity(reopened.MainModule,"reopened");
         var rt=FindTarget(reopened.MainModule,linked); CheckNonTargets(reopened.MainModule,rt,before,"reopened");
+        StackCheck(rt);StackCheck(FindBinding(reopened.MainModule));
         if(rt.Body.ExceptionHandlers.Count!=2 || rt.Body.ExceptionHandlers.Any(x=>x.HandlerType!=ExceptionHandlerType.Finally)) throw new InvalidOperationException("finally cleanup missing after reopen");
         Console.WriteLine($"NATIVE15_PATCH_PASS linked={linked} input_mvid={mvid} output_mvid={reopened.MainModule.Mvid}");
         Console.WriteLine($"TARGET token=0x{rt.MetadataToken.ToUInt32():X8} {rt.FullName} code_size={rt.Body.CodeSize} il={rt.Body.Instructions.Count} locals={rt.Body.Variables.Count} eh={rt.Body.ExceptionHandlers.Count} gp={rt.GenericParameters.Count}");
     }
 
     static IEnumerable<TypeDefinition> Types(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in Types(n))yield return x;}
+    static void StackCheck(MethodDefinition m){
+        var seen=new Dictionary<Instruction,int>();var queue=new Queue<(Instruction,int)>();queue.Enqueue((m.Body.Instructions[0],0));
+        foreach(var e in m.Body.ExceptionHandlers)queue.Enqueue((e.HandlerStart,e.HandlerType==ExceptionHandlerType.Catch?1:0));
+        while(queue.Count>0){var (i,depth)=queue.Dequeue();if(i==null)throw new InvalidOperationException("fallthrough past body");if(seen.TryGetValue(i,out var old)){if(old!=depth)throw new InvalidOperationException("stack merge mismatch");continue;}seen[i]=depth;
+            int pop=i.OpCode.StackBehaviourPop==StackBehaviour.Pop0?0:i.OpCode.StackBehaviourPop.ToString().Split('_').Length;
+            int push=i.OpCode.StackBehaviourPush==StackBehaviour.Push0?0:i.OpCode.StackBehaviourPush.ToString().Split('_').Length;
+            if(i.Operand is MethodReference mr){pop=mr.Parameters.Count+(i.OpCode==OpCodes.Newobj?0:mr.HasThis?1:0);push=i.OpCode==OpCodes.Newobj||mr.ReturnType.MetadataType!=MetadataType.Void?1:0;}
+            if(i.OpCode==OpCodes.Ret){pop=m.ReturnType.MetadataType==MetadataType.Void?0:1;push=0;}
+            if(depth<pop)throw new InvalidOperationException("stack underflow "+m.FullName+" "+i);int next=depth-pop+push;
+            if(i.OpCode==OpCodes.Ret||i.OpCode==OpCodes.Endfinally){if(next!=0)throw new InvalidOperationException("nonempty terminal stack");continue;}
+            if(i.OpCode==OpCodes.Leave||i.OpCode==OpCodes.Leave_S){if(depth!=0)throw new InvalidOperationException("nonempty leave stack");next=0;}
+            if(i.Operand is Instruction target)queue.Enqueue((target,next));
+            if(i.Operand is Instruction[] targets)foreach(var target2 in targets)queue.Enqueue((target2,next));
+            if(i.OpCode.FlowControl!=FlowControl.Branch&&i.OpCode.FlowControl!=FlowControl.Throw)queue.Enqueue((i.Next,next));
+        }
+    }
     sealed class LockedResolver:IAssemblyResolver {
         readonly string[] dirs;readonly Dictionary<string,AssemblyDefinition> cache=new();
         public LockedResolver(string[] d){dirs=d;}
@@ -62,7 +84,14 @@ internal static class Program
     }
     static void CheckIdentity(ModuleDefinition m,string stage){var ts=Types(m).ToArray();int mc=ts.Sum(t=>t.Methods.Count),fc=ts.Sum(t=>t.Fields.Count);if(ts.Length!=ExpectedTypes||mc!=ExpectedMethods||fc!=ExpectedFields)throw new InvalidOperationException($"{stage}: counts {ts.Length}/{mc}/{fc}");}
     static Dictionary<uint,string> Snapshot(ModuleDefinition m,MethodDefinition target)=>Types(m).SelectMany(t=>t.Methods).Where(x=>x.HasBody&&x!=target&&x!=FindBinding(m)).ToDictionary(x=>x.MetadataToken.ToUInt32(),Fingerprint);
-    static void CheckNonTargets(ModuleDefinition m,MethodDefinition target,Dictionary<uint,string> before,string stage){var now=Snapshot(m,target);if(now.Count!=before.Count)throw new InvalidOperationException($"{stage}: non-target count {before.Count}->{now.Count}");foreach(var kv in before)if(!now.TryGetValue(kv.Key,out var v)||v!=kv.Value)throw new InvalidOperationException($"{stage}: non-target changed 0x{kv.Key:X8}");Console.WriteLine($"NON_TARGET_ISOLATION_PASS stage={stage} methods={before.Count}");}
+    static void CheckNonTargets(ModuleDefinition m,MethodDefinition target,Dictionary<uint,string> before,string stage){
+        var now=Snapshot(m,target);if(now.Count!=before.Count)throw new InvalidOperationException($"{stage}: non-target count {before.Count}->{now.Count}");
+        foreach(var kv in before)if(!now.TryGetValue(kv.Key,out var v)||v!=kv.Value){
+            int at=0;while(v!=null&&at<Math.Min(v.Length,kv.Value.Length)&&v[at]==kv.Value[at])at++;
+            throw new InvalidOperationException($"{stage}: non-target changed 0x{kv.Key:X8} at={at} before={kv.Value.Substring(Math.Max(0,at-25),Math.Min(120,kv.Value.Length-Math.Max(0,at-25)))} after={v?.Substring(Math.Max(0,at-25),Math.Min(120,v.Length-Math.Max(0,at-25)))}");
+        }
+        Console.WriteLine($"NON_TARGET_ISOLATION_PASS stage={stage} methods={before.Count}");
+    }
     static string StableOp(Instruction i){var n=i.OpCode.Code.ToString();if((i.Operand is Instruction||i.Operand is Instruction[])&&n.EndsWith("_S",StringComparison.Ordinal))return n[..^2];return n;}
     static int Ix(MethodDefinition m,Instruction i)=>i==null?-1:m.Body.Instructions.IndexOf(i);
     static string Fingerprint(MethodDefinition m)
