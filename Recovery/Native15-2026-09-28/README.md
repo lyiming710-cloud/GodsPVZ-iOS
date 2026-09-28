@@ -2,6 +2,17 @@
 
 Experimental only. No production promotion or full Unity export is claimed.
 
+Codespace validation at source commit `796221ea58a0ecb77bab586d6e51f408aa61580d`
+reported **NATIVE15_TARGET_CLOSURE_PASS** in 129.0 seconds. The emitted CIL passed
+24 CLR fixture assertions, two stack negative controls, and non-target isolation
+for 2295 MethodBodies. Unlinked and linked outputs each reproduced byte-for-byte.
+
+- Unlinked native15 SHA256: `3416340aa16234f853f0d50e13c34b4ef382d1233c351ef3b3fcd918abed5d97`
+- Linked native15 SHA256: `542370a6b40adb7df92fa3bfa7384f867a035b29f3685152ac9a3bc809f64259`
+- IL2CPP exit: **255**, with newly exposed `FTRuntime.Internal.SwfAssocList<T>.Remove`
+  and `VFXAnimationEvent.SetSorting<T>` errors. Both repaired target errors are gone.
+- Full Unity Actions was not started because these known conversion failures remain.
+
 Authority: original PC `GameAssembly.dll` SHA256
 `9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d`
 and metadata SHA256
@@ -72,6 +83,7 @@ Run from repository root after the native14 bootstrap:
 
 ```sh
 python3 scripts/codespaces/run_native14_validation.py
+python3 scripts/codespaces/test_native15_fixture.py
 python3 scripts/codespaces/validate_native15.py
 ```
 
@@ -81,3 +93,18 @@ MVID and every non-target MethodBody, reopens the outputs, and executes the
 exact Unity China IL2CPP converter on the linked candidate. Target closure,
 full converter success, fresh Unity export and runtime fidelity are distinct
 results. Check latest-result.json; do not infer success from script existence.
+
+The patcher resolves framework methods only from pinned Unity directories. The
+runner supplies `GODSPVZ_RESOLVER` pointing to the exact seed's ManagedStripped
+directory for System.Core, which the small full resolver bundle does not carry.
+Never fall back to the installed .NET framework for candidate materialization.
+An explicit guard rejects a leaked System.Private.CoreLib assembly reference.
+
+The synthetic CLR fixture uses stubs for surrounding game/Unity behavior and
+executes the emitted target bodies on .NET 9. It tests branch behavior, casts,
+argument/write order, range boundaries, duplicate random draws and exceptions;
+it is not a Unity game/runtime qualification. Its Roslyn-generated nested-type
+token order is normalized once with Cecil before token-based non-target checks.
+Real candidate DLLs are never normalized this way. The patcher also checks stack
+height over both target CFGs and finally handlers, including two deliberately
+broken-stack negative controls, then repeats the check after reopening the DLL.
