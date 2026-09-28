@@ -106,7 +106,7 @@ jobs:
           for LIB in "$XCODE/Libraries/libiPhone-lib.a" "$XCODE/Libraries/baselib.a" "$XCODE/Libraries/libil2cpp.a"; do
             test -f "$LIB"
             xcrun lipo -info "$LIB" | tee -a "$E/target-libraries.txt"
-            xcrun lipo -verify_arch arm64 "$LIB"
+            xcrun lipo "$LIB" -verify_arch arm64
           done
 
           xcodebuild \
@@ -167,7 +167,7 @@ jobs:
           printf 'CFBundleExecutable=%s\nCFBundleIdentifier=%s\n' "$EXECUTABLE" "$BUNDLE_ID" | tee "$E/app-info.txt"
           test -f "$APP/$EXECUTABLE"
           file "$APP/$EXECUTABLE" | tee "$E/app-executable-file.txt"
-          xcrun lipo -verify_arch arm64 "$APP/$EXECUTABLE"
+          xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64
           if xcrun lipo -info "$APP/$EXECUTABLE" | grep -q 'x86_64'; then
             echo 'Unexpected x86_64 slice in iOS app executable' >&2
             exit 31
