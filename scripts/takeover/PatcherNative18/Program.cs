@@ -20,6 +20,9 @@ internal static class Program
         ("Ashe", 1),
         ("CheckZombieWin", 2),
         ("CreateStartPrePath", 0),
+        ("CreatParticles", 1),
+        ("DestroyZombie", 0),
+        ("Die", 2),
     };
 
     static void Main(string[] args)
@@ -53,7 +56,7 @@ internal static class Program
         var targetSet = new HashSet<MethodDefinition>(targets);
         var before = Snapshot(mod, targetSet);
 
-        // Patch the 8 target methods
+        // Patch the 11 target methods
         PatchPreviousPosition(mod, zombieType.Methods.Single(m => m.Name == "PreviousPosition" && m.Parameters.Count == 0));
         PatchStartPreviousPosition(mod, zombieType.Methods.Single(m => m.Name == "Start_PreviousPosition" && m.Parameters.Count == 0));
         PatchUpdateMove(mod, zombieType.Methods.Single(m => m.Name == "Update_Move" && m.Parameters.Count == 0));
@@ -62,6 +65,9 @@ internal static class Program
         PatchAshe(mod, zombieType.Methods.Single(m => m.Name == "Ashe" && m.Parameters.Count == 1));
         PatchCheckZombieWin(mod, zombieType.Methods.Single(m => m.Name == "CheckZombieWin" && m.Parameters.Count == 2));
         PatchCreateStartPrePath(mod, zombieType.Methods.Single(m => m.Name == "CreateStartPrePath" && m.Parameters.Count == 0));
+        PatchCreatParticles(mod, zombieType.Methods.Single(m => m.Name == "CreatParticles" && m.Parameters.Count == 1));
+        PatchDestroyZombie(mod, zombieType.Methods.Single(m => m.Name == "DestroyZombie" && m.Parameters.Count == 0));
+        PatchDie(mod, zombieType.Methods.Single(m => m.Name == "Die" && m.Parameters.Count == 2));
 
         foreach (var t in targets)
         {
@@ -519,7 +525,7 @@ internal static class Program
         RemoveTrailingStackWarning(m);
     }
 
-    // 7. CheckZombieWin: surgical fix for ldc.i4.0 ceq on Grid pointer + remove trailing warning
+    // 7. CheckZombieWin: surgical fix for ldc.i4.0 / ldc.i4 0 ceq on Grid pointer + remove trailing warning
     static void PatchCheckZombieWin(ModuleDefinition mod, MethodDefinition m)
     {
         var instructions = m.Body.Instructions;
@@ -528,9 +534,14 @@ internal static class Program
             var inst = instructions[i];
             if (inst.OpCode == OpCodes.Call && inst.Operand is MethodReference mr && mr.Name == "GetGrid")
             {
-                if (i + 3 < instructions.Count && instructions[i + 3].OpCode == OpCodes.Ldc_I4_0)
+                for (int j = i + 1; j < Math.Min(instructions.Count, i + 6); j++)
                 {
-                    instructions[i + 3] = Instruction.Create(OpCodes.Ldnull);
+                    var cand = instructions[j];
+                    if (cand.OpCode == OpCodes.Ldc_I4_0 || (cand.OpCode == OpCodes.Ldc_I4 && Convert.ToInt32(cand.Operand) == 0))
+                    {
+                        instructions[j] = Instruction.Create(OpCodes.Ldnull);
+                        break;
+                    }
                 }
             }
         }
@@ -552,12 +563,132 @@ internal static class Program
                     instructions[i - 1] = Instruction.Create(OpCodes.Ldc_I4_0);
                 }
             }
-            // Fix: ldloc V_8 -> ldc.i4.0 -> ceq (should be ldloc V_8 -> ldnull -> ceq)
+            // Fix: ldloc V_8 -> ldc.i4.0/ldc.i4 0 -> ceq (should be ldloc V_8 -> ldnull -> ceq)
             if (inst.OpCode == OpCodes.Ldloc && inst.Operand is VariableDefinition vd2 && vd2.Index == 8)
             {
-                if (i + 1 < instructions.Count && instructions[i + 1].OpCode == OpCodes.Ldc_I4_0)
+                if (i + 1 < instructions.Count)
                 {
-                    instructions[i + 1] = Instruction.Create(OpCodes.Ldnull);
+                    var next = instructions[i + 1];
+                    if (next.OpCode == OpCodes.Ldc_I4_0 || (next.OpCode == OpCodes.Ldc_I4 && Convert.ToInt32(next.Operand) == 0))
+                    {
+                        instructions[i + 1] = Instruction.Create(OpCodes.Ldnull);
+                    }
+                }
+            }
+        }
+        RemoveTrailingStackWarning(m);
+    }
+
+    // 9. CreatParticles: surgical fix for ldloca V_6 passed to Transform.set_position
+    static void PatchCreatParticles(ModuleDefinition mod, MethodDefinition m)
+    {
+        var instructions = m.Body.Instructions;
+        var v3 = m.Body.Variables.First(v => v.Index == 3 && v.VariableType.FullName == "UnityEngine.Vector3");
+        for (int i = 0; i < instructions.Count; i++)
+        {
+            var inst = instructions[i];
+            if (inst.OpCode == OpCodes.Call && inst.Operand is MethodReference mr && mr.Name == "set_position")
+            {
+                if (i >= 1 && (instructions[i - 1].OpCode == OpCodes.Ldloca || instructions[i - 1].OpCode == OpCodes.Ldloc))
+                {
+                    instructions[i - 1] = Instruction.Create(OpCodes.Ldloc, v3);
+                }
+            }
+        }
+        RemoveTrailingStackWarning(m);
+    }
+
+    // 10. DestroyZombie: fix loop variables V_10, V_17 to Int32; List<Zombie>.Remove; ldelem.ref
+    static void PatchDestroyZombie(ModuleDefinition mod, MethodDefinition m)
+    {
+        var v10 = m.Body.Variables.First(v => v.Index == 10);
+        v10.VariableType = mod.TypeSystem.Int32;
+        var v17 = m.Body.Variables.First(v => v.Index == 17);
+        v17.VariableType = mod.TypeSystem.Int32;
+
+        var instructions = m.Body.Instructions;
+        for (int i = 0; i < instructions.Count; i++)
+        {
+            var inst = instructions[i];
+            if (inst.OpCode == OpCodes.Call && inst.Operand is MethodReference mr && mr.Name == "Remove")
+            {
+                if (mr.DeclaringType is GenericInstanceType git && git.ElementType.Name.StartsWith("List"))
+                {
+                    var listZombie = new GenericInstanceType(git.ElementType);
+                    listZombie.GenericArguments.Add(m.DeclaringType);
+                    var removeMethod = new MethodReference(mr.Name, mr.ReturnType, listZombie)
+                    {
+                        HasThis = mr.HasThis,
+                        ExplicitThis = mr.ExplicitThis,
+                        CallingConvention = mr.CallingConvention
+                    };
+                    foreach (var p in mr.Parameters)
+                    {
+                        removeMethod.Parameters.Add(new ParameterDefinition(p.Name, p.Attributes, p.ParameterType));
+                    }
+                    inst.Operand = removeMethod;
+                }
+            }
+            if (inst.OpCode == OpCodes.Ldelem_Any)
+            {
+                instructions[i] = Instruction.Create(OpCodes.Ldelem_Ref);
+            }
+        }
+        RemoveTrailingStackWarning(m);
+    }
+
+    // 11. Die: fix 64-bit jump offsets, loop variables, set_position calls, and strip decompiler artifacts
+    static void PatchDie(ModuleDefinition mod, MethodDefinition m)
+    {
+        foreach (var idx in new[] { 29, 30, 31, 32 })
+        {
+            var v = m.Body.Variables.FirstOrDefault(x => x.Index == idx);
+            if (v != null) v.VariableType = mod.TypeSystem.Int64;
+        }
+        foreach (var idx in new[] { 15, 18, 33, 36 })
+        {
+            var v = m.Body.Variables.FirstOrDefault(x => x.Index == idx);
+            if (v != null) v.VariableType = mod.TypeSystem.Int32;
+        }
+
+        var getTransform = MR(mod, "UnityEngine.Component", "get_transform", 0);
+        var getPosition = MR(mod, "UnityEngine.Transform", "get_position", 0);
+        var v9 = m.Body.Variables.First(v => v.Index == 9 && v.VariableType.FullName == "UnityEngine.Vector3");
+
+        var instructions = m.Body.Instructions;
+        for (int i = 0; i < instructions.Count; i++)
+        {
+            var inst = instructions[i];
+
+            // Replace decompiler dead string artifacts with NOPs so branch targets are preserved
+            if (inst.OpCode == OpCodes.Ldstr && inst.Operand is string s &&
+                (s.StartsWith("Unmanaged memory load") || s.StartsWith("Indirect jump")))
+            {
+                instructions[i] = Instruction.Create(OpCodes.Nop);
+                if (i + 1 < instructions.Count && instructions[i + 1].OpCode == OpCodes.Pop)
+                {
+                    instructions[i + 1] = Instruction.Create(OpCodes.Nop);
+                }
+            }
+
+            // Fix set_position calls
+            if (inst.OpCode == OpCodes.Call && inst.Operand is MethodReference mr && mr.Name == "set_position")
+            {
+                if (i >= 1 && instructions[i - 1].OpCode == OpCodes.Ldloca &&
+                    instructions[i - 1].Operand is VariableDefinition vd && vd.Index == 60)
+                {
+                    if (i >= 7 && instructions[i - 7].OpCode == OpCodes.Call &&
+                        instructions[i - 7].Operand is MethodReference getPosMr && getPosMr.Name == "get_position")
+                    {
+                        instructions[i - 1] = Instruction.Create(OpCodes.Ldloc, v9);
+                    }
+                    else
+                    {
+                        instructions[i - 1] = Instruction.Create(OpCodes.Ldarg_0);
+                        instructions.Insert(i, Instruction.Create(OpCodes.Call, getTransform));
+                        instructions.Insert(i + 1, Instruction.Create(OpCodes.Call, getPosition));
+                        i += 2;
+                    }
                 }
             }
         }

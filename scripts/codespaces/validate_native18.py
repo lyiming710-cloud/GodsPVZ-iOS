@@ -87,9 +87,10 @@ try:
     cpp_text = cpp_file.read_text(errors='replace')
     # Verify no unmanaged memory load strings or stack warning comments in cpp
     assert "Unmanaged memory load" not in cpp_text, "Found leaked unmanaged memory string in cpp"
+    assert "Indirect jump" not in cpp_text, "Found leaked indirect jump string in cpp"
     assert "Warning: Method ends with non empty stack" not in cpp_text, "Found stack warning string in cpp"
 
-    # Verify the 8 methods in C++ text
+    # Verify all 11 methods in C++ text
     assert "Zombie_PreviousPosition" in cpp_text, "Zombie_PreviousPosition missing in cpp"
     assert "Zombie_Start_PreviousPosition" in cpp_text, "Zombie_Start_PreviousPosition missing in cpp"
     assert "Zombie_Update_Move" in cpp_text, "Zombie_Update_Move missing in cpp"
@@ -98,6 +99,15 @@ try:
     assert "Zombie_Ashe" in cpp_text, "Zombie_Ashe missing in cpp"
     assert "Zombie_CheckZombieWin" in cpp_text, "Zombie_CheckZombieWin missing in cpp"
     assert "Zombie_CreateStartPrePath" in cpp_text, "Zombie_CreateStartPrePath missing in cpp"
+    assert "Zombie_CreatParticles" in cpp_text, "Zombie_CreatParticles missing in cpp"
+    assert "Zombie_DestroyZombie" in cpp_text, "Zombie_DestroyZombie missing in cpp"
+    assert "Zombie_Die" in cpp_text, "Zombie_Die missing in cpp"
+
+    # Verify specific Clang bug fixes in C++ code
+    assert "Transform_set_position_mA1A817124BB41B685043DED2A9BA48CDF37C4156(L_7, L_8, NULL);" in cpp_text, "CreatParticles set_position value call missing"
+    assert "int64_t V_29 = 0;" in cpp_text, "Die int64 V_29 local missing"
+    assert "int32_t V_10 = 0;" in cpp_text, "DestroyZombie int32 V_10 local missing"
+    assert "List_1_Remove_mA1D99E3748D385DE4E016BC9467FD578A24DC2DB" in cpp_text, "DestroyZombie List<Zombie>.Remove missing"
 
     report.update(
         status='NATIVE18_DIRECT_CONVERSION_PASS',
