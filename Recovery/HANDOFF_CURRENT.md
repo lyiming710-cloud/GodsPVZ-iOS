@@ -1,5 +1,7 @@
 # GodsPVZ 1.0.2 高保真恢复 / iOS 移植 — CURRENT HANDOFF
 
+> 2026-09-29 Native19 更新：本分支最新恢复状态见 [Native19 检查点](Native19-2026-09-29/README.md)。15 个目标的方法级检查已通过，但全游戏 C++ 预检仍失败，尚无 IPA。以下 2026-09-18 内容保留为历史输入与 sealed baseline 记录，不代表当前候选的编译或交付状态。
+
 快照日期：2026-09-18
 仓库：`lyiming710-cloud/GodsPVZ-iOS`
 当前工作分支：`stage9-admin-start-static`

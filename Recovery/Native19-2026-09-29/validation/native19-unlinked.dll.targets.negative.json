@@ -1,0 +1,42 @@
+[
+  {
+    "case": "Vector3 pointer supplied to by-value parameter",
+    "rejected": true,
+    "reason": "System.Void Zombie::Update_Move() IL_009C: UnityEngine.Vector3& is not assignable to UnityEngine.Vector3"
+  },
+  {
+    "case": "object used as numeric loop local",
+    "rejected": true,
+    "reason": "System.Void Zombie::DestroyZombie() IL_010A: I4 is not assignable to System.Object"
+  },
+  {
+    "case": "List<object> receiver on List<Zombie>",
+    "rejected": true,
+    "reason": "System.Void Zombie::DestroyZombie() IL_0058: receiver System.Collections.Generic.List`1<Zombie> incompatible with System.Collections.Generic.List`1<System.Object> (write=False, call=True)"
+  },
+  {
+    "case": "reference compared with integer zero",
+    "rejected": true,
+    "reason": "System.Void Zombie::CheckZombieWin(System.Int32,System.Int32) IL_00B8: invalid comparison Grid, I4"
+  },
+  {
+    "case": "float compared with integer zero",
+    "rejected": true,
+    "reason": "System.Void Zombie::ArmBroken(System.Boolean) IL_04F8: invalid comparison F, I4"
+  },
+  {
+    "case": "undersized declared MaxStack",
+    "rejected": true,
+    "reason": "declared MaxStack too small"
+  },
+  {
+    "case": "branch exits try without finally",
+    "rejected": true,
+    "reason": "System.Void Project::LoopAddAnimation(UnityEngine.Transform) IL_005C: branch across protected region boundary"
+  },
+  {
+    "case": "unsupported instruction fails closed",
+    "rejected": true,
+    "reason": "UnityEngine.Vector3 Zombie::PreviousPosition() IL_0000: unsupported opcode unrecognized"
+  }
+]

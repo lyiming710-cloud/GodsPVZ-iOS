@@ -1,0 +1,88 @@
+{"image": "Assembly-CSharp.dll", "type": "Zombie", "name": "Ashe", "token": "0x6000430", "va": "0x18035d960"}
+PC_SHA256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
+DISASSEMBLY_RANGE=0x18035D960..0x18035DAC0 (next same-image method pointer; exclusive end)
+000000018035d960 mov       qword ptr [rsp + 8], rbx
+000000018035d965 mov       qword ptr [rsp + 0x10], rsi
+000000018035d96a push      rdi
+000000018035d96b sub       rsp, 0x50
+000000018035d96f cmp       byte ptr [rip + 0x19873d8], 0
+000000018035d976 mov       rdi, rdx
+000000018035d979 mov       rbx, rcx
+000000018035d97c jne       0x18035d99d
+000000018035d97e lea       rcx, [rip + 0x183d063]
+000000018035d985 call      0x18024fef0
+000000018035d98a lea       rcx, [rip + 0x1852b6f]
+000000018035d991 call      0x18024fef0
+000000018035d996 mov       byte ptr [rip + 0x19873b1], 1
+000000018035d99d mov       rcx, qword ptr [rip + 0x1852b5c]
+000000018035d9a4 mov       rsi, qword ptr [rbx + 0x208]
+000000018035d9ab cmp       dword ptr [rcx + 0xe0], 0
+000000018035d9b2 jne       0x18035d9b9
+000000018035d9b4 call      0x1802501e0
+000000018035d9b9 xor       edx, edx
+000000018035d9bb mov       rcx, rsi
+000000018035d9be call      0x18131f870
+000000018035d9c3 test      al, al
+000000018035d9c5 je        0x18035d9de
+000000018035d9c7 mov       rcx, qword ptr [rbx + 0x208]
+000000018035d9ce test      rcx, rcx
+000000018035d9d1 je        0x18035dab5
+000000018035d9d7 xor       edx, edx
+000000018035d9d9 call      0x18039db30
+000000018035d9de xor       edx, edx
+000000018035d9e0 mov       rcx, rbx
+000000018035d9e3 call      0x181304510
+000000018035d9e8 test      rax, rax
+000000018035d9eb je        0x18035dab5
+000000018035d9f1 xor       r8d, r8d
+000000018035d9f4 lea       rcx, [rsp + 0x30]
+000000018035d9f9 mov       rdx, rax
+000000018035d9fc call      0x18132f3a0
+000000018035da01 movsd     xmm0, qword ptr [rax]
+000000018035da05 mov       esi, dword ptr [rax + 8]
+000000018035da08 movsd     qword ptr [rsp + 0x20], xmm0
+000000018035da0e movss     xmm0, dword ptr [rbx + 0x38]
+000000018035da13 addss     xmm0, dword ptr [rbx + 0x34]
+000000018035da18 addss     xmm0, dword ptr [rip + 0x124a10c]
+000000018035da20 movss     dword ptr [rsp + 0x24], xmm0
+000000018035da26 test      rdi, rdi
+000000018035da29 je        0x18035dab5
+000000018035da2f mov       rcx, qword ptr [rip + 0x183cfb2]
+000000018035da36 movaps    xmmword ptr [rsp + 0x40], xmm6
+000000018035da3b movss     xmm6, dword ptr [rdi + 0x10]
+000000018035da40 cmp       dword ptr [rcx + 0xe0], 0
+000000018035da47 jne       0x18035da4e
+000000018035da49 call      0x1802501e0
+000000018035da4e movsd     xmm1, qword ptr [rsp + 0x20]
+000000018035da54 lea       r8, [rsp + 0x20]
+000000018035da59 xor       r9d, r9d
+000000018035da5c movsd     qword ptr [rsp + 0x20], xmm1
+000000018035da62 xor       edx, edx
+000000018035da64 mov       dword ptr [rsp + 0x28], esi
+000000018035da68 movaps    xmm0, xmm6
+000000018035da6b call      0x18039bb90
+000000018035da70 cmp       byte ptr [rbx + 0xcc], 0
+000000018035da77 mov       rcx, rbx
+000000018035da7a movaps    xmm6, xmmword ptr [rsp + 0x40]
+000000018035da7f jne       0x18035da9f
+000000018035da81 mov       r8b, 1
+000000018035da84 xor       r9d, r9d
+000000018035da87 movzx     edx, r8b
+000000018035da8b mov       rbx, qword ptr [rsp + 0x60]
+000000018035da90 mov       rsi, qword ptr [rsp + 0x68]
+000000018035da95 add       rsp, 0x50
+000000018035da99 pop       rdi
+000000018035da9a jmp       0x18035e7e0
+000000018035da9f xor       edx, edx
+000000018035daa1 mov       rbx, qword ptr [rsp + 0x60]
+000000018035daa6 mov       rsi, qword ptr [rsp + 0x68]
+000000018035daab add       rsp, 0x50
+000000018035daaf pop       rdi
+000000018035dab0 jmp       0x180370d80
+000000018035dab5 call      0x180250150
+000000018035daba int3
+000000018035dabb int3
+000000018035dabc int3
+000000018035dabd int3
+000000018035dabe int3
+000000018035dabf int3

@@ -1,0 +1,106 @@
+{"image": "Assembly-CSharp.dll", "type": "Zombie", "name": "Update_Move", "token": "0x6000427", "va": "0x18036c4b0"}
+PC_SHA256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
+DISASSEMBLY_RANGE=0x18036C4B0..0x18036C660 (next same-image method pointer; exclusive end)
+000000018036c4b0 push      rbx
+000000018036c4b2 sub       rsp, 0x70
+000000018036c4b6 movaps    xmmword ptr [rsp + 0x60], xmm6
+000000018036c4bb mov       rbx, rcx
+000000018036c4be mov       rdx, rcx
+000000018036c4c1 movaps    xmmword ptr [rsp + 0x50], xmm7
+000000018036c4c6 lea       rcx, [rsp + 0x30]
+000000018036c4cb movaps    xmmword ptr [rsp + 0x40], xmm8
+000000018036c4d1 xor       r8d, r8d
+000000018036c4d4 call      0x180361440
+000000018036c4d9 xor       r8d, r8d
+000000018036c4dc lea       rdx, [rsp + 0x20]
+000000018036c4e1 mov       rcx, rbx
+000000018036c4e4 movsd     xmm0, qword ptr [rax]
+000000018036c4e8 mov       eax, dword ptr [rax + 8]
+000000018036c4eb movsd     qword ptr [rsp + 0x20], xmm0
+000000018036c4f1 mov       dword ptr [rsp + 0x28], eax
+000000018036c4f5 call      0x180368280
+000000018036c4fa movss     xmm6, dword ptr [rbx + 0x130]
+000000018036c502 xor       ecx, ecx
+000000018036c504 call      0x18132c2f0
+000000018036c509 movss     xmm7, dword ptr [rbx + 0x134]
+000000018036c511 xor       ecx, ecx
+000000018036c513 movaps    xmm8, xmm0
+000000018036c517 call      0x18132c2f0
+000000018036c51c mulss     xmm0, xmm7
+000000018036c520 xor       r9d, r9d
+000000018036c523 mov       rcx, rbx
+000000018036c526 mulss     xmm8, xmm6
+000000018036c52b addss     xmm0, dword ptr [rbx + 0x34]
+000000018036c530 addss     xmm8, dword ptr [rbx + 0x30]
+000000018036c536 movaps    xmm2, xmm0
+000000018036c539 movss     dword ptr [rbx + 0x34], xmm0
+000000018036c53e movaps    xmm1, xmm8
+000000018036c542 movss     dword ptr [rbx + 0x30], xmm8
+000000018036c548 call      0x180369fc0
+000000018036c54d cmp       byte ptr [rbx + 0xb8], 0
+000000018036c554 movaps    xmm8, xmmword ptr [rsp + 0x40]
+000000018036c55a jne       0x18036c64a
+000000018036c560 xor       edx, edx
+000000018036c562 mov       qword ptr [rsp + 0x80], rdi
+000000018036c56a mov       rcx, rbx
+000000018036c56d call      0x181304510
+000000018036c572 test      rax, rax
+000000018036c575 je        0x18036c65a
+000000018036c57b xor       r8d, r8d
+000000018036c57e lea       rcx, [rsp + 0x30]
+000000018036c583 mov       rdx, rax
+000000018036c586 call      0x18132f3a0
+000000018036c58b movss     xmm6, dword ptr [rbx + 0x30]
+000000018036c590 xor       edx, edx
+000000018036c592 movss     xmm7, dword ptr [rbx + 0x34]
+000000018036c597 mov       rcx, rbx
+000000018036c59a movsd     xmm0, qword ptr [rax]
+000000018036c59e mov       edi, dword ptr [rax + 8]
+000000018036c5a1 movsd     qword ptr [rsp + 0x20], xmm0
+000000018036c5a7 call      0x181304510
+000000018036c5ac test      rax, rax
+000000018036c5af je        0x18036c65a
+000000018036c5b5 unpcklps  xmm6, xmm7
+000000018036c5b8 lea       rdx, [rsp + 0x20]
+000000018036c5bd xor       r8d, r8d
+000000018036c5c0 movsd     qword ptr [rsp + 0x20], xmm6
+000000018036c5c6 mov       rcx, rax
+000000018036c5c9 mov       dword ptr [rsp + 0x28], edi
+000000018036c5cd call      0x18132fbb0
+000000018036c5d2 xor       edx, edx
+000000018036c5d4 mov       rcx, rbx
+000000018036c5d7 call      0x181304510
+000000018036c5dc test      rax, rax
+000000018036c5df je        0x18036c65a
+000000018036c5e1 xor       r8d, r8d
+000000018036c5e4 lea       rcx, [rsp + 0x30]
+000000018036c5e9 mov       rdx, rax
+000000018036c5ec call      0x18132f3a0
+000000018036c5f1 mov       rcx, qword ptr [rbx + 0x1a0]
+000000018036c5f8 movss     xmm6, dword ptr [rbx + 0x38]
+000000018036c5fd movss     xmm7, dword ptr [rbx + 0x30]
+000000018036c602 movsd     xmm0, qword ptr [rax]
+000000018036c606 mov       edi, dword ptr [rax + 8]
+000000018036c609 movsd     qword ptr [rsp + 0x20], xmm0
+000000018036c60f addss     xmm6, dword ptr [rbx + 0x34]
+000000018036c614 test      rcx, rcx
+000000018036c617 je        0x18036c65a
+000000018036c619 xor       edx, edx
+000000018036c61b call      0x18131c070
+000000018036c620 test      rax, rax
+000000018036c623 je        0x18036c65a
+000000018036c625 unpcklps  xmm7, xmm6
+000000018036c628 lea       rdx, [rsp + 0x20]
+000000018036c62d xor       r8d, r8d
+000000018036c630 movsd     qword ptr [rsp + 0x20], xmm7
+000000018036c636 mov       rcx, rax
+000000018036c639 mov       dword ptr [rsp + 0x28], edi
+000000018036c63d call      0x18132fbb0
+000000018036c642 mov       rdi, qword ptr [rsp + 0x80]
+000000018036c64a movaps    xmm6, xmmword ptr [rsp + 0x60]
+000000018036c64f movaps    xmm7, xmmword ptr [rsp + 0x50]
+000000018036c654 add       rsp, 0x70
+000000018036c658 pop       rbx
+000000018036c659 ret
+000000018036c65a call      0x180250150
+000000018036c65f int3

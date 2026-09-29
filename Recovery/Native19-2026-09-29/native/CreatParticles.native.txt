@@ -1,0 +1,52 @@
+{"image": "Assembly-CSharp.dll", "type": "Zombie", "name": "CreatParticles", "token": "0x6000434", "va": "0x18035dfd0"}
+PC_SHA256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
+DISASSEMBLY_RANGE=0x18035DFD0..0x18035E080 (next same-image method pointer; exclusive end)
+000000018035dfd0 mov       qword ptr [rsp + 8], rbx
+000000018035dfd5 push      rdi
+000000018035dfd6 sub       rsp, 0x40
+000000018035dfda cmp       byte ptr [rip + 0x1986b53], 0
+000000018035dfe1 mov       ebx, edx
+000000018035dfe3 mov       rdi, rcx
+000000018035dfe6 jne       0x18035dffb
+000000018035dfe8 lea       rcx, [rip + 0x18538a1]
+000000018035dfef call      0x18024fef0
+000000018035dff4 mov       byte ptr [rip + 0x1986b39], 1
+000000018035dffb mov       rax, qword ptr [rip + 0x185388e]
+000000018035e002 mov       r8, qword ptr [rax + 0xb8]
+000000018035e009 mov       rcx, qword ptr [r8]
+000000018035e00c test      rcx, rcx
+000000018035e00f je        0x18035e077
+000000018035e011 xor       r8d, r8d
+000000018035e014 mov       edx, ebx
+000000018035e016 call      0x180321f30
+000000018035e01b test      rax, rax
+000000018035e01e je        0x18035e077
+000000018035e020 xor       edx, edx
+000000018035e022 mov       rcx, rax
+000000018035e025 call      0x18131c070
+000000018035e02a mov       rdx, qword ptr [rdi + 0x1f0]
+000000018035e031 mov       rbx, rax
+000000018035e034 test      rdx, rdx
+000000018035e037 je        0x18035e077
+000000018035e039 xor       r8d, r8d
+000000018035e03c lea       rcx, [rsp + 0x30]
+000000018035e041 call      0x18132f3a0
+000000018035e046 test      rbx, rbx
+000000018035e049 je        0x18035e077
+000000018035e04b movsd     xmm0, qword ptr [rax]
+000000018035e04f lea       rdx, [rsp + 0x20]
+000000018035e054 mov       eax, dword ptr [rax + 8]
+000000018035e057 xor       r8d, r8d
+000000018035e05a mov       rcx, rbx
+000000018035e05d movsd     qword ptr [rsp + 0x20], xmm0
+000000018035e063 mov       dword ptr [rsp + 0x28], eax
+000000018035e067 call      0x18132fbb0
+000000018035e06c mov       rbx, qword ptr [rsp + 0x50]
+000000018035e071 add       rsp, 0x40
+000000018035e075 pop       rdi
+000000018035e076 ret
+000000018035e077 call      0x180250150
+000000018035e07c int3
+000000018035e07d int3
+000000018035e07e int3
+000000018035e07f int3

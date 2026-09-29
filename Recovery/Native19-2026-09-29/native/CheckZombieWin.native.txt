@@ -1,0 +1,68 @@
+{"image": "Assembly-CSharp.dll", "type": "Zombie", "name": "CheckZombieWin", "token": "0x6000432", "va": "0x18035df00"}
+PC_SHA256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
+DISASSEMBLY_RANGE=0x18035DF00..0x18035DFD0 (next same-image method pointer; exclusive end)
+000000018035df00 mov       qword ptr [rsp + 8], rbx
+000000018035df05 mov       qword ptr [rsp + 0x10], rbp
+000000018035df0a mov       qword ptr [rsp + 0x18], rsi
+000000018035df0f push      rdi
+000000018035df10 sub       rsp, 0x20
+000000018035df14 cmp       byte ptr [rip + 0x1986e34], 0
+000000018035df1b mov       esi, r8d
+000000018035df1e mov       ebp, edx
+000000018035df20 mov       rbx, rcx
+000000018035df23 jne       0x18035df38
+000000018035df25 lea       rcx, [rip + 0x18525d4]
+000000018035df2c call      0x18024fef0
+000000018035df31 mov       byte ptr [rip + 0x1986e17], 1
+000000018035df38 mov       rcx, qword ptr [rip + 0x18525c1]
+000000018035df3f mov       rdi, qword ptr [rbx + 0x20]
+000000018035df43 cmp       dword ptr [rcx + 0xe0], 0
+000000018035df4a jne       0x18035df51
+000000018035df4c call      0x1802501e0
+000000018035df51 xor       r8d, r8d
+000000018035df54 xor       edx, edx
+000000018035df56 mov       rcx, rdi
+000000018035df59 call      0x18131f760
+000000018035df5e test      al, al
+000000018035df60 jne       0x18035dfab
+000000018035df62 mov       rax, qword ptr [rbx + 0x20]
+000000018035df66 test      rax, rax
+000000018035df69 je        0x18035dfc0
+000000018035df6b cmp       byte ptr [rax + 0x38], 0
+000000018035df6f jne       0x18035dfab
+000000018035df71 cmp       byte ptr [rax + 0x39], 0
+000000018035df75 jne       0x18035dfab
+000000018035df77 cmp       byte ptr [rbx + 0xb7], 0
+000000018035df7e jne       0x18035dfab
+000000018035df80 xor       r9d, r9d
+000000018035df83 mov       r8d, esi
+000000018035df86 mov       edx, ebp
+000000018035df88 mov       rcx, rax
+000000018035df8b call      0x180326fe0
+000000018035df90 test      rax, rax
+000000018035df93 je        0x18035dfab
+000000018035df95 cmp       byte ptr [rax + 0x14], 0
+000000018035df99 je        0x18035dfab
+000000018035df9b mov       rcx, qword ptr [rbx + 0x20]
+000000018035df9f test      rcx, rcx
+000000018035dfa2 je        0x18035dfc0
+000000018035dfa4 xor       edx, edx
+000000018035dfa6 call      0x180326910
+000000018035dfab mov       rbx, qword ptr [rsp + 0x30]
+000000018035dfb0 mov       rbp, qword ptr [rsp + 0x38]
+000000018035dfb5 mov       rsi, qword ptr [rsp + 0x40]
+000000018035dfba add       rsp, 0x20
+000000018035dfbe pop       rdi
+000000018035dfbf ret
+000000018035dfc0 call      0x180250150
+000000018035dfc5 int3
+000000018035dfc6 int3
+000000018035dfc7 int3
+000000018035dfc8 int3
+000000018035dfc9 int3
+000000018035dfca int3
+000000018035dfcb int3
+000000018035dfcc int3
+000000018035dfcd int3
+000000018035dfce int3
+000000018035dfcf int3

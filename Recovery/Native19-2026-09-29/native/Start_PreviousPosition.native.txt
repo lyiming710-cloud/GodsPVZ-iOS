@@ -1,0 +1,41 @@
+{"image": "Assembly-CSharp.dll", "type": "Zombie", "name": "Start_PreviousPosition", "token": "0x600041e", "va": "0x180369580"}
+PC_SHA256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d
+DISASSEMBLY_RANGE=0x180369580..0x1803695F0 (next same-image method pointer; exclusive end)
+0000000180369580 push      rbx
+0000000180369582 sub       rsp, 0x30
+0000000180369586 mov       eax, dword ptr [rcx + 0x30]
+0000000180369589 mov       rbx, rcx
+000000018036958c mov       dword ptr [rcx + 0x148], eax
+0000000180369592 mov       eax, dword ptr [rcx + 0x34]
+0000000180369595 mov       dword ptr [rcx + 0x14c], eax
+000000018036959b mov       rcx, qword ptr [rcx + 0x1a0]
+00000001803695a2 test      rcx, rcx
+00000001803695a5 je        0x1803695de
+00000001803695a7 xor       edx, edx
+00000001803695a9 call      0x18131c070
+00000001803695ae test      rax, rax
+00000001803695b1 je        0x1803695de
+00000001803695b3 xor       r8d, r8d
+00000001803695b6 lea       rcx, [rsp + 0x20]
+00000001803695bb mov       rdx, rax
+00000001803695be call      0x18132f3a0
+00000001803695c3 movss     xmm0, dword ptr [rax + 4]
+00000001803695c8 subss     xmm0, dword ptr [rbx + 0x14c]
+00000001803695d0 movss     dword ptr [rbx + 0x150], xmm0
+00000001803695d8 add       rsp, 0x30
+00000001803695dc pop       rbx
+00000001803695dd ret
+00000001803695de call      0x180250150
+00000001803695e3 int3
+00000001803695e4 int3
+00000001803695e5 int3
+00000001803695e6 int3
+00000001803695e7 int3
+00000001803695e8 int3
+00000001803695e9 int3
+00000001803695ea int3
+00000001803695eb int3
+00000001803695ec int3
+00000001803695ed int3
+00000001803695ee int3
+00000001803695ef int3
