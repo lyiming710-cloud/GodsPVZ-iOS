@@ -1,0 +1,40 @@
+=== AXIS 1: what was done ===
+   M2 accepted at least one site : 249 methods
+   M1 candidate only (all sites quarantined): 128 methods
+
+=== native body availability over the 377 candidate methods ===
+   native body located        366
+   native body NOT located    11
+
+=== AXIS 2: strongest evidence tier reached, per method ===
+   M1       E1                 11 methods
+   M2       E1+E2+E3           4 methods
+   M2       E1+E2+E3+E4        191 methods
+   M2       E1+E2+E3+E4+E5     3 methods
+   M2       E1+E2+E4           51 methods
+   M1       E1+E4              117 methods
+
+=== the two numbers that were previously conflated ===
+   methods touched at all                          : 377
+   E5  null-check site has NATIVE evidence         : 3
+   E4  native body corroborates at method level    : 362
+   E3  concrete execution reached every site       : 198
+   E2  accepted on trusted-provenance grounds      : 249
+   E6  WHOLE-METHOD BEHAVIOUR PROVEN               : 0
+
+=== E5 (site-level native evidence) methods ===
+   0x06000338  Device::TestPlacing            0x18034BDF9 mov 0x28(%rcx),%rcx; test %rcx,%rcx; je -> raise NRE
+        flips=1 accepted=1 quarantined=0 evidence=E1,E2,E3,E4,E5
+   0x060000D9  AttackRange::TestInRange_Device 0x1802FFCC9 test %rdx,%rdx; je
+        flips=1 accepted=1 quarantined=0 evidence=E1,E2,E3,E4,E5
+   0x060005C8  BoardInfoPage::SetLootList      30 sites, all `ldloc <ref>; ldc.i4 0; ceq`
+        flips=30 accepted=3 quarantined=27 evidence=E1,E2,E3,E4,E5
+
+=== E6 is empty: what would it take ===
+   Whole-method behaviour equivalence to PC native requires, for each
+   method: (a) every branch predicate matched instruction by
+   instruction, (b) every call target and argument matched, (c) the
+   return value matched on identical inputs, (d) a machine-readable
+   IL-site -> native-address map.  We have (d) for 0 methods, so E6 = 0.
+
+written: out/tiers.json

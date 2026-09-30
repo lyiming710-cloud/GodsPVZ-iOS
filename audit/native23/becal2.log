@@ -1,0 +1,64 @@
+runtime: 10.0.12  .NET 10.0.12
+
+=== 1. ceq: reference vs the zero constant (the repaired family) ===
+  ldnull;              ldnull;    ceq              VALUE 1
+  ldnull;              ldc.i4.0;  ceq              VALUE 1
+  obj(non-null);       ldnull;    ceq              VALUE 0
+  obj(non-null);       ldc.i4.0;  ceq  [DAMAGED]   VALUE 0
+  obj(null);           ldnull;    ceq              VALUE 1
+  obj(null);           ldc.i4.0;  ceq  [DAMAGED]   VALUE 1
+  ldfld F(null);       ldnull;    ceq              VALUE 1
+  ldfld F(null);       ldc.i4.0;  ceq  [DAMAGED]   VALUE 1
+  ldfld F(non-null);   ldc.i4.0;  ceq  [DAMAGED]   VALUE 0
+
+=== 2. ceq on a genuine INT operand: would a wrong flip be visible? ===
+  int 5;  ldc.i4.0;  ceq   (correct as-is)         VALUE 0
+  int 0;  ldc.i4.0;  ceq   (correct as-is)         VALUE 1
+  int 5;  ldnull;    ceq   [WRONG FLIP]            VALUE 0
+  int 0;  ldnull;    ceq   [WRONG FLIP]            VALUE 1
+  ldfld N(int 7); ldc.i4.0; ceq (correct)          VALUE 0
+  ldfld N(int 7); ldnull;   ceq [WRONG FLIP]       VALUE 0
+  ldfld N(int 0); ldnull;   ceq [WRONG FLIP]       VALUE 1
+
+=== 3. the constant zero as a RETURN value ===
+  ret(object) <- ldnull                            VALUE <null>
+  ret(object) <- ldc.i4.0  [DAMAGED]               VALUE <null>
+  ret(int)    <- ldc.i4.0                          VALUE 0
+  ret(int)    <- ldnull     [WRONG FLIP]           VALUE 0
+
+=== 4. the constant zero as a CALL ARGUMENT ===
+  Consume(object) <- ldnull                        VALUE 11
+  Consume(object) <- ldc.i4.0 [DAMAGED]            THROW System.InvalidProgramException
+  Consume(int)    <- ldc.i4.0                      VALUE 21
+  Consume(int)    <- ldnull    [WRONG FLIP]        THROW System.InvalidProgramException
+   (ConsumeObj returns 11 when it received null, 12 otherwise; ConsumeInt returns 21 when it received 0, 22 otherwise)
+
+=== 5. stfld of the constant zero ===
+  stfld F(object) <- ldnull                        VALUE <null>
+  stfld F(object) <- ldc.i4.0 [DAMAGED]            VALUE <null>
+  stfld N(int)    <- ldc.i4.0                      VALUE <null>
+  stfld N(int)    <- ldnull    [WRONG FLIP]        VALUE <null>
+
+=== 6. full guard shape, isolating why section 6 failed before ===
+   NullReferenceException ctor found: True
+  g0 no local, no throw: ldnull                    VALUE 0
+  g1 local+stloc+ldloc:  ldnull                    VALUE 0
+  g2 +brtrue+throw:      ldnull                    VALUE 42
+  g3 +brtrue+newobj+throw: ldnull                  VALUE 42
+  g3 same, arg = null                              THROW System.NullReferenceException
+  g4 identical but ldc.i4.0 [DAMAGED], arg=obj     VALUE 42
+  g4 identical but ldc.i4.0 [DAMAGED], arg=null    THROW System.NullReferenceException
+==================================================================
+=== C++ layer: what IL2CPP emits for the two forms, compiled+run ===
+==================================================================
+--- clang++ harness.cpp (REPAIRED form): compile + RUN ---
+repaired(p=non-null) -> 0   (expect 0)
+repaired(p=null)     -> 1   (expect 1)
+int-form(v=7)        -> 0   (expect 0)
+int-form(v=0)        -> 1   (expect 1)
+--- clang++ damaged.cpp (DAMAGED form): expect a compile ERROR ---
+damaged.cpp:5:55: error: comparison between pointer and integer ('Il2CppObject *' and 'int32_t' (aka 'int'))
+    5 | static int damaged_check(Il2CppObject* p) { return (p == (int32_t)0) ? 1 : 0; }
+      |                                                     ~ ^  ~~~~~~~~~~
+1 error generated.
+damaged compile rc=0

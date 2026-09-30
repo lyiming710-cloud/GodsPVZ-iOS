@@ -1,0 +1,12 @@
+PASS  TRUE-NULLCHECK-FIELD     want=ACCEPT       verdicts=['ACCEPT'] classes=['FIELD']
+PASS  TRUE-NULLCHECK-ARG       want=ACCEPT       verdicts=['ACCEPT'] classes=['ARG']
+PASS  TRUE-NULLCHECK-SFIELD    want=ACCEPT       verdicts=['ACCEPT'] classes=['SFIELD']
+PASS  INT-ZERO-COMPARE         want=NO-FLIP      flips=0
+PASS  NONZERO-LITERAL          want=NO-FLIP      flips=0
+PASS  MIXED-INT-AND-REF        want=ACCEPT-AT    flips=[14] wanted=[14] verdicts=['ACCEPT']
+PASS  ALREADY-CORRECT          want=NO-FLIP      flips=0
+PASS  ZERO-INTO-INT-LOCAL      want=NO-FLIP      flips=0
+PASS  VIA-LOCAL                want=QUARANTINE   verdicts=['QUARANTINE'] classes=['LOCAL']
+PASS  ZERO-INTO-REF-LOCAL      want=QUARANTINE   verdicts=['QUARANTINE'] classes=['<no provenance recorded>']
+
+counterexample suite: 10 passed, 0 failed

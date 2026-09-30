@@ -1,0 +1,36 @@
+################ concrete execution, wider world set ################
+1790727506
+=== concrete execution over the ACCEPTED methods ===
+   methods executed                 : 249
+   repair sites                     : 865
+
+=== verdict per site (runtime kind actually observed at the site) ===
+   REF-ONLY     747
+   UNREACHED    118
+
+=== runtime kinds observed ===
+   REF        747
+
+=== ORIGIN of the observed value (init = assumed from a declaration) ===
+   init       746
+   this       1
+
+=== damaged vs repaired trace divergence ===
+   methods whose event trace DIFFERED: 0
+
+=== execution status of the damaged body (one per method x world) ===
+   RET                    6416
+   THROW                  1567
+   NRE-receiver           721
+   BUDGET                 260
+
+written: out/behave-sites.json
+1790727566
+
+################ C++ counterexample for the ASSIGNMENT-shaped sites ################
+--- expect: correct_assign OK, damaged_assign REJECTED ---
+assign.cpp:7:57: error: incompatible integer to pointer conversion assigning to 'Il2CppObject *' from 'int32_t' (aka 'int')
+    7 | static void damaged_assign(Il2CppObject** out) { *out = (int32_t)0; }
+      |                                                         ^~~~~~~~~~
+1 error generated.
+---

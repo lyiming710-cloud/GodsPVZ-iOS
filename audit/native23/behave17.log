@@ -1,0 +1,85 @@
+################ 1. site shape census ################
+=== afam3-accepted : 865 sites in 249 methods ===
+  -- clash message family --
+     invalid        865
+  -- IL shape around the zero literal --
+     ldfld ; <zero> ; ceq           746
+     ldarg ; <zero> ; ceq           69
+     ldsfld ; <zero> ; ceq          49
+     ldarg.0 ; <zero> ; ceq         1
+
+=== afam3-quarantine : 758 sites in 268 methods ===
+  -- clash message family --
+     invalid        709
+     I4             49
+  -- IL shape around the zero literal --
+     ldloc ; <zero> ; ceq           693
+     stloc ; <zero> ; stloc         33
+     ldfld ; <zero> ; ceq           14
+     br ; <zero> ; stloc            12
+     ldelem.any ; <zero> ; ceq      2
+     nop ; <zero> ; stloc           2
+     call ; <zero> ; stloc          1
+     stelem.any ; <zero> ; stloc    1
+
+
+################ 2. concrete execution of the repaired methods ################
+=== concrete execution over the ACCEPTED methods ===
+   methods executed                 : 249
+   repair sites                     : 865
+
+=== verdict per site (runtime kind actually observed at the site) ===
+   REF-ONLY     562
+   UNREACHED    303
+
+=== runtime kinds observed ===
+   REF        562
+
+=== ORIGIN of the observed value (init = assumed from a declaration) ===
+   init       561
+   this       1
+
+=== damaged vs repaired trace divergence ===
+   methods whose event trace DIFFERED: 0
+
+=== execution status of the damaged body (one per method x world) ===
+   RET                    678
+   THROW                  147
+   BUDGET                 95
+   NRE-receiver           76
+
+written: out/behave-sites.json
+
+################ 3. C++ counterexample: what a WRONG flip looks like ################
+--- compile the counterexample (expect: 'correct' OK, 'wrong_int' REJECTED) ---
+wrong.cpp:7:50: error: invalid operands to binary expression ('int' and 'std::nullptr_t')
+    7 | static int wrong_int(int v)          { return (v == nullptr) ? 1 : 0; }
+      |                                                ~ ^  ~~~~~~~
+1 error generated.
+---
+
+################ 4. counterexamples at the IL level (rule must refuse) ################
+The rule must REFUSE all of these.  Each is a shape that a sloppy
+"replace every zero literal next to a comparison" rule would corrupt.
+
+ C1  int field:      ldfld  N:System.Int32 ; ldc.i4.0 ; ceq
+                     -> genuine integer zero test.  Flipping gives `N == null`.
+                        Real CLR (measured): ceq cannot tell the difference,
+                        so NOTHING at IL runtime exposes this mistake.
+                        C++ layer (measured): `int == nullptr` does not compile.
+ C2  int argument:   ldarg  n:System.Int32 ; ldc.i4.0 ; ceq            (same)
+ C3  int local:      ldloc  i:System.Int32 ; ldc.i4.0 ; ceq            (same)
+ C4  bool/enum:      ldfld  flag:System.Boolean ; ldc.i4.0 ; ceq       (same)
+ C5  genuine int 0 as a call argument:
+                     ldarg.0 ; ldc.i4.0 ; call Foo(System.Int32)
+                     -> Real CLR: `Consume(int) <- ldnull` throws
+                        InvalidProgramException (MEASURED).  Observable.
+ C6  genuine int 0 returned from an int method:
+                     ldc.i4.0 ; ret          (ret type System.Int32)
+                     -> flipping gives `ldnull; ret` in an int method.
+ C7  non-zero literal:  ldfld p ; ldc.i4 3 ; ceq
+                     -> rule's `is_zero_lit` refuses it (value != 0).
+ C8  reference compared with a reference:  ldfld p ; ldnull ; ceq
+                     -> already correct, nothing to flip.
+ C9  zero used in arithmetic:  ldfld n:System.Int32 ; ldc.i4.0 ; add
+                     -> no clash, so it is never a candidate.
