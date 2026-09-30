@@ -1,4 +1,6 @@
 # GodsPVZ 当前与历史资料归档 · 2026-09-30
+> **发布完成**：归档于 2026-09-30T08:59:22Z 正式发布，13 个资产（1,220,069,545 字节）全部核对通过；tag 固定在 `555cc0fafbf7b35361112bb02c6e04839780f4b1`。完整发布结果见 [FINAL-ARCHIVE-RESULT.json](FINAL-ARCHIVE-RESULT.json)。`RELEASE-VERIFICATION.json` 是发布前草稿状态的验收快照，最终状态以上述发布记录为准。
+
 
 本目录是项目资料入口。**目标仍是高保真恢复并导出未签名 IPA，目前没有合格 IPA；归档并不意味着候选通过验收。** 当前独立审查见 [Native23 审查](../Native23-Review-2026-09-30/README.md) 和 [完整结论](../Native23-Review-2026-09-30/REVIEW.md)。
 
