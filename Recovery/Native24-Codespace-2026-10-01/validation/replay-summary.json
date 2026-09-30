@@ -1,0 +1,328 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "scripts/takeover/native24/prepare_review.py",
+        "--work",
+        "/tmp/godspvz-native24-codespace-2026-10-01"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/prepare.log",
+      "tail": "{\n  \"review_zip_sha256\": \"b7565f28d68a91620d42f9b6d154d7943beefe9a5932ece290eadf93fe994aed\",\n  \"files_verified\": 1259,\n  \"restored_inputs\": {\n    \"inputs/baseline.dll\": {\n      \"bytes\": 1135104,\n      \"sha256\": \"0d6bc587c98ff05b733d9d5bced8b96726d2dd5d2ba82cb949c6ca90b8f86e8f\"\n    },\n    \"inputs/edits-batch1.json\": {\n      \"bytes\": 2437,\n      \"sha256\": \"57825a4b301608936b1a3c9386596e2fc6c4d314f372d0369407bb331d6349e2\"\n    },\n    \"inputs/edits-batch2.json\": {\n      \"bytes\": 772251,\n      \"sha256\": \"3b5226b9407bb556b2a165af6f146fe0d741eff2305830c312439943159f7b79\"\n    },\n    \"inputs/edits-batch2a.json\": {\n      \"bytes\": 562288,\n      \"sha256\": \"a102f60b04832470014575d26b5bc69f71fb0761abdf017c1fed60404e62aeb0\"\n    },\n    \"review/analysis.json\": {\n      \"bytes\": 80308,\n      \"sha256\": \"518f5e4c79aa1765525d2795fe8c8cb3b88a5dd28133e38ec601f240e86de3ea\"\n    },\n    \"review/status.json\": {\n      \"bytes\": 27349,\n      \"sha256\": \"36a317e36a6ac32b6df099e61198f2951c215b0a9a14e789c97c024e2fb3bac8\"\n    },\n    \"review/all-methods.baseline.json\": {\n      \"bytes\": 31690428,\n      \"sha256\": \"3fcb970af07c63bb77969fdf2c19ba279bc2d2173a2048dfb1e8efe5476debf7\"\n    },\n    \"review/all-methods.batch1.json\": {\n      \"bytes\": 31690437,\n      \"sha256\": \"47afaf0852cac2f7d96852e0f13a9a72f34ca93b01d097f300b174b8fd8d45b5\"\n    },\n    \"review/all-methods.batch2a.json\": {\n      \"bytes\": 31692492,\n      \"sha256\": \"f943b1592c752e8e7a31b20c5c3ae0d2890722adaa8bb82459e97768b75dbadc\"\n    },\n    \"review/batch1.dll\": {\n      \"bytes\": 1135104,\n      \"sha256\": \"4d970f5ed7e63dd42815c3c843ce51918328ff790fa5d1eb77e2a80e6f3b0a1b\"\n    }\n  },\n  \"purpose\": \"analysis fixtures only; no Unity project or game runtime selected\"\n}\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/takeover/native24/reproduce_findings.py",
+        "/tmp/godspvz-native24-codespace-2026-10-01/historical-counterexamples.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/counterexamples.log",
+      "tail": "REPRODUCED: 4 pollution accepts, failed field storage, 3 false pointer patterns\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/takeover/native24/test_provenance.py",
+        "/tmp/godspvz-native24-codespace-2026-10-01/source-controls.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/controls.log",
+      "tail": "PASS: 11 source controls including 4 independently reviewed negatives\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/takeover/native24/audit_provenance.py",
+        "--output",
+        "/tmp/godspvz-native24-codespace-2026-10-01/provenance-sites.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/sites.log",
+      "tail": "classified 200/1623\nclassified 400/1623\nclassified 600/1623\nclassified 800/1623\nclassified 1000/1623\nclassified 1200/1623\nclassified 1400/1623\nclassified 1600/1623\n{\"scope\": \"All 1623 fixed historical Batch2 sites; source evidence only; no patch/promotion\", \"source_sha256\": \"8498a03a7ec3ee2589c9f42bc3a98cc02fa3972d6dca245c3ad7642a6382f393\", \"methods\": 377, \"sites\": 1623, \"counts\": {\"UNPROVED_QUARANTINE\": 1369, \"SOURCE_SUPPORTED_ONLY\": 254}, \"reviewed_local_receiver_sites\": 225, \"local_receiver_sites_supported\": 0, \"EH_policy\": \"Unmodeled exception source state stays unproved\"}\n"
+    }
+  ],
+  "reads": {
+    "scripts/takeover/native24/audit_provenance.py": "\"\"\"Reclassify only the fixed 1623 historical sites. Do not emit any game patch.\"\"\"\nimport argparse\nimport collections\nimport copy\nimport hashlib\nimport json\nimport pathlib\nimport sys\nsys.dont_write_bytecode = True\nimport provenance as P\nimport reproduce_findings as R\n\nROOT = pathlib.Path(__file__).resolve().parents[3]\n\n\ndef errors(body, types):\n    # A method outside this gate's instruction/EH subset remains explicitly unproved.\n    return {(x['offset'], x['msg']): x for x in P.verify_prov(body, types)}\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument('--work', type=pathlib.Path, default=ROOT/'.validation/native24')\n    parser.add_argument('--output', type=pathlib.Path, required=True)\n    args = parser.parse_args()\n    data = json.loads((args.work/'review/all-methods.batch1.json').read_text())\n    methods = {m['token']: m for m in data['methods']}\n    edits = json.loads((args.work/'inputs/edits-batch2.json').read_text())['edits']\n    assert len(edits) == 1623 and len({(e['token'], e['offset']) for e in edits}) == 1623\n    baseline_errors, records = {}, []\n    for n, edit in enumerate(edits):\n        token, offset = edit['token'], edit['offset']\n        method = methods[token]\n        if token not in baseline_errors:\n            baseline_errors[token] = errors(method, data['types'])\n        old = baseline_errors[token]\n        trial = copy.deepcopy(method)\n        ins = next(x for x in trial['instructions'] if x['offset'] == offset)\n        assert R.C.A.is_zero_lit(ins), (token, offset)\n        ins['opcode'], ins['operand'] = 'ldnull', None\n        new = errors(trial, data['types'])\n        removed = [old[key] for key in old.keys()-new.keys()]\n        added = [new[key] for key in new.keys()-old.keys()]\n        observations = [R.C.classify(error, data['types']) for error in removed]\n        supported = (bool(removed) and not added and all(R.C.is_afam(error, data['types']) for error in removed)\n                     and all(verdict == 'ACCEPT' for verdict, _ in observations))\n        record = {'token': token, 'name': method['name'], 'offset': offset,\n                  'E2': 'SOURCE_SUPPORTED_ONLY' if supported else 'UNPROVED_QUARANTINE',\n                  'removed': removed, 'added': added, 'observations': observations,\n                  'E5': 'NOT_PROVED', 'E6': 'NOT_PROVED'}\n        records.append(record)\n        if (n+1) % 200 == 0:\n            print(f'classified {n+1}/1623', flush=True)\n    historical = json.loads((args.work/'review/analysis.json').read_text())\n    risky = historical['actual_accepted_analysis']['all_direct_local_receiver_sites']\n    risky_ids = {(s['token'], s['site']) for s in risky}\n    assert len(risky_ids) == 225\n    survivors = [s for s in records if (s['token'], s['offset']) in risky_ids and s['E2'] == 'SOURCE_SUPPORTED_ONLY']\n    assert not survivors, 'local receiver was laundered again'\n    counts = collections.Counter(x['E2'] for x in records)\n    result = {'scope': 'All 1623 fixed historical Batch2 sites; source evidence only; no patch/promotion',\n              'source_sha256': hashlib.sha256(pathlib.Path(P.__file__).read_bytes()).hexdigest(),\n              'methods': len({x['token'] for x in records}), 'sites': len(records), 'counts': dict(counts),\n              'reviewed_local_receiver_sites': 225, 'local_receiver_sites_supported': len(survivors),\n              'EH_policy': 'Unmodeled exception source state stays unproved', 'records': records}\n    args.output.write_text(json.dumps(result, indent=2)+'\\n')\n    print(json.dumps({k: v for k, v in result.items() if k != 'records'}))\n\n\nif __name__ == '__main__':\n    main()\n",
+    "scripts/takeover/native24/provenance.py": "\"\"\"Native24 conservative source tracking. Not a behavioral interpreter or native proof.\n\nLocals remain untrusted even after compatible stores. Invalid stores persist; all\ncall operands participate in output trust; incompatible merges poison revisited\nstates. Unmodeled aliased writes poison later field reads. These intentionally\nconservative results are E2 candidates only, never permission to rewrite CIL.\n\"\"\"\nimport json\n\nINTS = {'System.Boolean', 'System.Char', 'System.Byte', 'System.SByte',\n        'System.Int16', 'System.UInt16', 'System.Int32', 'System.UInt32'}\n\n# provenance classes that a caller may treat as independently determined\nTRUSTED = ('FIELD', 'SFIELD', 'ARG', 'THIS', 'CALLRET', 'STRING', 'NULL', 'NEWOBJ')\n\n\ndef prov_class(p):\n    return p.split(':', 1)[0]\n\n\ndef verify_prov(d, types):\n    ins = d['instructions']\n    by = {x['offset']: i for i, x in enumerate(ins)}\n    states = {}\n    pstates = {}\n    lstates = {}\n    astates = {}\n    hstates = {}\n    cstates = {}\n    stepbad = [False]\n    hard_bad = [False]\n    method_args = ([d['owner']] if d['hasThis'] else []) + d['args']\n    initial_locals = tuple('LOCAL:%d' % k for k in range(len(d['locals'])))\n    initial_args = tuple('THIS' if k == 0 and d['hasThis'] else 'ARG:%d' % k\n                         for k in range(len(method_args)))\n    todo = []\n    peak = 0\n    errs = []\n\n    def norm(t):\n        if t in INTS or types.get(t, {}).get('enumType'):\n            return 'I4'\n        if t in ('System.Int64', 'System.UInt64'):\n            return 'I8'\n        if t in ('System.IntPtr', 'System.UIntPtr'):\n            return 'I'\n        if t in ('System.Single', 'System.Double'):\n            return 'F'\n        return t\n\n    def ref(t):\n        return (t == 'null' or t.endswith('[]') or\n                (t in types and not types[t].get('value')\n                 and not types[t].get('byref') and not types[t].get('unbound')))\n\n    def assign(a, b):\n        a, b = norm(a), norm(b)\n        if a == b:\n            return True\n        if a == 'null':\n            return ref(b)\n        if b == 'System.Object' and ref(a):\n            return True\n        if a.endswith('[]') and b == 'System.Array':\n            return True\n        seen = set()\n        while a in types and a not in seen:\n            seen.add(a)\n            a = types[a].get('baseType')\n            if a == b:\n                return True\n        return False\n\n    pending = ['?']       # provenance of the value most recently popped\n\n    def fail(i, s):\n        pending[0] = 'TAINTED'\n        stepbad[0] = True\n        errs.append({'offset': ins[i]['offset'], 'msg': s,\n                     'opcode': ins[i]['opcode']})\n\n    def join_prov(a, b):\n        if a == b:\n            return a\n        return 'TAINTED' if any(prov_class(x) == 'TAINTED' for x in (a,b)) else 'MERGE'\n\n    def queue(i, s, ps, lp=None, ap=None, heap_bad=False, control_bad=False):\n        if not 0 <= i < len(ins):\n            hard_bad[0] = True\n            fail(min(max(i, 0), len(ins)-1), 'fallthrough outside method')\n            return\n        lp = initial_locals if lp is None else tuple(lp)\n        ap = initial_args if ap is None else tuple(ap)\n        s, ps = tuple(map(norm, s)), tuple(ps)\n        if len(s) > d['maxStack']:\n            hard_bad[0] = True\n            fail(i, 'stack exceeds declared MaxStack')\n            return\n        if i in states:\n            old = states[i]\n            if len(old) != len(s):\n                hard_bad[0] = control_bad = True\n                fail(i, 'merge height %s vs %s' % (old, s))\n                height = max(len(old), len(s))\n                s, ps = ('UNKNOWN',)*height, ('TAINTED',)*height\n            else:\n                joined, jp = [], []\n                for a, b, pa, pb in zip(old, s, pstates[i], ps):\n                    if a == b:\n                        joined.append(a); jp.append(join_prov(pa, pb))\n                    elif assign(a,b):\n                        joined.append(b); jp.append('TAINTED' if 'TAINTED' in (pa,pb) else 'MERGE')\n                    elif assign(b,a):\n                        joined.append(a); jp.append('TAINTED' if 'TAINTED' in (pa,pb) else 'MERGE')\n                    else:\n                        hard_bad[0] = control_bad = True\n                        fail(i, 'merge types %s vs %s' % (a,b))\n                        joined.append('UNKNOWN'); jp.append('TAINTED')\n                s, ps = tuple(joined), tuple(jp)\n            lp = tuple(join_prov(a,b) for a,b in zip(lstates[i],lp))\n            ap = tuple(join_prov(a,b) for a,b in zip(astates[i],ap))\n            heap_bad = heap_bad or hstates[i]\n            control_bad = control_bad or cstates[i]\n            if (s,ps,lp,ap,heap_bad,control_bad) == (states[i],pstates[i],lstates[i],astates[i],hstates[i],cstates[i]):\n                return\n        states[i],pstates[i],lstates[i],astates[i],hstates[i],cstates[i] = s,ps,lp,ap,heap_bad,control_bad\n        todo.append(i)\n\n    def regions(off):\n        return {(k, n) for n, h in enumerate(d['handlers'])\n                for k in ('try', 'handler') if h[k + 'Start'] <= off < h[k + 'End']}\n\n    queue(0, [], [])\n    bad_eh = False\n    for h in d['handlers']:\n        if h['kind'] != 'Finally':\n            fail(0, 'unsupported EH ' + h['kind'])\n            bad_eh = True\n            continue\n        if not h['tryStart'] < h['tryEnd'] <= h['handlerStart'] < h['handlerEnd']:\n            fail(0, 'invalid EH range')\n            bad_eh = True\n            continue\n        for k in ('tryStart', 'tryEnd', 'handlerStart', 'handlerEnd'):\n            if h[k] not in by:\n                fail(0, 'invalid EH boundary ' + k)\n                bad_eh = True\n        if not bad_eh:\n            queue(by[h['handlerStart']], [], [])\n    if d['handlers']:\n        fail(0, 'E2 EH source state not modeled; quarantine method')\n        return errs\n\n    while todo:\n        i = todo.pop()\n        x = ins[i]\n        s = list(states[i])\n        ps = list(pstates[i])\n        lp, ap = list(lstates[i]), list(astates[i])\n        heap_bad, control_bad = hstates[i], cstates[i]\n        stepbad[0] = False\n        popped = []\n        opname = x['opcode']\n        succ = None\n\n        def pop(want=None):\n            if not s:\n                fail(i, 'stack underflow')\n                return 'UNKNOWN'\n            t = s.pop()\n            p = ps.pop() if ps else 'TAINTED'\n            if want is not None and not assign(t, want):\n                fail(i, '%s is not assignable to %s' % (t, want))\n                p = 'TAINTED'\n            pending[0] = p\n            popped.append(p)\n            return t\n\n        def push(t, prov=None):\n            s.append(norm(t))\n            ps.append('TAINTED' if stepbad[0] or control_bad else (prov if prov is not None else pending[0]))\n\n        def receiver(owner, write=False, call=False):\n            \"\"\"pop()s the receiver and leaves its provenance in pending[0], so the\n            caller can demote the result when the object came from a polluted\n            value (a signature tells us the type, not that we reached the right\n            object).\"\"\"\n            t = pop()\n            value = types.get(owner, {}).get('value')\n            valid = ((t == owner + '&' or (not write and not call and assign(t, owner)))\n                     if value else assign(t, owner))\n            if not valid:\n                fail(i, 'receiver %s incompatible with %s (write=%s, call=%s)'\n                     % (t, owner, write, call))\n\n        a = x['operand']\n        if opname == 'nop':\n            pass\n        elif opname == 'ldnull':\n            push('null', 'NULL')\n        elif opname == 'ldstr':\n            push('System.String', 'STRING')\n        elif opname.startswith('ldc.i4'):\n            push('I4', 'CONST')\n        elif opname == 'ldc.i8':\n            push('I8', 'CONST')\n        elif opname in ('ldc.r4', 'ldc.r8'):\n            push('F', 'CONST')\n        elif opname.startswith(('ldarg', 'starg')):\n            ix = a['index'] if isinstance(a, dict) else int(opname.split('.')[-1])\n            args = method_args\n            t = args[ix]\n            if opname.startswith('starg'):\n                pop(t)\n                ap[ix] = 'TAINTED' if stepbad[0] or prov_class(pending[0]) not in TRUSTED else pending[0]\n            else:\n                push(t + ('&' if opname.startswith('ldarga') else ''),\n                     ap[ix])\n        elif opname.startswith(('ldloc', 'stloc')):\n            ix = a['index'] if isinstance(a, dict) else int(opname.split('.')[-1])\n            t = d['locals'][ix]\n            if opname.startswith('stloc'):\n                pop(t)\n                lp[ix] = 'TAINTED' if stepbad[0] or prov_class(pending[0]) in ('TAINTED','MERGE') else 'LOCAL:%d' % ix\n            else:\n                push(t + ('&' if opname.startswith('ldloca') else ''),\n                     lp[ix])\n        elif opname == 'dup':\n            v = pop()\n            p = pending[0]\n            push(v, p)\n            push(v, p)\n        elif opname == 'pop':\n            pop()\n        elif opname in ('ldfld', 'ldflda', 'stfld', 'ldsfld', 'ldsflda', 'stsfld'):\n            if opname in ('stfld', 'stsfld'):\n                pop(a['type'])\n            rp = None\n            if opname in ('ldfld', 'ldflda', 'stfld'):\n                receiver(a['owner'], write=opname in ('stfld', 'ldflda'))\n                rp = pending[0]\n            if opname.startswith('ld'):\n                kind = 'SFIELD' if opname.startswith('ldsfld') else 'FIELD'\n                prov = '%s:%s %s::%s' % (kind, a['type'], a['owner'],\n                                         a.get('name') or a.get('identity') or '?')\n                if heap_bad or (rp is not None and prov_class(rp) not in TRUSTED):\n                    prov = 'TAINTED'\n                push(a['type'] + ('&' if opname.endswith('a') else ''), prov)\n            elif stepbad[0] or any(prov_class(p) not in TRUSTED + ('CONST',) for p in popped):\n                heap_bad = True\n        elif opname in ('call', 'callvirt', 'newobj'):\n            for t in reversed(a['args']):\n                pop(t)\n            rp = None\n            if opname != 'newobj' and a['hasThis']:\n                receiver(a['owner'], call=True)\n                rp = pending[0]\n            call_bad = stepbad[0] or any(prov_class(p) not in TRUSTED + ('CONST',) for p in popped)\n            if call_bad:\n                heap_bad = True\n            if opname == 'newobj':\n                push(a['owner'], 'TAINTED' if call_bad else 'NEWOBJ:%s' % a['owner'])\n            elif a['ret'] != 'System.Void':\n                prov = 'CALLRET:%s' % a.get('identity', a['ret'])\n                if call_bad:\n                    prov = 'TAINTED'\n                push(a['ret'], prov)\n        elif opname in ('add', 'sub', 'mul', 'div', 'div.un', 'rem', 'rem.un',\n                        'and', 'or', 'xor'):\n            b = pop()\n            c = pop()\n            if b != c or b not in ('I4', 'I8', 'I', 'F'):\n                fail(i, 'invalid numeric operands %s, %s' % (c, b))\n            if opname in ('and', 'or', 'xor') and b == 'F':\n                fail(i, 'bitwise floating operand')\n            push(b, 'ARITH')\n        elif opname in ('shl', 'shr', 'shr.un'):\n            b = pop()\n            c = pop()\n            if b not in ('I4', 'I') or c not in ('I4', 'I8', 'I'):\n                fail(i, 'invalid shift')\n            push(c, 'ARITH')\n        elif opname in ('neg', 'not'):\n            t = pop()\n            if t not in ('I4', 'I8', 'I', 'F') or opname == 'not' and t == 'F':\n                fail(i, 'invalid unary operand')\n            push(t, 'ARITH')\n        elif opname.startswith('conv.'):\n            t = pop()\n            if t not in ('I4', 'I8', 'I', 'F'):\n                fail(i, 'invalid numeric conversion ' + t)\n            suffix = opname.split('.')[1]\n            push('F' if suffix in ('r4', 'r8', 'r') else\n                 'I8' if suffix in ('i8', 'u8') else\n                 'I' if suffix in ('i', 'u') else 'I4', 'CONV')\n        elif opname in ('ceq', 'cgt', 'cgt.un', 'clt', 'clt.un'):\n            b = pop()\n            pb = pending[0]\n            c = pop()\n            pc = pending[0]\n            numeric = b == c and b in ('I4', 'I8', 'I', 'F')\n            refs = ref(b) and ref(c) and (opname == 'ceq' or opname == 'cgt.un' and b == 'null')\n            if not numeric and not refs:\n                fail(i, 'invalid comparison %s, %s' % (c, b))\n                errs[-1]['prov_top'] = pb\n                errs[-1]['prov_second'] = pc\n            push('I4', 'ARITH')\n        elif opname in ('castclass', 'isinst'):\n            t = pop()\n            pp = pending[0]\n            if not ref(t):\n                fail(i, 'reference cast applied to ' + t)\n            push(a['type'], 'CONV' if prov_class(pp) in TRUSTED else 'TAINTED(via %s)' % prov_class(pp))\n        elif opname == 'box':\n            pop(a['type'])\n            push('System.Object', 'CONV')\n        elif opname == 'unbox.any':\n            if not ref(pop()):\n                fail(i, 'unbox on non-reference')\n            push(a['type'], 'CONV')\n        elif opname == 'newarr':\n            pop('I4')\n            push(a['type'] + '[]', 'NEWARR')\n        elif opname == 'ldlen':\n            t = pop()\n            if not t.endswith('[]'):\n                fail(i, 'ldlen on ' + t)\n            push('I', 'ARITH')\n        elif opname.startswith(('ldelem', 'stelem')):\n            val = pop() if opname.startswith('stelem') else None\n            index = pop()\n            arr = pop()\n            pa = pending[0]\n            if index not in ('I4', 'I') or not arr.endswith('[]'):\n                fail(i, 'invalid array access %s[%s]' % (arr, index))\n            el = arr[:-2]\n            p = 'ELEM' if prov_class(pa) in TRUSTED else 'TAINTED(via %s)' % prov_class(pa)\n            if val is not None:\n                if not assign(val, el):\n                    fail(i, 'array store %s into %s' % (val, el))\n            elif opname == 'ldelema':\n                if el != a['type']:\n                    fail(i, 'ldelema type mismatch')\n                push(el + '&', p)\n            elif opname == 'ldelem.ref':\n                if not ref(el):\n                    fail(i, 'ldelem.ref on non-reference element')\n                push(el, p)\n            elif opname == 'ldelem.any':\n                if el != a['type']:\n                    fail(i, 'ldelem.any type mismatch')\n                push(el, p)\n            else:\n                if norm(el) not in ('I4', 'I8', 'I', 'F'):\n                    fail(i, 'primitive element mismatch')\n                push(el, p)\n        elif opname in ('initobj', 'ldobj', 'stobj'):\n            if opname == 'stobj':\n                pop(a['type'])\n            pop(a['type'] + '&')\n            if opname == 'ldobj':\n                push(a['type'], 'CONV')\n            else:\n                # Alias-sensitive stores require a separate proof, not a guessed target.\n                heap_bad = True\n        elif opname == 'switch':\n            pop('I4')\n            if any(regions(t) != regions(x['offset']) for t in a['targets']):\n                fail(i, 'switch crosses protected region boundary')\n            succ = [by[t] for t in a['targets']] + [i + 1]\n        elif opname.rstrip('.s') in ('br', 'brtrue', 'brfalse', 'leave') or \\\n                opname.split('.')[0] in ('beq', 'bne', 'bgt', 'blt', 'bge', 'ble'):\n            base = opname[:-2] if opname.endswith('.s') else opname\n            target = by[a['target']]\n            if base in ('brtrue', 'brfalse'):\n                t = pop()\n                pt = pending[0]\n                if not (t in ('I4', 'I8', 'I') or ref(t) or t.endswith('&')):\n                    fail(i, 'invalid condition ' + t)\n                    errs[-1]['prov_top'] = pt\n            elif base not in ('br', 'leave'):\n                b = pop()\n                pb = pending[0]\n                c = pop()\n                pc = pending[0]\n                if not (b == c and b in ('I4', 'I8', 'I', 'F')\n                        or ref(b) and ref(c) and base in ('beq', 'bne.un')):\n                    fail(i, 'invalid branch comparison %s, %s' % (c, b))\n                    errs[-1]['prov_top'] = pb\n                    errs[-1]['prov_second'] = pc\n            if base == 'leave':\n                if s:\n                    fail(i, 'nonempty stack at leave')\n                if any(k == 'handler' for k, n in regions(x['offset'])):\n                    fail(i, 'leave from finally')\n            elif regions(x['offset']) != regions(a['target']):\n                fail(i, 'branch across protected region boundary')\n            succ = [target] if base in ('br', 'leave') else [target, i + 1]\n        elif opname == 'endfinally':\n            if s or not any(k == 'handler' for k, n in regions(x['offset'])):\n                fail(i, 'invalid endfinally')\n            succ = []\n        elif opname == 'throw':\n            t = pop()\n            pt = pending[0]\n            if not ref(t):\n                fail(i, 'throw requires reference')\n                errs[-1]['prov_top'] = pt\n            succ = []\n        elif opname == 'ret':\n            if d['ret'] != 'System.Void':\n                pop(d['ret'])\n            if s or regions(x['offset']):\n                fail(i, 'invalid return stack or EH region')\n            succ = []\n        else:\n            fail(i, 'unsupported opcode ' + opname)\n            succ = []\n        peak = max(peak, len(s))\n        for tgt in succ if succ is not None else [i + 1]:\n            queue(tgt, s, ps, lp, ap, heap_bad, control_bad)\n    if peak > d['maxStack']:\n        errs.append({'offset': -1, 'msg': 'declared MaxStack too small', 'opcode': '-'})\n    if hard_bad[0]:\n        for error in errs:\n            if 'prov_top' in error: error['prov_top'] = 'TAINTED'\n            if 'prov_second' in error: error['prov_second'] = 'TAINTED'\n    unique = {}\n    for error in errs:\n        key = (error['offset'], error['msg'], error['opcode'])\n        if key in unique:\n            for name in ('prov_top', 'prov_second'):\n                if name in error:\n                    unique[key][name] = join_prov(unique[key].get(name, 'TAINTED'), error[name])\n        else:\n            unique[key] = dict(error)\n    return list(unique.values())\n\n",
+    "scripts/takeover/native24/cpp_method_map.py": "\"\"\"Attribute diagnostics only to balanced function definitions, never prototypes.\"\"\"\nimport bisect\nimport collections\nimport hashlib\nimport json\nimport pathlib\nimport re\n\n\ndef sha(path):\n    return hashlib.sha256(path.read_bytes()).hexdigest()\n\n\ndef masked_source(text):\n    # Preserve positions/newlines while hiding comments and quoted braces.\n    pattern = r'//[^\\n]*|/\\*.*?\\*/|\"(?:\\\\.|[^\"\\\\])*\"|\\'(?:\\\\.|[^\\'\\\\])*\\''\n    return re.sub(pattern, lambda m: ''.join('\\n' if c == '\\n' else ' ' for c in m[0]),\n                  text, flags=re.S)\n\n\ndef balanced_end(text, start, opening, closing):\n    depth = 0\n    for i in range(start, len(text)):\n        if text[i] == opening:\n            depth += 1\n        elif text[i] == closing:\n            depth -= 1\n            if depth == 0:\n                return i\n    raise ValueError(f'unclosed {opening} at {start}')\n\n\ndef definitions(text):\n    masked = masked_source(text)\n    matches = re.finditer(r'^IL2CPP_EXTERN_C\\s+IL2CPP_METHOD_ATTR[^\\n;{]*?\\b([A-Za-z_][A-Za-z0-9_]*)\\s*\\(',\n                          masked, re.M)\n    for match in matches:\n        end = balanced_end(masked, match.end()-1, '(', ')')+1\n        while end < len(masked) and masked[end].isspace():\n            end += 1\n        if end < len(masked) and masked[end] == ';':\n            continue\n        if end == len(masked) or masked[end] != '{':\n            raise ValueError(f'unrecognized declaration suffix for {match[1]}')\n        stop = balanced_end(masked, end, '{', '}')\n        yield match[1], text.count('\\n', 0, match.start())+1, text.count('\\n', 0, stop)+1\n\n\ndef pointer_table(path):\n    text = path.read_text(encoding='utf-8-sig')\n    match = re.search(r's_methodPointers\\[(\\d+)\\]\\s*=\\s*\\{(.*?)\\n\\};', text, re.S)\n    if not match:\n        raise ValueError('missing method pointer table')\n    rows = [x.strip() for x in masked_source(match[2]).split(',') if x.strip()]\n    if len(rows) != int(match[1]) or len(rows) != 2317:\n        raise ValueError('MethodDef pointer-table invariant failed')\n    out = collections.defaultdict(list)\n    for index, symbol in enumerate(rows):\n        if symbol not in ('NULL', '0'):\n            if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', symbol):\n                raise ValueError('unrecognized pointer '+symbol)\n            out[symbol].append(f'0x{0x06000001+index:08X}')\n    return out\n\n\ndef attribute(cpp, logs, manifest):\n    \"\"\"Require exact source hashes and one compiler log for every translation unit.\"\"\"\n    cpp, logs = pathlib.Path(cpp), pathlib.Path(logs)\n    table = pointer_table(cpp/'GodsPVZRuntime1_CodeGen.c')\n    bodies, counts, outside = {}, collections.Counter(), []\n    seen_symbols = set()\n    units = sorted(cpp.glob('*.cpp'))\n    if {f.name for f in units} != set(manifest):\n        raise ValueError('manifest translation unit set differs')\n    for source in units:\n        actual = sha(source)\n        if actual != manifest[source.name]['sha256']:\n            raise ValueError('source hash mismatch: '+source.name)\n        regions = list(definitions(source.read_text(encoding='utf-8-sig')))\n        relevant = [(sym, start, end) for sym, start, end in regions if sym in table]\n        for symbol, start, end in relevant:\n            if symbol in seen_symbols:\n                raise ValueError('duplicate definition: '+symbol)\n            seen_symbols.add(symbol)\n            for token in table[symbol]:\n                bodies[token] = {'symbol': symbol, 'file': source.name, 'start': start, 'end': end,\n                                 'file_sha256': actual, 'errors': []}\n        starts = [r[1] for r in relevant]\n        log = logs/(source.name+'.log')\n        if not log.is_file():\n            raise ValueError('missing compiler log: '+source.name)\n        for line in log.read_text(errors='replace').splitlines():\n            m = re.match(r'^(.+?):(\\d+):(\\d+): (?:fatal )?error: (.*)', line)\n            if not m:\n                continue\n            counts['total_errors'] += 1\n            path, number = pathlib.Path(m[1]), int(m[2])\n            if path.name != source.name:\n                counts['included_file_errors'] += 1\n                outside.append({'tu': source.name, 'file': m[1], 'line': number, 'message': m[4]})\n                continue\n            counts['cpp_errors'] += 1\n            index = bisect.bisect_right(starts, number)-1\n            if index < 0 or not relevant[index][1] <= number <= relevant[index][2]:\n                counts['cpp_errors_outside_game_methods'] += 1\n                outside.append({'tu': source.name, 'file': m[1], 'line': number, 'message': m[4]})\n                continue\n            for token in table[relevant[index][0]]:\n                bodies[token]['errors'].append({'line': number, 'col': int(m[3]), 'message': m[4]})\n    return {'summary': {**counts, 'translation_units': len(units), 'mapped_method_tokens': len(bodies),\n                        'methods_with_errors': sum(bool(v['errors']) for v in bodies.values())},\n            'methods': bodies, 'unattributed_or_included_diagnostics': outside}\n"
+  },
+  "versions": {
+    "dotnet --version": "10.0.401\n",
+    "dotnet --list-runtimes": "Microsoft.AspNetCore.App 9.0.20 [/usr/share/dotnet/shared/Microsoft.AspNetCore.App]\nMicrosoft.AspNetCore.App 10.0.12 [/usr/share/dotnet/shared/Microsoft.AspNetCore.App]\nMicrosoft.NETCore.App 9.0.20 [/usr/share/dotnet/shared/Microsoft.NETCore.App]\nMicrosoft.NETCore.App 10.0.12 [/usr/share/dotnet/shared/Microsoft.NETCore.App]\n",
+    "clang++ --version": "Ubuntu clang version 18.1.3 (1ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\n"
+  },
+  "batch1_edits": {
+    "comment": "Native23 batch 1. Every edit is grounded in (a) PC GameAssembly disassembly, (b) the fail-closed typed IL verifier, (c) the clang diagnostic of the same site.",
+    "edits": [
+      {
+        "token": "0x06000348",
+        "offset": 7,
+        "action": "retype_call",
+        "newDeclaringType": "UnityEngine.GameObject",
+        "evidence": "Plant::Awake IL_0007 receives Plant::animationGroup (UnityEngine.GameObject). PC native 0x18034DEE4 calls 0x18046DC80 = GameObject::GetComponent<T>. Verifier: receiver UnityEngine.GameObject incompatible with UnityEngine.Component. clang GodsPVZRuntime1__7.cpp:2545."
+      },
+      {
+        "token": "0x06000348",
+        "offset": 35,
+        "action": "retype_call",
+        "newDeclaringType": "UnityEngine.GameObject",
+        "evidence": "Plant::Awake IL_0023 receives Plant::ani_aniPart (UnityEngine.GameObject). PC native 0x18034DF3A calls 0x18131C070 = GameObject::get_transform. clang GodsPVZRuntime1__7.cpp:2554."
+      },
+      {
+        "token": "0x0600034C",
+        "offset": 225,
+        "action": "retype_call",
+        "newDeclaringType": "UnityEngine.GameObject",
+        "evidence": "Plant::Update IL_00E1 receives Plant::shadow (UnityEngine.GameObject). PC native 0x18035C664/0x18035C699 call 0x18131C070 = GameObject::get_transform. The second get_transform in the same method (IL_020B, receiver Camera::get_main) stays Component::get_transform and native agrees (0x18035C833 -> 0x181304510), so this repair is per call site, not global. clang GodsPVZRuntime1__7.cpp:3017."
+      },
+      {
+        "token": "0x06000339",
+        "offset": 6,
+        "action": "to_ldnull",
+        "evidence": "Device::TryPlacing compares Board Device::board against an integer zero. PC native 0x18034BE4B 'test %rcx,%rcx; je' compares the reference against null. Verifier: invalid comparison Board, I4. clang GodsPVZRuntime1__6.cpp:27856."
+      },
+      {
+        "token": "0x06000339",
+        "offset": 58,
+        "action": "to_ldnull",
+        "evidence": "Same shape for local 4 (Grid) at IL_003A. Native 0x18034BE58 'test %rax,%rax; je'. clang GodsPVZRuntime1__6.cpp:27877."
+      },
+      {
+        "token": "0x06000339",
+        "offset": 161,
+        "action": "ret_to_throw",
+        "evidence": "The recovered body materialised NullReferenceException then returned it as System.Boolean. PC native reaches 0x18034BEA3 'call 0x180250150' (il2cpp raise NullReferenceException) followed by int3, i.e. the frame never returns."
+      }
+    ]
+  },
+  "support": {
+    "UnityEngine.DirectorModule.dll": {
+      "bytes": 9728,
+      "sha256": "4edb284215e1de7d0cf6f2df17b3392b50dde7450a2f629409d972b763f4da9b"
+    },
+    "UnityEngine.GameCenterModule.dll": {
+      "bytes": 26624,
+      "sha256": "85a3b86941334743cde7d593cae2bc612f9656123dc90267c3515f97e9ec6da0"
+    },
+    "UnityEngine.PropertiesModule.dll": {
+      "bytes": 46592,
+      "sha256": "23076dd8d45fd7773dfa23397983251dbceadd7f171206b6ca6f4f5b3cea5d91"
+    },
+    "UnityEngine.TextCoreFontEngineModule.dll": {
+      "bytes": 29184,
+      "sha256": "847ece8d134c5717b668b7241232f29b660858f2359d0c1cd2ea31214f6576fd"
+    },
+    "UnityEngine.AIModule.dll": {
+      "bytes": 9728,
+      "sha256": "5680238c8cce3c44ae01f2e3c27ed9b15b31d814cdb1d47f0bd195d4279b85ca"
+    },
+    "Unity.Burst.dll": {
+      "bytes": 300032,
+      "sha256": "3267b6ce164965bc0ab5ee6ebbaeb7497ad7e70103aad7bf3248cd253b703f5b"
+    },
+    "System.Xml.dll": {
+      "bytes": 6656,
+      "sha256": "68b227733a94a08d4c61db0f7e84f3094ad0e9fcd0a3ab78b980929f93b13ae3"
+    },
+    "System.Configuration.dll": {
+      "bytes": 4608,
+      "sha256": "cbe68580e09f5c5a2c529453047584e60a571f3b7a0ac49b98922e1a5b60b35b"
+    },
+    "UnityEngine.UI.dll": {
+      "bytes": 262656,
+      "sha256": "a6733875d7f72e29a82b2e2a849c7fd7bf4905aca5524e895978787f68525403"
+    },
+    "UnityEngine.UnityAnalyticsModule.dll": {
+      "bytes": 11776,
+      "sha256": "de8c606c7f10971a62bf1c455585684296909536fa840be4ff9e2db5776d638a"
+    },
+    "UnityEngine.ParticleSystemModule.dll": {
+      "bytes": 13312,
+      "sha256": "e5eb9f042b25813c38ca0e3611b772e2996e2547b463703210e03f0230748ab3"
+    },
+    "UnityEngine.UnityWebRequestModule.dll": {
+      "bytes": 10752,
+      "sha256": "4ccd72bf2a47c1ad7b6c0e5593b583c14ad4c316690cbc8e0a82cbee2498f7df"
+    },
+    "UnityEngine.InputModule.dll": {
+      "bytes": 10752,
+      "sha256": "14dd129259e917bf70b2fcd4183415aa665c9fce4ef639d5affc983c7cac7c99"
+    },
+    "UnityEngine.SubsystemsModule.dll": {
+      "bytes": 14336,
+      "sha256": "8a6062cd4dcbcc1483832267d9bb169eefb0d2ed7a9358817e64ee47d63893d7"
+    },
+    "Unity.Mathematics.dll": {
+      "bytes": 730112,
+      "sha256": "07ed4f1acbbb489f32e065fab689e8e8d1cf4e16411e2b5f3f04b12b3cefd247"
+    },
+    "UnityEngine.AndroidJNIModule.dll": {
+      "bytes": 46080,
+      "sha256": "2afbbad4e0e9932a59b772cc1e4c90bf721264d22362f2063e0033b56f21547a"
+    },
+    "UnityEngine.AudioModule.dll": {
+      "bytes": 14848,
+      "sha256": "546f5f60cbc2034556b318ed328787974fa9a64d57b1a6deefae14521fe1d071"
+    },
+    "UnityEngine.VideoModule.dll": {
+      "bytes": 13312,
+      "sha256": "45435f70c15300f6c0974662ff29d285c0136d00cfe7b57fc475237ef5e5f0e6"
+    },
+    "Mono.Security.dll": {
+      "bytes": 8704,
+      "sha256": "f73a53b8a054bbf1b4a9e6254613f0cd4545e83129a6b4c3e97ffdf93ccfb67a"
+    },
+    "Unity.2D.Animation.Runtime.dll": {
+      "bytes": 70656,
+      "sha256": "7f76f0fa1f79022b1577c60b00939ee99c13bb5869e9c84746b684a8ffe45e0b"
+    },
+    "UnityEngine.SpriteMaskModule.dll": {
+      "bytes": 9728,
+      "sha256": "1e2cf1dc3a9c10afc586025fa347f63c248d8437f46a4bc9253307f7a3195b66"
+    },
+    "UnityEngine.InputLegacyModule.dll": {
+      "bytes": 18432,
+      "sha256": "333738f42f13be98634796d2140f7d0a539e8ddcc16d32f35aa34480e5e55c05"
+    },
+    "Unity.RenderPipeline.Universal.ShaderLibrary.dll": {
+      "bytes": 8192,
+      "sha256": "37db7e3dc0e9d8333625661af015ff2f554ee435889e9be80cc9fb539da0e3ca"
+    },
+    "System.Core.dll": {
+      "bytes": 35840,
+      "sha256": "9df0e9b3bea10b5956c5e52395999146d650996c116ee704f620fee624a72ee7"
+    },
+    "System.dll": {
+      "bytes": 205824,
+      "sha256": "a093210049a55db21c43ff063c032ab317d36ff9020b80180692efa6c4cfff89"
+    },
+    "UnityEngine.TextCoreTextEngineModule.dll": {
+      "bytes": 212480,
+      "sha256": "3e36b59ea37eca823f30ad7e1011ae191322dbc1b1b666ce50c1349ba806d2c9"
+    },
+    "Unity.RenderPipelines.Core.Runtime.dll": {
+      "bytes": 525312,
+      "sha256": "f76f6e692fa62702eb8be2d8a114b07799fd23109cbac3d6c844389419ae5089"
+    },
+    "UnityEngine.UIModule.dll": {
+      "bytes": 20480,
+      "sha256": "1ea25da450ab53c3e8fdf27428c428bb79c4a50252956d8745615a2e26d8ba16"
+    },
+    "UnityEngine.CoreModule.dll": {
+      "bytes": 554496,
+      "sha256": "d4d9c2d8f48af011f2dec31328a482794eceba9f3eece005623448443c184f50"
+    },
+    "UnityEngine.TextRenderingModule.dll": {
+      "bytes": 18944,
+      "sha256": "1552538c83fe51ee1b425b4fdd057b2bde55f56c6d7e4f2dc63502f64e575285"
+    },
+    "Unity.TextMeshPro.dll": {
+      "bytes": 377856,
+      "sha256": "e66a82eaf9e78098727fea380dc72d509ef9027499c552210f968bbec996797f"
+    },
+    "Unity.Collections.dll": {
+      "bytes": 350208,
+      "sha256": "f029c4d0b804f2974b62a138c9d7e5f262c2f3fcc85fdbde05f9a418e1fd8b7c"
+    },
+    "UnityEngine.VRModule.dll": {
+      "bytes": 11264,
+      "sha256": "ec826f8a7ead3931a7da6910f4f240341729323ee1c77db906a1b6d590fde6a3"
+    },
+    "UnityEngine.PhysicsModule.dll": {
+      "bytes": 24064,
+      "sha256": "e48921a444d3d7b07751268d670b31f26c7a4e362e9c04cb74ae5250dabd3082"
+    },
+    "UnityEngine.IMGUIModule.dll": {
+      "bytes": 81408,
+      "sha256": "c36a7aaf83647bb047714e087e520fde34337906f28dfbf18f5b6b106d71be11"
+    },
+    "Unity.Collections.LowLevel.ILSupport.dll": {
+      "bytes": 3584,
+      "sha256": "ffa3c86258a8bb33427b5b3af15585b0128b882366b76cc0d634e73665c99878"
+    },
+    "UnityEngine.TerrainModule.dll": {
+      "bytes": 17408,
+      "sha256": "3e33b79f8dd17b2d353886453b8f2cf8c97f7e25869c1d03cd7d4c3fa4944af5"
+    },
+    "GodsPVZRuntime1.dll": {
+      "bytes": 1135104,
+      "sha256": "0d6bc587c98ff05b733d9d5bced8b96726d2dd5d2ba82cb949c6ca90b8f86e8f"
+    },
+    "Unity.Burst.Unsafe.dll": {
+      "bytes": 5632,
+      "sha256": "9fea099706060b53141b1d9a6f24faa0eb3f582947ab5f97eaa0a7cb07404a33"
+    },
+    "Unity.RenderPipelines.Universal.Runtime.dll": {
+      "bytes": 778752,
+      "sha256": "5366e14fd006256547448927e1ba32da919d6a17f2fe1752148f177bd7677321"
+    },
+    "UnityEngine.Physics2DModule.dll": {
+      "bytes": 17408,
+      "sha256": "19a6ce12dd66daa592062b0f3bdddba765bae09bac74d22c3ae1568acbb915a2"
+    },
+    "UnityEngine.TilemapModule.dll": {
+      "bytes": 17920,
+      "sha256": "6035f71dc272342065f03cc9a79c974ab648684db742bf7a83efdaa93ea62bbb"
+    },
+    "UnityEngine.JSONSerializeModule.dll": {
+      "bytes": 10752,
+      "sha256": "80218c2ca17df9250545d4040b4dedb0ae4953069ba3cabbcf3056854d3f2b44"
+    },
+    "Unity.InternalAPIEngineBridge.001.dll": {
+      "bytes": 6144,
+      "sha256": "381a9485cfabb22a1705acc59e403d8c4ca6d88a7a7856c9b77d57f034e5c5a4"
+    },
+    "UnityEngine.VFXModule.dll": {
+      "bytes": 15872,
+      "sha256": "bc36697e98574c3a8b3d4ac14899b82802bf4f1d4b850833f88c41fa83efcc9e"
+    },
+    "Unity.VisualScripting.Core.exe": {
+      "bytes": 330240,
+      "sha256": "16cabf56b65cd1e6c09338d39af27dce42377dc4d986c42cdfd9f91cc496a4fb"
+    },
+    "UnityEngine.XRModule.dll": {
+      "bytes": 24064,
+      "sha256": "d36c012dd4b640d57d331e55394814d75706fc78202ddc1c10922ef210d1a63e"
+    },
+    "mscorlib.dll": {
+      "bytes": 1798144,
+      "sha256": "01279f9f930e0c8f4dd760196cd35697dfc1cebb97e6a2a15bcd42936e8961d1"
+    },
+    "UnityEngine.AssetBundleModule.dll": {
+      "bytes": 9728,
+      "sha256": "09d78977c930e46f96a0db387804ec90251c31bbfeb11fff33b5be5ecb52d636"
+    },
+    "UnityEngine.AnimationModule.dll": {
+      "bytes": 24064,
+      "sha256": "057323dc2cadf8b9e609aca40703a42f4bf55326cb678d247062dcb881ca17ae"
+    },
+    "UnityEngine.GridModule.dll": {
+      "bytes": 9728,
+      "sha256": "f9c47c819f0f4480afc5799b006204066bfe8fd5b577a01392f5851e4ec9a1c3"
+    },
+    "UnityEngine.UIElementsModule.dll": {
+      "bytes": 1234944,
+      "sha256": "3b7347843f026a0de2781b79227c9c3de453e016af6796845b187f290fdd6080"
+    },
+    "UnityEngine.dll": {
+      "bytes": 69120,
+      "sha256": "baa0f885e6085900f8eceb4f8b384fa084dc0bff153bea40fa4267a350626011"
+    },
+    "UnityEngine.SharedInternalsModule.dll": {
+      "bytes": 16384,
+      "sha256": "a4f5741c70eb9fd39de9c4735a05634cd8920dd8495ea79dd0ae338575d899c4"
+    },
+    "UnityEngine.SpriteShapeModule.dll": {
+      "bytes": 9216,
+      "sha256": "5eea7dad091ccec41d465766303d6f52a0e1c3d1002dd938c3f772b8f971957a"
+    }
+  },
+  "tool_paths": [
+    "/workspaces/GodsPVZ-native19/.validation/native19/replay/canary/il2cpp/build/deploy/il2cpp",
+    "/workspaces/GodsPVZ-native19/.validation/native21/replay/canary/il2cpp",
+    "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/inspector-bin/Inspector.dll",
+    "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/runtime-fixture/Program.cs"
+  ]
+}

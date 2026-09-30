@@ -1,0 +1,101 @@
+{
+  "runs": [
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/workspaces/GodsPVZ-native24-codespace/scripts/takeover/native24/RepairNative24/RepairNative24.csproj",
+        "-c",
+        "Release",
+        "-o",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-bin",
+        "-p:MonoCecilPath=/workspaces/GodsPVZ-native19/Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/patcher-build.log",
+      "tail": "  Determining projects to restore...\n  All projects are up-to-date for restore.\n  RepairNative24 -> /tmp/godspvz-native24-codespace-2026-10-01/patcher-bin/RepairNative24.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:01.62\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-bin/RepairNative24.dll",
+        "--self-test",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-controls.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/patcher-controls.log",
+      "tail": "PATCHER_CONTROLS_PASS 19\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-bin/RepairNative24.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/candidate-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/edits-batch1.json",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patch-report-1.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/patch-1.log",
+      "tail": "{\"output\":\"4d970f5ed7e63dd42815c3c843ce51918328ff790fa5d1eb77e2a80e6f3b0a1b\",\"sites\":6,\"targets\":3}\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-bin/RepairNative24.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/candidate-2.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/edits-batch1.json",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patch-report-2.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/patch-2.log",
+      "tail": "{\"output\":\"4d970f5ed7e63dd42815c3c843ce51918328ff790fa5d1eb77e2a80e6f3b0a1b\",\"sites\":6,\"targets\":3}\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/inspector-bin/Inspector.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/baseline-metadata.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/inspect-baseline.log",
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/inspector-bin/Inspector.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/review/batch1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/historical-metadata.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/inspect-historical.log",
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/inspector-bin/Inspector.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/candidate-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/candidate-metadata.json"
+      ],
+      "exit": 0,
+      "log": "/tmp/godspvz-native24-codespace-2026-10-01/inspect-candidate.log",
+      "tail": ""
+    }
+  ],
+  "source_hashes": {
+    "Program.cs": "c95b23bc6fc296d97e10b6a691d6cbb8d6609cb49dafef5af6c5934b5862f960",
+    "RepairNative24.csproj": "893d8c083a9639d779deae9e4d9df44eba9b0fade5056d9159bbe0c162d172bd"
+  },
+  "hashes": {
+    "baseline.dll": "0d6bc587c98ff05b733d9d5bced8b96726d2dd5d2ba82cb949c6ca90b8f86e8f",
+    "batch1.dll": "4d970f5ed7e63dd42815c3c843ce51918328ff790fa5d1eb77e2a80e6f3b0a1b",
+    "candidate-1.dll": "4d970f5ed7e63dd42815c3c843ce51918328ff790fa5d1eb77e2a80e6f3b0a1b",
+    "candidate-2.dll": "4d970f5ed7e63dd42815c3c843ce51918328ff790fa5d1eb77e2a80e6f3b0a1b"
+  },
+  "deterministic": true,
+  "matches_historical": true
+}

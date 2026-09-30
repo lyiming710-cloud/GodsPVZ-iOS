@@ -1,0 +1,73 @@
+{
+  "scope": "Existing fail-closed typed instruction-subset verifier; E1 only, not full ECMA or game semantics",
+  "sets": {
+    "baseline": {
+      "count": 2297,
+      "pass": 1425,
+      "fail": 872,
+      "targets": [
+        {
+          "method": "System.Boolean Device::TryPlacing(System.Int32,System.Int32)",
+          "token": "0x06000339",
+          "status": "FAIL",
+          "error": "System.Boolean Device::TryPlacing(System.Int32,System.Int32) IL_000B: invalid comparison Board, I4"
+        },
+        {
+          "method": "System.Void Plant::Awake()",
+          "token": "0x06000348",
+          "status": "FAIL",
+          "error": "System.Void Plant::Awake() IL_0007: receiver UnityEngine.GameObject incompatible with UnityEngine.Component (write=False, call=True)"
+        },
+        {
+          "method": "System.Void Plant::Update()",
+          "token": "0x0600034C",
+          "status": "FAIL",
+          "error": "System.Void Plant::Update() IL_00E1: receiver UnityEngine.GameObject incompatible with UnityEngine.Component (write=False, call=True)"
+        }
+      ]
+    },
+    "raw": {
+      "count": 2297,
+      "pass": 1428,
+      "fail": 869,
+      "targets": [
+        {
+          "method": "System.Boolean Device::TryPlacing(System.Int32,System.Int32)",
+          "token": "0x06000339",
+          "status": "PASS",
+          "reachable": 52,
+          "instructions": 52,
+          "unreachable": 0,
+          "max_stack": 3
+        },
+        {
+          "method": "System.Void Plant::Awake()",
+          "token": "0x06000348",
+          "status": "PASS",
+          "reachable": 14,
+          "instructions": 14,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        {
+          "method": "System.Void Plant::Update()",
+          "token": "0x0600034C",
+          "status": "PASS",
+          "reachable": 182,
+          "instructions": 182,
+          "unreachable": 0,
+          "max_stack": 5
+        }
+      ]
+    }
+  },
+  "pass_to_fail": [],
+  "fail_to_pass": [
+    "0x06000339",
+    "0x06000348",
+    "0x0600034C"
+  ],
+  "generated_file_differences": [
+    "GodsPVZRuntime1__6.cpp"
+  ]
+}

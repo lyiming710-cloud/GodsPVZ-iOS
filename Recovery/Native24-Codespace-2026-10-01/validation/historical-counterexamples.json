@@ -1,0 +1,152 @@
+{
+  "sources": {
+    "native23_prov": {
+      "path": "/workspaces/GodsPVZ-native24-codespace/scripts/codespaces/native23_prov.py",
+      "sha256": "b422a40a1c61b29dbc7385dceff2669d42da7a2246849e1ccc098cbeec605cdb"
+    },
+    "native23_afam3": {
+      "path": "/workspaces/GodsPVZ-native24-codespace/scripts/codespaces/native23_afam3.py",
+      "sha256": "7c2288d8920a7b22bb0f1b6d0966a50e0a7809524cdd8c30918b929f0f10775b"
+    },
+    "native23_behave": {
+      "path": "/workspaces/GodsPVZ-native24-codespace/scripts/codespaces/native23_behave.py",
+      "sha256": "99cddd4ba8bc3e3288f63fe4d3f79f6831433466120f95e7af6459189a5c7f3d"
+    },
+    "native23_tiers": {
+      "path": "/workspaces/GodsPVZ-native24-codespace/scripts/codespaces/native23_tiers.py",
+      "sha256": "a2209a6bb7b243fca8539d71b9c0a52408f5d48c9a86973a0b29ae3c7a7e8a3c"
+    }
+  },
+  "pollution": [
+    {
+      "name": "invalid local receiver",
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to Owner",
+          "opcode": "stloc"
+        },
+        {
+          "offset": 10,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "FIELD:GameObject Owner::GameObject Owner::f"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 8,
+            "clash_offset": 10,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "name": "invalid starg",
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to GameObject",
+          "opcode": "starg"
+        },
+        {
+          "offset": 8,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "ARG:0"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 6,
+            "clash_offset": 8,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "ARG:0",
+            "prov_class": "ARG",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "name": "invalid call argument",
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to System.String",
+          "opcode": "call"
+        },
+        {
+          "offset": 8,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "FIELD:GameObject Owner::GameObject Owner::f"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 6,
+            "clash_offset": 8,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "name": "incompatible merge",
+      "errors": [
+        {
+          "offset": 14,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "FIELD:GameObject Owner::GameObject Owner::f"
+        },
+        {
+          "offset": 10,
+          "msg": "merge types Owner vs I4",
+          "opcode": "ldfld"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 12,
+            "clash_offset": 14,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    }
+  ],
+  "field_storage": {
+    "expected": 7,
+    "actual": 3,
+    "status": "RET"
+  },
+  "incorrect_pointer_patterns": {
+    "test %al,%al": true,
+    "test %eax,%eax": true,
+    "cmpq $0x20,(%rax)": true
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "runs": [
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/workspaces/GodsPVZ-native24-codespace/scripts/takeover/native24/RepairNative24/RepairNative24.csproj",
+        "-c",
+        "Release",
+        "-o",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin",
+        "-p:MonoCecilPath=/workspaces/GodsPVZ-native19/Tools/Stage9Native4Recovery/tools/lib/netstandard2.0/Mono.Cecil.dll"
+      ],
+      "exit": 0,
+      "tail": "  Determining projects to restore...\n  All projects are up-to-date for restore.\n  RepairNative24 -> /tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:03.90\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--self-test",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-controls.json"
+      ],
+      "exit": 0,
+      "tail": "PATCHER_CONTROLS_PASS 19\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--raw",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-1-report.json"
+      ],
+      "exit": 0,
+      "tail": "{\"output\":\"8300c14ebac3b45cc00397c69cd72d4517366587acbe081b6e8b5a98f8fdedf9\",\"changedBytes\":6,\"sites\":6,\"backend\":\"existing-token raw PE patch\"}\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--raw",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-2.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-2-report.json"
+      ],
+      "exit": 0,
+      "tail": "{\"output\":\"8300c14ebac3b45cc00397c69cd72d4517366587acbe081b6e8b5a98f8fdedf9\",\"changedBytes\":6,\"sites\":6,\"backend\":\"existing-token raw PE patch\"}\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--declarations",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/baseline-declarations.json",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/baseline/managed"
+      ],
+      "exit": 0,
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--declarations",
+        "/tmp/godspvz-native24-codespace-2026-10-01/candidate-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/cecil-declarations.json",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/baseline/managed"
+      ],
+      "exit": 0,
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--declarations",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-declarations.json",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/baseline/managed"
+      ],
+      "exit": 0,
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/workspaces/GodsPVZ-native19/.validation/native23-independent-full-review/inspector-bin/Inspector.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-metadata.json"
+      ],
+      "exit": 0,
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/fixture-bin/Runtime.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/raw-1.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/RAW-RUNTIME-FIXTURE.json"
+      ],
+      "exit": 0,
+      "tail": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "--raw",
+        "/tmp/godspvz-native24-codespace-2026-10-01/wrong-input.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/must-not-exist.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/must-not-exist.json"
+      ],
+      "exit": 3,
+      "tail": "REJECT: Raw pinned input mismatch\n"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/godspvz-native24-codespace-2026-10-01/patcher-final-bin/RepairNative24.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/baseline.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/must-not-exist-2.dll",
+        "/tmp/godspvz-native24-codespace-2026-10-01/inputs/edits-batch2.json",
+        "/tmp/godspvz-native24-codespace-2026-10-01/must-not-exist-2.json"
+      ],
+      "exit": 3,
+      "tail": "REJECT: Pinned six-site manifest hash mismatch\n"
+    }
+  ],
+  "hashes": {
+    "raw-1.dll": "8300c14ebac3b45cc00397c69cd72d4517366587acbe081b6e8b5a98f8fdedf9",
+    "raw-2.dll": "8300c14ebac3b45cc00397c69cd72d4517366587acbe081b6e8b5a98f8fdedf9"
+  }
+}

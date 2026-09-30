@@ -1,3 +1,5 @@
+> **2026-10-01 Codespaces 已恢复执行**：独立六站点补丁已完成完整声明、原始字节隔离与实际 IL2CPP/CLR/全量 C++ 验证。首选 raw 后端整文件只改六个字节，2294 个非目标方法体原始字节完全不变；三个目标方法已过类型门且 C++ 零错误，但整包仍有 6065 条错误、24 个失败 TU，没有 IPA。本轮没有 dispatch 或持证 Unity/Xcode。分支 `repair/codex-native24-codespace`。先读 [最新复验与完整归档](Native24-Codespace-2026-10-01/README.md)。旧云实例未上传的日志仍未取回。下方暂停描述只属于历史云环境。
+
 > **当前暂停（用户指示）**：云环境返回 `409 Conflict environment_offline`。已停止测试与构建，本轮没有创建或启动新工作流。已保存工具源码、观察摘要与交接；本机完整日志和未提交补丁器仍待环境恢复后归档。六站点补丁输出与历史 Batch1 的原始哈希比较失败，完整规范化/raw 差异尚未确认；不得晋级游戏候选。
 
 > **2026-09-30 Native24 接手检查点**：独立工作从固定 `08d5eb4eb039fd5db95b8caea740470697a6ad96` 开始，保存于 `repair/codex-native24-verification`。来源门已修复并通过 11 个控制，1623 个历史站点重算为 254 个有限 E2 支持、1369 个隔离，225 个已知 LOCAL receiver 站点无一获准。三组 792 次 Clang19 全量复编译完成，Batch2a 仍有 5200 条错误、23 个失败 TU；没有本轮 Unity/Xcode 或 IPA。补丁器的独立 DLL 再读与 raw/规范化隔离因云环境 `environment_offline` 尚未完成。详见 [本轮证据与继续入口](Native24-2026-09-30/README.md)。该检查点不晋级游戏候选。

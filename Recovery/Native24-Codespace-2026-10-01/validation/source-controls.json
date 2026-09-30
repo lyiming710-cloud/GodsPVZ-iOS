@@ -1,0 +1,235 @@
+{
+  "scope": "E2 only, not E1/E5/E6",
+  "tests": [
+    {
+      "case": "invalid local receiver",
+      "accepted": false,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 8,
+            "clash_offset": 10,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "TAINTED",
+            "prov_class": "TAINTED",
+            "verdict": "QUARANTINE"
+          }
+        ],
+        "n_flips": 1
+      },
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to Owner",
+          "opcode": "stloc"
+        },
+        {
+          "offset": 10,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "TAINTED"
+        }
+      ]
+    },
+    {
+      "case": "invalid starg",
+      "accepted": false,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 6,
+            "clash_offset": 8,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "TAINTED",
+            "prov_class": "TAINTED",
+            "verdict": "QUARANTINE"
+          }
+        ],
+        "n_flips": 1
+      },
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to GameObject",
+          "opcode": "starg"
+        },
+        {
+          "offset": 8,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "TAINTED"
+        }
+      ]
+    },
+    {
+      "case": "invalid call argument",
+      "accepted": false,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 6,
+            "clash_offset": 8,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "TAINTED",
+            "prov_class": "TAINTED",
+            "verdict": "QUARANTINE"
+          }
+        ],
+        "n_flips": 1
+      },
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to System.String",
+          "opcode": "call"
+        },
+        {
+          "offset": 8,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "TAINTED"
+        }
+      ]
+    },
+    {
+      "case": "incompatible merge",
+      "accepted": false,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 12,
+            "clash_offset": 14,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "TAINTED",
+            "prov_class": "TAINTED",
+            "verdict": "QUARANTINE"
+          }
+        ],
+        "n_flips": 1
+      },
+      "errors": [
+        {
+          "offset": 14,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "TAINTED",
+          "prov_second": "TAINTED"
+        },
+        {
+          "offset": 10,
+          "msg": "merge types Owner vs I4",
+          "opcode": "ldfld"
+        },
+        {
+          "offset": 10,
+          "msg": "receiver UNKNOWN incompatible with Owner (write=False, call=False)",
+          "opcode": "ldfld"
+        }
+      ]
+    },
+    {
+      "case": "direct field positive",
+      "accepted": true,
+      "expected": true,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 4,
+            "clash_offset": 6,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "direct argument positive",
+      "accepted": true,
+      "expected": true,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 2,
+            "clash_offset": 4,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "ARG:0",
+            "prov_class": "ARG",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "static field positive",
+      "accepted": true,
+      "expected": true,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 2,
+            "clash_offset": 4,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "SFIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "SFIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "clean local remains unproved",
+      "accepted": false,
+      "expected": false,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 8,
+            "clash_offset": 10,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "TAINTED",
+            "prov_class": "TAINTED",
+            "verdict": "QUARANTINE"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "real integer zero",
+      "accepted": false,
+      "expected": false,
+      "result": null
+    },
+    {
+      "case": "bad earlier call argument",
+      "accepted": false,
+      "result": {
+        "recs": [
+          {
+            "flip_offset": 8,
+            "clash_offset": 10,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "TAINTED",
+            "prov_class": "TAINTED",
+            "verdict": "QUARANTINE"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "EH not modeled",
+      "accepted": false,
+      "result": null
+    }
+  ],
+  "passed": 11
+}
