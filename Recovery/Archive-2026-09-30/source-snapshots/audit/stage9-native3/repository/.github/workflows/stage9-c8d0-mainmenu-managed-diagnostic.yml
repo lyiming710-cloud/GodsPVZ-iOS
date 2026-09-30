@@ -1,0 +1,213 @@
+name: Stage9.1 c8d0 MainMenu managed diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-c8d0-mainmenu-managed-diagnostic.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  managed-diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Prepare formal R3 HF55
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-mainmenu-diag"; E="$OUT/evidence"
+          mkdir -p "$OUT/parts" "$OUT/r3" "$E"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325
+          EOF
+          while IFS=$'\t' read -r idx fid sha; do
+            f="$OUT/parts/r3.$idx.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            [ "$(sha256sum "$f" | awk '{print $1}')" = "$sha" ] || exit 62
+          done < "$OUT/parts.tsv"
+          cat "$OUT/parts"/*.part > "$OUT/r3.tar.zst"
+          [ "$(stat -c%s "$OUT/r3.tar.zst")" = 786765618 ] || exit 63
+          [ "$(sha256sum "$OUT/r3.tar.zst" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 64
+          zstd -dc "$OUT/r3.tar.zst" | tar -xf - -C "$OUT/r3"
+          DLL="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Plugins/Assembly-CSharp.dll"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 65
+          echo "$DLL" > "$OUT/base.txt"
+
+      - name: Download HF56 patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34689491315
+          pattern: GodsPVZ-HF56Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/p56
+      - name: Download HF57 patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34690940527
+          pattern: GodsPVZ-HF57Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/p57
+      - name: Download Board mechanical patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34699623218
+          pattern: GodsPVZ-Stage9BoardMechanicalPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/pb
+      - name: Download managed cleanup patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34705278743
+          pattern: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/pc
+      - name: Download narrow Board ctor patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34710104085
+          pattern: GodsPVZ-Stage9BoardCtorPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/pctor
+      - name: Download PlantDetail Awake patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34710657395
+          pattern: GodsPVZ-Stage9PlantDetailAwakePatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/pdetail
+      - name: Download PlantDetail generic ref fix v2
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34712392060
+          pattern: GodsPVZ-Stage9PlantDetailGenericRefFixV2-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/pgeneric
+      - name: Download native Board ctor patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34712601618
+          pattern: GodsPVZ-Stage9BoardCtorNativePatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/pnative
+
+      - name: Reconstruct exact c8d0 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-mainmenu-diag"; E="$OUT/evidence"; BASE="$(cat "$OUT/base.txt")"
+          P56="$(find "$OUT/p56" -name GodsPVZ.HF56Patch -type f | head -1)"; P57="$(find "$OUT/p57" -name GodsPVZ.HF57Patch -type f | head -1)"
+          PB="$(find "$OUT/pb" -name GodsPVZ.Stage9BoardMechanicalPatch -type f | head -1)"; PC="$(find "$OUT/pc" -name GodsPVZ.Stage9ManagedCleanupPatch -type f | head -1)"
+          PCTOR="$(find "$OUT/pctor" -name GodsPVZ.Stage9BoardCtorPatch -type f | head -1)"; PDETAIL="$(find "$OUT/pdetail" -name GodsPVZ.Stage9PlantDetailAwakePatch -type f | head -1)"
+          PGEN="$(find "$OUT/pgeneric" -name GodsPVZ.Stage9PlantDetailGenericRefFixV2 -type f | head -1)"; PNATIVE="$(find "$OUT/pnative" -name GodsPVZ.Stage9BoardCtorNativePatch -type f | head -1)"
+          chmod +x "$P56" "$P57" "$PB" "$PC" "$PCTOR" "$PDETAIL" "$PGEN" "$PNATIVE"
+          "$P56" "$BASE" "$OUT/hf56.dll" > "$E/hf56.log"; [ "$(sha256sum "$OUT/hf56.dll"|awk '{print $1}')" = 2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0 ]
+          "$P57" "$OUT/hf56.dll" "$OUT/hf57.dll" > "$E/hf57.log"; [ "$(sha256sum "$OUT/hf57.dll"|awk '{print $1}')" = a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b ]
+          cp "$OUT/hf57.dll" "$OUT/integrated.dll"
+          python3 - "$OUT/integrated.dll" <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          p=Path(sys.argv[1]); b=bytearray(p.read_bytes()); assert hashlib.sha256(b).hexdigest()=='a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b'
+          for o in [0x9f3d6,0x9f3e3,0x9f3f1,0x9f3ff,0x9f412,0x9f41c,0x9f446]: assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000'); b[o+1]=0x0d
+          for o,old,new in [(0xde448,b'Assembly-CSharp.dll',b'GodsPVZRuntime1.dll'),(0xe0137,b'Assembly-CSharp',b'GodsPVZRuntime1')]: assert bytes(b[o:o+len(old)])==old; b[o:o+len(old)]=new
+          p.write_bytes(b); assert hashlib.sha256(b).hexdigest()=='e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568'
+          PY
+          "$PB" "$OUT/integrated.dll" "$OUT/mech.dll" > "$E/mechanical.log"; [ "$(sha256sum "$OUT/mech.dll"|awk '{print $1}')" = 00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980 ]
+          "$PC" "$OUT/mech.dll" "$OUT/cleanup.dll" > "$E/cleanup.log"; [ "$(sha256sum "$OUT/cleanup.dll"|awk '{print $1}')" = d9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03 ]
+          "$PCTOR" "$OUT/cleanup.dll" "$OUT/ctor-narrow.dll" > "$E/ctor-narrow.log"; [ "$(sha256sum "$OUT/ctor-narrow.dll"|awk '{print $1}')" = 7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3 ]
+          "$PDETAIL" "$OUT/ctor-narrow.dll" "$OUT/plantdetail.dll" > "$E/plantdetail.log"; [ "$(sha256sum "$OUT/plantdetail.dll"|awk '{print $1}')" = eaf77ffecc233fa612d0977d8867ab32a2a695fb88c2dd09d86a6920fd2e8995 ]
+          "$PGEN" "$OUT/plantdetail.dll" "$OUT/generic.dll" > "$E/generic.log"; [ "$(sha256sum "$OUT/generic.dll"|awk '{print $1}')" = 06be72c9a18079f6b0dea7e6026b1ad1f5cd6f083aedf2ea250e074330aef21d ]
+          "$PNATIVE" "$OUT/generic.dll" "$OUT/final.dll" > "$E/ctor-native.log"; [ "$(sha256sum "$OUT/final.dll"|awk '{print $1}')" = c8d0fdf2c6c03188ebe8a123121c6ef8972d9541ed8f630e95ee4e17b268b425 ]
+          sha256sum "$OUT/final.dll" > "$E/candidate.sha256"
+
+      - name: Build and run Cecil diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-mainmenu-diag"; E="$OUT/evidence"; D="$OUT/diag"
+          mkdir -p "$D"
+          cat > "$D/Diag.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$D/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          using System.Security.Cryptography;
+          class P {
+            const string ExpectedSha="c8d0fdf2c6c03188ebe8a123121c6ef8972d9541ed8f630e95ee4e17b268b425";
+            static IEnumerable<TypeDefinition> Types(IEnumerable<TypeDefinition> xs){foreach(var t in xs){yield return t;foreach(var n in Types(t.NestedTypes))yield return n;}}
+            static uint R(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+            static string O(object? x)=>x switch{null=>"",MethodReference m=>$"{m.FullName} [0x{R(m):X8}]",FieldReference f=>$"{f.FullName} [0x{R(f):X8}]",TypeReference t=>$"{t.FullName} [0x{R(t):X8}]",VariableDefinition v=>$"V_{v.Index}:{v.VariableType.FullName}",ParameterDefinition p=>$"P_{p.Index}:{p.ParameterType.FullName}",Instruction i=>$"IL_{i.Offset:X4}",Instruction[] a=>string.Join(',',a.Select(i=>$"IL_{i.Offset:X4}")),_=>x.ToString()??""};
+            static void Dump(TextWriter w,MethodDefinition m){w.WriteLine($"METHOD 0x{R(m):X8} {m.FullName} RVA=0x{m.RVA:X} BODY={m.HasBody}");if(!m.HasBody)return;w.WriteLine($"  MAX={m.Body.MaxStackSize} INIT={m.Body.InitLocals} LOCALS={m.Body.Variables.Count}");foreach(var v in m.Body.Variables)w.WriteLine($"  LOCAL V_{v.Index} {v.VariableType.FullName}");foreach(var i in m.Body.Instructions)w.WriteLine($"  IL_{i.Offset:X4}: {i.OpCode,-12} {O(i.Operand)}");w.WriteLine();}
+            static bool IsGp(TypeReference t,int pos)=>t is GenericParameter g&&g.Type==GenericParameterType.Type&&g.Position==pos;
+            static bool IsByRefGp(TypeReference t,int pos)=>t is ByReferenceType b&&IsGp(b.ElementType,pos);
+            static string GenericProblem(MethodReference m){if(m.DeclaringType is not GenericInstanceType gi)return "";var e=gi.ElementType.FullName;if(e=="System.Collections.Generic.List`1"){
+              if(m.Name=="Add"&&m.Parameters.Count==1&&!IsGp(m.Parameters[0].ParameterType,0))return "List.Add param should !0";
+              if(m.Name=="get_Item"&&m.Parameters.Count==1&&!IsGp(m.ReturnType,0))return "List.get_Item return should !0";
+              if(m.Name=="set_Item"&&m.Parameters.Count==2&&!IsGp(m.Parameters[1].ParameterType,0))return "List.set_Item value should !0";
+              if((m.Name=="Contains"||m.Name=="IndexOf"||m.Name=="Remove")&&m.Parameters.Count>=1&&!IsGp(m.Parameters[0].ParameterType,0))return $"List.{m.Name} param should !0";
+            } if(e=="System.Collections.Generic.Dictionary`2"){
+              if(m.Name=="Add"&&m.Parameters.Count==2&&(!IsGp(m.Parameters[0].ParameterType,0)||!IsGp(m.Parameters[1].ParameterType,1)))return "Dictionary.Add params should !0,!1";
+              if(m.Name=="get_Item"&&m.Parameters.Count==1&&(!IsGp(m.Parameters[0].ParameterType,0)||!IsGp(m.ReturnType,1)))return "Dictionary.get_Item should (!0)->!1";
+              if(m.Name=="set_Item"&&m.Parameters.Count==2&&(!IsGp(m.Parameters[0].ParameterType,0)||!IsGp(m.Parameters[1].ParameterType,1)))return "Dictionary.set_Item should !0,!1";
+              if((m.Name=="ContainsKey"||m.Name=="Remove")&&m.Parameters.Count>=1&&!IsGp(m.Parameters[0].ParameterType,0))return $"Dictionary.{m.Name} key should !0";
+              if(m.Name=="TryGetValue"&&m.Parameters.Count==2&&(!IsGp(m.Parameters[0].ParameterType,0)||!IsByRefGp(m.Parameters[1].ParameterType,1)))return "Dictionary.TryGetValue should !0,!1&";
+            } return "";}
+            static void Main(string[] a){var sha=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(a[0]))).ToLowerInvariant();if(sha!=ExpectedSha)throw new Exception($"SHA {sha}");using var md=ModuleDefinition.ReadModule(a[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});var methods=Types(md.Types).SelectMany(t=>t.Methods).ToList();if(methods.Count!=2317)throw new Exception($"MethodDef {methods.Count}");using var w=new StreamWriter(a[1]);w.WriteLine($"SHA256={sha}\nMETHODDEF_COUNT={methods.Count}\nASSEMBLY={md.Assembly.Name.FullName}\n");
+              string[][] targets={new[]{"GameStart","Start"},new[]{"MainUIController","Start"},new[]{"TextLink",".ctor"},new[]{"TextLink","Update"},new[]{"LevelItem",".ctor"}};
+              foreach(var q in targets){var f=methods.Where(m=>m.DeclaringType.Name==q[0]&&m.Name==q[1]).ToList();w.WriteLine($"TARGET {q[0]}::{q[1]} COUNT={f.Count}");foreach(var m in f)Dump(w,m);}
+              w.WriteLine("=== TOKEN RESOLUTION ===");foreach(uint tok in new[]{0x040008E4u,0x0A0002B5u}){try{var x=md.LookupToken(new MetadataToken(tok));w.WriteLine($"0x{tok:X8} => {x?.GetType().Name} {x}");}catch(Exception e){w.WriteLine($"0x{tok:X8} => ERROR {e.Message}");}}
+              w.WriteLine("\n=== SAVESMANAGER METHODS ===");foreach(var m in methods.Where(m=>m.DeclaringType.Name=="SavesManager"))Dump(w,m);
+              var ps=Types(md.Types).SelectMany(t=>t.Fields).Where(f=>f.DeclaringType.Name=="SavesManager"&&f.Name=="playerSave").ToList();w.WriteLine($"=== PLAYERSAVE FIELD COUNT={ps.Count} ===");foreach(var f in ps)w.WriteLine($"FIELD 0x{R(f):X8} {f.FullName}");
+              w.WriteLine("=== PLAYERSAVE FIELD REFERENCES ===");foreach(var m in methods.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions){if(i.Operand is FieldReference f&&f.Name=="playerSave"&&f.DeclaringType.Name=="SavesManager")w.WriteLine($"0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} {i.OpCode} {O(f)}");}
+              w.WriteLine("=== PLAYERSAVE CONSTRUCTION/CALL REFERENCES ===");foreach(var m in methods.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions){if(i.Operand is MethodReference mr&&(mr.DeclaringType.Name.Contains("PlayerSave")||mr.FullName.Contains("PlayerSave")))w.WriteLine($"0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} {i.OpCode} {O(mr)}");}
+              w.WriteLine("=== GLAWNAAPP FIELD REFERENCES ===");foreach(var m in methods.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions){if(i.Operand is FieldReference f&&(f.Name=="gLawnApp"||f.FullName.Contains("gLawnApp")))w.WriteLine($"0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} {i.OpCode} {O(f)}");}
+              w.WriteLine("=== LIST/DICTIONARY REFS USED BY TARGET METHODS ===");var targetSet=methods.Where(m=>targets.Any(q=>m.DeclaringType.Name==q[0]&&m.Name==q[1])).ToHashSet();foreach(var m in targetSet.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions){if(i.Operand is MethodReference mr&&mr.DeclaringType is GenericInstanceType gi&&(gi.ElementType.FullName=="System.Collections.Generic.List`1"||gi.ElementType.FullName=="System.Collections.Generic.Dictionary`2"))w.WriteLine($"0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} => {O(mr)} PROBLEM={GenericProblem(mr)}");}
+              w.WriteLine("=== WHOLE-ASSEMBLY GENERIC AUDIT ===");var hits=0;foreach(var m in methods.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions){if(i.Operand is MethodReference mr){var p=GenericProblem(mr);if(p.Length>0){hits++;w.WriteLine($"#{hits} caller=0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} ref=0x{R(mr):X8} {mr.FullName} :: {p}");}}}w.WriteLine($"GENERIC_AUDIT_SUSPICIOUS_CALLS={hits}");
+            }
+          }
+          EOF
+          dotnet build "$D/Diag.csproj" -c Release -o "$D/bin" --nologo
+          dotnet "$D/bin/Diag.dll" "$OUT/final.dll" "$E/mainmenu-managed-diagnostic.txt"
+          grep -E '^(SHA256|METHODDEF_COUNT|TARGET|===|FIELD|#|GENERIC_AUDIT)' "$E/mainmenu-managed-diagnostic.txt" > "$E/diagnostic-summary.txt" || true
+          cat "$E/diagnostic-summary.txt"
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-c8d0-MAINMENU-MANAGED-DIAGNOSTIC
+          path: ${{ runner.temp }}/stage9-mainmenu-diag/evidence
+          if-no-files-found: error

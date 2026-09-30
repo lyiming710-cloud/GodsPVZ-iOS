@@ -1,0 +1,59 @@
+name: Stage9.1 macOS exact-chain URL probe
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-macos-editor-module-url-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Probe exact-changeset macOS Editor and iOS module URLs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          cat > candidates.txt <<'EOF'
+          china-mac-editor-pkg|https://download.unitychina.cn/download_unity/c3ae09b9f03c/MacEditorInstaller/Unity.pkg
+          china-mac-editor-dmg|https://download.unitychina.cn/download_unity/c3ae09b9f03c/MacEditorInstaller/Unity.dmg
+          china-mac-ios-f1c1|https://download.unitychina.cn/download_unity/c3ae09b9f03c/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1c1.pkg
+          china-mac-ios-f1|https://download.unitychina.cn/download_unity/c3ae09b9f03c/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.pkg
+          global-mac-editor-pkg|https://download.unity3d.com/download_unity/c3ae09b9f03c/MacEditorInstaller/Unity.pkg
+          global-mac-ios-f1|https://download.unity3d.com/download_unity/c3ae09b9f03c/MacEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.pkg
+          EOF
+          printf 'name\tstatus\tlength\ttype\trange_status\trange_bytes\tmagic\n' > evidence/probe.tsv
+          while IFS='|' read -r name url; do
+            h="evidence/${name}.headers"
+            set +e
+            meta="$(curl -A 'GodsPVZ-Stage9.1/1' --connect-timeout 15 --max-time 45 -sSIL -D "$h" -o /dev/null -w '%{http_code}\t%{content_type}' "$url")"
+            hrc=$?
+            set -e
+            status="$(printf '%s' "$meta" | cut -f1)"
+            ctype="$(printf '%s' "$meta" | cut -f2-)"
+            clen="$(awk 'BEGIN{IGNORECASE=1} /^content-length:/ {gsub("\\r",""); v=$2} END{print v}' "$h")"
+            [ -n "$clen" ] || clen=unknown
+            tmp="evidence/${name}.range"
+            set +e
+            rmeta="$(curl -A 'GodsPVZ-Stage9.1/1' --connect-timeout 15 --max-time 60 -sSL --range 0-1023 -o "$tmp" -w '%{http_code}\t%{size_download}' "$url")"
+            rrc=$?
+            set -e
+            rs="$(printf '%s' "$rmeta" | cut -f1)"
+            rb="$(printf '%s' "$rmeta" | cut -f2)"
+            magic="$(xxd -p -l 8 "$tmp" 2>/dev/null || true)"
+            printf '%s\t%s(rc=%s)\t%s\t%s\t%s(rc=%s)\t%s\t%s\n' "$name" "$status" "$hrc" "$clen" "$ctype" "$rs" "$rrc" "$rb" "$magic" | tee -a evidence/probe.tsv
+            rm -f "$tmp"
+          done < candidates.txt
+          cat evidence/probe.tsv
+
+      - name: Upload probe evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-MACOS-EXACT-CHAIN-URL-PROBE
+          path: evidence/
+          retention-days: 90

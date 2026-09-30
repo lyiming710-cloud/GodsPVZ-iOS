@@ -1,0 +1,26 @@
+name: Stage9.1 9524 I8-to-Int32 inventory
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-9524-i8-int32-inventory.yml','Tools/Stage9I8Int32Inventory/**']
+permissions: {contents: read, actions: read}
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34959149981, name: Stage9.1-805A-ALMANAC-TALENT-CTOR-QUALIFIED, path: '${{ runner.temp }}/input'}
+      - name: Inventory remaining direct I8-to-Int32 patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/inventory"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-almanac-talent-ctor.dll' -print -quit); test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '9524b2339ba5a7572a16ae9def8c41ea4128af377d0d68dd9d6b5ad454b480d3'
+          dotnet run --project Tools/Stage9I8Int32Inventory/Stage9I8Int32Inventory.csproj -c Release -- "$IN" | tee "$E/i8-int32-inventory.txt"
+          grep -q '^READONLY_I8_INT32_INVENTORY_PASS mutation=0$' "$E/i8-int32-inventory.txt"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-9524-I8-INT32-INVENTORY, path: '${{ runner.temp }}/inventory/', retention-days: 90}

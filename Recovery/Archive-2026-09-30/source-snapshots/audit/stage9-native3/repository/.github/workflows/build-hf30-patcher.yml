@@ -1,0 +1,33 @@
+name: Build HF30 projectile device collision patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF30Patch/**'
+      - '.github/workflows/build-hf30-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF30 patcher
+        run: dotnet publish Tools/HF30Patch/HF30Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf30
+      - name: Smoke test
+        run: |
+          chmod +x out/hf30/GodsPVZ.HF30Patch
+          set +e
+          out/hf30/GodsPVZ.HF30Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf30/GodsPVZ.HF30Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF30Patch-linux-x64
+          path: out/hf30
+          if-no-files-found: error

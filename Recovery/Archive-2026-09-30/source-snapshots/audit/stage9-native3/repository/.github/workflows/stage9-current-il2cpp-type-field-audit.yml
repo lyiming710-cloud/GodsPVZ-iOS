@@ -1,0 +1,52 @@
+name: Stage9.1 current IL2CPP type field audit
+on:
+  push:
+    branches: [stage9-local-audit-tools]
+    paths:
+      - '.github/workflows/stage9-current-il2cpp-type-field-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      RUN_ID: '36111677154'
+      ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
+      SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.RUN_ID }}
+          name: ${{ env.ARTIFACT }}
+          path: ${{ runner.temp }}/f
+      - name: Lock candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          F="$RUNNER_TEMP/f/Assembly-CSharp-all24-orphan-clean.dll"
+          test -f "$F"
+          [ "$(sha256sum "$F"|awk '{print $1}')" = "$SHA256" ]
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Dump relevant fields
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK="$(dotnet --list-sdks | awk '/^8\./{v=$1} END{print v}')"
+          printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK" > global.json
+          dotnet restore Tools/Stage9TypeFieldDump/Stage9TypeFieldDump.csproj
+          dotnet run -c Release --no-restore --project Tools/Stage9TypeFieldDump/Stage9TypeFieldDump.csproj -- "$RUNNER_TEMP/f/Assembly-CSharp-all24-orphan-clean.dll" | tee "$RUNNER_TEMP/type-fields.txt"
+          grep -q '^STAGE9_TYPE_FIELD_DUMP_OK$' "$RUNNER_TEMP/type-fields.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Stage9.1-current-IL2CPP-type-fields
+          path: ${{ runner.temp }}/type-fields.txt
+          retention-days: 30

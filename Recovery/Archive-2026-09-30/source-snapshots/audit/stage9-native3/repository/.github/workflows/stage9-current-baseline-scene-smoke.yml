@@ -1,0 +1,646 @@
+name: Stage9.1 CURRENT BASELINE STABILITY AND SCENE SMOKE
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-current-baseline-scene-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  current-baseline-scene-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      R3_SHA256: d4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc
+      FINAL_DLL_SHA256: 047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee
+      FINAL_DLL_RUN_ID: '35236211080'
+      PACKAGE_GUID_RUN_ID: '35238895838'
+      PACKAGE_CLOSURE_RUN_ID: '35239319822'
+      PACKAGE_BUNDLE_RUN_ID: '35239547918'
+      EDITOR_RUN_ID: '34668863583'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          mkdir -p "$E"
+          if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
+            echo 'UNITY_EMAIL or UNITY_PASSWORD secret missing' >&2
+            exit 61
+          fi
+          {
+            echo "workflow_head=${GITHUB_SHA}"
+            echo "r3_sha256=${R3_SHA256}"
+            echo "final_dll_sha256=${FINAL_DLL_SHA256}"
+            echo "final_dll_run=${FINAL_DLL_RUN_ID}"
+            echo "package_guid_run=${PACKAGE_GUID_RUN_ID}"
+            echo "package_closure_run=${PACKAGE_CLOSURE_RUN_ID}"
+            echo "package_bundle_run=${PACKAGE_BUNDLE_RUN_ID}"
+            echo "editor_run=${EDITOR_RUN_ID}"
+          } > "$E/input-locks.txt"
+
+      - name: Download exact R3 parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PARTS="$OUT/r3-parts"
+          mkdir -p "$PARTS"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/r3-parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a	67108864
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2	67108864
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2	67108864
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f	67108864
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc	67108864
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263	67108864
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c	67108864
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec	67108864
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8	67108864
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a	67108864
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994	67108864
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325	48568114
+          EOF
+          : > "$E/r3-download.tsv"
+          while IFS=$'\t' read -r idx fid sha size; do
+            f="$PARTS/GodsPVZ-Stage9.1-preimport-r3-2026-09-12.tar.zst.${idx}.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            got_sha="$(sha256sum "$f" | awk '{print $1}')"
+            got_size="$(stat -c %s "$f")"
+            printf '%s\t%s\t%s\n' "$idx" "$got_sha" "$got_size" | tee -a "$E/r3-download.tsv"
+            [ "$got_sha" = "$sha" ] || exit 62
+            [ "$got_size" = "$size" ] || exit 63
+          done < "$OUT/r3-parts.tsv"
+
+      - name: Reconstruct and verify R3
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PARTS="$OUT/r3-parts"
+          ARCHIVE="$OUT/GodsPVZ-Stage9.1-preimport-r3-2026-09-12.tar.zst"
+          ROOT="$OUT/r3"
+          mkdir -p "$ROOT"
+          cat "$PARTS"/*.part > "$ARCHIVE"
+          got="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
+          echo "$got" > "$E/r3-rejoined-sha256.txt"
+          [ "$got" = "$R3_SHA256" ] || exit 64
+          zstd -t "$ARCHIVE" 2> "$E/r3-zstd-test.txt"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$ROOT"
+          PROJECT="$ROOT/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          [ -d "$PROJECT" ] || exit 65
+          grep -qx 'm_EditorVersion: 2022.3.44f1c1' "$PROJECT/ProjectSettings/ProjectVersion.txt"
+          test -f "$PROJECT/Assets/Scenes/MainMenu.unity"
+          test -f "$PROJECT/Assets/Scenes/Board.unity"
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 66
+          [ "$(grep -c '^  isExplicitlyReferenced: 1$' "$PROJECT/Assets/Plugins/Assembly-CSharp.dll.meta")" = '1' ] || exit 67
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          rm -rf "$PARTS" "$ARCHIVE"
+          echo R3_EXACT_PREIMAGE_PASS > "$E/r3-preimage-gate.txt"
+
+      - name: Download final runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.FINAL_DLL_RUN_ID }}
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: ${{ runner.temp }}/stage9-current-import/final-dll
+
+      - name: Download 67-of-67 package GUID evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_GUID_RUN_ID }}
+          name: HF46-package-reference-evidence
+          path: ${{ runner.temp }}/stage9-current-import/package-guid-evidence
+
+      - name: Download pinned package bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_BUNDLE_RUN_ID }}
+          name: Stage9.1-pinned-unity-packages
+          path: ${{ runner.temp }}/stage9-current-import/package-bundle
+
+      - name: Download package dependency closure
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.PACKAGE_CLOSURE_RUN_ID }}
+          name: Stage9.1-package-dependency-closure
+          path: ${{ runner.temp }}/stage9-current-import/package-closure
+
+      - name: Integrate locked DLL and packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          DLL="$OUT/final-dll/GodsPVZRuntime1-bgmvolume.dll"
+          [ -f "$DLL" ] || exit 68
+          got="$(sha256sum "$DLL" | awk '{print $1}')"
+          echo "$got" > "$E/final-dll-sha256.txt"
+          [ "$got" = "$FINAL_DLL_SHA256" ] || exit 69
+          cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = "$FINAL_DLL_SHA256" ] || exit 70
+
+          mkdir -p "$PROJECT/Assets/Editor"
+          cp "$GITHUB_WORKSPACE/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/GodsPVZPackageReferenceMigrator.cs"
+          mkdir -p "$PROJECT/Recovery"
+          cp "$GITHUB_WORKSPACE/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/package-script-map-editor.json"
+
+          python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" "$E/embedded-packages.txt" <<'PY'
+          import shutil,sys
+          from pathlib import Path
+          sources=[Path(sys.argv[1]),Path(sys.argv[2])]
+          dst=Path(sys.argv[3]); report=Path(sys.argv[4])
+          dst.mkdir(parents=True,exist_ok=True)
+          names=[]
+          for srcroot in sources:
+              if not srcroot.is_dir():
+                  raise SystemExit(f'missing package source {srcroot}')
+              for src in sorted(p for p in srcroot.iterdir() if p.is_dir()):
+                  target=dst/src.name
+                  if target.exists(): shutil.rmtree(target)
+                  shutil.copytree(src,target)
+                  names.append(src.name)
+          report.write_text('\n'.join(names)+'\n')
+          print('embedded_count',len(names))
+          print('\n'.join(names))
+          PY
+
+          python3 - "$OUT/package-guid-evidence/package-guid-map.json" "$PROJECT/Packages" "$E/package-guid-preflight.txt" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          root=Path(sys.argv[2]); out=Path(sys.argv[3])
+          assert d['resolved']==67 and d['expected']==67 and not d['failures']
+          bad=[]; rows=[]
+          for m in d['mapping']:
+              meta=root/m['package']/m['meta_path']
+              if not meta.is_file():
+                  bad.append((m['fullName'],'missing-meta',str(meta))); continue
+              txt=meta.read_text(encoding='utf-8',errors='replace')
+              mm=re.search(r'(?m)^guid:\s*([0-9a-fA-F]{32})\s*$',txt)
+              got=mm.group(1).lower() if mm else ''
+              rows.append(f"{m['package']}\t{m['fullName']}\t{got}")
+              if got != m['monoscript_guid'].lower():
+                  bad.append((m['fullName'],got,m['monoscript_guid']))
+          out.write_text(f'resolved={len(rows)}/67\nfailures={len(bad)}\n'+'\n'.join(rows)+'\n')
+          print('PACKAGE_GUID_PREFLIGHT',len(rows),'failures',len(bad))
+          if len(rows)!=67 or bad: raise SystemExit(71)
+          PY
+          rm -f "$PROJECT/Packages/packages-lock.json"
+          echo CURRENT_BASELINE_INTEGRATION_PASS > "$E/integration-gate.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EDITOR_RUN_ID }}
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-current-import/editor-parts
+
+      - name: Reconstruct exact Unity China Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          EDITOR="$OUT/editor"
+          mkdir -p "$EDITOR"
+          [ "$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)" = '15' ] || exit 72
+          SHA="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')"
+          echo "$SHA" > "$E/editor-rejoined-sha256.txt"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 73
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -dc | tar -xf - -C "$EDITOR"
+          UNITY="$EDITOR/Editor/Unity"
+          chmod +x "$UNITY"
+          VERSION="$("$UNITY" -version 2>&1 | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n1 || true)"
+          echo "$VERSION" > "$E/unity-version.txt"
+          [ "$VERSION" = '2022.3.44f1c1' ] || exit 74
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$PARTS"
+
+      - name: Acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          RAW="$OUT/activation.log"
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$RAW" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/activation-exit.txt"
+          rm -f "$RAW"
+          [ "$RC" -eq 0 ] || exit 75
+          echo ACQUIRED > "$OUT/seat-acquired.flag"
+
+      - name: Run current formal Unity import and compile
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          RAW="$OUT/Editor.log"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$RAW" > "$E/import-stdout.txt" 2> "$E/import-stderr.txt"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/import-exit.txt"
+          cp "$RAW" "$E/Editor.log"
+          echo ATTEMPTED > "$OUT/import-attempted.flag"
+          exit 0
+
+      - name: Run explicit package-reference migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod GodsPVZPackageReferenceMigrator.RunBatch -logFile "$E/package-migration.log" > "$E/package-migration-stdout.txt" 2> "$E/package-migration-stderr.txt"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/package-migration-exit.txt"
+          [ "$RC" -eq 0 ] || exit 81
+          test -f "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          grep -q '^resolved=67/67$' "$PROJECT/Library/GodsPVZ.package-reference-migration.done"
+          echo PACKAGE_REFERENCE_EXPLICIT_MIGRATION_PASS > "$E/package-migration-gate.txt"
+
+      - name: Audit current formal import
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt" 2>/dev/null || true)"
+          RC="$(cat "$E/import-exit.txt" 2>/dev/null || echo 255)"
+          python3 - "$E/Editor.log" "$RC" "$PROJECT" "$FINAL_DLL_SHA256" "$E/RESULT.json" "$E/package-reference-post-audit.txt" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          logp=Path(sys.argv[1]); rc=int(sys.argv[2]); project=Path(sys.argv[3]); finalsha=sys.argv[4]
+          resultp=Path(sys.argv[5]); refaudit=Path(sys.argv[6])
+          log=logp.read_text(encoding='utf-8',errors='replace') if logp.is_file() else ''
+          lines=log.splitlines()
+          pats={
+            'compile_errors':re.compile(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',re.I),
+            'package_errors':re.compile(r'Failed to resolve packages|Package resolution failed|\[Package Manager\].*(?:error|failed)',re.I),
+            'assembly_collisions':re.compile(r'Multiple precompiled assemblies|Assembly with name .* already exists',re.I),
+            'serialization_errors':re.compile(r'YAML parse error|SerializedFile.*error|PPtr.*failed',re.I),
+            'missing_script_errors':re.compile(r'referenced script .* is missing|The referenced script on this Behaviour',re.I),
+            'license_errors':re.compile(r'No valid Unity Editor license found|Machine bindings don.t match',re.I),
+            'fatal_errors':re.compile(r'Aborting batchmode due to failure|Fatal Error|Crash!!!',re.I),
+          }
+          counts={k:sum(1 for x in lines if p.search(x)) for k,p in pats.items()}
+          marker=project/'Library/GodsPVZ.package-reference-migration.done'
+          marker_text=marker.read_text(errors='replace') if marker.is_file() else ''
+          marker_ok='resolved=67/67' in marker_text
+          mapp=project/'Recovery/package-script-map-editor.json'
+          old_count=0
+          if mapp.is_file():
+              d=json.loads(mapp.read_text())
+              exts={'.unity','.prefab','.asset','.mat','.controller','.anim','.overridecontroller'}
+              needles=[]
+              for pkg in d.get('packages',[]):
+                  for m in pkg.get('mapping') or []:
+                      needles.append(f"{{fileID: {m['fileID']}, guid: {pkg['guid']}, type: 3}}")
+              for p in project.joinpath('Assets').rglob('*'):
+                  if p.is_file() and p.suffix.lower() in exts:
+                      try: t=p.read_text(errors='replace')
+                      except: continue
+                      old_count += sum(t.count(n) for n in needles)
+          refaudit.write_text(f'marker_ok={int(marker_ok)}\nold_package_refs={old_count}\nmarker={marker_text}')
+          import hashlib
+          dll=project/'Assets/Plugins/Assembly-CSharp.dll'
+          h=hashlib.sha256(dll.read_bytes()).hexdigest() if dll.is_file() else ''
+          lock=project/'Packages/packages-lock.json'
+          passed=(rc==0 and sum(counts.values())==0 and (project/'Library').is_dir() and marker_ok and old_count==0 and h==finalsha and lock.is_file())
+          result={
+            'current_formal_import_pass':passed,
+            'classification':'CURRENT_BASELINE_FORMAL_IMPORT_PASS' if passed else 'CURRENT_BASELINE_FORMAL_IMPORT_BLOCKED',
+            'unity_exit_code':rc,
+            'diagnostic_counts':counts,
+            'package_migration_marker_ok':marker_ok,
+            'old_package_reference_count':old_count,
+            'final_dll_sha256':h,
+            'expected_final_dll_sha256':finalsha,
+            'packages_lock_present':lock.is_file(),
+            'library_present':(project/'Library').is_dir(),
+          }
+          resultp.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          PY
+          if [ -n "$PROJECT" ] && [ -f "$PROJECT/Packages/packages-lock.json" ]; then
+            cp "$PROJECT/Packages/packages-lock.json" "$E/packages-lock.json"
+          fi
+
+      - name: Enforce import precondition before scene smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/stage9-current-import/evidence/RESULT.json"
+          [ -f "$R" ] || exit 90
+          python3 - "$R" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          if not d.get('current_formal_import_pass',False):
+              print(json.dumps(d,indent=2,sort_keys=True))
+              raise SystemExit(91)
+          print('CURRENT_BASELINE_IMPORT_PRECONDITION_PASS')
+          PY
+
+      - name: Immediate second reopen stability gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/second-reopen.log"
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > "$E/second-reopen-exit.txt"
+          [ "$RC" -eq 0 ] || exit 92
+          python3 - "$E/Editor.log" "$E/second-reopen.log" "$E/import-stability.json" <<'PY'
+          import json,re,sys
+          def scan(path):
+              lines=open(path,encoding='utf-8',errors='replace').read().splitlines()
+              pats={
+                'shader_not_found':re.compile(r"Shader '.*(?:fallback shader|dependency).*not found",re.I),
+                'compile_errors':re.compile(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',re.I),
+                'missing_script':re.compile(r'referenced script .* is missing|The referenced script on this Behaviour',re.I),
+                'exceptions':re.compile(r'\b(?:NullReferenceException|ArgumentException|InvalidOperationException)\b',re.I),
+                'serialization_errors':re.compile(r'YAML parse error|SerializedFile.*error|PPtr.*failed',re.I),
+              }
+              return {k:sum(bool(p.search(x)) for x in lines) for k,p in pats.items()}
+          a,b=scan(sys.argv[1]),scan(sys.argv[2])
+          out={
+            'first_import':a,
+            'second_reopen':b,
+            'shader_not_found_reduced_or_zero':b['shader_not_found']<=a['shader_not_found'],
+            'second_blocking_zero':sum(v for k,v in b.items() if k!='shader_not_found')==0
+          }
+          open(sys.argv[3],'w').write(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          if not out['second_blocking_zero']: raise SystemExit(93)
+          PY
+
+      - name: Install scene smoke harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          DIR="$PROJECT/Assets/__Stage9CurrentValidation/Editor"
+          mkdir -p "$DIR"
+          cat > "$DIR/Stage9CurrentSceneSmoke.cs" <<'CS'
+          using System;
+          using System.Collections.Generic;
+          using System.IO;
+          using UnityEditor;
+          using UnityEditor.SceneManagement;
+          using UnityEngine;
+          using UnityEngine.SceneManagement;
+
+          [Serializable]
+          public class Stage9CurrentSceneResult
+          {
+              public string path;
+              public bool loaded;
+              public int rootCount;
+              public int gameObjectCount;
+              public int componentSlots;
+              public int missingScriptCount;
+              public int rendererCount;
+              public int rendererMaterialSlots;
+              public int rendererNullMaterialSlots;
+              public int rendererMissingShaderCount;
+              public string error;
+          }
+
+          [Serializable]
+          public class Stage9CurrentSceneReport
+          {
+              public bool pass;
+              public string unityVersion;
+              public List<Stage9CurrentSceneResult> scenes = new List<Stage9CurrentSceneResult>();
+          }
+
+          public static class Stage9CurrentSceneSmoke
+          {
+              static void Walk(GameObject go, Stage9CurrentSceneResult r)
+              {
+                  r.gameObjectCount++;
+                  r.missingScriptCount += GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(go);
+                  var comps = go.GetComponents<Component>();
+                  r.componentSlots += comps.Length;
+                  var renderer = go.GetComponent<Renderer>();
+                  if (renderer != null)
+                  {
+                      r.rendererCount++;
+                      var mats = renderer.sharedMaterials;
+                      r.rendererMaterialSlots += mats.Length;
+                      foreach (var m in mats)
+                      {
+                          if (m == null) { r.rendererNullMaterialSlots++; continue; }
+                          if (m.shader == null || m.shader.name == "Hidden/InternalErrorShader") r.rendererMissingShaderCount++;
+                      }
+                  }
+                  foreach (Transform child in go.transform) Walk(child.gameObject, r);
+              }
+
+              public static void Run()
+              {
+                  var report = new Stage9CurrentSceneReport();
+                  report.unityVersion = Application.unityVersion;
+                  string[] paths = { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Board.unity" };
+                  foreach (var path in paths)
+                  {
+                      var r = new Stage9CurrentSceneResult();
+                      r.path = path;
+                      try
+                      {
+                          Scene s = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+                          r.loaded = s.IsValid() && s.isLoaded;
+                          var roots = s.GetRootGameObjects();
+                          r.rootCount = roots.Length;
+                          foreach (var go in roots) Walk(go, r);
+                      }
+                      catch (Exception ex)
+                      {
+                          r.error = ex.ToString();
+                      }
+                      report.scenes.Add(r);
+                  }
+                  report.pass = true;
+                  foreach (var r in report.scenes)
+                  {
+                      if (!r.loaded || r.rootCount <= 0 || r.missingScriptCount != 0 || r.rendererMissingShaderCount != 0 || !string.IsNullOrEmpty(r.error))
+                          report.pass = false;
+                  }
+                  string outPath = Environment.GetEnvironmentVariable("STAGE9_SCENE_SMOKE_OUT");
+                  if (string.IsNullOrEmpty(outPath))
+                      outPath = Path.Combine(Directory.GetCurrentDirectory(), "Stage9CurrentSceneSmoke.json");
+                  File.WriteAllText(outPath, JsonUtility.ToJson(report, true));
+                  if (!report.pass) throw new Exception("Stage9 current-baseline scene smoke failed. See " + outPath);
+              }
+          }
+          CS
+          echo "$DIR/Stage9CurrentSceneSmoke.cs" > "$E/scene-harness-path.txt"
+
+      - name: Run MainMenu and Board scene-load smoke gate
+        shell: bash
+        env:
+          STAGE9_SCENE_SMOKE_OUT: ${{ runner.temp }}/stage9-current-import/evidence/scene-smoke.json
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod Stage9CurrentSceneSmoke.Run -logFile "$E/scene-smoke-editor.log"
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > "$E/scene-smoke-exit.txt"
+          [ "$RC" -eq 0 ] || exit 94
+          test -s "$E/scene-smoke.json"
+          python3 - "$E/scene-smoke.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print(json.dumps(d,indent=2,sort_keys=True))
+          if not d.get('pass'): raise SystemExit(95)
+          if len(d.get('scenes',[])) != 2: raise SystemExit(96)
+          for s in d['scenes']:
+              if s.get('missingScriptCount') != 0 or s.get('rendererMissingShaderCount') != 0:
+                  raise SystemExit(97)
+          PY
+
+      - name: Verify current embedded package lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          python3 - "$PROJECT" "$E/package-lock-audit.json" <<'PY'
+          import json,sys
+          from pathlib import Path
+          p=Path(sys.argv[1])
+          lock=json.loads((p/'Packages/packages-lock.json').read_text())['dependencies']
+          expected={
+            'com.unity.2d.animation':'9.1.1',
+            'com.unity.2d.common':'8.0.2',
+            'com.unity.2d.sprite':'1.0.0',
+            'com.unity.burst':'1.8.9',
+            'com.unity.collections':'1.1.0',
+            'com.unity.ext.nunit':'1.0.6',
+            'com.unity.mathematics':'1.2.1',
+            'com.unity.render-pipelines.core':'14.0.11',
+            'com.unity.render-pipelines.universal':'14.0.11',
+            'com.unity.render-pipelines.universal-config':'14.0.10',
+            'com.unity.searcher':'4.9.2',
+            'com.unity.shadergraph':'14.0.11',
+            'com.unity.test-framework':'1.1.29',
+            'com.unity.textmeshpro':'3.0.6',
+            'com.unity.ugui':'1.0.0'
+          }
+          problems=[]; rows={}
+          for name,version in expected.items():
+              d=lock.get(name)
+              pj=p/'Packages'/name/'package.json'
+              pv=json.loads(pj.read_text()).get('version') if pj.exists() else None
+              rows[name]={
+                'lock_source':None if d is None else d.get('source'),
+                'lock_depth':None if d is None else d.get('depth'),
+                'package_json_version':pv
+              }
+              if d is None or d.get('source')!='embedded' or d.get('depth')!=0 or pv!=version:
+                  problems.append(name)
+          result={
+            'dependency_count':len(lock),
+            'expected_embedded_count':len(expected),
+            'packages':rows,
+            'problems':problems,
+            'pass':not problems
+          }
+          Path(sys.argv[2]).write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({'dependency_count':len(lock),'problems':problems,'pass':not problems},indent=2))
+          if problems: raise SystemExit(98)
+          PY
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-current-import"
+          E="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --return-ulf > /dev/null 2>&1
+            RC=$?
+            set -e
+            echo "$RC" > "$E/license-return-exit.txt"
+          fi
+
+      - name: Upload current formal import evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-CURRENT-BASELINE-SCENE-SMOKE
+          path: ${{ runner.temp }}/stage9-current-import/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Enforce current formal import result
+        if: always()
+        shell: bash
+        run: |
+          R="$RUNNER_TEMP/stage9-current-import/evidence/RESULT.json"
+          [ -f "$R" ] || exit 90
+          python3 - "$R" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print(json.dumps(d,indent=2,sort_keys=True))
+          if not d.get('current_formal_import_pass',False): raise SystemExit(91)
+          PY

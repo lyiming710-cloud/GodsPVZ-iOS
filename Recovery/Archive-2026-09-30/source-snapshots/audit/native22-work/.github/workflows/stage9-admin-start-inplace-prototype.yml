@@ -1,0 +1,178 @@
+name: Stage9 Administrator.Start in-place prototype
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-inplace-prototype.yml'
+  workflow_dispatch:
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_RUN_ID: '34990527235'
+      SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      EXPECTED_INPUT_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/inplace/input
+      - name: Build temporary Cecil body assembler
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/inplace/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          mkdir -p "$RUNNER_TEMP/inplace/assembler"
+          cp Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj "$RUNNER_TEMP/inplace/assembler/assembler.csproj"
+          cp Tools/Stage9AdministratorStartPatch/Program.cs "$RUNNER_TEMP/inplace/assembler/Program.cs"
+          python3 - "$RUNNER_TEMP/inplace/assembler/Program.cs" <<'PY'
+          from pathlib import Path
+          import sys
+          p=Path(sys.argv[1]); s=p.read_text()
+          old='''    var enumLocal = new VariableDefinition(getEnumerator.ReturnType);\n    var modeIndex = new VariableDefinition(module.TypeSystem.Int32);\n    body.Variables.Add(enumLocal);\n    body.Variables.Add(modeIndex);'''
+          new='''    var enumLocal = new VariableDefinition(getEnumerator.ReturnType);\n    var gameObjectType = ((GenericInstanceType)systems.FieldType).GenericArguments[0];\n    var unusedGameObject1 = new VariableDefinition(gameObjectType);\n    var unusedGameObject2 = new VariableDefinition(gameObjectType);\n    body.Variables.Add(enumLocal);\n    body.Variables.Add(unusedGameObject1);\n    body.Variables.Add(unusedGameObject2);'''
+          assert old in s; s=s.replace(old,new,1)
+          old='''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Ldfld, mode));\n    A(Instruction.Create(OpCodes.Ldc_I4_1));\n    A(Instruction.Create(OpCodes.Add));\n    A(Instruction.Create(OpCodes.Stloc, modeIndex));\n    A(Instruction.Create(OpCodes.Ldloc, modeIndex));\n    A(Instruction.Create(OpCodes.Ldc_I4_5));'''
+          new='''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Ldfld, mode));\n    A(Instruction.Create(OpCodes.Ldc_I4_1));\n    A(Instruction.Create(OpCodes.Add));\n    A(Instruction.Create(OpCodes.Ldc_I4_5));'''
+          assert old in s; s=s.replace(old,new,1)
+          old='''    A(Instruction.Create(OpCodes.Ldloc, modeIndex));\n    A(Instruction.Create(OpCodes.Switch, new[] { caseMinus1, case0, case1, case2, case3, case4 }));'''
+          new='''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Ldfld, mode));\n    A(Instruction.Create(OpCodes.Ldc_I4_1));\n    A(Instruction.Create(OpCodes.Add));\n    A(Instruction.Create(OpCodes.Switch, new[] { caseMinus1, case0, case1, case2, case3, case4 }));'''
+          assert old in s; s=s.replace(old,new,1)
+          old='''    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, unityImplicit)); A(Instruction.Create(OpCodes.Brfalse, mode3NullBoard));\n    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, boardOnPlay)); A(Instruction.Create(OpCodes.Br, mode3BoardReady));\n    A(mode3NullBoard); A(Instruction.Create(OpCodes.Ldnull));\n    A(mode3BoardReady);\n    var boardTemp = new VariableDefinition(startBoardConfig.Parameters[0].ParameterType);\n    body.Variables.Add(boardTemp);\n    A(Instruction.Create(OpCodes.Stloc, boardTemp));\n    A(Instruction.Create(OpCodes.Ldarg_0)); A(Instruction.Create(OpCodes.Ldloc, boardTemp)); A(Instruction.Create(OpCodes.Call, startBoardConfig));'''
+          new='''    A(Instruction.Create(OpCodes.Ldarg_0));\n    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, unityImplicit)); A(Instruction.Create(OpCodes.Brfalse, mode3NullBoard));\n    A(Instruction.Create(OpCodes.Call, boardManagerGetInstance)); A(Instruction.Create(OpCodes.Call, boardOnPlay)); A(Instruction.Create(OpCodes.Br, mode3BoardReady));\n    A(mode3NullBoard); A(Instruction.Create(OpCodes.Ldnull));\n    A(mode3BoardReady);\n    A(Instruction.Create(OpCodes.Call, startBoardConfig));'''
+          assert old in s; s=s.replace(old,new,1)
+          p.write_text(s)
+          print('ASSEMBLER_TRANSFORM_PASS no_mode_local=1 no_board_local=1 baseline_reusable_local_shape=1')
+          PY
+          dotnet restore "$RUNNER_TEMP/inplace/assembler/assembler.csproj"
+          dotnet build -c Release --no-restore "$RUNNER_TEMP/inplace/assembler/assembler.csproj"
+          TMP="$RUNNER_TEMP/inplace/GodsPVZRuntime1-temp-cecil.dll"
+          dotnet run -c Release --no-build --project "$RUNNER_TEMP/inplace/assembler/assembler.csproj" -- "$IN" "$TMP" "$EXPECTED_INPUT_SHA" | tee "$RUNNER_TEMP/inplace/assembler-audit.txt"
+          test -s "$TMP"
+          echo "BASELINE_DLL=$IN" >> "$GITHUB_ENV"
+          echo "TEMP_DLL=$TMP" >> "$GITHUB_ENV"
+      - name: Extract body, remap tokens, and patch baseline in place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/inplace/patcher" "$RUNNER_TEMP/inplace/evidence"
+          cat > "$RUNNER_TEMP/inplace/patcher/patcher.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/inplace/patcher/Program.cs" <<'EOF'
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          using System.Security.Cryptography;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          using CecilModule = Mono.Cecil.ModuleDefinition;
+          using CecilType = Mono.Cecil.TypeDefinition;
+          static IEnumerable<CecilType> All(IEnumerable<CecilType> roots){foreach(var t in roots){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          static string Sha(byte[] b)=>Convert.ToHexString(SHA256.HashData(b)).ToLowerInvariant();
+          static int RvaToOffset(PEHeaders h,int rva){foreach(var s in h.SectionHeaders){var span=Math.Max(s.VirtualSize,s.SizeOfRawData);if(rva>=s.VirtualAddress&&rva<s.VirtualAddress+span)return s.PointerToRawData+(rva-s.VirtualAddress);}throw new InvalidDataException($"RVA 0x{rva:X} not mapped");}
+          static int BodyLength(byte[] b,int off){ushort f=BitConverter.ToUInt16(b,off); if((f&3)!=3)throw new InvalidDataException("expected fat body");int hs=((f>>12)&0xF)*4;int cs=BitConverter.ToInt32(b,off+4);int end=hs+cs;if((f&8)==0)return end;int p=(end+3)&~3;byte kind=b[off+p];bool fat=(kind&0x40)!=0;int ds=fat?(b[off+p+1]|(b[off+p+2]<<8)|(b[off+p+3]<<16)):b[off+p+1];return p+ds;}
+          static uint MapToken(IMetadataTokenProvider p){
+            if(p is MethodDefinition or FieldDefinition or TypeDefinition) return Raw(p);
+            if(p is FieldReference f){ if(f.Resolve()!=null && f.Resolve()!.Module==f.Module) return Raw(f.Resolve()!); throw new InvalidDataException($"unexpected external field {f.FullName}"); }
+            if(p is GenericInstanceMethod gim && gim.DeclaringType.FullName=="UnityEngine.Component"&&gim.Name=="GetComponent"&&gim.GenericArguments.Count==1&&gim.GenericArguments[0].FullName=="UnityEngine.Canvas") return 0x2B000001;
+            if(p is MethodReference m){
+              var k=(m.DeclaringType.FullName,m.Name,m.Parameters.Count);
+              return k switch {
+                ("UnityEngine.Transform","GetChild",1)=>0x0A000001,
+                ("UnityEngine.Camera","get_main",0)=>0x0A000003,
+                ("UnityEngine.Canvas","set_worldCamera",1)=>0x0A000004,
+                ("UnityEngine.Object","op_Implicit",1)=>0x0A000005,
+                ("UnityEngine.Object","op_Inequality",2)=>0x0A000006,
+                ("UnityEngine.Component","get_transform",0)=>0x0A000008,
+                ("UnityEngine.Component","get_gameObject",0)=>0x0A000015,
+                ("UnityEngine.GameObject","SetActive",1)=>0x0A000016,
+                ("UnityEngine.Camera","set_orthographicSize",1)=>0x0A000025,
+                ("System.Collections.Generic.List`1<UnityEngine.GameObject>","GetEnumerator",0)=>0x0A0000FB,
+                ("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>","get_Current",0)=>0x0A0000FC,
+                ("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>","MoveNext",0)=>0x0A0000FD,
+                ("System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>","Dispose",0)=>0x0A000126,
+                ("System.Collections.Generic.List`1<UnityEngine.GameObject>","get_Item",1)=>0x0A0001EC,
+                _=>throw new InvalidDataException($"unmapped method operand {m.FullName}")};
+            }
+            if(p is TypeReference t) throw new InvalidDataException($"unexpected type operand {t.FullName}");
+            throw new InvalidDataException($"unmapped metadata operand {p.GetType().Name} {p}");
+          }
+          var baseline=args[0];var temp=args[1];var output=args[2];
+          var baseBytes=File.ReadAllBytes(baseline);var tempBytes=File.ReadAllBytes(temp);
+          if(Sha(baseBytes)!="26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022")throw new InvalidDataException("baseline SHA drift");
+          int baseRva,tempRva,nextBaseRva;
+          using(var fs=File.OpenRead(baseline)){using var pe=new PEReader(fs);var md=pe.GetMetadataReader();baseRva=md.GetMethodDefinition(MetadataTokens.MethodDefinitionHandle(4)).RelativeVirtualAddress;nextBaseRva=Enumerable.Range(1,md.GetTableRowCount(TableIndex.MethodDef)).Select(r=>md.GetMethodDefinition(MetadataTokens.MethodDefinitionHandle(r)).RelativeVirtualAddress).Where(r=>r>baseRva).Min();}
+          using(var fs=File.OpenRead(temp)){using var pe=new PEReader(fs);var md=pe.GetMetadataReader();tempRva=md.GetMethodDefinition(MetadataTokens.MethodDefinitionHandle(4)).RelativeVirtualAddress;}
+          int baseOff,tempOff,nextBaseOff;
+          using(var fs=File.OpenRead(baseline)){using var pe=new PEReader(fs);baseOff=RvaToOffset(pe.PEHeaders,baseRva);nextBaseOff=RvaToOffset(pe.PEHeaders,nextBaseRva);}
+          using(var fs=File.OpenRead(temp)){using var pe=new PEReader(fs);tempOff=RvaToOffset(pe.PEHeaders,tempRva);}
+          int tempLen=BodyLength(tempBytes,tempOff);int capacity=nextBaseOff-baseOff;
+          if(tempLen>capacity)throw new InvalidDataException($"body does not fit tempLen={tempLen} capacity={capacity}");
+          var body=new byte[tempLen];Buffer.BlockCopy(tempBytes,tempOff,body,0,tempLen);
+          ushort flags=BitConverter.ToUInt16(body,0);int headerSize=((flags>>12)&0xF)*4;uint oldLocal=BitConverter.ToUInt32(body,8);BitConverter.GetBytes(0x11000101u).CopyTo(body,8);
+          using(var tm=CecilModule.ReadModule(temp,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate})){
+            var start=All(tm.Types).SelectMany(t=>t.Methods).Single(m=>Raw(m)==0x06000004);
+            if(start.Body.Variables.Count!=3)throw new InvalidDataException("temp local count drift");
+            if(start.Body.Variables[0].VariableType.FullName!="System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>"||start.Body.Variables[1].VariableType.FullName!="UnityEngine.GameObject"||start.Body.Variables[2].VariableType.FullName!="UnityEngine.GameObject")throw new InvalidDataException("temp local shape drift");
+            foreach(var i in start.Body.Instructions){
+              if(i.Operand is not IMetadataTokenProvider p)continue;
+              uint mapped=MapToken(p);int pos=headerSize+i.Offset+i.OpCode.Size;if(pos<0||pos+4>body.Length)throw new InvalidDataException("operand patch range");BitConverter.GetBytes(mapped).CopyTo(body,pos);
+            }
+          }
+          var outBytes=(byte[])baseBytes.Clone();Buffer.BlockCopy(body,0,outBytes,baseOff,body.Length);Array.Clear(outBytes,baseOff+body.Length,capacity-body.Length);File.WriteAllBytes(output,outBytes);
+          var diffs=Enumerable.Range(0,baseBytes.Length).Where(i=>baseBytes[i]!=outBytes[i]).ToList();
+          if(diffs.Count==0||diffs.Any(i=>i<baseOff||i>=nextBaseOff))throw new InvalidDataException("diff escaped Start allocation");
+          Console.WriteLine($"INPLACE_PATCH_BYTES_PASS start_rva=0x{baseRva:X} start_file=0x{baseOff:X} next_rva=0x{nextBaseRva:X} capacity={capacity} new_body_len={body.Length} old_temp_local_sig=0x{oldLocal:X8} reused_local_sig=0x11000101 diff_bytes={diffs.Count}");
+          Console.WriteLine($"OUTPUT_SHA256 {Sha(outBytes)}");
+          using(var fs=File.OpenRead(output)){using var pe=new PEReader(fs);var md=pe.GetMetadataReader();var d=md.GetMethodDefinition(MetadataTokens.MethodDefinitionHandle(4));var mb=pe.GetMethodBody(d.RelativeVirtualAddress);Console.WriteLine($"OUTPUT_BODY il={mb.GetILBytes().Length} maxstack={mb.MaxStack} localsig=0x{MetadataTokens.GetToken(mb.LocalSignature):X8} eh={mb.ExceptionRegions.Length}");if(MetadataTokens.GetToken(mb.LocalSignature)!=0x11000101||mb.ExceptionRegions.Length!=1)throw new InvalidDataException("output body header drift");}
+          using(var bm=CecilModule.ReadModule(baseline,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate}))using(var om=CecilModule.ReadModule(output,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate})){
+            var bStart=All(bm.Types).SelectMany(t=>t.Methods).Single(m=>Raw(m)==0x06000004);var oStart=All(om.Types).SelectMany(t=>t.Methods).Single(m=>Raw(m)==0x06000004);
+            if(oStart.Body.Variables.Count!=3||oStart.Body.Variables[0].VariableType.FullName!="System.Collections.Generic.List`1/Enumerator<UnityEngine.GameObject>")throw new InvalidDataException("reopen local sig invalid");
+            var ge=oStart.Body.Instructions.Single(i=>i.Operand is MethodReference m&&m.DeclaringType.FullName=="System.Collections.Generic.List`1<UnityEngine.GameObject>"&&m.Name=="GetEnumerator");if(ge.OpCode.Code!=Code.Callvirt||Raw((MethodReference)ge.Operand)!=0x0A0000FB)throw new InvalidDataException("GetEnumerator raw token/opcode drift");
+            if(oStart.Body.Instructions.Any(i=>i.Operand is VariableDefinition v&&v.Index!=0))throw new InvalidDataException("unused compatibility locals unexpectedly referenced");
+            Console.WriteLine($"REOPEN_INPLACE_START_PASS instructions={oStart.Body.Instructions.Count} locals={oStart.Body.Variables.Count} handlers={oStart.Body.ExceptionHandlers.Count} getenumerator=0x{Raw((MethodReference)ge.Operand):X8}");
+          }
+          EOF
+          dotnet run --project "$RUNNER_TEMP/inplace/patcher/patcher.csproj" -- "$BASELINE_DLL" "$TEMP_DLL" "$RUNNER_TEMP/inplace/GodsPVZRuntime1-administrator-start-inplace.dll" | tee "$RUNNER_TEMP/inplace/evidence/inplace-audit.txt"
+          cp "$RUNNER_TEMP/inplace/assembler-audit.txt" "$RUNNER_TEMP/inplace/evidence/assembler-audit.txt"
+      - name: Prove metadata bytes are unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/inplace/GodsPVZRuntime1-administrator-start-inplace.dll"
+          python3 - "$BASELINE_DLL" "$OUT" <<'PY' | tee "$RUNNER_TEMP/inplace/evidence/byte-isolation.txt"
+          from pathlib import Path
+          import sys
+          a=Path(sys.argv[1]).read_bytes();b=Path(sys.argv[2]).read_bytes()
+          assert len(a)==len(b)
+          d=[i for i,(x,y) in enumerate(zip(a,b)) if x!=y]
+          print('FILE_LENGTH_UNCHANGED',len(a))
+          print('TOTAL_DIFF_BYTES',len(d))
+          print('FIRST_DIFF',hex(d[0]) if d else 'none')
+          print('LAST_DIFF',hex(d[-1]) if d else 'none')
+          assert d
+          PY
+          echo "INPLACE_STATIC_PROTOTYPE_PASS=1" | tee "$RUNNER_TEMP/inplace/evidence/prototype-qualified.txt"
+      - name: Upload prototype
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-INPLACE-PROTOTYPE
+          path: |
+            ${{ runner.temp }}/inplace/GodsPVZRuntime1-administrator-start-inplace.dll
+            ${{ runner.temp }}/inplace/evidence/
+          retention-days: 30
+          if-no-files-found: error

@@ -1,0 +1,179 @@
+name: Stage9.1 iOS Damage generic complete patch proof
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-ios-damage-generic-complete-patch-proof.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+
+      - name: Apply exact token-only iOS patch and prove invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=dll/GodsPVZRuntime1-bgmvolume.dll
+          DST=dll/Assembly-CSharp-ios-genericfix.dll
+          cp "$SRC" "$DST"
+          test "$(sha256sum "$SRC" | awk '{print $1}')" = '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+          mkdir -p diagnostics
+
+          python3 - "$SRC" "$DST" diagnostics/ios-damage-generic-complete-patch-proof.txt <<'PY'
+          import hashlib,struct,sys
+          src,dst,report=sys.argv[1:]
+          orig=open(src,'rb').read(); b=bytearray(orig)
+          def u16(o): return struct.unpack_from('<H',b,o)[0]
+          def u32(o): return struct.unpack_from('<I',b,o)[0]
+          def w32(o,v): struct.pack_into('<I',b,o,v)
+
+          pe=u32(0x3c); assert b[pe:pe+4]==b'PE\0\0'
+          coff=pe+4; nsec=u16(coff+2); optsz=u16(coff+16); chars_off=coff+18
+          assert u16(chars_off)==0x0122
+          struct.pack_into('<H',b,chars_off,0x2122)
+
+          opt=coff+20; sections=opt+optsz
+          def rva_to_off(rva):
+              for i in range(nsec):
+                  s=sections+i*40
+                  vs=u32(s+8); va=u32(s+12); rs=u32(s+16); ro=u32(s+20)
+                  if va <= rva < va+max(vs,rs): return ro+(rva-va)
+              raise AssertionError(hex(rva))
+
+          # Locked from Cecil/raw metadata audits.
+          body=rva_to_off(0x14e70)
+          assert body==0x13070, hex(body)
+          flags_size=u16(body)
+          assert (flags_size & 3)==3, hex(flags_size)
+          hsize=((flags_size>>12)&0xf)*4
+          assert hsize==12, hsize
+          code=body+hsize
+          assert code==0x1307c, hex(code)
+
+          # Replace malformed local signature [Enumerator<!0>, Element]
+          # with existing canonical StandAloneSig 0x11000367:
+          # [Enumerator<Element>, Element].
+          local_sig_off=body+8
+          assert u32(local_sig_off)==0x110000d7, hex(u32(local_sig_off))
+          w32(local_sig_off,0x11000367)
+
+          patches=[
+            # (IL opcode offset, expected opcode, old MemberRef, canonical MemberRef)
+            (0x19,0x28,0x0a0000c3,0x0a0000e7), # get_Current
+            (0x76,0x28,0x0a0000c4,0x0a0000e9), # MoveNext
+            (0x89,0x28,0x0a0000c5,0x0a000223), # Dispose
+          ]
+          records=[]
+          for il,op,old,new in patches:
+              opcode_off=code+il; tok_off=opcode_off+1
+              assert b[opcode_off]==op,(hex(il),hex(b[opcode_off]))
+              assert u32(tok_off)==old,(hex(il),hex(u32(tok_off)),hex(old))
+              w32(tok_off,new)
+              records.append((il,tok_off,old,new))
+
+          diffs=[(i,orig[i],b[i]) for i in range(len(b)) if orig[i]!=b[i]]
+          sha=hashlib.sha256(b).hexdigest()
+          open(dst,'wb').write(b)
+          with open(report,'w') as f:
+              f.write(f'original_sha256={hashlib.sha256(orig).hexdigest()}\n')
+              f.write(f'patched_sha256={sha}\n')
+              f.write(f'Damage.AddElement.rva=0x14e70 body_file_offset=0x{body:x} code_file_offset=0x{code:x}\n')
+              f.write(f'PE_DLL_offset=0x{chars_off+1:x} 01->21\n')
+              f.write(f'LocalVarSig_offset=0x{local_sig_off:x} 0x110000d7->0x11000367\n')
+              for il,off,old,new in records:
+                  f.write(f'IL_0x{il:04x}_operand_offset=0x{off:x} 0x{old:08x}->0x{new:08x}\n')
+              f.write(f'byte_diff_count={len(diffs)}\n')
+              for off,x,y in diffs: f.write(f'diff=0x{off:x} {x:02x}->{y:02x}\n')
+          print(open(report).read())
+          PY
+
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          class P {
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t; foreach(var n in t.NestedTypes) foreach(var x in AT(n)) yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static int CM(TypeDefinition t)=>t.Methods.Count+t.NestedTypes.Sum(CM);
+            static bool Orphan(TypeReference t){
+              if(t==null) return true;
+              if(t is GenericParameter gp && gp.Owner==null) return true;
+              if(t is GenericInstanceType gi && gi.GenericArguments.Any(Orphan)) return true;
+              if(t is TypeSpecification ts && !(t is GenericInstanceType) && Orphan(ts.ElementType)) return true;
+              return false;
+            }
+            static void Main(string[] a){
+              using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true});
+              var m=asm.MainModule;
+              var d=AT(m).Single(t=>t.FullName=="Damage");
+              var md=d.Methods.Single(x=>x.Name=="AddElement" && x.Parameters.Count==1 && x.Parameters[0].ParameterType.FullName=="Element");
+              Console.WriteLine("module_kind="+m.Kind);
+              Console.WriteLine("methoddefs="+m.Types.Sum(CM));
+              Console.WriteLine("method_token="+md.MetadataToken);
+              Console.WriteLine("local_count="+md.Body.Variables.Count);
+              for(int i=0;i<md.Body.Variables.Count;i++) Console.WriteLine($"local{i}={md.Body.Variables[i].VariableType.FullName} orphan={Orphan(md.Body.Variables[i].VariableType)}");
+              foreach(var ins in md.Body.Instructions.Where(i=>i.Operand is MethodReference)){
+                var mr=(MethodReference)ins.Operand;
+                Console.WriteLine($"IL_{ins.Offset:x4} token={mr.MetadataToken} name={mr.Name} decl={mr.DeclaringType.FullName} orphan={Orphan(mr.DeclaringType)}");
+              }
+              if(m.Kind!=ModuleKind.Dll) throw new Exception("module kind");
+              if(m.Types.Sum(CM)!=2317) throw new Exception("methoddefs");
+              if(md.Body.Variables.Count!=2) throw new Exception("locals");
+              if(md.Body.Variables.Any(v=>Orphan(v.VariableType))) throw new Exception("orphan local remains");
+              var refs=md.Body.Instructions.Where(i=>i.Operand is MethodReference).Select(i=>(i.Offset,(MethodReference)i.Operand)).ToDictionary(x=>x.Offset,x=>x.Item2);
+              if(refs[0x19].MetadataToken.ToUInt32()!=0x0a0000e7) throw new Exception("get_Current");
+              if(refs[0x76].MetadataToken.ToUInt32()!=0x0a0000e9) throw new Exception("MoveNext");
+              if(refs[0x89].MetadataToken.ToUInt32()!=0x0a000223) throw new Exception("Dispose");
+              if(refs.Values.Any(r=>Orphan(r.DeclaringType)||Orphan(r.ReturnType)||r.Parameters.Any(p=>Orphan(p.ParameterType)))) throw new Exception("orphan methodref remains");
+            }
+          }
+          CS
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DST" | tee -a "$GITHUB_WORKSPACE/diagnostics/ios-damage-generic-complete-patch-proof.txt"
+          cd "$GITHUB_WORKSPACE"
+          cat diagnostics/ios-damage-generic-complete-patch-proof.txt
+          sha256sum "$DST" | tee diagnostics/ios-damage-generic-complete-candidate.sha256
+
+      - name: Upload proof candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-DAMAGE-GENERIC-COMPLETE-CANDIDATE
+          path: dll/Assembly-CSharp-ios-genericfix.dll
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Commit proof evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/ios-damage-generic-complete-patch-proof.txt diagnostics/ios-damage-generic-complete-candidate.sha256
+          git commit -m 'diagnostics: prove complete Damage generic repair' || exit 0
+          git pull --rebase origin stage9-admin-start-static
+          git push origin HEAD:stage9-admin-start-static

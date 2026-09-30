@@ -1,0 +1,87 @@
+name: Stage9.1 iOS Build Support preflight
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-ios-module-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ios-module-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Prepare evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module-preflight"
+          E="$OUT/evidence"
+          mkdir -p "$E"
+          echo "workflow_head=$GITHUB_SHA" > "$E/input-locks.txt"
+          echo "editor_run=34668863583" >> "$E/input-locks.txt"
+          echo "expected_editor_sha256=0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14" >> "$E/input-locks.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-ios-module-preflight/editor-parts
+
+      - name: Reconstruct exact Editor and probe iOS support
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-module-preflight"
+          E="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          EDITOR="$OUT/editor"
+          mkdir -p "$EDITOR"
+          [ "$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)" = '15' ] || exit 71
+          SHA="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')"
+          echo "$SHA" > "$E/editor-rejoined-sha256.txt"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 72
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -dc | tar -xf - -C "$EDITOR"
+          rm -rf "$PARTS"
+          UNITY="$EDITOR/Editor/Unity"
+          chmod +x "$UNITY"
+          "$UNITY" -version > "$E/unity-version.txt" 2>&1
+          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 73
+
+          ROOT="$EDITOR/Editor/Data/PlaybackEngines"
+          IOS="$ROOT/iOSSupport"
+          {
+            echo "playback_engines_root=$ROOT"
+            echo "ios_support_path=$IOS"
+            echo "ios_support_present=$([ -d "$IOS" ] && echo true || echo false)"
+          } > "$E/ios-module-result.txt"
+          find "$ROOT" -maxdepth 2 -type d -printf '%P\n' 2>/dev/null | sort > "$E/playback-engines-dirs.txt" || true
+          if [ -d "$IOS" ]; then
+            find "$IOS" -maxdepth 3 -type f -printf '%P\n' | sort | head -n 500 > "$E/ios-support-files-sample.txt"
+            du -sh "$IOS" > "$E/ios-support-size.txt"
+            echo IOS_BUILD_SUPPORT_PRESENT > "$E/RESULT.txt"
+          else
+            echo IOS_BUILD_SUPPORT_MISSING > "$E/RESULT.txt"
+          fi
+          cat "$E/RESULT.txt"
+          cat "$E/ios-module-result.txt"
+
+      - name: Upload iOS module preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-MODULE-PREFLIGHT
+          path: ${{ runner.temp }}/stage9-ios-module-preflight/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6

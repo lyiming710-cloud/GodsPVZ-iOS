@@ -1,0 +1,26 @@
+name: Stage9.1 51d3 FlagMeter ctor qualify
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-51d3-flagmeter-ctor-qualify.yml','Tools/Stage9FlagMeterCtorQualify/**','Tools/Stage9Int32MinusOnePatch/**','Tools/Stage9NativeProbe/FlagMeter.ctor.native-evidence.md']
+permissions: {contents: read, actions: read}
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34961960130, name: Stage9.1-51D3-WINDOW-T-CTOR-NATURAL-RUNTIME, path: '${{ runner.temp }}/promotion'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34961830646, name: Stage9.1-9524-WINDOW-T-CTOR-QUALIFIED, path: '${{ runner.temp }}/input'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34804463514, name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1, path: '${{ runner.temp }}/refs'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34173085137, pattern: GodsPVZ-ILSpyCmd-linux-x64, merge-multiple: true, path: '${{ runner.temp }}/ilspy'}
+      - name: Qualify FlagMeter ctor
+        shell: bash
+        run: bash Tools/Stage9FlagMeterCtorQualify/run.sh "$RUNNER_TEMP/promotion" "$RUNNER_TEMP/input" "$RUNNER_TEMP/refs" "$RUNNER_TEMP/ilspy" "$RUNNER_TEMP/flagmeter-recovery"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-51D3-FLAGMETER-CTOR-QUALIFIED, path: '${{ runner.temp }}/flagmeter-recovery/evidence/', retention-days: 90}

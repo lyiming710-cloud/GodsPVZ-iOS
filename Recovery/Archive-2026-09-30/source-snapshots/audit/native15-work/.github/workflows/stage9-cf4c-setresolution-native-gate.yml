@@ -1,0 +1,93 @@
+name: Stage9.1 cf4c SetResolution PC-native repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-cf4c-setresolution-native-gate.yml'
+      - 'Tools/Stage9SetResolutionPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  setresolution-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact cf4c candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34741369772
+          pattern: Stage9.1-eec5-QUALIFICATIONTEST
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-setresolution/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-setresolution/ilspy
+      - name: Apply exact PC-native-backed repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-setresolution"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-qualificationtest.dll"; DLL="$OUT/GodsPVZRuntime1-setresolution.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = 'cf4c2ffcde7a9ac20d91b89fe5e315b832e85f73082323c3e0db976604d647b9' ] || exit 61
+          dotnet build Tools/Stage9SetResolutionPatch/Stage9SetResolutionPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9SetResolutionPatch/Stage9SetResolutionPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x0600014A ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x0600014A address=0x000000018031BF70 next=0x000000018031C080 gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d metadata_sha256=ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9$' "$E/patch.log"
+          grep -q '^PATCH_SETRESOLUTION table=0:1280x720,1:1920x1080,2:2160x1080,3:2560x1440,4:2960x1440,default:1280x720 fullscreen=early-return mode=3$' "$E/patch.log"
+          grep -q '^REOPEN_SETRESOLUTION_PASS locals=2 cases=5 fallback=1280x720 token=0x0600014A$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+          cp Tools/Stage9SetResolutionPatch/Evidence.md "$E/PC-native-evidence.md"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-setresolution"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-setresolution.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t GlobalStaticVars "$DLL" > "$E/GlobalStaticVars.cs" 2> "$E/GlobalStaticVars.stderr"; test ! -s "$E/GlobalStaticVars.stderr"
+          "$ILSPY" -il -t GlobalStaticVars "$DLL" > "$E/GlobalStaticVars.il" 2> "$E/GlobalStaticVars-il.stderr"; test ! -s "$E/GlobalStaticVars-il.stderr"
+          python3 - "$E/GlobalStaticVars.cs" "$E/GlobalStaticVars.il" "$E/SetResolution.cs" "$E/SetResolution.il" <<'PY'
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text()
+          cstart=cs.index('public static void SetResolution(int resolutionScale)')
+          b=cs.index('{',cstart); d=0; cend=None
+          for i in range(b,len(cs)):
+              if cs[i]=='{': d+=1
+              elif cs[i]=='}':
+                  d-=1
+                  if d==0: cend=i+1; break
+          assert cend
+          cm=cs[cstart:cend]
+          istart=il.index('void SetResolution (')
+          iend=il.index('} // end of method GlobalStaticVars::SetResolution',istart)
+          im=il[istart:iend]
+          Path(sys.argv[3]).write_text(cm); Path(sys.argv[4]).write_text(im)
+          for bad in ('Invalid IL','Expected O, but got','Unknown result type','object obj'):
+              assert bad not in cm, bad
+          for req in ('gLawnApp.resolutionScale','gLawnApp.fullscreen','1280','720','1920','1080','2160','2560','1440','2960','Screen.SetResolution'):
+              assert req in cm, req
+          assert 'UnityEngine.Screen::SetResolution' in im
+          for n in ('1280','720','1920','1080','2160','2560','1440','2960'):
+              assert n in im, n
+          print('ILSPY_SETRESOLUTION_PASS method=GlobalStaticVars.SetResolution table=5+fallback fullscreen=early-return mode=3')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-cf4c-SETRESOLUTION
+          path: ${{ runner.temp }}/stage9-setresolution/evidence/
+          if-no-files-found: error
+          retention-days: 90

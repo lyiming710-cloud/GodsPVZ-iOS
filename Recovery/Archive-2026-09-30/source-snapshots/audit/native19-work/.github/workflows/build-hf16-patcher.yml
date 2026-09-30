@@ -1,0 +1,36 @@
+name: Build HF16 AttackRange patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF16Patch/**'
+      - '.github/workflows/build-hf16-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF16 patcher
+        run: dotnet publish Tools/HF16Patch/HF16Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out/hf16
+      - name: Smoke test usage
+        shell: bash
+        run: |
+          chmod +x out/hf16/GodsPVZ.HF16Patch
+          set +e
+          out/hf16/GodsPVZ.HF16Patch >/tmp/hf16-usage.txt 2>&1
+          code=$?
+          set -e
+          cat /tmp/hf16-usage.txt
+          test "$code" -eq 2
+          grep -F 'Usage: GodsPVZ.HF16Patch <input.dll> <output.dll>' /tmp/hf16-usage.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF16Patch-linux-x64
+          path: out/hf16
+          include-hidden-files: true
+          if-no-files-found: error

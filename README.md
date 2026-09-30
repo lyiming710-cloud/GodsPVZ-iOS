@@ -1,3 +1,6 @@
+
+> **2026-09-30 项目分类归档**：原版输入、当前/历史代码、实验候选、验证证据与 Xcode 工程已整理。入口：[Recovery/Archive-2026-09-30](Recovery/Archive-2026-09-30/README.md)。归档不是 IPA 发布；验收结论仍以 Native23 独立审查为准。
+
 # GodsPVZ iOS recovery
 
 ## Latest recovery checkpoint — 2026-09-30

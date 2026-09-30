@@ -1,0 +1,141 @@
+name: Stage9.1 4110 LoadSkillLogo strict runtime gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-4110-load-skill-logo-runtime-gate.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  strict-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-4110/r3-cache
+      - name: Download exact-ref-qualified LoadSkillLogo candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34834962528
+          name: Stage9.1-273D-PLANT-DETAIL-LOAD-SKILL-LOGO-STATIC
+          path: ${{ runner.temp }}/stage9-4110/candidate
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-4110/editor-parts
+      - name: Resolve candidate DLL
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/stage9-4110/candidate" -type f -name 'GodsPVZRuntime1-plant-detail-load-skill-logo.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = '4110588321372dd0c388f69485bcbdca6f908136c377d65d8903fe657c1e5035'
+          echo "LOAD_SKILL_LOGO_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+      - name: Run exact R3 strict Board gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9RuntimeGate/run-strict-board.sh \
+            "$RUNNER_TEMP/stage9-4110" \
+            "$LOAD_SKILL_LOGO_CANDIDATE" \
+            "4110588321372dd0c388f69485bcbdca6f908136c377d65d8903fe657c1e5035"
+      - name: Audit recovered blocker and promote next gameplay causal error
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-4110/evidence"
+          mkdir -p "$E"
+          LOG="$E/playmode.log"
+          if [ ! -f "$LOG" ]; then
+            echo 'RUNTIME_AUDIT no_playmode_log=1' | tee "$E/load-skill-logo-runtime-audit.txt"
+            exit 1
+          fi
+          python3 - "$LOG" > "$E/load-skill-logo-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          p=Path(sys.argv[1])
+          lines=p.read_text(errors='replace').splitlines()
+          text='\n'.join(lines)
+          load_skill=len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text))
+          plant_detail=sum('FieldAccessException' in x and 'Plant:isOnField' in x and 'Plant_DetaiPage:Initialize' in x for x in lines)
+          projectile=len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text))
+          plant_ctor=len(re.findall(r'(?:InvalidProgramException|FieldAccessException).*Plant:\.ctor',text))
+          zero=text.count('zeroVector')
+          markers=[x for x in lines if x.startswith('STAGE9_STRICT_')]
+          print('LOAD_SKILL_LOGO_INVALID_IL_COUNT',load_skill)
+          print('PLANT_DETAIL_INITIALIZE_FIELDACCESS_COUNT',plant_detail)
+          print('PROJECTILE_CTOR_INVALID_IL_COUNT',projectile)
+          print('PLANT_CTOR_RUNTIME_ERROR_COUNT',plant_ctor)
+          print('ZEROVECTOR_TEXT_COUNT',zero)
+          print('STRICT_MARKER_COUNT',len(markers))
+          for m in markers: print(m)
+
+          pre_idx=next((i for i,x in enumerate(lines) if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')),None)
+          first=None
+          if pre_idx is not None:
+              for i in range(pre_idx+1,len(lines)):
+                  line=lines[i]
+                  if 'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo' in line: continue
+                  if 'FieldAccessException' in line and 'Plant:isOnField' in line and 'Plant_DetaiPage:Initialize' in line: continue
+                  if 'InvalidProgramException: Invalid IL code in Projectile:.ctor' in line: continue
+                  if 'Exception:' in line and not line.startswith('UnityEngine.'):
+                      first=i; break
+          if first is not None:
+              print('=== FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION ===')
+              for j in range(max(pre_idx or 0,first-4),min(len(lines),first+28)):
+                  print(f'{j+1}: {lines[j]}')
+          else:
+              print('FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION none')
+
+          assert load_skill==0, f'LoadSkillLogo InvalidProgram remains: {load_skill}'
+          assert plant_detail==0, f'Plant detail Initialize regression: {plant_detail}'
+          assert projectile==0, f'Projectile ctor regression: {projectile}'
+          assert plant_ctor==0, f'Plant ctor regression: {plant_ctor}'
+          assert zero==0, f'zeroVector regression/noise: {zero}'
+          assert any(x.startswith('STAGE9_STRICT_MAINMENU ') for x in markers)
+          assert 'STAGE9_STRICT_CREATE_INVOKE ok=1' in markers
+          assert any(x.startswith('STAGE9_STRICT_SAVE_READY ') for x in markers)
+          pre=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')]
+          assert pre and 'boardStart=0' in pre[-1] and 'board=0' in pre[-1] and 'boardManager=1' in pre[-1] and 'prepare=1' in pre[-1] and 'seedChooser=1' in pre[-1], pre
+          assert 'STAGE9_STRICT_GAMESTART_INVOKE ok=1' in markers
+          board=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD ')]
+          assert board and 'board=1' in board[-1] and 'activeBoard=1' in board[-1], board
+          print('LOAD_SKILL_LOGO_RUNTIME_GATE_PASS blocker_removed=1 previous_recoveries_preserved=1 corrected_board_lifecycle=1')
+          PY
+          cat "$E/load-skill-logo-runtime-audit.txt"
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-4110-LOAD-SKILL-LOGO-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-4110/evidence/
+          if-no-files-found: warn
+          retention-days: 90

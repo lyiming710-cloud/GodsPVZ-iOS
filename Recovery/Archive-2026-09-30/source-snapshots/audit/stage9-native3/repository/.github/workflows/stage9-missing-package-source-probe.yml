@@ -1,0 +1,133 @@
+name: Probe Stage9.1 missing package sources
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-missing-package-source-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Resolve exact pinned sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, subprocess, tempfile, urllib.request
+          from pathlib import Path
+
+          out=Path('stage9-missing-package-source-probe'); out.mkdir()
+          work=Path(tempfile.mkdtemp(prefix='stage9-missing-pkg-'))
+          result={'schema':1,'resolved':{},'failures':[]}
+
+          def clone_commit(repo,commit,dest):
+              subprocess.run(['git','init',str(dest)],check=True,stdout=subprocess.DEVNULL)
+              subprocess.run(['git','-C',str(dest),'remote','add','origin',repo],check=True)
+              subprocess.run(['git','-C',str(dest),'fetch','--depth=1','origin',commit],check=True)
+              got=subprocess.check_output(['git','-C',str(dest),'rev-parse','FETCH_HEAD'],text=True).strip()
+              if got!=commit: raise RuntimeError(f'commit mismatch {got} != {commit}')
+              subprocess.run(['git','-C',str(dest),'checkout','--detach','FETCH_HEAD'],check=True,stdout=subprocess.DEVNULL)
+
+          # 1. 2D Sprite 1.0.0 from the same pinned Unity project already used for 2D Animation 9.1.1.
+          try:
+              repo='https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git'
+              commit='9104e9a40be711441d25848120cc83604c21d0b7'
+              d=work/'anim-project'; clone_commit(repo,commit,d)
+              rel='Library/PackageCache/com.unity.2d.sprite@1.0.0'
+              root=d/rel
+              pj=json.loads((root/'package.json').read_text(encoding='utf-8'))
+              if pj.get('name')!='com.unity.2d.sprite' or pj.get('version')!='1.0.0': raise RuntimeError(f'identity mismatch {pj.get("name")}@{pj.get("version")}')
+              tree=subprocess.check_output(['git','-C',str(d),'rev-parse',f'HEAD:{rel}'],text=True).strip()
+              result['resolved']['com.unity.2d.sprite@1.0.0']={'repository':repo,'commit':commit,'subdir':rel,'tree_sha':tree,'dependencies':pj.get('dependencies') or {}}
+          except Exception as e:
+              result['failures'].append({'package':'com.unity.2d.sprite@1.0.0','error':str(e)})
+
+          # 2. Universal Config 14.0.10: known-compatible package embedded beside URP 14.0.11 in the pinned Sloane project.
+          try:
+              repo='https://github.com/SL0ANE/SloanePixelartURP.git'
+              commit='1738732ad202a4d79d575005d9b85c2f12876d8f'
+              d=work/'urp-project'; clone_commit(repo,commit,d)
+              rel='Packages/com.unity.render-pipelines.universal-config@14.0.10'
+              root=d/rel
+              pj=json.loads((root/'package.json').read_text(encoding='utf-8'))
+              if pj.get('name')!='com.unity.render-pipelines.universal-config' or pj.get('version')!='14.0.10': raise RuntimeError(f'identity mismatch {pj.get("name")}@{pj.get("version")}')
+              tree=subprocess.check_output(['git','-C',str(d),'rev-parse',f'HEAD:{rel}'],text=True).strip()
+              result['resolved']['com.unity.render-pipelines.universal-config@14.0.10']={'repository':repo,'commit':commit,'subdir':rel,'tree_sha':tree,'dependencies':pj.get('dependencies') or {},'compatibility_note':'same pinned project embeds URP 14.0.11 with universal-config 14.0.10'}
+          except Exception as e:
+              result['failures'].append({'package':'com.unity.render-pipelines.universal-config@14.0.10','error':str(e)})
+
+          # 3. ShaderGraph 14.0.11 from official Unity-Technologies/Graphics history.
+          def gh_json(url):
+              req=urllib.request.Request(url,headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+os.environ['GH_TOKEN'],'X-GitHub-Api-Version':'2022-11-28','User-Agent':'GodsPVZ-Stage9.1/1'})
+              with urllib.request.urlopen(req,timeout=60) as r: return json.loads(r.read().decode('utf-8'))
+          def gh_text(url):
+              req=urllib.request.Request(url,headers={'Accept':'application/vnd.github.raw+json','Authorization':'Bearer '+os.environ['GH_TOKEN'],'X-GitHub-Api-Version':'2022-11-28','User-Agent':'GodsPVZ-Stage9.1/1'})
+              with urllib.request.urlopen(req,timeout=60) as r: return r.read().decode('utf-8')
+          try:
+              owner_repo='Unity-Technologies/Graphics'
+              target='14.0.11'
+              found=None
+              scanned=0
+              for page in range(1,21):
+                  rows=gh_json(f'https://api.github.com/repos/{owner_repo}/commits?path=Packages/com.unity.shadergraph/package.json&per_page=100&page={page}')
+                  if not rows: break
+                  for row in rows:
+                      scanned += 1
+                      msg=(row.get('commit') or {}).get('message') or ''
+                      sha=row['sha']
+                      if target not in msg and 'shadergraph' not in msg.lower():
+                          continue
+                      try:
+                          pj=json.loads(gh_text(f'https://api.github.com/repos/{owner_repo}/contents/Packages/com.unity.shadergraph/package.json?ref={sha}'))
+                      except Exception:
+                          continue
+                      if pj.get('name')=='com.unity.shadergraph' and pj.get('version')==target:
+                          found=(sha,msg.splitlines()[0],pj); break
+                  if found: break
+              # Fallback: inspect package.json for all recent path commits until exact version is found.
+              if not found:
+                  for page in range(1,21):
+                      rows=gh_json(f'https://api.github.com/repos/{owner_repo}/commits?path=Packages/com.unity.shadergraph/package.json&per_page=100&page={page}')
+                      if not rows: break
+                      for row in rows:
+                          sha=row['sha']
+                          try:
+                              pj=json.loads(gh_text(f'https://api.github.com/repos/{owner_repo}/contents/Packages/com.unity.shadergraph/package.json?ref={sha}'))
+                          except Exception:
+                              continue
+                          if pj.get('name')=='com.unity.shadergraph' and pj.get('version')==target:
+                              found=(sha,((row.get('commit') or {}).get('message') or '').splitlines()[0],pj); break
+                      if found: break
+              if not found: raise RuntimeError(f'exact ShaderGraph {target} commit not found after {scanned} path commits')
+              sha,msg,pj=found
+              commit_obj=gh_json(f'https://api.github.com/repos/{owner_repo}/git/commits/{sha}')
+              root_tree=gh_json(commit_obj['tree']['url'])
+              packages_entry=next(x for x in root_tree['tree'] if x['path']=='Packages' and x['type']=='tree')
+              packages_tree=gh_json(packages_entry['url'])
+              sg_entry=next(x for x in packages_tree['tree'] if x['path']=='com.unity.shadergraph' and x['type']=='tree')
+              result['resolved']['com.unity.shadergraph@14.0.11']={'repository':'https://github.com/Unity-Technologies/Graphics.git','commit':sha,'subdir':'Packages/com.unity.shadergraph','tree_sha':sg_entry['sha'],'commit_subject':msg,'dependencies':pj.get('dependencies') or {}}
+          except Exception as e:
+              result['failures'].append({'package':'com.unity.shadergraph@14.0.11','error':str(e)})
+
+          (out/'RESULT.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          if result['failures'] or len(result['resolved'])!=3: raise SystemExit(41)
+          PY
+
+      - name: Upload source probe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-missing-package-source-probe
+          path: stage9-missing-package-source-probe/
+          if-no-files-found: error
+          retention-days: 90
+          include-hidden-files: true

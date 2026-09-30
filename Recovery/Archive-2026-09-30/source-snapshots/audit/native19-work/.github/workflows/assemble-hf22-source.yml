@@ -1,0 +1,48 @@
+name: Assemble HF22 source once
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - '.github/workflows/assemble-hf22-source.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: high-fidelity
+      - name: Assemble fixed HF22 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p Tools/HF22Patch
+          base64 -d .hf22-src/part00.b64 > /tmp/hf22-part00
+          base64 -d .hf22-src/part01.b64 > /tmp/hf22-part01
+          test "$(wc -c < /tmp/hf22-part00)" -eq 5000
+          test "$(wc -c < /tmp/hf22-part01)" -eq 5000
+          cat /tmp/hf22-part00 /tmp/hf22-part01 .hf22-src/part02 .hf22-src/part03 .hf22-src/part04 .hf22-src/part05 > Tools/HF22Patch/Program.cs
+          echo '9789186cfdd248d9c53ff7aac6518d41beee1179597750cf305617e900eab10e  Tools/HF22Patch/Program.cs' | sha256sum -c -
+          cat > Tools/HF22Patch/HF22Patch.csproj <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net10.0</TargetFramework>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <Nullable>enable</Nullable>
+              <AssemblyName>GodsPVZ.HF22Patch</AssemblyName>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="Mono.Cecil" Version="0.11.6" />
+            </ItemGroup>
+          </Project>
+          EOF
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Tools/HF22Patch
+          git commit -m 'Add HF22 damage dispatch patcher source'
+          git push origin HEAD:high-fidelity

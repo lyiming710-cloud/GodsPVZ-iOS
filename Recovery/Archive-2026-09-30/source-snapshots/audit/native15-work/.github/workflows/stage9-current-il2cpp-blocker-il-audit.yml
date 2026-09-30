@@ -1,0 +1,115 @@
+name: Stage9.1 current IL2CPP blocker IL audit
+
+on:
+  push:
+    branches: [stage9-local-audit-tools]
+    paths:
+      - '.github/workflows/stage9-current-il2cpp-blocker-il-audit.yml'
+      - 'Tools/Stage9MethodILDump/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CANDIDATE_RUN_ID: '36111677154'
+      CANDIDATE_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
+      CANDIDATE_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
+      FORMAL_RUN_ID: '35236211080'
+      FORMAL_ARTIFACT: 'Stage9.1-BGMVOLUME-STATIC-QUALIFIED'
+      FORMAL_SHA256: '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download strict-qualified 59bb candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.CANDIDATE_RUN_ID }}
+          name: ${{ env.CANDIDATE_ARTIFACT }}
+          path: ${{ runner.temp }}/stage9-il-audit/candidate
+
+      - name: Download formal runtime baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.FORMAL_RUN_ID }}
+          name: ${{ env.FORMAL_ARTIFACT }}
+          path: ${{ runner.temp }}/stage9-il-audit/formal
+
+      - name: Lock exact assembly inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-il-audit"
+          C="$OUT/candidate/Assembly-CSharp-all24-orphan-clean.dll"
+          F="$OUT/formal/GodsPVZRuntime1-bgmvolume.dll"
+          test -f "$C"
+          test -f "$F"
+          C_SHA="$(sha256sum "$C" | awk '{print $1}')"
+          F_SHA="$(sha256sum "$F" | awk '{print $1}')"
+          [ "$C_SHA" = "$CANDIDATE_SHA256" ] || exit 41
+          [ "$F_SHA" = "$FORMAL_SHA256" ] || exit 42
+          printf 'candidate=%s\nformal=%s\n' "$C" "$F" > "$OUT/paths.env"
+          printf 'candidate_run=%s\ncandidate_sha256=%s\nformal_run=%s\nformal_sha256=%s\nproduction_modified=false\nwrite_status=AUDIT_ONLY\n' \
+            "$CANDIDATE_RUN_ID" "$C_SHA" "$FORMAL_RUN_ID" "$F_SHA" > "$OUT/input-locks.txt"
+
+      - name: Pin .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build read-only Cecil dumper
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK="$(dotnet --list-sdks | awk '/^8\./{v=$1} END{print v}')"
+          test -n "$SDK"
+          printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK" > global.json
+          dotnet --version
+          dotnet restore Tools/Stage9MethodILDump/Stage9MethodILDump.csproj
+          dotnet build -c Release --no-restore Tools/Stage9MethodILDump/Stage9MethodILDump.csproj
+
+      - name: Dump blocker methods from formal and 59bb
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-il-audit"
+          C="$OUT/candidate/Assembly-CSharp-all24-orphan-clean.dll"
+          F="$OUT/formal/GodsPVZRuntime1-bgmvolume.dll"
+          LOG="$OUT/current-il2cpp-blockers-il.txt"
+          dotnet Tools/Stage9MethodILDump/bin/Release/net8.0/GodsPVZ.Stage9MethodILDump.dll "$F" "$C" | tee "$LOG"
+          grep -q '^STAGE9_METHOD_IL_DUMP_OK$' "$LOG"
+          grep -q 'full=Plant MouseManager::GetPlantUnderMouse()' "$LOG"
+          grep -q 'full=System.Void DeviceManager::Start_BoardEntry()' "$LOG"
+
+      - name: Print focused comparison summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-il-audit"
+          LOG="$OUT/current-il2cpp-blockers-il.txt"
+          echo '=== METHOD HEADERS / LOCALS / MEMBERREFS ==='
+          grep -E '^(ASSEMBLY|TARGET|METHOD token=|BODY |LOCAL |EH |METHODREF |FIELDREF |STAGE9_)' "$LOG" || true
+          echo '=== BOARDENTRY ENUMERATOR REFERENCES ==='
+          grep -nEi -C 6 'BoardEntry|Enumerator|GetEnumerator|get_Current' "$LOG" || true
+          echo '=== VECTOR3 / MOUSE METHOD CONTEXT ==='
+          grep -nEi -C 6 'GetPlantUnderMouse|Vector3|op_Equality|op_Inequality|ceq|brtrue|brfalse' "$LOG" || true
+
+      - name: Upload IL audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-current-IL2CPP-blocker-IL-audit
+          path: |
+            ${{ runner.temp }}/stage9-il-audit/current-il2cpp-blockers-il.txt
+            ${{ runner.temp }}/stage9-il-audit/input-locks.txt
+          if-no-files-found: warn
+          retention-days: 30

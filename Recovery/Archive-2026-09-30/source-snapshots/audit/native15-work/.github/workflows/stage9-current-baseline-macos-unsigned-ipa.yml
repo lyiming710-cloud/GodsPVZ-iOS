@@ -1,0 +1,215 @@
+name: Stage9.1 CURRENT BASELINE macOS UNSIGNED IPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      export_run_id:
+        description: Successful Stage9.1 CURRENT BASELINE iOS XCODE EXPORT run ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  compile:
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      EXPORT_RUN_ID: ${{ inputs.export_run_id }}
+      EXPECTED_BUNDLE_ID: com.tipsGodsStudio.godsPVZ
+      EXPECTED_MIN_IOS: '12.0'
+
+    steps:
+      - name: Prepare macOS compile workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-macos-compile"
+          mkdir -p "$OUT/evidence" "$OUT/input" "$OUT/work"
+          xcodebuild -version | tee "$OUT/evidence/xcode-version.txt"
+          sw_vers | tee "$OUT/evidence/macos-version.txt"
+          uname -a | tee "$OUT/evidence/uname.txt"
+          printf 'export_run_id=%s\n' "$EXPORT_RUN_ID" > "$OUT/evidence/input-lock.txt"
+
+      - name: Download validated unsigned Xcode export
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EXPORT_RUN_ID }}
+          name: GodsPVZ-Stage9.1-unsigned-Xcode
+          path: ${{ runner.temp }}/stage9-macos-compile/input
+
+      - name: Extract and inventory Xcode project
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-macos-compile"
+          E="$OUT/evidence"
+          ARCHIVE="$OUT/input/GodsPVZ-Stage9.1-unsigned-Xcode.tar.zst"
+          test -f "$ARCHIVE"
+          shasum -a 256 "$ARCHIVE" > "$E/input-xcode-archive.sha256"
+          command -v zstd >/dev/null 2>&1 || brew install zstd
+          zstd -t "$ARCHIVE" 2> "$E/input-xcode-zstd-test.txt"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$OUT/work"
+          XCODE="$OUT/work/xcode"
+          test -d "$XCODE"
+          PROJECT="$XCODE/Unity-iPhone.xcodeproj"
+          test -d "$PROJECT"
+          printf '%s\n' "$XCODE" > "$OUT/xcode-path.txt"
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          find "$XCODE" -maxdepth 3 -type f | sort > "$E/input-xcode-inventory.txt"
+          du -sh "$XCODE" | tee "$E/input-xcode-du.txt"
+          rm -rf "$OUT/input"
+
+      - name: Discover actual Xcode build entrypoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-macos-compile"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          xcodebuild -project "$PROJECT" -list -json > "$E/xcodebuild-list.json"
+          python3 - "$E/xcodebuild-list.json" "$OUT/build-entry.txt" <<'PY'
+          import json,sys
+          src,out=sys.argv[1:]
+          d=json.load(open(src))
+          p=d.get('project') or {}
+          schemes=list(p.get('schemes') or [])
+          targets=list(p.get('targets') or [])
+          if 'Unity-iPhone' in schemes:
+              mode,name='scheme','Unity-iPhone'
+          elif schemes:
+              mode,name='scheme',schemes[0]
+          elif 'Unity-iPhone' in targets:
+              mode,name='target','Unity-iPhone'
+          elif targets:
+              mode,name='target',targets[0]
+          else:
+              raise SystemExit('No Xcode scheme or target discovered')
+          open(out,'w').write(mode+'\t'+name+'\n')
+          print('BUILD_ENTRY',mode,name)
+          PY
+          cat "$OUT/build-entry.txt" | tee "$E/build-entry.txt"
+
+      - name: Compile Release iphoneos without signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-macos-compile"
+          E="$OUT/evidence"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          DERIVED="$OUT/DerivedData"
+          IFS=$'\t' read -r MODE NAME < "$OUT/build-entry.txt"
+          ENTRY_ARGS=()
+          if [ "$MODE" = scheme ]; then
+            ENTRY_ARGS=(-scheme "$NAME" -destination 'generic/platform=iOS')
+          else
+            ENTRY_ARGS=(-target "$NAME")
+          fi
+          set +e
+          xcodebuild \
+            -project "$PROJECT" \
+            "${ENTRY_ARGS[@]}" \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath "$DERIVED" \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' \
+            DEVELOPMENT_TEAM='' \
+            build 2>&1 | tee "$E/xcodebuild-release.log"
+          RC=${PIPESTATUS[0]}
+          set -e
+          echo "$RC" > "$E/xcodebuild-exit.txt"
+          [ "$RC" -eq 0 ] || exit 61
+          grep -q '\*\* BUILD SUCCEEDED \*\*' "$E/xcodebuild-release.log" || exit 62
+          printf '%s\n' "$DERIVED" > "$OUT/derived-path.txt"
+
+      - name: Audit compiled app and create unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-macos-compile"
+          E="$OUT/evidence"
+          DERIVED="$(cat "$OUT/derived-path.txt")"
+          PRODUCTS="$DERIVED/Build/Products/Release-iphoneos"
+          test -d "$PRODUCTS"
+          find "$PRODUCTS" -maxdepth 1 -type d -name '*.app' | sort > "$E/app-candidates.txt"
+          test -s "$E/app-candidates.txt" || exit 63
+          APP=""
+          while IFS= read -r a; do
+            if [ -f "$a/Info.plist" ]; then
+              bid="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$a/Info.plist" 2>/dev/null || true)"
+              if [ "$bid" = "$EXPECTED_BUNDLE_ID" ]; then
+                APP="$a"
+                break
+              fi
+            fi
+          done < "$E/app-candidates.txt"
+          if [ -z "$APP" ]; then APP="$(head -n 1 "$E/app-candidates.txt")"; fi
+          test -n "$APP"
+          INFO="$APP/Info.plist"
+          test -f "$INFO"
+          BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO")"
+          EXECUTABLE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO")"
+          MIN_OS="$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO" 2>/dev/null || true)"
+          echo "$BUNDLE_ID" > "$E/app-bundle-id.txt"
+          echo "$EXECUTABLE" > "$E/app-executable.txt"
+          echo "$MIN_OS" > "$E/app-minimum-os.txt"
+          [ "$BUNDLE_ID" = "$EXPECTED_BUNDLE_ID" ] || exit 64
+          test -f "$APP/$EXECUTABLE"
+          file "$APP/$EXECUTABLE" | tee "$E/app-executable-file.txt"
+          lipo -info "$APP/$EXECUTABLE" 2>&1 | tee "$E/app-executable-lipo.txt"
+          grep -qi 'arm64' "$E/app-executable-lipo.txt" || exit 65
+          if [ -d "$APP/_CodeSignature" ]; then
+            echo 'signature_directory=present' > "$E/signing-state.txt"
+            codesign -dvv "$APP" > "$E/codesign-detail.txt" 2>&1 || true
+          else
+            echo 'signature_directory=absent' > "$E/signing-state.txt"
+          fi
+
+          PAYLOAD_ROOT="$OUT/ipa-root"
+          mkdir -p "$PAYLOAD_ROOT/Payload"
+          ditto "$APP" "$PAYLOAD_ROOT/Payload/$(basename "$APP")"
+          IPA="$OUT/GodsPVZ-Stage9.1-unsigned.ipa"
+          (cd "$PAYLOAD_ROOT" && /usr/bin/zip -qry "$IPA" Payload)
+          test -s "$IPA"
+          shasum -a 256 "$IPA" > "$E/unsigned-ipa.sha256"
+          stat -f '%z' "$IPA" > "$E/unsigned-ipa-size.txt"
+          find "$APP" -type f | sort > "$E/app-inventory.txt"
+          du -sh "$APP" | tee "$E/app-du.txt"
+          {
+            echo 'MACOS_XCODE_COMPILE=PASS'
+            echo 'SIGNING=DISABLED'
+            echo "export_run_id=$EXPORT_RUN_ID"
+            echo "bundle_id=$BUNDLE_ID"
+            echo "minimum_os=$MIN_OS"
+            echo "executable=$EXECUTABLE"
+            echo "app=$(basename "$APP")"
+          } | tee "$E/RESULT.txt"
+
+      - name: Upload macOS compile evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-CURRENT-BASELINE-MACOS-COMPILE-EVIDENCE
+          path: ${{ runner.temp }}/stage9-macos-compile/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Upload unsigned IPA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9.1-unsigned-IPA
+          path: ${{ runner.temp }}/stage9-macos-compile/GodsPVZ-Stage9.1-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

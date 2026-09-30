@@ -1,0 +1,295 @@
+name: Stage9.1 R3 HF56 integrated PlayMode gate
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-r3-playmode-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  r3-hf56-playmode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Prepare formal R3
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"
+          mkdir -p "$OUT/parts" "$OUT/r3" "$E"
+          [ -n "${UNITY_EMAIL:-}" ] && [ -n "${UNITY_PASSWORD:-}" ] || exit 61
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325
+          EOF
+          while IFS=$'\t' read -r idx fid sha; do
+            f="$OUT/parts/r3.$idx.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            [ "$(sha256sum "$f" | awk '{print $1}')" = "$sha" ] || exit 62
+          done < "$OUT/parts.tsv"
+          cat "$OUT/parts"/*.part > "$OUT/r3.tar.zst"
+          [ "$(stat -c%s "$OUT/r3.tar.zst")" = 786765618 ] || exit 63
+          [ "$(sha256sum "$OUT/r3.tar.zst" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 64
+          zstd -t "$OUT/r3.tar.zst"
+          zstd -dc "$OUT/r3.tar.zst" | tar -xf - -C "$OUT/r3"
+          rm -rf "$OUT/parts" "$OUT/r3.tar.zst"
+          PROJECT="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          DLL="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"; META="$DLL.meta"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 65
+          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$META" || exit 66
+          grep -q '^  isExplicitlyReferenced: 1$' "$META" || exit 67
+          grep -q '^  isPreloaded: 0$' "$META" || exit 68
+          echo "$PROJECT" > "$OUT/project.txt"
+          printf 'r3_sha256=%s\nhf55_sha256=%s\n' \
+            'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' \
+            'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' > "$E/input-gate.txt"
+
+      - name: Download HF56 patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34689491315
+          pattern: GodsPVZ-HF56Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf56/hf56-patcher
+
+      - name: Apply formal HF56 and integration fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"
+          OLD="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"; OLDMETA="$OLD.meta"
+          CAND="$OUT/Assembly-CSharp-HF56.dll"
+          P="$(find "$OUT/hf56-patcher" -type f -name 'GodsPVZ.HF56Patch' | head -1)"
+          [ -n "$P" ]; chmod +x "$P"
+          "$P" "$OLD" "$CAND" | tee "$E/hf56-patcher.log"
+          [ "$(sha256sum "$CAND" | awk '{print $1}')" = '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' ] || exit 71
+          cp "$CAND" "$OLD"
+          python3 - "$OLD" "$E/integration-binary-diff.txt" <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          p=Path(sys.argv[1]); out=Path(sys.argv[2]); b=bytearray(p.read_bytes())
+          assert hashlib.sha256(b).hexdigest()=='2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0'
+          lines=[]
+          for o in [0x9f3d6,0x9f3e3,0x9f3f1,0x9f3ff,0x9f412,0x9f41c,0x9f446]:
+              assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000')
+              b[o+1]=0x0d
+              lines.append(f'{o:#x}: fe0c0000 -> fe0d0000')
+          for o,old,new in [(0xde421,b'Assembly-CSharp.dll',b'GodsPVZRuntime1.dll'),(0xe0110,b'Assembly-CSharp',b'GodsPVZRuntime1')]:
+              assert len(old)==len(new)
+              assert bytes(b[o:o+len(old)])==old
+              b[o:o+len(old)]=new
+              lines.append(f'{o:#x}: {old.decode()} -> {new.decode()}')
+          p.write_bytes(b)
+          got=hashlib.sha256(b).hexdigest()
+          assert got=='50ac9e9bbcaef7580bde7959b70cafc1b33515cbe199ce99b14696bb64c549f8'
+          out.write_text('\n'.join(lines)+f'\nintegrated_sha256={got}\n')
+          PY
+          sed -i 's/^  isPreloaded: 0$/  isPreloaded: 1/' "$OLDMETA"
+          NEW="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"; NEWMETA="$NEW.meta"
+          mv "$OLD" "$NEW"; mv "$OLDMETA" "$NEWMETA"
+          [ "$(sha256sum "$NEW" | awk '{print $1}')" = '50ac9e9bbcaef7580bde7959b70cafc1b33515cbe199ce99b14696bb64c549f8' ] || exit 72
+          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$NEWMETA" || exit 73
+          grep -q '^  isExplicitlyReferenced: 1$' "$NEWMETA" || exit 74
+          grep -q '^  isPreloaded: 1$' "$NEWMETA" || exit 75
+          printf 'hf56_sha256=%s\nintegrated_sha256=%s\nguid=%s\n' \
+            '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' \
+            '50ac9e9bbcaef7580bde7959b70cafc1b33515cbe199ce99b14696bb64c549f8' \
+            '60b84a767c46ced9aacc93f38da4d2f3' >> "$E/input-gate.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf56/editor-parts
+
+      - name: Reconstruct exact Editor and activate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
+          mkdir -p "$D"
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
+          (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
+          U="$D/Editor/Unity"; chmod +x "$U"
+          "$U" -version > "$E/unity-version.txt" 2>&1
+          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 82
+          echo "$U" > "$OUT/unity.txt"
+          C="$D/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          set +e
+          "$C" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$OUT/activate.log" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/activation-exit.txt"
+          [ "$RC" = 0 ] || exit 83
+          echo ACQUIRED > "$OUT/seat.flag"
+
+      - name: First import HF56 integrated candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/first-import.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in UnitySourceGeneratedAssemblyMonoScriptTypes_v1:Get' "$E/first-import.log"
+          ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/first-import.log"
+
+      - name: Verify HF56 MonoScript binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          D="$PROJECT/Assets/Stage9HF56Diag/Editor"; mkdir -p "$D"
+          cat > "$D/Stage9HF56Binding.cs" <<'EOF'
+          using System;
+          using System.Collections.Generic;
+          using System.IO;
+          using System.Linq;
+          using UnityEditor;
+          using UnityEngine;
+          public static class Stage9HF56Binding {
+            public static void Run() {
+              const string path="Assets/Plugins/GodsPVZRuntime1.dll";
+              var a=AssetDatabase.LoadAllAssetsAtPath(path);
+              var l=new List<string>(); int mono=0,res=0;
+              foreach(var ms in a.OfType<MonoScript>()) {
+                mono++; var t=ms.GetClass(); if(t!=null)res++;
+                if(ms.name=="GameStart"||ms.name=="BoardStart") {
+                  AssetDatabase.TryGetGUIDAndLocalFileIdentifier(ms,out string g,out long id);
+                  l.Add($"BOOT {ms.name} guid={g} fileID={id} getClass={(t==null?"<null>":t.AssemblyQualifiedName)}");
+                }
+              }
+              l.Add($"SUMMARY total={a.Length} monoscripts={mono} resolved={res}");
+              File.WriteAllLines(Environment.GetEnvironmentVariable("STAGE9_DIAG_PATH"),l);
+              Debug.Log("STAGE9_HF56_BINDING "+l.Last());
+            }
+          }
+          EOF
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/diag-compile.log"
+          STAGE9_DIAG_PATH="$E/hf56-binding.txt" "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod Stage9HF56Binding.Run -logFile "$E/hf56-binding.log"
+          cat "$E/hf56-binding.txt"
+          grep -q 'SUMMARY .*monoscripts=148 resolved=148' "$E/hf56-binding.txt" || exit 91
+          grep -q 'BOOT GameStart guid=60b84a767c46ced9aacc93f38da4d2f3 fileID=2065901034 getClass=GameStart, GodsPVZRuntime1' "$E/hf56-binding.txt" || exit 92
+          grep -q 'BOOT BoardStart guid=60b84a767c46ced9aacc93f38da4d2f3 fileID=1176281179 getClass=BoardStart, GodsPVZRuntime1' "$E/hf56-binding.txt" || exit 93
+
+      - name: Install focused PlayMode tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; PROJECT="$(cat "$OUT/project.txt")"; T="$PROJECT/Assets/Stage9PlayModeSmoke"
+          mkdir -p "$T"
+          cat > "$T/Stage9.PlayModeSmoke.asmdef" <<'EOF'
+          {"name":"Stage9.PlayModeSmoke.Tests","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
+          EOF
+          cat > "$T/Stage9PlayModeSmoke.cs" <<'EOF'
+          using System.Collections;
+          using NUnit.Framework;
+          using UnityEngine;
+          using UnityEngine.SceneManagement;
+          using UnityEngine.TestTools;
+          public class Stage9PlayModeSmoke {
+            static void Walk(GameObject g,string starter,ref int gos,ref int missing,ref int starters) {
+              gos++;
+              foreach(var c in g.GetComponents<Component>()) {
+                if(c==null){missing++;continue;}
+                if(c.GetType().Name==starter)starters++;
+              }
+              foreach(Transform ch in g.transform) Walk(ch.gameObject,starter,ref gos,ref missing,ref starters);
+            }
+            static IEnumerator Probe(string scene,string starter) {
+              LogAssert.ignoreFailingMessages=true;
+              var op=SceneManager.LoadSceneAsync(scene,LoadSceneMode.Single);
+              Assert.IsNotNull(op);
+              while(!op.isDone) yield return null;
+              yield return new WaitForSecondsRealtime(2f);
+              for(int i=0;i<20;i++) yield return null;
+              var a=SceneManager.GetActiveScene();
+              int gos=0,missing=0,starters=0;
+              foreach(var r in a.GetRootGameObjects()) Walk(r,starter,ref gos,ref missing,ref starters);
+              Debug.Log($"STAGE9_HF56_MARKER scene={scene} gos={gos} missing={missing} starters={starters}");
+              Assert.Greater(gos,3,$"{scene} did not expand beyond bootstrap scene");
+              Assert.AreEqual(0,missing,$"{scene} has missing component slots");
+            }
+            [UnityTest] public IEnumerator MainMenuRuntimeBoot() { yield return Probe("MainMenu","GameStart"); }
+            [UnityTest] public IEnumerator BoardRuntimeBoot() { yield return Probe("Board","BoardStart"); }
+          }
+          EOF
+          U="$(cat "$OUT/unity.txt")"
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$OUT/evidence/test-compile.log"
+          ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$OUT/evidence/test-compile.log"
+
+      - name: Run focused PlayMode HF56
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          set +e
+          timeout 300 "$U" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode \
+            -assemblyNames Stage9.PlayModeSmoke.Tests -testResults "$E/playmode-results.xml" -logFile "$E/playmode.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/playmode-exit.txt"
+          grep 'STAGE9_HF56_MARKER' "$E/playmode.log" > "$E/playmode-markers.txt" || true
+          cat "$E/playmode-markers.txt" || true
+          if [ -f "$E/playmode-results.xml" ]; then
+            python3 - "$E/playmode-results.xml" "$E/playmode-summary.txt" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          p=sys.argv[1]; out=sys.argv[2]; r=ET.parse(p).getroot()
+          attrs={k:r.attrib.get(k,'') for k in ('total','passed','failed','skipped','inconclusive','result')}
+          open(out,'w').write('\n'.join(f'{k}={v}' for k,v in attrs.items())+'\n')
+          print(attrs)
+          PY
+          fi
+          [ "$RC" = 0 ] || exit "$RC"
+          grep -q 'scene=MainMenu .*missing=0' "$E/playmode-markers.txt" || exit 101
+          grep -q 'scene=Board .*missing=0' "$E/playmode-markers.txt" || exit 102
+          ! grep -q 'InvalidProgramException.*GameStart.Start' "$E/playmode.log" || exit 103
+          ! grep -q 'InvalidProgramException.*BoardStart.Awake' "$E/playmode.log" || exit 104
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf56"; E="$OUT/evidence"
+          if [ -f "$OUT/seat.flag" ] && [ -f "$OUT/unity.txt" ]; then
+            C="$(dirname "$(cat "$OUT/unity.txt")")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$C" --deactivate-all > "$E/license-deactivate.log" 2>&1
+            RC=$?
+            echo "$RC" > "$E/license-deactivate-exit.txt"
+            set -e
+          fi
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-R3-HF56-INTEGRATED-PLAYMODE-evidence
+          path: ${{ runner.temp }}/stage9-hf56/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true

@@ -1,0 +1,96 @@
+name: Stage9.1 5a1b LoadSkillLogo native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-5a1b-loadskilllogo-native-gate.yml'
+      - 'Tools/Stage9LoadSkillLogoPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  loadskilllogo-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 5a1b input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34749244928
+          pattern: Stage9.1-0112-PLANTDETAIL-SERIALIZEFIELD
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-loadskill/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-loadskill/ilspy
+      - name: Apply PC-native-backed LoadSkillLogo repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-loadskill"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-plantdetail-serializefield.dll"
+          DLL="$OUT/GodsPVZRuntime1-loadskilllogo.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = '5a1b4e0554fa0163283a477efb606685588012397c39d877ea2179a4de07fcca' ] || exit 61
+          dotnet build Tools/Stage9LoadSkillLogoPatch/Stage9LoadSkillLogoPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9LoadSkillLogoPatch/Stage9LoadSkillLogoPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 5a1b4e0554fa0163283a477efb606685588012397c39d877ea2179a4de07fcca$' "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x0600021E ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x0600021E address=0x00000001803339E0 function_end=0x0000000180333DA1 ' "$E/patch.log"
+          grep -q '^PATCH_LOADSKILLLOGO .*private_list_fields=0 malformed_list_object_refs=0$' "$E/patch.log"
+          grep -q '^REOPEN_LOADSKILLLOGO_PASS .*get_item_return=!0 add_signature=!0 set_item_signature=!0 private_list_fields=0 malformed_list_object_refs=0 token=0x0600021E$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9LoadSkillLogoPatch/Evidence.md "$E/native-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-loadskill"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-loadskilllogo.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t ResourceManager "$DLL" > "$E/ResourceManager.cs" 2> "$E/ResourceManager.stderr"; test ! -s "$E/ResourceManager.stderr"
+          "$ILSPY" -il -t ResourceManager "$DLL" > "$E/ResourceManager.il" 2> "$E/ResourceManager-il.stderr"; test ! -s "$E/ResourceManager-il.stderr"
+          python3 - "$E/ResourceManager.cs" "$E/ResourceManager.il" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text()
+          il=Path(sys.argv[2]).read_text()
+          a=cs.index('public static Sprite LoadSkillLogo')
+          b=cs.index('public static bool LoadFile_Json',a)
+          m=cs[a:b]
+          for bad in ('._size','._version','._items','AddWithResize','List<object>'):
+              assert bad not in m, (bad,m)
+          assert m.count('skillLogos.Count') >= 2, m
+          assert 'skillLogos.Add(null)' in m, m
+          assert 'skillLogos[id] =' in m, m
+          assert 'InternalResourceLoader.Load<Sprite>' in m, m
+          ia=il.index('LoadSkillLogo (')
+          ib=il.index('LoadFile_Json<T>',ia)
+          mi=il[ia:ib]
+          assert mi.count('::get_Count()') == 2, mi
+          assert mi.count('::get_Item(int32)') == 2, mi
+          assert '::Add(!0)' in mi, mi
+          assert '::set_Item(int32, !0)' in mi, mi
+          for bad in ('::_size','::_version','::_items','AddWithResize','List`1<object>'):
+              assert bad not in mi, (bad,mi)
+          print('ILSPY_LOADSKILLLOGO_PASS count_calls=2 get_item_calls=2 get_item_return=!0 add_signature=!0 set_item_signature=!0 private_list_fields=0 malformed_list_object_refs=0')
+          PY
+      - name: Upload evidence and candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-5A1B-LOADSKILLLOGO
+          path: ${{ runner.temp }}/stage9-loadskill/evidence/
+          if-no-files-found: error
+          retention-days: 90

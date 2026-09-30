@@ -1,0 +1,108 @@
+name: Stage9 Administrator.Start indexed static qualify
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-admin-start-indexed-static.yml'
+      - 'Tools/Stage9AdministratorStartIndexedPatch/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_RUN_ID: '35190758891'
+      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-START-INPLACE-STATIC-QUALIFIED
+      EXPECTED_INPUT_SHA: f3d980abb6a7678bf3ac04587ec857f88d488a9c136d991323562beda943f3a2
+      BASELINE_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact metadata-preserving Start candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/indexed/input
+
+      - name: Lock input and patch foreach to indexed loop
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/indexed/input" -type f -name 'GodsPVZRuntime1-administrator-start-inplace.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN" | awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          mkdir -p "$RUNNER_TEMP/indexed/evidence"
+          OUT="$RUNNER_TEMP/indexed/GodsPVZRuntime1-administrator-start-indexed.dll"
+          python3 Tools/Stage9AdministratorStartIndexedPatch/patch.py "$IN" "$OUT" | tee "$RUNNER_TEMP/indexed/evidence/indexed-patch-audit.txt"
+          test -s "$OUT"
+          SHA=$(sha256sum "$OUT" | awk '{print $1}')
+          grep -Fx "OUTPUT_SHA256 $SHA" "$RUNNER_TEMP/indexed/evidence/indexed-patch-audit.txt"
+          echo "INDEXED_OUTPUT=$OUT" >> "$GITHUB_ENV"
+          echo "INDEXED_OUTPUT_SHA=$SHA" >> "$GITHUB_ENV"
+          printf 'SOURCE_INPUT_SHA256 %s\nBASELINE_ANCESTOR_SHA256 %s\nOUTPUT_SHA256 %s\n' "$EXPECTED_INPUT_SHA" "$BASELINE_SHA" "$SHA" | tee "$RUNNER_TEMP/indexed/evidence/output.sha256.txt"
+
+      - name: Read-only Cecil reopen gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/indexed/verifier"
+          cat > "$RUNNER_TEMP/indexed/verifier/verifier.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+            <ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup>
+          </Project>
+          EOF
+          cat > "$RUNNER_TEMP/indexed/verifier/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> AllTypes(IEnumerable<TypeDefinition> ts){foreach(var t in ts){yield return t;foreach(var n in AllTypes(t.NestedTypes))yield return n;}}
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          using var m=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var start=AllTypes(m.Types).SelectMany(t=>t.Methods).Single(x=>Raw(x)==0x06000004);
+          if(start.DeclaringType.FullName!="Administrator"||start.Name!="Start"||!start.HasBody) throw new Exception("target identity drift");
+          if(start.Body.Variables.Count!=1||start.Body.Variables[0].VariableType.FullName!="System.Int32") throw new Exception("local shape drift");
+          if(start.Body.ExceptionHandlers.Count!=1||start.Body.ExceptionHandlers[0].HandlerType!=ExceptionHandlerType.Finally) throw new Exception("EH shape drift");
+          if(start.Body.Instructions.Any(i=>i.Operand is VariableDefinition v&&v.Index!=0)) throw new Exception("unexpected local reference");
+          var refs=start.Body.Instructions.Where(i=>i.Operand is MethodReference).Select(i=>(i,(MethodReference)i.Operand)).ToList();
+          var bad=refs.Where(x=>x.Item2.DeclaringType.FullName.Contains("List`1/Enumerator<UnityEngine.GameObject>")||
+                                     (x.Item2.DeclaringType.FullName=="System.Collections.Generic.List`1<UnityEngine.GameObject>"&&x.Item2.Name=="GetEnumerator")).ToList();
+          if(bad.Count!=0) throw new Exception("GameObject enumerator ref remains");
+          var count=refs.Count(x=>Raw(x.Item2)==0x0A0001EB&&x.Item2.Name=="get_Count");
+          var item=refs.Count(x=>Raw(x.Item2)==0x0A0001EC&&x.Item2.Name=="get_Item");
+          if(count!=1||item!=5) throw new Exception($"indexed refs drift count={count} item={item}");
+          if(start.Body.Instructions.Any(i=>i.OpCode.Code is Code.Calli or Code.Localloc or Code.Cpblk or Code.Initblk)) throw new Exception("unmanaged opcode pollution");
+          Console.WriteLine($"READONLY_REOPEN_INDEXED_START_PASS token=0x{Raw(start):X8} code_size={start.Body.CodeSize} instructions={start.Body.Instructions.Count} locals={start.Body.Variables.Count} handlers={start.Body.ExceptionHandlers.Count} get_count={count} get_item={item} enumerator_refs={bad.Count}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/indexed/verifier/verifier.csproj" -- "$INDEXED_OUTPUT" | tee "$RUNNER_TEMP/indexed/evidence/reopen-audit.txt"
+
+      - name: Enforce indexed static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="$RUNNER_TEMP/indexed/evidence/indexed-patch-audit.txt"
+          R="$RUNNER_TEMP/indexed/evidence/reopen-audit.txt"
+          grep -F 'ADMINISTRATOR_START_INDEXED_PATCH_PASS' "$P"
+          grep -F 'INDEXED_LOOP_GATE_PASS local_sig=0x11000114 get_count=0x0A0001EB get_item=0x0A0001EC enumerator_refs=0 empty_finally=1' "$P"
+          grep -F 'METADATA_DIRECTORY_UNCHANGED_PASS' "$P"
+          grep -F 'PORTABILITY_DEVIATION native_foreach=1 managed_indexed_loop=1' "$P"
+          grep -F 'READONLY_REOPEN_INDEXED_START_PASS token=0x06000004' "$R"
+          printf 'STATIC_QUALIFIED=1\nbaseline_ancestor_sha256=%s\nsource_candidate_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\nwrite_mode=inplace-byte-patch\nmetadata_directory_unchanged=1\nlocal_signature=0x11000114\nlist_gameobject_get_count=0x0A0001EB\nlist_gameobject_get_item=0x0A0001EC\nlist_gameobject_enumerator_refs=0\nportability_deviation=indexed-loop-for-malformed-recovered-enumerator\n' "$BASELINE_SHA" "$EXPECTED_INPUT_SHA" "$INDEXED_OUTPUT_SHA" | tee "$RUNNER_TEMP/indexed/evidence/static-qualified.txt"
+
+      - name: Upload indexed metadata-preserving candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-INDEXED-STATIC-QUALIFIED
+          path: |
+            ${{ runner.temp }}/indexed/GodsPVZRuntime1-administrator-start-indexed.dll
+            ${{ runner.temp }}/indexed/evidence/
+          retention-days: 90
+          if-no-files-found: error

@@ -1,0 +1,52 @@
+name: Stage9.1 a005 BGMUnPasue managed evidence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-a005-bgmunpause-managed.yml'
+      - 'Tools/Stage9MethodProbe/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified a005 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34863937932
+          name: Stage9.1-18B4-BOARD-GAMECONTINUE-QUALIFIED
+          path: ${{ runner.temp }}/candidate
+      - name: Build probe and capture BGM blocker family
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/evidence"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-board-gamecontinue.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = 'a005d602d20814c5917d6f36ac7d85ee3013615aea54019ac417f5c84aed3b28'
+          dotnet build Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release --nologo
+          dotnet Tools/Stage9MethodProbe/bin/Release/net10.0/Stage9MethodProbe.dll \
+            "$DLL" \
+            'ZombieManager::BGMUnPasue' \
+            'ZombieManager::BGMPasue' \
+            'Zombie::BGMUnPasue' \
+            'Zombie::BGMPasue' \
+            > "$O/managed-fingerprint.txt"
+          echo 'RUNTIME_CAUSE Board.GameContinue -> ZombieManager.BGMUnPasue InvalidProgramException IL_0019 ceq' > "$O/runtime-cause.txt"
+          cat "$O/managed-fingerprint.txt"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-A005-BGMUNPAUSE-MANAGED
+          path: ${{ runner.temp }}/evidence/
+          retention-days: 90

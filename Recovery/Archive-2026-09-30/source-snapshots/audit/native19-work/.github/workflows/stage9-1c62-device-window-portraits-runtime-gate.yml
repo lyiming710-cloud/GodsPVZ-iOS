@@ -1,0 +1,69 @@
+name: Stage9.1 1c62 DeviceWindowPortraits MainMenu save Board runtime gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c62-device-window-portraits-runtime-gate.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  mainmenu-save-board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-1c62/r3-cache
+      - name: Download validated DeviceWindowPortraits candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-1c62/candidate
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-1c62/editor-parts
+      - name: Run exact R3 strict Board gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9RuntimeGate/run-strict-board.sh \
+            "$RUNNER_TEMP/stage9-1c62" \
+            "$RUNNER_TEMP/stage9-1c62/candidate/GodsPVZRuntime1-device-window-portraits.dll" \
+            "1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209"
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1C62-DEVICE-WINDOW-PORTRAITS-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-1c62/evidence/
+          if-no-files-found: warn
+          retention-days: 90

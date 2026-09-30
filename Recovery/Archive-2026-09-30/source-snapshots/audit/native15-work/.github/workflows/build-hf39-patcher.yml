@@ -1,0 +1,33 @@
+name: Build HF39 Element runtime core patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF39Patch/**'
+      - '.github/workflows/build-hf39-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF39 patcher
+        run: dotnet publish Tools/HF39Patch/HF39Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf39
+      - name: Smoke test
+        run: |
+          chmod +x out/hf39/GodsPVZ.HF39Patch
+          set +e
+          out/hf39/GodsPVZ.HF39Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf39/GodsPVZ.HF39Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF39Patch-linux-x64
+          path: out/hf39
+          if-no-files-found: error

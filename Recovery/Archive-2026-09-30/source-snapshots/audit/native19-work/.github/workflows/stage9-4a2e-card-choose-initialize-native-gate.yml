@@ -1,0 +1,110 @@
+name: Stage9.1 4a2e Card_Choose.Initialize native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-4a2e-card-choose-initialize-native-gate.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  card-choose-initialize-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact 4a2e input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34756364758
+          pattern: Stage9.1-3B1B-SETCARDCHOOSELIST-V2
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-card-init/input
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-card-init/ilspy
+
+      - name: Apply PC-native-backed Card_Choose.Initialize repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-card-init"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-setcardchooselist.dll"
+          DLL="$OUT/GodsPVZRuntime1-card-choose-initialize.dll"
+          TRUE_SHA='4a2e07d7813f6b56cd125a212c25c6998a36fe9312f763814a786ce218a1b1ab'
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = "$TRUE_SHA" ] || exit 61
+          dotnet build Tools/Stage9CardChooseInitializePatch/Stage9CardChooseInitializePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9CardChooseInitializePatch/Stage9CardChooseInitializePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 4a2e07d7813f6b56cd125a212c25c6998a36fe9312f763814a786ce218a1b1ab$' "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x060002F2 ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x060002F2 index=753 address=0x0000000180343BE0 function_end=0x00000001803442C0 ' "$E/patch.log"
+          grep -q '^PATCH_CARD_CHOOSE_INITIALIZE copy_fields=7 orders_loop=1 stars_loop=1 level_color_0_9=1 clique=1 portrait=1 card_shells=4 order_arabesques=1 texts=2 default_skill_switch=1 double_copy=1 get_skill_id=1 load_skill_logo=1 target_only=1$' "$E/patch.log"
+          grep -q '^REOPEN_CARD_CHOOSE_INITIALIZE_PASS locals=3 object_locals=0 copy_calls=2 get_skill_id=1 load_skill_logo=1 set_active_sites=7 set_sprite_sites=8 texts=2 color=0.9 token=0x060002F2$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9CardChooseInitializePatch/Evidence.md "$E/native-evidence.md"
+
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-card-init"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-card-choose-initialize.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t Card_Choose "$DLL" > "$E/Card_Choose.cs" 2> "$E/Card_Choose.stderr"; test ! -s "$E/Card_Choose.stderr"
+          "$ILSPY" -il -t Card_Choose "$DLL" > "$E/Card_Choose.il" 2> "$E/Card_Choose-il.stderr"; test ! -s "$E/Card_Choose-il.stderr"
+          python3 - "$E/Card_Choose.cs" "$E/Card_Choose.il" <<'PY'
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text()
+          il=Path(sys.argv[2]).read_text()
+          card=il.index('.class public auto ansi beforefieldinit Card_Choose')
+          a=il.index('instance void Initialize (',card)
+          b=il.index('instance void ChooseThis',a)
+          m=il[a:b]
+          assert 'class PlantSave plantSave' in m[:256], m[:256]
+          assert '[0] int32' in m, m
+          assert '[1] class Skill' in m and '[2] class Skill' in m, m
+          assert 'System.Object' not in m, m
+          assert m.count('Skill::Copy()') == 2, m
+          assert m.count('PlantSave::GetSkill_ID(int32)') == 1, m
+          assert m.count('ResourceManager::LoadSkillLogo(int32, string)') == 1, m
+          assert 'Card_Choose::ordersImage' in m and 'Card_Choose::starsImage' in m, m
+          assert 'ResourceManager::cliqueLogos' in m, m
+          assert 'ResourceManager::card_Choose_PlantPortraits' in m, m
+          assert 'ResourceManager::card_Choose_OrderArabesques' in m, m
+          assert m.count('TMPro.TMP_Text::set_text(string)') == 2, m
+          assert 'TMPro.TMP_Text::set_color(valuetype [UnityEngine.CoreModule]UnityEngine.Color)' in m, m
+          assert 'ldc.r4 0.9' in m, m
+          assert 'ldc.i4.3' in m or 'ldc.i4 3' in m, m
+          assert m.count('UnityEngine.GameObject::SetActive(bool)') == 7, m
+          assert m.count('UnityEngine.UI.Image::set_sprite(class [UnityEngine.CoreModule]UnityEngine.Sprite)') == 8, m
+          ca=cs.index('void Initialize(PlantSave plantSave)')
+          cb=cs.index('void ChooseThis()',ca)
+          cm=cs[ca:cb]
+          for required in ('ordersImage','starsImage','cliqueLogo','plantPortrait','orderArabesques','defaultSkillID','GetSkill_ID','LoadSkillLogo','skillLogo'):
+              assert required in cm, (required,cm)
+          print('ILSPY_CARD_CHOOSE_INITIALIZE_PASS locals=3 object_locals=0 copy_calls=2 get_skill_id=1 load_skill_logo=1 native_ui_resource_shape=1')
+          PY
+
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-4A2E-CARD-CHOOSE-INITIALIZE
+          path: ${{ runner.temp }}/stage9-card-init/evidence/
+          if-no-files-found: error
+          retention-days: 90

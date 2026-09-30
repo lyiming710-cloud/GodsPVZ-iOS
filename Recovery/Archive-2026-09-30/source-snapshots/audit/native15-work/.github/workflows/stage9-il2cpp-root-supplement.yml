@@ -1,0 +1,87 @@
+name: Stage9.2 exact IL2CPP root supplement
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-il2cpp-root-supplement.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-il2cpp-root-supplement
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      EDITOR_RUN_ID: '34668863583'
+      EDITOR_PREFIX: 'Stage9.1-unity-china-editor-part-'
+      EDITOR_SHA256: '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch exact locked Unity China Editor split artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/il2cpp-root-supplement"
+          PARTS="$RUNNER_TEMP/editor-parts"
+          mkdir -p "$OUT" "$PARTS"
+          python3 scripts/takeover/fetch_actions_artifact.py \
+            --run-id "$EDITOR_RUN_ID" \
+            --prefix "$EDITOR_PREFIX" \
+            --dest "$PARTS"
+          mapfile -t P < <(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | sort)
+          [ "${#P[@]}" = 15 ] || { echo "expected 15 Editor parts, got ${#P[@]}" >&2; exit 1; }
+          GOT="$({ for p in "${P[@]}"; do cat "$p"; done; } | sha256sum | awk '{print $1}')"
+          [ "$GOT" = "$EDITOR_SHA256" ] || { echo "Editor stream SHA mismatch: $GOT" >&2; exit 1; }
+          printf '%s\n' "editor_sha256=$GOT" "editor_part_count=${#P[@]}" | tee "$OUT/LOCK.txt"
+
+      - name: Extract only exact libil2cpp icall authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/il2cpp-root-supplement"
+          PARTS="$RUNNER_TEMP/editor-parts"
+          TMP="$RUNNER_TEMP/editor-one-file"
+          mkdir -p "$TMP" "$OUT/il2cpp/libil2cpp"
+          mapfile -t P < <(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | sort)
+          { for p in "${P[@]}"; do cat "$p"; done; } | \
+            tar -xJf - -C "$TMP" --wildcards --no-anchored 'libil2cpp/libil2cpp.icalls'
+          mapfile -t H < <(find "$TMP" -type f -path '*/libil2cpp/libil2cpp.icalls' | sort)
+          [ "${#H[@]}" = 1 ] || { printf 'expected one libil2cpp.icalls, got %s\n' "${#H[@]}" >&2; printf '%s\n' "${H[@]:-}" >&2; exit 1; }
+          cp "${H[0]}" "$OUT/il2cpp/libil2cpp/libil2cpp.icalls"
+          test -s "$OUT/il2cpp/libil2cpp/libil2cpp.icalls"
+          ICALL_SHA="$(sha256sum "$OUT/il2cpp/libil2cpp/libil2cpp.icalls" | awk '{print $1}')"
+          ICALL_SIZE="$(stat -c %s "$OUT/il2cpp/libil2cpp/libil2cpp.icalls")"
+          cat >> "$OUT/LOCK.txt" <<EOF
+          source_path=${H[0]}
+          icall_sha256=$ICALL_SHA
+          icall_size=$ICALL_SIZE
+          source_unity=2022.3.44f1c1
+          source_editor_sha256=$EDITOR_SHA256
+          purpose=postlink_direct_il2cpp_replay
+          production_promotion=NO
+          EOF
+          cat "$OUT/LOCK.txt"
+
+      - name: Upload exact IL2CPP root supplement
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.2-exact-il2cpp-root-supplement
+          path: ${{ runner.temp }}/il2cpp-root-supplement/
+          if-no-files-found: error
+          retention-days: 90

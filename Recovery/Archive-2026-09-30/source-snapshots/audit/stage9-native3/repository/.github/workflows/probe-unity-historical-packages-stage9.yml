@@ -1,0 +1,83 @@
+name: Probe historical Unity packages for Stage9.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/probe-unity-historical-packages-stage9.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe current metadata and pinned historical tarballs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, urllib.request, urllib.error, tarfile, tempfile, os, hashlib
+          from pathlib import Path
+
+          pkgs = [
+              ('com.unity.ugui','1.0.0'),
+              ('com.unity.textmeshpro','3.0.6'),
+              ('com.unity.2d.animation','9.1.1'),
+          ]
+          hosts = ['https://download.packages.unity.com','https://packages.unity.com']
+
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'GodsPVZ-stage9-probe/1.0'})
+              with urllib.request.urlopen(req,timeout=60) as r:
+                  return r.status, r.headers, r.read()
+
+          for name,version in pkgs:
+              print(f'=== {name}@{version} ===')
+              try:
+                  st,h,b=get('https://packages.unity.com/'+name)
+                  meta=json.loads(b)
+                  versions=meta.get('versions') or {}
+                  print('metadata_status',st,'target_present',version in versions,'version_count',len(versions))
+                  sample=None
+                  for v in sorted(versions.keys(), reverse=True):
+                      dist=(versions[v].get('dist') or {})
+                      if dist.get('tarball'):
+                          sample=(v,dist.get('tarball'))
+                          break
+                  print('metadata_sample',sample)
+              except Exception as e:
+                  print('metadata_error',repr(e))
+
+              ok=False
+              for host in hosts:
+                  url=f'{host}/{name}/-/{name}-{version}.tgz'
+                  try:
+                      st,h,b=get(url)
+                      sha=hashlib.sha256(b).hexdigest()
+                      tmp=Path(tempfile.mkdtemp())/'pkg.tgz'
+                      tmp.write_bytes(b)
+                      ident=[]
+                      with tarfile.open(tmp,'r:*') as tf:
+                          members=[m for m in tf.getmembers() if m.name.endswith('/package.json') or m.name=='package.json']
+                          for m in members:
+                              try:
+                                  j=json.loads(tf.extractfile(m).read())
+                              except Exception:
+                                  continue
+                              if j.get('name')==name:
+                                  ident.append((m.name,j.get('name'),j.get('version')))
+                      print('candidate',url,'status',st,'bytes',len(b),'sha256',sha,'identity',ident[:5])
+                      if any(x[1]==name and x[2]==version for x in ident):
+                          print('PINNED_OK',name,version,url,sha,len(b))
+                          ok=True
+                          break
+                  except urllib.error.HTTPError as e:
+                      print('candidate_http',url,e.code)
+                  except Exception as e:
+                      print('candidate_error',url,repr(e))
+              if not ok:
+                  print('PINNED_FAIL',name,version)
+                  raise SystemExit(23)
+          PY

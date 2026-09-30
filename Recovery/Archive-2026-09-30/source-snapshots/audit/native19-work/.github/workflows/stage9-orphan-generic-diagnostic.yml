@@ -1,0 +1,161 @@
+name: Stage9 Orphan Element Parent Candidate Gate
+
+on:
+  push:
+    branches:
+      - stage9-local-audit-tools
+    paths:
+      - '.github/workflows/stage9-orphan-generic-diagnostic.yml'
+      - 'Recovery/CandidateSource/build_orphan_element_parent_candidate.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      RUN8_ARTIFACT_ID: '10574264630'
+      RUN8_ARTIFACT_SHA256: '68469c45adb5470fd9c23e7a4dde536ae56f08d2a99d4a22c5092a06bec2ac7b'
+      RUN8_DLL_SHA256: 'f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321'
+      EXPECTED_ALL24: 'b07254d5c4077e013bbc934734f7b0949c0942a4e667d6d2b23d2af6c830f720'
+      RESOLVER_EVIDENCE_ARTIFACT_ID: '10853191869'
+      RESOLVER_EVIDENCE_SHA256: 'efb8ef74f996f2faac0e72d7cf4530dcd98783b1ac16c74cfeb3459b11184271'
+      EXPECTED_MSCORLIB_SHA256: '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+      EXPECTED_COREMODULE_SHA256: '83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Pin .NET 8
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK8="$(dotnet --list-sdks | awk '$1 ~ /^8\./ {v=$1} END{print v}')"
+          test -n "$SDK8"
+          printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK8" > global.json
+          dotnet --version | grep -E '^8\.'
+
+      - name: Recover locked run8 input and exact Unity resolver
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p _orphan/run8 _orphan/prior _orphan/resolver _orphan/out
+          get_artifact() {
+            local id="$1" sha="$2" out="$3"
+            curl -fL --retry 4 --retry-delay 2 \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" \
+              -o "$out"
+            test "$(sha256sum "$out" | awk '{print $1}')" = "$sha"
+          }
+          get_artifact "$RUN8_ARTIFACT_ID" "$RUN8_ARTIFACT_SHA256" _orphan/run8.zip
+          unzip -qq _orphan/run8.zip -d _orphan/run8
+          get_artifact "$RESOLVER_EVIDENCE_ARTIFACT_ID" "$RESOLVER_EVIDENCE_SHA256" _orphan/resolver.zip
+          unzip -qq _orphan/resolver.zip -d _orphan/prior
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, shutil
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(1<<20), b''): h.update(b)
+              return h.hexdigest()
+          run8_expected='f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321'
+          hits=[p for p in Path('_orphan/run8').rglob('*') if p.is_file() and sha(p)==run8_expected]
+          if len(hits)!=1: raise SystemExit(f'run8 exact matches={hits}')
+          Path('_orphan/run8-path.txt').write_text(str(hits[0].resolve())+'\n')
+
+          suffixes={
+            'mscorlib.dll':'Editor/Data/MonoBleedingEdge/lib/mono/unityjit-linux/mscorlib.dll',
+            'UnityEngine.CoreModule.dll':'Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll',
+          }
+          valid=[]
+          for report in Path('_orphan/prior').rglob('extraction-report.json'):
+              d=json.loads(report.read_text())
+              if not d.get('complete_targets'): continue
+              if all(d.get('selected',{}).get(n,{}).get('archive_path')==s for n,s in suffixes.items()):
+                  valid.append((report,d))
+          if len(valid)!=1: raise SystemExit(f'exact resolver reports={len(valid)}')
+          report,d=valid[0]
+          for n in suffixes:
+              src=report.parent/n
+              if not src.is_file(): raise SystemExit(f'missing {src}')
+              actual=sha(src)
+              if actual != d['selected'][n]['sha256']: raise SystemExit(f'{n} report hash mismatch')
+              shutil.copy2(src, Path('_orphan/resolver')/n)
+          expected={
+            'mscorlib.dll':'4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be',
+            'UnityEngine.CoreModule.dll':'83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f',
+          }
+          for n,e in expected.items():
+              a=sha(Path('_orphan/resolver')/n)
+              if a!=e: raise SystemExit(f'{n} exact hash {a} != {e}')
+          shutil.copy2(report, '_orphan/out/resolver-extraction-report.json')
+          PY
+
+      - name: Build all24 and three-row orphan parent candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/Stage9MemberRefAudit/build_all24_candidate.py \
+            "$(cat _orphan/run8-path.txt)" _orphan/out/Assembly-CSharp-all24.dll \
+            --manifest _orphan/out/all24-manifest.json > _orphan/out/all24-builder.stdout.json
+          test "$(sha256sum _orphan/out/Assembly-CSharp-all24.dll | awk '{print $1}')" = "$EXPECTED_ALL24"
+
+          python3 Recovery/CandidateSource/build_orphan_element_parent_candidate.py \
+            _orphan/out/Assembly-CSharp-all24.dll _orphan/out/Assembly-CSharp-all24-orphan-clean.dll \
+            --manifest _orphan/out/orphan-parent-manifest.json > _orphan/out/orphan-parent-builder.stdout.json
+
+          python3 - <<'PY'
+          import json
+          d=json.load(open('_orphan/out/orphan-parent-manifest.json'))
+          if len(d['changed_byte_positions']) != 3: raise SystemExit(d)
+          if len(d['patches']) != 3: raise SystemExit(d)
+          if [p['token'] for p in d['patches']] != ['0x0A0000C3','0x0A0000C4','0x0A0000C5']:
+              raise SystemExit(d['patches'])
+          print('ORPHAN_PARENT_CANDIDATE_SHA256='+d['output_sha256'])
+          PY
+
+      - name: Strict Cecil Resolve and orphan scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          export NUGET_PACKAGES="$PWD/_orphan/nuget"
+          dotnet restore Tools/Stage9MemberRefAudit/Stage9MemberRefAudit.csproj --packages "$NUGET_PACKAGES" \
+            > _orphan/out/dotnet-restore.log
+          set +e
+          dotnet run --project Tools/Stage9MemberRefAudit/Stage9MemberRefAudit.csproj --no-restore -- \
+            _orphan/out/Assembly-CSharp-all24-orphan-clean.dll --require-resolve "$PWD/_orphan/resolver" \
+            | tee _orphan/out/memberref-strict-resolve.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "audit_exit_code=$rc" > _orphan/out/GATE-SUMMARY.txt
+          echo "candidate_sha256=$(sha256sum _orphan/out/Assembly-CSharp-all24-orphan-clean.dll | awk '{print $1}')" >> _orphan/out/GATE-SUMMARY.txt
+          test "$rc" -eq 0
+          grep -q '^STAGE9_MEMBERREF_AUDIT_OK$' _orphan/out/memberref-strict-resolve.log
+          grep -q '^ORPHAN_GENERIC_HITS=0$' _orphan/out/memberref-strict-resolve.log
+          grep -q '^RESOLVE_SUMMARY ok=24 dependency_missing=0 hard_fail=0 require_resolve=True$' _orphan/out/memberref-strict-resolve.log
+          echo 'audit_status=PASS' >> _orphan/out/GATE-SUMMARY.txt
+          echo 'production_promotion=NOT_AUTOMATIC_REAL_UNITY_IL2CPP_GATE_STILL_REQUIRED' >> _orphan/out/GATE-SUMMARY.txt
+          echo 'STAGE9_ORPHAN_PARENT_STRICT_GATE_PASS'
+
+      - name: Upload candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-orphan-element-parent-candidate-evidence
+          path: _orphan/out
+          if-no-files-found: warn
+          retention-days: 30

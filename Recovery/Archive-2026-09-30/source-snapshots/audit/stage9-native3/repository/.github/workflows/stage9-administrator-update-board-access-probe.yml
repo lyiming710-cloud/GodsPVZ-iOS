@@ -1,0 +1,63 @@
+name: Stage9 Administrator.Update board access probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-administrator-update-board-access-probe.yml'
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_RUN_ID: '35217162411'
+      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-BOARDACCESS-STATIC-QUALIFIED
+      EXPECTED_SHA: 2ba80feb6cd332148b950953675ac6e8d38b57f0c5944114503eea4caa442d83
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Update candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: '${{ env.SOURCE_RUN_ID }}'
+          name: '${{ env.SOURCE_ARTIFACT }}'
+          path: '${{ runner.temp }}/probe/input'
+      - name: Probe BoardManager accessors and Update IL
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/probe/input" -type f -name 'GodsPVZRuntime1-administrator-update-boardaccess.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED_SHA"
+          mkdir -p "$RUNNER_TEMP/probe/src"
+          cat > "$RUNNER_TEMP/probe/src/probe.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/probe/src/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> ts){foreach(var t in ts){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Tok(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          static string Op(object? o)=>o switch { IMetadataTokenProvider p=>$"0x{Tok(p):X8} {p}", Instruction t=>$"IL_{t.Offset:X4}", Instruction[] a=>string.Join(",",a.Select(t=>$"IL_{t.Offset:X4}")), null=>"", _=>o.ToString()??"" };
+          using var m=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var types=All(m.Types).ToList(); var methods=types.SelectMany(t=>t.Methods).ToList();
+          var bm=types.Single(t=>t.FullName=="BoardManager");
+          foreach(var f in bm.Fields) Console.WriteLine($"BM_FIELD token=0x{Tok(f):X8} attrs={f.Attributes} type={f.FieldType.FullName} name={f.Name}");
+          foreach(var token in new uint[]{0x06000169,0x0600016F}){
+            var x=methods.Single(v=>Tok(v)==token);
+            Console.WriteLine($"ACCESSOR token=0x{Tok(x):X8} attrs={x.Attributes} ret={x.ReturnType.FullName} name={x.Name} code={x.Body.CodeSize} locals={x.Body.Variables.Count} handlers={x.Body.ExceptionHandlers.Count}");
+            foreach(var i in x.Body.Instructions) Console.WriteLine($"ACCESSOR_IL token=0x{Tok(x):X8} IL_{i.Offset:X4} {i.OpCode.Code} {Op(i.Operand)}");
+          }
+          var u=methods.Single(x=>Tok(x)==0x06000006);
+          foreach(var i in u.Body.Instructions){
+            if(i.Offset>=0x1D0 || (i.Operand is FieldReference fr && fr.DeclaringType.FullName=="BoardManager") || (i.Operand is MethodReference mr && mr.DeclaringType.FullName=="BoardManager"))
+              Console.WriteLine($"UPDATE_IL IL_{i.Offset:X4} {i.OpCode.Code} {Op(i.Operand)}");
+          }
+          Console.WriteLine("ADMINISTRATOR_UPDATE_INSTANCE_ACCESS_PROBE_PASS mutation=0");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/probe/src/probe.csproj" -- "$DLL"

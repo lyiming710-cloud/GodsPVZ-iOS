@@ -1,0 +1,116 @@
+name: Stage9 Administrator.Update truth probe
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-administrator-update-truth-probe.yml'
+  workflow_dispatch:
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      SOURCE_RUN_ID: '34990527235'
+      SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      EXPECTED_INPUT_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+      START_RUNTIME_RUN_ID: '35177397625'
+      START_RUNTIME_ARTIFACT: Stage9.1-ADMINISTRATOR-START-NATURAL-RUNTIME
+    steps:
+      - name: Download exact baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/update-probe/input
+      - name: Download latest Administrator.Start runtime evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.START_RUNTIME_RUN_ID }}
+          name: ${{ env.START_RUNTIME_ARTIFACT }}
+          path: ${{ runner.temp }}/update-probe/start-runtime
+      - name: Extract remaining generic List MissingMethod context
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/update-probe/evidence"
+          LOG=$(find "$RUNNER_TEMP/update-probe/start-runtime" -type f -name 'playmode.log' -print -quit)
+          test -n "$LOG"
+          python3 - "$LOG" <<'PY' | tee "$RUNNER_TEMP/update-probe/evidence/remaining-list-missingmethod.txt"
+          from pathlib import Path
+          import sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
+          hits=[]
+          for i,line in enumerate(lines):
+              if 'MissingMethodException' in line:
+                  lo=max(0,i-5); hi=min(len(lines),i+12)
+                  block='\n'.join(f'{n+1}: {lines[n]}' for n in range(lo,hi))
+                  hits.append((i+1,line,block))
+          print(f'MISSINGMETHOD_TOTAL {len(hits)}')
+          for j,(line_no,line,block) in enumerate(hits,1):
+              print(f'=== MISSINGMETHOD_HIT {j} line={line_no} ===')
+              print(block)
+          list_hits=[h for h in hits if 'List' in h[1] or 'List' in h[2]]
+          print(f'LIST_RELATED_MISSINGMETHOD_TOTAL {len(list_hits)}')
+          for j,(line_no,line,block) in enumerate(list_hits,1):
+              print(f'=== LIST_HIT {j} line={line_no} ===')
+              print(block)
+          if not list_hits:
+              raise SystemExit('no List-related MissingMethod found in runtime evidence')
+          PY
+      - name: Probe Administrator.Update metadata and IL
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/update-probe/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          mkdir -p "$RUNNER_TEMP/update-probe/src" "$RUNNER_TEMP/update-probe/evidence"
+          cat > "$RUNNER_TEMP/update-probe/src/probe.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/update-probe/src/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> roots){foreach(var t in roots){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Raw(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          static string Operand(object? o)=>o switch{
+            null=>"",
+            Instruction i=>$"IL_{i.Offset:X4}",
+            Instruction[] a=>string.Join(",",a.Select(x=>$"IL_{x.Offset:X4}")),
+            MethodReference m=>$"M 0x{Raw(m):X8} {m.FullName}",
+            FieldReference f=>$"F 0x{Raw(f):X8} {f.FullName}",
+            TypeReference t=>$"T 0x{Raw(t):X8} {t.FullName}",
+            VariableDefinition v=>$"V_{v.Index}:{v.VariableType.FullName}",
+            ParameterDefinition p=>$"P_{p.Index}:{p.ParameterType.FullName}",
+            _=>o.ToString()??""};
+          using var mod=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var types=All(mod.Types).ToList();
+          var admin=types.Single(t=>t.FullName=="Administrator");
+          Console.WriteLine($"ADMIN token=0x{Raw(admin):X8} methods={admin.Methods.Count} fields={admin.Fields.Count}");
+          foreach(var x in admin.Methods.OrderBy(x=>Raw(x))) Console.WriteLine($"ADMIN_METHOD token=0x{Raw(x):X8} name={x.Name} full={x.FullName} body={x.HasBody} code={(x.HasBody?x.Body.CodeSize:-1)} ins={(x.HasBody?x.Body.Instructions.Count:-1)} locals={(x.HasBody?x.Body.Variables.Count:-1)} eh={(x.HasBody?x.Body.ExceptionHandlers.Count:-1)}");
+          var m=admin.Methods.Single(x=>x.Name=="Update" && !x.IsStatic && x.Parameters.Count==0);
+          Console.WriteLine($"UPDATE_ID token=0x{Raw(m):X8} full={m.FullName} attrs={m.Attributes} impl={m.ImplAttributes} code={m.Body.CodeSize} maxstack={m.Body.MaxStackSize} initlocals={m.Body.InitLocals} locals={m.Body.Variables.Count} instructions={m.Body.Instructions.Count} handlers={m.Body.ExceptionHandlers.Count}");
+          for(int n=0;n<m.Body.Variables.Count;n++) Console.WriteLine($"LOCAL {n} {m.Body.Variables[n].VariableType.FullName}");
+          foreach(var i in m.Body.Instructions) Console.WriteLine($"IL_{i.Offset:X4}: {i.OpCode.Code} {Operand(i.Operand)}");
+          foreach(var h in m.Body.ExceptionHandlers) Console.WriteLine($"EH type={h.HandlerType} try={h.TryStart?.Offset:X4}-{h.TryEnd?.Offset:X4} handler={h.HandlerStart?.Offset:X4}-{h.HandlerEnd?.Offset:X4} filter={h.FilterStart?.Offset:X4} catch={h.CatchType?.FullName}");
+          Console.WriteLine("=== UNIQUE DEPENDENCIES ===");
+          foreach(var d in m.Body.Instructions.Select(i=>i.Operand).OfType<IMetadataTokenProvider>().Where(x=>x is MethodReference or FieldReference or TypeReference).GroupBy(x=>$"{x.GetType().Name}|0x{Raw(x):X8}|{x}").Select(g=>g.First()).OrderBy(x=>Raw(x))) Console.WriteLine($"DEP {d.GetType().Name} token=0x{Raw(d):X8} value={d}");
+          Console.WriteLine("=== CALLERS ===");
+          foreach(var owner in types.SelectMany(t=>t.Methods).Where(x=>x.HasBody)) foreach(var i in owner.Body.Instructions) if(i.Operand is MethodReference r && Raw(r)==Raw(m)) Console.WriteLine($"CALLER token=0x{Raw(owner):X8} {owner.FullName} op={i.OpCode.Code} at=IL_{i.Offset:X4}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/update-probe/src/probe.csproj" -- "$DLL" | tee "$RUNNER_TEMP/update-probe/evidence/administrator-update-truth.txt"
+      - name: Upload truth evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-UPDATE-TRUTH-PROBE
+          path: ${{ runner.temp }}/update-probe/evidence/
+          retention-days: 30
+          if-no-files-found: error

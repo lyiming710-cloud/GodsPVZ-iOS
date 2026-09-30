@@ -1,0 +1,103 @@
+name: Stage9.1 batch1 Plant ctor PC-native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-batch1-plant-ctor-native-gate.yml'
+      - 'Tools/Stage9PlantCtorPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download validated gameplay batch1 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34791010159
+          pattern: Stage9.1-GAMEPLAY-BATCH1-INTEGRATED
+          merge-multiple: true
+          path: ${{ runner.temp }}/plant-ctor/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/plant-ctor/ilspy
+      - name: Recover Plant ctor from PC-native evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/plant-ctor"; E="$O/evidence"; mkdir -p "$E"
+          IN="$O/input/GodsPVZRuntime1-gameplay-batch1.dll"
+          OUT="$O/GodsPVZRuntime1-plant-ctor.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '2bcf1643457eecddeff3eaed9668c2117c11fdd5829b264a29e0f30cc86fe20c' ] || exit 61
+          dotnet build Tools/Stage9PlantCtorPatch/Stage9PlantCtorPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantCtorPatch/Stage9PlantCtorPatch.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x060003BA rid=954 va=0x18035CAD0 end=0x18035CEF0 native_slice_sha256=4aa8c226c4128cb04ee0851a5802a5fecf013ad1be9a9e200586c32d363ebb06$' "$E/patch.log"
+          grep -q '^NATIVE_BOOLEAN_RECOVERY attackable=true blockable=true active=true native_word_store=this+0xB5_value_0x0101$' "$E/patch.log"
+          grep -q '^PATCH_PLANT_CTOR method_body_changes=1 vector_zero_lowering=typed_locals_initobj_store gameplay_semantics_changed=0$' "$E/patch.log"
+          grep -q '^REOPEN_PLANT_CTOR_PASS token=0x060003BA .*locals=2 zeroVector_private_refs=0 vector2_initobj=1 vector3_initobj=1 blockable_stores=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x060003BA$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^BATCH1_REPAIRS_PRESERVATION_PASS tokens=0x0600067E,0x06000285,0x06000289,0x0600028A$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9PlantCtorPatch/Evidence.md "$E/"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/plant-ctor"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-plant-ctor.dll"
+          ILSPY="$(find "$O/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$O/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t Plant "$DLL" > "$E/Plant.cs" 2> "$E/Plant.cs.stderr"; test ! -s "$E/Plant.cs.stderr"
+          "$ILSPY" -il -t Plant "$DLL" > "$E/Plant.il" 2> "$E/Plant.il.stderr"; test ! -s "$E/Plant.il.stderr"
+          python3 - "$E/Plant.cs" "$E/Plant.il" "$DLL" <<'PY' | tee "$E/ilspy-validation.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          data=Path(sys.argv[3]).read_bytes()
+          m=re.search(r'public\s+Plant\s*\(\s*\)',cs); assert m, 'Plant ctor C# not found'
+          o=cs.index('{',m.end()); d=0; end=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0:
+                  end=i+1; break
+          body=cs[m.start():end]
+          for bad in ['Unknown result type','Expected I','Expected O','Expected I4','Unmanaged memory load','zeroVector']:
+              assert bad not in body,(bad,body)
+          assert 'blockable = true' in body, body
+          start=il.index('.method public hidebysig specialname rtspecialname', il.index('class Plant'))
+          stop=il.index('} // end of method Plant::.ctor', start)
+          ib=il[start:stop]
+          assert 'zeroVector' not in ib
+          assert 'Unmanaged memory load' not in ib
+          assert ib.count('initobj valuetype [UnityEngine.CoreModule]UnityEngine.Vector2') == 1, ib
+          assert ib.count('initobj valuetype [UnityEngine.CoreModule]UnityEngine.Vector3') == 1, ib
+          assert ib.count('stfld valuetype [UnityEngine.CoreModule]UnityEngine.Vector2 Plant::dithering') == 1, ib
+          assert ib.count('stfld valuetype [UnityEngine.CoreModule]UnityEngine.Vector3 Plant::dithering_anim') == 1, ib
+          assert ib.count('stfld bool Plant::blockable') == 1
+          assert ib.count('newarr [mscorlib]System.String') == 2
+          assert ib.count('newarr [UnityEngine.CoreModule]UnityEngine.Sprite') == 4
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_PLANT_CTOR_PASS invalid_il_diagnostics=0 zeroVector_private_refs=0 blockable_true=1 vector_zero_typed_locals=2 corelib_binary_string=0')
+          PY
+      - name: Upload recovered candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BATCH1-PLANT-CTOR-NATIVE
+          path: ${{ runner.temp }}/plant-ctor/evidence/
+          if-no-files-found: warn
+          retention-days: 90

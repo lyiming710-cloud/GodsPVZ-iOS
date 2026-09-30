@@ -1,0 +1,81 @@
+name: Stage9.1 Zombie ctor natural runtime promotion reaudit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-zombie-ctor-natural-runtime-promotion-reaudit.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download existing exact-R3 Zombie coverage evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34924550267
+          name: Stage9.1-ZOMBIE-CTOR-COVERAGE-PROMOTION
+          path: ${{ runner.temp }}/evidence
+      - name: Re-audit natural prefab-import Zombie ctor executions
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/evidence"; LOG="$E/playmode.log"
+          test -f "$LOG"
+          test -f "$E/input-gate.txt"
+          grep -q '^candidate_sha256=2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5$' "$E/input-gate.txt"
+          python3 - "$LOG" | tee "$E/zombie-ctor-natural-promotion-reaudit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          target='InvalidProgramException: Invalid IL code in Zombie:.ctor (): IL_0055: stfld'
+          idx=[i for i,x in enumerate(lines) if target in x]
+          print('ZOMBIE_CTOR_IL0055_COUNT',len(idx))
+          assert len(idx)==26,len(idx)
+          prefab=[]
+          for i in idx:
+              window=lines[max(0,i-5):i]
+              hit=next((x for x in reversed(window) if x.startswith('Start importing Assets/Resources/prefabs/zombie/')),None)
+              if hit: prefab.append(hit)
+          print('ZOMBIE_PREFAB_IMPORT_CONTEXT_COUNT',len(prefab))
+          assert len(prefab)>=10,len(prefab)
+          for x in prefab[:10]: print('PREFAB_CONTEXT',x)
+          recovered={
+            'SKILLPROGRESS':r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update_SkillProgress',
+            'PLANTDATA_UPDATE':r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:Update',
+            'CAMERA':r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Updata_Camera',
+            'PLANT_DETAIL_UPDATE':r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update \(',
+            'DIALOGUE_START':r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',
+            'GRID_COPY':r'InvalidProgramException: Invalid IL code in Grid:Copy',
+            'CREATE_MAP':r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',
+            'LOAD_DATA':r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',
+            'LOAD_SKILL_LOGO':r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',
+            'PROJECTILE_CTOR':r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',
+          }
+          for k,p in recovered.items():
+              n=len(re.findall(p,text)); print(k+'_REGRESSION_COUNT',n); assert n==0,(k,n)
+          dialogue=sum('FieldAccessException' in x and 'DialogueManager_OnBoard:Update' in x for x in lines)
+          bgm=sum(('InvalidProgramException' in x or 'MissingMethodException' in x) and 'ZombieManager:BGMUnPasue' in x for x in lines)
+          gamecontinue=sum('MethodAccessException' in x and 'Board.GameContinue' in x for x in lines)
+          corelib=text.count('System.Private.CoreLib')
+          print('DIALOGUE_UPDATE_REGRESSION_COUNT',dialogue); assert dialogue==0
+          print('BGMUNPAUSE_REGRESSION_COUNT',bgm); assert bgm==0
+          print('GAMECONTINUE_REGRESSION_COUNT',gamecontinue); assert gamecontinue==0
+          print('CORELIB_TEXT_COUNT',corelib); assert corelib==0
+          print('ZOMBIE_CTOR_RUNTIME_PROMOTION_PASS runtime_base=2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5 natural_runtime_invocations=26 expected_il_0055_stfld=1 prefab_import_contexts_verified=1 previous_recoveries_preserved=1 unity_rerun=0')
+          PY
+      - name: Upload promotion reaudit
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ZOMBIE-CTOR-NATURAL-RUNTIME-PROMOTION
+          path: ${{ runner.temp }}/evidence/zombie-ctor-natural-promotion-reaudit.txt
+          retention-days: 90

@@ -1,0 +1,80 @@
+name: Stage9 R3 Drive Transport Diagnostic
+
+on:
+  push:
+    branches: [stage9-local-audit-tools]
+    paths:
+      - '.github/workflows/stage9-r3-download-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  part00:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FILE_ID: '111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI'
+      EXPECTED_SHA256: 'e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a'
+      EXPECTED_SIZE: '67108864'
+    steps:
+      - name: Test public Drive transports against exact part00
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/r3diag"
+          OUT="$RUNNER_TEMP/r3diag/part00"
+          LOG="$RUNNER_TEMP/r3diag/result.txt"
+          : > "$LOG"
+
+          verify() {
+            local method="$1"
+            if [[ ! -f "$OUT" ]]; then return 1; fi
+            local size sha ctype
+            size="$(stat -c %s "$OUT")"
+            sha="$(sha256sum "$OUT" | awk '{print $1}')"
+            ctype="$(file -b --mime-type "$OUT" || true)"
+            printf 'method=%s size=%s sha256=%s mime=%s\n' "$method" "$size" "$sha" "$ctype" | tee -a "$LOG"
+            [[ "$size" = "$EXPECTED_SIZE" && "$sha" = "$EXPECTED_SHA256" ]]
+          }
+
+          attempt() {
+            local method="$1" url="$2"
+            rm -f "$OUT" "$RUNNER_TEMP/r3diag/headers.txt" "$RUNNER_TEMP/r3diag/cookies.txt"
+            printf '\n=== %s ===\nurl=%s\n' "$method" "$url" | tee -a "$LOG"
+            set +e
+            curl --fail --location --retry 2 --retry-delay 1 \
+              --connect-timeout 20 --max-time 240 \
+              --cookie-jar "$RUNNER_TEMP/r3diag/cookies.txt" \
+              --dump-header "$RUNNER_TEMP/r3diag/headers.txt" \
+              --output "$OUT" "$url"
+            rc=$?
+            set -e
+            printf 'curl_exit=%s\n' "$rc" | tee -a "$LOG"
+            sed -n '1,30p' "$RUNNER_TEMP/r3diag/headers.txt" | sed -E 's/(Set-Cookie:).*/\1 <redacted>/I' >> "$LOG" || true
+            if [[ "$rc" -eq 0 ]] && verify "$method"; then
+              echo "R3_PART00_TRANSPORT_PASS=$method" | tee -a "$LOG"
+              exit 0
+            fi
+            if [[ -f "$OUT" ]]; then
+              echo 'first_300_bytes:' >> "$LOG"
+              head -c 300 "$OUT" | strings | head -10 >> "$LOG" || true
+            fi
+          }
+
+          attempt 'usercontent-confirm-t' "https://drive.usercontent.google.com/download?id=${FILE_ID}&export=download&confirm=t"
+          attempt 'drive-uc-confirm-t' "https://drive.google.com/uc?export=download&confirm=t&id=${FILE_ID}"
+          attempt 'drive-download-confirm-t' "https://drive.google.com/uc?id=${FILE_ID}&export=download&confirm=t"
+
+          echo 'R3_PART00_TRANSPORT_FAILED' | tee -a "$LOG"
+          exit 70
+
+      - name: Upload tiny diagnostic log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9-R3-Drive-transport-diagnostic
+          path: ${{ runner.temp }}/r3diag/result.txt
+          if-no-files-found: warn
+          retention-days: 14

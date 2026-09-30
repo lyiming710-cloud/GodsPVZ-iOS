@@ -1,0 +1,54 @@
+name: Stage9.1 2b2f Zombie nested ctor managed prefetch
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-2b2f-zombie-nested-ctor-prefetch.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified SkillProgress v2 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34922788006
+          name: Stage9.1-4736-SKILLPROGRESS-V2-QUALIFIED
+          path: ${{ runner.temp }}/input
+      - name: Probe nested constructors only
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-skillprogress-v2.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5'
+          dotnet build Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release --no-build -- \
+            "$IN" \
+            'ElementManager::.ctor' \
+            'HPUIController_Zombie::.ctor' \
+            'BuffManager::.ctor' \
+            'ElementUIController::.ctor' \
+            'EnemyPath::.ctor' \
+            | tee "$RUNNER_TEMP/zombie-nested-ctors.txt"
+          grep -q '^INPUT_SHA256 2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5$' "$RUNNER_TEMP/zombie-nested-ctors.txt"
+          grep -q 'METHOD selector=ElementManager::.ctor' "$RUNNER_TEMP/zombie-nested-ctors.txt"
+          grep -q 'METHOD selector=HPUIController_Zombie::.ctor' "$RUNNER_TEMP/zombie-nested-ctors.txt"
+          grep -q 'METHOD selector=BuffManager::.ctor' "$RUNNER_TEMP/zombie-nested-ctors.txt"
+          echo 'ZOMBIE_NESTED_CTOR_MANAGED_PREFETCH_PASS gameplay_candidate_generated=0 unity_runs=0'
+      - name: Upload managed prefetch
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-2B2F-ZOMBIE-NESTED-CTOR-PREFETCH
+          path: ${{ runner.temp }}/zombie-nested-ctors.txt
+          retention-days: 90

@@ -1,0 +1,89 @@
+name: Stage9.1 R3 Assembly-CSharp plugin meta audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-r3-assembly-pluginmeta-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      R3_SHA256: d4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc
+    steps:
+      - name: Download exact R3 parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/r3-pluginmeta"
+          E="$OUT/evidence"
+          PARTS="$OUT/parts"
+          mkdir -p "$E" "$PARTS"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a	67108864
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2	67108864
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2	67108864
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f	67108864
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc	67108864
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263	67108864
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c	67108864
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec	67108864
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8	67108864
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a	67108864
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994	67108864
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325	48568114
+          EOF
+          while IFS=$'\t' read -r idx fid sha size; do
+            f="$PARTS/r3.${idx}.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            [ "$(sha256sum "$f" | awk '{print $1}')" = "$sha" ] || exit 61
+            [ "$(stat -c %s "$f")" = "$size" ] || exit 62
+          done < "$OUT/parts.tsv"
+          cat "$PARTS"/*.part > "$OUT/r3.tar.zst"
+          got="$(sha256sum "$OUT/r3.tar.zst" | awk '{print $1}')"
+          echo "$got" > "$E/r3-sha256.txt"
+          [ "$got" = "$R3_SHA256" ] || exit 63
+
+      - name: Extract and classify Assembly-CSharp plugin metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/r3-pluginmeta"
+          E="$OUT/evidence"
+          P='UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Plugins/Assembly-CSharp.dll.meta'
+          zstd -dc "$OUT/r3.tar.zst" | tar -xOf - "$P" > "$E/Assembly-CSharp.dll.meta"
+          cat "$E/Assembly-CSharp.dll.meta"
+          python3 - "$E/Assembly-CSharp.dll.meta" "$E/RESULT.json" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          p=Path(sys.argv[1]); text=p.read_text(errors='replace')
+          any_enabled=bool(re.search(r'first:\s*\n\s*Any:\s*\n\s*second:\s*\n\s*enabled:\s*1',text,re.S))
+          editor_enabled=bool(re.search(r'first:\s*\n\s*Editor:\s*Editor\s*\n\s*second:\s*\n\s*enabled:\s*1',text,re.S))
+          ios_entries=re.findall(r'first:\s*\n\s*([^\n]*iOS[^\n]*)\n\s*second:\s*\n\s*enabled:\s*(\d+)',text,re.I|re.S)
+          explicit=bool(re.search(r'(?m)^\s*isExplicitlyReferenced:\s*1\s*$',text))
+          result={'any_enabled':any_enabled,'editor_enabled':editor_enabled,'ios_entries':ios_entries,'is_explicitly_referenced':explicit,'raw_sha256':__import__('hashlib').sha256(p.read_bytes()).hexdigest()}
+          if any_enabled:
+              classification='PLUGIN_ANY_PLATFORM_ENABLED'
+          elif any(v=='1' for _,v in ios_entries):
+              classification='PLUGIN_IOS_EXPLICITLY_ENABLED'
+          else:
+              classification='PLUGIN_IOS_COMPATIBILITY_NOT_PROVEN'
+          result['classification']=classification
+          Path(sys.argv[2]).write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          PY
+
+      - name: Upload audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-R3-ASSEMBLY-CSHARP-PLUGINMETA-AUDIT
+          path: ${{ runner.temp }}/r3-pluginmeta/evidence/
+          if-no-files-found: error
+          retention-days: 90

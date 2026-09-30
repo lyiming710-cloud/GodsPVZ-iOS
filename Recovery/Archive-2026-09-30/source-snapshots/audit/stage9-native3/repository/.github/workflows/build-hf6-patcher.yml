@@ -1,0 +1,32 @@
+name: Build HF6 Zombie Update patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF6Patch/**'
+      - '.github/workflows/build-hf6-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF6 patcher
+        run: dotnet publish Tools/HF6Patch/HF6Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out
+      - name: Smoke test usage
+        run: |
+          chmod +x out/GodsPVZ.HF6Patch
+          set +e
+          out/GodsPVZ.HF6Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF6Patch-linux-x64
+          path: out/GodsPVZ.HF6Patch
+          if-no-files-found: error

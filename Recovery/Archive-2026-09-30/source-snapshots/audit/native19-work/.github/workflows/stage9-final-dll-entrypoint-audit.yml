@@ -1,0 +1,155 @@
+name: Stage9.1 final DLL entrypoint audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-final-dll-entrypoint-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download runtime-qualified DLL
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+
+      - name: Prove minimal PE DLL-bit repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=dll/GodsPVZRuntime1-bgmvolume.dll
+          DST=dll/Assembly-CSharp-ios.dll
+          ORIG_SHA=$(sha256sum "$SRC" | awk '{print $1}')
+          test "$ORIG_SHA" = '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
+          mkdir -p diagnostics
+          OUT=diagnostics/final-runtime-dll-bit-repair.txt
+          : > "$OUT"
+          echo "original_sha256=$ORIG_SHA" | tee -a "$OUT"
+
+          python3 - "$SRC" "$DST" <<'PY' | tee -a "$OUT"
+          import hashlib,struct,sys
+          src,dst=sys.argv[1:]
+          b=bytearray(open(src,'rb').read())
+          before=bytes(b)
+          def u16(o): return struct.unpack_from('<H',b,o)[0]
+          def u32(o): return struct.unpack_from('<I',b,o)[0]
+          pe=u32(0x3c)
+          assert b[pe:pe+4]==b'PE\0\0'
+          coff=pe+4
+          chars_off=coff+18
+          chars=u16(chars_off)
+          assert (chars & 0x2000)==0, hex(chars)
+          nsec=u16(coff+2)
+          optsz=u16(coff+16)
+          opt=coff+20
+          magic=u16(opt)
+          dd=opt+(96 if magic==0x10b else 112)
+          cli_rva=u32(dd+14*8)
+          sec=opt+optsz
+          def rva_to_off(rva):
+              for i in range(nsec):
+                  s=sec+i*40
+                  vsize=u32(s+8); va=u32(s+12); rawsz=u32(s+16); raw=u32(s+20)
+                  if va <= rva < va+max(vsize,rawsz): return raw+(rva-va)
+              raise ValueError(hex(rva))
+          cli=rva_to_off(cli_rva)
+          cli_flags=u32(cli+16)
+          ep=u32(cli+20)
+          assert ep==0, hex(ep)
+          assert (cli_flags & 0x10)==0
+          struct.pack_into('<H',b,chars_off,chars|0x2000)
+          open(dst,'wb').write(b)
+          diffs=[(i,before[i],b[i]) for i in range(len(b)) if before[i]!=b[i]]
+          print(f'pe_offset=0x{pe:x}')
+          print(f'coff_characteristics_offset=0x{chars_off:x}')
+          print(f'coff_characteristics_before=0x{chars:04x}')
+          print(f'coff_characteristics_after=0x{chars|0x2000:04x}')
+          print(f'cli_flags=0x{cli_flags:08x}')
+          print(f'cli_entrypoint_token_or_rva=0x{ep:08x}')
+          print(f'byte_diff_count={len(diffs)}')
+          for i,a,c in diffs: print(f'byte_diff offset=0x{i:x} {a:02x}->{c:02x}')
+          assert len(diffs)==1, diffs
+          assert diffs[0][0] in (chars_off,chars_off+1)
+          print('patched_sha256='+hashlib.sha256(b).hexdigest())
+          PY
+
+          PATCHED_SHA=$(sha256sum "$DST" | awk '{print $1}')
+          echo "patched_sha256_shell=$PATCHED_SHA" | tee -a "$OUT"
+          file "$SRC" | tee -a "$OUT"
+          file "$DST" | tee -a "$OUT"
+
+          TMP=$(mktemp -d)
+          cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.Linq;
+          using Mono.Cecil;
+          class P {
+            static int Main(string[] args) {
+              foreach (var p in args) {
+                using var a=AssemblyDefinition.ReadAssembly(p, new ReaderParameters { ReadSymbols=false, InMemory=true });
+                var m=a.MainModule;
+                int methods=m.Types.SelectMany(AllTypes).Sum(t => t.Methods.Count);
+                Console.WriteLine($"path={p}");
+                Console.WriteLine($"assembly={a.Name.FullName}");
+                Console.WriteLine($"module_kind={m.Kind}");
+                Console.WriteLine($"module_architecture={m.Architecture}");
+                Console.WriteLine($"entrypoint_null={a.EntryPoint == null}");
+                Console.WriteLine($"types_recursive={m.Types.SelectMany(AllTypes).Count()}");
+                Console.WriteLine($"methoddefs={methods}");
+              }
+              return 0;
+            }
+            static System.Collections.Generic.IEnumerable<TypeDefinition> AllTypes(TypeDefinition t) {
+              yield return t;
+              foreach (var n in t.NestedTypes)
+                foreach (var x in AllTypes(n)) yield return x;
+            }
+          }
+          CS
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$SRC" "$GITHUB_WORKSPACE/$DST" | tee -a "$GITHUB_WORKSPACE/$OUT"
+          cd "$GITHUB_WORKSPACE"
+
+          grep -q 'byte_diff_count=1' "$OUT"
+          test "$(grep -c '^module_kind=Console$' "$OUT")" = 1
+          test "$(grep -c '^module_kind=Dll$' "$OUT")" = 1
+          test "$(grep -c '^entrypoint_null=True$' "$OUT")" = 2
+          test "$(grep -c '^methoddefs=2317$' "$OUT")" = 2
+          cat "$OUT"
+
+      - name: Upload repaired DLL proof artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-DLL-BIT-REPAIR-PROOF
+          path: |
+            dll/Assembly-CSharp-ios.dll
+            diagnostics/final-runtime-dll-bit-repair.txt
+          if-no-files-found: error
+
+      - name: Commit repair proof report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/final-runtime-dll-bit-repair.txt
+          git commit -m 'diagnostics: prove one-bit PE DLL repair' || exit 0
+          git push origin HEAD:stage9-admin-start-static

@@ -1,0 +1,33 @@
+name: Build HF25 collision dispatch patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF25Patch/**'
+      - '.github/workflows/build-hf25-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF25 patcher
+        run: dotnet publish Tools/HF25Patch/HF25Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf25
+      - name: Smoke test
+        run: |
+          chmod +x out/hf25/GodsPVZ.HF25Patch
+          set +e
+          out/hf25/GodsPVZ.HF25Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf25/GodsPVZ.HF25Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF25Patch-linux-x64
+          path: out/hf25
+          if-no-files-found: error

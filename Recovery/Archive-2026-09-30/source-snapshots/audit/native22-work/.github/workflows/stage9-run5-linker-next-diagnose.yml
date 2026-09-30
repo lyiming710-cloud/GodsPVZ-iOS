@@ -1,0 +1,84 @@
+name: Diagnose Stage9.1 run5 linker next blocker
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-run5-linker-next-diagnose.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      EXPORT_RUN_ID: '35363783833'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download run5 evidence and isolate final linker stack
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf evidence
+          mkdir -p evidence diagnostics
+          gh run download "$EXPORT_RUN_ID" --repo "$GITHUB_REPOSITORY" \
+            -n Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE -D evidence
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          log=Path('evidence/ios-export.log')
+          mig=Path('evidence/package-migration.log')
+          out=Path('diagnostics/run-35363783833-linker-next.txt')
+          lines=log.read_text(errors='replace').splitlines()
+          pats=[
+            'Fatal error in Unity CIL Linker',
+            'System.NullReferenceException',
+            'UnityTypeReferenceStep',
+            'ResolveFromAssemblyStep',
+            'ProcessExecutable',
+            'ManagedStripped',
+            'BuildFailedException',
+            'Player build failed',
+            'ILLink',
+            'UnityLinker',
+          ]
+          hit=[]
+          for i,l in enumerate(lines):
+            if any(p.lower() in l.lower() for p in pats): hit.append(i)
+          # Focus on the final linker fatal, not the long command line.
+          fatal=[i for i,l in enumerate(lines) if 'Fatal error in Unity CIL Linker' in l]
+          center=fatal[-1] if fatal else (hit[-1] if hit else len(lines)-1)
+          lo=max(0,center-20); hi=min(len(lines),center+90)
+          with out.open('w',encoding='utf-8') as f:
+            f.write('run_id=35363783833\n')
+            f.write(f'ios_export_lines={len(lines)} material_hits={len(hit)} final_center={center+1}\n')
+            if mig.exists():
+              ml=mig.read_text(errors='replace').splitlines()
+              for i,l in enumerate(ml):
+                if 'STAGE9_IOS_DLL_KIND' in l:
+                  f.write(f'migration:{i+1}: {l}\n')
+            f.write('\n=== FINAL LINKER CONTEXT ===\n')
+            for i in range(lo,hi):
+              s=lines[i]
+              if len(s)>900: s=s[:900]+' ... [LONG LINE OMITTED]'
+              f.write(f'{i+1}: {s}\n')
+          print(out.read_text())
+          PY
+
+      - name: Commit compact linker report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/run-35363783833-linker-next.txt
+          git commit -m 'diagnostics: isolate run5 linker next blocker' || exit 0
+          git push origin HEAD:stage9-admin-start-static

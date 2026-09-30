@@ -1,0 +1,83 @@
+name: Stage9.1 exact iOS module URL probe
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-ios-module-url-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Probe official Unity/Unity China candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          cat > candidates.txt <<'EOF'
+          china-linux-f1c1|https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1c1.tar.xz
+          china-linux-f1|https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz
+          china-target-f1c1|https://download.unitychina.cn/download_unity/c3ae09b9f03c/TargetSupportInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1c1.tar.xz
+          china-target-f1|https://download.unitychina.cn/download_unity/c3ae09b9f03c/TargetSupportInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz
+          global-linux-f1|https://download.unity3d.com/download_unity/c3ae09b9f03c/LinuxEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz
+          EOF
+          printf 'name\tstatus\tcontent_length\tcontent_type\teffective_url\trange_status\trange_bytes\tmagic\n' > evidence/probe.tsv
+          while IFS='|' read -r name url; do
+            h="evidence/${name}.headers"
+            set +e
+            meta="$(curl -A 'GodsPVZ-Stage9.1/1' --connect-timeout 15 --max-time 45 -sSIL -D "$h" -o /dev/null -w '%{http_code}\t%{size_download}\t%{content_type}\t%{url_effective}' "$url")"
+            hrc=$?
+            set -e
+            status="$(printf '%s' "$meta" | cut -f1)"
+            ctype="$(printf '%s' "$meta" | cut -f3)"
+            eff="$(printf '%s' "$meta" | cut -f4-)"
+            clen="$(awk 'BEGIN{IGNORECASE=1} /^content-length:/ {gsub("\\r",""); v=$2} END{print v}' "$h")"
+            [ -n "$clen" ] || clen=unknown
+            tmp="evidence/${name}.range"
+            set +e
+            range_meta="$(curl -A 'GodsPVZ-Stage9.1/1' --connect-timeout 15 --max-time 60 -sSL --range 0-1023 -o "$tmp" -w '%{http_code}\t%{size_download}' "$url")"
+            rrc=$?
+            set -e
+            rstatus="$(printf '%s' "$range_meta" | cut -f1)"
+            rbytes="$(printf '%s' "$range_meta" | cut -f2)"
+            magic="$(xxd -p -l 8 "$tmp" 2>/dev/null || true)"
+            printf '%s\t%s(rc=%s)\t%s\t%s\t%s\t%s(rc=%s)\t%s\t%s\n' "$name" "$status" "$hrc" "$clen" "$ctype" "$eff" "$rstatus" "$rrc" "$rbytes" "$magic" | tee -a evidence/probe.tsv
+            rm -f "$tmp"
+          done < candidates.txt
+          cat evidence/probe.tsv
+
+      - name: Select exact-China candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          rows=Path('evidence/probe.tsv').read_text().splitlines()[1:]
+          matches=[]
+          for row in rows:
+              f=row.split('\t')
+              if not f: continue
+              name=f[0]
+              status=f[1].split('(')[0]
+              rstatus=f[5].split('(')[0]
+              if name.startswith('china-') and (status in {'200','206'} or rstatus in {'200','206'}):
+                  matches.append(name)
+          Path('evidence/RESULT.txt').write_text(('EXACT_CHINA_CANDIDATES=' + ','.join(matches)) if matches else 'EXACT_CHINA_CANDIDATES=NONE')
+          print(Path('evidence/RESULT.txt').read_text())
+          PY
+
+      - name: Upload URL probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-MODULE-URL-PROBE
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true

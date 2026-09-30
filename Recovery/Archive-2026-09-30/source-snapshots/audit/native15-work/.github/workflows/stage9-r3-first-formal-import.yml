@@ -1,0 +1,317 @@
+name: Stage9.1 R3 FIRST FORMAL UNITY IMPORT
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-r3-first-formal-import.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  r3-first-formal-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Prepare evidence and verify secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          mkdir -p "$EVIDENCE"
+          if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
+            echo 'UNITY_EMAIL or UNITY_PASSWORD repository secret is missing/empty.' >&2
+            exit 61
+          fi
+          echo 'Required Unity account secrets are present.' > "$EVIDENCE/secret-presence.txt"
+
+      - name: Download and verify all 12 formal R3 parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          PARTS="$OUT/r3-parts"
+          mkdir -p "$PARTS"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/r3-parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a	67108864
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2	67108864
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2	67108864
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f	67108864
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc	67108864
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263	67108864
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c	67108864
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec	67108864
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8	67108864
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a	67108864
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994	67108864
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325	48568114
+          EOF
+          : > "$EVIDENCE/r3-download.tsv"
+          while IFS=$'\t' read -r idx fid expected_sha expected_size; do
+            f="$PARTS/GodsPVZ-Stage9.1-preimport-r3-2026-09-12.tar.zst.${idx}.part"
+            set +e
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            rc=$?
+            set -e
+            if [ "$rc" -ne 0 ] || [ ! -s "$f" ]; then
+              printf '%s\tDOWNLOAD_FAIL\t%s\n' "$idx" "$rc" | tee -a "$EVIDENCE/r3-download.tsv"
+              exit 62
+            fi
+            sha="$(sha256sum "$f" | awk '{print $1}')"
+            size="$(stat -c %s "$f")"
+            printf '%s\t%s\t%s\t%s\n' "$idx" "$sha" "$size" "$rc" | tee -a "$EVIDENCE/r3-download.tsv"
+            [ "$sha" = "$expected_sha" ] || exit 63
+            [ "$size" = "$expected_size" ] || exit 64
+          done < "$OUT/r3-parts.tsv"
+          echo 'R3_PARTS_12_OF_12_PASS' > "$EVIDENCE/r3-parts-gate.txt"
+
+      - name: Reconstruct R3 and run formal pre-import audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          PARTS="$OUT/r3-parts"
+          ARCHIVE="$OUT/GodsPVZ-Stage9.1-preimport-r3-2026-09-12.tar.zst"
+          ROOT="$OUT/r3"
+          mkdir -p "$ROOT"
+          cat "$PARTS"/*.part > "$ARCHIVE"
+          SHA="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
+          SIZE="$(stat -c %s "$ARCHIVE")"
+          printf '%s\n' "$SHA" > "$EVIDENCE/r3-rejoined-sha256.txt"
+          printf '%s\n' "$SIZE" > "$EVIDENCE/r3-rejoined-size.txt"
+          [ "$SHA" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 65
+          [ "$SIZE" = '786765618' ] || exit 66
+          zstd -t "$ARCHIVE" 2> "$EVIDENCE/r3-zstd-test.txt"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$ROOT"
+          rm -rf "$PARTS" "$ARCHIVE"
+          PROJECT="$ROOT/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          MANIFEST="$ROOT/Stage9.1-preimport-r3-evidence/after-project-manifest.json"
+          PROV="$ROOT/Stage9.1-preimport-r3-evidence/R3-PROVENANCE.json"
+          [ -d "$PROJECT" ] || exit 67
+          [ -f "$MANIFEST" ] || exit 68
+          [ -f "$PROV" ] || exit 69
+          [ "$(sha256sum "$MANIFEST" | awk '{print $1}')" = '87ceec00ed89e4b7969fffbbeb1903435789966489ad9138b6d4cee74d176856' ] || exit 70
+          printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          python3 - "$PROJECT" "$MANIFEST" "$EVIDENCE/preimport-audit.json" "$EVIDENCE/preimport-normalized-manifest.json" <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          project=Path(sys.argv[1]); formal=json.loads(Path(sys.argv[2]).read_text()); out=Path(sys.argv[3]); norm=Path(sys.argv[4])
+          actual={}
+          for f in sorted(p for p in project.rglob('*') if p.is_file()):
+              rel=f.relative_to(project).as_posix(); h=hashlib.sha256()
+              with f.open('rb') as fh:
+                  for b in iter(lambda:fh.read(1024*1024),b''): h.update(b)
+              actual[rel]={'sha256':h.hexdigest(),'size':f.stat().st_size}
+          missing=sorted(set(formal)-set(actual)); extra=sorted(set(actual)-set(formal)); bad=[]
+          for p in sorted(set(formal)&set(actual)):
+              if formal[p]!=actual[p]: bad.append(p)
+          result={'formal_entries':len(formal),'actual_files':len(actual),'missing':missing,'extra':extra,'mismatch':bad}
+          out.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          norm.write_text(json.dumps(formal,sort_keys=True)+'\n')
+          print(json.dumps({'formal_entries':len(formal),'actual_files':len(actual),'missing':len(missing),'extra':len(extra),'mismatch':len(bad)},indent=2))
+          if len(formal)!=19782 or len(actual)!=19782 or missing or extra or bad: raise SystemExit(71)
+          PY
+          HF55="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          META="$PROJECT/Assets/Plugins/Assembly-CSharp.dll.meta"
+          [ "$(sha256sum "$HF55" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 72
+          [ "$(grep -c '^  isExplicitlyReferenced: 1$' "$META")" = '1' ] || exit 73
+          [ "$(grep -c '^  isExplicitlyReferenced: 0$' "$META" || true)" = '0' ] || exit 74
+          grep -qx 'm_EditorVersion: 2022.3.44f1c1' "$PROJECT/ProjectSettings/ProjectVersion.txt"
+          test -f "$PROJECT/Assets/Scenes/MainMenu.unity"
+          test -f "$PROJECT/Assets/Scenes/Board.unity"
+          test ! -d "$PROJECT/Library"
+          echo 'FORMAL_R3_PREIMPORT_GATE_PASS' > "$EVIDENCE/r3-preimport-gate.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-r3-first-import/editor-parts
+
+      - name: Reconstruct exact Unity China 2022.3.44f1c1
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          EDITOR="$OUT/editor"
+          mkdir -p "$EDITOR"
+          cat > "$OUT/editor.sha256" <<'EOF'
+          c2cb7252b28c99581fd1ebfa7bd0d63b82fbdfd66ed9323327560eab9f9c5b12  Unity-China-2022.3.44f1c1.tar.xz.part-00
+          6f9af6d8bfae2d0dcb5482778fdb2ffee9bf8a4eb32b3030601d2d817eff5380  Unity-China-2022.3.44f1c1.tar.xz.part-01
+          daf4e501efa59d388cec09fb1bb69fb71b074933c20389748fc1aaab5b4f1b6e  Unity-China-2022.3.44f1c1.tar.xz.part-02
+          e8870b1b8ac3354302b3d4c7fa80a74249d3f2ca1d442a0fb978448ad2b7a586  Unity-China-2022.3.44f1c1.tar.xz.part-03
+          115be82c7f103fd0888e28ee316c6cd1e877d4d14939388e3be40d877e8591d4  Unity-China-2022.3.44f1c1.tar.xz.part-04
+          2efe6703f8a4b871275bde3c742c61d5b4a3322bb56fcbaf417cb9a80e90a97e  Unity-China-2022.3.44f1c1.tar.xz.part-05
+          e7b300ff6e5639c0e5d6cbc065ec6918e4dc4d36ae8abab8f97c896af8b595f1  Unity-China-2022.3.44f1c1.tar.xz.part-06
+          00f364a9e6619acd9ed466ae46055a9480d7c62a76914f713e69c3fa94abf151  Unity-China-2022.3.44f1c1.tar.xz.part-07
+          0f7b8225b57960ba08b104f20869ce42707c17df290c143d4e3bd9dc3a26c0e2  Unity-China-2022.3.44f1c1.tar.xz.part-08
+          6930abaf854320d200b069d135800fc310abcb0cb9a910e88ce68693e69a6d0a  Unity-China-2022.3.44f1c1.tar.xz.part-09
+          47b0bb1451d33932ee9f56fea9f10d7ffbffd578b8105c212401119182c3d0f0  Unity-China-2022.3.44f1c1.tar.xz.part-10
+          b5377382ceb94492a1c5288aee7c598f0495cfd108666ba2857059f6ecd92b7f  Unity-China-2022.3.44f1c1.tar.xz.part-11
+          9d6c3a3e5c94104c783620c13095460638604f9ca92fb5017d1142970710e116  Unity-China-2022.3.44f1c1.tar.xz.part-12
+          7541e40151f60c3882a82650595a4d9a97f2fdc2fe49469f440aef8f7996cc0a  Unity-China-2022.3.44f1c1.tar.xz.part-13
+          c364240981c3a762bc3be6b61db0170bd7d168b3e7c3d14d48770e72e897e830  Unity-China-2022.3.44f1c1.tar.xz.part-14
+          EOF
+          [ "$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)" = '15' ] || exit 75
+          (cd "$PARTS" && sha256sum -c "$OUT/editor.sha256") > "$EVIDENCE/editor-part-sha256-check.txt"
+          SHA="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')"
+          SIZE="$(cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | wc -c)"
+          printf '%s\n' "$SHA" > "$EVIDENCE/editor-rejoined-sha256.txt"
+          printf '%s\n' "$SIZE" > "$EVIDENCE/editor-rejoined-size.txt"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 76
+          [ "$SIZE" = '3906640940' ] || exit 77
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -t
+          (for p in "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; rm -f "$p"; done) | xz -dc | tar -xf - -C "$EDITOR"
+          UNITY="$EDITOR/Editor/Unity"
+          chmod +x "$UNITY"
+          VERSION_OUT="$("$UNITY" -version 2>&1)"
+          printf '%s\n' "$VERSION_OUT" > "$EVIDENCE/unity-version.txt"
+          VERSION="$(printf '%s\n' "$VERSION_OUT" | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n1 || true)"
+          [ "$VERSION" = '2022.3.44f1c1' ] || exit 78
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$PARTS"
+
+      - name: Acquire Personal seat and probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          RAW="$OUT/activation.log"
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$RAW" 2>&1
+          RC=$?
+          set -e
+          printf '%s\n' "$RC" > "$EVIDENCE/activation-exit.txt"
+          python3 - "$RAW" "$EVIDENCE/activation-sanitized.log" <<'PY'
+          import re,sys
+          lines=open(sys.argv[1],encoding='utf-8',errors='replace').read().splitlines(); s=re.compile(r'(access.?token|refresh.?token|password|username|e-?mail|serial|license key)',re.I)
+          open(sys.argv[2],'w').write('\n'.join('[REDACTED POTENTIALLY SENSITIVE LICENSE LINE]' if s.search(x) else x for x in lines)+'\n')
+          PY
+          rm -f "$RAW"
+          [ "$RC" -eq 0 ] || exit 79
+          echo ACQUIRED > "$OUT/seat-acquired.flag"
+          PROBE="$OUT/probe.log"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -logFile "$PROBE"
+          PRC=$?
+          set -e
+          printf '%s\n' "$PRC" > "$EVIDENCE/probe-exit.txt"
+          [ "$PRC" -eq 0 ] || exit 80
+          ! grep -q 'No valid Unity Editor license found' "$PROBE" || exit 81
+          echo LICENSE_GATE_PASS > "$EVIDENCE/license-gate.txt"
+
+      - name: Run R3 FIRST FORMAL UNITY IMPORT
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          RAW="$OUT/R3-FirstImport-Editor.log"
+          date -u +%FT%TZ > "$EVIDENCE/import-start.txt"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$RAW" > "$EVIDENCE/import-stdout.txt" 2> "$EVIDENCE/import-stderr.txt"
+          RC=$?
+          set -e
+          date -u +%FT%TZ > "$EVIDENCE/import-end.txt"
+          printf '%s\n' "$RC" > "$EVIDENCE/import-exit.txt"
+          cp "$RAW" "$EVIDENCE/Editor.log"
+          echo ATTEMPTED > "$OUT/import-attempted.flag"
+          exit 0
+
+      - name: Classify R3 import
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          if [ ! -f "$OUT/import-attempted.flag" ]; then
+            echo '{"first_import_pass":false,"classification":"NOT_ATTEMPTED"}' > "$EVIDENCE/RESULT.json"
+            exit 0
+          fi
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          RC="$(cat "$EVIDENCE/import-exit.txt")"
+          python3 - "$EVIDENCE/Editor.log" "$RC" "$PROJECT" "$EVIDENCE/RESULT.json" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          log=Path(sys.argv[1]).read_text(encoding='utf-8',errors='replace'); rc=int(sys.argv[2]); project=Path(sys.argv[3]); out=Path(sys.argv[4]); lines=log.splitlines()
+          pats={
+            'compile_errors':re.compile(r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',re.I),
+            'package_errors':re.compile(r'Failed to resolve packages|Package resolution failed|\[Package Manager\].*(?:error|failed)',re.I),
+            'assembly_collisions':re.compile(r'Multiple precompiled assemblies|Assembly with name .* already exists',re.I),
+            'serialization_errors':re.compile(r'YAML parse error|SerializedFile.*error|PPtr.*failed',re.I),
+            'missing_script_errors':re.compile(r'referenced script .* is missing|The referenced script on this Behaviour',re.I),
+            'license_errors':re.compile(r'No valid Unity Editor license found|Machine bindings don.t match',re.I),
+            'fatal_errors':re.compile(r'Aborting batchmode due to failure|Fatal Error|Crash!!!',re.I),
+          }
+          counts={k:sum(1 for x in lines if p.search(x)) for k,p in pats.items()}
+          passed=(rc==0 and sum(counts.values())==0 and (project/'Library').is_dir())
+          cls='R3_FIRST_IMPORT_PASS' if passed else 'R3_FIRST_IMPORT_BLOCKED'
+          result={'first_import_pass':passed,'classification':cls,'unity_exit_code':rc,'diagnostic_counts':counts,'library_present':(project/'Library').is_dir(),'formal_r3_archive_sha256':'d4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc','r3_project_manifest_sha256':'87ceec00ed89e4b7969fffbbeb1903435789966489ad9138b6d4cee74d176856','hf55_dll_sha256':'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655','hf56_authorized':False}
+          out.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          PY
+          if [ -f "$PROJECT/Packages/packages-lock.json" ]; then cp "$PROJECT/Packages/packages-lock.json" "$EVIDENCE/packages-lock.json"; fi
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-r3-first-import"
+          EVIDENCE="$OUT/evidence"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
+            UNITY="$(cat "$OUT/unity-path.txt")"
+            CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$CLIENT" --return-ulf > "$OUT/return.log" 2>&1
+            RC=$?
+            set -e
+            printf '%s\n' "$RC" > "$EVIDENCE/license-return-exit.txt"
+          else
+            echo 'No acquired seat.' > "$EVIDENCE/license-return-exit.txt"
+          fi
+
+      - name: Upload R3 FIRST IMPORT evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-R3-FIRST-FORMAL-UNITY-IMPORT-evidence
+          path: ${{ runner.temp }}/stage9-r3-first-import/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6
+
+      - name: Enforce R3 FIRST IMPORT result
+        if: always()
+        shell: bash
+        run: |
+          RESULT="$RUNNER_TEMP/stage9-r3-first-import/evidence/RESULT.json"
+          [ -f "$RESULT" ] || exit 90
+          python3 - "$RESULT" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1])); print(json.dumps(d,indent=2,sort_keys=True))
+          if not d.get('first_import_pass',False): raise SystemExit(91)
+          PY

@@ -1,0 +1,320 @@
+name: Stage9.1 R3 HF57 MainMenu serialization gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-r3-hf57-mainmenu-serialization-gate.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  r3-hf57-mainmenu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== disk before cleanup ==='
+          df -h
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+          sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+          echo '=== disk after cleanup ==='
+          df -h
+
+      - name: Prepare formal R3
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"
+          mkdir -p "$OUT/parts" "$OUT/r3" "$E"
+          [ -n "${UNITY_EMAIL:-}" ] && [ -n "${UNITY_PASSWORD:-}" ] || exit 61
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325
+          EOF
+          while IFS=$'\t' read -r idx fid sha; do
+            f="$OUT/parts/r3.$idx.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            [ "$(sha256sum "$f" | awk '{print $1}')" = "$sha" ] || exit 62
+          done < "$OUT/parts.tsv"
+          cat "$OUT/parts"/*.part > "$OUT/r3.tar.zst"
+          [ "$(stat -c%s "$OUT/r3.tar.zst")" = 786765618 ] || exit 63
+          [ "$(sha256sum "$OUT/r3.tar.zst" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 64
+          zstd -t "$OUT/r3.tar.zst"
+          zstd -dc "$OUT/r3.tar.zst" | tar -xf - -C "$OUT/r3"
+          rm -rf "$OUT/parts" "$OUT/r3.tar.zst"
+          PROJECT="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          DLL="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"; META="$DLL.meta"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 65
+          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$META" || exit 66
+          grep -q '^  isExplicitlyReferenced: 1$' "$META" || exit 67
+          grep -q '^  isPreloaded: 0$' "$META" || exit 68
+          echo "$PROJECT" > "$OUT/project.txt"
+          printf 'r3_sha256=%s\nhf55_sha256=%s\n' \
+            'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' \
+            'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' > "$E/input-gate.txt"
+          echo '=== disk after R3 reconstruction ==='
+          df -h
+          du -sh "$OUT/r3" || true
+
+      - name: Download HF56 and HF57 patchers
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34689491315
+          pattern: GodsPVZ-HF56Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57/hf56-patcher
+
+      - name: Download HF57 patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34690940527
+          pattern: GodsPVZ-HF57Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57/hf57-patcher
+
+      - name: Apply formal HF56 HF57 and integration fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"
+          OLD="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"; OLDMETA="$OLD.meta"
+          HF56="$OUT/Assembly-CSharp-HF56.dll"; HF57="$OUT/Assembly-CSharp-HF57.dll"
+          P56="$(find "$OUT/hf56-patcher" -type f -name 'GodsPVZ.HF56Patch' | head -1)"
+          P57="$(find "$OUT/hf57-patcher" -type f -name 'GodsPVZ.HF57Patch' | head -1)"
+          [ -n "$P56" ] && [ -n "$P57" ]; chmod +x "$P56" "$P57"
+          "$P56" "$OLD" "$HF56" | tee "$E/hf56-patcher.log"
+          [ "$(sha256sum "$HF56" | awk '{print $1}')" = '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' ] || exit 71
+          "$P57" "$HF56" "$HF57" | tee "$E/hf57-patcher.log"
+          [ "$(sha256sum "$HF57" | awk '{print $1}')" = 'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' ] || exit 72
+          cp "$HF57" "$OLD"
+          python3 - "$OLD" "$E/integration-binary-diff.txt" <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          p=Path(sys.argv[1]); out=Path(sys.argv[2]); b=bytearray(p.read_bytes())
+          assert hashlib.sha256(b).hexdigest()=='a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b'
+          lines=[]
+          for o in [0x9f3d6,0x9f3e3,0x9f3f1,0x9f3ff,0x9f412,0x9f41c,0x9f446]:
+              assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000')
+              b[o+1]=0x0d
+              lines.append(f'{o:#x}: fe0c0000 -> fe0d0000')
+          for o,old,new in [(0xde448,b'Assembly-CSharp.dll',b'GodsPVZRuntime1.dll'),(0xe0137,b'Assembly-CSharp',b'GodsPVZRuntime1')]:
+              assert len(old)==len(new)
+              assert bytes(b[o:o+len(old)])==old
+              b[o:o+len(old)]=new
+              lines.append(f'{o:#x}: {old.decode()} -> {new.decode()}')
+          p.write_bytes(b)
+          got=hashlib.sha256(b).hexdigest()
+          assert got=='e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568'
+          out.write_text('\n'.join(lines)+f'\nintegrated_sha256={got}\n')
+          PY
+          sed -i 's/^  isPreloaded: 0$/  isPreloaded: 1/' "$OLDMETA"
+          NEW="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"; NEWMETA="$NEW.meta"
+          mv "$OLD" "$NEW"; mv "$OLDMETA" "$NEWMETA"
+          [ "$(sha256sum "$NEW" | awk '{print $1}')" = 'e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568' ] || exit 73
+          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$NEWMETA" || exit 74
+          grep -q '^  isExplicitlyReferenced: 1$' "$NEWMETA" || exit 75
+          grep -q '^  isPreloaded: 1$' "$NEWMETA" || exit 76
+          printf 'hf56_sha256=%s\nhf57_sha256=%s\nintegrated_sha256=%s\nguid=%s\n' \
+            '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' \
+            'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' \
+            'e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568' \
+            '60b84a767c46ced9aacc93f38da4d2f3' >> "$E/input-gate.txt"
+          rm -rf "$OUT/hf56-patcher" "$OUT/hf57-patcher" "$HF56" "$HF57"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-hf57/editor-parts
+
+      - name: Reconstruct exact Editor and activate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"
+          mkdir -p "$D"
+          echo '=== disk before Editor extraction ==='
+          df -h
+          du -sh "$P" || true
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 81
+          (for p in "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*; do cat "$p"; done) | xz -dc | tar -xf - -C "$D"
+          rm -rf "$P"
+          echo '=== disk after Editor extraction and compressed-part cleanup ==='
+          df -h
+          du -sh "$D" || true
+          U="$D/Editor/Unity"; chmod +x "$U"
+          "$U" -version > "$E/unity-version.txt" 2>&1
+          grep -q '2022.3.44f1c1' "$E/unity-version.txt" || exit 82
+          echo "$U" > "$OUT/unity.txt"
+          C="$D/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          set +e
+          "$C" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$OUT/activate.log" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/activation-exit.txt"
+          [ "$RC" = 0 ] || exit 83
+          echo ACQUIRED > "$OUT/seat.flag"
+
+      - name: First import HF57 integrated candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          echo '=== disk before first Unity import ==='
+          df -h
+          du -sh "$PROJECT" || true
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/first-import.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in UnitySourceGeneratedAssemblyMonoScriptTypes_v1:Get' "$E/first-import.log"
+          ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/first-import.log"
+          echo '=== disk after first Unity import ==='
+          df -h
+          du -sh "$PROJECT/Library" || true
+
+      - name: Verify GameStart serialized prefab binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          D="$PROJECT/Assets/Stage9HF57Diag/Editor"; mkdir -p "$D"
+          cat > "$D/Stage9HF57Serialization.cs" <<'EOF'
+          using System;
+          using System.Collections.Generic;
+          using System.IO;
+          using UnityEditor;
+          using UnityEditor.SceneManagement;
+          using UnityEngine;
+          public static class Stage9HF57Serialization {
+            static void Walk(GameObject g,List<Component> comps){ foreach(var c in g.GetComponents<Component>()) if(c!=null) comps.Add(c); foreach(Transform ch in g.transform) Walk(ch.gameObject,comps); }
+            public static void Run(){
+              var s=EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity",OpenSceneMode.Single);
+              var comps=new List<Component>(); foreach(var r in s.GetRootGameObjects()) Walk(r,comps);
+              Component gs=null; foreach(var c in comps) if(c.GetType().Name=="GameStart"){ gs=c; break; }
+              if(gs==null) throw new Exception("GameStart component not found");
+              var so=new SerializedObject(gs); var p=so.FindProperty("mainMenuPrefab");
+              if(p==null) throw new Exception("mainMenuPrefab serialized property not found");
+              var o=p.objectReferenceValue;
+              string guid=""; long fileID=0; if(o!=null) AssetDatabase.TryGetGUIDAndLocalFileIdentifier(o,out guid,out fileID);
+              string line=$"GAMESTART mainMenuPrefab null={(o==null)} guid={guid} fileID={fileID} name={(o==null?"<null>":o.name)}";
+              File.WriteAllText(Environment.GetEnvironmentVariable("STAGE9_DIAG_PATH"),line+"\n"); Debug.Log("STAGE9_HF57_SERIALIZATION "+line);
+              if(o==null) throw new Exception("mainMenuPrefab remained null");
+            }
+          }
+          EOF
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/diag-compile.log"
+          STAGE9_DIAG_PATH="$E/hf57-serialization.txt" "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod Stage9HF57Serialization.Run -logFile "$E/hf57-serialization.log"
+          cat "$E/hf57-serialization.txt"
+          grep -q 'null=False' "$E/hf57-serialization.txt" || exit 91
+          grep -q 'guid=aefa3794e8efa4d4d86c42da9c31b06c' "$E/hf57-serialization.txt" || exit 92
+          grep -q 'fileID=1709254077376921' "$E/hf57-serialization.txt" || exit 93
+
+      - name: Install focused MainMenu PlayMode test
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"; T="$PROJECT/Assets/Stage9HF57PlayMode"
+          mkdir -p "$T"
+          cat > "$T/Stage9.HF57.PlayMode.asmdef" <<'EOF'
+          {"name":"Stage9.HF57.PlayMode.Tests","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
+          EOF
+          cat > "$T/Stage9HF57PlayMode.cs" <<'EOF'
+          using System.Collections;
+          using NUnit.Framework;
+          using UnityEngine;
+          using UnityEngine.SceneManagement;
+          using UnityEngine.TestTools;
+          public class Stage9HF57PlayMode {
+            static void Walk(GameObject g,ref int gos,ref int missing,ref int mainui){ gos++; foreach(var c in g.GetComponents<Component>()){ if(c==null){missing++;continue;} if(c.GetType().Name=="MainUIController") mainui++; } foreach(Transform ch in g.transform) Walk(ch.gameObject,ref gos,ref missing,ref mainui); }
+            [UnityTest] public IEnumerator MainMenuRuntimeBoot(){
+              LogAssert.ignoreFailingMessages=true;
+              var op=SceneManager.LoadSceneAsync("MainMenu",LoadSceneMode.Single); Assert.IsNotNull(op); while(!op.isDone) yield return null;
+              yield return new WaitForSecondsRealtime(2f); for(int i=0;i<20;i++) yield return null;
+              int gos=0,missing=0,mainui=0; foreach(var r in SceneManager.GetActiveScene().GetRootGameObjects()) Walk(r,ref gos,ref missing,ref mainui);
+              Debug.Log($"STAGE9_HF57_MARKER scene=MainMenu gos={gos} missing={missing} mainui={mainui}");
+              Assert.Greater(gos,3,"MainMenu did not expand beyond bootstrap scene");
+              Assert.AreEqual(0,missing,"MainMenu has missing component slots");
+              Assert.Greater(mainui,0,"MainUIController was not instantiated");
+            }
+          }
+          EOF
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/test-compile.log"
+          ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/test-compile.log"
+
+      - name: Run focused MainMenu PlayMode HF57
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          set +e
+          timeout 300 "$U" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode \
+            -assemblyNames Stage9.HF57.PlayMode.Tests -testResults "$E/playmode-results.xml" -logFile "$E/playmode.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/playmode-exit.txt"
+          grep 'STAGE9_HF57_MARKER' "$E/playmode.log" > "$E/playmode-markers.txt" || true
+          cat "$E/playmode-markers.txt" || true
+          if [ -f "$E/playmode-results.xml" ]; then
+            python3 - "$E/playmode-results.xml" "$E/playmode-summary.txt" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          r=ET.parse(sys.argv[1]).getroot(); attrs={k:r.attrib.get(k,'') for k in ('total','passed','failed','skipped','inconclusive','result')}
+          open(sys.argv[2],'w').write('\n'.join(f'{k}={v}' for k,v in attrs.items())+'\n'); print(attrs)
+          PY
+          fi
+          [ "$RC" = 0 ] || exit "$RC"
+          grep -q 'scene=MainMenu .*missing=0 .*mainui=' "$E/playmode-markers.txt" || exit 101
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-hf57"; E="$OUT/evidence"
+          if [ -f "$OUT/seat.flag" ] && [ -f "$OUT/unity.txt" ]; then
+            C="$(dirname "$(cat "$OUT/unity.txt")")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+            set +e
+            "$C" --deactivate-all > "$E/license-deactivate.log" 2>&1
+            RC=$?; echo "$RC" > "$E/license-deactivate-exit.txt"
+            set -e
+          fi
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-R3-HF57-MAINMENU-SERIALIZATION-evidence
+          path: ${{ runner.temp }}/stage9-hf57/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true

@@ -1,0 +1,252 @@
+name: Stage9.1 18b4 Board GameContinue recovery pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-18b4-board-gamecontinue-recovery-pipeline.yml'
+      - 'Tools/Stage9BoardGameContinuePatch/**'
+      - 'Tools/Stage9RuntimeGateFast/**'
+      - 'Tools/Stage9NativeProbe/Board.GameContinue.native-evidence.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runtime-qualified 18b4 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34846936817
+          name: Stage9.1-8905-DIALOGUE-START-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Build patch and run static isolation gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/board-gamecontinue"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-dialogue-start.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '18b4d2ad02efa29c909a151e34fb12cb4e72f8a1fa0e3e3e702d5b8c169fa5fd'
+          OUT="$O/GodsPVZRuntime1-board-gamecontinue.dll"
+          dotnet build Tools/Stage9BoardGameContinuePatch/Stage9BoardGameContinuePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9BoardGameContinuePatch/Stage9BoardGameContinuePatch.csproj -c Release --no-build -- "$IN" "$OUT" | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x060002BD rid=701 method_pointer_entry=0x181B84340 va=0x180326700 end=0x1803267D9 native_slice_sha256=28b029b2f9c2ff3b683305f9a3e8aede54b2e42e255ececc3c12542900463987$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS keycode_space_32=1 pauseTemp_on_keydown=1 gamePause_false=1 restore_gameSpeed=1 detail_AutoTimeSlow_0_25=1 audio0_UnPause=1 BGMUnPasue=1 pause_inactive=1$' "$E/patch.log"
+          grep -q '^CLR_ACCESS_ADAPTATION internal_Input_GetKeyDownInt_to_public_Input_GetKeyDown=1 semantics_preserved=1 field_metadata_changes=0 framework_exception_ctor=0$' "$E/patch.log"
+          grep -q '^REOPEN_BOARD_GAMECONTINUE_PASS token=0x060002BD .*locals=0 GetKeyDownInt_calls=0 GetKeyDown_calls=1 keycode32=1 AutoTimeSlow_calls=1 UnPause_calls=1 BGMUnPasue_calls=1 SetActive_calls=1$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x060002BD$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^PRESERVATION_PASS batch1=4 plant_ctor=1 projectile_ctor=1 projectile_hf21=2 managers=2 plant_detail_initialize=1 load_skill_logo=1 load_data=1 create_map=1 grid_copy=1 dialogue_start=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9NativeProbe/Board.GameContinue.native-evidence.md "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Exact-reference readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/board-gamecontinue"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-board-gamecontinue.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          test -f "$RDIR/UnityEngine.InputLegacyModule.dll"
+          "$ILSPY" -r "$RDIR" -t Board "$DLL" > "$E/Board.cs" 2> "$E/Board.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Board "$DLL" > "$E/Board.il" 2> "$E/Board.il.stderr"
+          test ! -s "$E/Board.cs.stderr"
+          test ! -s "$E/Board.il.stderr"
+          python3 - "$E/Board.cs" "$E/Board.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+void\s+GameContinue\s*\(\s*\)',cs); assert m,'GameContinue C# not found'
+          o=cs.index('{',m.end()); d=0; end=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: end=i+1; break
+          assert end is not None
+          body=cs[m.start():end]; Path(sys.argv[1]+'.GameContinue.txt').write_text(body)
+          for bad in ['GetKeyDownInt','Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Method not found @','Warning: Method ends','System.Private.CoreLib']:
+              assert bad not in body,(bad,body)
+          for good in ['Input.GetKeyDown','pauseTemp','gamePause','gameSpeed','AutoTimeSlow','UnPause','BGMUnPasue','SetActive']:
+              assert good in body,(good,body)
+          e=il.find('} // end of method Board::GameContinue'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.GameContinue.txt').write_text(ib)
+          for bad in ['GetKeyDownInt','System.Private.CoreLib','Method not found @','Warning: Method ends']:
+              assert bad not in ib,(bad,ib)
+          assert ib.count('UnityEngine.Input::GetKeyDown(valuetype [UnityEngine.CoreModule]UnityEngine.KeyCode)')==1,ib
+          assert ib.count('GlobalStaticVars::AutoTimeSlow(float32, class Board)')==1,ib
+          assert ib.count('UnityEngine.AudioSource::UnPause()')==1,ib
+          assert ib.count('ZombieManager::BGMUnPasue()')==1,ib
+          assert ib.count('UnityEngine.GameObject::SetActive(bool)')==1,ib
+          print('BOARD_GAMECONTINUE_EXACT_REF_PASS target_token=0x060002BD internal_input_call=0 public_input_wrapper=1 native_semantics_preserved=1 corelib_pollution=0')
+          print('=== TARGET_CSHARP ==='); print(body)
+          PY
+
+      - name: Upload qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-18B4-BOARD-GAMECONTINUE-QUALIFIED
+          path: ${{ runner.temp }}/board-gamecontinue/evidence/
+          retention-days: 90
+
+  runtime:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+
+      - name: Download qualified candidate from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Stage9.1-18B4-BOARD-GAMECONTINUE-QUALIFIED
+          path: ${{ runner.temp }}/stage9-gamecontinue/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-gamecontinue/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-gamecontinue/editor-parts
+
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-gamecontinue/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-board-gamecontinue.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "${#EXPECTED}" = 64
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "GAMECONTINUE_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "GAMECONTINUE_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+
+      - name: Run single-launch exact R3 strict Board gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9RuntimeGateFast/run-strict-board-fast.sh "$RUNNER_TEMP/stage9-gamecontinue" "$GAMECONTINUE_CANDIDATE" "$GAMECONTINUE_SHA"
+
+      - name: Audit recovered blocker and promote next causal error
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-gamecontinue/evidence"; mkdir -p "$E"; LOG="$E/playmode.log"
+          if [ ! -f "$LOG" ]; then echo 'RUNTIME_AUDIT no_playmode_log=1' | tee "$E/board-gamecontinue-runtime-audit.txt"; exit 1; fi
+          python3 - "$LOG" > "$E/board-gamecontinue-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'BOARD_GAMECONTINUE_METHODACCESS_COUNT':text.count("MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)' is inaccessible from method `Board.GameContinue()'"),
+            'DIALOGUE_START_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',text)),
+            'GRID_COPY_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Grid:Copy',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'BOARDCONFIG_CREATEMAP_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',text)),
+            'LOAD_DATA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',text)),
+            'LOAD_SKILL_LOGO_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text)),
+            'PROJECTILE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text)),
+          }
+          counts['PLANT_DETAIL_INITIALIZE_FIELDACCESS_COUNT']=sum('FieldAccessException' in x and 'Plant:isOnField' in x and 'Plant_DetaiPage:Initialize' in x for x in lines)
+          counts['PLANT_CTOR_RUNTIME_ERROR_COUNT']=len(re.findall(r'(?:InvalidProgramException|FieldAccessException).*Plant:\.ctor',text))
+          counts['ZEROVECTOR_TEXT_COUNT']=text.count('zeroVector')
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_STRICT_')]
+          print('STRICT_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          pre_idx=next((i for i,x in enumerate(lines) if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')),None)
+          recovered=['Board.GameContinue','DialogueManager_OnBoard:Start','Grid:Copy','BoardConfig:CreateMap','Board_PlantDetail_PlantData:LoadData','Plant_DetaiPage:LoadSkillLogo','Projectile:.ctor']
+          first=None
+          if pre_idx is not None:
+            for i in range(pre_idx+1,len(lines)):
+              x=lines[i]
+              if 'Exception:' not in x or x.startswith('UnityEngine.'): continue
+              if any(s in x for s in recovered): continue
+              if 'FieldAccessException' in x and 'Plant:isOnField' in x: continue
+              first=i; break
+          if first is None: print('FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION none')
+          else:
+            print('=== FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION ===')
+            for j in range(max(pre_idx or 0,first-4),min(len(lines),first+36)): print(f'{j+1}: {lines[j]}')
+          assert all(v==0 for v in counts.values()),counts
+          assert any(x.startswith('STAGE9_STRICT_MAINMENU ') for x in markers)
+          assert 'STAGE9_STRICT_CREATE_INVOKE ok=1' in markers
+          assert any(x.startswith('STAGE9_STRICT_SAVE_READY ') for x in markers)
+          pre=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')]
+          assert pre and all(s in pre[-1] for s in ['boardStart=0','board=0','boardManager=1','prepare=1','seedChooser=1']),pre
+          assert 'STAGE9_STRICT_GAMESTART_INVOKE ok=1' in markers
+          board=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD ')]
+          assert board and 'board=1' in board[-1] and 'activeBoard=1' in board[-1],board
+          print('BOARD_GAMECONTINUE_RUNTIME_GATE_PASS blocker_removed=1 previous_recoveries_preserved=1 corelib_pollution=0 corrected_board_lifecycle=1')
+          PY
+          cat "$E/board-gamecontinue-runtime-audit.txt"
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BOARD-GAMECONTINUE-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-gamecontinue/evidence/
+          if-no-files-found: warn
+          retention-days: 90

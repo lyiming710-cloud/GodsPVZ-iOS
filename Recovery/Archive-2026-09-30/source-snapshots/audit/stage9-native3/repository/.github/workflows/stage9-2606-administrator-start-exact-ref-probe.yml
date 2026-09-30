@@ -1,0 +1,25 @@
+name: Stage9.1 2606 Administrator Start exact-ref probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-2606-administrator-start-exact-ref-probe.yml','Tools/Stage9AdministratorStartRefProbe/**']
+permissions: {contents: read, actions: read}
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34990527235, name: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED, path: '${{ runner.temp }}/candidate'}
+      - name: Probe exact refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$DLL"
+          dotnet run --project Tools/Stage9AdministratorStartRefProbe/Stage9AdministratorStartRefProbe.csproj -c Release -- "$DLL" '26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022' | tee "$RUNNER_TEMP/admin-start-exact-refs.txt"
+          grep -q '^READONLY_ADMINISTRATOR_START_EXACT_REF_PROBE_PASS mutation=0$' "$RUNNER_TEMP/admin-start-exact-refs.txt"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-2606-ADMINISTRATOR-START-EXACT-REFS, path: '${{ runner.temp }}/admin-start-exact-refs.txt', retention-days: 90}

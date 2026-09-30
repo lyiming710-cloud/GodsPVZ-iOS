@@ -1,0 +1,146 @@
+name: Stage9.1 exact Unity China license gate
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-unity-license-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  license-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    steps:
+      - name: Verify secret is present without exposing it
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${UNITY_LICENSE:-}" ]; then
+            echo 'UNITY_LICENSE repository secret is missing or empty.' >&2
+            exit 41
+          fi
+          echo 'UNITY_LICENSE secret is present.'
+
+      - name: Download and verify exact Unity China 2022.3.44f1c1 editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-license-gate"
+          mkdir -p "$OUT/editor" "$OUT/evidence"
+          URL='https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorInstaller/Unity.tar.xz'
+          ARCHIVE="$OUT/Unity-China-2022.3.44f1c1.tar.xz"
+          EXPECTED_SIZE='3906640940'
+          EXPECTED_SHA='0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+
+          df -h . > "$OUT/evidence/disk-before.txt"
+          curl -fL --retry 5 --retry-delay 5 --connect-timeout 30 -o "$ARCHIVE" "$URL"
+          ACTUAL_SIZE="$(stat -c %s "$ARCHIVE")"
+          ACTUAL_SHA="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
+          printf '%s\n' "$ACTUAL_SIZE" > "$OUT/evidence/editor-size.txt"
+          printf '%s\n' "$ACTUAL_SHA" > "$OUT/evidence/editor-sha256.txt"
+          [ "$ACTUAL_SIZE" = "$EXPECTED_SIZE" ] || { echo "Editor size mismatch: $ACTUAL_SIZE" >&2; exit 42; }
+          [ "$ACTUAL_SHA" = "$EXPECTED_SHA" ] || { echo "Editor SHA mismatch: $ACTUAL_SHA" >&2; exit 43; }
+          xz -t "$ARCHIVE"
+          tar -xJf "$ARCHIVE" -C "$OUT/editor"
+          rm -f "$ARCHIVE"
+
+          UNITY="$OUT/editor/Editor/Unity"
+          [ -x "$UNITY" ] || chmod +x "$UNITY"
+          VERSION_OUT="$("$UNITY" -version 2>&1)"
+          printf '%s\n' "$VERSION_OUT" > "$OUT/evidence/unity-version-raw.txt"
+          VERSION="$(printf '%s\n' "$VERSION_OUT" | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n1 || true)"
+          [ "$VERSION" = '2022.3.44f1c1' ] || { echo "Exact editor version gate failed: $VERSION" >&2; exit 44; }
+          df -h . > "$OUT/evidence/disk-after-extract.txt"
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          echo 'Exact editor verification PASS.'
+
+      - name: Import Personal license and probe persisted license state
+        id: license
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-license-gate"
+          EVIDENCE="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          LICENSE_FILE="$RUNNER_TEMP/Unity_lic.ulf"
+          RAW1="$OUT/license-import-raw.log"
+          RAW2="$OUT/license-probe-raw.log"
+
+          umask 077
+          printf '%s' "$UNITY_LICENSE" > "$LICENSE_FILE"
+          if [ ! -s "$LICENSE_FILE" ]; then
+            echo 'Temporary ULF file is empty.' >&2
+            exit 45
+          fi
+          printf '%s\n' "$(stat -c %s "$LICENSE_FILE")" > "$EVIDENCE/license-secret-byte-count.txt"
+
+          set +e
+          "$UNITY" -batchmode -nographics -quit -manualLicenseFile "$LICENSE_FILE" -logFile "$RAW1"
+          IMPORT_EXIT=$?
+          "$UNITY" -batchmode -nographics -quit -logFile "$RAW2"
+          PROBE_EXIT=$?
+          set -e
+
+          printf '%s\n' "$IMPORT_EXIT" > "$EVIDENCE/license-import-exit.txt"
+          printf '%s\n' "$PROBE_EXIT" > "$EVIDENCE/license-probe-exit.txt"
+
+          python3 - "$RAW1" "$EVIDENCE/license-import-sanitized.log" "$RAW2" "$EVIDENCE/license-probe-sanitized.log" <<'PY'
+          import re, sys
+          pairs=[(sys.argv[1],sys.argv[2]),(sys.argv[3],sys.argv[4])]
+          sensitive=re.compile(r'(access.?token|refresh.?token|serial|password|e-?mail|username|user name|license key)',re.I)
+          for src,dst in pairs:
+              try:
+                  lines=open(src,'r',encoding='utf-8',errors='replace').read().splitlines()
+              except FileNotFoundError:
+                  lines=['<raw log missing>']
+              out=[]
+              for line in lines:
+                  out.append('[REDACTED POTENTIALLY SENSITIVE LICENSE LINE]' if sensitive.search(line) else line)
+              open(dst,'w',encoding='utf-8').write('\n'.join(out)+'\n')
+          PY
+
+          rm -f "$LICENSE_FILE" "$RAW1" "$RAW2"
+          unset UNITY_LICENSE || true
+
+          python3 - "$EVIDENCE/RESULT.json" "$IMPORT_EXIT" "$PROBE_EXIT" <<'PY'
+          import json,sys
+          p=sys.argv[1]; imp=int(sys.argv[2]); probe=int(sys.argv[3])
+          d={
+            'gate':'STAGE9_1_UNITY_LICENSE_GATE',
+            'editor':'Unity China 2022.3.44f1c1',
+            'editor_sha256':'0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14',
+            'license_secret_present':True,
+            'manual_license_import_exit':imp,
+            'persisted_license_probe_exit':probe,
+            'license_gate_pass': imp == 0 and probe == 0,
+            'project_import_attempted':False,
+            'r2_touched':False,
+            'hf56_authorized':False,
+          }
+          open(p,'w',encoding='utf-8').write(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(d,indent=2,sort_keys=True))
+          PY
+
+          if [ "$IMPORT_EXIT" -ne 0 ] || [ "$PROBE_EXIT" -ne 0 ]; then
+            echo "License gate FAILED: import=$IMPORT_EXIT probe=$PROBE_EXIT" >&2
+            exit 46
+          fi
+          echo 'License gate PASS.'
+
+      - name: Upload sanitized license-gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-unity-license-gate-evidence
+          path: |
+            ${{ runner.temp }}/stage9-license-gate/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+          include-hidden-files: true
+          compression-level: 6

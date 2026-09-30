@@ -1,0 +1,108 @@
+name: Stage9.1 global orphan generic metadata audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-ios-global-orphan-generic-audit.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35412364048'
+          name: Stage9.1-IOS-BOARD-START-LOCAL-PROOF
+          path: dll
+      - name: Scan all reachable Cecil metadata for ownerless generic parameters
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=dll/Assembly-CSharp-ios-board-local-proof.dll
+          test -f "$DLL"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = 'f47b1b37f1d4d3a1ddeb44bb6dbe399c58dc6dee3d4602618b2790f839d3e321'
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          class P {
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t;foreach(var n in t.NestedTypes)foreach(var x in AT(n))yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static bool HasOrphan(TypeReference t, HashSet<TypeReference> seen=null){
+              if(t==null)return false; seen??=new HashSet<TypeReference>(); if(!seen.Add(t))return false;
+              if(t is GenericParameter gp && gp.Owner==null)return true;
+              if(t.DeclaringType!=null && HasOrphan(t.DeclaringType,seen))return true;
+              if(t is TypeSpecification ts && HasOrphan(ts.ElementType,seen))return true;
+              if(t is GenericInstanceType gi && gi.GenericArguments.Any(x=>HasOrphan(x,seen)))return true;
+              if(t is FunctionPointerType fp){if(HasOrphan(fp.ReturnType,seen))return true;foreach(var p in fp.Parameters)if(HasOrphan(p.ParameterType,seen))return true;}
+              return false;
+            }
+            static string TI(TypeReference t){
+              if(t==null)return "<null>";
+              if(t is GenericParameter gp)return $"{gp.FullName}[owner={(gp.Owner==null?"null":gp.Owner.ToString())};scope={(gp.Scope==null?"null":gp.Scope.ToString())}]";
+              return t.FullName;
+            }
+            static void Main(string[] a){
+              using var asm=AssemblyDefinition.ReadAssembly(Path.GetFullPath(a[0]),new ReaderParameters{InMemory=true}); var m=asm.MainModule; var all=AT(m).ToList(); var hits=new SortedSet<string>();
+              foreach(var t in all){
+                if(HasOrphan(t.BaseType))hits.Add($"TYPE_BASE owner={t.FullName} type={TI(t.BaseType)}");
+                foreach(var it in t.Interfaces)if(HasOrphan(it.InterfaceType))hits.Add($"TYPE_INTERFACE owner={t.FullName} type={TI(it.InterfaceType)}");
+                foreach(var f in t.Fields)if(HasOrphan(f.FieldType))hits.Add($"FIELD owner={t.FullName} field={f.FullName} type={TI(f.FieldType)}");
+                foreach(var p in t.Properties){if(HasOrphan(p.PropertyType))hits.Add($"PROPERTY owner={t.FullName} prop={p.FullName} type={TI(p.PropertyType)}");foreach(var x in p.Parameters)if(HasOrphan(x.ParameterType))hits.Add($"PROPERTY_PARAM owner={p.FullName} type={TI(x.ParameterType)}");}
+                foreach(var e in t.Events)if(HasOrphan(e.EventType))hits.Add($"EVENT owner={t.FullName} event={e.FullName} type={TI(e.EventType)}");
+                foreach(var md in t.Methods){
+                  if(HasOrphan(md.ReturnType))hits.Add($"METHOD_RETURN owner={md.FullName} type={TI(md.ReturnType)}");
+                  foreach(var p in md.Parameters)if(HasOrphan(p.ParameterType))hits.Add($"METHOD_PARAM owner={md.FullName} index={p.Index} type={TI(p.ParameterType)}");
+                  foreach(var gp in md.GenericParameters)foreach(var c in gp.Constraints)if(HasOrphan(c.ConstraintType))hits.Add($"METHOD_GP_CONSTRAINT owner={md.FullName} gp={gp.Name} type={TI(c.ConstraintType)}");
+                  if(!md.HasBody)continue;
+                  foreach(var v in md.Body.Variables)if(HasOrphan(v.VariableType))hits.Add($"LOCAL owner={md.FullName} index={v.Index} type={TI(v.VariableType)}");
+                  foreach(var eh in md.Body.ExceptionHandlers)if(HasOrphan(eh.CatchType))hits.Add($"EH owner={md.FullName} type={TI(eh.CatchType)}");
+                  foreach(var ins in md.Body.Instructions){
+                    if(ins.Operand is TypeReference tr && HasOrphan(tr))hits.Add($"IL_TYPE owner={md.FullName} il=IL_{ins.Offset:x4} op={ins.OpCode} type={TI(tr)}");
+                    if(ins.Operand is FieldReference fr && (HasOrphan(fr.DeclaringType)||HasOrphan(fr.FieldType)))hits.Add($"IL_FIELD owner={md.FullName} il=IL_{ins.Offset:x4} op={ins.OpCode} field={fr.FullName} decl={TI(fr.DeclaringType)} type={TI(fr.FieldType)}");
+                    if(ins.Operand is MethodReference mr){
+                      bool bad=HasOrphan(mr.DeclaringType)||HasOrphan(mr.ReturnType)||mr.Parameters.Any(x=>HasOrphan(x.ParameterType));
+                      if(mr is GenericInstanceMethod gm)bad|=gm.GenericArguments.Any(x=>HasOrphan(x));
+                      if(bad)hits.Add($"IL_METHOD owner={md.FullName} il=IL_{ins.Offset:x4} op={ins.OpCode} token={mr.MetadataToken} method={mr.FullName} decl={TI(mr.DeclaringType)} ret={TI(mr.ReturnType)}");
+                    }
+                  }
+                }
+              }
+              foreach(var t in all)foreach(var gp in t.GenericParameters)foreach(var c in gp.Constraints)if(HasOrphan(c.ConstraintType))hits.Add($"TYPE_GP_CONSTRAINT owner={t.FullName} gp={gp.Name} type={TI(c.ConstraintType)}");
+              Console.WriteLine("assembly="+asm.Name.FullName); Console.WriteLine("module_kind="+m.Kind); Console.WriteLine("types="+all.Count); Console.WriteLine("orphan_hits="+hits.Count); foreach(var h in hits)Console.WriteLine(h);
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          set +e
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/$DLL" 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/global-orphan-generic-audit.txt"
+          rc=${PIPESTATUS[0]}
+          set -e
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/global-orphan-generic-audit.txt
+          exit "$rc"
+      - name: Commit report
+        if: always()
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/global-orphan-generic-audit.txt || true
+          git commit -m 'diagnostics: audit remaining orphan generic metadata' || exit 0
+          git push origin HEAD:stage9-admin-start-static

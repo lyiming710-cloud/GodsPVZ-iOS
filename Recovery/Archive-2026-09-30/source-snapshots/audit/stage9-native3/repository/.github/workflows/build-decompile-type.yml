@@ -1,0 +1,32 @@
+name: Build targeted decompiler
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/DecompileType/**'
+      - '.github/workflows/build-decompile-type.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish
+        run: dotnet publish Tools/DecompileType/DecompileType.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/decompile-type
+      - name: Smoke test
+        run: |
+          chmod +x publish/decompile-type/GodsPVZ.DecompileType
+          set +e
+          publish/decompile-type/GodsPVZ.DecompileType
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-DecompileType-linux-x64
+          path: publish/decompile-type/GodsPVZ.DecompileType
+          if-no-files-found: error

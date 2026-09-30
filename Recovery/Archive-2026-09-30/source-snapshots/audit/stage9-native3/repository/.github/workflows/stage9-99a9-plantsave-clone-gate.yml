@@ -1,0 +1,79 @@
+name: Stage9.1 99a9 PlantSave Clone repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-99a9-plantsave-clone-gate.yml'
+      - 'Tools/Stage9PlantSaveClonePatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  plantsave-clone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 99a9 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34719396729
+          pattern: Stage9.1-bad91-INITIALIZE-NEW-PLANT-SAVE
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantsave-clone/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantsave-clone/ilspy
+      - name: Apply exact repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantsave-clone"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-plant-save.dll"; DLL="$OUT/GodsPVZRuntime1-plantsave-clone.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '99a9dcbf8e677b705ec4df86c2034112264b872b6edce805f89c15b2f438abe6' ] || exit 61
+          dotnet build Tools/Stage9PlantSaveClonePatch/Stage9PlantSaveClonePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantSaveClonePatch/Stage9PlantSaveClonePatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^PATCH_PLANTSAVE_CLONE_INDEX local=V7 type=System.Int32$' "$E/patch.log"
+          grep -q '^PATCH_PLANTSAVE_CLONE_BOUNDS action=throw exception=System.IndexOutOfRangeException$' "$E/patch.log"
+          grep -q '^REOPEN_PLANTSAVE_CLONE_PASS index_type=System.Int32 bounds=throw token=0x' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantsave-clone"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-plantsave-clone.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t PlantSave "$DLL" > "$E/PlantSave.cs" 2> "$E/PlantSave.stderr"; test ! -s "$E/PlantSave.stderr"
+          python3 - "$E/PlantSave.cs" "$E/PlantSave.Clone.cs" <<'PY'
+          from pathlib import Path
+          import sys
+          s=Path(sys.argv[1]).read_text()
+          start=s.index('public PlantSave Clone()')
+          end=s.index('public Skill GetSkill_ID(int skillID)', start)
+          m=s[start:end]
+          Path(sys.argv[2]).write_text(m)
+          assert 'Invalid IL' not in m
+          assert 'Expected O, but got I4' not in m
+          assert 'Unknown result type' not in m
+          assert '(PlantSave)(object)new IndexOutOfRangeException()' not in m
+          assert 'IndexOutOfRangeException' in m and 'throw ' in m
+          print('ILSPY_PLANTSAVE_CLONE_PASS method=PlantSave.Clone')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-99a9-PLANTSAVE-CLONE
+          path: ${{ runner.temp }}/stage9-plantsave-clone/evidence/
+          if-no-files-found: error
+          retention-days: 90

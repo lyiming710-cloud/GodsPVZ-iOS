@@ -1,0 +1,97 @@
+name: Stage9.1 18b4 current blocker managed bundle
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - 'Tools/Stage9MethodProbe/**'
+      - '.github/workflows/stage9-18b4-current-blocker-managed-bundle.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runtime-qualified 18b4 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34846936817
+          name: Stage9.1-8905-DIALOGUE-START-QUALIFIED
+          path: ${{ runner.temp }}/candidate
+
+      - name: Download 18b4 runtime truth
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34846936817
+          name: Stage9.1-DIALOGUE-START-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/runtime
+
+      - name: Build reusable MethodDef probe
+        run: dotnet build Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release --nologo
+
+      - name: Fingerprint current blocker and queued gameplay methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/evidence"; mkdir -p "$OUT"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-dialogue-start.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL" | awk '{print $1}')
+          test "$SHA" = '18b4d2ad02efa29c909a151e34fb12cb4e72f8a1fa0e3e3e702d5b8c169fa5fd'
+          echo "CANDIDATE_SHA256 $SHA" | tee "$OUT/candidate.txt"
+          dotnet Tools/Stage9MethodProbe/bin/Release/net10.0/Stage9MethodProbe.dll \
+            "$DLL" \
+            'Board::GameContinue' \
+            'DialogueManager_OnBoard::Update' \
+            'Plant_DetaiPage::Update' \
+            'Board_PlantDetail_PlantData::Update' \
+            'ZombieManager::Update_Ladder' \
+            'Map::Copy' \
+            > "$OUT/managed-fingerprint.txt"
+          cat "$OUT/managed-fingerprint.txt"
+
+      - name: Pin runtime causal order
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/evidence"
+          LOG=$(find "$RUNNER_TEMP/runtime" -type f -name 'playmode.log' -print -quit)
+          test -n "$LOG"
+          python3 - "$LOG" > "$OUT/runtime-causal.txt" <<'PY'
+          import sys
+          lines=open(sys.argv[1],encoding='utf-8',errors='replace').read().splitlines()
+          needles=[
+            'MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)',
+            "FieldAccessException: Field `System.Collections.Generic.List`1:_size' is inaccessible from method `DialogueManager_OnBoard:Update",
+            'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update',
+            'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:Update'
+          ]
+          for needle in needles:
+            hits=[i for i,x in enumerate(lines) if needle in x]
+            print('COUNT',len(hits),needle)
+            if hits:
+              i=hits[0]
+              for j in range(max(0,i-3),min(len(lines),i+12)): print(f'{j+1}: {lines[j]}')
+              print()
+          print('CURRENT_TARGET Board.GameContinue')
+          print('CAUSE DialogueManager_OnBoard.Start -> Board.GameContinue -> inaccessible UnityEngine.Input.GetKeyDownInt')
+          PY
+          cat "$OUT/runtime-causal.txt"
+
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-18B4-CURRENT-BLOCKER-MANAGED
+          path: ${{ runner.temp }}/evidence/
+          retention-days: 90

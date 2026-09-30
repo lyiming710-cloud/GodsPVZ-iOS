@@ -1,0 +1,115 @@
+name: Stage9.1 Plant ILSpy exact-reference A-B
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-plant-ilspy-reference-ab.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  ab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+      - name: Download Plant typed-local candidate evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34795946769
+          pattern: Stage9.1-BATCH1-PLANT-CTOR-NATIVE
+          merge-multiple: true
+          path: ${{ runner.temp }}/ab/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ab/ilspy
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/ab/editor-parts
+      - name: Reconstruct exact editor and run A-B decompile
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/ab"; E="$O/evidence"; mkdir -p "$E" "$O/editor"
+          DLL="$O/candidate/GodsPVZRuntime1-plant-ctor.dll"
+          [ "$(sha256sum "$DLL"|awk '{print $1}')" = 'dc39b8bcbfcd61f04acf2c18c42e24583e9a6e75248bb24b6aae9e381b19f173' ]
+          P="$O/editor-parts"
+          [ "$(find "$P" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*'|wc -l)" = 15 ]
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*|sha256sum|awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ]
+          cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -dc | tar -xf - -C "$O/editor"
+          ILSPY="$(find "$O/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$O/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          UROOT="$O/editor/Editor/Data/Managed"
+          CORE="$(find "$UROOT" -type f -name UnityEngine.CoreModule.dll | head -1)"
+          test -n "$CORE"; echo "COREMODULE $CORE" | tee "$E/reference.txt"
+          RDIR="$(dirname "$CORE")"; echo "REFERENCE_DIR $RDIR" | tee -a "$E/reference.txt"
+          "$ILSPY" -t Plant "$DLL" > "$E/Plant-no-ref.cs" 2> "$E/Plant-no-ref.stderr"
+          "$ILSPY" -r "$RDIR" -t Plant "$DLL" > "$E/Plant-with-ref.cs" 2> "$E/Plant-with-ref.stderr"
+          test ! -s "$E/Plant-no-ref.stderr"; test ! -s "$E/Plant-with-ref.stderr"
+          python3 - "$E/Plant-no-ref.cs" "$E/Plant-with-ref.cs" <<'PY' | tee "$E/ab-result.txt"
+          from pathlib import Path
+          import re,sys
+          a=Path(sys.argv[1]).read_text(errors='replace')
+          b=Path(sys.argv[2]).read_text(errors='replace')
+          def ctor(s):
+              m=re.search(r'public\s+Plant\s*\(\s*\)',s); assert m, 'no-ref Plant ctor not found'
+              o=s.index('{',m.end()); d=0
+              for i in range(o,len(s)):
+                  d+=(s[i]=='{')-(s[i]=='}')
+                  if d==0:return s[m.start():i+1]
+              raise AssertionError('unterminated')
+          ca=ctor(a)
+          no_ref_unknown=ca.count('Unknown result type')
+          no_ref_zero=ca.count('zeroVector')
+          # With exact Unity refs ILSpy is expected to fold the trivial instance ctor
+          # into field initializers. Validate those initializers instead of requiring
+          # an explicit public Plant() method in the decompiled C#.
+          field_end=b.find('\n\tpublic ', b.find('public class Plant'))
+          # Use the prefix through the first real method marker; target fields occur near class start.
+          prefix=b[:max(b.find('\n\tpublic void ',0), b.find('\n\tprivate void ',0), b.find('\n\tpublic bool ',1000), 1500)]
+          targets=['blockable = true','dithering = default(Vector2)','dithering_anim = default(Vector3)']
+          print('NO_REF_CTOR_UNKNOWN',no_ref_unknown)
+          print('NO_REF_CTOR_ZEROVECTOR',no_ref_zero)
+          print('WITH_REF_EXPLICIT_CTOR',int(bool(re.search(r'public\s+Plant\s*\(\s*\)',b))))
+          for t in targets: print('WITH_REF_TARGET',t,int(t in b))
+          assert no_ref_unknown == 6, ca
+          assert no_ref_zero == 0, ca
+          assert not re.search(r'public\s+Plant\s*\(\s*\)',b), 'exact-reference ILSpy should fold ctor into field initializers'
+          assert all(t in b for t in targets), targets
+          # No constructor-local invalid-IL diagnostics can remain once constructor is folded;
+          # unrelated damaged Plant methods are outside this single-method gate.
+          for t in targets:
+              pos=b.index(t)
+              window=b[max(0,pos-300):pos+300]
+              assert 'Unknown result type' not in window, (t,window)
+              assert 'zeroVector' not in window, (t,window)
+          print('ILSPY_EXACT_REFERENCE_AB_PASS no_ref_ctor_unknown=6 with_ref_ctor_folded=1 target_initializers=3 local_diagnostics=0')
+          PY
+      - name: Upload A-B evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-PLANT-ILSPY-REFERENCE-AB
+          path: ${{ runner.temp }}/ab/evidence/
+          if-no-files-found: warn
+          retention-days: 90

@@ -1,0 +1,121 @@
+name: Stage9 GlobalStaticVars.BGMVolume static qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-bgmvolume-static.yml'
+      - 'Tools/Stage9BGMVolumeNullPatch/**'
+
+permissions: {contents: read, actions: read}
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SOURCE_RUN_ID: '35218413650'
+      SOURCE_ARTIFACT: Stage9.1-ADMINISTRATOR-UPDATE-ACCESSORS-STATIC-QUALIFIED
+      EXPECTED_INPUT_SHA: b9eb85ee19a9d8b2c9c36c7dd5b9fbd16f24df6af9a0d5c2eeebfba702871b80
+      EXPECTED_OUTPUT_SHA: 047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact Update-runtime-qualified ancestor
+        uses: actions/download-artifact@v4
+        with:
+          github-token: '${{ github.token }}'
+          repository: '${{ github.repository }}'
+          run-id: '${{ env.SOURCE_RUN_ID }}'
+          name: '${{ env.SOURCE_ARTIFACT }}'
+          path: '${{ runner.temp }}/bgm/input'
+
+      - name: Lock ancestor and apply BGMVolume null byte repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/bgm/input" -type f -name 'GodsPVZRuntime1-administrator-update-accessors.dll' -print -quit)
+          QUAL=$(find "$RUNNER_TEMP/bgm/input" -type f -name 'static-qualified.txt' -print -quit)
+          test -n "$IN"; test -n "$QUAL"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = "$EXPECTED_INPUT_SHA"
+          grep -Fx 'STATIC_QUALIFIED=1' "$QUAL"
+          grep -Fx 'target=Administrator.Update' "$QUAL"
+          grep -Fx 'repair_chain=IL_00D4_mode_m1;IL_00F3_Board_OnPlay;IL_01DE_get_Instance' "$QUAL"
+          mkdir -p "$RUNNER_TEMP/bgm/evidence"
+          OUT="$RUNNER_TEMP/bgm/GodsPVZRuntime1-bgmvolume.dll"
+          python3 Tools/Stage9BGMVolumeNullPatch/patch.py "$IN" "$OUT" | tee "$RUNNER_TEMP/bgm/evidence/bgmvolume-patch-audit.txt"
+          test "$(sha256sum "$OUT"|awk '{print $1}')" = "$EXPECTED_OUTPUT_SHA"
+          echo "BGM_OUTPUT=$OUT" >> "$GITHUB_ENV"
+
+      - name: Read-only Cecil reopen gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bgm/verifier"
+          cat > "$RUNNER_TEMP/bgm/verifier/verifier.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$RUNNER_TEMP/bgm/verifier/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          static IEnumerable<TypeDefinition> All(IEnumerable<TypeDefinition> ts){foreach(var t in ts){yield return t;foreach(var n in All(t.NestedTypes))yield return n;}}
+          static uint Tok(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+          using var m=ModuleDefinition.ReadModule(args[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});
+          var types=All(m.Types).ToList(); var methods=types.SelectMany(t=>t.Methods).ToList(); var fields=types.SelectMany(t=>t.Fields).ToList();
+          if(methods.Count!=2317||fields.Count!=2802) throw new Exception($"definition count drift methods={methods.Count} fields={fields.Count}");
+          if(m.AssemblyReferences.Any(a=>a.Name=="System.Private.CoreLib")) throw new Exception("corelib pollution");
+
+          var bgm=methods.Single(x=>Tok(x)==0x06000139);
+          if(bgm.DeclaringType.FullName!="GlobalStaticVars"||bgm.Name!="BGMVolume"||bgm.ReturnType.FullName!="System.Single"||bgm.Body.CodeSize!=78||bgm.Body.MaxStackSize!=2) throw new Exception("BGMVolume identity/shape drift");
+          var by=bgm.Body.Instructions.ToDictionary(i=>i.Offset);
+          if(by[0x2D].OpCode.Code!=Code.Ldsfld||by[0x2D].Operand is not FieldReference gla||Tok(gla)!=0x0400015E||gla.Name!="gLawnApp") throw new Exception("gLawnApp load drift");
+          if(by[0x32].OpCode.Code!=Code.Ldnull) throw new Exception("BGMVolume null repair missing");
+          for(int off=0x33;off<=0x36;off++) if(by[off].OpCode.Code!=Code.Nop) throw new Exception($"BGMVolume null padding drift IL_{off:X4}");
+          if(by[0x37].OpCode.Code!=Code.Ceq||by[0x39].OpCode.Code!=Code.Ldc_I4_0||by[0x3A].OpCode.Code!=Code.Ceq) throw new Exception("BGMVolume null-test tail drift");
+          if(by[0x44].OpCode.Code!=Code.Brtrue||by[0x44].Operand is not Instruction bt||bt.Offset!=0x0B) throw new Exception("BGMVolume true branch drift");
+          if(by[0x49].OpCode.Code!=Code.Br||by[0x49].Operand is not Instruction bf||bf.Offset!=0x05) throw new Exception("BGMVolume false branch drift");
+          if(!bgm.Body.Instructions.Any(i=>i.Operand is FieldReference fr && Tok(fr)==0x04000161 && fr.Name=="BGMVolume")) throw new Exception("LawnApp.BGMVolume field path missing");
+
+          var update=methods.Single(x=>Tok(x)==0x06000006); var ub=update.Body.Instructions.ToDictionary(i=>i.Offset);
+          if(ub[0xD4].OpCode.Code!=Code.Ldc_I4_M1) throw new Exception("Update mode repair regression");
+          if(ub[0xF3].OpCode.Code!=Code.Callvirt||ub[0xF3].Operand is not MethodReference bop||Tok(bop)!=0x0600016F) throw new Exception("Update Board_OnPlay regression");
+          if(ub[0x1DE].OpCode.Code!=Code.Call||ub[0x1DE].Operand is not MethodReference gi||Tok(gi)!=0x06000169) throw new Exception("Update get_Instance regression");
+          if(update.Body.Instructions.Any(i=>i.Operand is FieldReference fr && (Tok(fr)==0x040001AD||Tok(fr)==0x040001B4))) throw new Exception("Update private BoardManager access regression");
+
+          var start=methods.Single(x=>Tok(x)==0x06000004);
+          var bad=start.Body.Instructions.Where(i=>i.Operand is MethodReference mr && (mr.DeclaringType.FullName.Contains("List`1/Enumerator<UnityEngine.GameObject>")||(mr.DeclaringType.FullName=="System.Collections.Generic.List`1<UnityEngine.GameObject>"&&mr.Name=="GetEnumerator"))).ToList();
+          if(bad.Count!=0) throw new Exception("Start enumerator regression");
+
+          Console.WriteLine("READONLY_REOPEN_BGMVOLUME_PASS token=0x06000139 il0032=ldnull padding_nops=4 ceq=valid branch_shape=preserved return=float32");
+          Console.WriteLine("BGMVOLUME_SOURCE_SEMANTICS_GATE_PASS source=gLawnApp_null?0.3f:gLawnApp.BGMVolume gLawnApp=0x0400015E bgm_field=0x04000161");
+          Console.WriteLine("ADMINISTRATOR_UPDATE_ANCESTOR_GATE_PASS token=0x06000006 mode_fix=1 Board_OnPlay=1 get_Instance=1 private_boardmanager_refs=0");
+          Console.WriteLine($"ADMINISTRATOR_START_ANCESTOR_GATE_PASS token=0x{Tok(start):X8} malformed_enumerator_refs={bad.Count}");
+          EOF
+          dotnet run --project "$RUNNER_TEMP/bgm/verifier/verifier.csproj" -- "$BGM_OUTPUT" | tee "$RUNNER_TEMP/bgm/evidence/reopen-audit.txt"
+
+      - name: Enforce static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="$RUNNER_TEMP/bgm/evidence/bgmvolume-patch-audit.txt"
+          R="$RUNNER_TEMP/bgm/evidence/reopen-audit.txt"
+          grep -F 'BGMVOLUME_NULL_PATCH_PASS target=0x06000139' "$P"
+          grep -F 'BGMVOLUME_NATIVE_EQUIVALENCE_PASS' "$P"
+          grep -F 'METADATA_DIRECTORY_UNCHANGED_PASS' "$P"
+          grep -F 'READONLY_REOPEN_BGMVOLUME_PASS token=0x06000139' "$R"
+          grep -F 'BGMVOLUME_SOURCE_SEMANTICS_GATE_PASS' "$R"
+          grep -F 'ADMINISTRATOR_UPDATE_ANCESTOR_GATE_PASS token=0x06000006' "$R"
+          grep -F 'ADMINISTRATOR_START_ANCESTOR_GATE_PASS token=0x06000004 malformed_enumerator_refs=0' "$R"
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=GlobalStaticVars.BGMVolume\ntoken=0x06000139\nwrite_mode=inplace-byte-patch\nmetadata_directory_unchanged=1\nrepair=IL_0032_ldc_i4_0_to_ldnull_plus_nops\nsource_semantics=gLawnApp_null?0.3f:gLawnApp.BGMVolume\nadministrator_update_runtime_pass_run=35218539954\nadministrator_start_runtime_pass_run=35212942551\n' "$EXPECTED_INPUT_SHA" "$EXPECTED_OUTPUT_SHA" | tee "$RUNNER_TEMP/bgm/evidence/static-qualified.txt"
+          printf 'INPUT_SHA256 %s\nOUTPUT_SHA256 %s\n' "$EXPECTED_INPUT_SHA" "$EXPECTED_OUTPUT_SHA" > "$RUNNER_TEMP/bgm/evidence/output.sha256.txt"
+
+      - name: Upload static-qualified BGMVolume candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: |
+            ${{ runner.temp }}/bgm/GodsPVZRuntime1-bgmvolume.dll
+            ${{ runner.temp }}/bgm/evidence/
+          retention-days: 90
+          if-no-files-found: error

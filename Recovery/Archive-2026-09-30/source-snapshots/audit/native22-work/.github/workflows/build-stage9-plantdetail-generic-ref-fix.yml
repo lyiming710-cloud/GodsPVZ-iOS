@@ -1,0 +1,39 @@
+name: Build Stage9 PlantDetail generic ref fix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - 'Tools/Stage9PlantDetailGenericRefFix/**'
+      - '.github/workflows/build-stage9-plantdetail-generic-ref-fix.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish patcher
+        run: dotnet publish Tools/Stage9PlantDetailGenericRefFix/Stage9PlantDetailGenericRefFix.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out
+      - name: Smoke test
+        shell: bash
+        run: |
+          set +e
+          ./out/GodsPVZ.Stage9PlantDetailGenericRefFix >smoke.out 2>smoke.err
+          rc=$?
+          set -e
+          cat smoke.err
+          [ "$rc" = 2 ]
+          grep -q '^Usage: GodsPVZ.Stage9PlantDetailGenericRefFix <input.dll> <output.dll>$' smoke.err
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9PlantDetailGenericRefFix-linux-x64
+          path: out/
+          if-no-files-found: error
+          retention-days: 90

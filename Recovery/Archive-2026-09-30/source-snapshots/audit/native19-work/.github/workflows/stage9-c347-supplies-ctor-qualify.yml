@@ -1,0 +1,167 @@
+name: Stage9.1 c347 Supplies ctor qualify
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-c347-supplies-ctor-qualify.yml'
+      - 'Tools/Stage9SuppliesCtorPatch/**'
+      - 'Tools/Stage9NativeProbe/SuppliesInitialValue.ctor.native-evidence.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Device natural-runtime promotion evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34933464337
+          name: Stage9.1-C347-DEVICE-CTOR-NATURAL-RUNTIME
+          path: ${{ runner.temp }}/promotion
+
+      - name: Gate runtime promotion of Supplies ctor
+        shell: bash
+        run: |
+          set -euo pipefail
+          A=$(find "$RUNNER_TEMP/promotion" -type f -name 'device-ctor-natural-runtime-audit.txt' -print -quit)
+          test -n "$A"
+          grep -q '^ZOMBIE_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^ZOMBIEINFO_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_FIELDACCESS_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_INVALID_IL_COUNT 0$' "$A"
+          grep -q '^DEVICE_CTOR_MISSINGMETHOD_COUNT 0$' "$A"
+          grep -q '^SUPPLIES_CTOR_FIELDACCESS_COUNT 7$' "$A"
+          grep -q '^ALMANAC_ZOMBIEWINDOW_INVALID_IL_COUNT 2$' "$A"
+          grep -q '^CORELIB_TEXT_COUNT 0$' "$A"
+          grep -q '^ZEROVECTOR_TEXT_COUNT 0$' "$A"
+          grep -q '^GENERIC_LIST_MISSINGMETHOD_COUNT 0$' "$A"
+          grep -q '^STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5$' "$A"
+          grep -q '^DEVICE_CTOR_NATURAL_RUNTIME_PASS candidate=c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446 device_fieldaccess=0 device_invalid=0 five_state_paths=5 corelib_pollution=0 zerovector_pollution=0$' "$A"
+          cat "$A"
+
+      - name: Download runtime-qualified Device candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34928562898
+          name: Stage9.1-BB33-DEVICE-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Download exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Download exact Unity Mono corelib cache
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34878091297
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib
+
+      - name: Build high-level typed Supplies ctor recovery and run static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/supplies-ctor-recovery"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-device-ctor.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = 'c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446'
+          CORE=$(find "$RUNNER_TEMP/corelib" -type f -path '*/unityjit-linux/mscorlib.dll' -print -quit)
+          test -n "$CORE"
+          test "$(sha256sum "$CORE"|awk '{print $1}')" = '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+          echo "LOCKED_UNITYJIT_LINUX_MSCORLIB $CORE"
+          echo "LOCKED_UNITYJIT_LINUX_MSCORLIB_SHA256 $(sha256sum "$CORE"|awk '{print $1}')"
+          OUT="$O/GodsPVZRuntime1-supplies-ctor.dll"
+          dotnet build Tools/Stage9SuppliesCtorPatch/Stage9SuppliesCtorPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9SuppliesCtorPatch/Stage9SuppliesCtorPatch.csproj -c Release --no-build -- \
+            "$IN" "$OUT" 'c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446' "$CORE" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 c3474e8c33230af0098512e2c345f5aea12a74ae3a4fea13bb51a63f7d906446$' "$E/patch.log"
+          grep -q '^UNITYJIT_LINUX_MSCORLIB_SHA256 4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x0600025C rid=604 method_pointer_entry=0x181B84038 va=0x180341320 end=0x18034146C native_span_sha256=3688ac9e8b1ca81c33bb128a816e2a5ab536fd6e48126a5e093749dfd964c6f8$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS base_ctor=System.Object suppliesInfos=List<SuppliesInfo> loop_start=0 loop_end_exclusive=512 item_ctor=SuppliesInfo(int) add=List<SuppliesInfo>.Add$' "$E/patch.log"
+          grep -q '^RECOVERY_STRATEGY full_single_MethodDef_rebuild=1 exact_unityjit_linux_List_ctor=1 exact_unityjit_linux_List_Add=1 list_object_internals=0 metadata_changes=0 guards=0 exception_swallowing=0$' "$E/patch.log"
+          grep -Eq '^REOPEN_SUPPLIES_CTOR_PASS token=0x0600025C code_size=[0-9]+ locals=1 list_object_internal_refs=0 fake_diagnostics=0 suppliesInfo_ctor=1 typed_List_Add=1 loop_bound_512=1 base_object_ctor=1$' "$E/patch.log"
+          grep -q '^GENERIC_MEMBERREF_RESOLUTION_PASS list_ctor=1 list_add=1 corelib_sha256=4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x0600025C$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9SuppliesCtorPatch/Program.cs "$E/"
+          cp Tools/Stage9NativeProbe/SuppliesInitialValue.ctor.native-evidence.md "$E/"
+          cp "$RUNNER_TEMP/promotion/device-ctor-natural-runtime-audit.txt" "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Exact-reference Supplies ctor readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/supplies-ctor-recovery"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-supplies-ctor.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t SuppliesInitialValue "$DLL" > "$E/SuppliesInitialValue.cs" 2> "$E/SuppliesInitialValue.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t SuppliesInitialValue "$DLL" > "$E/SuppliesInitialValue.il" 2> "$E/SuppliesInitialValue.il.stderr"
+          test ! -s "$E/SuppliesInitialValue.cs.stderr"; test ! -s "$E/SuppliesInitialValue.il.stderr"
+          python3 - "$E/SuppliesInitialValue.cs" "$E/SuppliesInitialValue.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          e=il.find('} // end of method SuppliesInitialValue::.ctor'); assert e>=0, il
+          b=il.rfind('.method ',0,e); assert b>=0, il
+          ctor=il[b:e]; Path(sys.argv[2]+'.ctor.txt').write_text(ctor)
+          bad=['System.Collections.Generic.List`1<object>','::_version','::_items','::_size','AddWithResize','Method not found @','System.Private.CoreLib','Unmanaged memory load']
+          for x in bad: assert x not in ctor,(x,ctor)
+          assert ctor.count('newobj instance void class [mscorlib]System.Collections.Generic.List`1<class SuppliesInfo>::.ctor()')==1, ctor
+          assert ctor.count('newobj instance void SuppliesInfo::.ctor(int32)')==1, ctor
+          assert len(re.findall(r'callvirt instance void class \[mscorlib\]System\.Collections\.Generic\.List`1<class SuppliesInfo>::Add\(!0\)',ctor))==1, ctor
+          assert ctor.count('stfld class [mscorlib]System.Collections.Generic.List`1<class SuppliesInfo> SuppliesInitialValue::suppliesInfos')==1, ctor
+          assert ctor.count('ldfld class [mscorlib]System.Collections.Generic.List`1<class SuppliesInfo> SuppliesInitialValue::suppliesInfos')==1, ctor
+          assert re.search(r'ldc\.i4(\.s)?\s+512|ldc\.i4\s+512',ctor), ctor
+          assert 'System.Object::.ctor()' in ctor, ctor
+          assert 'ldc.i8' not in ctor, ctor
+          assert '.try' not in ctor and 'catch' not in ctor, ctor
+          for x in ['new List<SuppliesInfo>()','new SuppliesInfo(']: assert x in cs,(x,cs)
+          assert 'List<object>' not in cs, cs
+          assert 'AddWithResize' not in cs, cs
+          print('SUPPLIES_CTOR_EXACT_REF_PASS token=0x0600025C typed_list_ctor=1 suppliesInfo_ctor=1 typed_list_add=1 loop_bound_512=1 object_base_ctor=1 list_object_internals=0 fake_diagnostics=0 corelib_pollution=0')
+          print('=== SUPPLIES_CTOR_CSHARP ==='); print(cs[:8000])
+          print('=== SUPPLIES_CTOR_IL ==='); print(ctor)
+          PY
+
+      - name: Upload qualified Supplies ctor candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-C347-SUPPLIES-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/supplies-ctor-recovery/evidence/
+          retention-days: 90

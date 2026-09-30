@@ -1,0 +1,25 @@
+name: Stage9.1 342c TextLink read-only probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-342c-textlink-readonly-probe.yml','Tools/Stage9TextLinkProbe/**']
+permissions: {contents: read, actions: read}
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34982349828, name: Stage9.1-27B2-SUPPLIESINFO-CTOR-QUALIFIED, path: '${{ runner.temp }}/candidate'}
+      - name: Probe TextLink ctor read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-suppliesinfo-ctor.dll' -print -quit)
+          test -n "$DLL"
+          dotnet run --project Tools/Stage9TextLinkProbe/Stage9TextLinkProbe.csproj -c Release -- "$DLL" '342c0a94f90371415c7f782604d9976bb91befec20500894dfd8af607b8ac5c4' | tee "$RUNNER_TEMP/textlink-probe.txt"
+          grep -q '^READONLY_TEXTLINK_CTOR_PROBE_PASS mutation=0 token=0x060006E5$' "$RUNNER_TEMP/textlink-probe.txt"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-342C-TEXTLINK-READONLY-PROBE, path: '${{ runner.temp }}/textlink-probe.txt', retention-days: 90}

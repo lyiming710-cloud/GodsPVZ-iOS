@@ -1,0 +1,141 @@
+name: Stage9.1 8f43 Supplies ctor natural runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-8f43-supplies-ctor-natural-runtime.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+
+      - name: Download qualified Supplies ctor candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34949011350
+          name: Stage9.1-C347-SUPPLIES-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/stage9-supplies/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-supplies/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-supplies/editor-parts
+
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-supplies/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-supplies-ctor.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "$EXPECTED" = '8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292'
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "SUPPLIES_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "SUPPLIES_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+
+      - name: Run one-launch exact-R3 natural SkillProgress path
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh \
+            "$RUNNER_TEMP/stage9-supplies" "$SUPPLIES_CANDIDATE" "$SUPPLIES_SHA"
+
+      - name: Audit Supplies natural runtime and remaining blockers
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-supplies/evidence"; LOG="$E/playmode.log"; test -f "$LOG"
+          python3 - "$LOG" > "$E/supplies-ctor-natural-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'ZOMBIE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Zombie:\.ctor',text)),
+            'ZOMBIEINFO_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in ZombieInfo:\.ctor',text)),
+            'DEVICE_CTOR_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'Device:.ctor' in x for x in lines),
+            'DEVICE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Device:\.ctor',text)),
+            'DEVICE_CTOR_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'Device:.ctor' in x for x in lines),
+            'SUPPLIES_CTOR_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'SuppliesInitialValue:.ctor' in x for x in lines),
+            'SUPPLIES_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in SuppliesInitialValue:\.ctor',text)),
+            'SUPPLIES_CTOR_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'SuppliesInitialValue:.ctor' in x for x in lines),
+            'SUPPLIES_CLASS_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'SuppliesInitialValue:' in x for x in lines),
+            'SUPPLIES_CLASS_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in SuppliesInitialValue:',text)),
+            'SUPPLIES_CLASS_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'SuppliesInitialValue:' in x for x in lines),
+            'ALMANAC_ZOMBIEWINDOW_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Almanac_ZombieWindow:\.ctor',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'ZEROVECTOR_TEXT_COUNT':text.count('zeroVector'),
+            'GENERIC_LIST_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'System.Collections.Generic.List' in x for x in lines),
+          }
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_SKILLPROGRESS_')]
+          print('SKILLPROGRESS_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          assert counts['ZOMBIE_CTOR_INVALID_IL_COUNT']==0,counts
+          assert counts['ZOMBIEINFO_CTOR_INVALID_IL_COUNT']==0,counts
+          assert counts['DEVICE_CTOR_FIELDACCESS_COUNT']==0,counts
+          assert counts['DEVICE_CTOR_INVALID_IL_COUNT']==0,counts
+          assert counts['DEVICE_CTOR_MISSINGMETHOD_COUNT']==0,counts
+          assert counts['SUPPLIES_CTOR_FIELDACCESS_COUNT']==0,counts
+          assert counts['SUPPLIES_CTOR_INVALID_IL_COUNT']==0,counts
+          assert counts['SUPPLIES_CTOR_MISSINGMETHOD_COUNT']==0,counts
+          assert counts['CORELIB_TEXT_COUNT']==0,counts
+          assert counts['ZEROVECTOR_TEXT_COUNT']==0,counts
+          assert counts['GENERIC_LIST_MISSINGMETHOD_COUNT']==0,counts
+          required=[
+            'STAGE9_SKILLPROGRESS_SAVE_READY ok=1',
+            'STAGE9_SKILLPROGRESS_BOARD_READY ok=1',
+            'STAGE9_SKILLPROGRESS_READY_INVOKE ok=1',
+            'STAGE9_SKILLPROGRESS_PHASE phase=ready ok=1',
+            'STAGE9_SKILLPROGRESS_PHASE phase=active_charge ok=1',
+            'STAGE9_SKILLPROGRESS_PHASE phase=passive ok=1',
+            'STAGE9_SKILLPROGRESS_PHASE phase=ongoing_high ok=1',
+            'STAGE9_SKILLPROGRESS_PHASE phase=ongoing_low ok=1',
+            'STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5',
+          ]
+          for x in required: assert x in markers,(x,markers)
+          print('SUPPLIES_CTOR_NATURAL_RUNTIME_PASS candidate=8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292 supplies_fieldaccess=0 supplies_invalid=0 supplies_missingmethod=0 five_state_paths=5 corelib_pollution=0 zerovector_pollution=0')
+          PY
+          cat "$E/supplies-ctor-natural-runtime-audit.txt"
+
+      - name: Upload Supplies natural runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-8F43-SUPPLIES-CTOR-NATURAL-RUNTIME
+          path: ${{ runner.temp }}/stage9-supplies/evidence/
+          retention-days: 90

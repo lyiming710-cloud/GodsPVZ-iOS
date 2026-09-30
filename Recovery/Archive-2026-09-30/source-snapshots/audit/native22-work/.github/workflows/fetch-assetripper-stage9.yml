@@ -1,0 +1,35 @@
+name: Fetch pinned AssetRipper for Stage9.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/fetch-assetripper-stage9.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download pinned AssetRipper 2.0.0 Linux x64
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://github.com/AssetRipper/AssetRipper/releases/download/2.0.0/AssetRipper_linux_x64.tar.xz'
+          expected='6f5d4352d36795b944243eb3ec790ec37dbca6d6756e52605bc8616e042d384e'
+          curl -L --fail --retry 3 -o AssetRipper_linux_x64.tar.xz "$url"
+          actual="$(sha256sum AssetRipper_linux_x64.tar.xz | awk '{print $1}')"
+          echo "ASSET_RIPPER_SHA256=$actual"
+          test "$actual" = "$expected"
+          mkdir -p AssetRipper-2.0.0-linux-x64
+          tar -xJf AssetRipper_linux_x64.tar.xz -C AssetRipper-2.0.0-linux-x64
+          printf 'version=2.0.0\nsource=%s\nsha256=%s\n' "$url" "$actual" > AssetRipper-2.0.0-linux-x64/PROVENANCE.txt
+          find AssetRipper-2.0.0-linux-x64 -maxdepth 2 -type f -printf '%P\n' | sort | head -200
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AssetRipper-2.0.0-linux-x64-pinned
+          path: AssetRipper-2.0.0-linux-x64/
+          if-no-files-found: error
+          retention-days: 30

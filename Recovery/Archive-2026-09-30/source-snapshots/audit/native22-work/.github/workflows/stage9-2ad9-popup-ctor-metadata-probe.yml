@@ -1,0 +1,45 @@
+name: Stage9.1 2ad9 Popup ctor metadata probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-2ad9-popup-ctor-metadata-probe.yml'
+      - 'Tools/Stage9PopupCtorProbe/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified Almanac candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34954938662
+          name: Stage9.1-8F43-ALMANAC-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/input
+      - name: Probe Popup ctor identity and damaged IL
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/popup-probe"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-almanac-ctor.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '2ad9b7db97262c5a2e3177a605704350cfe73f33a2ff15832defc254db3cdb3d'
+          dotnet run --project Tools/Stage9PopupCtorProbe/Stage9PopupCtorProbe.csproj -c Release -- "$IN" | tee "$E/popup-ctor-probe.txt"
+          grep -q '^INPUT_SHA256 2ad9b7db97262c5a2e3177a605704350cfe73f33a2ff15832defc254db3cdb3d$' "$E/popup-ctor-probe.txt"
+          grep -q '^READONLY_POPUP_CTOR_PROBE_PASS ldc_i8=1 info0_int_stfld=1 monoBehaviour_ctor=1 mutation=0$' "$E/popup-ctor-probe.txt"
+      - name: Upload Popup metadata probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-2AD9-POPUP-CTOR-METADATA-PROBE
+          path: ${{ runner.temp }}/popup-probe/
+          retention-days: 90

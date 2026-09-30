@@ -1,0 +1,33 @@
+name: Build HF49 EnemyPath ArrivalTest patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF49Patch/**'
+      - '.github/workflows/build-hf49-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF49 patcher
+        run: dotnet publish Tools/HF49Patch/HF49Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf49
+      - name: Smoke test
+        run: |
+          chmod +x out/hf49/GodsPVZ.HF49Patch
+          set +e
+          out/hf49/GodsPVZ.HF49Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf49/GodsPVZ.HF49Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF49Patch-linux-x64
+          path: out/hf49
+          if-no-files-found: error

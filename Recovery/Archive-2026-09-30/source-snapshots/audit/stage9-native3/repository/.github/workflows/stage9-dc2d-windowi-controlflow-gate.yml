@@ -1,0 +1,90 @@
+name: Stage9.1 dc2d Window_I control-flow gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-dc2d-windowi-controlflow-gate.yml'
+      - 'Tools/Stage9WindowIControlFlowPatch/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  windowi-controlflow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact dc2d candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34716405258
+          pattern: Stage9.1-c8d0-GENERIC-MEMBERREF-REPAIR
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-windowi/input
+
+      - name: Download fixed ILSpy 11.0.0.9375
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-windowi/ilspy
+
+      - name: Build and apply bounded Window_I repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-windowi"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-generic-repaired.dll"; OUTDLL="$OUT/GodsPVZRuntime1-windowi-controlflow.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = 'dc2dccac079f4db46934283c380817d7b60e2a82ae71e8e18ba0b9f199bb6931' ] || exit 61
+          dotnet build Tools/Stage9WindowIControlFlowPatch/Stage9WindowIControlFlowPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9WindowIControlFlowPatch/Stage9WindowIControlFlowPatch.csproj -c Release --no-build -- "$IN" "$OUTDLL" | tee "$E/windowi-controlflow-patch.log"
+          grep -q '^PATCH_START locals=V1,V2:Object->Int32 branches=I1,I2-zero-tests$' "$E/windowi-controlflow-patch.log"
+          grep -q '^PATCH_YES locals=V2,V4:Object->Int32 branches=I1,I2-zero-tests$' "$E/windowi-controlflow-patch.log"
+          grep -q '^REOPEN_WINDOWI_CONTROLFLOW_PASS start_cases=0,1,2,3 yes_cases=0,1,2,3$' "$E/windowi-controlflow-patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2315 changed_methods=2$' "$E/windowi-controlflow-patch.log"
+          sha256sum "$OUTDLL" | tee "$E/output-candidate.sha256"
+          cp "$OUTDLL" "$E/"
+
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-windowi"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-windowi-controlflow.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          [ -n "$ILSPY" ] && [ -n "$DOTNET_BIN" ]; chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" --version | tee "$E/ilspy-version.txt"
+          grep -q '^ilspycmd: 11.0.0.9375$' "$E/ilspy-version.txt"
+          "$ILSPY" -m 0x060006F3 "$DLL" > "$E/Window_I.Start.cs" 2> "$E/Window_I.Start.stderr"
+          test ! -s "$E/Window_I.Start.stderr"
+          grep -q 'I - 1' "$E/Window_I.Start.cs"
+          grep -q 'I - 2' "$E/Window_I.Start.cs" || grep -q 'num - 1' "$E/Window_I.Start.cs"
+          grep -q '新建存档' "$E/Window_I.Start.cs"
+          grep -q '修改昵称' "$E/Window_I.Start.cs"
+          ! grep -Eq 'Expected [A-Z0-9]|Unknown result type|Unmanaged memory load|Method not found @' "$E/Window_I.Start.cs"
+          "$ILSPY" -m 0x060006F6 "$DLL" > "$E/Window_I.Yes.cs" 2> "$E/Window_I.Yes.stderr"
+          test ! -s "$E/Window_I.Yes.stderr"
+          grep -q 'CreatNewSave' "$E/Window_I.Yes.cs"
+          grep -q 'RenamePlayer' "$E/Window_I.Yes.cs"
+          ! grep -Eq 'Expected [A-Z0-9]|Unknown result type|Unmanaged memory load|Method not found @' "$E/Window_I.Yes.cs"
+          echo 'ILSPY_WINDOWI_CONTROLFLOW_PASS start=0x060006F3 yes=0x060006F6' | tee "$E/ilspy-pass.txt"
+
+      - name: Upload repair evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-dc2d-WINDOWI-CONTROLFLOW
+          path: ${{ runner.temp }}/stage9-windowi/evidence/
+          if-no-files-found: error
+          retention-days: 90

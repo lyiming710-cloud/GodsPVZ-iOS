@@ -1,0 +1,14 @@
+name: Stage9 SuppliesInfo ctor patch buildcheck
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-suppliesinfo-ctor-patch-buildcheck.yml','Tools/Stage9SuppliesInfoCtorPatch/**']
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build target-specific SuppliesInfo ctor patcher
+        run: dotnet build Tools/Stage9SuppliesInfoCtorPatch/Stage9SuppliesInfoCtorPatch.csproj -c Release --nologo

@@ -1,0 +1,90 @@
+name: Stage9.1 canonical Damage enumerator metadata audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-element-getcurrent-candidates.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Locate canonical Enumerator Element refs and local signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          dotnet add package Mono.Cecil --version 0.11.5 >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Collections.Generic;
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          class P {
+            static IEnumerable<TypeDefinition> AT(TypeDefinition t){yield return t; foreach(var n in t.NestedTypes) foreach(var x in AT(n)) yield return x;}
+            static IEnumerable<TypeDefinition> AT(ModuleDefinition m)=>m.Types.SelectMany(AT);
+            static ushort U16(byte[] b,int o)=>(ushort)(b[o]|(b[o+1]<<8));
+            static int I32(byte[] b,int o)=>b[o]|(b[o+1]<<8)|(b[o+2]<<16)|(b[o+3]<<24);
+            static int R2F(byte[] b,int rva){
+              int pe=I32(b,0x3c), coff=pe+4, n=U16(b,coff+2), os=U16(b,coff+16), sec=coff+20+os;
+              for(int i=0;i<n;i++){int s=sec+i*40, vs=I32(b,s+8), va=I32(b,s+12), rs=I32(b,s+16), ro=I32(b,s+20), span=Math.Max(vs,rs); if(rva>=va&&rva<va+span)return ro+(rva-va);} throw new Exception("rva");
+            }
+            static int LocalSigToken(byte[] b, MethodDefinition m){int o=R2F(b,m.RVA); byte f=b[o]; if((f&3)==2)return 0; int hs=((U16(b,o)>>12)&0xf)*4; if(hs<12)throw new Exception("fat header too small"); return I32(b,o+8);}
+            static bool IsElemEnum(TypeReference t){return t is GenericInstanceType gi && gi.ElementType.FullName=="System.Collections.Generic.List`1/Enumerator" && gi.GenericArguments.Count==1 && gi.GenericArguments[0].FullName=="Element";}
+            static void Main(string[] a){
+              string p=Path.GetFullPath(a[0]); var raw=File.ReadAllBytes(p);
+              using var asm=AssemblyDefinition.ReadAssembly(p,new ReaderParameters{InMemory=true}); var all=AT(asm.MainModule).ToList();
+              var damage=all.Single(t=>t.FullName=="Damage").Methods.Single(m=>m.Name=="AddElement");
+              Console.WriteLine($"damage token={damage.MetadataToken} rva=0x{damage.RVA:x} localSig=0x{LocalSigToken(raw,damage):x8}");
+              for(int i=0;i<damage.Body.Variables.Count;i++) Console.WriteLine($"damage local[{i}]={damage.Body.Variables[i].VariableType.FullName}");
+              Console.WriteLine("=== canonical MemberRefs Enumerator<Element> ===");
+              var seen=new HashSet<uint>();
+              foreach(var t in all) foreach(var m in t.Methods) if(m.HasBody) foreach(var ins in m.Body.Instructions) if(ins.Operand is MethodReference mr && IsElemEnum(mr.DeclaringType) && (mr.Name=="get_Current"||mr.Name=="MoveNext"||mr.Name=="Dispose")){
+                uint tok=mr.MetadataToken.ToUInt32(); if(seen.Add(tok)) Console.WriteLine($"token=0x{tok:x8} name={mr.Name} full={mr.FullName} owner={m.FullName} il=IL_{ins.Offset:x4}");
+              }
+              Console.WriteLine("=== methods with exact locals [Enumerator<Element>, Element] ===");
+              int count=0;
+              foreach(var t in all) foreach(var m in t.Methods) if(m.HasBody && m.Body.Variables.Count==2 && IsElemEnum(m.Body.Variables[0].VariableType) && m.Body.Variables[1].VariableType.FullName=="Element"){
+                count++; Console.WriteLine($"method={m.FullName} token={m.MetadataToken} rva=0x{m.RVA:x} localSig=0x{LocalSigToken(raw,m):x8}");
+              }
+              Console.WriteLine("exactLocalCandidates="+count);
+              Console.WriteLine("=== methods whose first locals begin [Enumerator<Element>, Element] ===");
+              count=0;
+              foreach(var t in all) foreach(var m in t.Methods) if(m.HasBody && m.Body.Variables.Count>=2 && IsElemEnum(m.Body.Variables[0].VariableType) && m.Body.Variables[1].VariableType.FullName=="Element"){
+                count++; Console.WriteLine($"method={m.FullName} locals={m.Body.Variables.Count} token={m.MetadataToken} localSig=0x{LocalSigToken(raw,m):x8}");
+              }
+              Console.WriteLine("prefixLocalCandidates="+count);
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" > "$GITHUB_WORKSPACE/diagnostics/canonical-damage-enumerator-metadata.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/canonical-damage-enumerator-metadata.txt
+      - name: Commit report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/canonical-damage-enumerator-metadata.txt
+          git commit -m 'diagnostics: locate canonical Damage enumerator metadata' || exit 0
+          git push origin HEAD:stage9-admin-start-static

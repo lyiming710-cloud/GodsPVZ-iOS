@@ -1,0 +1,129 @@
+name: Stage9 native17 macOS unsigned IPA
+
+on:
+  push:
+    branches: [repair/codespace-native14-validation-2026-09-27]
+    paths: ['.github/workflows/stage9-native17-macos-unsigned-ipa.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: stage9-native17-macos-unsigned-ipa
+  cancel-in-progress: false
+
+jobs:
+  compile:
+    runs-on: macos-15-intel
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      EXPORT_RUN_ID: '36435550922'
+      EXPORT_HEAD_SHA: ff088446839f67161045561e4a19e56799a6d039
+      EXPORT_ARTIFACT_ID: '10977480251'
+      EXPORT_ARCHIVE_SHA256: e0c9fd7cdba5fdbaf8cbc8863a809b18ea0f9b990e4944e0324361e3ddd9c908
+      EXPECTED_BUNDLE_ID: com.tipsGodsStudio.godsPVZ
+      EXPECTED_MIN_IOS: '12.0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify successful export and artifact identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/native17-macos"
+          mkdir -p "$OUT/evidence" "$OUT/input" "$OUT/work"
+          xcodebuild -version | tee "$OUT/evidence/xcode-version.txt"
+          grep -qx 'Xcode 16.4' "$OUT/evidence/xcode-version.txt"
+          sw_vers > "$OUT/evidence/macos-version.txt"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$EXPORT_RUN_ID" > "$OUT/evidence/export-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$EXPORT_ARTIFACT_ID" > "$OUT/evidence/export-artifact.json"
+          python3 - "$OUT/evidence" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          e=Path(sys.argv[1]);r=json.loads((e/'export-run.json').read_text());a=json.loads((e/'export-artifact.json').read_text())
+          assert r['conclusion']=='success' and r['status']=='completed'
+          assert r['head_sha']==os.environ['EXPORT_HEAD_SHA']
+          assert a['id']==int(os.environ['EXPORT_ARTIFACT_ID']) and not a['expired']
+          assert a['workflow_run']['id']==int(os.environ['EXPORT_RUN_ID'])
+          assert a['name']=='GodsPVZ-Stage9-native17-unsigned-Xcode'
+          assert a['digest']=='sha256:d9e64d2fb693f02707c89b44343e0b5645049b43c5383792d23ec4a5b9ae2f4a'
+          PY
+      - name: Download exact successful Xcode export
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '36435550922'
+          artifact-ids: '10977480251'
+          merge-multiple: true
+          path: ${{ runner.temp }}/native17-macos/input
+      - name: Check archive hash and discover the application scheme
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/native17-macos"
+          ARCHIVE="$OUT/input/GodsPVZ-Stage9-native17-unsigned-Xcode.tar.zst"
+          printf '%s  %s\n' "$EXPORT_ARCHIVE_SHA256" "$ARCHIVE" | shasum -a 256 -c -
+          shasum -a 256 "$ARCHIVE" > "$OUT/evidence/input-archive.sha256"
+          command -v zstd >/dev/null || brew install zstd
+          zstd -t "$ARCHIVE"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$OUT/work"
+          X="$OUT/work/xcode"
+          test -f "$X/Unity-iPhone.xcodeproj/project.pbxproj"
+          test -f "$X/Il2CppOutputProject/Source/il2cppOutput/GodsPVZRuntime1.cpp"
+          test -f "$X/Data/Managed/Metadata/global-metadata.dat"
+          shasum -a 256 "$X/Data/Managed/Metadata/global-metadata.dat" > "$OUT/evidence/input-metadata.sha256"
+          xcodebuild -project "$X/Unity-iPhone.xcodeproj" -list -json > "$OUT/evidence/xcode-list.json"
+          python3 - "$OUT/evidence/xcode-list.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))['project']
+          assert 'Unity-iPhone' in d.get('schemes',[]),d
+          PY
+      - name: Compile Release arm64 for iPhone without signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/native17-macos"
+          set +e
+          xcodebuild -project "$OUT/work/xcode/Unity-iPhone.xcodeproj" \
+            -scheme Unity-iPhone -configuration Release -sdk iphoneos \
+            -destination 'generic/platform=iOS' -derivedDataPath "$OUT/DerivedData" \
+            -resultBundlePath "$OUT/evidence/Build.xcresult" -jobs 3 \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM='' build \
+            2>&1 | tee "$OUT/evidence/xcodebuild.log"
+          rc=${PIPESTATUS[0]}
+          set -e
+          echo "$rc" > "$OUT/evidence/xcodebuild-exit.txt"
+          test "$rc" -eq 0
+          grep -q '\*\* BUILD SUCCEEDED \*\*' "$OUT/evidence/xcodebuild.log"
+      - name: Verify compiled app and package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/native17-macos"
+          python3 scripts/codespaces/package_native17_ipa.py "$OUT"
+      - name: Upload macOS build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9-native17-MACOS-IPA-EVIDENCE
+          path: ${{ runner.temp }}/native17-macos/evidence/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Upload verified unsigned IPA and checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-Stage9-native17-unsigned-IPA
+          path: ${{ runner.temp }}/native17-macos/delivery/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90

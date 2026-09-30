@@ -1,0 +1,36 @@
+name: Build HF3 Zombie injury patcher
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - 'Tools/HF3Patch/**'
+      - '.github/workflows/build-hf3-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Apply native-order validation fixes
+        run: python3 Tools/HF3Patch/hf3_validation_fix.py
+      - name: Publish HF3 patcher
+        run: dotnet publish Tools/HF3Patch/HF3Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf3
+      - name: Smoke test usage
+        shell: bash
+        run: |
+          chmod +x out/hf3/GodsPVZ.HF3Patch
+          set +e
+          out/hf3/GodsPVZ.HF3Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF3Patch-linux-x64
+          path: out/hf3/GodsPVZ.HF3Patch
+          if-no-files-found: error

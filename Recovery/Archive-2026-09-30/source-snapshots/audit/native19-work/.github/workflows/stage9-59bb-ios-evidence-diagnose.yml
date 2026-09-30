@@ -1,0 +1,77 @@
+name: Stage9.1 59bb iOS evidence diagnose
+
+on:
+  push:
+    branches: [stage9-local-audit-tools]
+    paths:
+      - '.github/workflows/stage9-59bb-ios-evidence-diagnose.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SOURCE_RUN_ID: '36115729931'
+      SOURCE_ARTIFACT: 'Stage9.1-59bb-REAL-UNITY-IOS-EVIDENCE'
+      SOURCE_ARTIFACT_ID: '10854729362'
+      SOURCE_ARTIFACT_SHA256: 'd2f5743a2d9f01a5a83c3bd46526c1ef88a19dde13eb7dca208c6ee810067c3d'
+    steps:
+      - name: Download preserved real Unity evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/stage9-59bb-evidence
+
+      - name: Print focused iOS export failure evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-59bb-evidence"
+          echo '=== SOURCE LOCK ==='
+          printf 'run=%s\nartifact=%s\nartifact_id=%s\nartifact_zip_sha256=%s\n' \
+            "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT" "$SOURCE_ARTIFACT_ID" "$SOURCE_ARTIFACT_SHA256"
+          echo '=== FILES ==='
+          find "$E" -maxdepth 2 -type f -printf '%P\t%s bytes\n' | sort
+          echo '=== EXIT ==='
+          for f in ios-export-exit.txt import-after-59bb-exit.txt test-dll-after-reimport.sha256; do
+            if [ -f "$E/$f" ]; then echo "--- $f"; cat "$E/$f"; fi
+          done
+          echo '=== IOS EXPORT STDERR ==='
+          if [ -f "$E/ios-export.stderr" ]; then cat "$E/ios-export.stderr"; fi
+          echo '=== IOS EXPORT STDOUT (tail 200) ==='
+          if [ -f "$E/ios-export.stdout" ]; then tail -n 200 "$E/ios-export.stdout"; fi
+          echo '=== IOS EXPORT LOG: ERROR/EXCEPTION/IL2CPP CONTEXT ==='
+          if [ -f "$E/ios-export.log" ]; then
+            grep -nEi -C 8 '(^|[^A-Za-z])(error|exception|failed|failure|IL2CPP|BuildFailedException|InvalidProgramException|MissingMethodException|TypeLoadException|MemberRef|GetEnumerator|DataModel)([^A-Za-z]|$)' "$E/ios-export.log" | tail -n 800 || true
+            echo '=== IOS EXPORT LOG TAIL 300 ==='
+            tail -n 300 "$E/ios-export.log"
+          fi
+
+      - name: Preserve compact diagnosis input
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          E="$RUNNER_TEMP/stage9-59bb-evidence"
+          O="$RUNNER_TEMP/stage9-59bb-diagnosis"
+          mkdir -p "$O"
+          for f in ios-export.log ios-export.stdout ios-export.stderr ios-export-exit.txt import-after-59bb.log import-after-59bb-exit.txt test-dll-after-reimport.sha256 input-locks.txt candidate-provenance.txt test-dll-injection.txt b001-workcopy.txt software-gl-max-texture.txt; do
+            [ -f "$E/$f" ] && cp "$E/$f" "$O/"
+          done
+
+      - name: Upload diagnosis bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-59bb-iOS-export-diagnosis
+          path: ${{ runner.temp }}/stage9-59bb-diagnosis/
+          if-no-files-found: warn
+          retention-days: 30

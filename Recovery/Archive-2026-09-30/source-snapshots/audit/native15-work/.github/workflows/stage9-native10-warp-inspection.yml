@@ -1,0 +1,62 @@
+name: Stage9.5 native10 WarpText metadata inspection
+
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths:
+      - '.github/workflows/stage9-native10-warp-inspection.yml'
+      - 'scripts/takeover/InspectNative10/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      NATIVE9_RUN_ID: '36309302621'
+      NATIVE9_ARTIFACT_NAME: 'Stage9.4-native9-polejump-experimental'
+      NATIVE9_SHA256: '6e3d3fe4283ce4079f22727e9e6a13c290cb2944b8b0eedd1c705a0815b3906f'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Download exact native9 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE9_RUN_ID }}
+          name: ${{ env.NATIVE9_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native9
+      - name: Verify candidate and fetch pinned Cecil
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mapfile -t D < <(find "$RUNNER_TEMP/native9" -type f -name 'Assembly-CSharp-native9-polejump.dll' | sort)
+          [ "${#D[@]}" = 1 ]
+          [ "$(sha256sum "${D[0]}"|awk '{print $1}')" = "$NATIVE9_SHA256" ]
+          echo "${D[0]}" > "$RUNNER_TEMP/native9.path"
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+      - name: Inspect WarpText metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project scripts/takeover/InspectNative10/InspectNative10.csproj -- "$(cat "$RUNNER_TEMP/native9.path")" | tee "$RUNNER_TEMP/native10-inspect.txt"
+          grep -qx INSPECT_NATIVE10_PASS "$RUNNER_TEMP/native10-inspect.txt"
+      - name: Upload inspection evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.5-native10-warp-inspection
+          path: ${{ runner.temp }}/native10-inspect.txt
+          if-no-files-found: error
+          retention-days: 30

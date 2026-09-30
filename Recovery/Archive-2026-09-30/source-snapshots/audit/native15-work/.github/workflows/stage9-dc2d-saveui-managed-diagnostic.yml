@@ -1,0 +1,71 @@
+name: Stage9.1 dc2d save UI managed diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-dc2d-saveui-managed-diagnostic.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  saveui-managed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download exact dc2d candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34716405258
+          pattern: Stage9.1-c8d0-GENERIC-MEMBERREF-REPAIR
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-saveui/input
+
+      - name: Build and run Cecil save-UI diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-saveui"; E="$OUT/evidence"; D="$OUT/diag"; DLL="$OUT/input/GodsPVZRuntime1-generic-repaired.dll"
+          mkdir -p "$E" "$D"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = 'dc2dccac079f4db46934283c380817d7b60e2a82ae71e8e18ba0b9f199bb6931' ] || exit 61
+          cat > "$D/Diag.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          EOF
+          cat > "$D/Program.cs" <<'EOF'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          using System.Security.Cryptography;
+          class P {
+            const string Sha="dc2dccac079f4db46934283c380817d7b60e2a82ae71e8e18ba0b9f199bb6931";
+            static IEnumerable<TypeDefinition> Types(IEnumerable<TypeDefinition> xs){foreach(var t in xs){yield return t;foreach(var n in Types(t.NestedTypes))yield return n;}}
+            static uint R(IMetadataTokenProvider p)=>p.MetadataToken.ToUInt32();
+            static string O(object? x)=>x switch{null=>"",MethodReference m=>$"{m.FullName} [0x{R(m):X8}]",FieldReference f=>$"{f.FullName} [0x{R(f):X8}]",TypeReference t=>$"{t.FullName} [0x{R(t):X8}]",VariableDefinition v=>$"V_{v.Index}:{v.VariableType.FullName}",ParameterDefinition p=>$"P_{p.Index}:{p.ParameterType.FullName}",Instruction i=>$"IL_{i.Offset:X4}",Instruction[] a=>string.Join(',',a.Select(i=>$"IL_{i.Offset:X4}")),_=>x.ToString()??""};
+            static void Dump(TextWriter w,MethodDefinition m){w.WriteLine($"METHOD 0x{R(m):X8} {m.FullName} RVA=0x{m.RVA:X} BODY={m.HasBody}");if(!m.HasBody)return;w.WriteLine($"  MAX={m.Body.MaxStackSize} INIT={m.Body.InitLocals} LOCALS={m.Body.Variables.Count}");foreach(var v in m.Body.Variables)w.WriteLine($"  LOCAL V_{v.Index} {v.VariableType.FullName}");foreach(var i in m.Body.Instructions)w.WriteLine($"  IL_{i.Offset:X4}: {i.OpCode,-12} {O(i.Operand)}");w.WriteLine();}
+            static void DumpType(TextWriter w,TypeDefinition t,bool allMethods){w.WriteLine($"TYPE 0x{R(t):X8} {t.FullName} base={t.BaseType?.FullName}");w.WriteLine("FIELDS");foreach(var f in t.Fields)w.WriteLine($"  FIELD 0x{R(f):X8} {f.Attributes} {f.FieldType.FullName} {f.Name}");w.WriteLine("METHOD INDEX");foreach(var m in t.Methods)w.WriteLine($"  0x{R(m):X8} {m.FullName}");w.WriteLine();if(allMethods)foreach(var m in t.Methods)Dump(w,m);}
+            static void Main(string[] a){var sha=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(a[0]))).ToLowerInvariant();if(sha!=Sha)throw new Exception($"SHA {sha}");using var md=ModuleDefinition.ReadModule(a[0],new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate});var ts=Types(md.Types).ToList();var ms=ts.SelectMany(t=>t.Methods).ToList();if(ms.Count!=2317)throw new Exception($"MethodDef {ms.Count}");using var w=new StreamWriter(a[1]);w.WriteLine($"SHA256={sha}\nMETHODDEF_COUNT={ms.Count}\n");
+              foreach(var name in new[]{"Window_I","SaveList","SavesManager","MainUIController"}){var t=ts.Single(x=>x.Name==name);DumpType(w,t,name=="Window_I"||name=="SaveList");}
+              w.WriteLine("=== CREATE-SAVE XREFS ===");foreach(var m in ms.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions)if(i.Operand is MethodReference mr&&(mr.Name=="CreatNewSave"||mr.Name=="CreateNewPlayerSave"||mr.Name=="PopupNewWindow"))w.WriteLine($"0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} {i.OpCode} {O(mr)}");
+              w.WriteLine("=== WINDOW_I UI REFS ===");var wi=ts.Single(x=>x.Name=="Window_I");foreach(var m in wi.Methods.Where(m=>m.HasBody))foreach(var i in m.Body.Instructions){if(i.Operand is IMetadataTokenProvider p){var s=O(p);if(s.Contains("InputField")||s.Contains("TMP_")||s.Contains("Button")||s.Contains("Text")||s.Contains("SavesManager")||s.Contains("PopupNewWindow"))w.WriteLine($"0x{R(m):X8} {m.FullName} IL_{i.Offset:X4} {i.OpCode} {s}");}}
+            }
+          }
+          EOF
+          dotnet build "$D/Diag.csproj" -c Release -o "$D/bin" --nologo
+          dotnet "$D/bin/Diag.dll" "$DLL" "$E/saveui-managed-diagnostic.txt"
+          grep -E '^(SHA256|METHODDEF_COUNT|TYPE|  FIELD|===|0x)' "$E/saveui-managed-diagnostic.txt" > "$E/saveui-summary.txt" || true
+          cat "$E/saveui-summary.txt"
+
+      - name: Upload save-UI managed evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-dc2d-SAVEUI-MANAGED-DIAGNOSTIC
+          path: ${{ runner.temp }}/stage9-saveui/evidence/
+          if-no-files-found: error
+          retention-days: 90

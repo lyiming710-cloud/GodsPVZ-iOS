@@ -1,0 +1,107 @@
+name: Stage9.1 Projectile ctor exact-reference gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-projectile-ctor-exact-ref.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-ref:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download static Projectile candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804560890
+          name: Stage9.1-DC39-PROJECTILE-CTOR-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference decompile and gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/projectile-ref"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-projectile-ctor.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL"|awk '{print $1}')
+          echo "CANDIDATE_SHA256 $SHA" | tee "$O/reference-gate.txt"
+          test "$SHA" = 'b192a02950c52778008b612c5afb2795f5124edb25e7744c68e1293be8dc34c0'
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          echo "REFERENCE_DIR $RDIR" | tee -a "$O/reference-gate.txt"
+          "$ILSPY" -r "$RDIR" -t Projectile "$DLL" > "$O/Projectile.cs" 2> "$O/Projectile.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Projectile "$DLL" > "$O/Projectile.il" 2> "$O/Projectile.il.stderr"
+          test ! -s "$O/Projectile.cs.stderr"
+          test ! -s "$O/Projectile.il.stderr"
+          python3 - "$O/Projectile.cs" "$O/Projectile.il" <<'PY' | tee -a "$O/reference-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          explicit=bool(re.search(r'public\s+Projectile\s*\(\s*\)',cs))
+          scale_m=re.search(r'\bscale\s*=\s*1(?:\.0+)?f?\s*;',cs)
+          rate_m=re.search(r'\bupdateRate\s*=\s*1(?:\.0+)?f?\s*;',cs)
+          zero_m=re.search(r'\bpreviousPosition\s*=\s*(?:Vector3\.zero|default(?:\(Vector3\))?)\s*;',cs)
+          assert scale_m and rate_m and zero_m, (bool(scale_m),bool(rate_m),bool(zero_m))
+          # Other Projectile methods still contain known Cpp2IL damage. Scope C# diagnostics to the
+          # recovered constructor representation (explicit ctor or the three folded field initializers).
+          if explicit:
+              m=re.search(r'public\s+Projectile\s*\(\s*\)',cs); o=cs.index('{',m.end()); d=0; end=None
+              for i in range(o,len(cs)):
+                  d+=(cs[i]=='{')-(cs[i]=='}')
+                  if d==0: end=i+1; break
+              assert end is not None
+              local_cs=cs[m.start():end]
+          else:
+              spans=[scale_m.span(),rate_m.span(),zero_m.span()]
+              local_cs='\n'.join(cs[max(0,a-160):min(len(cs),b+160)] for a,b in spans)
+          for x in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','zeroVector']:
+              assert x not in local_cs,(x,local_cs)
+          end=il.find('} // end of method Projectile::.ctor')
+          assert end>=0, 'Projectile ctor IL end marker missing'
+          begin=il.rfind('.method ',0,end)
+          body=il[begin:end]
+          for x in ['zeroVector','Unmanaged memory load','Unknown result type','stloc']:
+              assert x not in body,(x,body)
+          assert body.count('stfld float32 Projectile::scale')==1, body
+          assert body.count('stfld float32 Projectile::updateRate')==1, body
+          assert body.count('stfld valuetype [UnityEngine.CoreModule]UnityEngine.Vector3 Projectile::previousPosition')==1, body
+          assert ('UnityEngine.Vector3::get_zero()' in body or 'initobj valuetype [UnityEngine.CoreModule]UnityEngine.Vector3' in body), body
+          assert body.count('UnityEngine.MonoBehaviour::.ctor()')==1, body
+          print('PROJECTILE_EXACT_REF_PASS explicit_ctor=%d scale=1 updateRate=1 previousPosition_zero=1 invalid_diagnostics=0 private_zeroVector_refs=0 unrelated_class_unknown=%d' % (explicit,cs.count('Unknown result type')))
+          PY
+      - name: Upload exact-reference evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-PROJECTILE-CTOR-EXACT-REF
+          path: ${{ runner.temp }}/projectile-ref/
+          if-no-files-found: warn
+          retention-days: 90

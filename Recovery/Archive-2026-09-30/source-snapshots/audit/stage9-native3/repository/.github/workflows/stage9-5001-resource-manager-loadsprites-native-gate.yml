@@ -1,0 +1,109 @@
+name: Stage9.1 5001 ResourceManager.LoadSprites native gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-5001-resource-manager-loadsprites-native-gate.yml'
+      - 'Tools/Stage9ResourceManagerLoadSpritesPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  resource-manager-loadsprites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 5001 input
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34765271557
+          pattern: Stage9.1-9A01-RESOURCE-MANAGER-START
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-loadsprites/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-loadsprites/ilspy
+      - name: Apply PC-native-backed ResourceManager.LoadSprites recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-loadsprites"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-resource-manager-start.dll"
+          DLL="$OUT/GodsPVZRuntime1-resource-manager-loadsprites.dll"
+          [ "$(sha256sum "$IN" | awk '{print $1}')" = '50015e74e2225c2b3a98c83837195bcc510ea0920bd1a619bcf43c415fe9e641' ] || exit 61
+          dotnet build Tools/Stage9ResourceManagerLoadSpritesPatch/Stage9ResourceManagerLoadSpritesPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9ResourceManagerLoadSpritesPatch/Stage9ResourceManagerLoadSpritesPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^INPUT_SHA256 50015e74e2225c2b3a98c83837195bcc510ea0920bd1a619bcf43c415fe9e641$' "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x0600021C type=ResourceManager method=LoadSprites code_size=14561 broken_fingerprint=plantSprites_ldc0_ceq$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x0600021C address=0x0000000180333DB0 load_sprite_calls=88 list_add_calls=85 path_combine2_calls=92 path_combine3_calls=4 helper_calls=4$' "$E/patch.log"
+          grep -q '^RUNTIME_CAUSAL_EVIDENCE strict_run=34765343442 candidate=50015e74e2225c2b3a98c83837195bcc510ea0920bd1a619bcf43c415fe9e641 exception=InvalidProgramException method=ResourceManager.LoadSprites il_offset=0x0113 opcode=ceq$' "$E/patch.log"
+          grep -q '^PATCH_RESOURCE_MANAGER_LOADSPRITES method_body_changes=1 field_metadata_changes=0 source=pc_native_plus_exact_resource_sequence$' "$E/patch.log"
+          grep -q '^REOPEN_RESOURCE_MANAGER_LOADSPRITES_PASS token=0x0600021C load_sprite_calls=88 list_add_calls=85 path_combine2_calls=92 path_combine3_calls=4$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target_token=0x0600021C$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^START_RECOVERY_PRESERVATION_PASS load_audio_calls=1 load_sprites_calls=1 adjacent=1$' "$E/patch.log"
+          grep -q '^CARD_CHOOSE_SERIALIZEFIELD_PRESERVATION_PASS fields=17$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9ResourceManagerLoadSpritesPatch/Evidence.md "$E/native-runtime-evidence.md"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-loadsprites"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-resource-manager-loadsprites.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'ResourceManager' "$DLL" > "$E/ResourceManager.cs" 2> "$E/ResourceManager.stderr"; test ! -s "$E/ResourceManager.stderr"
+          "$ILSPY" -il -t 'ResourceManager' "$DLL" > "$E/ResourceManager.il" 2> "$E/ResourceManager-il.stderr"; test ! -s "$E/ResourceManager-il.stderr"
+          python3 - "$E/ResourceManager.cs" "$E/ResourceManager.il" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text()
+          m=re.search(r'\bstatic\s+void\s+LoadSprites\s*\(\s*\)',cs)
+          assert m,'LoadSprites C# signature missing'
+          o=cs.index('{',m.end()); depth=0; end=None
+          for i in range(o,len(cs)):
+              if cs[i]=='{': depth+=1
+              elif cs[i]=='}':
+                  depth-=1
+                  if depth==0: end=i+1; break
+          assert end is not None
+          body=cs[m.start():end]
+          assert 'Expected I' not in body and 'Expected O' not in body and 'Unknown result type' not in body and 'Not implemented instruction' not in body
+          assert body.count('InternalResourceLoader.Load<Sprite>')==88,body.count('InternalResourceLoader.Load<Sprite>')
+          for x in ['KnightWallnut_body','VikingChomper_Barrels2','LadderSaboteurs_outerarm_upper2','IceCube_Large','CliqueLogo','Roadblock2','HA_A_','HA_B_','HA_C_','Shovel','Glove']:
+              assert x in body,x
+          marker='// end of method ResourceManager::LoadSprites'
+          e=il.index(marker); s=il.rfind('.method',0,e); assert s>=0
+          ib=il[s:e]
+          load='InternalResourceLoader::Load<class [UnityEngine.CoreModule]UnityEngine.Sprite>(string)'
+          add='System.Collections.Generic.List`1<class [UnityEngine.CoreModule]UnityEngine.Sprite>::Add(!0)'
+          c2='System.IO.Path::Combine(string, string)'
+          c3='System.IO.Path::Combine(string, string, string)'
+          assert ib.count(load)==88,ib.count(load)
+          assert ib.count(add)==85,ib.count(add)
+          assert ib.count(c2)==92,ib.count(c2)
+          assert ib.count(c3)==4,ib.count(c3)
+          for h in ['Load_card_Choose_Sprites','Load_card_Choose_PlantPortraits','Load_card_Choose_DevicePortraits','Load_devicePortraits_Window']:
+              assert ib.count('ResourceManager::'+h+'(')==1,(h,ib.count('ResourceManager::'+h+'('))
+          print('ILSPY_RESOURCE_MANAGER_LOADSPRITES_PASS load_sprite_calls=88 list_add_calls=85 path_combine2_calls=92 path_combine3_calls=4 invalid_il_diagnostics=0')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-5001-RESOURCE-MANAGER-LOADSPRITES
+          path: ${{ runner.temp }}/stage9-loadsprites/evidence/
+          if-no-files-found: warn
+          retention-days: 90

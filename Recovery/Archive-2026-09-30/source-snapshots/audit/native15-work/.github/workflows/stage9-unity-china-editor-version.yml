@@ -1,0 +1,73 @@
+name: Verify exact Unity China Stage9.1 editor version
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-unity-china-editor-version.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download and verify exact China Linux editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p stage9-unity-editor-version editor
+          URL='https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorInstaller/Unity.tar.xz'
+          EXPECTED_SIZE='3906640940'
+          curl -fL --retry 5 --retry-delay 5 --connect-timeout 30 -o Unity-China-2022.3.44.tar.xz "$URL"
+          ACTUAL_SIZE="$(stat -c %s Unity-China-2022.3.44.tar.xz)"
+          SHA="$(sha256sum Unity-China-2022.3.44.tar.xz | awk '{print $1}')"
+          if [ "$ACTUAL_SIZE" != "$EXPECTED_SIZE" ]; then
+            printf 'size mismatch: %s != %s\n' "$ACTUAL_SIZE" "$EXPECTED_SIZE" >&2
+            exit 31
+          fi
+          tar -xJf Unity-China-2022.3.44.tar.xz -C editor
+          UNITY="$(find editor -type f -path '*/Editor/Unity' -o -type f -path '*/Unity' | head -n 1)"
+          if [ -z "$UNITY" ]; then
+            echo 'Unity executable not found after extraction' >&2
+            exit 32
+          fi
+          chmod +x "$UNITY"
+          set +e
+          VERSION_OUT="$("$UNITY" -version 2>&1)"
+          VERSION_EXIT=$?
+          set -e
+          printf '%s\n' "$VERSION_OUT" > stage9-unity-editor-version/unity-version-raw.txt
+          VERSION="$(printf '%s\n' "$VERSION_OUT" | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n 1 || true)"
+          python3 - <<PY
+          import json
+          from pathlib import Path
+          result={
+            'url': '$URL',
+            'download_size': int('$ACTUAL_SIZE'),
+            'download_sha256': '$SHA',
+            'unity_executable': '$UNITY',
+            'version_exit': int('$VERSION_EXIT'),
+            'parsed_version': '$VERSION',
+            'expected_version': '2022.3.44f1c1',
+            'version_match': '$VERSION' == '2022.3.44f1c1',
+          }
+          Path('stage9-unity-editor-version/RESULT.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          PY
+          if [ "$VERSION" != '2022.3.44f1c1' ]; then
+            echo "Exact editor gate failed: got '$VERSION'" >&2
+            exit 33
+          fi
+
+      - name: Upload exact-version evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-unity-china-editor-version
+          path: stage9-unity-editor-version/
+          if-no-files-found: error
+          retention-days: 90
+          include-hidden-files: true

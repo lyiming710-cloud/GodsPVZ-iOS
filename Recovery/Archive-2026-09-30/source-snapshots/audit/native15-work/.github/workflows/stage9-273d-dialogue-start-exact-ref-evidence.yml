@@ -1,0 +1,95 @@
+name: Stage9.1 273d Dialogue Start exact-ref evidence
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-273d-dialogue-start-exact-ref-evidence.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-ref-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download validated 273d candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34812322356
+          name: Stage9.1-B192-PLANT-DETAIL-INITIALIZE-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference decompile DialogueManager_OnBoard
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/dialogue-start-ref"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-plant-detail-initialize.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL"|awk '{print $1}')
+          test "$SHA" = '273ddef385775d169aa88d63a505aeb2b99aab4b8c32204a4929175310e2969b'
+          echo "CANDIDATE_SHA256 $SHA" > "$O/evidence.txt"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t DialogueManager_OnBoard "$DLL" > "$O/DialogueManager_OnBoard.cs" 2> "$O/cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t DialogueManager_OnBoard "$DLL" > "$O/DialogueManager_OnBoard.il" 2> "$O/il.stderr"
+          test ! -s "$O/cs.stderr"
+          test ! -s "$O/il.stderr"
+          python3 - "$O/DialogueManager_OnBoard.cs" "$O/DialogueManager_OnBoard.il" <<'PY' | tee -a "$O/evidence.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          def extract_cs(name):
+              m=re.search(r'(?:private|public|protected|internal)\s+void\s+'+re.escape(name)+r'\s*\([^)]*\)',cs)
+              if not m: return ''
+              o=cs.index('{',m.end()); d=0
+              for i in range(o,len(cs)):
+                  d+=(cs[i]=='{')-(cs[i]=='}')
+                  if d==0: return cs[m.start():i+1]
+              return ''
+          start=extract_cs('Start'); update=extract_cs('Update')
+          print('START_FOUND',int(bool(start)))
+          print('START_UNKNOWN',start.count('Unknown result type'))
+          print('START_UNMANAGED',start.count('Unmanaged memory load'))
+          print('START_EXPECTED_DIAGNOSTICS',sum(start.count(x) for x in ['Expected I','Expected O','Expected I4']))
+          print('START_NULLREF_LITERAL',start.count('NullReferenceException'))
+          print('START_INDEX_LITERAL',start.count('IndexOutOfRangeException'))
+          print('UPDATE_FOUND',int(bool(update)))
+          print('UPDATE_LIST_SIZE_DIRECT',int('._size' in update or '::_size' in update))
+          Path(sys.argv[1]+'.Start.txt').write_text(start)
+          Path(sys.argv[1]+'.Update.txt').write_text(update)
+          assert start, 'Start method missing'
+          PY
+      - name: Upload exact-ref evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-273D-DIALOGUE-START-EXACT-REF-EVIDENCE
+          path: ${{ runner.temp }}/dialogue-start-ref/
+          if-no-files-found: warn
+          retention-days: 90

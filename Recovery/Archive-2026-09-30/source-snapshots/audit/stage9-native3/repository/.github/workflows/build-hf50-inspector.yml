@@ -1,0 +1,32 @@
+name: Build HF50 MethodDef inspector
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF50Inspect/**'
+      - '.github/workflows/build-hf50-inspector.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF50 inspector
+        run: dotnet publish Tools/HF50Inspect/HF50Inspect.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out/hf50-inspect
+      - name: Smoke test
+        run: |
+          chmod +x out/hf50-inspect/GodsPVZ.HF50Inspect
+          set +e
+          out/hf50-inspect/GodsPVZ.HF50Inspect
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF50Inspect-linux-x64
+          path: out/hf50-inspect/GodsPVZ.HF50Inspect
+          if-no-files-found: error

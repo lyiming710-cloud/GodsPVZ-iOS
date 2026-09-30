@@ -1,0 +1,75 @@
+name: Stage9.1 273d LoadSkillLogo evidence
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-273d-load-skill-logo-evidence.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified 273d candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34812322356
+          name: Stage9.1-B192-PLANT-DETAIL-INITIALIZE-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download Plant detail exact-ref evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34812760829
+          name: Stage9.1-PLANT-DETAIL-INITIALIZE-EXACT-REF
+          path: ${{ runner.temp }}/ref
+      - name: Probe managed target and extract exact-reference method
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/evidence"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-plant-detail-initialize.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = '273ddef385775d169aa88d63a505aeb2b99aab4b8c32204a4929175310e2969b'
+          dotnet build Tools/Stage9MethodProbe/Stage9MethodProbe.csproj -c Release --nologo >/dev/null
+          dotnet Tools/Stage9MethodProbe/bin/Release/net10.0/Stage9MethodProbe.dll "$DLL" 'Plant_DetaiPage::LoadSkillLogo' > "$O/managed-probe.txt"
+          cat "$O/managed-probe.txt"
+          CS=$(find "$RUNNER_TEMP/ref" -type f -name 'Plant_DetaiPage.cs' -print -quit)
+          IL=$(find "$RUNNER_TEMP/ref" -type f -name 'Plant_DetaiPage.il' -print -quit)
+          test -n "$CS"; test -n "$IL"
+          python3 - "$CS" "$IL" "$O" <<'PY'
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace'); out=Path(sys.argv[3])
+          m=re.search(r'(?:private|public|protected|internal)\s+void\s+LoadSkillLogo\s*\([^)]*\)',cs)
+          assert m
+          o=cs.index('{',m.end()); d=0; e=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: e=i+1; break
+          body=cs[m.start():e]; (out/'LoadSkillLogo.cs.txt').write_text(body)
+          end=il.find('} // end of method Plant_DetaiPage::LoadSkillLogo')
+          assert end>=0
+          begin=il.rfind('.method ',0,end)
+          ib=il[begin:end]; (out/'LoadSkillLogo.il.txt').write_text(ib)
+          print('=== LOAD_SKILL_LOGO_EXACT_CS ==='); print(body)
+          print('=== LOAD_SKILL_LOGO_DIAGNOSTICS ===')
+          for s in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Not implemented instruction']:
+              print(s,body.count(s))
+          print('=== LOAD_SKILL_LOGO_EXACT_IL ==='); print(ib)
+          PY
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-273D-LOAD-SKILL-LOGO-EVIDENCE
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn
+          retention-days: 90

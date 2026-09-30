@@ -1,0 +1,168 @@
+name: Stage9.1 cf4c MainMenu save Board runtime gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-cf4c-mainmenu-save-board-runtime-gate.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  mainmenu-save-board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+
+      - name: Prepare exact R3 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; mkdir -p "$OUT/parts" "$OUT/r3" "$E"
+          [ -n "${UNITY_EMAIL:-}" ] && [ -n "${UNITY_PASSWORD:-}" ] || exit 61
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325
+          EOF
+          while IFS=$'\t' read -r idx fid sha; do f="$OUT/parts/r3.$idx.part"; python3 -m gdown --id "$fid" --output "$f" --quiet; [ "$(sha256sum "$f"|awk '{print $1}')" = "$sha" ] || exit 62; done < "$OUT/parts.tsv"
+          cat "$OUT/parts"/*.part > "$OUT/r3.tar.zst"
+          [ "$(stat -c%s "$OUT/r3.tar.zst")" = 786765618 ] || exit 63
+          [ "$(sha256sum "$OUT/r3.tar.zst"|awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 64
+          zstd -dc "$OUT/r3.tar.zst" | tar -xf - -C "$OUT/r3"; rm -rf "$OUT/parts" "$OUT/r3.tar.zst"
+          PROJECT="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject"; OLD="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          [ "$(sha256sum "$OLD"|awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 65
+          echo "$PROJECT" > "$OUT/project.txt"
+
+      - name: Download exact cf4c candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34741369772
+          pattern: Stage9.1-eec5-QUALIFICATIONTEST
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-cf4c/candidate
+
+      - name: Integrate exact cf4c candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; PROJECT="$(cat "$OUT/project.txt")"
+          SRC="$OUT/candidate/GodsPVZRuntime1-qualificationtest.dll"
+          [ "$(sha256sum "$SRC"|awk '{print $1}')" = 'cf4c2ffcde7a9ac20d91b89fe5e315b832e85f73082323c3e0db976604d647b9' ] || exit 71
+          OLD="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"; OLDMETA="$OLD.meta"; NEW="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"; NEWMETA="$NEW.meta"
+          sed -i 's/^  isPreloaded: 0$/  isPreloaded: 1/' "$OLDMETA"; cp "$SRC" "$NEW"; mv "$OLDMETA" "$NEWMETA"; rm "$OLD"
+          grep -q '^guid: 60b84a767c46ced9aacc93f38da4d2f3$' "$NEWMETA"; grep -q '^  isPreloaded: 1$' "$NEWMETA"
+          printf 'candidate_sha256=%s\nsource_run=34741369772\nsource_artifact=Stage9.1-eec5-QUALIFICATIONTEST\ntest_scope=MainMenu_popup_then_real_CreateNewPlayerSave_then_Board\n' 'cf4c2ffcde7a9ac20d91b89fe5e315b832e85f73082323c3e0db976604d647b9' > "$E/input-gate.txt"
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-cf4c/editor-parts
+
+      - name: Reconstruct Unity editor and acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; P="$OUT/editor-parts"; D="$OUT/editor"; mkdir -p "$D"
+          [ "$(find "$P" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*'|wc -l)" = 15 ] || exit 81
+          [ "$(cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-*|sha256sum|awk '{print $1}')" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ] || exit 82
+          cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -dc | tar -xf - -C "$D"; rm -rf "$P"
+          U="$D/Editor/Unity"; chmod +x "$U"; "$U" -version > "$E/unity-version.txt" 2>&1; grep -q '2022.3.44f1c1' "$E/unity-version.txt"; echo "$U" > "$OUT/unity.txt"
+          C="$D/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"; set +e; "$C" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$E/license-activate.log" 2>&1; RC=$?; set -e; echo "$RC" > "$E/activation-exit.txt"; [ "$RC" = 0 ] || exit 84; echo ACQUIRED > "$OUT/seat.flag"
+
+      - name: First import
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/first-import.log"
+          ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/first-import.log"
+
+      - name: Install combined runtime gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"; T="$PROJECT/Assets/Stage9CF4CRuntime"; mkdir -p "$T"
+          cat > "$T/Stage9.CF4C.Runtime.asmdef" <<'EOF'
+          {"name":"Stage9.CF4C.Runtime","references":[],"overrideReferences":false,"autoReferenced":true,"optionalUnityReferences":["TestAssemblies"]}
+          EOF
+          cat > "$T/Stage9CF4CRuntime.cs" <<'EOF'
+          using System;using System.Collections;using System.Linq;using System.Reflection;using NUnit.Framework;using UnityEngine;using UnityEngine.SceneManagement;using UnityEngine.TestTools;
+          public class Stage9CF4CRuntime{
+            static readonly BindingFlags F=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.Static;
+            static object RF(Type t,object o,string n){var f=t.GetField(n,F);return f==null?null:f.GetValue(o);}
+            static int CW(Type t,out int total){total=0;if(t==null)return 0;int a=0;foreach(var o in Resources.FindObjectsOfTypeAll(t)){total++;var c=o as Component;if(c!=null){bool x=c.gameObject.scene.IsValid()&&c.gameObject.activeInHierarchy;if(x)a++;Debug.Log($"STAGE9_CF4C_WINDOW name={c.gameObject.name} active={(x?1:0)} scene={c.gameObject.scene.name}");}}return a;}
+            static void Walk(GameObject g,ref int gos,ref int missing,ref int bs,ref int b){gos++;foreach(var c in g.GetComponents<Component>()){if(c==null){missing++;continue;}if(c.GetType().Name=="BoardStart")bs++;if(c.GetType().Name=="Board")b++;}foreach(Transform ch in g.transform)Walk(ch.gameObject,ref gos,ref missing,ref bs,ref b);}
+            [UnityTest]public IEnumerator Gate(){LogAssert.ignoreFailingMessages=true;var op=SceneManager.LoadSceneAsync("MainMenu",LoadSceneMode.Single);while(!op.isDone)yield return null;yield return new WaitForSecondsRealtime(2f);for(int i=0;i<30;i++)yield return null;
+              var rt=AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a=>a.GetName().Name=="GodsPVZRuntime1");var gs=rt?.GetType("GlobalStaticVars");var lawn=gs==null?null:RF(gs,null,"gLawnApp");var saves=lawn==null?null:RF(lawn.GetType(),lawn,"savesManager");var sl=saves==null?null:RF(saves.GetType(),saves,"saveList");var p=saves==null?null:RF(saves.GetType(),saves,"playerSave");int total;int active=CW(rt?.GetType("Window_I"),out total);Debug.Log($"STAGE9_CF4C_MAINMENU scene={SceneManager.GetActiveScene().name} runtime={(rt!=null?1:0)} lawn={(lawn!=null?1:0)} saves={(saves!=null?1:0)} saveList={(sl!=null?1:0)} player={(p!=null?1:0)} windowI={total} activeWindowI={active}");Assert.IsNotNull(saves);Assert.IsNotNull(sl);if(p==null){Assert.Greater(active,0);Debug.Log("STAGE9_CF4C_BRANCH no-save-popup");var m=saves.GetType().GetMethod("CreateNewPlayerSave",F,null,new[]{typeof(string)},null);try{m.Invoke(saves,new object[]{"Stage9Test"});Debug.Log("STAGE9_CF4C_CREATE_INVOKE ok=1");}catch(TargetInvocationException ex){Debug.LogError("STAGE9_CF4C_CREATE_INVOKE ok=0 inner="+(ex.InnerException??ex));throw ex.InnerException??ex;}for(int i=0;i<10;i++)yield return null;p=RF(saves.GetType(),saves,"playerSave");}
+              sl=RF(saves.GetType(),saves,"saveList");var pn=p==null?null:RF(p.GetType(),p,"playerName");var dn=sl==null?null:RF(sl.GetType(),sl,"defaultPlayerName");Debug.Log($"STAGE9_CF4C_SAVE_READY player={(p!=null?1:0)} playerName={(pn??"<null>")} saveList={(sl!=null?1:0)} defaultName={(dn??"<null>")}");Assert.IsNotNull(p);Assert.AreEqual("Stage9Test",Convert.ToString(pn));Assert.AreEqual("Stage9Test",Convert.ToString(dn));
+              op=SceneManager.LoadSceneAsync("Board",LoadSceneMode.Single);while(!op.isDone)yield return null;yield return new WaitForSecondsRealtime(2f);for(int i=0;i<30;i++)yield return null;var s=SceneManager.GetActiveScene();int gos=0,missing=0,bs=0,b=0;foreach(var r in s.GetRootGameObjects())Walk(r,ref gos,ref missing,ref bs,ref b);Debug.Log($"STAGE9_CF4C_BOARD scene={s.name} gos={gos} missing={missing} boardStart={bs} board={b}");Assert.AreEqual("Board",s.name);Assert.Greater(bs,0);}
+          }
+          EOF
+          "$U" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/test-compile.log"
+          ! grep -qE '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/test-compile.log"
+
+      - name: Run combined PlayMode gate
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; U="$(cat "$OUT/unity.txt")"; PROJECT="$(cat "$OUT/project.txt")"
+          set +e; timeout 360 "$U" -batchmode -nographics -projectPath "$PROJECT" -runTests -testPlatform PlayMode -assemblyNames Stage9.CF4C.Runtime -testResults "$E/results.xml" -logFile "$E/playmode.log"; RC=$?; set -e; echo "$RC" > "$E/playmode-exit.txt"
+          grep -E 'STAGE9_CF4C_' "$E/playmode.log" > "$E/markers.txt" || true
+          grep -E 'Exception|InvalidProgramException|MissingMethodException|FieldAccessException' "$E/playmode.log" > "$E/exceptions.txt" || true
+          grep -E 'MissingMethodException.*System\.Collections\.Generic\.(List|Dictionary)' "$E/playmode.log" > "$E/generic-missing-methods.txt" || true
+          cat "$E/markers.txt" || true
+          [ "$RC" = 0 ] || exit "$RC"
+          grep -q 'STAGE9_CF4C_CREATE_INVOKE ok=1' "$E/markers.txt" || exit 103
+          grep -q 'STAGE9_CF4C_SAVE_READY player=1 playerName=Stage9Test saveList=1 defaultName=Stage9Test' "$E/markers.txt" || exit 104
+          grep -q 'STAGE9_CF4C_BOARD scene=Board ' "$E/markers.txt" || exit 105
+          ! grep -q 'InvalidProgramException: Invalid IL code in GlobalStaticVars:QualificationTest (string)' "$E/playmode.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in PlantData:CloneData (PlantSave)' "$E/playmode.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in SkillDataList:LoadSkillDataList ()' "$E/playmode.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in Skill:Copy ()' "$E/playmode.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in PlantSave:Clone ()' "$E/playmode.log"
+          ! grep -q 'InvalidProgramException: Invalid IL code in SavesManager:InitializeNewPlantSave (int)' "$E/playmode.log"
+          test ! -s "$E/generic-missing-methods.txt"
+
+      - name: Return Unity Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-cf4c"; E="$OUT/evidence"; if [ -f "$OUT/seat.flag" ] && [ -f "$OUT/unity.txt" ]; then C="$(dirname "$(cat "$OUT/unity.txt")")/Data/Resources/Licensing/Client/Unity.Licensing.Client"; set +e; "$C" --deactivate-all > "$E/license-deactivate.log" 2>&1; echo $? > "$E/license-deactivate-exit.txt"; set -e; fi
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-cf4c-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-cf4c/evidence/
+          if-no-files-found: warn
+          retention-days: 90

@@ -1,0 +1,34 @@
+name: Build main menu patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/MainMenuPatch/**'
+      - '.github/workflows/build-main-menu-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assemble source
+        run: cat Tools/MainMenuPatch/Program.cs.part1 Tools/MainMenuPatch/Program.cs.part2 Tools/MainMenuPatch/Program.cs.part3 Tools/MainMenuPatch/Program.cs.part4 > Tools/MainMenuPatch/Program.cs
+      - name: Publish
+        run: dotnet publish Tools/MainMenuPatch/MainMenuPatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/main-menu-patch
+      - name: Smoke test
+        run: |
+          chmod +x publish/main-menu-patch/GodsPVZ.MainMenuPatch
+          set +e
+          publish/main-menu-patch/GodsPVZ.MainMenuPatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-MainMenuPatch-linux-x64
+          path: publish/main-menu-patch/GodsPVZ.MainMenuPatch
+          if-no-files-found: error

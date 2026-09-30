@@ -1,0 +1,14 @@
+name: Stage9.1 reusable Int32 minus-one patcher buildcheck
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-int32-minus-one-patcher-buildcheck.yml','Tools/Stage9Int32MinusOnePatch/**']
+permissions: {contents: read}
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: dotnet build Tools/Stage9Int32MinusOnePatch/Stage9Int32MinusOnePatch.csproj -c Release --nologo

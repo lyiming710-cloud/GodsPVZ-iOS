@@ -1,0 +1,38 @@
+name: Build fixed Cpp2IL reference tool
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-cpp2il-fixed-reference-tool.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact Cpp2IL commit
+        uses: actions/checkout@v4
+        with:
+          repository: SamboyCoding/Cpp2IL
+          ref: 5fb20304df698ffd3d0e664b2a698cd911dc9d57
+          path: cpp2il
+          fetch-depth: 1
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish exact Cpp2IL
+        run: dotnet publish cpp2il/Cpp2IL/Cpp2IL.csproj -f net10.0 -c Release -r linux-x64 --self-contained true -p:PublishTrimmed=false -o out/cpp2il
+      - name: Verify exact source commit
+        shell: bash
+        run: |
+          test "$(git -C cpp2il rev-parse HEAD)" = "5fb20304df698ffd3d0e664b2a698cd911dc9d57"
+          chmod +x out/cpp2il/Cpp2IL
+          out/cpp2il/Cpp2IL --version | tee out/cpp2il/VERSION.txt
+          grep -F '5fb20304df698ffd3d0e664b2a698cd911dc9d57' out/cpp2il/VERSION.txt
+          printf '%s\n' 'Historical upstream CI label: 2022.1.0-development.1736; exact source commit is authoritative.' >> out/cpp2il/VERSION.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Cpp2IL-development-1736-5fb2030-linux-x64
+          path: out/cpp2il
+          include-hidden-files: true
+          if-no-files-found: error

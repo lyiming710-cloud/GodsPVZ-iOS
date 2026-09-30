@@ -1,0 +1,68 @@
+name: Stage9.1 338b Window_I PopupNew repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-338b-windowi-popupnew-gate.yml'
+      - 'Tools/Stage9WindowIPopupNewPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  popupnew:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 338b candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34717490282
+          pattern: Stage9.1-59b-LOADBASEDATA-ENUM
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-popupnew/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-popupnew/ilspy
+      - name: Apply exact repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-popupnew"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-loadbasedata.dll"; DLL="$OUT/GodsPVZRuntime1-popupnew.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '338b70971320ab701db67adb24dc9c2c87de5c301cd64edcbedba6bea9d4ffa6' ] || exit 61
+          dotnet build Tools/Stage9WindowIPopupNewPatch/Stage9WindowIPopupNewPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9WindowIPopupNewPatch/Stage9WindowIPopupNewPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^PATCH_POPUPNEW_NULL_CHECKS sites=2 opcode=ldnull$' "$E/patch.log"
+          grep -q '^PATCH_POPUPNEW_NULL_RETURN local=Window_I$' "$E/patch.log"
+          grep -q '^REOPEN_POPUPNEW_PASS null_checks=2 null_return=1$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-popupnew"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-popupnew.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -m 0x060006FA "$DLL" > "$E/PopupNewWindow.cs" 2> "$E/PopupNewWindow.stderr"; test ! -s "$E/PopupNewWindow.stderr"
+          grep -q 'return null;' "$E/PopupNewWindow.cs"
+          grep -q 'SetParent(parent' "$E/PopupNewWindow.cs"
+          ! grep -Eq 'Invalid IL|Expected .* but got|Unknown result type|NullReferenceException.*return' "$E/PopupNewWindow.cs"
+          echo 'ILSPY_POPUPNEW_PASS token=0x060006FA' | tee "$E/ilspy-pass.txt"
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-338b-WINDOWI-POPUPNEW
+          path: ${{ runner.temp }}/stage9-popupnew/evidence/
+          if-no-files-found: error
+          retention-days: 90

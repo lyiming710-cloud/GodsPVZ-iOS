@@ -1,0 +1,1 @@
+"PING:"; (Get-Date).ToString("o"); echo "gh path:"; (Get-Command gh -ErrorAction SilentlyContinue).Source

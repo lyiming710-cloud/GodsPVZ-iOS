@@ -1,0 +1,59 @@
+cd /workspaces/GodsPVZ-native19/.validation/native22
+python3 - <<'PY'
+import json
+W='/workspaces/GodsPVZ-native19/.validation/native22/work'
+a=json.load(open(W+'/all-methods.batch1.json'))
+b=json.load(open(W+'/all-methods.batch2.json'))
+da={m['token']:m for m in a['methods']}
+db={m['token']:m for m in b['methods']}
+
+def strip(o):
+    if isinstance(o,dict):
+        if 'opcode' in o and 'offset' in o: return '<instr@%04X>'%o['offset']
+        return {k:strip(v) for k,v in o.items()}
+    if isinstance(o,list): return [strip(x) for x in o]
+    return o
+
+def sig(x, idx):
+    """opcode + operand, with branch targets expressed as INSTRUCTION INDEX."""
+    o=x.get('operand')
+    if isinstance(o,dict) and 'target' in o and isinstance(o['target'],dict):
+        o=dict(o); o['target']='#%d'%idx[o['target']['offset']]
+    if isinstance(o,dict) and 'targets' in o:
+        o=dict(o); o['targets']=['#%d'%idx[t['offset']] for t in o['targets']]
+    return (x['opcode'], json.dumps(strip(o),sort_keys=True))
+
+changed=[t for t in da if json.dumps(da[t],sort_keys=True)!=json.dumps(db[t],sort_keys=True)]
+print('methods changed: %d'%len(changed))
+diffs=0; kinds={}; anomalies=[]; lenbad=[]; ehdone=0
+for t in changed:
+    ia=da[t]['instructions']; ib=db[t]['instructions']
+    if len(ia)!=len(ib):
+        lenbad.append((t,len(ia),len(ib))); continue
+    idxa={x['offset']:k for k,x in enumerate(ia)}
+    idxb={x['offset']:k for k,x in enumerate(ib)}
+    for k,(x,y) in enumerate(zip(ia,ib)):
+        sx,sy=sig(x,idxa),sig(y,idxb)
+        if sx==sy: continue
+        diffs+=1
+        kinds[(sx[0],sy[0])]=kinds.get((sx[0],sy[0]),0)+1
+        if not (sx[0].startswith('ldc.i4') and sy[0]=='ldnull'):
+            anomalies.append((t,'#%d %s -> %s'%(k,sx[0],sy[0])))
+    # exception handler regions, compared by instruction index too
+    for h1,h2 in zip(da[t].get('handlers') or [], db[t].get('handlers') or []):
+        for k in ('tryStart','tryEnd','handlerStart','handlerEnd'):
+            if idxa[h1[k]] != idxb[h2[k]]:
+                anomalies.append((t,'EH %s index %d -> %d'%(k,idxa[h1[k]],idxb[h2[k]])))
+print('methods whose instruction COUNT changed: %s'%(lenbad or 'none'))
+print('instruction-level diffs: %d'%diffs)
+print('diff kinds:')
+for k,v in sorted(kinds.items(), key=lambda kv:-kv[1]):
+    print('   %-12s -> %-10s %d'%(k[0],k[1],v))
+print('anomalies: %d'%len(anomalies))
+for x in anomalies[:20]: print('   ',x)
+E=json.load(open('/workspaces/GodsPVZ-native19/.validation/native22/edits-batch2.json'))['edits']
+print()
+print('edits in the edit list: %d'%len(E))
+print('RESULT: diffs == edits and nothing else changed: %s'
+      %(diffs==len(E) and not anomalies and not lenbad))
+PY

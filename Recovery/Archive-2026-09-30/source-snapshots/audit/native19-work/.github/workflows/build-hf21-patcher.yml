@@ -1,0 +1,35 @@
+name: Build HF21 projectile cluster patcher
+
+on:
+  push:
+    branches: [ high-fidelity ]
+    paths:
+      - 'Tools/HF21Patch/**'
+      - '.github/workflows/build-hf21-patcher.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF21 patcher
+        run: dotnet publish Tools/HF21Patch/HF21Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o out
+      - name: Smoke test usage
+        run: |
+          set +e
+          ./out/GodsPVZ.HF21Patch >/tmp/hf21.out 2>/tmp/hf21.err
+          code=$?
+          set -e
+          test "$code" -eq 2
+          grep -q 'Usage: GodsPVZ.HF21Patch' /tmp/hf21.err
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF21Patch-linux-x64
+          path: out/GodsPVZ.HF21Patch
+          if-no-files-found: error
+
+# final formal build after measured verifier calibration

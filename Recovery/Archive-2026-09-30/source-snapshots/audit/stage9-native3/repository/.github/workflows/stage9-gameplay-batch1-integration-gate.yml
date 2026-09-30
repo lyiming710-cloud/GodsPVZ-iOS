@@ -1,0 +1,108 @@
+name: Stage9.1 gameplay batch1 integration gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-gameplay-batch1-integration-gate.yml'
+      - 'Tools/Stage9GameplayBatch1Integration/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download validated Map branch candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34775850942
+          pattern: Stage9.1-1C62-MAP-IMMEDIATE
+          merge-multiple: true
+          path: ${{ runner.temp }}/batch1/map
+      - name: Download exact 1c62 base
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/batch1/base
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/batch1/ilspy
+      - name: Integrate independently validated gameplay repairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/batch1"; E="$OUT/evidence"; mkdir -p "$E"
+          MAP="$OUT/map/GodsPVZRuntime1-map-immediate.dll"
+          BASE="$OUT/base/GodsPVZRuntime1-device-window-portraits.dll"
+          DLL="$OUT/GodsPVZRuntime1-gameplay-batch1.dll"
+          [ "$(sha256sum "$MAP"|awk '{print $1}')" = '6fb26689d20362531c5ccabbe89a8b90f8b80af9381b4581e95263b2692e0305' ] || exit 61
+          [ "$(sha256sum "$BASE"|awk '{print $1}')" = '1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209' ] || exit 62
+          dotnet build Tools/Stage9GameplayBatch1Integration/Stage9GameplayBatch1Integration.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9GameplayBatch1Integration/Stage9GameplayBatch1Integration.csproj -c Release --no-build -- "$MAP" "$BASE" "$DLL" | tee "$E/integration.log"
+          grep -q '^PREINTEGRATION_MAP_ISOLATION_PASS changed_methods=3 tokens=0x06000285,0x06000289,0x0600028A fields_unchanged=2802$' "$E/integration.log"
+          grep -q '^INTEGRATE_GAMESTART_PASS target_token=0x0600067E replacement=private_backing_read_to_get_Instance loadboard_calls=1$' "$E/integration.log"
+          grep -q '^GAMEPLAY_BATCH1_REOPEN_PASS changed_methods=4 tokens=0x0600067E,0x06000285,0x06000289,0x0600028A fields_unchanged=2802 corelib_refs=0$' "$E/integration.log"
+          grep -q '^GAMEPLAY_BATCH1_SEMANTICS_PASS gamestart_getter_calls=1 gamestart_loadboard_calls=1 map_private_list_refs=0 map_copy_getx_calls=1 map_copy_grid_copy_calls=1$' "$E/integration.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9GameplayBatch1Integration/Evidence.md "$E/"
+      - name: Independent fixed ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/batch1"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-gameplay-batch1.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'PrepareUIController' "$DLL" > "$E/PrepareUIController.cs" 2> "$E/prepare.stderr"; test ! -s "$E/prepare.stderr"
+          "$ILSPY" -t 'Map' "$DLL" > "$E/Map.cs" 2> "$E/map.stderr"; test ! -s "$E/map.stderr"
+          "$ILSPY" -il -t 'Map' "$DLL" > "$E/Map.il" 2> "$E/map-il.stderr"; test ! -s "$E/map-il.stderr"
+          python3 - "$E/PrepareUIController.cs" "$E/Map.cs" "$E/Map.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          prep=Path(sys.argv[1]).read_text(); mcs=Path(sys.argv[2]).read_text(); mil=Path(sys.argv[3]).read_text(); data=Path(sys.argv[4]).read_bytes()
+          gm=re.search(r'public\s+void\s+GameStart\s*\(\s*\)',prep); assert gm
+          o=prep.index('{',gm.end()); d=0; ge=None
+          for i in range(o,len(prep)):
+              d+=(prep[i]=='{')-(prep[i]=='}')
+              if d==0: ge=i+1; break
+          gb=prep[gm.start():ge]; assert 'BoardManager.Instance' in gb and '<Instance>k__BackingField' not in gb and gb.count('.LoadBoard()')==1
+          def body(name):
+              mm=re.search(r'public\s+[^\n]*\b'+re.escape(name)+r'\s*\(\s*\)',mcs); assert mm,name
+              oo=mcs.index('{',mm.end()); dd=0
+              for j in range(oo,len(mcs)):
+                  dd+=(mcs[j]=='{')-(mcs[j]=='}')
+                  if dd==0:return mcs[mm.start():j+1]
+              raise AssertionError(name)
+          for n in ['Copy','GetMapX','GetMapY']:
+              b=body(n)
+              for bad in ['._size','._version','._items','Expected I','Expected O','Expected I4','Unknown result type','System.Private.CoreLib']:
+                  assert bad not in b,(n,bad)
+          marker='// end of method Map::Copy'; e=mil.index(marker); s=mil.rfind('.method',0,e); assert s>=0
+          ib=mil[s:e]
+          assert ib.count('Map::GetMapX()')==1 and ib.count('Grid::Copy()')==1
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_GAMEPLAY_BATCH1_PASS gamestart=1 map_methods=3 map_copy_getx_calls=1 map_copy_grid_copy_calls=1 invalid_il_diagnostics=0 corelib_binary_string=0')
+          PY
+      - name: Upload integrated candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-GAMEPLAY-BATCH1-INTEGRATED
+          path: ${{ runner.temp }}/batch1/evidence/
+          if-no-files-found: warn
+          retention-days: 90

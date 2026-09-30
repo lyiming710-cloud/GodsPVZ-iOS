@@ -1,0 +1,79 @@
+name: Stage9.1 fdf4 Skill Copy repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-fdf4-skill-copy-gate.yml'
+      - 'Tools/Stage9SkillCopyPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  skill-copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact fdf4 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34735840497
+          pattern: Stage9.1-99a9-PLANTSAVE-CLONE
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-skill-copy/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-skill-copy/ilspy
+      - name: Apply exact repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-skill-copy"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-plantsave-clone.dll"; DLL="$OUT/GodsPVZRuntime1-skill-copy.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = 'fdf417e8f5fbc33fa14e012e5db6a4887fa0d3307104c5117afec234ca1e67fb' ] || exit 61
+          dotnet build Tools/Stage9SkillCopyPatch/Stage9SkillCopyPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9SkillCopyPatch/Stage9SkillCopyPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^PATCH_SKILL_COPY_INDEX locals=V5,V6 type=System.Int32$' "$E/patch.log"
+          grep -q '^PATCH_SKILL_COPY_BOUNDS action=throw exception=System.IndexOutOfRangeException$' "$E/patch.log"
+          grep -q '^REOPEN_SKILL_COPY_PASS index_types=System.Int32 bounds=throw token=0x' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-skill-copy"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-skill-copy.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t Skill "$DLL" > "$E/Skill.cs" 2> "$E/Skill.stderr"; test ! -s "$E/Skill.stderr"
+          python3 - "$E/Skill.cs" "$E/Skill.Copy.cs" <<'PY'
+          from pathlib import Path
+          import sys
+          s=Path(sys.argv[1]).read_text()
+          start=s.index('public Skill Copy()')
+          end=s.index('public void Awake(', start)
+          m=s[start:end]
+          Path(sys.argv[2]).write_text(m)
+          assert 'Invalid IL' not in m
+          assert 'Expected O, but got I4' not in m
+          assert 'Unknown result type' not in m
+          assert '(Skill)(object)new IndexOutOfRangeException()' not in m
+          assert 'IndexOutOfRangeException' in m and 'throw ' in m
+          print('ILSPY_SKILL_COPY_PASS method=Skill.Copy')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-fdf4-SKILL-COPY
+          path: ${{ runner.temp }}/stage9-skill-copy/evidence/
+          if-no-files-found: error
+          retention-days: 90

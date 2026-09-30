@@ -1,0 +1,32 @@
+name: Build HF9 Zombie Update_Attack patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF9Patch/**'
+      - '.github/workflows/build-hf9-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF9 patcher
+        run: dotnet publish Tools/HF9Patch/HF9Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o out
+      - name: Smoke test usage
+        run: |
+          chmod +x out/GodsPVZ.HF9Patch
+          set +e
+          out/GodsPVZ.HF9Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF9Patch-linux-x64
+          path: out/GodsPVZ.HF9Patch
+          if-no-files-found: error

@@ -1,0 +1,110 @@
+name: Stage9.1 raw metadata blobs audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-raw-metadata-blobs-audit.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Dump raw MethodBody local signatures and MemberRef TypeSpecs
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          class P {
+            static string Hex(byte[] b)=>BitConverter.ToString(b).Replace("-"," ").ToLowerInvariant();
+            static void Main(string[] args){
+              using var fs=File.OpenRead(Path.GetFullPath(args[0]));
+              using var pe=new PEReader(fs);
+              var r=pe.GetMetadataReader();
+              Console.WriteLine($"MethodDefs={r.MethodDefinitions.Count} MemberRefs={r.MemberReferences.Count} StandaloneSigs={r.StandaloneSignatures.Count}");
+              DumpMethod(pe,r,0x0600010b,"Damage.AddElement");
+              DumpMethod(pe,r,0x060002a8,"Board.Start");
+              foreach(var tok in new[]{0x0A0000C2,0x0A0000C3,0x0A0000C4,0x0A0000C5,0x0A0000E7,0x0A0000E9}) DumpMemberRef(r,tok);
+              foreach(var tok in new[]{0x1B000029,0x1B000030}){
+                var h=(TypeSpecificationHandle)MetadataTokens.Handle(tok);
+                var ts=r.GetTypeSpecification(h);
+                Console.WriteLine($"TypeSpec token=0x{tok:x8} sig={Hex(r.GetBlobBytes(ts.Signature))}");
+              }
+              var msh=(MethodSpecificationHandle)MetadataTokens.Handle(0x2B000005);
+              var ms=r.GetMethodSpecification(msh);
+              Console.WriteLine($"MethodSpec 0x2b000005 method=0x{MetadataTokens.GetToken(ms.Method):x8} inst={Hex(r.GetBlobBytes(ms.Signature))}");
+
+              var wanted="07 02 15 11 55 01 12 80 ac 12 80 ac";
+              Console.WriteLine("=== StandAloneSig exact canonical Damage locals ===");
+              int matches=0;
+              foreach(var sh in r.StandaloneSignatures){
+                var ss=r.GetStandaloneSignature(sh);
+                var hex=Hex(r.GetBlobBytes(ss.Signature));
+                if(hex==wanted){
+                  matches++;
+                  Console.WriteLine($"match token=0x{MetadataTokens.GetToken(sh):x8} sig={hex}");
+                }
+              }
+              Console.WriteLine($"canonicalDamageLocalSigMatches={matches}");
+            }
+            static void DumpMethod(PEReader pe,MetadataReader r,int tok,string name){
+              var h=(MethodDefinitionHandle)MetadataTokens.Handle(tok);
+              var md=r.GetMethodDefinition(h);
+              var body=pe.GetMethodBody(md.RelativeVirtualAddress);
+              Console.WriteLine($"=== {name} token=0x{tok:x8} rva=0x{md.RelativeVirtualAddress:x} ===");
+              Console.WriteLine($"localSigToken=0x{MetadataTokens.GetToken(body.LocalSignature):x8}");
+              if(!body.LocalSignature.IsNil){
+                var ss=r.GetStandaloneSignature(body.LocalSignature);
+                Console.WriteLine($"localSig={Hex(r.GetBlobBytes(ss.Signature))}");
+              }
+              var il=body.GetILBytes();
+              Console.WriteLine($"ilSize={il.Length} il={Hex(il)}");
+            }
+            static void DumpMemberRef(MetadataReader r,int tok){
+              var h=(MemberReferenceHandle)MetadataTokens.Handle(tok);
+              var mr=r.GetMemberReference(h);
+              var parent=mr.Parent;
+              Console.WriteLine($"MemberRef 0x{tok:x8} name={r.GetString(mr.Name)} parent=0x{MetadataTokens.GetToken(parent):x8} sig={Hex(r.GetBlobBytes(mr.Signature))}");
+              if(parent.Kind==HandleKind.TypeSpecification){
+                var ts=r.GetTypeSpecification((TypeSpecificationHandle)parent);
+                Console.WriteLine($"  parentTypeSpec={Hex(r.GetBlobBytes(ts.Signature))}");
+              }
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/raw-metadata-blobs.txt"
+          cd "$GITHUB_WORKSPACE"; cat diagnostics/raw-metadata-blobs.txt
+      - name: Commit report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/raw-metadata-blobs.txt || true
+          git commit -m 'diagnostics: dump raw malformed metadata blobs' || exit 0
+          git push origin HEAD:stage9-admin-start-static

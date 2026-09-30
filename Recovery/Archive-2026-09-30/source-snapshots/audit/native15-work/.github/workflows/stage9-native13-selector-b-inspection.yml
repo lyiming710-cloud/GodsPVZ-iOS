@@ -1,0 +1,44 @@
+name: Stage9.8 native13 TMP_TextSelector_B metadata inspection
+on:
+  push:
+    branches: [takeover/stage9-native6-repro-2026-09-27]
+    paths: ['.github/workflows/stage9-native13-selector-b-inspection.yml','scripts/takeover/InspectNative13/**']
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      NATIVE11_RUN_ID: '36310760734'
+      NATIVE11_ARTIFACT_NAME: 'Stage9.6-native11-selector-experimental'
+      NATIVE11_SHA256: 'c78fe103cf7b1cccda016ab9f272d668ce3c44fe9450f2ac1d9d97508af5838a'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-dotnet@v4
+        with: {dotnet-version: '9.0.x'}
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.NATIVE11_RUN_ID }}
+          name: ${{ env.NATIVE11_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}/native11
+      - name: Verify and inspect
+        shell: bash
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: |
+          set -euo pipefail
+          mapfile -t D < <(find "$RUNNER_TEMP/native11" -type f -name 'Assembly-CSharp-native11-selector.dll' | sort)
+          [ "${#D[@]}" = 1 ]
+          [ "$(sha256sum "${D[0]}"|awk '{print $1}')" = "$NATIVE11_SHA256" ]
+          python3 Tools/Stage9Native4Recovery/prepare_ci_inputs.py
+          dotnet run --project scripts/takeover/InspectNative13/InspectNative13.csproj -- "${D[0]}" | tee "$RUNNER_TEMP/native13-inspect.txt"
+          grep -qx INSPECT_NATIVE13_PASS "$RUNNER_TEMP/native13-inspect.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.8-native13-selector-b-inspection
+          path: ${{ runner.temp }}/native13-inspect.txt
+          retention-days: 30

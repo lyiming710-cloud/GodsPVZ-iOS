@@ -1,0 +1,230 @@
+name: Stage9.1 4736 SkillProgress recovery pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-4736-skillprogress-recovery-pipeline.yml'
+      - 'Tools/Stage9PlantDetailSkillProgressPatch/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runtime-qualified PlantData candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34915836008
+          name: Stage9.1-1F00-PLANTDATA-UPDATE-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Build full SkillProgress recovery and run static gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/skillprogress-recovery"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-plantdata-update.dll' -print -quit)
+          test -n "$IN"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '47369e6d43789f303d7d7ebc42a2f16b6c9add2d7a5f7bb6ba412db02c963058'
+          OUT="$O/GodsPVZRuntime1-skillprogress.dll"
+          dotnet build Tools/Stage9PlantDetailSkillProgressPatch/Stage9PlantDetailSkillProgressPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantDetailSkillProgressPatch/Stage9PlantDetailSkillProgressPatch.csproj -c Release --no-build -- "$IN" "$OUT" '47369e6d43789f303d7d7ebc42a2f16b6c9add2d7a5f7bb6ba412db02c963058' | tee "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000664 rid=1636 method_pointer_entry=0x181B86078 va=0x1803A4BB0 end=0x1803A573B native_span_sha256=5050f85b69db4e37dcf86232a9c388ac32e4b622972556a8bfa4340cf3f8dbe4$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS chargedLayer_text=1 ready_branch=1 ready_color_white=1 charge_ratio=1 charge_text_current_max=1 passive_dash_text=1 complementary_fill_via_stored_fill=1 normal_color_white=1 ongoing_duration_fill=1 layer_select_fill_one=1$' "$E/patch.log"
+          grep -Eq '^REOPEN_SKILL_PROGRESS_PASS token=0x06000664 code_size=[0-9]+ locals=1 object_locals=0 private_fill_refs=0 public_fill_get=1 fill_set=6 SetActive=23 TMP_set_text=7 TMP_set_color=2 typed_array_ldelem_ref=18 Color_ctor=2$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000664$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9NativeProbe/Plant_DetaiPage.Update_SkillProgress.native-evidence.md "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Exact-reference readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/skillprogress-recovery"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-skillprogress.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t Plant_DetaiPage "$DLL" > "$E/Plant_DetaiPage.cs" 2> "$E/Plant_DetaiPage.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Plant_DetaiPage "$DLL" > "$E/Plant_DetaiPage.il" 2> "$E/Plant_DetaiPage.il.stderr"
+          test ! -s "$E/Plant_DetaiPage.cs.stderr"; test ! -s "$E/Plant_DetaiPage.il.stderr"
+          python3 - "$E/Plant_DetaiPage.cs" "$E/Plant_DetaiPage.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+void\s+Update_SkillProgress\s*\(\s*\)',cs); assert m
+          o=cs.index('{',m.end()); d=0; target=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0: target=cs[m.start():i+1]; break
+          assert target is not None
+          Path(sys.argv[1]+'.Update_SkillProgress.txt').write_text(target)
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','Invalid comparison','Not implemented instruction','Warning: Method ends','System.Private.CoreLib','m_FillAmount']:
+              assert bad not in target,(bad,target)
+          for good in ['text_chargeLayer','Ready!','fillAmount','skillRemainTime','duration']:
+              assert good in target,(good,target)
+          e=il.find('} // end of method Plant_DetaiPage::Update_SkillProgress'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.Update_SkillProgress.txt').write_text(ib)
+          for bad in ['System.Object','m_FillAmount','Not implemented instruction','Warning: Method ends','System.Private.CoreLib']:
+              assert bad not in ib,(bad,ib)
+          assert ib.count('UnityEngine.UI.Image::get_fillAmount()')==1,ib
+          assert ib.count('UnityEngine.UI.Image::set_fillAmount(')==6,ib
+          assert ib.count('UnityEngine.GameObject::SetActive(')==23,ib
+          assert ib.count('ldelem.ref')==18,ib
+          assert ib.count('UnityEngine.Color::.ctor(')==2,ib
+          print('SKILLPROGRESS_EXACT_REF_PASS target_token=0x06000664 typed_locals=1 private_fill_refs=0 public_fill_get=1 fill_set=6 SetActive=23 typed_array_ldelem_ref=18 Color_ctor=2 invalid_diagnostics=0 corelib_pollution=0')
+          print('=== TARGET_CSHARP ==='); print(target)
+          PY
+
+      - name: Upload qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-4736-SKILLPROGRESS-QUALIFIED
+          path: ${{ runner.temp }}/skillprogress-recovery/evidence/
+          retention-days: 90
+
+  runtime:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+
+      - name: Download qualified candidate from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Stage9.1-4736-SKILLPROGRESS-QUALIFIED
+          path: ${{ runner.temp }}/stage9-skillprogress-qualification/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-skillprogress-qualification/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-skillprogress-qualification/editor-parts
+
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-skillprogress-qualification/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-skillprogress.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "${#EXPECTED}" = 64
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "SKILLPROGRESS_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "SKILLPROGRESS_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+
+      - name: Run one-launch five-state SkillProgress qualification
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh "$RUNNER_TEMP/stage9-skillprogress-qualification" "$SKILLPROGRESS_CANDIDATE" "$SKILLPROGRESS_SHA"
+
+      - name: Audit five-state SkillProgress qualification
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-skillprogress-qualification/evidence"; mkdir -p "$E"; LOG="$E/playmode.log"
+          test -f "$LOG"
+          python3 - "$LOG" > "$E/skillprogress-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'SKILLPROGRESS_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:Update_SkillProgress',text)),
+            'SKILLPROGRESS_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'Plant_DetaiPage:Update_SkillProgress' in x for x in lines),
+            'SKILLPROGRESS_MISSINGMETHOD_COUNT':sum('MissingMethodException' in x and 'Plant_DetaiPage:Update_SkillProgress' in x for x in lines),
+            'PLANTDATA_UPDATE_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|FieldAccessException|MissingMethodException).*Board_PlantDetail_PlantData:Update',text)),
+            'CAMERA_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|FieldAccessException|MissingMethodException).*Plant_DetaiPage:Updata_Camera',text)),
+            'PLANT_DETAIL_UPDATE_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|FieldAccessException|MissingMethodException).*Plant_DetaiPage:Update \(',text)),
+            'DIALOGUE_UPDATE_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'List`1:_size' in x and 'DialogueManager_OnBoard:Update' in x for x in lines),
+            'BGMUNPAUSE_RUNTIME_ERROR_COUNT':len(re.findall(r'(?:InvalidProgramException|MissingMethodException).*ZombieManager:BGMUnPasue',text)),
+            'BOARD_GAMECONTINUE_METHODACCESS_COUNT':text.count("MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)' is inaccessible from method `Board.GameContinue()'"),
+            'DIALOGUE_START_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',text)),
+            'GRID_COPY_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Grid:Copy',text)),
+            'BOARDCONFIG_CREATEMAP_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',text)),
+            'LOAD_DATA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',text)),
+            'LOAD_SKILL_LOGO_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text)),
+            'PROJECTILE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'ZEROVECTOR_TEXT_COUNT':text.count('zeroVector'),
+          }
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_SKILLPROGRESS_')]
+          print('SKILLPROGRESS_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          assert all(v==0 for v in counts.values()),counts
+          for phase in ['ready','active_charge','passive','ongoing_high','ongoing_low']:
+              assert f'STAGE9_SKILLPROGRESS_PHASE phase={phase} ok=1' in markers,(phase,markers)
+          assert 'STAGE9_SKILLPROGRESS_READY_INVOKE ok=1' in markers
+          assert 'STAGE9_SKILLPROGRESS_ALL_PHASES_PASS phases=5' in markers
+          assert any(x.startswith('STAGE9_SKILLPROGRESS_PLANT_SOURCE source=') for x in markers)
+          print('SKILLPROGRESS_RUNTIME_GATE_PASS blocker_removed=1 five_state_paths=5 previous_recoveries_preserved=1 corelib_pollution=0')
+          PY
+          cat "$E/skillprogress-runtime-audit.txt"
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-SKILLPROGRESS-FIVE-STATE-RUNTIME
+          path: ${{ runner.temp }}/stage9-skillprogress-qualification/evidence/
+          retention-days: 90

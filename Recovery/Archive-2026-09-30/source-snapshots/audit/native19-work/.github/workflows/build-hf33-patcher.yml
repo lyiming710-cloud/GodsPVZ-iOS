@@ -1,0 +1,33 @@
+name: Build HF33 projectile aim rotation patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF33Patch/**'
+      - '.github/workflows/build-hf33-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF33 patcher
+        run: dotnet publish Tools/HF33Patch/HF33Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf33
+      - name: Smoke test
+        run: |
+          chmod +x out/hf33/GodsPVZ.HF33Patch
+          set +e
+          out/hf33/GodsPVZ.HF33Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf33/GodsPVZ.HF33Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF33Patch-linux-x64
+          path: out/hf33
+          if-no-files-found: error

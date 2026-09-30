@@ -1,0 +1,52 @@
+name: Stage9.1 native3 four-method static gate
+on:
+  push:
+    branches: [stage9-native3-codex-recovery]
+    paths:
+      - 'Tools/Stage9Native3Recovery/**'
+      - '.github/workflows/stage9-native3-four-method-static-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  static:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch exact baseline and Unity resolver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python Tools/Stage9Native3Recovery/prepare_ci_inputs.py
+          if ($LASTEXITCODE -ne 0) { throw 'input preparation failed' }
+      - name: Rebuild and verify all four methods
+        run: |
+          $env:NATIVE3_PYTHON = (Get-Command python).Source
+          ./Tools/Stage9Native3Recovery/build-and-verify.ps1 -Baseline ./Tools/Stage9Native3Recovery/inputs/baseline-18e44.dll
+      - name: Upload qualified candidate and complete static evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-native3-four-method-qualified
+          path: |
+            Tools/Stage9Native3Recovery/candidate/Assembly-CSharp-native3-four-method.dll
+            Tools/Stage9Native3Recovery/evidence/
+            Tools/Stage9Native3Recovery/specification/
+            Tools/Stage9Native3Recovery/reopened/
+            Tools/Stage9Native3Recovery/input-locks.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Upload diagnostic evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-native3-four-method-static-failure
+          path: Tools/Stage9Native3Recovery/evidence/
+          if-no-files-found: warn

@@ -1,0 +1,224 @@
+name: Build Stage9.1 package dependency closure
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-package-dependency-closure.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  closure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve pinned Stage9.1 dependency closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, shutil, subprocess, tarfile, tempfile, urllib.request
+          from collections import deque
+          from pathlib import Path
+
+          selected = {
+              'com.unity.2d.common': '8.0.2',
+              'com.unity.2d.sprite': '1.0.0',
+              'com.unity.collections': '1.1.0',
+              'com.unity.burst': '1.8.9',
+              'com.unity.mathematics': '1.2.1',
+              'com.unity.render-pipelines.universal-config': '14.0.10',
+              'com.unity.shadergraph': '14.0.11',
+          }
+          already_embedded = {
+              'com.unity.ugui': '1.0.0',
+              'com.unity.textmeshpro': '3.0.6',
+              'com.unity.2d.animation': '9.1.1',
+              'com.unity.render-pipelines.core': '14.0.11',
+              'com.unity.render-pipelines.universal': '14.0.11',
+          }
+
+          historical = {
+              ('com.unity.2d.sprite','1.0.0'): {
+                  'repository':'https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git',
+                  'commit':'9104e9a40be711441d25848120cc83604c21d0b7',
+                  'subdir':'Library/PackageCache/com.unity.2d.sprite@1.0.0',
+                  'tree_sha':'e5e6d31f2a0e53fed729750de1592dd1486d138d',
+                  'group':'sprite-project',
+              },
+              ('com.unity.render-pipelines.universal-config','14.0.10'): {
+                  'repository':'https://github.com/Unity-Technologies/Graphics.git',
+                  'commit':'9aeb329b70d9ea288cb3a79fb607fa84d2b8430b',
+                  'subdir':'Packages/com.unity.render-pipelines.universal-config',
+                  'tree_sha':'b85b5c72fd64c85cf8d74fc8e63823b56572cf6e',
+                  'group':'graphics-14.0.11',
+              },
+              ('com.unity.shadergraph','14.0.11'): {
+                  'repository':'https://github.com/Unity-Technologies/Graphics.git',
+                  'commit':'9aeb329b70d9ea288cb3a79fb607fa84d2b8430b',
+                  'subdir':'Packages/com.unity.shadergraph',
+                  'tree_sha':'8133ec9363b7bc189cd19a817f3441a63f452259',
+                  'group':'graphics-14.0.11',
+              },
+          }
+
+          out=Path('stage9-package-dependency-closure')
+          pkgs=out/'Packages'; pkgs.mkdir(parents=True)
+          work=Path(tempfile.mkdtemp(prefix='godspvz-upm-closure-'))
+          resolved={}; requested_by={}; overrides=[]; unresolved=[]
+          q=deque((n,v,'direct') for n,v in sorted(selected.items()))
+          git_roots={}
+
+          def sha256(path):
+              h=hashlib.sha256()
+              with path.open('rb') as f:
+                  for b in iter(lambda:f.read(1024*1024),b''): h.update(b)
+              return h.hexdigest()
+
+          def get_json(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'GodsPVZ-Stage9.1/3'})
+              with urllib.request.urlopen(req,timeout=45) as r:
+                  return json.loads(r.read().decode('utf-8'))
+
+          def run(args, **kw):
+              return subprocess.run(args, check=True, **kw)
+
+          def git_text(root,*args):
+              return subprocess.check_output(['git','-C',str(root),*args],text=True).strip()
+
+          def prepare_git_group(info):
+              group=info['group']
+              if group in git_roots:
+                  return git_roots[group]
+              root=work/group
+              run(['git','init',str(root)],stdout=subprocess.DEVNULL)
+              run(['git','-C',str(root),'remote','add','origin',info['repository']])
+
+              members=[x for x in historical.values() if x['group']==group]
+              sparse=''.join('/'+m['subdir'].rstrip('/')+'/\n' for m in members)
+              run(['git','-C',str(root),'config','core.sparseCheckout','true'])
+              (root/'.git/info/sparse-checkout').write_text(sparse,encoding='utf-8')
+
+              fetch=['git','-C',str(root),'fetch','--depth=1','--filter=blob:none','origin',info['commit']]
+              try:
+                  run(fetch)
+              except subprocess.CalledProcessError:
+                  run(['git','-C',str(root),'fetch','--depth=1','origin',info['commit']])
+              got=git_text(root,'rev-parse','FETCH_HEAD')
+              if got!=info['commit']:
+                  raise RuntimeError(f'commit mismatch {got} != {info["commit"]}')
+              run(['git','-C',str(root),'checkout','--detach','FETCH_HEAD'],stdout=subprocess.DEVNULL)
+              git_roots[group]=root
+              return root
+
+          def materialize_historical(name,version,info):
+              root=prepare_git_group(info)
+              actual_tree=git_text(root,'rev-parse','HEAD:'+info['subdir'])
+              if actual_tree!=info['tree_sha']:
+                  raise RuntimeError(f'tree mismatch {actual_tree} != {info["tree_sha"]}')
+              src=root/info['subdir']
+              if not (src/'package.json').is_file():
+                  raise RuntimeError('pinned git package.json missing after checkout')
+              pj=json.loads((src/'package.json').read_text(encoding='utf-8'))
+              if pj.get('name')!=name or pj.get('version')!=version:
+                  raise RuntimeError(f"identity mismatch {pj.get('name')}@{pj.get('version')}")
+              dst=pkgs/name
+              shutil.copytree(src,dst)
+              files=sorted(p for p in dst.rglob('*') if p.is_file())
+              return pj, {
+                  'name':name,'version':version,'source_kind':'pinned-git-tree',
+                  'repository':info['repository'],'commit':info['commit'],
+                  'subdir':info['subdir'],'tree_sha':actual_tree,'file_count':len(files),
+                  'dependencies':pj.get('dependencies') or {},
+              }
+
+          def materialize_registry(name,version):
+              meta=get_json('https://packages.unity.com/'+name)
+              vm=(meta.get('versions') or {}).get(version)
+              if vm is None: raise RuntimeError('exact version absent from registry metadata')
+              tar_url=((vm.get('dist') or {}).get('tarball'))
+              if not tar_url: raise RuntimeError('dist.tarball missing')
+              tgz=work/(name.replace('/','_')+'@'+version+'.tgz')
+              req=urllib.request.Request(tar_url,headers={'User-Agent':'GodsPVZ-Stage9.1/3'})
+              with urllib.request.urlopen(req,timeout=120) as r, tgz.open('wb') as f:
+                  shutil.copyfileobj(r,f)
+              tar_sha=sha256(tgz)
+              ex=work/(name.replace('/','_')+'@'+version); ex.mkdir()
+              with tarfile.open(tgz,'r:*') as tf: tf.extractall(ex,filter='data')
+              root=next((p for p in (ex/'package',ex) if (p/'package.json').is_file()),None)
+              if root is None: raise RuntimeError('package.json not found after extraction')
+              pj=json.loads((root/'package.json').read_text(encoding='utf-8'))
+              if pj.get('name')!=name or pj.get('version')!=version:
+                  raise RuntimeError(f"identity mismatch {pj.get('name')}@{pj.get('version')}")
+              dst=pkgs/name
+              shutil.copytree(root,dst)
+              files=sorted(p for p in dst.rglob('*') if p.is_file())
+              return pj, {
+                  'name':name,'version':version,'source_kind':'registry',
+                  'registry_metadata':'https://packages.unity.com/'+name,
+                  'tarball_url':tar_url,'tarball_sha256':tar_sha,'file_count':len(files),
+                  'dependencies':pj.get('dependencies') or {},
+              }
+
+          def effective(dep,requested,parent):
+              if dep in already_embedded:
+                  chosen=already_embedded[dep]
+                  if chosen!=requested:
+                      overrides.append({'name':dep,'requested_version':requested,'selected_version':chosen,'parent':parent,'provider':'already-embedded'})
+                  return chosen,'already-embedded'
+              if dep in selected:
+                  chosen=selected[dep]
+                  if chosen!=requested:
+                      overrides.append({'name':dep,'requested_version':requested,'selected_version':chosen,'parent':parent,'provider':'direct-selected'})
+                  return chosen,'selected'
+              return requested,'transitive'
+
+          while q:
+              name,requested,parent=q.popleft()
+              if name.startswith('com.unity.modules.'): continue
+              version,provider=effective(name,requested,parent)
+              requested_by.setdefault(name,[]).append({'requested_version':requested,'effective_version':version,'parent':parent,'provider':provider})
+              if name in already_embedded:
+                  continue
+              if name in resolved:
+                  if resolved[name]['version']!=version:
+                      unresolved.append({'name':name,'requested_version':requested,'effective_version':version,'already_resolved':resolved[name]['version'],'parent':parent,'error':'effective-version-conflict'})
+                  continue
+              try:
+                  hist=historical.get((name,version))
+                  if hist:
+                      pj,rec=materialize_historical(name,version,hist)
+                  else:
+                      pj,rec=materialize_registry(name,version)
+                  resolved[name]=rec
+                  for dep,dv in sorted((pj.get('dependencies') or {}).items()):
+                      if not dep.startswith('com.unity.modules.'):
+                          q.append((dep,dv,name+'@'+version))
+              except Exception as e:
+                  unresolved.append({'name':name,'version':version,'parent':parent,'error':str(e)})
+
+          result={
+              'schema':3,'selected':selected,'already_embedded':already_embedded,
+              'resolved':sorted(resolved.values(),key=lambda x:x['name']),
+              'requested_by':requested_by,'overrides':overrides,'unresolved':unresolved,
+          }
+          (out/'CLOSURE.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          with (out/'SHA256SUMS.tsv').open('w',encoding='utf-8',newline='\n') as f:
+              for p in sorted(x for x in out.rglob('*') if x.is_file() and x.name!='SHA256SUMS.tsv'):
+                  f.write(f'{sha256(p)}\t{p.stat().st_size}\t{p.relative_to(out).as_posix()}\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          print('resolved_count',len(resolved),'override_count',len(overrides),'unresolved_count',len(unresolved))
+          if unresolved: raise SystemExit(31)
+          PY
+
+      - name: Upload dependency closure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-package-dependency-closure
+          path: stage9-package-dependency-closure/
+          if-no-files-found: error
+          retention-days: 90
+          include-hidden-files: true

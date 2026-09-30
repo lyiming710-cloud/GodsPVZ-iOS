@@ -1,0 +1,97 @@
+name: Stage9.1 iOS export evidence diagnose
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-ios-export-evidence-diagnose.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+
+      - name: Download fourth-export evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35359524630'
+          name: Stage9.1-CURRENT-BASELINE-IOS-XCODE-EVIDENCE
+          path: evidence
+
+      - name: Isolate linker stack only
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG=evidence/ios-export.log
+          OUT=diagnostics/run-35359524630-linker-stack.txt
+          mkdir -p diagnostics
+          python3 - "$LOG" "$OUT" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
+          out=Path(sys.argv[2])
+
+          def clipped(s, n=900):
+              return s if len(s) <= n else s[:n] + ' ... [LONG LINE OMITTED]'
+
+          def hits(rx):
+              p=re.compile(rx,re.I)
+              return [i for i,l in enumerate(lines) if p.search(l)]
+
+          strip=hits(r'STAGE9_IOS_STRIPPING|ManagedStrippingLevel')
+          nulls=hits(r'System\.NullReferenceException|NullReferenceException')
+          tref=hits(r'UnityTypeReferenceStep')
+          fail=hits(r'BuildFailedException|Player build failed|iOS Unity build failed|Build completed')
+          tmp=hits(r'MissingReferenceException|TMP_PreBuildProcessor|wryh\+pico12num')
+
+          keep=set()
+          def add(a,b):
+              for j in range(max(0,a),min(len(lines),b)): keep.add(j)
+
+          for i in strip[-2:]: add(i-2,i+4)
+          for i in nulls[-2:]: add(i-8,i+45)
+          for i in tref[-12:]: add(i-3,i+6)
+          for i in fail[-4:]: add(i-12,i+16)
+          for i in tmp[-3:]: add(i-2,i+4)
+
+          # Also retain short linker status/error lines, but explicitly omit the giant command invocation.
+          for i,l in enumerate(lines):
+              if len(l) < 900 and re.search(r'UnityLinker.*(failed|error|exit)|ManagedStripped|UnityTypeReferenceStep',l,re.I):
+                  add(i-2,i+5)
+
+          with out.open('w',encoding='utf-8') as f:
+              f.write('run_id=35359524630\n')
+              f.write(f'log_lines={len(lines)} stripping_hits={len(strip)} nullref_hits={len(nulls)} type_ref_hits={len(tref)} buildfail_hits={len(fail)} tmp_hits={len(tmp)}\n')
+              f.write('\n=== ISOLATED MATERIAL LINES ===\n')
+              last=-2
+              for i in sorted(keep):
+                  if i > last+1: f.write(f'\n--- gap; resume at log line {i+1} ---\n')
+                  f.write(f'{i+1}: {clipped(lines[i])}\n')
+                  last=i
+          print(out.read_text(errors='replace'))
+          PY
+
+      - name: Commit isolated stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/run-35359524630-linker-stack.txt
+          if git diff --cached --quiet; then
+            echo 'No diagnostic change to commit.'
+            exit 0
+          fi
+          git commit -m 'diagnostics: isolate run 35359524630 linker stack'
+          git push origin HEAD:stage9-admin-start-static

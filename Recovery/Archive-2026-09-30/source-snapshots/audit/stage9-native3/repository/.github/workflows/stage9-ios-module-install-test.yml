@@ -1,0 +1,249 @@
+name: Stage9.1 iOS module disposable install test
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - '.github/workflows/stage9-ios-module-install-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ios-module-install-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 100
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      EDITOR_RUN_ID: '34668863583'
+      EDITOR_SHA256: '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+      MODULE_URL: 'https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz'
+      EXPECTED_EDITOR_VERSION: '2022.3.44f1c1'
+      EXPECTED_CHANGESET: 'c3ae09b9f03c'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          mkdir -p "$E"
+          if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
+            echo 'UNITY_EMAIL or UNITY_PASSWORD secret missing' >&2
+            exit 61
+          fi
+          {
+            echo "workflow_head=${GITHUB_SHA}"
+            echo "editor_run=${EDITOR_RUN_ID}"
+            echo "editor_sha256=${EDITOR_SHA256}"
+            echo "expected_editor_version=${EXPECTED_EDITOR_VERSION}"
+            echo "expected_changeset=${EXPECTED_CHANGESET}"
+            echo "module_url=${MODULE_URL}"
+          } > "$E/input-locks.txt"
+
+      - name: Download preserved exact Editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EDITOR_RUN_ID }}
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-ios-install-test/editor-parts
+
+      - name: Reconstruct exact Unity China Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          PARTS="$OUT/editor-parts"
+          EDITOR="$OUT/editor"
+          mkdir -p "$EDITOR"
+          COUNT="$(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          echo "$COUNT" > "$E/editor-part-count.txt"
+          [ "$COUNT" = '15' ] || exit 62
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | sha256sum | tee "$E/editor-rejoined-sha256.txt"
+          SHA="$(awk '{print $1}' "$E/editor-rejoined-sha256.txt")"
+          [ "$SHA" = "$EDITOR_SHA256" ] || exit 63
+          cat "$PARTS"/Unity-China-2022.3.44f1c1.tar.xz.part-* | xz -dc | tar -xf - -C "$EDITOR"
+          UNITY="$EDITOR/Editor/Unity"
+          chmod +x "$UNITY"
+          VERSION="$("$UNITY" -version 2>&1 | grep -Eo '2022\.3\.44f1c[0-9]+|2022\.3\.44f1' | head -n1 || true)"
+          printf '%s\n' "$VERSION" | tee "$E/editor-version.txt"
+          [ "$VERSION" = "$EXPECTED_EDITOR_VERSION" ] || exit 64
+          printf '%s\n' "$UNITY" > "$OUT/unity-path.txt"
+          rm -rf "$PARTS"
+
+      - name: Download and install same-changeset China iOS module
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          EDITOR="$OUT/editor"
+          MODULE="$OUT/ios-support.tar.xz"
+          curl -fL --retry 4 --retry-delay 3 -o "$MODULE" "$MODULE_URL"
+          sha256sum "$MODULE" | tee "$E/module-sha256.txt"
+          stat -c '%s' "$MODULE" | tee "$E/module-size.txt"
+          tar -tJf "$MODULE" > "$E/module-tar-list.txt"
+          sed -n '1,120p' "$E/module-tar-list.txt" > "$E/module-tar-head.txt"
+          tar -xJf "$MODULE" -C "$EDITOR"
+          rm -f "$MODULE"
+          IOS="$EDITOR/Editor/Data/PlaybackEngines/iOSSupport"
+          [ -d "$IOS" ] || {
+            echo "Expected iOSSupport directory missing: $IOS" >&2
+            find "$EDITOR" -maxdepth 6 -type d -iname '*ios*' | sort | tee "$E/ios-like-dirs.txt"
+            exit 65
+          }
+          find "$IOS" -maxdepth 3 -type f -printf '%P\t%s\n' | sort | head -2000 > "$E/iossupport-files.txt"
+          du -sh "$IOS" | tee "$E/iossupport-size.txt"
+          echo IOS_PAYLOAD_INSTALLED > "$E/install-layout-gate.txt"
+
+      - name: Acquire Personal seat
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          RAW="$OUT/activation.log"
+          set +e
+          "$CLIENT" --activate-all --include-personal --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$RAW" 2>&1
+          RC=$?
+          set -e
+          echo "$RC" > "$E/activation-exit.txt"
+          rm -f "$RAW"
+          [ "$RC" -eq 0 ] || exit 66
+          echo ACQUIRED > "$OUT/seat-acquired.flag"
+
+      - name: Create disposable project
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$OUT/probe-project"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -createProject "$PROJECT" -logFile "$E/create-project.log" > "$E/create-project-stdout.txt" 2> "$E/create-project-stderr.txt"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/create-project-exit.txt"
+          [ "$RC" -eq 0 ] || exit 67
+          grep -q 'm_EditorVersion: 2022.3.44f1c1' "$PROJECT/ProjectSettings/ProjectVersion.txt" || exit 68
+          mkdir -p "$PROJECT/Assets/Editor"
+          cat > "$PROJECT/Assets/Editor/IOSModuleProbe.cs" <<'CS'
+          using System;
+          using System.IO;
+          using UnityEditor;
+          using UnityEngine;
+
+          public static class IOSModuleProbe
+          {
+              public static void Run()
+              {
+                  string root = Directory.GetParent(Application.dataPath).FullName;
+                  string marker = Path.Combine(root, "IOS_MODULE_PROBE.txt");
+                  bool supported = BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.iOS, BuildTarget.iOS);
+                  bool switched = EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
+                  string active = EditorUserBuildSettings.activeBuildTarget.ToString();
+                  File.WriteAllText(marker,
+                      "supported=" + supported + "\n" +
+                      "switched=" + switched + "\n" +
+                      "active=" + active + "\n" +
+                      "unity=" + Application.unityVersion + "\n");
+                  Debug.Log("GODSPVZ_IOS_MODULE_PROBE supported=" + supported + " switched=" + switched + " active=" + active + " unity=" + Application.unityVersion);
+                  if (!supported || !switched || EditorUserBuildSettings.activeBuildTarget != BuildTarget.iOS)
+                      throw new Exception("iOS module compatibility probe failed");
+              }
+          }
+          CS
+
+      - name: Execute iOS build-target compatibility probe
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$OUT/probe-project"
+          set +e
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -executeMethod IOSModuleProbe.Run -logFile "$E/ios-probe.log" > "$E/ios-probe-stdout.txt" 2> "$E/ios-probe-stderr.txt"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/ios-probe-exit.txt"
+          test -f "$PROJECT/IOS_MODULE_PROBE.txt" && cp "$PROJECT/IOS_MODULE_PROBE.txt" "$E/IOS_MODULE_PROBE.txt"
+          exit 0
+
+      - name: Audit compatibility result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          python3 - "$E" <<'PY'
+          import json,re,sys
+          from pathlib import Path
+          e=Path(sys.argv[1])
+          rc=int((e/'ios-probe-exit.txt').read_text().strip()) if (e/'ios-probe-exit.txt').is_file() else 255
+          marker=(e/'IOS_MODULE_PROBE.txt').read_text(errors='replace') if (e/'IOS_MODULE_PROBE.txt').is_file() else ''
+          log=(e/'ios-probe.log').read_text(errors='replace') if (e/'ios-probe.log').is_file() else ''
+          bad_patterns={
+            'platform_not_installed': r'(module|platform).*(not installed|not found)|iOS.*support.*not installed',
+            'unsupported_target': r'build target.*not supported|unsupported.*iOS',
+            'license_error': r'No valid Unity Editor license found|Machine bindings don.t match',
+            'fatal': r'Aborting batchmode due to failure|Fatal Error|Crash!!!',
+            'compile_error': r'\berror CS\d+\b|Scripts have compiler errors|Compilation failed',
+          }
+          counts={k:len(re.findall(p,log,re.I)) for k,p in bad_patterns.items()}
+          ok=(rc==0 and 'supported=True' in marker and 'switched=True' in marker and 'active=iOS' in marker and sum(counts.values())==0)
+          result={
+            'editor_version':'2022.3.44f1c1',
+            'editor_changeset':'c3ae09b9f03c',
+            'module_url_version':'2022.3.44f1',
+            'module_url_changeset':'c3ae09b9f03c',
+            'unity_probe_exit':rc,
+            'marker':marker.strip(),
+            'diagnostic_counts':counts,
+            'compatible':ok,
+            'classification':'IOS_MODULE_COMPATIBILITY_PASS' if ok else 'IOS_MODULE_COMPATIBILITY_BLOCKED',
+          }
+          (e/'RESULT.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(result,indent=2,sort_keys=True))
+          if not ok:
+              raise SystemExit(90)
+          PY
+
+      - name: Return Personal seat
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          OUT="$RUNNER_TEMP/stage9-ios-install-test"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt" 2>/dev/null)"
+          CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          if [ -f "$OUT/seat-acquired.flag" ] && [ -x "$CLIENT" ]; then
+            "$CLIENT" --return-activations --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD" > "$OUT/return.log" 2>&1
+            echo "$?" > "$E/return-exit.txt"
+          fi
+          rm -f "$OUT/return.log"
+          exit 0
+
+      - name: Upload install-test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-MODULE-INSTALL-TEST
+          path: ${{ runner.temp }}/stage9-ios-install-test/evidence/
+          if-no-files-found: warn
+          retention-days: 90

@@ -1,0 +1,51 @@
+name: Stage9.1 8f43 Almanac ctor metadata probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-8f43-almanac-ctor-metadata-probe.yml'
+      - 'Tools/Stage9AlmanacCtorProbe/**'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download statically-qualified Supplies candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34949011350
+          name: Stage9.1-C347-SUPPLIES-CTOR-QUALIFIED
+          path: ${{ runner.temp }}/candidate
+
+      - name: Verify candidate and inspect Almanac ctor metadata read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-supplies-ctor.dll' -print -quit)
+          test -n "$DLL"
+          test "$(sha256sum "$DLL" | awk '{print $1}')" = '8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292'
+          mkdir -p "$RUNNER_TEMP/almanac-probe"
+          dotnet build Tools/Stage9AlmanacCtorProbe/Stage9AlmanacCtorProbe.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9AlmanacCtorProbe/Stage9AlmanacCtorProbe.csproj -c Release --no-build -- "$DLL" | tee "$RUNNER_TEMP/almanac-probe/almanac-ctor-metadata.txt"
+          grep -q '^INPUT_SHA256 8f43eed318bfffa68666384b74f9736d47260bb4860429a19f8cdc357f01c292$' "$RUNNER_TEMP/almanac-probe/almanac-ctor-metadata.txt"
+          grep -q '^READONLY_ALMANAC_CTOR_PROBE_PASS ldc_i8=1 zombieID_stfld=1 monoBehaviour_ctor=1 mutation=0$' "$RUNNER_TEMP/almanac-probe/almanac-ctor-metadata.txt"
+          cp Tools/Stage9AlmanacCtorProbe/Program.cs "$RUNNER_TEMP/almanac-probe/"
+          sha256sum "$DLL" > "$RUNNER_TEMP/almanac-probe/input-candidate.sha256"
+
+      - name: Upload read-only Almanac metadata evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-8F43-ALMANAC-CTOR-METADATA-PROBE
+          path: ${{ runner.temp }}/almanac-probe/
+          retention-days: 90

@@ -1,0 +1,108 @@
+name: Stage9.1 Plant detail Initialize exact-reference gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-plant-detail-initialize-exact-ref.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-ref:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download static Plant detail candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34812322356
+          name: Stage9.1-B192-PLANT-DETAIL-INITIALIZE-STATIC
+          path: ${{ runner.temp }}/candidate
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+      - name: Download compact exact Unity managed refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+      - name: Exact-reference decompile and gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/plant-detail-ref"; mkdir -p "$O"
+          DLL=$(find "$RUNNER_TEMP/candidate" -type f -name 'GodsPVZRuntime1-plant-detail-initialize.dll' -print -quit)
+          test -n "$DLL"
+          SHA=$(sha256sum "$DLL"|awk '{print $1}')
+          echo "CANDIDATE_SHA256 $SHA" | tee "$O/reference-gate.txt"
+          test "$SHA" = '273ddef385775d169aa88d63a505aeb2b99aab4b8c32204a4929175310e2969b'
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          echo "REFERENCE_DIR $RDIR" | tee -a "$O/reference-gate.txt"
+          "$ILSPY" -r "$RDIR" -t Plant_DetaiPage "$DLL" > "$O/Plant_DetaiPage.cs" 2> "$O/Plant_DetaiPage.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t Plant_DetaiPage "$DLL" > "$O/Plant_DetaiPage.il" 2> "$O/Plant_DetaiPage.il.stderr"
+          test ! -s "$O/Plant_DetaiPage.cs.stderr"
+          test ! -s "$O/Plant_DetaiPage.il.stderr"
+          python3 - "$O/Plant_DetaiPage.cs" "$O/Plant_DetaiPage.il" <<'PY' | tee -a "$O/reference-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace')
+          il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'public\s+void\s+Initialize\s*\(\s*Plant\s+\w+\s*\)',cs)
+          assert m, 'Initialize(Plant) C# method not found'
+          o=cs.index('{',m.end()); depth=0; end=None
+          for i in range(o,len(cs)):
+              depth+=(cs[i]=='{')-(cs[i]=='}')
+              if depth==0:
+                  end=i+1; break
+          assert end is not None
+          body=cs[m.start():end]
+          for bad in ['Unknown result type','Unmanaged memory load','Expected I','Expected O','Expected I4','(Vector3)(&','(Color)(&']:
+              assert bad not in body,(bad,body)
+          assert '.IsOnField()' in body, body
+          assert '.isOnField' not in body, body
+          assert re.search(r'new\s+Vector3\s*\([^;]*\.x\s*,\s*[^,;]*\.y\s*\+\s*30(?:\.0+)?f?\s*,\s*[^);]*\.z\s*\)',body,re.S), body
+          assert 'LoadSkillLogo();' in body, body
+          assert '.LoadData(this);' in body and '.CheckText(0);' in body, body
+          assert re.search(r'\bskillRange\s*=\s*false\s*;',body), body
+          assert re.search(r'new\s+Color\s*\(\s*1(?:\.0+)?f?\s*,\s*1(?:\.0+)?f?\s*,\s*1(?:\.0+)?f?\s*,\s*1(?:\.0+)?f?\s*\)',body), body
+          # Native semantics: the non-null p_skill branch only enables chargeLayer when maxChargedLayer > 1;
+          # it must not introduce an else-side SetActive(false).
+          assert re.search(r'maxChargedLayer\s*>\s*1',body), body
+          target_end=il.find('} // end of method Plant_DetaiPage::Initialize')
+          assert target_end>=0, 'Initialize IL end marker missing'
+          target_begin=il.rfind('.method ',0,target_end)
+          ib=il[target_begin:target_end]
+          for bad in ['Plant::isOnField','Unmanaged memory load','Unknown result type']:
+              assert bad not in ib,(bad,ib)
+          assert 'Plant::IsOnField()' in ib, ib
+          # Cecil initializes value-type locals with ldloca + call instance .ctor; this is the canonical IL shape here.
+          assert 'call instance void [UnityEngine.CoreModule]UnityEngine.Vector3::.ctor(float32, float32, float32)' in ib, ib
+          assert 'call instance void [UnityEngine.CoreModule]UnityEngine.Color::.ctor(float32, float32, float32, float32)' in ib, ib
+          print('PLANT_DETAIL_EXACT_REF_PASS target_token=0x06000667 invalid_diagnostics=0 private_isOnField_refs=0 IsOnField_call=1 xyz_preserved_y_plus_30=1 color_rgba_1=1 native_charge_semantics=1 unrelated_class_unknown=%d' % cs.count('Unknown result type'))
+          PY
+      - name: Upload exact-reference evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-PLANT-DETAIL-INITIALIZE-EXACT-REF
+          path: ${{ runner.temp }}/plant-detail-ref/
+          if-no-files-found: warn
+          retention-days: 90

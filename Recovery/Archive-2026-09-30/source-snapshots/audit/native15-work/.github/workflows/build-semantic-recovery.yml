@@ -1,0 +1,164 @@
+name: Build semantic recovery patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-semantic-recovery.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Normalize historical semantic source for recovered CIL
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('Tools/SemanticPatch/Program.cs')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''static void Emit(ILProcessor il, OpCode code) => il.Append(Instruction.Create(code));
+          static void Emit(ILProcessor il, OpCode code, string value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, int value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, MethodReference value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, TypeReference value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, FieldReference value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, ParameterDefinition value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, VariableDefinition value) => il.Append(Instruction.Create(code, value));
+          static void Emit(ILProcessor il, OpCode code, Instruction value) => il.Append(Instruction.Create(code, value));'''.replace('\n          ', '\n')
+          new = '''static void Emit(ILProcessor il, OpCode code, object? value = null)
+          {
+              Instruction ins = value switch
+              {
+                  null => Instruction.Create(code),
+                  string v => Instruction.Create(code, v),
+                  int v => Instruction.Create(code, v),
+                  MethodReference v => Instruction.Create(code, v),
+                  TypeReference v => Instruction.Create(code, v),
+                  FieldReference v => Instruction.Create(code, v),
+                  ParameterDefinition v => Instruction.Create(code, v),
+                  VariableDefinition v => Instruction.Create(code, v),
+                  Instruction v => Instruction.Create(code, v),
+                  _ => throw new NotSupportedException($"Unsupported Emit operand: {value.GetType().FullName}")
+              };
+              il.Append(ins);
+          }'''.replace('\n          ', '\n')
+          if old not in s:
+              raise SystemExit('expected Emit block not found')
+          s = s.replace(old, new)
+
+          skill = r'''static void PatchSkillDataPath\(ModuleDefinition module\)\n\{.*?\n\}\n\nstatic void PatchBoardConfigPath'''
+          skill_replacement = '''static void PatchSkillDataPath(ModuleDefinition module)
+          {
+              var method = FindMethod(module, "ResourceManager", "GetSkillDataPath", 1);
+              var getStreaming = CallRef(method, "UnityEngine.Application", "get_streamingAssetsPath", 0);
+              var combineArray = CallRef(method, "System.IO.Path", "Combine", 1);
+              var toString = CallRef(method, "System.Int32", "ToString", 0);
+              var concat2 = CallRef(method, "System.String", "Concat", 2);
+              var body = FreshBody(method, true);
+              var paths = new VariableDefinition(new ArrayType(module.TypeSystem.String));
+              body.Variables.Add(paths);
+              var il = body.GetILProcessor();
+
+              Emit(il, OpCodes.Ldc_I4_5);
+              Emit(il, OpCodes.Newarr, module.TypeSystem.String);
+              Emit(il, OpCodes.Stloc, paths);
+              Emit(il, OpCodes.Ldloc, paths); Emit(il, OpCodes.Ldc_I4_0); Emit(il, OpCodes.Call, getStreaming); Emit(il, OpCodes.Stelem_Ref);
+              Emit(il, OpCodes.Ldloc, paths); Emit(il, OpCodes.Ldc_I4_1); Emit(il, OpCodes.Ldstr, "jsons"); Emit(il, OpCodes.Stelem_Ref);
+              Emit(il, OpCodes.Ldloc, paths); Emit(il, OpCodes.Ldc_I4_2); Emit(il, OpCodes.Ldstr, "PlantData"); Emit(il, OpCodes.Stelem_Ref);
+              Emit(il, OpCodes.Ldloc, paths); Emit(il, OpCodes.Ldc_I4_3); Emit(il, OpCodes.Ldstr, "Skills"); Emit(il, OpCodes.Stelem_Ref);
+              Emit(il, OpCodes.Ldloc, paths); Emit(il, OpCodes.Ldc_I4_4);
+              Emit(il, OpCodes.Ldarga, method.Parameters[0]); Emit(il, OpCodes.Call, toString);
+              Emit(il, OpCodes.Ldstr, ".json"); Emit(il, OpCodes.Call, concat2); Emit(il, OpCodes.Stelem_Ref);
+              Emit(il, OpCodes.Ldloc, paths); Emit(il, OpCodes.Call, combineArray); Emit(il, OpCodes.Ret);
+              Console.WriteLine("PATCH ResourceManager.GetSkillDataPath: original string[] combine + skillID.json");
+          }
+
+          static void PatchBoardConfigPath'''.replace('\n          ', '\n')
+          s, count = re.subn(skill, skill_replacement, s, flags=re.S)
+          if count != 1:
+              raise SystemExit(f'expected one PatchSkillDataPath block, got {count}')
+
+          load = r'''static void PatchLoadFileJson\(ModuleDefinition module\)\n\{.*?\n\}\n\nstatic void PatchFirstIntToStringArgument'''
+          load_replacement = '''static void PatchLoadFileJson(ModuleDefinition module)
+          {
+              var method = FindMethod(module, "ResourceManager", "LoadFile_Json", 2);
+              var exists = CallRef(method, "System.IO.File", "Exists", 1);
+              var concat3 = CallRef(method, "System.String", "Concat", 3);
+              var debugLog = CallRef(method, "UnityEngine.Debug", "Log", 1);
+              var readAll = CallRef(method, "System.IO.File", "ReadAllText", 1);
+
+              MethodReference fromJson;
+              var recovered = method.Body.Instructions.Select(i => i.Operand).OfType<GenericInstanceMethod>()
+                  .FirstOrDefault(m => m.Name == "FromJson" && m.DeclaringType.FullName.Contains("JsonUtility", StringComparison.Ordinal));
+              if (recovered is not null)
+              {
+                  fromJson = recovered;
+              }
+              else
+              {
+                  var jsonScope = module.AssemblyReferences.Single(a => a.Name == "UnityEngine.JSONSerializeModule");
+                  var jsonType = new TypeReference("UnityEngine", "JsonUtility", module, jsonScope);
+                  var open = new MethodReference("FromJson", module.TypeSystem.Object, jsonType) { HasThis = false };
+                  var t = new GenericParameter("T", open);
+                  open.GenericParameters.Add(t);
+                  open.ReturnType = t;
+                  open.Parameters.Add(new ParameterDefinition(module.TypeSystem.String));
+                  var instance = new GenericInstanceMethod(open);
+                  instance.GenericArguments.Add(method.GenericParameters[0]);
+                  fromJson = instance;
+                  Console.WriteLine("RECOVER ResourceManager.LoadFile_Json<T>: reconstructed JsonUtility.FromJson<T> method reference");
+              }
+
+              var body = FreshBody(method);
+              var il = body.GetILProcessor();
+              var load = Instruction.Create(OpCodes.Nop);
+              Emit(il, OpCodes.Ldarg, method.Parameters[0]);
+              Emit(il, OpCodes.Call, exists);
+              Emit(il, OpCodes.Brtrue, load);
+              Emit(il, OpCodes.Ldstr, "未找到路径为");
+              Emit(il, OpCodes.Ldarg, method.Parameters[0]);
+              Emit(il, OpCodes.Ldstr, "的json文件");
+              Emit(il, OpCodes.Call, concat3);
+              Emit(il, OpCodes.Call, debugLog);
+              Emit(il, OpCodes.Ldc_I4_0);
+              Emit(il, OpCodes.Ret);
+              il.Append(load);
+              Emit(il, OpCodes.Ldarg, method.Parameters[1]);
+              Emit(il, OpCodes.Ldarg, method.Parameters[0]);
+              Emit(il, OpCodes.Call, readAll);
+              Emit(il, OpCodes.Call, fromJson);
+              Emit(il, OpCodes.Stobj, method.GenericParameters[0]);
+              Emit(il, OpCodes.Ldc_I4_1);
+              Emit(il, OpCodes.Ret);
+              Console.WriteLine("PATCH ResourceManager.LoadFile_Json<T>: assign JsonUtility result to ref T_this");
+          }
+
+          static void PatchFirstIntToStringArgument'''.replace('\n          ', '\n')
+          s, count = re.subn(load, load_replacement, s, flags=re.S)
+          if count != 1:
+              raise SystemExit(f'expected one PatchLoadFileJson block, got {count}')
+
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Publish semantic recovery patcher
+        run: dotnet publish Tools/SemanticPatch/SemanticPatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/semantic-recovery
+      - name: Smoke test executable
+        run: |
+          chmod +x publish/semantic-recovery/GodsPVZ.SemanticPatch
+          set +e
+          publish/semantic-recovery/GodsPVZ.SemanticPatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-SemanticRecovery-linux-x64
+          path: publish/semantic-recovery/GodsPVZ.SemanticPatch
+          if-no-files-found: error

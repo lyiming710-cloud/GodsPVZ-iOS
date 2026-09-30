@@ -1,0 +1,179 @@
+name: Stage9.1 MainMenu save-init PC native diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-mainmenu-save-native-diagnostic.yml'
+      - 'Tools/MethodIndexDump/native_map.py'
+
+permissions:
+  contents: read
+
+jobs:
+  native-diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and validate original PC authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/mainmenu-save-native"; E="$OUT/evidence"; mkdir -p "$OUT" "$E"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0 capstone==5.0.6
+          python3 -m gdown --id '1_5kVGTFmsvwcdRLQ2ah_rtyC6DqvLnf0' --output "$OUT/GodsPVZ_1.0.2.zip" --quiet
+          [ "$(sha256sum "$OUT/GodsPVZ_1.0.2.zip" | awk '{print $1}')" = '2f08b4e2243e2bd296f3db694b4a2c9656252d76202c80167bdf3340b9f65b48' ] || exit 61
+          unzip -Z1 "$OUT/GodsPVZ_1.0.2.zip" > "$E/pc-zip-list.txt"
+          GA="$(grep -E '(^|/)GameAssembly\.dll$' "$E/pc-zip-list.txt" | head -1)"
+          MD="$(grep -E '(^|/)global-metadata\.dat$' "$E/pc-zip-list.txt" | head -1)"
+          [ -n "$GA" ] && [ -n "$MD" ] || exit 62
+          [ "$(grep -E '(^|/)GameAssembly\.dll$' "$E/pc-zip-list.txt" | wc -l)" = 1 ] || exit 63
+          [ "$(grep -E '(^|/)global-metadata\.dat$' "$E/pc-zip-list.txt" | wc -l)" = 1 ] || exit 64
+          unzip -p "$OUT/GodsPVZ_1.0.2.zip" "$GA" > "$OUT/GameAssembly.dll"
+          unzip -p "$OUT/GodsPVZ_1.0.2.zip" "$MD" > "$OUT/global-metadata.dat"
+          [ "$(sha256sum "$OUT/GameAssembly.dll" | awk '{print $1}')" = '9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d' ] || exit 65
+          [ "$(sha256sum "$OUT/global-metadata.dat" | awk '{print $1}')" = 'ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9' ] || exit 66
+          printf 'zip=%s\ngameassembly=%s\nmetadata=%s\nzip_gameassembly_path=%s\nzip_metadata_path=%s\n' \
+            "$(sha256sum "$OUT/GodsPVZ_1.0.2.zip"|awk '{print $1}')" \
+            "$(sha256sum "$OUT/GameAssembly.dll"|awk '{print $1}')" \
+            "$(sha256sum "$OUT/global-metadata.dat"|awk '{print $1}')" "$GA" "$MD" > "$E/source-provenance.txt"
+          rm "$OUT/GodsPVZ_1.0.2.zip"
+
+      - name: Map original MethodDefs and select startup/save targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/mainmenu-save-native"; E="$OUT/evidence"
+          python3 Tools/MethodIndexDump/native_map.py "$OUT/GameAssembly.dll" "$OUT/global-metadata.dat" > "$E/original-method-map.tsv" 2> "$E/native-map.stderr"
+          cat "$E/native-map.stderr"
+          python3 - "$E/original-method-map.tsv" "$E/targets.tsv" <<'PY'
+          import sys
+          from pathlib import Path
+          rows=[]
+          for line in Path(sys.argv[1]).read_text().splitlines()[1:]:
+              p=line.split('\t')
+              if len(p)!=7: continue
+              rows.append(dict(idx=int(p[0]),rid=int(p[1]),token=p[2],addr=int(p[3],16),typ=p[4],name=p[5],pc=int(p[6])))
+          specs=[
+              ('GameStart','Start',0),
+              ('ResourceManager','Start',0),
+              ('ResourceManager','LoadAudioClips',0),
+              ('SavesManager','.ctor',0),
+              ('SavesManager','Awake',0),
+              ('SavesManager','Start',0),
+              ('SavesManager','LoadPlayerSaves',0),
+              ('SavesManager','TryCreateNewPlayerSave',0),
+              ('SavesManager','LoadFirstSave',0),
+              ('SavesManager','LoadPlayerSave',1),
+              ('SavesManager','LoadPlayerSave_ID',1),
+              ('SavesManager','CreateNewPlayerSave',1),
+              ('SavesManager','CreateNewPlayerSaveList',0),
+              ('SavesManager','LoadBaseData',0),
+              ('MainUIController','Start',0),
+              ('MainUIController','PlayBGM',1),
+              ('TextLink','.ctor',0),
+              ('TextLink','Update',0),
+              ('LevelItem','.ctor',0),
+          ]
+          chosen=[]
+          for typ,name,pc in specs:
+              c=[r for r in rows if (r['typ']==typ or r['typ'].endswith('/'+typ) or r['typ'].endswith('.'+typ)) and r['name']==name and r['pc']==pc]
+              if len(c)!=1: raise SystemExit(f'expected exactly one {typ}::{name}/{pc}, got {len(c)}: {c}')
+              chosen.append(c[0])
+          out=['type\tname\tparam_count\tnative_index\trid\ttoken\taddress']
+          for r in chosen: out.append(f"{r['typ']}\t{r['name']}\t{r['pc']}\t{r['idx']}\t{r['rid']}\t{r['token']}\t0x{r['addr']:X}")
+          Path(sys.argv[2]).write_text('\n'.join(out)+'\n')
+          print(Path(sys.argv[2]).read_text(),end='')
+          PY
+          grep -E '(^|\t)(GameStart|ResourceManager|SavesManager|MainUIController|TextLink|LevelItem)(/|\.|\t)' "$E/original-method-map.tsv" > "$E/relevant-original-methods.tsv" || true
+
+      - name: Disassemble and annotate exact original PC native ranges
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/mainmenu-save-native"; E="$OUT/evidence"
+          python3 - "$OUT/GameAssembly.dll" "$E/original-method-map.tsv" "$E/targets.tsv" "$E" <<'PY'
+          import re,struct,sys
+          from pathlib import Path
+          from capstone import Cs,CS_ARCH_X86,CS_MODE_64
+          from capstone.x86 import X86_OP_IMM
+          ga=Path(sys.argv[1]); mapf=Path(sys.argv[2]); targetf=Path(sys.argv[3]); outdir=Path(sys.argv[4])
+          b=ga.read_bytes()
+          rows=[]
+          for line in mapf.read_text().splitlines()[1:]:
+              p=line.split('\t')
+              if len(p)!=7: continue
+              rows.append(dict(idx=int(p[0]),rid=int(p[1]),token=p[2],addr=int(p[3],16),typ=p[4],name=p[5],pc=int(p[6])))
+          addr_rows={}
+          for r in rows: addr_rows.setdefault(r['addr'],[]).append(r)
+          all_addrs=sorted(addr_rows)
+          targets=[]
+          for line in targetf.read_text().splitlines()[1:]:
+              p=line.split('\t'); targets.append(dict(typ=p[0],name=p[1],pc=int(p[2]),idx=int(p[3]),rid=int(p[4]),token=p[5],addr=int(p[6],16)))
+          u16=lambda o:struct.unpack_from('<H',b,o)[0];u32=lambda o:struct.unpack_from('<I',b,o)[0];u64=lambda o:struct.unpack_from('<Q',b,o)[0]
+          pe=u32(0x3c); n=u16(pe+6); osz=u16(pe+20); opt=pe+24; base=u64(opt+24); secs=[]; st=opt+osz
+          for i in range(n):
+              o=st+i*40; vs,va,rs,rp=struct.unpack_from('<IIII',b,o+8); secs.append((va,vs,rp,rs))
+          def vaoff(a):
+              r=a-base
+              for va,vs,rp,rs in secs:
+                  if va<=r<va+max(vs,rs):
+                      d=r-va
+                      if d<rs:return rp+d
+              raise ValueError(hex(a))
+          def label(a):
+              rr=addr_rows.get(a,[])
+              if not rr:return ''
+              return ' | '.join(f"{x['typ']}::{x['name']}/{x['pc']} token={x['token']}" for x in rr[:8])
+          md=Cs(CS_ARCH_X86,CS_MODE_64); md.detail=True
+          edges=['source_type\tsource_method\tsource_address\tinsn_address\tkind\ttarget_address\ttarget_label']
+          summary=[]
+          for t in targets:
+              higher=[a for a in all_addrs if a>t['addr']]
+              stop=higher[0] if higher else t['addr']+0x10000
+              if stop-t['addr']>0x10000: stop=t['addr']+0x10000
+              off=vaoff(t['addr']); code=b[off:off+(stop-t['addr'])]
+              safe=re.sub(r'[^A-Za-z0-9_.-]+','_',f"{t['typ']}__{t['name']}_{t['pc']}")
+              lines=[f"# type={t['typ']} method={t['name']} param_count={t['pc']} token={t['token']} rid={t['rid']} native_index={t['idx']}",f"# start=0x{t['addr']:X} stop=0x{stop:X} span=0x{stop-t['addr']:X} file_off=0x{off:X}"]
+              direct=0
+              for ins in md.disasm(code,t['addr']):
+                  ann=''
+                  if ins.mnemonic in ('call','jmp') and ins.operands and ins.operands[0].type==X86_OP_IMM:
+                      dst=int(ins.operands[0].imm) & ((1<<64)-1); lab=label(dst); direct+=1
+                      if lab: ann=f" ; => {lab}"
+                      edges.append(f"{t['typ']}\t{t['name']}\t0x{t['addr']:X}\t0x{ins.address:X}\t{ins.mnemonic}\t0x{dst:X}\t{lab}")
+                  lines.append(f"0x{ins.address:016X}: {ins.bytes.hex():<24} {ins.mnemonic:<9} {ins.op_str}{ann}")
+              (outdir/(safe+'.native.txt')).write_text('\n'.join(lines)+'\n')
+              summary.append(f"{t['typ']}::{t['name']}/{t['pc']} token={t['token']} addr=0x{t['addr']:X} span=0x{stop-t['addr']:X} direct_call_or_jmp={direct}")
+          (outdir/'native-call-edges.tsv').write_text('\n'.join(edges)+'\n')
+          (outdir/'native-target-summary.txt').write_text('\n'.join(summary)+'\n')
+          print('\n'.join(summary))
+          PY
+          grep -E $'SavesManager|GameStart|ResourceManager|MainUIController' "$E/native-call-edges.tsv" > "$E/startup-save-call-edges.tsv" || true
+          cat "$E/startup-save-call-edges.tsv" || true
+
+      - name: Extract save-init focused native call graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/mainmenu-save-native/evidence"
+          python3 - "$E/native-call-edges.tsv" "$E/save-init-findings.txt" <<'PY'
+          import sys
+          from pathlib import Path
+          lines=Path(sys.argv[1]).read_text().splitlines()
+          keys=('SavesManager::LoadPlayerSaves','SavesManager::TryCreateNewPlayerSave','SavesManager::LoadFirstSave','SavesManager::LoadPlayerSave','SavesManager::CreateNewPlayerSave','SavesManager::Start','GameStart::Start','ResourceManager::Start')
+          keep=[x for x in lines if any(k in x for k in keys)]
+          Path(sys.argv[2]).write_text('\n'.join(keep)+'\n')
+          print('\n'.join(keep))
+          PY
+
+      - name: Upload original PC native evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-MainMenu-save-init-original-PC-native-evidence
+          path: ${{ runner.temp }}/mainmenu-save-native/evidence/
+          if-no-files-found: error
+          retention-days: 90

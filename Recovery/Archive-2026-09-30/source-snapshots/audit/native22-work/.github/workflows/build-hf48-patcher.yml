@@ -1,0 +1,33 @@
+name: Build HF48 ladder runtime core patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Tools/HF48Patch/**'
+      - '.github/workflows/build-hf48-patcher.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Publish HF48 patcher
+        run: dotnet publish Tools/HF48Patch/HF48Patch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o out/hf48
+      - name: Smoke test
+        run: |
+          chmod +x out/hf48/GodsPVZ.HF48Patch
+          set +e
+          out/hf48/GodsPVZ.HF48Patch
+          code=$?
+          set -e
+          test "$code" = "2"
+          test -f out/hf48/GodsPVZ.HF48Patch.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-HF48Patch-linux-x64
+          path: out/hf48
+          if-no-files-found: error

@@ -1,0 +1,49 @@
+name: Probe 2D Animation 9.1.1 mirror
+
+on:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/probe-2d-animation-911.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify exact 9.1.1 package and mapped MonoScript meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo=https://git-okt.sed.inf.szte.hu/h269729/HotlineBekescsaba.git
+          commit=9104e9a40be711441d25848120cc83604c21d0b7
+          git init src
+          git -C src remote add origin "$repo"
+          git -C src fetch --depth=1 origin "$commit"
+          test "$(git -C src rev-parse FETCH_HEAD)" = "$commit"
+          git -C src checkout --detach FETCH_HEAD
+          root='src/Library/PackageCache/com.unity.2d.animation@9.1.1'
+          test -f "$root/package.json"
+          python3 - <<'PY'
+          import json, pathlib, re, hashlib, subprocess
+          root=pathlib.Path('src/Library/PackageCache/com.unity.2d.animation@9.1.1')
+          pkg=json.loads((root/'package.json').read_text())
+          assert pkg['name']=='com.unity.2d.animation', pkg
+          assert pkg['version']=='9.1.1', pkg
+          targets={'SpriteSkin':'Runtime/SpriteSkin.cs.meta','SkeletonAsset':'Runtime/SkeletonAsset.cs.meta'}
+          out=[]
+          for typ,rel in targets.items():
+              p=root/rel
+              assert p.exists(), p
+              text=p.read_text(errors='replace')
+              m=re.search(r'(?m)^guid:\s*([0-9a-fA-F]{32})\s*$',text)
+              assert m, rel
+              out.append((typ,rel,m.group(1).lower(),hashlib.sha256(p.read_bytes()).hexdigest()))
+          tree=subprocess.check_output(['git','-C','src','rev-parse','HEAD:Library/PackageCache/com.unity.2d.animation@9.1.1'],text=True).strip()
+          print('PACKAGE com.unity.2d.animation@9.1.1')
+          print('TREE',tree)
+          for row in out: print('MAP',*row)
+          PY

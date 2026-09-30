@@ -1,0 +1,265 @@
+name: Stage9.1 8644 Dialogue Update recovery pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-8644-dialogue-update-recovery-pipeline.yml'
+      - 'Tools/Stage9DialogueUpdatePatch/**'
+      - 'Tools/Stage9RuntimeGateFast/**'
+      - 'Tools/Stage9NativeProbe/DialogueManager_OnBoard.Update.native-evidence.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runtime-qualified BGM v2 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34879613958
+          name: Stage9.1-A005-BGMUNPAUSE-V2-QUALIFIED
+          path: ${{ runner.temp }}/input
+
+      - name: Download exact Unity Mono corelib cache
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34878091297
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib
+
+      - name: Build patch and run minimal static plus Count resolution gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/dialogue-update"; E="$O/evidence"; mkdir -p "$E"
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-bgm-unpause-v2.dll' -print -quit)
+          CORE=$(find "$RUNNER_TEMP/corelib" -type f -path '*/unityjit-linux/mscorlib.dll' -print -quit)
+          test -n "$IN"; test -n "$CORE"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '864481ad0bbbf6799a7c14a858e857823402edf62c19900ed15a70cc471c44ce'
+          test "$(sha256sum "$CORE"|awk '{print $1}')" = '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+          OUT="$O/GodsPVZRuntime1-dialogue-update.dll"
+          dotnet build Tools/Stage9DialogueUpdatePatch/Stage9DialogueUpdatePatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9DialogueUpdatePatch/Stage9DialogueUpdatePatch.csproj -c Release --no-build -- "$IN" "$OUT" "$CORE" | tee "$E/patch.log"
+          grep -q '^UNITYJIT_LINUX_MSCORLIB_SHA256 4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be$' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY target_token=0x06000194 rid=404 method_pointer_entry=0x181B839F8 va=0x180314920 end=0x1803149FD native_slice_sha256=e40d885774b7c6ddeb7651e6091d748daa75bd3551e3229532c21ea45c97141b$' "$E/patch.log"
+          grep -q '^NATIVE_SEMANTICS board_null_return=1 isRunning_return=1 dialogueIndex_vs_list_size=1 get_Item=2 TestLogTrigger=1 LoadDialogue=1$' "$E/patch.log"
+          grep -q '^RECOVERY_STRATEGY replace_private_List_size_with_public_Count=1 preserve_all_other_IL=1 metadata_changes=0 exception_swallowing=0$' "$E/patch.log"
+          grep -q '^COUNT_MEMBERREF_RESOLUTION_PASS ' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1 target=0x06000194$' "$E/patch.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/patch.log"
+          grep -q '^REOPEN_DIALOGUE_UPDATE_PASS token=0x06000194 .* private_List_size_refs=0 List_Count_calls=1$' "$E/patch.log"
+          grep -q '^FRAMEWORK_REFERENCE_GATE_PASS system_private_corelib_refs=0 assembly_reference_set_unchanged=1$' "$E/patch.log"
+          sha256sum "$OUT" | tee "$E/output-candidate.sha256"
+          cp "$OUT" "$E/"
+          cp Tools/Stage9NativeProbe/DialogueManager_OnBoard.Update.native-evidence.md "$E/"
+
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/ilspy
+
+      - name: Download compact exact Unity refs
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34804463514
+          name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1
+          path: ${{ runner.temp }}/refs
+
+      - name: Exact-reference readback gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/dialogue-update"; E="$O/evidence"; DLL="$O/GodsPVZRuntime1-dialogue-update.dll"
+          ILSPY=$(find "$RUNNER_TEMP/ilspy" -type f -name ilspycmd -print -quit)
+          DOTNET_BIN=$(find "$RUNNER_TEMP/ilspy" -type f -path '*/ilspy-runtime/dotnet' -print -quit)
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          RDIR=$(find "$RUNNER_TEMP/refs" -type f -name UnityEngine.CoreModule.dll -printf '%h\n' | head -1)
+          test -n "$RDIR"
+          "$ILSPY" -r "$RDIR" -t DialogueManager_OnBoard "$DLL" > "$E/DialogueManager_OnBoard.cs" 2> "$E/DialogueManager_OnBoard.cs.stderr"
+          "$ILSPY" -r "$RDIR" -il -t DialogueManager_OnBoard "$DLL" > "$E/DialogueManager_OnBoard.il" 2> "$E/DialogueManager_OnBoard.il.stderr"
+          test ! -s "$E/DialogueManager_OnBoard.cs.stderr"
+          test ! -s "$E/DialogueManager_OnBoard.il.stderr"
+          python3 - "$E/DialogueManager_OnBoard.cs" "$E/DialogueManager_OnBoard.il" <<'PY' | tee "$E/exact-ref-gate.txt"
+          from pathlib import Path
+          import re,sys
+          cs=Path(sys.argv[1]).read_text(errors='replace'); il=Path(sys.argv[2]).read_text(errors='replace')
+          m=re.search(r'(?:private|public|protected|internal)\s+void\s+Update\s*\(\s*\)',cs); assert m,'Update C# not found'
+          o=cs.index('{',m.end()); d=0; target=None
+          for i in range(o,len(cs)):
+              d+=(cs[i]=='{')-(cs[i]=='}')
+              if d==0:
+                  target=cs[m.start():i+1]; break
+          assert target is not None
+          Path(sys.argv[1]+'.Update.txt').write_text(target)
+          assert '_size' not in target,target
+          assert 'dialogueList' in target and '.Count' in target,target
+          assert target.count('TestLogTrigger')==1,target
+          assert target.count('LoadDialogue')==1,target
+          e=il.find('} // end of method DialogueManager_OnBoard::Update'); assert e>=0
+          b=il.rfind('.method ',0,e); ib=il[b:e]; Path(sys.argv[2]+'.Update.txt').write_text(ib)
+          assert '::_size' not in ib,ib
+          assert ib.count('::get_Count()')==1,ib
+          assert ib.count('::get_Item(')==2,ib
+          assert ib.count('::TestLogTrigger(')==1,ib
+          assert ib.count('::LoadDialogue(')==1,ib
+          assert 'System.Private.CoreLib' not in ib,ib
+          print('DIALOGUE_UPDATE_EXACT_REF_PASS target_token=0x06000194 private_List_size=0 public_Count=1 get_Item=2 TestLogTrigger=1 LoadDialogue=1 corelib_pollution=0')
+          print('=== TARGET_CSHARP ==='); print(target)
+          PY
+
+      - name: Upload qualified candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-8644-DIALOGUE-UPDATE-QUALIFIED
+          path: ${{ runner.temp }}/dialogue-update/evidence/
+          retention-days: 90
+
+  runtime:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          sudo apt-get clean || true
+
+      - name: Download qualified candidate from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Stage9.1-8644-DIALOGUE-UPDATE-QUALIFIED
+          path: ${{ runner.temp }}/stage9-dialogue/candidate
+
+      - name: Download exact cached R3 archive
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          pattern: Stage9.1-r3-exact-archive
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-dialogue/r3-cache
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-dialogue/editor-parts
+
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-dialogue/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-dialogue-update.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          EXPECTED=$(awk '{print $1}' "$SUM")
+          test "${#EXPECTED}" = 64
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$EXPECTED"
+          echo "DIALOGUE_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "DIALOGUE_SHA=$EXPECTED" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $EXPECTED"
+
+      - name: Run single-launch exact R3 strict Board gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash Tools/Stage9RuntimeGateFast/run-strict-board-fast.sh "$RUNNER_TEMP/stage9-dialogue" "$DIALOGUE_CANDIDATE" "$DIALOGUE_SHA"
+
+      - name: Audit Dialogue Update and promote next causal error
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-dialogue/evidence"; mkdir -p "$E"; LOG="$E/playmode.log"
+          if [ ! -f "$LOG" ]; then echo 'RUNTIME_AUDIT no_playmode_log=1' | tee "$E/dialogue-update-runtime-audit.txt"; exit 1; fi
+          python3 - "$LOG" > "$E/dialogue-update-runtime-audit.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines(); text='\n'.join(lines)
+          counts={
+            'DIALOGUE_UPDATE_FIELDACCESS_COUNT':sum('FieldAccessException' in x and 'List`1:_size' in x and 'DialogueManager_OnBoard:Update' in x for x in lines),
+            'BGMUNPAUSE_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in ZombieManager:BGMUnPasue',text)),
+            'BGMUNPAUSE_GENERIC_MISSINGMETHOD_COUNT':len(re.findall(r'MissingMethodException: Method not found: System\.Collections\.Generic\.List`1/Enumerator<Zombie> System\.Collections\.Generic\.List`1\.GetEnumerator\(\)',text)),
+            'BOARD_GAMECONTINUE_METHODACCESS_COUNT':text.count("MethodAccessException: Method `UnityEngine.Input.GetKeyDownInt(UnityEngine.KeyCode)' is inaccessible from method `Board.GameContinue()'"),
+            'DIALOGUE_START_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in DialogueManager_OnBoard:Start',text)),
+            'GRID_COPY_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Grid:Copy',text)),
+            'CORELIB_TEXT_COUNT':text.count('System.Private.CoreLib'),
+            'BOARDCONFIG_CREATEMAP_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in BoardConfig:CreateMap',text)),
+            'LOAD_DATA_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Board_PlantDetail_PlantData:LoadData',text)),
+            'LOAD_SKILL_LOGO_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Plant_DetaiPage:LoadSkillLogo',text)),
+            'PROJECTILE_CTOR_INVALID_IL_COUNT':len(re.findall(r'InvalidProgramException: Invalid IL code in Projectile:\.ctor',text)),
+          }
+          counts['PLANT_DETAIL_INITIALIZE_FIELDACCESS_COUNT']=sum('FieldAccessException' in x and 'Plant:isOnField' in x and 'Plant_DetaiPage:Initialize' in x for x in lines)
+          counts['PLANT_CTOR_RUNTIME_ERROR_COUNT']=len(re.findall(r'(?:InvalidProgramException|FieldAccessException).*Plant:\.ctor',text))
+          counts['ZEROVECTOR_TEXT_COUNT']=text.count('zeroVector')
+          for k,v in counts.items(): print(k,v)
+          markers=[x for x in lines if x.startswith('STAGE9_STRICT_')]
+          print('STRICT_MARKER_COUNT',len(markers)); [print(x) for x in markers]
+          pre_idx=next((i for i,x in enumerate(lines) if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')),None)
+          recovered=['DialogueManager_OnBoard:Update','ZombieManager:BGMUnPasue','Board.GameContinue','DialogueManager_OnBoard:Start','Grid:Copy','BoardConfig:CreateMap','Board_PlantDetail_PlantData:LoadData','Plant_DetaiPage:LoadSkillLogo','Projectile:.ctor']
+          first=None
+          if pre_idx is not None:
+            for i in range(pre_idx+1,len(lines)):
+              x=lines[i]
+              if 'Exception:' not in x or x.startswith('UnityEngine.'): continue
+              if any(s in x for s in recovered): continue
+              if 'FieldAccessException' in x and 'Plant:isOnField' in x: continue
+              first=i; break
+          if first is None: print('FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION none')
+          else:
+            print('=== FIRST_POST_PRESTART_NONRECOVERED_EXCEPTION ===')
+            for j in range(max(pre_idx or 0,first-4),min(len(lines),first+36)): print(f'{j+1}: {lines[j]}')
+          assert all(v==0 for v in counts.values()),counts
+          assert any(x.startswith('STAGE9_STRICT_MAINMENU ') for x in markers)
+          assert 'STAGE9_STRICT_CREATE_INVOKE ok=1' in markers
+          assert any(x.startswith('STAGE9_STRICT_SAVE_READY ') for x in markers)
+          pre=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD_PRESTART ')]
+          assert pre and all(s in pre[-1] for s in ['boardStart=0','board=0','boardManager=1','prepare=1','seedChooser=1']),pre
+          assert 'STAGE9_STRICT_GAMESTART_INVOKE ok=1' in markers
+          board=[x for x in markers if x.startswith('STAGE9_STRICT_BOARD ')]
+          assert board and 'board=1' in board[-1] and 'activeBoard=1' in board[-1],board
+          print('DIALOGUE_UPDATE_RUNTIME_GATE_PASS blocker_removed=1 Count_memberref_resolved=1 previous_recoveries_preserved=1 corelib_pollution=0 corrected_board_lifecycle=1')
+          PY
+          cat "$E/dialogue-update-runtime-audit.txt"
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-DIALOGUE-UPDATE-MAINMENU-SAVE-BOARD-RUNTIME
+          path: ${{ runner.temp }}/stage9-dialogue/evidence/
+          retention-days: 90

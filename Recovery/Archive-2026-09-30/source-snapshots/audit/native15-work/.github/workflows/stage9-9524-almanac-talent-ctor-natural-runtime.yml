@@ -1,0 +1,55 @@
+name: Stage9.1 9524 Almanac Talent ctor natural runtime
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-9524-almanac-talent-ctor-natural-runtime.yml','Tools/Stage9AlmanacTalentRuntimeAudit/**']
+permissions: {contents: read, actions: read}
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      UNITY_EMAIL: '${{ secrets.UNITY_EMAIL }}'
+      UNITY_PASSWORD: '${{ secrets.UNITY_PASSWORD }}'
+      STAGE9_SKILLPROGRESS_TIMEOUT_SECONDS: 900
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure runner disk space conditionally
+        shell: bash
+        run: bash Tools/Stage9CI/conditional-free-space.sh 24
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34959149981, name: Stage9.1-805A-ALMANAC-TALENT-CTOR-QUALIFIED, path: '${{ runner.temp }}/stage9-talent/candidate'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34747460206, pattern: Stage9.1-r3-exact-archive, merge-multiple: true, path: '${{ runner.temp }}/stage9-talent/r3-cache'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34668863583, pattern: 'Stage9.1-unity-china-editor-part-*', merge-multiple: true, path: '${{ runner.temp }}/stage9-talent/editor-parts'}
+      - name: Resolve qualified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="$RUNNER_TEMP/stage9-talent/candidate"
+          DLL=$(find "$D" -type f -name 'GodsPVZRuntime1-almanac-talent-ctor.dll' -print -quit)
+          SUM=$(find "$D" -type f -name 'output-candidate.sha256' -print -quit)
+          test -n "$DLL"; test -n "$SUM"
+          SHA=$(awk '{print $1}' "$SUM")
+          test "$SHA" = '9524b2339ba5a7572a16ae9def8c41ea4128af377d0d68dd9d6b5ad454b480d3'
+          test "$(sha256sum "$DLL"|awk '{print $1}')" = "$SHA"
+          echo "TALENT_CANDIDATE=$DLL" >> "$GITHUB_ENV"
+          echo "TALENT_SHA=$SHA" >> "$GITHUB_ENV"
+          echo "RUNTIME_CANDIDATE_SHA256 $SHA"
+      - name: Run one-launch exact-R3 natural SkillProgress path
+        shell: bash
+        run: bash Tools/Stage9SkillProgressRuntime/run-skillprogress-coverage.sh "$RUNNER_TEMP/stage9-talent" "$TALENT_CANDIDATE" "$TALENT_SHA"
+      - name: Audit Almanac Talent natural runtime and next blockers
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$RUNNER_TEMP/stage9-talent/evidence"; LOG="$E/playmode.log"; test -f "$LOG"
+          python3 Tools/Stage9AlmanacTalentRuntimeAudit/audit.py "$LOG" "$TALENT_SHA" | tee "$E/almanac-talent-ctor-natural-runtime-audit.txt"
+          python3 Tools/Stage9RuntimeTriage/first-invalid.py "$LOG" | tee "$E/first-invalid-triage.txt"
+      - name: Upload Almanac Talent natural runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-9524-ALMANAC-TALENT-CTOR-NATURAL-RUNTIME, path: '${{ runner.temp }}/stage9-talent/evidence/', retention-days: 90}

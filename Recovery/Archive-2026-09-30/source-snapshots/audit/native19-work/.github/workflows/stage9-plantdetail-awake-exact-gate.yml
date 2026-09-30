@@ -1,0 +1,200 @@
+name: Stage9.1 PlantDetail Awake exact gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-plantdetail-awake-exact-gate.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  exact-plantdetail-awake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Reconstruct formal R3 HF55
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantdetail"; E="$OUT/evidence"
+          mkdir -p "$OUT/parts" "$OUT/r3" "$E"
+          python3 -m pip install --disable-pip-version-check -q gdown==5.2.0
+          cat > "$OUT/parts.tsv" <<'EOF'
+          00	111hFaHbkXIkSyRoAEdushS_qZ5sPFqUI	e024b6d534a6eace43694a506ce8636c56ed17e8c21bde3bba61caab3d3bdf7a
+          01	1nYIm3Bk9yxckfbwVlk6ijSUcaid6aorm	1c10d0d87be6b65c3dfd0424e38515b53a8dd1158c5734b4397f2072e5004bb2
+          02	1Y9pMN1FvEpXTFzoKWAx3frra-1-O4s-y	4943615fc153ff8539ab44818dde6981a16758a2c53184a858867d4932edd9c2
+          03	1I3yfH8qb4nrAvEErO-KaZLX4Ds77x_5C	f8573c2ef3db3d65de3cb3b98f0892e633cdf89d499bde2d509b36f88306331f
+          04	1QUYoGuNGP83hTo6_hoeKlosAonRJCJ-n	3dc6a03ebb4a7bbd48f652b0c468911d6985f76f48c6ded991d40d1c9b7593bc
+          05	1Dp8BsTeRmJ9K2yni834KMrxN_Zp18Pe2	13284c2cd74583ccdd63cf6b736dcca443acbf6bda4c25d4b65193fc08c09263
+          06	1pfqVCotdu3GMYp8Vl1Bbxp7ls8SPGLsW	d35ba0e632125749f581ad57cf950d8c6b264f9f4882a08adb9ca227f6b6e23c
+          07	1fgUDh-crdy3oNjYAwGr50kdAY7BTwF2J	0c9443797e24ddca500a54a21955e27fd2cb995ec7924147e7f5c244859c07ec
+          08	1mhL4lliMszPy7ITjfAlSkKQEh19UjhAu	30c9a5330cdece142938150311e8acb87d00d48ab057aa39a2128a3fffdcece8
+          09	12sojmPtnZPiWmnyfW-c5MhQjvR2DZMJg	46bca3df6cbfc11f155038470a39b705bb028fa7a0e9f9eb3ba4810c06d5058a
+          10	1P-vcBUiPmSH3gR3l_zkgjA63J8UnsVpG	3c8e312e65a72ac3072233f558b4d43970b3a4e521139d03328e9c27ec41d994
+          11	1EGPUP5nBjKqvIMft0TAQXvgqpxSVpsyI	dc3d7aa732a19f237e5e72aa6f1e768c10bd360bc6fc832d29b9afc7489da325
+          EOF
+          while IFS=$'\t' read -r idx fid sha; do
+            f="$OUT/parts/r3.$idx.part"
+            python3 -m gdown --id "$fid" --output "$f" --quiet
+            [ "$(sha256sum "$f" | awk '{print $1}')" = "$sha" ] || exit 61
+          done < "$OUT/parts.tsv"
+          cat "$OUT/parts"/*.part > "$OUT/r3.tar.zst"
+          [ "$(stat -c%s "$OUT/r3.tar.zst")" = 786765618 ] || exit 62
+          [ "$(sha256sum "$OUT/r3.tar.zst" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ] || exit 63
+          zstd -dc "$OUT/r3.tar.zst" | tar -xf - -C "$OUT/r3"
+          rm -rf "$OUT/parts" "$OUT/r3.tar.zst"
+          DLL="$OUT/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Plugins/Assembly-CSharp.dll"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 64
+          echo "$DLL" > "$OUT/base.txt"
+
+      - name: Download HF56 patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34689491315
+          pattern: GodsPVZ-HF56Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/p56
+
+      - name: Download HF57 patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34690940527
+          pattern: GodsPVZ-HF57Patch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/p57
+
+      - name: Download Board mechanical patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34699623218
+          pattern: GodsPVZ-Stage9BoardMechanicalPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/pb
+
+      - name: Download managed cleanup patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34705278743
+          pattern: GodsPVZ-Stage9ManagedCleanupPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/pc
+
+      - name: Download Board ctor patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34710104085
+          pattern: GodsPVZ-Stage9BoardCtorPatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/pctor
+
+      - name: Download PlantDetail Awake patcher
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34710657395
+          pattern: GodsPVZ-Stage9PlantDetailAwakePatch-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/pdetail
+
+      - name: Download fixed ILSpy 11.0.0.9375
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdetail/ilspy
+
+      - name: Construct exact Board-ctor target
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantdetail"; E="$OUT/evidence"; BASE="$(cat "$OUT/base.txt")"
+          P56="$(find "$OUT/p56" -name GodsPVZ.HF56Patch -type f | head -1)"
+          P57="$(find "$OUT/p57" -name GodsPVZ.HF57Patch -type f | head -1)"
+          PB="$(find "$OUT/pb" -name GodsPVZ.Stage9BoardMechanicalPatch -type f | head -1)"
+          PC="$(find "$OUT/pc" -name GodsPVZ.Stage9ManagedCleanupPatch -type f | head -1)"
+          PCTOR="$(find "$OUT/pctor" -name GodsPVZ.Stage9BoardCtorPatch -type f | head -1)"
+          chmod +x "$P56" "$P57" "$PB" "$PC" "$PCTOR"
+          "$P56" "$BASE" "$OUT/hf56.dll" > "$E/hf56.log"
+          [ "$(sha256sum "$OUT/hf56.dll" | awk '{print $1}')" = '2308c08296cfb83a72321325fd28362d59c25d6bb1a9cc6635a7b4624af202b0' ]
+          "$P57" "$OUT/hf56.dll" "$OUT/hf57.dll" > "$E/hf57.log"
+          [ "$(sha256sum "$OUT/hf57.dll" | awk '{print $1}')" = 'a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b' ]
+          cp "$OUT/hf57.dll" "$OUT/integrated.dll"
+          python3 - "$OUT/integrated.dll" <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          p=Path(sys.argv[1]); b=bytearray(p.read_bytes()); assert hashlib.sha256(b).hexdigest()=='a699e0f3e812ae1dcd7e1f7d60b7757f958e498626c6a39e43f9984ebe55e38b'
+          for o in [0x9f3d6,0x9f3e3,0x9f3f1,0x9f3ff,0x9f412,0x9f41c,0x9f446]: assert bytes(b[o:o+4])==bytes.fromhex('fe0c0000'); b[o+1]=0x0d
+          for o,old,new in [(0xde448,b'Assembly-CSharp.dll',b'GodsPVZRuntime1.dll'),(0xe0137,b'Assembly-CSharp',b'GodsPVZRuntime1')]: assert bytes(b[o:o+len(old)])==old; b[o:o+len(old)]=new
+          p.write_bytes(b); assert hashlib.sha256(b).hexdigest()=='e49557eeb620c2d3be38aaf9c399a10978740e0a26dd8d0b0f8a190b12b8b568'
+          PY
+          "$PB" "$OUT/integrated.dll" "$OUT/postmechanical.dll" > "$E/board-mechanical.log"
+          [ "$(sha256sum "$OUT/postmechanical.dll" | awk '{print $1}')" = '00ba34c43e08c73c3cc8a39e0bf7f0d35fd280e360dd8a2907e9304d93343980' ]
+          "$PC" "$OUT/postmechanical.dll" "$OUT/managed-cleanup.dll" > "$E/managed-cleanup.log"
+          [ "$(sha256sum "$OUT/managed-cleanup.dll" | awk '{print $1}')" = 'd9e3da6a7ce72daf505aaa806c0c6a6a5b38ecac2308e70135f5245db4144c03' ]
+          "$PCTOR" "$OUT/managed-cleanup.dll" "$OUT/board-ctor.dll" > "$E/board-ctor.log"
+          [ "$(sha256sum "$OUT/board-ctor.dll" | awk '{print $1}')" = '7bdddb8c5f86db6f87dd9b602a2b850af6999d7965aa09bbfced59ef62a815f3' ]
+
+      - name: Apply and verify PlantDetail Awake recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantdetail"; E="$OUT/evidence"
+          P="$(find "$OUT/pdetail" -name GodsPVZ.Stage9PlantDetailAwakePatch -type f | head -1)"
+          [ -n "$P" ]; chmod +x "$P"
+          "$P" "$OUT/board-ctor.dll" "$OUT/plantdetail-awake.dll" | tee "$E/plantdetail-awake.log"
+          grep -q '^PATCH PlantDetail.Awake native_backed pc=0x1803A1C60 android=0x13E0A88 skill_iterations=3 child4_lock=1 child2_on=1 child5_off=1$' "$E/plantdetail-awake.log"
+          grep -q '^REOPEN_PLANTDETAIL_AWAKE_PASS helpers=0 loadData=1 lock=1 nan=1 logo=1 objectEq=1 cardStores=1 locals=13$' "$E/plantdetail-awake.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/plantdetail-awake.log"
+          sha256sum "$OUT/plantdetail-awake.dll" | tee "$E/plantdetail-awake-sha256.txt"
+
+      - name: Independent ILSpy 11.0.0.9375 validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantdetail"; E="$OUT/evidence"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          [ -n "$ILSPY" ] && [ -n "$DOTNET_BIN" ]
+          chmod +x "$ILSPY" "$DOTNET_BIN"
+          export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"
+          export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" --version | tee "$E/ilspy-version.txt"
+          grep -q '^ilspycmd: 11.0.0.9375$' "$E/ilspy-version.txt"
+          grep -q '^ICSharpCode.Decompiler: 11.0.0.9375$' "$E/ilspy-version.txt"
+          "$ILSPY" -m 0x060006C2 "$OUT/plantdetail-awake.dll" > "$E/PlantDetail.Awake.cs" 2> "$E/PlantDetail.Awake.stderr"
+          test ! -s "$E/PlantDetail.Awake.stderr"
+          grep -q 'void Awake(Card_Choose card_Choose)' "$E/PlantDetail.Awake.cs"
+          grep -q 'LoadPlantData' "$E/PlantDetail.Awake.cs"
+          grep -q 'LoadSkillLogo(0, "Lock")' "$E/PlantDetail.Awake.cs"
+          grep -q 'GetChild(4)' "$E/PlantDetail.Awake.cs"
+          grep -q 'GetChild(2)' "$E/PlantDetail.Awake.cs"
+          grep -q 'GetChild(5)' "$E/PlantDetail.Awake.cs"
+          ! grep -Eq 'Cpp2ILHelpers|Expected [A-Z0-9]|Invalid comparison|Unmanaged memory load|Method not found @' "$E/PlantDetail.Awake.cs"
+          echo 'ILSPY_PLANTDETAIL_AWAKE_PASS token=0x060006C2' | tee "$E/ilspy-pass.txt"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-PlantDetail-Awake-exact-evidence
+          path: ${{ runner.temp }}/stage9-plantdetail/evidence/
+          if-no-files-found: warn
+          retention-days: 90

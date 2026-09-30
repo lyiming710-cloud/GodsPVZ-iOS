@@ -1,0 +1,74 @@
+name: Build SaveCore recovery patcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-savecore-recovery.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Normalize historical SaveCore source for recovered CIL
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('Tools/SaveCorePatch/Program.cs')
+          s=p.read_text(encoding='utf-8')
+
+          pattern=r'''void PatchInitializeNewPlantSaveList\(MethodDefinition method\)\n\{.*?\n\}\n\nvoid PatchInitializeNewPropSaveList'''
+          repl='''void PatchInitializeNewPlantSaveList(MethodDefinition method)
+          {
+              var body = Fresh(method, true);
+              var plant = new VariableDefinition(plantSave);
+              body.Variables.Add(plant);
+              var il = body.GetILProcessor();
+              var done = Instruction.Create(OpCodes.Ret);
+              E(il, OpCodes.Ldarg_1); E(il, OpCodes.Ldfld, fPlantSaves); E(il, OpCodes.Callvirt, listPlantClear);
+              E(il, OpCodes.Ldarg_0); E(il, OpCodes.Ldc_I4_0); E(il, OpCodes.Call, initializeNewPlant); E(il, OpCodes.Stloc, plant);
+              E(il, OpCodes.Ldloc, plant); E(il, OpCodes.Brfalse, done);
+              E(il, OpCodes.Ldarg_1); E(il, OpCodes.Ldfld, fPlantSaves); E(il, OpCodes.Ldloc, plant); E(il, OpCodes.Callvirt, listPlantAdd);
+              il.Append(done);
+              Console.WriteLine("PATCH SavesManager.InitializeNewPlantSaveList: Clear + Add(initial plant)");
+          }
+
+          void PatchInitializeNewPropSaveList'''.replace('\n          ','\n')
+          s,n=re.subn(pattern,repl,s,flags=re.S)
+          if n!=1: raise SystemExit(f'plant-list replacement count={n}')
+
+          old='''var originalLoadPlayerSaves = Method(savesManager, "LoadPlayerSaves", 0);
+          var loadJsonSaveList = originalLoadPlayerSaves.Body.Instructions
+              .Select(i => i.Operand)
+              .OfType<GenericInstanceMethod>()
+              .Single(m => m.Name == "LoadFile_Json" && m.GenericArguments.Count == 1 && m.GenericArguments[0].Name == "SaveList");'''.replace('\n          ','\n')
+          new='''var originalLoadPlayerSaves = Method(savesManager, "LoadPlayerSaves", 0);
+          var loadJsonOpen = Method(Type(module, "ResourceManager"), "LoadFile_Json", 2);
+          var loadJsonSaveList = new GenericInstanceMethod(loadJsonOpen);
+          loadJsonSaveList.GenericArguments.Add(saveList);
+          Console.WriteLine("RECOVER SavesManager.LoadPlayerSaves: reconstructed ResourceManager.LoadFile_Json<SaveList> reference");'''.replace('\n          ','\n')
+          if old not in s: raise SystemExit('expected LoadFile_Json<SaveList> lookup block not found')
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Publish
+        run: dotnet publish Tools/SaveCorePatch/SaveCorePatch.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o publish/save-core-recovery
+      - name: Smoke test
+        run: |
+          chmod +x publish/save-core-recovery/GodsPVZ.SaveCorePatch
+          set +e
+          publish/save-core-recovery/GodsPVZ.SaveCorePatch
+          code=$?
+          set -e
+          test "$code" = "2"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ-SaveCoreRecovery-linux-x64
+          path: publish/save-core-recovery/GodsPVZ.SaveCorePatch
+          if-no-files-found: error

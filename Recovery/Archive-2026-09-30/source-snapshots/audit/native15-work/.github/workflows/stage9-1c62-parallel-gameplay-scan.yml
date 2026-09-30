@@ -1,0 +1,98 @@
+name: Stage9.1 1c62 parallel gameplay subsystem scan
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c62-parallel-gameplay-scan.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        type: [BoardManager, Board, BoardConfig, Map]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 1c62 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/scan/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/scan/ilspy
+      - name: Scan ${{ matrix.type }}
+        shell: bash
+        env:
+          TYPE: ${{ matrix.type }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/scan/$TYPE"; mkdir -p "$OUT"
+          DLL="$RUNNER_TEMP/scan/input/GodsPVZRuntime1-device-window-portraits.dll"
+          [ "$(sha256sum "$DLL" | awk '{print $1}')" = '1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209' ] || exit 61
+          ILSPY="$(find "$RUNNER_TEMP/scan/ilspy" -type f -name ilspycmd | head -1)"
+          DOTNET_BIN="$(find "$RUNNER_TEMP/scan/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t "$TYPE" "$DLL" > "$OUT/$TYPE.cs" 2> "$OUT/cs.stderr"
+          "$ILSPY" -il -t "$TYPE" "$DLL" > "$OUT/$TYPE.il" 2> "$OUT/il.stderr"
+          test ! -s "$OUT/cs.stderr"; test ! -s "$OUT/il.stderr"
+          python3 - "$TYPE" "$OUT/$TYPE.cs" "$OUT/$TYPE.il" > "$OUT/risk-summary.txt" <<'PY'
+          from pathlib import Path
+          import re,sys
+          typ=sys.argv[1]; cs=Path(sys.argv[2]).read_text(errors='replace'); il=Path(sys.argv[3]).read_text(errors='replace')
+          diag_patterns=['Expected I','Expected O','Expected I4','Unknown result type','Not implemented instruction','Stack underflow','Stack overflow']
+          print(f'TYPE {typ}')
+          print('DIAGNOSTIC_COUNTS')
+          for p in diag_patterns: print(f'{p}\t{cs.count(p)}')
+          priv=['::_size','::_version','::_items']
+          print('PRIVATE_LIST_FIELD_COUNTS')
+          for p in priv: print(f'{p}\t{il.count(p)}')
+          print('BACKING_FIELD_COUNTS')
+          for p in ['<Instance>k__BackingField','k__BackingField']:
+              print(f'{p}\t{cs.count(p)}')
+          # Method-level C# diagnostics: track most recent plausible declaration.
+          method=None; hits=[]
+          decl=re.compile(r'^\s*(?:public|private|protected|internal)\s+(?:static\s+|unsafe\s+|virtual\s+|override\s+|sealed\s+|new\s+|async\s+)*[^=;]+\([^;]*\)\s*$')
+          for n,line in enumerate(cs.splitlines(),1):
+              if decl.match(line): method=line.strip()
+              if any(p in line for p in diag_patterns): hits.append((n,method or '<unknown>',line.strip()))
+          print('METHOD_DIAGNOSTICS')
+          for n,m,l in hits[:300]: print(f'{n}\t{m}\t{l}')
+          # IL method-level private List field refs.
+          current='<unknown>'; refs=[]
+          for n,line in enumerate(il.splitlines(),1):
+              if line.lstrip().startswith('.method '): current=line.strip()
+              if any(p in line for p in priv): refs.append((n,current,line.strip()))
+          print('METHOD_PRIVATE_LIST_REFS')
+          for n,m,l in refs[:500]: print(f'{n}\t{m}\t{l}')
+          # Calls relevant to the current gameplay chain.
+          print('GAMEPLAY_CALL_REFS')
+          keys=['BoardManager::','Board::','BoardConfig::','Map::','Row::','PrepareUIController::','SeedChooserScreen::']
+          for n,line in enumerate(il.splitlines(),1):
+              if ('call ' in line or 'callvirt ' in line or 'newobj ' in line) and any(k in line for k in keys):
+                  print(f'{n}\t{line.strip()}')
+          PY
+          sha256sum "$DLL" > "$OUT/input.sha256"
+          cat "$OUT/risk-summary.txt"
+      - name: Upload ${{ matrix.type }} scan
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1C62-SCAN-${{ matrix.type }}
+          path: ${{ runner.temp }}/scan/${{ matrix.type }}/
+          if-no-files-found: error
+          retention-days: 90

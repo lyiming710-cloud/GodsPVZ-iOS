@@ -1,0 +1,26 @@
+name: Stage9.1 2ad9 Popup ctor qualify
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths: ['.github/workflows/stage9-2ad9-popup-ctor-qualify.yml','Tools/Stage9PopupCtorPatch/**','Tools/Stage9PopupCtorQualify/**','Tools/Stage9NativeProbe/Popup.ctor.native-evidence.md']
+permissions: {contents: read, actions: read}
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34956412570, name: Stage9.1-2AD9-ALMANAC-CTOR-NATURAL-RUNTIME, path: '${{ runner.temp }}/promotion'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34954938662, name: Stage9.1-8F43-ALMANAC-CTOR-QUALIFIED, path: '${{ runner.temp }}/input'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34804463514, name: Stage9.1-UNITY-MANAGED-REFS-2022.3.44f1c1, path: '${{ runner.temp }}/refs'}
+      - uses: actions/download-artifact@v4
+        with: {github-token: '${{ github.token }}', repository: lyiming710-cloud/GodsPVZ-iOS, run-id: 34173085137, pattern: GodsPVZ-ILSpyCmd-linux-x64, merge-multiple: true, path: '${{ runner.temp }}/ilspy'}
+      - name: Qualify Popup ctor
+        shell: bash
+        run: bash Tools/Stage9PopupCtorQualify/run.sh "$RUNNER_TEMP/promotion" "$RUNNER_TEMP/input" "$RUNNER_TEMP/refs" "$RUNNER_TEMP/ilspy" "$RUNNER_TEMP/popup-ctor-recovery"
+      - uses: actions/upload-artifact@v4
+        with: {name: Stage9.1-2AD9-POPUP-CTOR-QUALIFIED, path: '${{ runner.temp }}/popup-ctor-recovery/evidence/', retention-days: 90}

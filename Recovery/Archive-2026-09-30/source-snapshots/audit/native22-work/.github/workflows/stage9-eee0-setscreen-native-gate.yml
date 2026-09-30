@@ -1,0 +1,100 @@
+name: Stage9.1 eee0 SetScreen PC-native repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-eee0-setscreen-native-gate.yml'
+      - 'Tools/Stage9SetScreenPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  setscreen-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact eee0 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34742096769
+          pattern: Stage9.1-cf4c-SETRESOLUTION
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-setscreen/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-setscreen/ilspy
+      - name: Apply exact PC-native-backed repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-setscreen"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-setresolution.dll"; DLL="$OUT/GodsPVZRuntime1-setscreen.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = 'eee0e8f1f919c9038138c10a3d642c69116a768f5ec7651ed2c396fb7df88842' ] || exit 61
+          dotnet build Tools/Stage9SetScreenPatch/Stage9SetScreenPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9SetScreenPatch/Stage9SetScreenPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x06000149 ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x06000149 address=0x000000018031C080 next=0x000000018031C2B0 gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d metadata_sha256=ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9$' "$E/patch.log"
+          grep -q '^NATIVE_ENGINE_CALL address=0x0000000180D0E340 module=UnityEngine.CoreModule.dll token=0x0600034F method=UnityEngine.Resolution::get_refreshRateRatio/0$' "$E/patch.log"
+          grep -q '^PATCH_SETSCREEN windowed_preflight=1440x810:mode3 table=0:1280x720,1:1920x1080,2:2160x1080,3:2560x1440,4:2960x1440,default:1280x720 fullscreen=2560x1440:mode1 refresh=currentResolution.refreshRateRatio$' "$E/patch.log"
+          grep -q '^REOPEN_SETSCREEN_PASS locals=4 windowed_calls=2 fullscreen_calls=1 refresh=get_refreshRateRatio token=0x06000149$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+          cp Tools/Stage9SetScreenPatch/Evidence.md "$E/PC-native-evidence.md"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-setscreen"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-setscreen.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t GlobalStaticVars "$DLL" > "$E/GlobalStaticVars.cs" 2> "$E/GlobalStaticVars.stderr"; test ! -s "$E/GlobalStaticVars.stderr"
+          "$ILSPY" -il -t GlobalStaticVars "$DLL" > "$E/GlobalStaticVars.il" 2> "$E/GlobalStaticVars-il.stderr"; test ! -s "$E/GlobalStaticVars-il.stderr"
+          python3 - "$E/GlobalStaticVars.cs" "$E/GlobalStaticVars.il" "$E/SetScreen.cs" "$E/SetScreen.il" <<'PY'
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text()
+          cstart=cs.index('public static void SetScreen(bool fullscreen)')
+          b=cs.index('{',cstart); d=0; cend=None
+          for i in range(b,len(cs)):
+              if cs[i]=='{': d+=1
+              elif cs[i]=='}':
+                  d-=1
+                  if d==0: cend=i+1; break
+          assert cend
+          cm=cs[cstart:cend]
+          istart=il.index('void SetScreen (')
+          iend=il.index('} // end of method GlobalStaticVars::SetScreen',istart)
+          im=il[istart:iend]
+          Path(sys.argv[3]).write_text(cm); Path(sys.argv[4]).write_text(im)
+          for bad in ('Invalid IL','Expected O, but got','Method not found @180D0E340','object obj'):
+              assert bad not in cm, bad
+          # ILSpy 11 emits three analysis-only Unknown-result comments around the manually restored
+          # external value-type getter path, while still decompiling it correctly. Pin them exactly
+          # instead of treating any such comment as CLR-invalid IL.
+          assert cm.count('Unknown result type') == 3
+          for off in ('IL_011a','IL_011f','IL_0132'):
+              assert f'//{off}: Unknown result type' in cm, off
+          for req in ('gLawnApp.fullscreen','gLawnApp.resolutionScale','1440','810','1280','720','1920','1080','2160','2560','2960','Screen.currentResolution','refreshRateRatio','Screen.SetResolution'):
+              assert req in cm, req
+          assert 'UnityEngine.Resolution::get_refreshRateRatio()' in im
+          assert im.count('UnityEngine.Screen::SetResolution') == 3
+          assert 'ldc.i4.1' in im and 'ldc.i4.3' in im
+          print('ILSPY_SETSCREEN_PASS method=GlobalStaticVars.SetScreen native_windowed_table=5+fallback fullscreen_refresh=currentResolution.refreshRateRatio warnings=3-pinned-value-type-analysis')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-eee0-SETSCREEN
+          path: ${{ runner.temp }}/stage9-setscreen/evidence/
+          if-no-files-found: error
+          retention-days: 90

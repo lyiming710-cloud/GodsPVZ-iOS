@@ -1,0 +1,84 @@
+name: Stage9.1 2b2f BuffManager generic ref preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-2b2f-buffmanager-generic-ref-preflight.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download runtime-qualified SkillProgress v2 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34922788006
+          name: Stage9.1-4736-SKILLPROGRESS-V2-QUALIFIED
+          path: ${{ runner.temp }}/input
+      - name: Download exact Unity Mono corelib cache
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34878091297
+          name: Stage9.1-UNITY-CORELIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib
+      - name: Resolve existing BuffManager generic ctor refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/input" -type f -name 'GodsPVZRuntime1-skillprogress-v2.dll' -print -quit)
+          CORE=$(find "$RUNNER_TEMP/corelib" -type f -path '*/unityjit-linux/mscorlib.dll' -print -quit)
+          test -n "$IN"; test -n "$CORE"
+          test "$(sha256sum "$IN"|awk '{print $1}')" = '2b2fdf165076ff9f48c577b84fb4c62346b78c925e46c6bff5f8ec6a79f67ce5'
+          test "$(sha256sum "$CORE"|awk '{print $1}')" = '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+          D="$RUNNER_TEMP/probe"; mkdir -p "$D"
+          cat > "$D/probe.csproj" <<'XML'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><PackageReference Include="Mono.Cecil" Version="0.11.6" /></ItemGroup></Project>
+          XML
+          cat > "$D/Program.cs" <<'CS'
+          using Mono.Cecil;
+          using Mono.Cecil.Cil;
+          using System.Security.Cryptography;
+          static string Sha(string p)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(p))).ToLowerInvariant();
+          var input=args[0]; var corelib=args[1];
+          var resolver=new DefaultAssemblyResolver(); resolver.AddSearchDirectory(Path.GetDirectoryName(corelib)!); resolver.AddSearchDirectory(Path.GetDirectoryName(input)!);
+          using var m=ModuleDefinition.ReadModule(input,new ReaderParameters{InMemory=true,ReadingMode=ReadingMode.Immediate,AssemblyResolver=resolver});
+          var t=m.Types.SelectMany(R).Single(x=>x.FullName=="BuffManager");
+          var ctor=t.Methods.Single(x=>x.IsConstructor&&!x.IsStatic&&x.Parameters.Count==0);
+          Console.WriteLine($"BUFFMANAGER token=0x{ctor.MetadataToken.ToUInt32():X8} rid={ctor.MetadataToken.RID} code_size={ctor.Body.CodeSize}");
+          var refs=ctor.Body.Instructions.Select(i=>i.Operand).OfType<MethodReference>().Where(x=>x.Name==".ctor"&&x.DeclaringType is GenericInstanceType g&&g.ElementType.FullName=="System.Collections.Generic.List`1").ToList();
+          Console.WriteLine($"LIST_CTOR_REF_COUNT {refs.Count}");
+          if(refs.Count!=3) throw new Exception("expected three List<Buff> ctors");
+          foreach(var r in refs){
+            var g=(GenericInstanceType)r.DeclaringType; var arg=g.GenericArguments.Single().FullName;
+            Console.WriteLine($"REF full={r.FullName} arg={arg} scope={r.DeclaringType.Scope}");
+            try{
+              var d=r.Resolve();
+              Console.WriteLine($"RESOLVE ok={(d!=null?1:0)} def={(d==null?"<null>":d.FullName)} module={(d==null?"<null>":d.Module.FileName)}");
+              if(d==null||d.Name!=".ctor"||d.DeclaringType.FullName!="System.Collections.Generic.List`1"||d.Parameters.Count!=0) throw new Exception("wrong MethodDef");
+              if(Sha(d.Module.FileName)!=Sha(corelib)) throw new Exception("wrong corelib");
+            } catch(Exception ex){ Console.WriteLine($"RESOLVE_FAIL type={ex.GetType().FullName} message={ex.Message}"); throw; }
+          }
+          Console.WriteLine("BUFFMANAGER_GENERIC_REF_PREFLIGHT_PASS existing_List_Buff_ctor_refs=3 exact_corelib_resolve=1 gameplay_candidate_generated=0 unity_runs=0");
+          static IEnumerable<TypeDefinition> R(TypeDefinition x){yield return x;foreach(var n in x.NestedTypes)foreach(var y in R(n))yield return y;}
+          CS
+          dotnet run --project "$D/probe.csproj" -c Release -- "$IN" "$CORE" | tee "$RUNNER_TEMP/buffmanager-generic-ref-preflight.txt"
+          grep -q '^BUFFMANAGER_GENERIC_REF_PREFLIGHT_PASS existing_List_Buff_ctor_refs=3 exact_corelib_resolve=1 gameplay_candidate_generated=0 unity_runs=0$' "$RUNNER_TEMP/buffmanager-generic-ref-preflight.txt"
+      - name: Upload preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-2B2F-BUFFMANAGER-GENERIC-REF-PREFLIGHT
+          path: ${{ runner.temp }}/buffmanager-generic-ref-preflight.txt
+          retention-days: 90

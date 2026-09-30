@@ -1,0 +1,177 @@
+# Gate revision: closed-enumerator native2 semantic validation
+name: Stage9.1 native2 semantic MemberRef gate
+
+on:
+  push:
+    branches:
+      - stage9-local-audit-tools
+      - native3-blocker-repair
+    paths:
+      - '.github/workflows/stage9-native2-semantic-memberref-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      BASE_RUN_ID: '36111677154'
+      BASE_ARTIFACT: 'Stage9.1-orphan-element-parent-candidate-evidence'
+      BASE_SHA256: '59bb8e0224787f369653bfdb91fadff0a2d09316e33060d04497b4cab5638c33'
+      CANDIDATE_RUN_ID: '36155470169'
+      CANDIDATE_ARTIFACT: 'Stage9.1-native3-candidate'
+      CANDIDATE_SHA256: 'ff0e46f11d7cd7038fd8d366765d23ac46e9176f1251f284ac18543cd378fda7'
+      RESOLVER_EVIDENCE_ARTIFACT_ID: '10853191869'
+      RESOLVER_EVIDENCE_SHA256: 'efb8ef74f996f2faac0e72d7cf4530dcd98783b1ac16c74cfeb3459b11184271'
+      EXPECTED_MSCORLIB_SHA256: '4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+      EXPECTED_COREMODULE_SHA256: '83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Pin .NET 8
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK8="$(dotnet --list-sdks | awk '$1 ~ /^8\./ {v=$1} END{print v}')"
+          test -n "$SDK8"
+          printf '{"sdk":{"version":"%s","rollForward":"latestPatch"}}\n' "$SDK8" > global.json
+          dotnet --version | grep -E '^8\.'
+
+      - name: Download locked 59bb baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.BASE_RUN_ID }}
+          name: ${{ env.BASE_ARTIFACT }}
+          path: ${{ runner.temp }}/baseline
+
+      - name: Download locked native2 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.CANDIDATE_RUN_ID }}
+          name: ${{ env.CANDIDATE_ARTIFACT }}
+          path: ${{ runner.temp }}/candidate
+
+      - name: Lock exact DLLs and Unity resolver
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p _semantic/resolver _semantic/prior _semantic/out
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, os
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(1<<20), b''): h.update(b)
+              return h.hexdigest()
+          def locate(root, expected, out_file):
+              hits=[p for p in Path(root).rglob('*') if p.is_file() and sha(p)==expected]
+              if len(hits)!=1: raise SystemExit(f'exact sha {expected} matches={hits}')
+              Path(out_file).write_text(str(hits[0].resolve())+'\n')
+              print(f'LOCKED {expected} {hits[0]}')
+          locate(os.environ['RUNNER_TEMP']+'/baseline', os.environ['BASE_SHA256'], '_semantic/baseline-path.txt')
+          locate(os.environ['RUNNER_TEMP']+'/candidate', os.environ['CANDIDATE_SHA256'], '_semantic/candidate-path.txt')
+          PY
+
+          curl -fL --retry 4 --retry-delay 2 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${RESOLVER_EVIDENCE_ARTIFACT_ID}/zip" \
+            -o _semantic/resolver.zip
+          test "$(sha256sum _semantic/resolver.zip | awk '{print $1}')" = "$RESOLVER_EVIDENCE_SHA256"
+          unzip -qq _semantic/resolver.zip -d _semantic/prior
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os, shutil
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for b in iter(lambda:f.read(1<<20), b''): h.update(b)
+              return h.hexdigest()
+          suffixes={
+            'mscorlib.dll':'Editor/Data/MonoBleedingEdge/lib/mono/unityjit-linux/mscorlib.dll',
+            'UnityEngine.CoreModule.dll':'Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll',
+          }
+          valid=[]
+          for report in Path('_semantic/prior').rglob('extraction-report.json'):
+              d=json.loads(report.read_text())
+              if not d.get('complete_targets'): continue
+              if all(d.get('selected',{}).get(n,{}).get('archive_path')==s for n,s in suffixes.items()):
+                  valid.append((report,d))
+          if len(valid)!=1: raise SystemExit(f'exact resolver reports={len(valid)}')
+          report,d=valid[0]
+          expected={
+            'mscorlib.dll':os.environ['EXPECTED_MSCORLIB_SHA256'],
+            'UnityEngine.CoreModule.dll':os.environ['EXPECTED_COREMODULE_SHA256'],
+          }
+          for n in suffixes:
+              src=report.parent/n
+              if not src.is_file(): raise SystemExit(f'missing {src}')
+              actual=sha(src)
+              if actual != d['selected'][n]['sha256'] or actual != expected[n]:
+                  raise SystemExit(f'{n} hash mismatch actual={actual}')
+              shutil.copy2(src, Path('_semantic/resolver')/n)
+          shutil.copy2(report, '_semantic/out/resolver-extraction-report.json')
+          PY
+
+      - name: Run token-independent all24 semantic gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          export NUGET_PACKAGES="$PWD/_semantic/nuget"
+          dotnet restore Tools/Stage9SemanticMemberRefAudit/Stage9SemanticMemberRefAudit.csproj --packages "$NUGET_PACKAGES" > _semantic/out/dotnet-restore.log
+          set +e
+          dotnet run -c Release --no-restore --project Tools/Stage9SemanticMemberRefAudit/Stage9SemanticMemberRefAudit.csproj -- \
+            "$(cat _semantic/baseline-path.txt)" "$(cat _semantic/candidate-path.txt)" --require-resolve "$PWD/_semantic/resolver" \
+            | tee _semantic/out/semantic-memberref-audit.log
+          rc=${PIPESTATUS[0]}
+          set -e
+
+          {
+            echo "audit_exit_code=$rc"
+            echo "baseline_sha256=$(sha256sum "$(cat _semantic/baseline-path.txt)" | awk '{print $1}')"
+            echo "candidate_sha256=$(sha256sum "$(cat _semantic/candidate-path.txt)" | awk '{print $1}')"
+          } > _semantic/out/GATE-SUMMARY.txt
+
+          test "$rc" -eq 0
+          grep -q '^BASELINE_TARGET_TOKEN_CHECK=24/24$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^EXPECTED_NATIVE3_USE_DELTAS=6/6$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^SEMANTIC_TARGETS_ACCOUNTED=24/24$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^SEMANTIC_TARGET_KEYS=23$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^SEMANTIC_RESOLVE_KEYS=23/23$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^METHOD_IDENTITY_DRIFT=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^FIELD_IDENTITY_DRIFT=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^NON_TARGET_METHOD_SEMANTIC_DIFFS=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^TRANSFORM_REPAIR_SITES=3/3$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^ORPHAN_GENERIC_HITS=0$' _semantic/out/semantic-memberref-audit.log
+          grep -q '^STAGE9_SEMANTIC_MEMBERREF_AUDIT_OK$' _semantic/out/semantic-memberref-audit.log
+          echo 'audit_status=PASS' >> _semantic/out/GATE-SUMMARY.txt
+          echo 'next_gate=REAL_UNITY_IOS_IL2CPP' >> _semantic/out/GATE-SUMMARY.txt
+          echo 'production_modified=false' >> _semantic/out/GATE-SUMMARY.txt
+          echo 'STAGE9_NATIVE3_SEMANTIC_MEMBERREF_GATE_PASS'
+
+      - name: Upload semantic gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-native2-semantic-memberref-gate
+          path: _semantic/out
+          if-no-files-found: warn
+          retention-days: 30

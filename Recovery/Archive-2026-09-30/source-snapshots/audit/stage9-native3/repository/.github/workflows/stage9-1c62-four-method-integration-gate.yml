@@ -1,0 +1,137 @@
+name: Stage9.1 1c62 four-method integration gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c62-four-method-integration-gate.yml'
+      - 'Tools/Stage9FourMethodIntegrationVerify/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 1c62 baseline
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34773167969
+          pattern: Stage9.1-A744-DEVICE-WINDOW-PORTRAITS
+          merge-multiple: true
+          path: ${{ runner.temp }}/integration/base
+      - name: Download green GameStart candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34775585332
+          pattern: Stage9.1-1C62-PREPARE-GAMESTART
+          merge-multiple: true
+          path: ${{ runner.temp }}/integration/game
+      - name: Download green Map candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34775850942
+          pattern: Stage9.1-1C62-MAP-IMMEDIATE
+          merge-multiple: true
+          path: ${{ runner.temp }}/integration/map
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/integration/ilspy
+      - name: Apply already-green Map recipe onto green GameStart candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/integration"; E="$ROOT/evidence"; mkdir -p "$E" "$ROOT/map-on-game"
+          BASE="$ROOT/base/GodsPVZRuntime1-device-window-portraits.dll"
+          GAME="$ROOT/game/GodsPVZRuntime1-gamestart.dll"
+          MAP="$ROOT/map/GodsPVZRuntime1-map-immediate.dll"
+          OUT="$ROOT/GodsPVZRuntime1-four-method-integration.dll"
+          [ "$(sha256sum "$BASE"|awk '{print $1}')" = '1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209' ] || exit 61
+          [ "$(sha256sum "$GAME"|awk '{print $1}')" = '5dbeb70608ea5880f79140932133f2793f01787ec99059a545ba04013d8fdd06' ] || exit 62
+          [ "$(sha256sum "$MAP"|awk '{print $1}')" = '6fb26689d20362531c5ccabbe89a8b90f8b80af9381b4581e95263b2692e0305' ] || exit 63
+          cp Tools/Stage9MapImmediatePatch/Stage9MapImmediatePatch.csproj "$ROOT/map-on-game/Stage9MapImmediatePatch.csproj"
+          cp Tools/Stage9MapImmediatePatch/Program.cs "$ROOT/map-on-game/Program.cs"
+          sed -i 's/1c62f969409ed16c9d7c7855f7b52e6b593701524e2b2d75ec0affbc3d05b209/5dbeb70608ea5880f79140932133f2793f01787ec99059a545ba04013d8fdd06/g' "$ROOT/map-on-game/Program.cs"
+          dotnet build "$ROOT/map-on-game/Stage9MapImmediatePatch.csproj" -c Release --nologo
+          dotnet run --project "$ROOT/map-on-game/Stage9MapImmediatePatch.csproj" -c Release --no-build -- "$GAME" "$OUT" | tee "$E/apply-map-on-game.log"
+          grep -q '^INPUT_SHA256 5dbeb70608ea5880f79140932133f2793f01787ec99059a545ba04013d8fdd06$' "$E/apply-map-on-game.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2314 changed_methods=3 target_tokens=0x06000285,0x06000289,0x0600028A$' "$E/apply-map-on-game.log"
+          sha256sum "$OUT" | tee "$E/integrated.sha256"
+      - name: Cross-verify integrated candidate against both standalone green candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/integration"; E="$ROOT/evidence"
+          dotnet build Tools/Stage9FourMethodIntegrationVerify/Stage9FourMethodIntegrationVerify.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9FourMethodIntegrationVerify/Stage9FourMethodIntegrationVerify.csproj -c Release --no-build -- \
+            "$ROOT/base/GodsPVZRuntime1-device-window-portraits.dll" \
+            "$ROOT/game/GodsPVZRuntime1-gamestart.dll" \
+            "$ROOT/map/GodsPVZRuntime1-map-immediate.dll" \
+            "$ROOT/GodsPVZRuntime1-four-method-integration.dll" | tee "$E/integration-verify.log"
+          grep -q '^FOUR_METHOD_INTEGRATION_PASS changed_methods=4 untouched_methods=2313 tokens=0x06000285,0x06000289,0x0600028A,0x0600067E standalone_semantics_exact=1$' "$E/integration-verify.log"
+          grep -q '^FIELD_METADATA_ISOLATION_PASS unchanged_fields=2802 changed_fields=0$' "$E/integration-verify.log"
+          grep -q '^INTEGRATION_SEMANTICS_PASS gamestart_getter_calls=1 gamestart_loadboard_calls=1 map_private_list_refs=0 corelib_refs=0$' "$E/integration-verify.log"
+      - name: Independent fixed ILSpy validation of all four methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/integration"; E="$ROOT/evidence"; DLL="$ROOT/GodsPVZRuntime1-four-method-integration.dll"
+          ILSPY="$(find "$ROOT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$ROOT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t 'PrepareUIController' "$DLL" > "$E/PrepareUIController.cs" 2> "$E/prepare.stderr"; test ! -s "$E/prepare.stderr"
+          "$ILSPY" -t 'Map' "$DLL" > "$E/Map.cs" 2> "$E/map.stderr"; test ! -s "$E/map.stderr"
+          "$ILSPY" -il -t 'PrepareUIController' "$DLL" > "$E/PrepareUIController.il" 2> "$E/prepare-il.stderr"; test ! -s "$E/prepare-il.stderr"
+          "$ILSPY" -il -t 'Map' "$DLL" > "$E/Map.il" 2> "$E/map-il.stderr"; test ! -s "$E/map-il.stderr"
+          python3 - "$E/PrepareUIController.cs" "$E/Map.cs" "$E/PrepareUIController.il" "$E/Map.il" "$DLL" <<'PY'
+          from pathlib import Path
+          import re,sys
+          pcs,mcs,pil,mil=[Path(x).read_text() for x in sys.argv[1:5]]; data=Path(sys.argv[5]).read_bytes()
+          def cs_body(text, pattern):
+              m=re.search(pattern,text); assert m,pattern
+              o=text.index('{',m.end()); d=0
+              for i in range(o,len(text)):
+                  if text[i]=='{': d+=1
+                  elif text[i]=='}':
+                      d-=1
+                      if d==0: return text[m.start():i+1]
+              raise AssertionError(pattern)
+          def il_body(text, marker):
+              e=text.index(marker); s=text.rfind('.method',0,e); assert s>=0
+              return text[s:e]
+          gb=cs_body(pcs,r'public\s+void\s+GameStart\s*\(\s*\)')
+          gib=il_body(pil,'// end of method PrepareUIController::GameStart')
+          assert 'BoardManager.Instance' in gb and '<Instance>k__BackingField' not in gb
+          assert gb.count('.LoadBoard()')==1
+          assert gib.count('BoardManager::get_Instance()')==1 and gib.count('BoardManager::LoadBoard()')==1
+          for name in ['GetMapX','GetMapY','Copy']:
+              mb=cs_body(mcs,r'public\s+[^\n]*\b'+name+r'\s*\(\s*\)')
+              for bad in ['._size','._version','._items','Expected I','Expected O','Expected I4','Unknown result type','System.Private.CoreLib']:
+                  assert bad not in mb,(name,bad)
+          mib=il_body(mil,'// end of method Map::Copy')
+          assert mib.count('Map::GetMapX()')==1 and mib.count('Grid::Copy()')==1
+          assert b'System.Private.CoreLib' not in data
+          print('ILSPY_FOUR_METHOD_INTEGRATION_PASS gamestart=1 map_methods=3 target_scope_only=1 corelib_binary_string=0')
+          PY
+          cp "$DLL" "$E/"
+      - name: Upload integrated candidate and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1C62-FOUR-METHOD-INTEGRATION
+          path: ${{ runner.temp }}/integration/evidence/
+          if-no-files-found: warn
+          retention-days: 90

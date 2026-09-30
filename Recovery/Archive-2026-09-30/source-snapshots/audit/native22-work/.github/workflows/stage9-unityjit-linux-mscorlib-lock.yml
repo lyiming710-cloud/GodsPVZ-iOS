@@ -1,0 +1,102 @@
+name: Stage9.1 exact Unity unityjit-linux mscorlib lock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-unityjit-linux-mscorlib-lock.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  lock-corelib:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+
+      - name: Download exact Unity editor parts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/corelib/editor-parts
+
+      - name: Reconstruct editor archive and lock exact unityjit-linux mscorlib
+        shell: bash
+        run: |
+          set -euo pipefail
+          O="$RUNNER_TEMP/corelib"
+          P="$O/editor-parts"
+          A="$O/Unity-China-2022.3.44f1c1.tar.xz"
+          X="$O/extract"
+          L="$O/locked"
+          EXPECTED_ARCHIVE='0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14'
+          EXPECTED_CORELIB='4d1725f1ae54a22f69b79c2b1569181ed6653dd484c35005e29c40300c6673be'
+
+          PART_COUNT="$(find "$P" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | wc -l)"
+          test "$PART_COUNT" = 15
+          cat "$P"/Unity-China-2022.3.44f1c1.tar.xz.part-* > "$A"
+          ARCHIVE_SHA="$(sha256sum "$A" | awk '{print $1}')"
+          echo "SOURCE_EDITOR_ARCHIVE_SHA256 $ARCHIVE_SHA"
+          test "$ARCHIVE_SHA" = "$EXPECTED_ARCHIVE"
+
+          mapfile -t CORELIB_MEMBERS < <(tar -tJf "$A" | grep -E '(^|/)mscorlib\.dll$' || true)
+          printf 'MSCORELIB_MEMBER %s\n' "${CORELIB_MEMBERS[@]}"
+          test "${#CORELIB_MEMBERS[@]}" -gt 0
+
+          mkdir -p "$X" "$L"
+          tar -xJf "$A" -C "$X" -- "${CORELIB_MEMBERS[@]}"
+
+          MATCH_COUNT=0
+          MATCH_PATH=''
+          : > "$L/MSCORELIB-CANDIDATES.txt"
+          for member in "${CORELIB_MEMBERS[@]}"; do
+            file="$X/$member"
+            test -f "$file"
+            sha="$(sha256sum "$file" | awk '{print $1}')"
+            printf '%s  %s\n' "$sha" "$member" | tee -a "$L/MSCORELIB-CANDIDATES.txt"
+            if [ "$sha" = "$EXPECTED_CORELIB" ]; then
+              MATCH_COUNT=$((MATCH_COUNT + 1))
+              MATCH_PATH="$member"
+              cp "$file" "$L/mscorlib.dll"
+            fi
+          done
+
+          echo "LOCKED_CORELIB_MATCH_COUNT $MATCH_COUNT"
+          test "$MATCH_COUNT" = 1
+          test -f "$L/mscorlib.dll"
+          LOCKED_SHA="$(sha256sum "$L/mscorlib.dll" | awk '{print $1}')"
+          test "$LOCKED_SHA" = "$EXPECTED_CORELIB"
+
+          {
+            echo 'UNITY_VERSION Unity China 2022.3.44f1c1'
+            echo 'SOURCE_EDITOR_PARTS_RUN_ID 34668863583'
+            echo 'SOURCE_EDITOR_PART_PATTERN Stage9.1-unity-china-editor-part-*'
+            echo "SOURCE_EDITOR_PART_COUNT $PART_COUNT"
+            echo "SOURCE_EDITOR_ARCHIVE_SHA256 $ARCHIVE_SHA"
+            echo "SOURCE_MEMBER_PATH $MATCH_PATH"
+            echo "UNITYJIT_LINUX_MSCORLIB_SHA256 $LOCKED_SHA"
+            echo 'PROVENANCE_POLICY exact_archive_and_exact_corelib_sha_required'
+          } | tee "$L/CORELIB-PROVENANCE.txt"
+          sha256sum "$L/mscorlib.dll" "$L/CORELIB-PROVENANCE.txt" "$L/MSCORELIB-CANDIDATES.txt" > "$L/MANIFEST-SHA256.txt"
+
+      - name: Upload locked exact corelib
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-UNITYJIT-LINUX-MSCORLIB-2022.3.44f1c1
+          path: ${{ runner.temp }}/corelib/locked/
+          retention-days: 90
+          compression-level: 6

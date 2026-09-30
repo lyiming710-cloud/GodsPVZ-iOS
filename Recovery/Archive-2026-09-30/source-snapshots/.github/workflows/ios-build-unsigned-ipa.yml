@@ -1,0 +1,100 @@
+﻿name: Build Unsigned iOS IPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      unity_version:
+        description: 'Unity Editor Version'
+        required: true
+        default: '2022.3.44f1'
+      build_config:
+        description: 'Build Configuration'
+        required: true
+        default: 'Release'
+  push:
+    branches:
+      - main
+      - release/*
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Select Xcode Version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Setup Node.js for Verification Scripts
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check Source Assets & Environment
+        run: |
+          echo "=== Checking Project Files ==="
+          ls -la
+          node scripts/verify_environment.mjs
+
+      - name: Build Xcode Project (If Unity Project Present)
+        id: unity_build
+        run: |
+          if [ -d "ProjectSettings" ] && [ -d "Assets" ]; then
+            echo "Unity source project detected. Running Unity iOS export..."
+            /Applications/Unity/Hub/Editor/${{ github.event.inputs.unity_version || '2022.3.44f1' }}/Unity.app/Contents/MacOS/Unity \
+              -batchmode \
+              -quit \
+              -projectPath . \
+              -executeMethod BuildScript.BuildIOS \
+              -logFile unity_export.log
+          elif [ -d "xcode" ] || [ -d "Unity-iPhone.xcodeproj" ]; then
+            echo "Pre-exported Xcode project detected."
+          else
+            echo "Notice: Neither Unity project nor Xcode project found in repository root."
+            echo "Proceeding with packaging check."
+          fi
+
+      - name: Compile iOS ARM64 Binary via Xcode
+        run: |
+          XCODE_PROJ=$(find . -maxdepth 2 -name "*.xcodeproj" | head -n 1)
+          if [ -n "$XCODE_PROJ" ]; then
+            echo "Building Xcode project: $XCODE_PROJ"
+            xcodebuild -project "$XCODE_PROJ" \
+              -scheme Unity-iPhone \
+              -configuration ${{ github.event.inputs.build_config || 'Release' }} \
+              -destination 'generic/platform=iOS' \
+              ARCHS=arm64 \
+              ONLY_ACTIVE_ARCH=NO \
+              CODE_SIGNING_ALLOWED=NO \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGN_IDENTITY="" \
+              CODE_SIGNING_BUILD_SIGNATURE=NO \
+              CONFIGURATION_BUILD_DIR=./build/Release-iphoneos \
+              clean build
+          else
+            echo "No xcodeproj to compile directly. Skipping xcodebuild step."
+          fi
+
+      - name: Package Unsigned IPA
+        run: |
+          echo "=== Assembling IPA Structure ==="
+          node scripts/package_unsigned_ipa.mjs
+
+      - name: Validate Unsigned IPA Integrity
+        run: |
+          echo "=== Running 11-point IPA Acceptance Validation ==="
+          node scripts/validate_ipa.mjs
+
+      - name: Upload Unsigned IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ_1.0.2_unsigned_ipa
+          path: build/output/*.ipa
+          if-no-files-found: warn

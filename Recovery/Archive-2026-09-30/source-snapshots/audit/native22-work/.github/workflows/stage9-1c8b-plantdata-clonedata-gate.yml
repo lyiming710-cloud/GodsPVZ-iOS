@@ -1,0 +1,81 @@
+name: Stage9.1 1c8b PlantData CloneData repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-1c8b-plantdata-clonedata-gate.yml'
+      - 'Tools/Stage9PlantDataCloneDataPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  plantdata-clonedata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact 1c8b candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34737905107
+          pattern: Stage9.1-e2a0-SKILLDATALIST-LOAD
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdata-clonedata/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-plantdata-clonedata/ilspy
+      - name: Apply exact repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantdata-clonedata"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-skilldatalist-load.dll"; DLL="$OUT/GodsPVZRuntime1-plantdata-clonedata.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = '1c8b03824d1de8096fdf79028f69af5b28ab69ca51980dd0fb89ae0889e5a958' ] || exit 61
+          dotnet build Tools/Stage9PlantDataCloneDataPatch/Stage9PlantDataCloneDataPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9PlantDataCloneDataPatch/Stage9PlantDataCloneDataPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x06000256 ' "$E/patch.log"
+          grep -q '^PATCH_PLANTDATA_CLONEDATA_INT_LOCALS locals=V12,V13,V15,V16,V17,V18,V19,V20,V21 type=System.Int32$' "$E/patch.log"
+          grep -q '^CONTROL_FLOW_UNCHANGED suspicious_order_branches=preserved$' "$E/patch.log"
+          grep -q '^REOPEN_PLANTDATA_CLONEDATA_PASS int_locals=9 token=0x06000256$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"; cp "$DLL" "$E/"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-plantdata-clonedata"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-plantdata-clonedata.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"; chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t PlantData "$DLL" > "$E/PlantData.cs" 2> "$E/PlantData.stderr"; test ! -s "$E/PlantData.stderr"
+          python3 - "$E/PlantData.cs" "$E/PlantData.CloneData.cs" <<'PY'
+          from pathlib import Path
+          import sys
+          s=Path(sys.argv[1]).read_text()
+          start=s.index('public void CloneData(PlantSave plantSave)')
+          end=s.index('\n\t}\n}', start)+4
+          m=s[start:end]
+          Path(sys.argv[2]).write_text(m)
+          assert 'Invalid IL' not in m
+          assert 'Expected O, but got' not in m
+          assert 'Unknown result type' not in m
+          assert 'object obj' not in m
+          assert 'plantSave.level' in m
+          assert 'maxHealthPoint' in m and 'attackPoint' in m and 'defensePoint' in m
+          print('ILSPY_PLANTDATA_CLONEDATA_PASS method=PlantData.CloneData')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-1c8b-PLANTDATA-CLONEDATA
+          path: ${{ runner.temp }}/stage9-plantdata-clonedata/evidence/
+          if-no-files-found: error
+          retention-days: 90

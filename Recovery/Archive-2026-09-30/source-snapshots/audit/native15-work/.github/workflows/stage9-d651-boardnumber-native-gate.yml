@@ -1,0 +1,98 @@
+name: Stage9.1 d651 BoardNumber PC-native repair gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [high-fidelity]
+    paths:
+      - '.github/workflows/stage9-d651-boardnumber-native-gate.yml'
+      - 'Tools/Stage9BoardNumberStringPatch/**'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  boardnumber-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact d651 candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34743003129
+          pattern: Stage9.1-eee0-SETSCREEN
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-boardnumber/input
+      - name: Download fixed ILSpy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34173085137
+          pattern: GodsPVZ-ILSpyCmd-linux-x64
+          merge-multiple: true
+          path: ${{ runner.temp }}/stage9-boardnumber/ilspy
+      - name: Apply exact PC-native-backed repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-boardnumber"; E="$OUT/evidence"; mkdir -p "$E"
+          IN="$OUT/input/GodsPVZRuntime1-setscreen.dll"; DLL="$OUT/GodsPVZRuntime1-boardnumber.dll"
+          [ "$(sha256sum "$IN"|awk '{print $1}')" = 'd65169e360e2b73a619a0047ec42b6df366344b1172b611ef95d6c6f71765c4b' ] || exit 61
+          dotnet build Tools/Stage9BoardNumberStringPatch/Stage9BoardNumberStringPatch.csproj -c Release --nologo
+          dotnet run --project Tools/Stage9BoardNumberStringPatch/Stage9BoardNumberStringPatch.csproj -c Release --no-build -- "$IN" "$DLL" | tee "$E/patch.log"
+          grep -q '^TARGET_METHOD token=0x06000174 ' "$E/patch.log"
+          grep -q '^NATIVE_AUTHORITY token=0x06000174 address=0x000000018030F6F0 function_end=0x000000018030F82A next_managed=0x000000018030FE40 gameassembly_sha256=9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d metadata_sha256=ad992341add498bd1018ac980f42171e0737b0793bf945c8714ad70a445b36b9$' "$E/patch.log"
+          grep -Fq 'PATCH_BOARDNUMBER adventure=((level-1)/20+1)-((level-1)%20+1) rescue=R-+level hard=H-+level other=String.Empty' "$E/patch.log"
+          grep -q '^REOPEN_BOARDNUMBER_PASS locals=2 adventure=20-div-rem rescue=R hard=H other=empty token=0x06000174$' "$E/patch.log"
+          grep -q '^SEMANTIC_ISOLATION_PASS untouched_methods=2316 changed_methods=1$' "$E/patch.log"
+          sha256sum "$DLL" | tee "$E/output-candidate.sha256"
+          cp "$DLL" "$E/"
+          cp Tools/Stage9BoardNumberStringPatch/Evidence.md "$E/PC-native-evidence.md"
+      - name: Independent ILSpy validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-boardnumber"; E="$OUT/evidence"; DLL="$OUT/GodsPVZRuntime1-boardnumber.dll"
+          ILSPY="$(find "$OUT/ilspy" -type f -name ilspycmd | head -1)"; DOTNET_BIN="$(find "$OUT/ilspy" -type f -path '*/ilspy-runtime/dotnet' | head -1)"
+          chmod +x "$ILSPY" "$DOTNET_BIN"; export DOTNET_ROOT="$(dirname "$DOTNET_BIN")"; export PATH="$DOTNET_ROOT:$PATH"
+          "$ILSPY" -t BoardManager "$DLL" > "$E/BoardManager.cs" 2> "$E/BoardManager.stderr"; test ! -s "$E/BoardManager.stderr"
+          "$ILSPY" -il -t BoardManager "$DLL" > "$E/BoardManager.il" 2> "$E/BoardManager-il.stderr"; test ! -s "$E/BoardManager-il.stderr"
+          python3 - "$E/BoardManager.cs" "$E/BoardManager.il" "$E/GetBoardNumberString.cs" "$E/GetBoardNumberString.il" <<'PY'
+          from pathlib import Path
+          import sys
+          cs=Path(sys.argv[1]).read_text(); il=Path(sys.argv[2]).read_text()
+          cstart=cs.index('public static string GetBoardNumberString(ChallengeType challengeType, int level)')
+          b=cs.index('{',cstart); d=0; cend=None
+          for i in range(b,len(cs)):
+              if cs[i]=='{': d+=1
+              elif cs[i]=='}':
+                  d-=1
+                  if d==0: cend=i+1; break
+          assert cend
+          cm=cs[cstart:cend]
+          istart=il.index('string GetBoardNumberString (')
+          iend=il.index('} // end of method BoardManager::GetBoardNumberString',istart)
+          im=il[istart:iend]
+          Path(sys.argv[3]).write_text(cm); Path(sys.argv[4]).write_text(im)
+          for bad in ('Invalid IL','Expected O, but got','Not implemented instruction','object obj'):
+              assert bad not in cm, bad
+          for req in ('"R-"','"H-"','20'):
+              assert req in cm, req
+          assert 'System.Int32::ToString()' in im
+          assert 'System.String::Concat' in im
+          assert 'System.String::Empty' in im
+          ops=[line.split(':',1)[1].strip() for line in im.splitlines() if line.lstrip().startswith('IL_') and ':' in line]
+          assert 'div' in ops and 'rem' in ops
+          assert 'Not implemented instruction' not in im
+          print('ILSPY_BOARDNUMBER_PASS method=BoardManager.GetBoardNumberString adventure=20-div-rem rescue=R hard=H other=empty')
+          PY
+      - name: Upload evidence and candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-d651-BOARDNUMBER
+          path: ${{ runner.temp }}/stage9-boardnumber/evidence/
+          if-no-files-found: error
+          retention-days: 90

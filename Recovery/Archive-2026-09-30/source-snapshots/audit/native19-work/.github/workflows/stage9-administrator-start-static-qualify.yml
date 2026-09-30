@@ -1,0 +1,91 @@
+name: Stage9 Administrator.Start static qualification
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - 'Tools/Stage9AdministratorStartPatch/**'
+      - '.github/workflows/stage9-administrator-start-static-qualify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      SOURCE_RUN_ID: '34990527235'
+      SOURCE_ARTIFACT: Stage9.1-FE67-TEXTLINK-UPDATE-QUALIFIED
+      EXPECTED_INPUT_SHA: 26064265fdba4e9b501f0c3312260503fdde43b9e111072c19dd39891e5ca022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact qualified input candidate
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+          name: ${{ env.SOURCE_ARTIFACT }}
+          path: ${{ runner.temp }}/administrator-start/input
+      - name: Lock exact input
+        shell: bash
+        run: |
+          set -euo pipefail
+          IN=$(find "$RUNNER_TEMP/administrator-start/input" -type f -name 'GodsPVZRuntime1-textlink-update.dll' -print -quit)
+          test -n "$IN"
+          ACTUAL=$(sha256sum "$IN" | awk '{print $1}')
+          test "$ACTUAL" = "$EXPECTED_INPUT_SHA"
+          mkdir -p "$RUNNER_TEMP/administrator-start/evidence"
+          echo "ADMINISTRATOR_START_INPUT=$IN" >> "$GITHUB_ENV"
+          echo "INPUT_SHA256 $ACTUAL" | tee "$RUNNER_TEMP/administrator-start/evidence/input.sha256.txt"
+          printf 'source_run_id=%s\nsource_artifact=%s\nsource_candidate_sha256=%s\nworkflow_commit=%s\n' "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT" "$ACTUAL" "$GITHUB_SHA" > "$RUNNER_TEMP/administrator-start/evidence/provenance.txt"
+      - name: Verify durable patch source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -F 'OpCodes.Callvirt, getEnumerator' Tools/Stage9AdministratorStartPatch/Program.cs
+          grep -F '"get_Item", "!0", "System.Int32"' Tools/Stage9AdministratorStartPatch/Program.cs
+          grep -F 'member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1' Tools/Stage9AdministratorStartPatch/Program.cs
+          grep -F 'LIST_GAMEOBJECT_FOREACH_GATE_PASS getenumerator_opcode=callvirt' Tools/Stage9AdministratorStartPatch/Program.cs
+      - name: Build dedicated Cecil patcher
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj
+          dotnet build -c Release --no-restore Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj
+      - name: Patch Administrator.Start and run embedded reopen isolation gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/administrator-start/GodsPVZRuntime1-administrator-start.dll"
+          dotnet run -c Release --no-build --project Tools/Stage9AdministratorStartPatch/Stage9AdministratorStartPatch.csproj -- "$ADMINISTRATOR_START_INPUT" "$OUT" "$EXPECTED_INPUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/patcher-audit.txt"
+          test -s "$OUT"
+          OUT_SHA=$(sha256sum "$OUT" | awk '{print $1}')
+          echo "OUTPUT_SHA256 $OUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/output.sha256.txt"
+          echo "ADMINISTRATOR_START_OUTPUT=$OUT" >> "$GITHUB_ENV"
+          echo "ADMINISTRATOR_START_OUTPUT_SHA=$OUT_SHA" >> "$GITHUB_ENV"
+      - name: Enforce qualification markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG="$RUNNER_TEMP/administrator-start/evidence/patcher-audit.txt"
+          grep -F 'ADMINISTRATOR_START_PREIMAGE_PASS' "$LOG"
+          grep -F 'REOPEN_ADMINISTRATOR_START_PASS' "$LOG"
+          grep -F 'SEMANTIC_ISOLATION_PASS unchanged_method_headers=2317 changed_method_bodies=1 target=0x06000004 unchanged_fields=2802' "$LOG"
+          grep -F 'METADATA_REFERENCE_GATE_PASS assembly_refs_unchanged=1 member_ref_semantics_unchanged=1 type_ref_semantics_unchanged=1 system_private_corelib_refs=0' "$LOG"
+          grep -F 'ADMINISTRATOR_START_STRUCTURE_GATE_PASS valid_range_gate=1 foreach_try_finally=1 SetGloveButtons_zero_arg=1 mode0_save_chain=1 mode3_private_board_field=0 mode4_order=load_then_start tail_gamepause=1' "$LOG"
+          grep -F 'LIST_GAMEOBJECT_FOREACH_GATE_PASS getenumerator_opcode=callvirt getcurrent_call=1 movenext_call=1 dispose_call=1' "$LOG"
+          printf 'STATIC_QUALIFIED=1\ninput_sha256=%s\noutput_sha256=%s\ntarget=Administrator.Start\ntoken=0x06000004\nmemberref_gate=semantic-set\ntyperef_gate=semantic-set\ngetenumerator_opcode=callvirt\n' "$EXPECTED_INPUT_SHA" "$ADMINISTRATOR_START_OUTPUT_SHA" | tee "$RUNNER_TEMP/administrator-start/evidence/static-qualified.txt"
+      - name: Upload static-qualified Administrator.Start candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-ADMINISTRATOR-START-STATIC-QUALIFIED
+          path: |
+            ${{ runner.temp }}/administrator-start/GodsPVZRuntime1-administrator-start.dll
+            ${{ runner.temp }}/administrator-start/evidence/
+          retention-days: 90
+          if-no-files-found: error

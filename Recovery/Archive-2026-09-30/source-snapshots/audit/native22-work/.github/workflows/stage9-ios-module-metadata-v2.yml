@@ -1,0 +1,105 @@
+name: Stage9.1 exact iOS module metadata v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/stage9-ios-module-metadata-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download exact-changeset China iOS module
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://download.unitychina.cn/download_unity/c3ae09b9f03c/LinuxEditorTargetInstaller/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz'
+          mkdir -p evidence/module extracted
+          curl -fL --retry 4 --retry-delay 3 -o ios-support.tar.xz "$URL"
+          sha256sum ios-support.tar.xz | tee evidence/module/archive.sha256
+          stat -c '%s bytes' ios-support.tar.xz | tee evidence/module/archive.size
+          printf '%s\n' "$URL" > evidence/module/source-url.txt
+
+      - name: Extract once and inspect metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -tJf ios-support.tar.xz > evidence/module/tar-list.txt
+          tar -xJf ios-support.tar.xz -C extracted
+          du -sh extracted | tee evidence/module/extracted-size.txt
+          find extracted -maxdepth 5 -type f -printf '%P\n' | sort > evidence/module/files-all.txt
+          sed -n '1,5000p' evidence/module/files-all.txt > evidence/module/files-head.txt
+
+          find extracted -type f \( \
+            -iname 'ivy.xml' -o -iname 'package.json' -o -iname '*install*.ini' -o \
+            -iname '*install*.json' -o -iname '*module*.json' -o -iname '*version*' -o \
+            -iname '*revision*' -o -iname '*changeset*' -o -iname '*.manifest' \
+          \) -size -4M -print | sort > evidence/module/metadata-files.txt
+
+          : > evidence/module/version-grep.txt
+          while IFS= read -r f; do
+            echo "===== ${f#extracted/} =====" >> evidence/module/version-grep.txt
+            grep -aEin '2022\.3\.44|f1c1|f1|c3ae09b9f03c|changeset|revision|version|editor' "$f" >> evidence/module/version-grep.txt 2>/dev/null || true
+          done < evidence/module/metadata-files.txt
+
+          grep -RIl --binary-files=without-match -E '2022\.3\.44f1c1|2022\.3\.44f1|c3ae09b9f03c' extracted 2>/dev/null \
+            | sort > evidence/module/identity-hit-files-all.txt || true
+          sed -n '1,500p' evidence/module/identity-hit-files-all.txt > evidence/module/identity-hit-files.txt
+          : > evidence/module/identity-hits.txt
+          while IFS= read -r f; do
+            echo "===== ${f#extracted/} =====" >> evidence/module/identity-hits.txt
+            grep -aEin '2022\.3\.44f1c1|2022\.3\.44f1|c3ae09b9f03c' "$f" >> evidence/module/identity-hits.txt 2>/dev/null || true
+          done < evidence/module/identity-hit-files.txt
+
+          find extracted -type d -path '*PlaybackEngines/iOSSupport*' | sort > evidence/module/iossupport-dirs-all.txt
+          sed -n '1,100p' evidence/module/iossupport-dirs-all.txt > evidence/module/iossupport-dirs.txt
+
+          echo '--- metadata files ---'
+          cat evidence/module/metadata-files.txt || true
+          echo '--- identity hits ---'
+          sed -n '1,400p' evidence/module/identity-hits.txt
+          echo '--- iOSSupport roots ---'
+          cat evidence/module/iossupport-dirs.txt
+
+      - name: Compatibility verdict
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          hits = Path('evidence/module/identity-hits.txt').read_text(errors='replace')
+          greps = Path('evidence/module/version-grep.txt').read_text(errors='replace')
+          tarlist = Path('evidence/module/tar-list.txt').read_text(errors='replace')
+          alltext = hits + '\n' + greps
+          out = [
+            'EDITOR_VERSION=2022.3.44f1c1',
+            'EDITOR_CHANGESET=c3ae09b9f03c',
+            'MODULE_URL_VERSION=2022.3.44f1',
+            'MODULE_URL_CHANGESET=c3ae09b9f03c',
+            'MODULE_CONTAINS_PLAYBACKENGINES_IOSSUPPORT=' + ('YES' if 'PlaybackEngines/iOSSupport' in tarlist else 'NO'),
+            'PACKAGE_METADATA_MENTIONS_F1C1=' + ('YES' if '2022.3.44f1c1' in alltext else 'NO'),
+            'PACKAGE_METADATA_MENTIONS_F1=' + ('YES' if '2022.3.44f1' in alltext else 'NO'),
+            'PACKAGE_METADATA_MENTIONS_CHANGESET=' + ('YES' if 'c3ae09b9f03c' in alltext.lower() else 'NO'),
+          ]
+          if 'PlaybackEngines/iOSSupport' not in tarlist:
+              verdict='REJECT_NO_IOS_SUPPORT_PAYLOAD'
+          elif 'c3ae09b9f03c' in alltext.lower():
+              verdict='ELIGIBLE_FOR_DISPOSABLE_INSTALL_TEST'
+          else:
+              verdict='ELIGIBLE_FOR_DISPOSABLE_INSTALL_TEST_SAME_CDN_CHANGESET_ONLY'
+          out.append('VERDICT=' + verdict)
+          Path('evidence/module/VERDICT.txt').write_text('\n'.join(out)+'\n')
+          print(Path('evidence/module/VERDICT.txt').read_text())
+          PY
+
+      - name: Upload metadata evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stage9.1-IOS-MODULE-METADATA-V2
+          path: evidence/module/
+          if-no-files-found: error
+          retention-days: 90

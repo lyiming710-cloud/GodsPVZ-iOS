@@ -1,0 +1,94 @@
+name: Stage9.1 Damage generic-instance canonical audit
+
+on:
+  push:
+    branches: [stage9-admin-start-static]
+    paths:
+      - .github/workflows/stage9-damage-generic-instance-canonical-audit.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stage9-admin-start-static
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: '35236211080'
+          name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
+          path: dll
+      - name: Find canonical MemberRefs and StandAloneSig
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=$(mktemp -d); cd "$TMP"
+          dotnet new console --framework net8.0 --force >/dev/null
+          cat > Program.cs <<'CS'
+          using System;
+          using System.IO;
+          using System.Linq;
+          using System.Reflection.Metadata;
+          using System.Reflection.Metadata.Ecma335;
+          using System.Reflection.PortableExecutable;
+          class P {
+            static string Hex(byte[] b)=>BitConverter.ToString(b).Replace("-"," ").ToLowerInvariant();
+            static void Main(string[] args){
+              using var fs=File.OpenRead(Path.GetFullPath(args[0]));
+              using var pe=new PEReader(fs);
+              var r=pe.GetMetadataReader();
+              Console.WriteLine($"MemberRefs={r.MemberReferences.Count} StandAloneSigRows={r.GetTableRowCount(TableIndex.StandAloneSig)}");
+
+              Console.WriteLine("=== MemberRefs parent TypeSpec 0x1b000030 (Enumerator<Element>) ===");
+              for(int rid=1; rid<=r.MemberReferences.Count; rid++){
+                var h=MetadataTokens.MemberReferenceHandle(rid);
+                var mr=r.GetMemberReference(h);
+                if(MetadataTokens.GetToken(mr.Parent)==0x1B000030){
+                  Console.WriteLine($"token=0x{MetadataTokens.GetToken(h):x8} name={r.GetString(mr.Name)} sig={Hex(r.GetBlobBytes(mr.Signature))}");
+                }
+              }
+
+              var wanted="07 02 15 11 55 01 12 80 ac 12 80 ac";
+              Console.WriteLine("=== exact StandAloneSig for locals [Enumerator<Element>, Element] ===");
+              int rows=r.GetTableRowCount(TableIndex.StandAloneSig), matches=0;
+              for(int rid=1; rid<=rows; rid++){
+                var h=MetadataTokens.StandaloneSignatureHandle(rid);
+                var ss=r.GetStandaloneSignature(h);
+                var hex=Hex(r.GetBlobBytes(ss.Signature));
+                if(hex==wanted){
+                  matches++;
+                  Console.WriteLine($"match token=0x{MetadataTokens.GetToken(h):x8} rid={rid} sig={hex}");
+                }
+              }
+              Console.WriteLine($"matches={matches}");
+
+              Console.WriteLine("=== Damage local sig ===");
+              var dh=MetadataTokens.MethodDefinitionHandle(0x10b);
+              var dm=r.GetMethodDefinition(dh);
+              var db=pe.GetMethodBody(dm.RelativeVirtualAddress);
+              var dss=r.GetStandaloneSignature(db.LocalSignature);
+              Console.WriteLine($"token=0x{MetadataTokens.GetToken(db.LocalSignature):x8} sig={Hex(r.GetBlobBytes(dss.Signature))}");
+            }
+          }
+          CS
+          mkdir -p "$GITHUB_WORKSPACE/diagnostics"
+          dotnet run --no-restore -- "$GITHUB_WORKSPACE/dll/GodsPVZRuntime1-bgmvolume.dll" 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/damage-generic-instance-canonical.txt"
+          cd "$GITHUB_WORKSPACE"
+      - name: Commit report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics/damage-generic-instance-canonical.txt || true
+          git commit -m 'diagnostics: find canonical Damage generic metadata' || exit 0
+          git pull --rebase origin stage9-admin-start-static
+          git push origin HEAD:stage9-admin-start-static
