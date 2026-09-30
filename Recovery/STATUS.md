@@ -1,5 +1,7 @@
 # Recovery status
 
+> **2026-09-30 最新进度：Native23 全面独立审查已完成，先读 [审查与当前状态](Native23-Review-2026-09-30/README.md)。有真实编译改善，但 Batch2a 全量预检仍有 5200 条错误、23 个失败 TU，没有 IPA。Batch1 六个站点可保留为受限候选；Batch2/2a 未通过高还原验收。来源追踪、方法归属、字节隔离和补丁器约束需先纠正。此前 Native21 交接继续保留为项目历史与输入依据。**
+
 ## Current strategy
 
 Use PC x86-64 IL2CPP as the primary gameplay source, Android native second, then original metadata/assets/JSON. Cpp2IL/ILSpy are attribution and managed-reconstruction aids, not authoritative source.

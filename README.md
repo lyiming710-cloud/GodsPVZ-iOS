@@ -1,5 +1,9 @@
 # GodsPVZ iOS recovery
 
+## Latest recovery checkpoint — 2026-09-30
+
+Read [Native23 independent review and current progress](Recovery/Native23-Review-2026-09-30/README.md) first. The unsigned IPA has **not** been exported. Native23 Batch2a has reproducible compilation improvement, but full preflight still fails with **5200 diagnostics / 23 failed translation units**. Provenance, method attribution and strict byte-isolation findings remain open. Experimental DLLs are evidence, not a promoted production baseline. The older Stage9.1 sections below are historical context.
+
 Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by the repository owner.
 
 ## Locked source/build identity

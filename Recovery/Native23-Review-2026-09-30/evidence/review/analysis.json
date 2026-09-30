@@ -1,0 +1,2773 @@
+{
+  "provenance_source": {
+    "executed": "/workspaces/GodsPVZ-native19/.validation/native22/native23_prov.py",
+    "sha256": "b422a40a1c61b29dbc7385dceff2669d42da7a2246849e1ccc098cbeec605cdb",
+    "equals_tracked": true,
+    "equals_commit": true
+  },
+  "counterexamples": [
+    {
+      "case": "invalid local receiver laundered as FIELD",
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to Owner",
+          "opcode": "stloc"
+        },
+        {
+          "offset": 10,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "FIELD:GameObject Owner::GameObject Owner::f"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 8,
+            "clash_offset": 10,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "invalid starg laundered as ARG",
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to GameObject",
+          "opcode": "starg"
+        },
+        {
+          "offset": 8,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "ARG:0"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 6,
+            "clash_offset": 8,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "ARG:0",
+            "prov_class": "ARG",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "invalid call argument laundered as FIELD",
+      "errors": [
+        {
+          "offset": 2,
+          "msg": "I4 is not assignable to System.String",
+          "opcode": "call"
+        },
+        {
+          "offset": 8,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "FIELD:GameObject Owner::GameObject Owner::f"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 6,
+            "clash_offset": 8,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    },
+    {
+      "case": "invalid merge retains accepted predecessor",
+      "errors": [
+        {
+          "offset": 14,
+          "msg": "invalid comparison GameObject, I4",
+          "opcode": "ceq",
+          "prov_top": "CONST",
+          "prov_second": "FIELD:GameObject Owner::GameObject Owner::f"
+        },
+        {
+          "offset": 10,
+          "msg": "merge types Owner vs I4",
+          "opcode": "ldfld"
+        }
+      ],
+      "solver": {
+        "recs": [
+          {
+            "flip_offset": 12,
+            "clash_offset": 14,
+            "clash_msg": "invalid comparison GameObject, I4",
+            "prov": "FIELD:GameObject Owner::GameObject Owner::f",
+            "prov_class": "FIELD",
+            "verdict": "ACCEPT"
+          }
+        ],
+        "n_flips": 1
+      }
+    }
+  ],
+  "actual_accepted_analysis": {
+    "methods": 249,
+    "sites": 865,
+    "provenance_counts": {
+      "FIELD": 746,
+      "ARG": 69,
+      "THIS": 1,
+      "SFIELD": 49
+    },
+    "direct_field_receiver_observations": {
+      "LOCAL": 225,
+      "THIS": 494,
+      "ARG": 27
+    },
+    "accepted_direct_local_receiver_sites": 225,
+    "examples": [
+      {
+        "token": "0x06000011",
+        "name": "System.Void Admin_system2_boardEdior::Update_Mouse()",
+        "site": 208,
+        "field_load": 203,
+        "receiver_provenance": [
+          "LOCAL:12(Device_boardEditor)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x0600002D",
+        "name": "System.Void DeviceDataEditor::SetContentType(System.Int32)",
+        "site": 227,
+        "field_load": 222,
+        "receiver_provenance": [
+          "LOCAL:11(DeviceContent)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 233,
+        "field_load": 228,
+        "receiver_provenance": [
+          "LOCAL:8(Enemy_boardEditor)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 352,
+        "field_load": 347,
+        "receiver_provenance": [
+          "LOCAL:12(Enemy_boardEditor)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 471,
+        "field_load": 466,
+        "receiver_provenance": [
+          "LOCAL:14(Enemy_boardEditor)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 505,
+        "field_load": 500,
+        "receiver_provenance": [
+          "LOCAL:15(Enemy)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x0600004B",
+        "name": "System.Void Enemy_boardEditor::Initialize(Enemy)",
+        "site": 338,
+        "field_load": 333,
+        "receiver_provenance": [
+          "LOCAL:14(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:2(BoardConfig)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 74,
+        "field_load": 69,
+        "receiver_provenance": [
+          "LOCAL:4(Map)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 231,
+        "field_load": 226,
+        "receiver_provenance": [
+          "LOCAL:7(Row)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 355,
+        "field_load": 350,
+        "receiver_provenance": [
+          "LOCAL:9(BoardConfig)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 389,
+        "field_load": 384,
+        "receiver_provenance": [
+          "LOCAL:11(Map)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 474,
+        "field_load": 469,
+        "receiver_provenance": [
+          "LOCAL:10(Row)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x060000C5",
+        "name": "System.Void VFXAnimationEvent::Close()",
+        "site": 123,
+        "field_load": 118,
+        "receiver_provenance": [
+          "LOCAL:3(Plant)"
+        ],
+        "method_existing_errors": 9
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 542,
+        "field_load": 537,
+        "receiver_provenance": [
+          "LOCAL:13(Board)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 576,
+        "field_load": 571,
+        "receiver_provenance": [
+          "LOCAL:12(Banks)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 783,
+        "field_load": 778,
+        "receiver_provenance": [
+          "LOCAL:12(Banks)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 920,
+        "field_load": 915,
+        "receiver_provenance": [
+          "LOCAL:13(Board)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 954,
+        "field_load": 949,
+        "receiver_provenance": [
+          "LOCAL:12(Banks)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000ED",
+        "name": "System.Void Banks::SetPreCards(BoardConfig)",
+        "site": 582,
+        "field_load": 577,
+        "receiver_provenance": [
+          "LOCAL:27(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 20
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 324,
+        "field_load": 319,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 403,
+        "field_load": 398,
+        "receiver_provenance": [
+          "LOCAL:22(Map)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 733,
+        "field_load": 728,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 825,
+        "field_load": 820,
+        "receiver_provenance": [
+          "LOCAL:75(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1051,
+        "field_load": 1046,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      }
+    ],
+    "all_direct_local_receiver_sites": [
+      {
+        "token": "0x06000011",
+        "name": "System.Void Admin_system2_boardEdior::Update_Mouse()",
+        "site": 208,
+        "field_load": 203,
+        "receiver_provenance": [
+          "LOCAL:12(Device_boardEditor)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x0600002D",
+        "name": "System.Void DeviceDataEditor::SetContentType(System.Int32)",
+        "site": 227,
+        "field_load": 222,
+        "receiver_provenance": [
+          "LOCAL:11(DeviceContent)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 233,
+        "field_load": 228,
+        "receiver_provenance": [
+          "LOCAL:8(Enemy_boardEditor)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 352,
+        "field_load": 347,
+        "receiver_provenance": [
+          "LOCAL:12(Enemy_boardEditor)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 471,
+        "field_load": 466,
+        "receiver_provenance": [
+          "LOCAL:14(Enemy_boardEditor)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x06000041",
+        "name": "System.Void EnemyDataEditor::Move(System.Int32)",
+        "site": 505,
+        "field_load": 500,
+        "receiver_provenance": [
+          "LOCAL:15(Enemy)"
+        ],
+        "method_existing_errors": 33
+      },
+      {
+        "token": "0x0600004B",
+        "name": "System.Void Enemy_boardEditor::Initialize(Enemy)",
+        "site": 338,
+        "field_load": 333,
+        "receiver_provenance": [
+          "LOCAL:14(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:2(BoardConfig)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 74,
+        "field_load": 69,
+        "receiver_provenance": [
+          "LOCAL:4(Map)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 231,
+        "field_load": 226,
+        "receiver_provenance": [
+          "LOCAL:7(Row)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 355,
+        "field_load": 350,
+        "receiver_provenance": [
+          "LOCAL:9(BoardConfig)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 389,
+        "field_load": 384,
+        "receiver_provenance": [
+          "LOCAL:11(Map)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600008C",
+        "name": "Grid System2::FindGrid(System.Int32,System.Int32)",
+        "site": 474,
+        "field_load": 469,
+        "receiver_provenance": [
+          "LOCAL:10(Row)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x060000C5",
+        "name": "System.Void VFXAnimationEvent::Close()",
+        "site": 123,
+        "field_load": 118,
+        "receiver_provenance": [
+          "LOCAL:3(Plant)"
+        ],
+        "method_existing_errors": 9
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 542,
+        "field_load": 537,
+        "receiver_provenance": [
+          "LOCAL:13(Board)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 576,
+        "field_load": 571,
+        "receiver_provenance": [
+          "LOCAL:12(Banks)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 783,
+        "field_load": 778,
+        "receiver_provenance": [
+          "LOCAL:12(Banks)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 920,
+        "field_load": 915,
+        "receiver_provenance": [
+          "LOCAL:13(Board)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000E8",
+        "name": "System.Void Banks::LoadProps(PropChooseSystem,BoardConfig)",
+        "site": 954,
+        "field_load": 949,
+        "receiver_provenance": [
+          "LOCAL:12(Banks)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x060000ED",
+        "name": "System.Void Banks::SetPreCards(BoardConfig)",
+        "site": 582,
+        "field_load": 577,
+        "receiver_provenance": [
+          "LOCAL:27(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 20
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 324,
+        "field_load": 319,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 403,
+        "field_load": 398,
+        "receiver_provenance": [
+          "LOCAL:22(Map)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 733,
+        "field_load": 728,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 825,
+        "field_load": 820,
+        "receiver_provenance": [
+          "LOCAL:75(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1051,
+        "field_load": 1046,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1143,
+        "field_load": 1138,
+        "receiver_provenance": [
+          "LOCAL:75(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1369,
+        "field_load": 1364,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1461,
+        "field_load": 1456,
+        "receiver_provenance": [
+          "LOCAL:75(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1687,
+        "field_load": 1682,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 1779,
+        "field_load": 1774,
+        "receiver_provenance": [
+          "LOCAL:75(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 2005,
+        "field_load": 2000,
+        "receiver_provenance": [
+          "LOCAL:21(BoardConfig)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x06000156",
+        "name": "BoardConfig BoardConfig::Copy()",
+        "site": 2097,
+        "field_load": 2092,
+        "receiver_provenance": [
+          "LOCAL:75(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 68
+      },
+      {
+        "token": "0x0600018A",
+        "name": "Device DeviceManager::PlaceDevice(DeviceData,System.Int32,System.Int32)",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:4(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x0600018A",
+        "name": "Device DeviceManager::PlaceDevice(DeviceData,System.Int32,System.Int32)",
+        "site": 90,
+        "field_load": 85,
+        "receiver_provenance": [
+          "LOCAL:6(SavesManager)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x060001A2",
+        "name": "System.Collections.Generic.List`1<EnemyPath> Enemy::ClonePath()",
+        "site": 126,
+        "field_load": 121,
+        "receiver_provenance": [
+          "LOCAL:0(System.Collections.Generic.List`1<EnemyPath>)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x060001A7",
+        "name": "System.Collections.Generic.List`1<Enemy> EnemySelecter::CreateEnemyPreviews()",
+        "site": 347,
+        "field_load": 342,
+        "receiver_provenance": [
+          "LOCAL:26(System.Collections.Generic.List`1<Enemy>)"
+        ],
+        "method_existing_errors": 34
+      },
+      {
+        "token": "0x060001A9",
+        "name": "UnityEngine.Vector3 EnemySelecter::GetRandomPosition(System.Int32,System.Int32,System.Int32)",
+        "site": 50,
+        "field_load": 45,
+        "receiver_provenance": [
+          "LOCAL:0(Board)"
+        ],
+        "method_existing_errors": 5
+      },
+      {
+        "token": "0x060001AA",
+        "name": "System.Int32 EnemySelecter::GetRandomRow(ZombieSelect)",
+        "site": 98,
+        "field_load": 93,
+        "receiver_provenance": [
+          "LOCAL:2(Board)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001AA",
+        "name": "System.Int32 EnemySelecter::GetRandomRow(ZombieSelect)",
+        "site": 145,
+        "field_load": 140,
+        "receiver_provenance": [
+          "LOCAL:4(Map)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001AA",
+        "name": "System.Int32 EnemySelecter::GetRandomRow(ZombieSelect)",
+        "site": 524,
+        "field_load": 519,
+        "receiver_provenance": [
+          "LOCAL:4(Map)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001AA",
+        "name": "System.Int32 EnemySelecter::GetRandomRow(ZombieSelect)",
+        "site": 809,
+        "field_load": 804,
+        "receiver_provenance": [
+          "LOCAL:4(Map)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001AA",
+        "name": "System.Int32 EnemySelecter::GetRandomRow(ZombieSelect)",
+        "site": 856,
+        "field_load": 851,
+        "receiver_provenance": [
+          "LOCAL:4(Map)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001AF",
+        "name": "System.Void EnemyManager::Start()",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:1(Board)"
+        ],
+        "method_existing_errors": 25
+      },
+      {
+        "token": "0x060001AF",
+        "name": "System.Void EnemyManager::Start()",
+        "site": 711,
+        "field_load": 706,
+        "receiver_provenance": [
+          "LOCAL:40(Flag)"
+        ],
+        "method_existing_errors": 25
+      },
+      {
+        "token": "0x060001B7",
+        "name": "System.Void EnemyManager::ExtendFlagList()",
+        "site": 291,
+        "field_load": 286,
+        "receiver_provenance": [
+          "LOCAL:9(Flag)"
+        ],
+        "method_existing_errors": 23
+      },
+      {
+        "token": "0x060001BB",
+        "name": "Wave EnemyManager::GetWave(System.Int32)",
+        "site": 308,
+        "field_load": 303,
+        "receiver_provenance": [
+          "LOCAL:16(Flag)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001BB",
+        "name": "Wave EnemyManager::GetWave(System.Int32)",
+        "site": 457,
+        "field_load": 452,
+        "receiver_provenance": [
+          "LOCAL:18(Flag)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060001BD",
+        "name": "System.Void EnemyManager::SetPreZombie()",
+        "site": 387,
+        "field_load": 382,
+        "receiver_provenance": [
+          "LOCAL:28(Board)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x060001BD",
+        "name": "System.Void EnemyManager::SetPreZombie()",
+        "site": 481,
+        "field_load": 476,
+        "receiver_provenance": [
+          "LOCAL:15(Wave)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x060001BD",
+        "name": "System.Void EnemyManager::SetPreZombie()",
+        "site": 580,
+        "field_load": 575,
+        "receiver_provenance": [
+          "LOCAL:26(Board)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x060001D3",
+        "name": "System.Boolean MouseManager::MouseDownUpdateOnBoardPreview()",
+        "site": 309,
+        "field_load": 304,
+        "receiver_provenance": [
+          "LOCAL:12(PrepareUIController)"
+        ],
+        "method_existing_errors": 13
+      },
+      {
+        "token": "0x060001D5",
+        "name": "Project MouseManager::MouseDown_GetProject()",
+        "site": 14,
+        "field_load": 9,
+        "receiver_provenance": [
+          "LOCAL:4(Board)"
+        ],
+        "method_existing_errors": 12
+      },
+      {
+        "token": "0x060001D5",
+        "name": "Project MouseManager::MouseDown_GetProject()",
+        "site": 164,
+        "field_load": 159,
+        "receiver_provenance": [
+          "LOCAL:9(Board)"
+        ],
+        "method_existing_errors": 12
+      },
+      {
+        "token": "0x060001D5",
+        "name": "Project MouseManager::MouseDown_GetProject()",
+        "site": 204,
+        "field_load": 199,
+        "receiver_provenance": [
+          "LOCAL:10(ProjectManager)"
+        ],
+        "method_existing_errors": 12
+      },
+      {
+        "token": "0x060001D5",
+        "name": "Project MouseManager::MouseDown_GetProject()",
+        "site": 499,
+        "field_load": 494,
+        "receiver_provenance": [
+          "LOCAL:10(ProjectManager)"
+        ],
+        "method_existing_errors": 12
+      },
+      {
+        "token": "0x060001D5",
+        "name": "Project MouseManager::MouseDown_GetProject()",
+        "site": 740,
+        "field_load": 735,
+        "receiver_provenance": [
+          "LOCAL:10(ProjectManager)"
+        ],
+        "method_existing_errors": 12
+      },
+      {
+        "token": "0x060001D6",
+        "name": "Plant MouseManager::MouseDown_GetPlant()",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:4(Board)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x060001D6",
+        "name": "Plant MouseManager::MouseDown_GetPlant()",
+        "site": 243,
+        "field_load": 238,
+        "receiver_provenance": [
+          "LOCAL:16(Board)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x060001D6",
+        "name": "Plant MouseManager::MouseDown_GetPlant()",
+        "site": 346,
+        "field_load": 341,
+        "receiver_provenance": [
+          "LOCAL:6(Plant_DetaiPage)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x060001DB",
+        "name": "System.Boolean MouseManager::GetDeviceFromCardbank(Card)",
+        "site": 120,
+        "field_load": 115,
+        "receiver_provenance": [
+          "LOCAL:6(Board)"
+        ],
+        "method_existing_errors": 49
+      },
+      {
+        "token": "0x060001DC",
+        "name": "Device MouseManager::GetDeviceUnderMouse(System.Boolean,Damage)",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:2(Board)"
+        ],
+        "method_existing_errors": 8
+      },
+      {
+        "token": "0x060001DC",
+        "name": "Device MouseManager::GetDeviceUnderMouse(System.Boolean,Damage)",
+        "site": 568,
+        "field_load": 563,
+        "receiver_provenance": [
+          "LOCAL:4(DeviceManager)"
+        ],
+        "method_existing_errors": 8
+      },
+      {
+        "token": "0x060001FF",
+        "name": "System.Void ProjectManager::CollectAll()",
+        "site": 236,
+        "field_load": 231,
+        "receiver_provenance": [
+          "LOCAL:3(Board)"
+        ],
+        "method_existing_errors": 5
+      },
+      {
+        "token": "0x06000217",
+        "name": "Supplies ResourceManager::CreatNewSupplies(System.Int32)",
+        "site": 37,
+        "field_load": 32,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesInitialValue)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x06000218",
+        "name": "SuppliesInfo ResourceManager::GetSuppliesInfo(System.Int32)",
+        "site": 37,
+        "field_load": 32,
+        "receiver_provenance": [
+          "LOCAL:2(SuppliesInitialValue)"
+        ],
+        "method_existing_errors": 4
+      },
+      {
+        "token": "0x0600023F",
+        "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32,System.Int32,System.Int32,System.Int32)",
+        "site": 14,
+        "field_load": 9,
+        "receiver_provenance": [
+          "LOCAL:4(PlantsInitialValue)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600023F",
+        "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32,System.Int32,System.Int32,System.Int32)",
+        "site": 239,
+        "field_load": 234,
+        "receiver_provenance": [
+          "LOCAL:8(PlantSave)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600023F",
+        "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32,System.Int32,System.Int32,System.Int32)",
+        "site": 332,
+        "field_load": 327,
+        "receiver_provenance": [
+          "LOCAL:8(PlantSave)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600023F",
+        "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32,System.Int32,System.Int32,System.Int32)",
+        "site": 425,
+        "field_load": 420,
+        "receiver_provenance": [
+          "LOCAL:8(PlantSave)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600023F",
+        "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32,System.Int32,System.Int32,System.Int32)",
+        "site": 478,
+        "field_load": 473,
+        "receiver_provenance": [
+          "LOCAL:14(PlantsInitialValue)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x06000253",
+        "name": "System.Collections.Generic.List`1<Supplies> PlantsInitialValue::GetSkillUpSuppliesList(System.Int32,System.Int32)",
+        "site": 119,
+        "field_load": 114,
+        "receiver_provenance": [
+          "LOCAL:9(PlantSkillUpSupplies)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x06000253",
+        "name": "System.Collections.Generic.List`1<Supplies> PlantsInitialValue::GetSkillUpSuppliesList(System.Int32,System.Int32)",
+        "site": 302,
+        "field_load": 297,
+        "receiver_provenance": [
+          "LOCAL:12(PlantSkillUpSupplies)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x0600027C",
+        "name": "Zombie ZombieManager::PlaceNewZombie(System.Int32,System.Int32,System.Int32)",
+        "site": 93,
+        "field_load": 88,
+        "receiver_provenance": [
+          "LOCAL:6(Board)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000286",
+        "name": "System.Collections.Generic.List`1<NodeAstar> Map::CreateAstarMap(System.Int32,System.Int32)",
+        "site": 442,
+        "field_load": 437,
+        "receiver_provenance": [
+          "LOCAL:15(Row)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000286",
+        "name": "System.Collections.Generic.List`1<NodeAstar> Map::CreateAstarMap(System.Int32,System.Int32)",
+        "site": 476,
+        "field_load": 471,
+        "receiver_provenance": [
+          "LOCAL:11(Map)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x0600028B",
+        "name": "System.Int32 Map::GetGridPassablePoint(System.Int32,System.Int32)",
+        "site": 183,
+        "field_load": 178,
+        "receiver_provenance": [
+          "LOCAL:13(Row)"
+        ],
+        "method_existing_errors": 8
+      },
+      {
+        "token": "0x0600028B",
+        "name": "System.Int32 Map::GetGridPassablePoint(System.Int32,System.Int32)",
+        "site": 361,
+        "field_load": 356,
+        "receiver_provenance": [
+          "LOCAL:16(Row)"
+        ],
+        "method_existing_errors": 8
+      },
+      {
+        "token": "0x0600028C",
+        "name": "System.Collections.Generic.List`1<EnemyPath> Map::PathFingding(Zombie)",
+        "site": 1630,
+        "field_load": 1625,
+        "receiver_provenance": [
+          "LOCAL:2(Board)"
+        ],
+        "method_existing_errors": 22
+      },
+      {
+        "token": "0x0600028E",
+        "name": "System.Collections.Generic.List`1<Grid> Map::RandomGet_Grid(System.Int32,System.Int32,System.Int32)",
+        "site": 343,
+        "field_load": 338,
+        "receiver_provenance": [
+          "LOCAL:3(System.Collections.Generic.List`1<Grid>)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x06000291",
+        "name": "System.Void Map::TurnScale(System.Int32,System.Int32)",
+        "site": 705,
+        "field_load": 700,
+        "receiver_provenance": [
+          "LOCAL:9(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x060002F5",
+        "name": "System.Void Card_Choose::Choose_Reset()",
+        "site": 443,
+        "field_load": 438,
+        "receiver_provenance": [
+          "LOCAL:25(SeedChooserScreen)"
+        ],
+        "method_existing_errors": 20
+      },
+      {
+        "token": "0x060002F5",
+        "name": "System.Void Card_Choose::Choose_Reset()",
+        "site": 755,
+        "field_load": 750,
+        "receiver_provenance": [
+          "LOCAL:26(SeedChooserScreen)"
+        ],
+        "method_existing_errors": 20
+      },
+      {
+        "token": "0x060002FC",
+        "name": "System.Void DeviceData::.ctor(System.Int32,DeviceData)",
+        "site": 122,
+        "field_load": 117,
+        "receiver_provenance": [
+          "LOCAL:5(DeviceContent)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x0600030C",
+        "name": "System.Void Device::Update_Events()",
+        "site": 125,
+        "field_load": 120,
+        "receiver_provenance": [
+          "LOCAL:18(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x06000330",
+        "name": "System.Void Device::SetBrightness(System.Single)",
+        "site": 332,
+        "field_load": 327,
+        "receiver_provenance": [
+          "LOCAL:3(Device/ICEUIController)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x06000330",
+        "name": "System.Void Device::SetBrightness(System.Single)",
+        "site": 574,
+        "field_load": 569,
+        "receiver_provenance": [
+          "LOCAL:3(Device/ICEUIController)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x06000354",
+        "name": "System.Void Plant::Update_PlantFight()",
+        "site": 756,
+        "field_load": 751,
+        "receiver_provenance": [
+          "LOCAL:11(Board)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000354",
+        "name": "System.Void Plant::Update_PlantFight()",
+        "site": 803,
+        "field_load": 798,
+        "receiver_provenance": [
+          "LOCAL:11(Board)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000356",
+        "name": "System.Void Plant::Update_SenarioState()",
+        "site": 14,
+        "field_load": 9,
+        "receiver_provenance": [
+          "LOCAL:0(Board)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x06000356",
+        "name": "System.Void Plant::Update_SenarioState()",
+        "site": 61,
+        "field_load": 56,
+        "receiver_provenance": [
+          "LOCAL:0(Board)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x0600035C",
+        "name": "System.Void Plant::DestroyThis()",
+        "site": 417,
+        "field_load": 412,
+        "receiver_provenance": [
+          "LOCAL:10(Board)"
+        ],
+        "method_existing_errors": 5
+      },
+      {
+        "token": "0x06000360",
+        "name": "Zombie Plant::EnemySeeking()",
+        "site": 1065,
+        "field_load": 1060,
+        "receiver_provenance": [
+          "LOCAL:8(Board)"
+        ],
+        "method_existing_errors": 29
+      },
+      {
+        "token": "0x06000363",
+        "name": "Device Plant::EnemySeeking_Device()",
+        "site": 506,
+        "field_load": 501,
+        "receiver_provenance": [
+          "LOCAL:7(Board)"
+        ],
+        "method_existing_errors": 39
+      },
+      {
+        "token": "0x06000363",
+        "name": "Device Plant::EnemySeeking_Device()",
+        "site": 1238,
+        "field_load": 1233,
+        "receiver_provenance": [
+          "LOCAL:8(Board)"
+        ],
+        "method_existing_errors": 39
+      },
+      {
+        "token": "0x06000364",
+        "name": "System.Collections.Generic.List`1<Device> Plant::EnemySeeking_Device_plural(System.Int32)",
+        "site": 221,
+        "field_load": 216,
+        "receiver_provenance": [
+          "LOCAL:6(Board)"
+        ],
+        "method_existing_errors": 23
+      },
+      {
+        "token": "0x06000364",
+        "name": "System.Collections.Generic.List`1<Device> Plant::EnemySeeking_Device_plural(System.Int32)",
+        "site": 255,
+        "field_load": 250,
+        "receiver_provenance": [
+          "LOCAL:7(DeviceManager)"
+        ],
+        "method_existing_errors": 23
+      },
+      {
+        "token": "0x06000387",
+        "name": "System.Void Plant::PC_Potatomortar()",
+        "site": 284,
+        "field_load": 279,
+        "receiver_provenance": [
+          "LOCAL:9(Board)"
+        ],
+        "method_existing_errors": 25
+      },
+      {
+        "token": "0x06000392",
+        "name": "System.Void Plant::PC_SSI_TrySummon()",
+        "site": 84,
+        "field_load": 79,
+        "receiver_provenance": [
+          "LOCAL:9(Board)"
+        ],
+        "method_existing_errors": 19
+      },
+      {
+        "token": "0x06000392",
+        "name": "System.Void Plant::PC_SSI_TrySummon()",
+        "site": 119,
+        "field_load": 114,
+        "receiver_provenance": [
+          "LOCAL:11(ProjectileManager)"
+        ],
+        "method_existing_errors": 19
+      },
+      {
+        "token": "0x060003B5",
+        "name": "System.Void Plant::TranPlanting(System.Int32,System.Int32)",
+        "site": 108,
+        "field_load": 103,
+        "receiver_provenance": [
+          "LOCAL:25(Board)"
+        ],
+        "method_existing_errors": 41
+      },
+      {
+        "token": "0x060003B7",
+        "name": "System.Boolean Plant::TryUseSkills()",
+        "site": 140,
+        "field_load": 135,
+        "receiver_provenance": [
+          "LOCAL:8(Board)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x060003FC",
+        "name": "System.Boolean Projectile::TestOutofMap()",
+        "site": 63,
+        "field_load": 58,
+        "receiver_provenance": [
+          "LOCAL:0(Board)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x0600046A",
+        "name": "System.Boolean Zombie::Path_Finding()",
+        "site": 85,
+        "field_load": 80,
+        "receiver_provenance": [
+          "LOCAL:2(Board)"
+        ],
+        "method_existing_errors": 9
+      },
+      {
+        "token": "0x0600046A",
+        "name": "System.Boolean Zombie::Path_Finding()",
+        "site": 557,
+        "field_load": 552,
+        "receiver_provenance": [
+          "LOCAL:10(Board)"
+        ],
+        "method_existing_errors": 9
+      },
+      {
+        "token": "0x06000486",
+        "name": "Device Zombie::TrySeekTragetDevice()",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:1(Board)"
+        ],
+        "method_existing_errors": 4
+      },
+      {
+        "token": "0x06000487",
+        "name": "Plant Zombie::TrySeekTragetPlant()",
+        "site": 68,
+        "field_load": 63,
+        "receiver_provenance": [
+          "LOCAL:3(Board)"
+        ],
+        "method_existing_errors": 5
+      },
+      {
+        "token": "0x06000487",
+        "name": "Plant Zombie::TrySeekTragetPlant()",
+        "site": 102,
+        "field_load": 97,
+        "receiver_provenance": [
+          "LOCAL:6(PlantManager)"
+        ],
+        "method_existing_errors": 5
+      },
+      {
+        "token": "0x0600048E",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Enhance()",
+        "site": 49,
+        "field_load": 44,
+        "receiver_provenance": [
+          "LOCAL:5(Board)"
+        ],
+        "method_existing_errors": 22
+      },
+      {
+        "token": "0x0600048E",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Enhance()",
+        "site": 361,
+        "field_load": 356,
+        "receiver_provenance": [
+          "LOCAL:31(StatsIncreased)"
+        ],
+        "method_existing_errors": 22
+      },
+      {
+        "token": "0x0600048E",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Enhance()",
+        "site": 442,
+        "field_load": 437,
+        "receiver_provenance": [
+          "LOCAL:24(Zombie)"
+        ],
+        "method_existing_errors": 22
+      },
+      {
+        "token": "0x06000490",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Boxing()",
+        "site": 146,
+        "field_load": 141,
+        "receiver_provenance": [
+          "LOCAL:2(Board)"
+        ],
+        "method_existing_errors": 40
+      },
+      {
+        "token": "0x06000490",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Boxing()",
+        "site": 185,
+        "field_load": 180,
+        "receiver_provenance": [
+          "LOCAL:6(PlantManager)"
+        ],
+        "method_existing_errors": 40
+      },
+      {
+        "token": "0x06000490",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Boxing()",
+        "site": 535,
+        "field_load": 530,
+        "receiver_provenance": [
+          "LOCAL:4(DeviceManager)"
+        ],
+        "method_existing_errors": 40
+      },
+      {
+        "token": "0x06000490",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Boxing()",
+        "site": 1721,
+        "field_load": 1716,
+        "receiver_provenance": [
+          "LOCAL:15(Board)"
+        ],
+        "method_existing_errors": 40
+      },
+      {
+        "token": "0x06000490",
+        "name": "System.Void Zombie::ZC_IVH_Skill1_Boxing()",
+        "site": 2117,
+        "field_load": 2112,
+        "receiver_provenance": [
+          "LOCAL:2(Board)"
+        ],
+        "method_existing_errors": 40
+      },
+      {
+        "token": "0x06000493",
+        "name": "System.Void Zombie::ZC_IVH_Skill2_Enhance()",
+        "site": 54,
+        "field_load": 49,
+        "receiver_provenance": [
+          "LOCAL:6(Board)"
+        ],
+        "method_existing_errors": 26
+      },
+      {
+        "token": "0x06000493",
+        "name": "System.Void Zombie::ZC_IVH_Skill2_Enhance()",
+        "site": 235,
+        "field_load": 230,
+        "receiver_provenance": [
+          "LOCAL:23(Zombie)"
+        ],
+        "method_existing_errors": 26
+      },
+      {
+        "token": "0x06000493",
+        "name": "System.Void Zombie::ZC_IVH_Skill2_Enhance()",
+        "site": 487,
+        "field_load": 482,
+        "receiver_provenance": [
+          "LOCAL:23(Zombie)"
+        ],
+        "method_existing_errors": 26
+      },
+      {
+        "token": "0x06000493",
+        "name": "System.Void Zombie::ZC_IVH_Skill2_Enhance()",
+        "site": 787,
+        "field_load": 782,
+        "receiver_provenance": [
+          "LOCAL:23(Zombie)"
+        ],
+        "method_existing_errors": 26
+      },
+      {
+        "token": "0x060004AC",
+        "name": "Device Zombie::ZC_SnowbeastSeekBait()",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:1(Board)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 101,
+        "field_load": 96,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 148,
+        "field_load": 143,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 200,
+        "field_load": 195,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 387,
+        "field_load": 382,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 440,
+        "field_load": 435,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 492,
+        "field_load": 487,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 674,
+        "field_load": 669,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x060004D9",
+        "name": "SuppliesItem Supplies::CreatSuppliesItem(System.Boolean)",
+        "site": 805,
+        "field_load": 800,
+        "receiver_provenance": [
+          "LOCAL:5(SuppliesItem)"
+        ],
+        "method_existing_errors": 17
+      },
+      {
+        "token": "0x06000507",
+        "name": "System.Void SkillManager::Updata10(Plant)",
+        "site": 1726,
+        "field_load": 1721,
+        "receiver_provenance": [
+          "LOCAL:80(Skill)"
+        ],
+        "method_existing_errors": 67
+      },
+      {
+        "token": "0x06000518",
+        "name": "System.Void SkillManager::Function149(Plant,Zombie,Projectile,Damage)",
+        "site": 212,
+        "field_load": 207,
+        "receiver_provenance": [
+          "LOCAL:64(Plant)"
+        ],
+        "method_existing_errors": 51
+      },
+      {
+        "token": "0x06000518",
+        "name": "System.Void SkillManager::Function149(Plant,Zombie,Projectile,Damage)",
+        "site": 259,
+        "field_load": 254,
+        "receiver_provenance": [
+          "LOCAL:42(Plant)"
+        ],
+        "method_existing_errors": 51
+      },
+      {
+        "token": "0x06000518",
+        "name": "System.Void SkillManager::Function149(Plant,Zombie,Projectile,Damage)",
+        "site": 824,
+        "field_load": 819,
+        "receiver_provenance": [
+          "LOCAL:64(Plant)"
+        ],
+        "method_existing_errors": 51
+      },
+      {
+        "token": "0x06000518",
+        "name": "System.Void SkillManager::Function149(Plant,Zombie,Projectile,Damage)",
+        "site": 871,
+        "field_load": 866,
+        "receiver_provenance": [
+          "LOCAL:69(Plant)"
+        ],
+        "method_existing_errors": 51
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 104,
+        "field_load": 99,
+        "receiver_provenance": [
+          "LOCAL:7(Plant)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 159,
+        "field_load": 154,
+        "receiver_provenance": [
+          "LOCAL:11(Skill)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 244,
+        "field_load": 239,
+        "receiver_provenance": [
+          "LOCAL:7(Plant)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 496,
+        "field_load": 491,
+        "receiver_provenance": [
+          "LOCAL:7(Plant)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 543,
+        "field_load": 538,
+        "receiver_provenance": [
+          "LOCAL:93(Plant)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 1143,
+        "field_load": 1138,
+        "receiver_provenance": [
+          "LOCAL:7(Plant)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600051B",
+        "name": "System.Void SkillManager::Function150(Plant,Zombie,Projectile,Damage)",
+        "site": 1190,
+        "field_load": 1185,
+        "receiver_provenance": [
+          "LOCAL:93(Plant)"
+        ],
+        "method_existing_errors": 38
+      },
+      {
+        "token": "0x0600052A",
+        "name": "System.Void AdventureHardScreen::AddNewLevelItem(System.Int32)",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:2(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x0600052A",
+        "name": "System.Void AdventureHardScreen::AddNewLevelItem(System.Int32)",
+        "site": 61,
+        "field_load": 56,
+        "receiver_provenance": [
+          "LOCAL:4(SavesManager)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x0600052A",
+        "name": "System.Void AdventureHardScreen::AddNewLevelItem(System.Int32)",
+        "site": 553,
+        "field_load": 548,
+        "receiver_provenance": [
+          "LOCAL:11(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x06000560",
+        "name": "System.Void Almanac_DeviceHome::Open(System.Int32)",
+        "site": 74,
+        "field_load": 69,
+        "receiver_provenance": [
+          "LOCAL:7(SavesManager)"
+        ],
+        "method_existing_errors": 2
+      },
+      {
+        "token": "0x06000563",
+        "name": "System.Void Almanac_DeviceHome::SetWindowsLock()",
+        "site": 45,
+        "field_load": 40,
+        "receiver_provenance": [
+          "LOCAL:1(SavesManager)"
+        ],
+        "method_existing_errors": 2
+      },
+      {
+        "token": "0x06000572",
+        "name": "System.Void Almanac_PlantDetail::Button_LevelUp()",
+        "site": 75,
+        "field_load": 70,
+        "receiver_provenance": [
+          "LOCAL:38(Almanac_PlantDetail)"
+        ],
+        "method_existing_errors": 50
+      },
+      {
+        "token": "0x06000572",
+        "name": "System.Void Almanac_PlantDetail::Button_LevelUp()",
+        "site": 173,
+        "field_load": 168,
+        "receiver_provenance": [
+          "LOCAL:49(Almanac_PlantDetail)"
+        ],
+        "method_existing_errors": 50
+      },
+      {
+        "token": "0x06000573",
+        "name": "System.Void Almanac_PlantDetail::Button_OrderUp()",
+        "site": 75,
+        "field_load": 70,
+        "receiver_provenance": [
+          "LOCAL:10(Almanac_TalentSystem)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x06000573",
+        "name": "System.Void Almanac_PlantDetail::Button_OrderUp()",
+        "site": 182,
+        "field_load": 177,
+        "receiver_provenance": [
+          "LOCAL:4(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x06000573",
+        "name": "System.Void Almanac_PlantDetail::Button_OrderUp()",
+        "site": 229,
+        "field_load": 224,
+        "receiver_provenance": [
+          "LOCAL:5(SavesManager)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x06000574",
+        "name": "System.Void Almanac_PlantDetail::Button_SkillUp()",
+        "site": 395,
+        "field_load": 390,
+        "receiver_provenance": [
+          "LOCAL:7(Almanac_SkillSystem)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x06000574",
+        "name": "System.Void Almanac_PlantDetail::Button_SkillUp()",
+        "site": 492,
+        "field_load": 487,
+        "receiver_provenance": [
+          "LOCAL:7(Almanac_SkillSystem)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x06000574",
+        "name": "System.Void Almanac_PlantDetail::Button_SkillUp()",
+        "site": 628,
+        "field_load": 623,
+        "receiver_provenance": [
+          "LOCAL:7(Almanac_SkillSystem)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x06000574",
+        "name": "System.Void Almanac_PlantDetail::Button_SkillUp()",
+        "site": 662,
+        "field_load": 657,
+        "receiver_provenance": [
+          "LOCAL:7(Almanac_SkillSystem)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x06000574",
+        "name": "System.Void Almanac_PlantDetail::Button_SkillUp()",
+        "site": 1100,
+        "field_load": 1095,
+        "receiver_provenance": [
+          "LOCAL:7(Almanac_SkillSystem)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x0600057B",
+        "name": "System.Void Almanac_PlantDetail::Creat_OrderUpSupplies()",
+        "site": 661,
+        "field_load": 656,
+        "receiver_provenance": [
+          "LOCAL:19(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 93
+      },
+      {
+        "token": "0x0600057B",
+        "name": "System.Void Almanac_PlantDetail::Creat_OrderUpSupplies()",
+        "site": 695,
+        "field_load": 690,
+        "receiver_provenance": [
+          "LOCAL:11(SavesManager)"
+        ],
+        "method_existing_errors": 93
+      },
+      {
+        "token": "0x0600057B",
+        "name": "System.Void Almanac_PlantDetail::Creat_OrderUpSupplies()",
+        "site": 934,
+        "field_load": 929,
+        "receiver_provenance": [
+          "LOCAL:20(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 93
+      },
+      {
+        "token": "0x0600057B",
+        "name": "System.Void Almanac_PlantDetail::Creat_OrderUpSupplies()",
+        "site": 1974,
+        "field_load": 1969,
+        "receiver_provenance": [
+          "LOCAL:68(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 93
+      },
+      {
+        "token": "0x0600057B",
+        "name": "System.Void Almanac_PlantDetail::Creat_OrderUpSupplies()",
+        "site": 2050,
+        "field_load": 2045,
+        "receiver_provenance": [
+          "LOCAL:64(SavesManager)"
+        ],
+        "method_existing_errors": 93
+      },
+      {
+        "token": "0x0600057B",
+        "name": "System.Void Almanac_PlantDetail::Creat_OrderUpSupplies()",
+        "site": 2290,
+        "field_load": 2285,
+        "receiver_provenance": [
+          "LOCAL:44(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 93
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 625,
+        "field_load": 620,
+        "receiver_provenance": [
+          "LOCAL:12(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 659,
+        "field_load": 654,
+        "receiver_provenance": [
+          "LOCAL:13(SavesManager)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 898,
+        "field_load": 893,
+        "receiver_provenance": [
+          "LOCAL:24(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 1440,
+        "field_load": 1435,
+        "receiver_provenance": [
+          "LOCAL:19(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 1474,
+        "field_load": 1469,
+        "receiver_provenance": [
+          "LOCAL:20(SavesManager)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 1635,
+        "field_load": 1630,
+        "receiver_provenance": [
+          "LOCAL:75(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 1711,
+        "field_load": 1706,
+        "receiver_provenance": [
+          "LOCAL:71(SavesManager)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057C",
+        "name": "System.Void Almanac_PlantDetail::Creat_SkillUpSupplies()",
+        "site": 1951,
+        "field_load": 1946,
+        "receiver_provenance": [
+          "LOCAL:48(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 84
+      },
+      {
+        "token": "0x0600057E",
+        "name": "System.Void Almanac_PlantDetail::LoadPlant(System.Int32)",
+        "site": 745,
+        "field_load": 740,
+        "receiver_provenance": [
+          "LOCAL:10(Plant)"
+        ],
+        "method_existing_errors": 30
+      },
+      {
+        "token": "0x0600057E",
+        "name": "System.Void Almanac_PlantDetail::LoadPlant(System.Int32)",
+        "site": 968,
+        "field_load": 963,
+        "receiver_provenance": [
+          "LOCAL:5(Plant)"
+        ],
+        "method_existing_errors": 30
+      },
+      {
+        "token": "0x06000582",
+        "name": "System.Void Almanac_PlantDetail::SetLevelUpPreview(System.Int32)",
+        "site": 580,
+        "field_load": 575,
+        "receiver_provenance": [
+          "LOCAL:18(SavesManager)"
+        ],
+        "method_existing_errors": 40
+      },
+      {
+        "token": "0x06000583",
+        "name": "System.Void Almanac_PlantDetail::SetOrderUpPreview(System.Int32,System.Boolean)",
+        "site": 319,
+        "field_load": 314,
+        "receiver_provenance": [
+          "LOCAL:19(SavesManager)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x06000585",
+        "name": "System.Boolean Almanac_PlantDetail::TestSupplied()",
+        "site": 757,
+        "field_load": 752,
+        "receiver_provenance": [
+          "LOCAL:17(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x06000585",
+        "name": "System.Boolean Almanac_PlantDetail::TestSupplied()",
+        "site": 804,
+        "field_load": 799,
+        "receiver_provenance": [
+          "LOCAL:18(SavesManager)"
+        ],
+        "method_existing_errors": 32
+      },
+      {
+        "token": "0x060005AF",
+        "name": "System.Void Almanac_ZombieHome::Open(System.Int32)",
+        "site": 74,
+        "field_load": 69,
+        "receiver_provenance": [
+          "LOCAL:7(SavesManager)"
+        ],
+        "method_existing_errors": 2
+      },
+      {
+        "token": "0x060005B0",
+        "name": "System.Void Almanac_ZombieHome::SetWindowsLock()",
+        "site": 45,
+        "field_load": 40,
+        "receiver_provenance": [
+          "LOCAL:1(SavesManager)"
+        ],
+        "method_existing_errors": 2
+      },
+      {
+        "token": "0x060005B1",
+        "name": "System.Void Almanac_ZombieHome::ToggleChange_M(System.Boolean)",
+        "site": 392,
+        "field_load": 387,
+        "receiver_provenance": [
+          "LOCAL:5(Almanac_ZombieWindow)"
+        ],
+        "method_existing_errors": 12
+      },
+      {
+        "token": "0x060005B2",
+        "name": "System.Void Almanac_ZombieHome::ToggleChange_E(System.Boolean)",
+        "site": 353,
+        "field_load": 348,
+        "receiver_provenance": [
+          "LOCAL:5(Almanac_ZombieWindow)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x060005B3",
+        "name": "System.Void Almanac_ZombieHome::ToggleChange_B(System.Boolean)",
+        "site": 353,
+        "field_load": 348,
+        "receiver_provenance": [
+          "LOCAL:5(Almanac_ZombieWindow)"
+        ],
+        "method_existing_errors": 11
+      },
+      {
+        "token": "0x06000603",
+        "name": "DamageText DamageText::CreatDamageText(System.Single,System.Int32,UnityEngine.Vector3)",
+        "site": 110,
+        "field_load": 105,
+        "receiver_provenance": [
+          "LOCAL:1(DamageText)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000603",
+        "name": "DamageText DamageText::CreatDamageText(System.Single,System.Int32,UnityEngine.Vector3)",
+        "site": 383,
+        "field_load": 378,
+        "receiver_provenance": [
+          "LOCAL:1(DamageText)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x0600062C",
+        "name": "System.Void LevelItem::SetState()",
+        "site": 45,
+        "field_load": 40,
+        "receiver_provenance": [
+          "LOCAL:1(SavesManager)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000634",
+        "name": "System.Boolean LevelItem_HA::TestLocked(Save)",
+        "site": 880,
+        "field_load": 875,
+        "receiver_provenance": [
+          "LOCAL:21(AdventureHardScreen)"
+        ],
+        "method_existing_errors": 41
+      },
+      {
+        "token": "0x0600068C",
+        "name": "System.Void PrepareUIController::TeamSaving_Prop()",
+        "site": 233,
+        "field_load": 228,
+        "receiver_provenance": [
+          "LOCAL:12(Save)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x06000692",
+        "name": "System.Void PropChooseSystem::CreatPropList(Save,BoardConfig)",
+        "site": 177,
+        "field_load": 172,
+        "receiver_provenance": [
+          "LOCAL:22(PropChooseSystem/Prop_)"
+        ],
+        "method_existing_errors": 25
+      },
+      {
+        "token": "0x06000692",
+        "name": "System.Void PropChooseSystem::CreatPropList(Save,BoardConfig)",
+        "site": 338,
+        "field_load": 333,
+        "receiver_provenance": [
+          "LOCAL:23(PropChooseSystem/Prop_)"
+        ],
+        "method_existing_errors": 25
+      },
+      {
+        "token": "0x06000692",
+        "name": "System.Void PropChooseSystem::CreatPropList(Save,BoardConfig)",
+        "site": 695,
+        "field_load": 690,
+        "receiver_provenance": [
+          "LOCAL:51(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 25
+      },
+      {
+        "token": "0x0600069F",
+        "name": "System.Void RescueScreen::AddNewLevelItem(System.Int32)",
+        "site": 452,
+        "field_load": 447,
+        "receiver_provenance": [
+          "LOCAL:9(System.Collections.Generic.List`1<System.Object>)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x060006B6",
+        "name": "System.Void SeedChooserScreen::LoadTeam_Card(Team)",
+        "site": 397,
+        "field_load": 392,
+        "receiver_provenance": [
+          "LOCAL:23(Card_Choose)"
+        ],
+        "method_existing_errors": 10
+      },
+      {
+        "token": "0x060006C5",
+        "name": "System.Void SeedChooserScreen/PlantDetail::SkillButton_OnClick(System.Int32)",
+        "site": 515,
+        "field_load": 510,
+        "receiver_provenance": [
+          "LOCAL:14(Card_Choose)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x060006C8",
+        "name": "System.Boolean SeedChooserScreen/PlantDetail::GetInteractableOfInfoButton(System.Int32)",
+        "site": 142,
+        "field_load": 137,
+        "receiver_provenance": [
+          "LOCAL:7(Card_Choose)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x060006C8",
+        "name": "System.Boolean SeedChooserScreen/PlantDetail::GetInteractableOfInfoButton(System.Int32)",
+        "site": 344,
+        "field_load": 339,
+        "receiver_provenance": [
+          "LOCAL:3(Card_Choose)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x060006DA",
+        "name": "System.Void SkillButtonController::Select(System.Boolean)",
+        "site": 229,
+        "field_load": 224,
+        "receiver_provenance": [
+          "LOCAL:8(Almanac_SkillSystem)"
+        ],
+        "method_existing_errors": 2
+      },
+      {
+        "token": "0x060006F8",
+        "name": "System.Void Window_I::CreatNewSave()",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:4(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 18
+      },
+      {
+        "token": "0x060006F8",
+        "name": "System.Void Window_I::CreatNewSave()",
+        "site": 108,
+        "field_load": 103,
+        "receiver_provenance": [
+          "LOCAL:6(SavesManager)"
+        ],
+        "method_existing_errors": 18
+      },
+      {
+        "token": "0x060006F8",
+        "name": "System.Void Window_I::CreatNewSave()",
+        "site": 143,
+        "field_load": 138,
+        "receiver_provenance": [
+          "LOCAL:8(SaveList)"
+        ],
+        "method_existing_errors": 18
+      },
+      {
+        "token": "0x060006F8",
+        "name": "System.Void Window_I::CreatNewSave()",
+        "site": 409,
+        "field_load": 404,
+        "receiver_provenance": [
+          "LOCAL:12(MainUIController)"
+        ],
+        "method_existing_errors": 18
+      },
+      {
+        "token": "0x060006F8",
+        "name": "System.Void Window_I::CreatNewSave()",
+        "site": 444,
+        "field_load": 439,
+        "receiver_provenance": [
+          "LOCAL:9(SavesUIController)"
+        ],
+        "method_existing_errors": 18
+      },
+      {
+        "token": "0x060006F9",
+        "name": "System.Void Window_I::RenamePlayer()",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:1(GlobalStaticVars/LawnApp)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x060006F9",
+        "name": "System.Void Window_I::RenamePlayer()",
+        "site": 121,
+        "field_load": 116,
+        "receiver_provenance": [
+          "LOCAL:3(SavesManager)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x060006F9",
+        "name": "System.Void Window_I::RenamePlayer()",
+        "site": 156,
+        "field_load": 151,
+        "receiver_provenance": [
+          "LOCAL:7(SaveList)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x060006F9",
+        "name": "System.Void Window_I::RenamePlayer()",
+        "site": 798,
+        "field_load": 793,
+        "receiver_provenance": [
+          "LOCAL:3(SavesManager)"
+        ],
+        "method_existing_errors": 14
+      },
+      {
+        "token": "0x06000703",
+        "name": "System.Void Window_Q::DeletePlayerSave()",
+        "site": 187,
+        "field_load": 182,
+        "receiver_provenance": [
+          "LOCAL:8(SavesUIController_PlayerSave)"
+        ],
+        "method_existing_errors": 2
+      },
+      {
+        "token": "0x06000720",
+        "name": "System.Boolean EnvMapAnimator/<Start>d__4::MoveNext()",
+        "site": 353,
+        "field_load": 348,
+        "receiver_provenance": [
+          "LOCAL:2(EnvMapAnimator)"
+        ],
+        "method_existing_errors": 15
+      },
+      {
+        "token": "0x06000768",
+        "name": "System.Boolean TMPro.Examples.ShaderPropAnimator/<AnimateProperties>d__6::MoveNext()",
+        "site": 177,
+        "field_load": 172,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.ShaderPropAnimator)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x06000768",
+        "name": "System.Boolean TMPro.Examples.ShaderPropAnimator/<AnimateProperties>d__6::MoveNext()",
+        "site": 474,
+        "field_load": 469,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.ShaderPropAnimator)"
+        ],
+        "method_existing_errors": 7
+      },
+      {
+        "token": "0x0600077F",
+        "name": "System.Boolean TMPro.Examples.TeleType/<Start>d__4::MoveNext()",
+        "site": 291,
+        "field_load": 286,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.TeleType)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x0600077F",
+        "name": "System.Boolean TMPro.Examples.TeleType/<Start>d__4::MoveNext()",
+        "site": 441,
+        "field_load": 436,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.TeleType)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x0600077F",
+        "name": "System.Boolean TMPro.Examples.TeleType/<Start>d__4::MoveNext()",
+        "site": 591,
+        "field_load": 586,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.TeleType)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x0600077F",
+        "name": "System.Boolean TMPro.Examples.TeleType/<Start>d__4::MoveNext()",
+        "site": 662,
+        "field_load": 657,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.TeleType)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x0600077F",
+        "name": "System.Boolean TMPro.Examples.TeleType/<Start>d__4::MoveNext()",
+        "site": 709,
+        "field_load": 704,
+        "receiver_provenance": [
+          "LOCAL:9(TMPro.TMP_Text)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x0600077F",
+        "name": "System.Boolean TMPro.Examples.TeleType/<Start>d__4::MoveNext()",
+        "site": 1042,
+        "field_load": 1037,
+        "receiver_provenance": [
+          "LOCAL:0(TMPro.Examples.TeleType)"
+        ],
+        "method_existing_errors": 28
+      },
+      {
+        "token": "0x0600083D",
+        "name": "System.String FTRuntime.SwfClip::GetCurrentFrameLabel(System.Int32)",
+        "site": 27,
+        "field_load": 22,
+        "receiver_provenance": [
+          "LOCAL:2(FTRuntime.SwfClipAsset/Frame)"
+        ],
+        "method_existing_errors": 3
+      },
+      {
+        "token": "0x06000843",
+        "name": "System.Void FTRuntime.SwfClip::ChangeSequence()",
+        "site": 69,
+        "field_load": 64,
+        "receiver_provenance": [
+          "LOCAL:3(FTRuntime.SwfClipAsset)"
+        ],
+        "method_existing_errors": 16
+      },
+      {
+        "token": "0x06000843",
+        "name": "System.Void FTRuntime.SwfClip::ChangeSequence()",
+        "site": 799,
+        "field_load": 794,
+        "receiver_provenance": [
+          "LOCAL:22(FTRuntime.SwfClipAsset/Sequence)"
+        ],
+        "method_existing_errors": 16
+      },
+      {
+        "token": "0x06000843",
+        "name": "System.Void FTRuntime.SwfClip::ChangeSequence()",
+        "site": 908,
+        "field_load": 903,
+        "receiver_provenance": [
+          "LOCAL:32(FTRuntime.SwfClipAsset/Sequence)"
+        ],
+        "method_existing_errors": 16
+      },
+      {
+        "token": "0x06000875",
+        "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+        "site": 276,
+        "field_load": 271,
+        "receiver_provenance": [
+          "LOCAL:21(FTRuntime.SwfClipAsset/Sequence)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000875",
+        "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+        "site": 378,
+        "field_load": 373,
+        "receiver_provenance": [
+          "LOCAL:37(FTRuntime.SwfClipAsset/Sequence)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000875",
+        "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+        "site": 644,
+        "field_load": 639,
+        "receiver_provenance": [
+          "LOCAL:14(FTRuntime.SwfClip)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000875",
+        "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+        "site": 678,
+        "field_load": 673,
+        "receiver_provenance": [
+          "LOCAL:14(FTRuntime.SwfClip)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000875",
+        "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+        "site": 734,
+        "field_load": 729,
+        "receiver_provenance": [
+          "LOCAL:14(FTRuntime.SwfClip)"
+        ],
+        "method_existing_errors": 6
+      },
+      {
+        "token": "0x06000878",
+        "name": "System.Boolean FTRuntime.SwfClipController::NextClipFrame()",
+        "site": 118,
+        "field_load": 113,
+        "receiver_provenance": [
+          "LOCAL:25(FTRuntime.SwfClipAsset/Sequence)"
+        ],
+        "method_existing_errors": 8
+      },
+      {
+        "token": "0x06000878",
+        "name": "System.Boolean FTRuntime.SwfClipController::NextClipFrame()",
+        "site": 608,
+        "field_load": 603,
+        "receiver_provenance": [
+          "LOCAL:30(FTRuntime.SwfClip)"
+        ],
+        "method_existing_errors": 8
+      },
+      {
+        "token": "0x06000878",
+        "name": "System.Boolean FTRuntime.SwfClipController::NextClipFrame()",
+        "site": 707,
+        "field_load": 702,
+        "receiver_provenance": [
+          "LOCAL:30(FTRuntime.SwfClip)"
+        ],
+        "method_existing_errors": 8
+      }
+    ],
+    "note": "Instrumented original analyzer; counts direct predecessor field loads only, not a replacement proof. LOCAL dependency is unproved rather than necessarily wrong."
+  },
+  "typed": {
+    "baseline": {
+      "methods": 2297,
+      "fails": 872,
+      "crashes": 0
+    },
+    "batch1": {
+      "methods": 2297,
+      "fails": 869,
+      "crashes": 0,
+      "fail_to_pass": [
+        "0x06000339",
+        "0x06000348",
+        "0x0600034C"
+      ],
+      "pass_to_fail": []
+    },
+    "batch2": {
+      "methods": 2297,
+      "fails": 858,
+      "crashes": 0,
+      "fail_to_pass": [
+        "0x06000045",
+        "0x060001FF",
+        "0x06000263",
+        "0x060002FF",
+        "0x060003A0",
+        "0x06000510",
+        "0x060005BE",
+        "0x0600073A",
+        "0x0600073B",
+        "0x0600083E",
+        "0x06000875"
+      ],
+      "pass_to_fail": []
+    },
+    "batch2a": {
+      "methods": 2297,
+      "fails": 864,
+      "crashes": 0,
+      "fail_to_pass": [
+        "0x06000045",
+        "0x060002FF",
+        "0x0600073A",
+        "0x0600073B",
+        "0x06000875"
+      ],
+      "pass_to_fail": []
+    }
+  },
+  "batch1_single_revert_negatives": [
+    {
+      "edit": {
+        "token": "0x06000348",
+        "offset": 7,
+        "action": "retype_call",
+        "newDeclaringType": "UnityEngine.GameObject",
+        "evidence": "Plant::Awake IL_0007 receives Plant::animationGroup (UnityEngine.GameObject). PC native 0x18034DEE4 calls 0x18046DC80 = GameObject::GetComponent<T>. Verifier: receiver UnityEngine.GameObject incompatible with UnityEngine.Component. clang GodsPVZRuntime1__7.cpp:2545."
+      },
+      "failure": "System.Void Plant::Awake() IL_0007: receiver UnityEngine.GameObject incompatible with UnityEngine.Component (write=False, call=True)"
+    },
+    {
+      "edit": {
+        "token": "0x06000348",
+        "offset": 35,
+        "action": "retype_call",
+        "newDeclaringType": "UnityEngine.GameObject",
+        "evidence": "Plant::Awake IL_0023 receives Plant::ani_aniPart (UnityEngine.GameObject). PC native 0x18034DF3A calls 0x18131C070 = GameObject::get_transform. clang GodsPVZRuntime1__7.cpp:2554."
+      },
+      "failure": "System.Void Plant::Awake() IL_0023: receiver UnityEngine.GameObject incompatible with UnityEngine.Component (write=False, call=True)"
+    },
+    {
+      "edit": {
+        "token": "0x0600034C",
+        "offset": 225,
+        "action": "retype_call",
+        "newDeclaringType": "UnityEngine.GameObject",
+        "evidence": "Plant::Update IL_00E1 receives Plant::shadow (UnityEngine.GameObject). PC native 0x18035C664/0x18035C699 call 0x18131C070 = GameObject::get_transform. The second get_transform in the same method (IL_020B, receiver Camera::get_main) stays Component::get_transform and native agrees (0x18035C833 -> 0x181304510), so this repair is per call site, not global. clang GodsPVZRuntime1__7.cpp:3017."
+      },
+      "failure": "System.Void Plant::Update() IL_00E1: receiver UnityEngine.GameObject incompatible with UnityEngine.Component (write=False, call=True)"
+    },
+    {
+      "edit": {
+        "token": "0x06000339",
+        "offset": 6,
+        "action": "to_ldnull",
+        "evidence": "Device::TryPlacing compares Board Device::board against an integer zero. PC native 0x18034BE4B 'test %rcx,%rcx; je' compares the reference against null. Verifier: invalid comparison Board, I4. clang GodsPVZRuntime1__6.cpp:27856."
+      },
+      "failure": "System.Boolean Device::TryPlacing(System.Int32,System.Int32) IL_0007: invalid comparison Board, I4"
+    },
+    {
+      "edit": {
+        "token": "0x06000339",
+        "offset": 58,
+        "action": "to_ldnull",
+        "evidence": "Same shape for local 4 (Grid) at IL_003A. Native 0x18034BE58 'test %rax,%rax; je'. clang GodsPVZRuntime1__6.cpp:27877."
+      },
+      "failure": "System.Boolean Device::TryPlacing(System.Int32,System.Int32) IL_0037: invalid comparison Grid, I4"
+    },
+    {
+      "edit": {
+        "token": "0x06000339",
+        "offset": 161,
+        "action": "ret_to_throw",
+        "evidence": "The recovered body materialised NullReferenceException then returned it as System.Boolean. PC native reaches 0x18034BEA3 'call 0x180250150' (il2cpp raise NullReferenceException) followed by int3, i.e. the frame never returns."
+      },
+      "failure": "System.Boolean Device::TryPlacing(System.Int32,System.Int32) IL_0099: System.NullReferenceException is not assignable to System.Boolean"
+    }
+  ],
+  "wrong_shape_contract_probe": {
+    "expected": "reject with no file",
+    "exit": 0,
+    "written": true,
+    "token": "0x06000001",
+    "old_opcode": "ret",
+    "requested_action": "to_ldnull"
+  },
+  "original_suite_exits": {
+    "native23_counter.py": 0,
+    "native23_provcheck.py": 0,
+    "native23_afam3_check.py": 0
+  }
+}

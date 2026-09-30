@@ -1,0 +1,71 @@
+{
+  "native_patterns": {
+    "test %al,%al": true,
+    "test %eax,%eax": true,
+    "cmpq $0x20,(%rax)": true
+  },
+  "interpreter_stfld": {
+    "expected": 7,
+    "actual": 3,
+    "status": "RET"
+  },
+  "contiguous_pdata_cross_method_examples": [
+    {
+      "method": "Admin_system2_boardEdior::CopyDevice",
+      "start": "0x1802fb570",
+      "end": "0x1802fba46",
+      "includes_next_method": "Admin_system2_boardEdior::CopyEnemy",
+      "next": "0x1802fb810"
+    },
+    {
+      "method": "Administrator::Start",
+      "start": "0x1802fdd20",
+      "end": "0x1802feaee",
+      "includes_next_method": "Administrator::Update",
+      "next": "0x1802fe980"
+    },
+    {
+      "method": "Banks::BoardEntriesEffect",
+      "start": "0x180300700",
+      "end": "0x180300ead",
+      "includes_next_method": "Banks::CompareSunPrice",
+      "next": "0x180300d80"
+    },
+    {
+      "method": "Enemy_boardEditor::Select",
+      "start": "0x1803051a0",
+      "end": "0x180305317",
+      "includes_next_method": "Enemy_boardEditor::.ctor",
+      "next": "0x1803052a0"
+    },
+    {
+      "method": "EnemySelecter::SetZombieSelects",
+      "start": "0x18031a350",
+      "end": "0x18031a5e4",
+      "includes_next_method": "EnemySelecter::ZombieSelectRandomGet",
+      "next": "0x18031a490"
+    },
+    {
+      "method": "MouseManager::DropDownAll",
+      "start": "0x18031d7e0",
+      "end": "0x18031db06",
+      "includes_next_method": "MouseManager::DropPlantOnGlove",
+      "next": "0x18031d9f0"
+    },
+    {
+      "method": "MouseManager::DropPlantOnGlove",
+      "start": "0x18031d9f0",
+      "end": "0x18031db06",
+      "includes_next_method": "MouseManager::ExitBoard",
+      "next": "0x18031dae0"
+    },
+    {
+      "method": "MouseManager::FollowMouse_SkillCrosshairs",
+      "start": "0x18031dd50",
+      "end": "0x18031e2fa",
+      "includes_next_method": "MouseManager::GetDeviceFromCardbank",
+      "next": "0x18031de90"
+    }
+  ],
+  "contiguous_pdata_cross_method_count": 101
+}
