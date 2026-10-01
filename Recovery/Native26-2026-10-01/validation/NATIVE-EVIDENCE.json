@@ -1,0 +1,154 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "native_map_sha256": "5f4d1766e4aa1e3258be51bd591b93079bc9be20d42aad4e84aad19a5fc78ec1",
+  "boundary_scope": "Contiguous pdata limited by next distinct metadata method pointer; does not alone prove noncontiguous funclets",
+  "methods": [
+    {
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "AttackRange",
+        "name": "TestInRange_Device",
+        "token": "0x60000d9",
+        "va": "0x1802ffcc0"
+      },
+      "start": "0x1802ffcc0",
+      "end": "0x1802ffde1",
+      "next_mapped_method": "0x1802ffdf0",
+      "pdata_fragments": [
+        [
+          "0x1802ffcc0",
+          "0x1802ffd02"
+        ],
+        [
+          "0x1802ffd02",
+          "0x1802ffd59"
+        ],
+        [
+          "0x1802ffd59",
+          "0x1802ffddb"
+        ],
+        [
+          "0x1802ffddb",
+          "0x1802ffde1"
+        ]
+      ],
+      "native_body_sha256": "e0f39d3fc0e4bcc9754bd84cfc897596834566d3eae72bf7611e7070034fab08",
+      "calls": [
+        {
+          "instruction": "1802ffd7c:\te8 1f 03 00 00       \tcall   0x1803000a0",
+          "va": "0x1803000a0",
+          "metadata_targets": [
+            {
+              "image": "Assembly-CSharp.dll",
+              "type": "AttackRange",
+              "name": "TestInRects_Rect",
+              "token": "0x60000d7",
+              "va": "0x1803000a0"
+            }
+          ]
+        },
+        {
+          "instruction": "1802ffd87:\teb ba                \tjmp    0x1802ffd43",
+          "va": "0x1802ffd43",
+          "metadata_targets": []
+        },
+        {
+          "instruction": "1802ffda7:\te8 34 fd ff ff       \tcall   0x1802ffae0",
+          "va": "0x1802ffae0",
+          "metadata_targets": [
+            {
+              "image": "Assembly-CSharp.dll",
+              "type": "AttackRange",
+              "name": "TestInCircles_Position",
+              "token": "0x60000d4",
+              "va": "0x1802ffae0"
+            }
+          ]
+        },
+        {
+          "instruction": "1802ffdac:\teb 95                \tjmp    0x1802ffd43",
+          "va": "0x1802ffd43",
+          "metadata_targets": []
+        },
+        {
+          "instruction": "1802ffdd1:\te8 ca 02 00 00       \tcall   0x1803000a0",
+          "va": "0x1803000a0",
+          "metadata_targets": [
+            {
+              "image": "Assembly-CSharp.dll",
+              "type": "AttackRange",
+              "name": "TestInRects_Rect",
+              "token": "0x60000d7",
+              "va": "0x1803000a0"
+            }
+          ]
+        },
+        {
+          "instruction": "1802ffdd6:\te9 68 ff ff ff       \tjmp    0x1802ffd43",
+          "va": "0x1802ffd43",
+          "metadata_targets": []
+        },
+        {
+          "instruction": "1802ffddb:\te8 70 03 f5 ff       \tcall   0x180250150",
+          "va": "0x180250150",
+          "metadata_targets": []
+        }
+      ],
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native25-2026-10-01/native-060000D9.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001802ffcc0 <.data>:\n   1802ffcc0:\t40 53                \trex push %rbx\n   1802ffcc2:\t48 83 ec 60          \tsub    $0x60,%rsp\n   1802ffcc6:\t48 8b d9             \tmov    %rcx,%rbx\n   1802ffcc9:\t48 85 d2             \ttest   %rdx,%rdx\n   1802ffccc:\t0f 84 09 01 00 00    \tje     0x1802ffddb\n   1802ffcd2:\tf3 0f 10 42 48       \tmovss  0x48(%rdx),%xmm0\n   1802ffcd7:\tf3 0f 59 05 29 7d 2a \tmulss  0x12a7d29(%rip),%xmm0        # 0x1815a7a08\n   1802ffcde:\t01 \n   1802ffcdf:\t8b 49 38             \tmov    0x38(%rcx),%ecx\n   1802ffce2:\tf3 0f 10 52 38       \tmovss  0x38(%rdx),%xmm2\n   1802ffce7:\tf3 0f 10 5a 3c       \tmovss  0x3c(%rdx),%xmm3\n   1802ffcec:\tf3 0f 10 4a 48       \tmovss  0x48(%rdx),%xmm1\n   1802ffcf1:\tf3 0f 5c d0          \tsubss  %xmm0,%xmm2\n   1802ffcf5:\tf3 0f 10 42 4c       \tmovss  0x4c(%rdx),%xmm0\n   1802ffcfa:\tf3 0f 59 05 06 7d 2a \tmulss  0x12a7d06(%rip),%xmm0        # 0x1815a7a08\n   1802ffd01:\t01 \n   1802ffd02:\t0f 29 74 24 50       \tmovaps %xmm6,0x50(%rsp)\n   1802ffd07:\tf3 0f 10 72 38       \tmovss  0x38(%rdx),%xmm6\n   1802ffd0c:\t0f 29 7c 24 40       \tmovaps %xmm7,0x40(%rsp)\n   1802ffd11:\tf3 0f 5c d8          \tsubss  %xmm0,%xmm3\n   1802ffd15:\tf3 0f 10 42 4c       \tmovss  0x4c(%rdx),%xmm0\n   1802ffd1a:\tf3 0f 10 7a 3c       \tmovss  0x3c(%rdx),%xmm7\n   1802ffd1f:\t44 0f 29 44 24 30    \tmovaps %xmm8,0x30(%rsp)\n   1802ffd25:\t45 0f 57 c0          \txorps  %xmm8,%xmm8\n   1802ffd29:\t85 c9                \ttest   %ecx,%ecx\n   1802ffd2b:\t74 14                \tje     0x1802ffd41\n   1802ffd2d:\t83 e9 01             \tsub    $0x1,%ecx\n   1802ffd30:\t74 7c                \tje     0x1802ffdae\n   1802ffd32:\t83 e9 01             \tsub    $0x1,%ecx\n   1802ffd35:\t74 52                \tje     0x1802ffd89\n   1802ffd37:\t83 e9 01             \tsub    $0x1,%ecx\n   1802ffd3a:\t74 1d                \tje     0x1802ffd59\n   1802ffd3c:\t83 f9 01             \tcmp    $0x1,%ecx\n   1802ffd3f:\t74 44                \tje     0x1802ffd85\n   1802ffd41:\t32 c0                \txor    %al,%al\n   1802ffd43:\t0f 28 7c 24 40       \tmovaps 0x40(%rsp),%xmm7\n   1802ffd48:\t0f 28 74 24 50       \tmovaps 0x50(%rsp),%xmm6\n   1802ffd4d:\t44 0f 28 44 24 30    \tmovaps 0x30(%rsp),%xmm8\n   1802ffd53:\t48 83 c4 60          \tadd    $0x60,%rsp\n   1802ffd57:\t5b                   \tpop    %rbx\n   1802ffd58:\tc3                   \tret\n   1802ffd59:\t45 33 c0             \txor    %r8d,%r8d\n   1802ffd5c:\tf3 0f 11 54 24 20    \tmovss  %xmm2,0x20(%rsp)\n   1802ffd62:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   1802ffd67:\tf3 0f 11 5c 24 24    \tmovss  %xmm3,0x24(%rsp)\n   1802ffd6d:\t48 8b cb             \tmov    %rbx,%rcx\n   1802ffd70:\tf3 0f 11 4c 24 28    \tmovss  %xmm1,0x28(%rsp)\n   1802ffd76:\tf3 0f 11 44 24 2c    \tmovss  %xmm0,0x2c(%rsp)\n   1802ffd7c:\te8 1f 03 00 00       \tcall   0x1803000a0\n   1802ffd81:\t84 c0                \ttest   %al,%al\n   1802ffd83:\t74 04                \tje     0x1802ffd89\n   1802ffd85:\tb0 01                \tmov    $0x1,%al\n   1802ffd87:\teb ba                \tjmp    0x1802ffd43\n   1802ffd89:\t0f 28 c6             \tmovaps %xmm6,%xmm0\n   1802ffd8c:\tf3 44 0f 11 44 24 28 \tmovss  %xmm8,0x28(%rsp)\n   1802ffd93:\t0f 14 c7             \tunpcklps %xmm7,%xmm0\n   1802ffd96:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   1802ffd9b:\t45 33 c0             \txor    %r8d,%r8d\n   1802ffd9e:\tf2 0f 11 44 24 20    \tmovsd  %xmm0,0x20(%rsp)\n   1802ffda4:\t48 8b cb             \tmov    %rbx,%rcx\n   1802ffda7:\te8 34 fd ff ff       \tcall   0x1802ffae0\n   1802ffdac:\teb 95                \tjmp    0x1802ffd43\n   1802ffdae:\t45 33 c0             \txor    %r8d,%r8d\n   1802ffdb1:\tf3 0f 11 54 24 20    \tmovss  %xmm2,0x20(%rsp)\n   1802ffdb7:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   1802ffdbc:\tf3 0f 11 5c 24 24    \tmovss  %xmm3,0x24(%rsp)\n   1802ffdc2:\t48 8b cb             \tmov    %rbx,%rcx\n   1802ffdc5:\tf3 0f 11 4c 24 28    \tmovss  %xmm1,0x28(%rsp)\n   1802ffdcb:\tf3 0f 11 44 24 2c    \tmovss  %xmm0,0x2c(%rsp)\n   1802ffdd1:\te8 ca 02 00 00       \tcall   0x1803000a0\n   1802ffdd6:\te9 68 ff ff ff       \tjmp    0x1802ffd43\n   1802ffddb:\te8 70 03 f5 ff       \tcall   0x180250150\n   1802ffde0:\tcc                   \tint3\n"
+    }
+  ],
+  "field_offsets_scope": "Historical native field offset extraction, current locked file verified; not newly re-extracted",
+  "native_fields_sha256": "8273b66712f7fd64732a4fed64c453c2e71934d2cab329937f9dadaf57eef110",
+  "field_offsets": [
+    {
+      "type": "AttackRange",
+      "namespace": "",
+      "typeIndex": 5111,
+      "name": "rangeType",
+      "token": "0x40000e2",
+      "offset": 56,
+      "type_index": 17280
+    },
+    {
+      "type": "Device",
+      "namespace": "",
+      "typeIndex": 5206,
+      "name": "fX",
+      "token": "0x4000466",
+      "offset": 56,
+      "type_index": 18124
+    },
+    {
+      "type": "Device",
+      "namespace": "",
+      "typeIndex": 5206,
+      "name": "fY",
+      "token": "0x4000467",
+      "offset": 60,
+      "type_index": 18124
+    },
+    {
+      "type": "Device",
+      "namespace": "",
+      "typeIndex": 5206,
+      "name": "fW",
+      "token": "0x400046a",
+      "offset": 72,
+      "type_index": 18124
+    },
+    {
+      "type": "Device",
+      "namespace": "",
+      "typeIndex": 5206,
+      "name": "fD",
+      "token": "0x400046b",
+      "offset": 76,
+      "type_index": 18124
+    }
+  ],
+  "constant": {
+    "va": "0x1815a7a08",
+    "bytes": "0000003f",
+    "value": 0.5
+  }
+}
