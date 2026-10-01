@@ -1,3 +1,5 @@
+> **2026-10-01 Native27最新进度**：完成问题分类及十二方法批修，174个新CLR用例/66个负面变体检出，继承325用例通过。24字节变化，增量2285个非目标body完全一致。类型失败855；Linux全量错误6033，24个失败TU，仍无IPA。本轮没有Unity/Xcode dispatch。当前源码、证据和十八个待native审计队列见[Native27](Native27-2026-10-01/README.md)。
+
 > **2026-10-01 Native26最新进度**：继承Native25并完整恢复AttackRange.TestInRange_Device；255个新CLR用例及六个行为反例通过，继承70个用例通过。类型失败867；Linux全量错误6057、24个失败TU，尚无IPA。五目标之外2292个方法体原始字节不变。没有完整Unity/Xcode dispatch。源码、完整规格与完整证据见[Native26](Native26-2026-10-01/README.md)。
 
 > **2026-10-01 Native25 最新进度**：Device.TestPlacing 完整方法体已按原版62字节native恢复；46个新CLR用例和六个行为反例通过，旧24用例继续通过；全量类型失败869→868，Linux全量编译错误6065→6063、含错误方法673→672，24个失败TU仍在，没有IPA。新增一个目标外2296个方法体原始字节完全不变。源码、完整证据与下一批入口见 [Native25](Native25-2026-10-01/README.md)。工作文件已迁入/workspaces持久目录。本轮没有完整Unity/Xcode dispatch。

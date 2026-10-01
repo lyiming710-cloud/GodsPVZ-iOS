@@ -1,0 +1,681 @@
+{
+  "parent_sha256": "affd9276454e70d6f39d9e28144ba2006021e818b1a617ed517eea90741ca878",
+  "native_inputs": {
+    "input_sha256": "affd9276454e70d6f39d9e28144ba2006021e818b1a617ed517eea90741ca878",
+    "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+    "method_map_sha256": "5f4d1766e4aa1e3258be51bd591b93079bc9be20d42aad4e84aad19a5fc78ec1",
+    "field_map_sha256": "8273b66712f7fd64732a4fed64c453c2e71934d2cab329937f9dadaf57eef110"
+  },
+  "approved_methods": [
+    {
+      "token": "0x0600087E",
+      "method": "System.Int32 FTRuntime.SwfManager::get_clipCount()",
+      "native_start": "0x1803ca120",
+      "native_end": "0x1803ca165",
+      "native_sha256": "41c648d327bebe3eeccef840aa00d9430dd5f673ad03e9a12fa5c889482e52dc",
+      "null_guard_terminal": "0x1803ca15f",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x0600087E",
+        "method": "System.Int32 FTRuntime.SwfManager::get_clipCount()",
+        "null_sites": [
+          {
+            "offset": 45,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 50,
+            "reference_provenance": "FIELD:FTRuntime.Internal.SwfAssocList`1<FTRuntime.SwfClip> FTRuntime.SwfManager::FTRuntime.Internal.SwfAssocList`1<FTRuntime.SwfClip> FTRuntime.SwfManager::_clips"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 38,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 25,
+            "exception_local": 2
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "System.Int32 FTRuntime.SwfManager::get_clipCount()",
+          "token": "0x0600087E",
+          "status": "PASS",
+          "reachable": 19,
+          "instructions": 19,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "native_field_offset": 32,
+      "non_null_target": "0x18065baa0",
+      "non_null_contract": "Read this list then return existing SwfAssocList<T>.Count; no fallback to zero"
+    },
+    {
+      "token": "0x0600087F",
+      "method": "System.Int32 FTRuntime.SwfManager::get_controllerCount()",
+      "native_start": "0x1803ca170",
+      "native_end": "0x1803ca1b5",
+      "native_sha256": "a977bbbe61f697c5f6e5401fa36f9f68ff0c825af510d3fb16fe7525d8e04efc",
+      "null_guard_terminal": "0x1803ca1af",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x0600087F",
+        "method": "System.Int32 FTRuntime.SwfManager::get_controllerCount()",
+        "null_sites": [
+          {
+            "offset": 45,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 50,
+            "reference_provenance": "FIELD:FTRuntime.Internal.SwfAssocList`1<FTRuntime.SwfClipController> FTRuntime.SwfManager::FTRuntime.Internal.SwfAssocList`1<FTRuntime.SwfClipController> FTRuntime.SwfManager::_controllers"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 38,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 25,
+            "exception_local": 2
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "System.Int32 FTRuntime.SwfManager::get_controllerCount()",
+          "token": "0x0600087F",
+          "status": "PASS",
+          "reachable": 19,
+          "instructions": 19,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "native_field_offset": 40,
+      "non_null_target": "0x18065baa0",
+      "non_null_contract": "Read this list then return existing SwfAssocList<T>.Count; no fallback to zero"
+    },
+    {
+      "token": "0x060008AB",
+      "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStop(FTRuntime.SwfClipController,System.String)",
+      "native_start": "0x1803cb090",
+      "native_end": "0x1803cb102",
+      "native_sha256": "658770d13953c61d35c0dc281f250fbacfa5e30bb49fa35f7a9c5d55f5a3a00d",
+      "null_guard_terminal": "0x1803cb0fc",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008AB",
+        "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStop(FTRuntime.SwfClipController,System.String)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStop(FTRuntime.SwfClipController,System.String)",
+          "token": "0x060008AB",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c68a0",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::Play(System.String)",
+      "subscribe_call": "0x1803cbd20",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitStopPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008AD",
+      "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitRewind(FTRuntime.SwfClipController,System.String)",
+      "native_start": "0x1803cad80",
+      "native_end": "0x1803cadf2",
+      "native_sha256": "d686f6d5c3bf9a191da8ab2dd46d7f1ff968dd82cefa3747fdc841ae98fcc841",
+      "null_guard_terminal": "0x1803cadec",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008AD",
+        "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitRewind(FTRuntime.SwfClipController,System.String)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitRewind(FTRuntime.SwfClipController,System.String)",
+          "token": "0x060008AD",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c68a0",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::Play(System.String)",
+      "subscribe_call": "0x1803cb7f0",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitRewindPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008AF",
+      "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.String)",
+      "native_start": "0x1803caeb0",
+      "native_end": "0x1803caf22",
+      "native_sha256": "c95599b40d7d61f6e1f71b00c5a7787a99add60a95c95627e9cb34f57d444215",
+      "null_guard_terminal": "0x1803caf1c",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008AF",
+        "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.String)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.String)",
+          "token": "0x060008AF",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c68a0",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::Play(System.String)",
+      "subscribe_call": "0x1803cba50",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitStopOrRewindPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B0",
+      "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStop(FTRuntime.SwfClipController,System.Int32)",
+      "native_start": "0x1803cab90",
+      "native_end": "0x1803cac02",
+      "native_sha256": "5af56cef8fb334439f040e8ac51fdb57639009ac81f347751ec07fddb145cb5d",
+      "null_guard_terminal": "0x1803cabfc",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B0",
+        "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStop(FTRuntime.SwfClipController,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStop(FTRuntime.SwfClipController,System.Int32)",
+          "token": "0x060008B0",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c60d0",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.Int32)",
+      "subscribe_call": "0x1803cbd20",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitStopPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B2",
+      "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitRewind(FTRuntime.SwfClipController,System.Int32)",
+      "native_start": "0x1803ca910",
+      "native_end": "0x1803ca982",
+      "native_sha256": "02fc3a9a4f5e14c430fa9bf628a363d9539e1261639cdf47ec60bc5a50eac806",
+      "null_guard_terminal": "0x1803ca97c",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B2",
+        "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitRewind(FTRuntime.SwfClipController,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitRewind(FTRuntime.SwfClipController,System.Int32)",
+          "token": "0x060008B2",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c60d0",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.Int32)",
+      "subscribe_call": "0x1803cb7f0",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitRewindPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B4",
+      "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.Int32)",
+      "native_start": "0x1803caa10",
+      "native_end": "0x1803caa82",
+      "native_sha256": "bd0bfac1e19e742ad53dcc330359da2f4384e427637ae997806a8ca0c396a964",
+      "null_guard_terminal": "0x1803caa7c",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B4",
+        "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.Int32)",
+          "token": "0x060008B4",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c60d0",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.Int32)",
+      "subscribe_call": "0x1803cba50",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitStopOrRewindPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B8",
+      "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::GotoAndStopAndWaitPlay(FTRuntime.SwfClipController,System.Int32)",
+      "native_start": "0x1803cad00",
+      "native_end": "0x1803cad72",
+      "native_sha256": "8f8d9ceb844a2691d10bf42774a7ce792228d2634a66be6ef9136dc1fd36f9b5",
+      "null_guard_terminal": "0x1803cad6c",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B8",
+        "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::GotoAndStopAndWaitPlay(FTRuntime.SwfClipController,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 65,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 52,
+            "exception_local": 3
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::GotoAndStopAndWaitPlay(FTRuntime.SwfClipController,System.Int32)",
+          "token": "0x060008B8",
+          "status": "PASS",
+          "reachable": 26,
+          "instructions": 26,
+          "unreachable": 0,
+          "max_stack": 2
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c6240",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndStop(System.Int32)",
+      "subscribe_call": "0x1803cb470",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitPlayStopped::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B1",
+      "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStop(FTRuntime.SwfClipController,System.String,System.Int32)",
+      "native_start": "0x1803cab10",
+      "native_end": "0x1803cab82",
+      "native_sha256": "766db7bcf6c6d5fa9a8ce76ab4c60691d28a344f906a66107ff81c366e2627e7",
+      "null_guard_terminal": "0x1803cab7c",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B1",
+        "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStop(FTRuntime.SwfClipController,System.String,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 69,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 56,
+            "exception_local": 4
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStop(FTRuntime.SwfClipController,System.String,System.Int32)",
+          "token": "0x060008B1",
+          "status": "PASS",
+          "reachable": 27,
+          "instructions": 27,
+          "unreachable": 0,
+          "max_stack": 3
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c6030",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.String,System.Int32)",
+      "subscribe_call": "0x1803cbd20",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitStopPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B3",
+      "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitRewind(FTRuntime.SwfClipController,System.String,System.Int32)",
+      "native_start": "0x1803ca990",
+      "native_end": "0x1803caa02",
+      "native_sha256": "d1e0594dfcf9aa68ed0071f02af530c818240632af09f53c74aa7eaa903e6391",
+      "null_guard_terminal": "0x1803ca9fc",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B3",
+        "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitRewind(FTRuntime.SwfClipController,System.String,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 69,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 56,
+            "exception_local": 4
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitRewind(FTRuntime.SwfClipController,System.String,System.Int32)",
+          "token": "0x060008B3",
+          "status": "PASS",
+          "reachable": 27,
+          "instructions": 27,
+          "unreachable": 0,
+          "max_stack": 3
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c6030",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.String,System.Int32)",
+      "subscribe_call": "0x1803cb7f0",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitRewindPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    },
+    {
+      "token": "0x060008B5",
+      "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.String,System.Int32)",
+      "native_start": "0x1803caa90",
+      "native_end": "0x1803cab02",
+      "native_sha256": "1853419bcd0580abbc7a8942f9cef63e9154c186a380d1a8908f3bb0c71319ce",
+      "null_guard_terminal": "0x1803caafc",
+      "exception_helper": "0x180250150",
+      "helper_identity_scope": "Historically audited NRE helper; current call+int3 verified, no fabricated MethodDef",
+      "recipe": {
+        "token": "0x060008B5",
+        "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.String,System.Int32)",
+        "null_sites": [
+          {
+            "offset": 4,
+            "opcode_before": "ldc.i4",
+            "operand_before": 0,
+            "comparison_offset": 9,
+            "reference_provenance": "ARG:0"
+          }
+        ],
+        "throw_sites": [
+          {
+            "offset": 69,
+            "opcode_before": "ret",
+            "opcode_after": "throw",
+            "ctor_offset": 56,
+            "exception_local": 4
+          }
+        ],
+        "cpp_errors_before": 2,
+        "type_trial": {
+          "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::GotoAndPlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.String,System.Int32)",
+          "token": "0x060008B5",
+          "status": "PASS",
+          "reachable": 27,
+          "instructions": 27,
+          "unreachable": 0,
+          "max_stack": 3
+        },
+        "E5": "NOT_PROVED",
+        "E6": "NOT_PROVED"
+      },
+      "verdict": "APPROVED_CALL_CONTRACT",
+      "behavior_scope": "Native outer method contract; helper internals not newly recovered",
+      "action_call": "0x1803c6030",
+      "action_CIL": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.String,System.Int32)",
+      "subscribe_call": "0x1803cba50",
+      "subscribe_CIL": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitStopOrRewindPlaying::Subscribe(FTRuntime.SwfClipController)",
+      "allocation": "0x180250100",
+      "constructor_shared_call": "0x18030f300",
+      "contract": "Controller physical null -> NRE. Otherwise action(original args), allocate declared wait, shared ctor(null), Subscribe(original controller), return allocated wait rather than Subscribe result",
+      "allocation_type_scope": "Wait owner inferred from matching existing CIL ctor and native Subscribe receiver; class pointer not independently decoded"
+    }
+  ],
+  "quarantined_known_missing_call": [
+    {
+      "token": "0x0600073A",
+      "reason": "PC calls UnityEvent<string,int,int>.Invoke at 0x180A66460; current IL discards Method not found placeholder and omits event invocation"
+    },
+    {
+      "token": "0x0600073B",
+      "reason": "PC calls UnityEvent<string,int,int>.Invoke at 0x180A66460; current IL discards Method not found placeholder and omits event invocation"
+    }
+  ],
+  "deferred_methods": [
+    "0x060001F1",
+    "0x060005BD",
+    "0x0600080E",
+    "0x0600025D",
+    "0x06000146",
+    "0x0600022C",
+    "0x06000189",
+    "0x060005D8",
+    "0x0600043B",
+    "0x060008B9",
+    "0x060002FF",
+    "0x0600019B",
+    "0x06000361",
+    "0x060008AA",
+    "0x060008AC",
+    "0x060008AE",
+    "0x0600019C",
+    "0x060008B6",
+    "0x060008B7"
+  ],
+  "scope": "Per-method native contract review, not standalone game behavior proof"
+}
