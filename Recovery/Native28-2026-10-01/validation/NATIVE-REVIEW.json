@@ -1,0 +1,225 @@
+{
+  "input_sha256": "ae6ac972e0615666091b7359774f0c0ec70d01d8e5d05d0942324b7d13b34920",
+  "original_evidence_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "approved_methods": [
+    {
+      "token": "0x060001F1",
+      "method": "Plant PlantManager::GetPlantPrefab(System.Int32)",
+      "native_start": "0x180322920",
+      "native_end": "0x1803229af",
+      "native_sha256": "11e6b7c39d1dfcedbc4174db9cc7b66451e519a3bb47979fd4b8edb96e255bee",
+      "null_sites": [
+        95
+      ],
+      "throw_sites": [
+        88
+      ],
+      "cpp_diagnostics_before": 2,
+      "contract": "Physical list null -> NRE; get_Item(id); Unity op_Inequality at 0x18131F900 retains live object; CIL op_Equality uses complementary branch."
+    },
+    {
+      "token": "0x060005BD",
+      "method": "AttackRange AttackRangeUIController::GetAttackRange(System.Int32)",
+      "native_start": "0x1803944e0",
+      "native_end": "0x180394553",
+      "native_sha256": "44a976cb312ac9548a1fc97bcd932eca7f89faec402c368136eedf81a1f74458",
+      "null_sites": [
+        94
+      ],
+      "throw_sites": [
+        77
+      ],
+      "cpp_diagnostics_before": 2,
+      "contract": "Signed size > id then get_Item, else null; negative id is not sanitized and reaches item exception."
+    },
+    {
+      "token": "0x0600080E",
+      "method": "System.Int32 TMPro.Examples.VertexZoom/<>c__DisplayClass10_0::<AnimateVertexColors>b__0(System.Int32,System.Int32)",
+      "native_start": "0x1803cd360",
+      "native_end": "0x1803cd3ed",
+      "native_sha256": "df966508aa56a4f8e43721d1d2adf109805b5eaaaa1c89e308030402144ce15c",
+      "null_sites": [
+        121,
+        30
+      ],
+      "throw_sites": [
+        114
+      ],
+      "cpp_diagnostics_before": 3,
+      "contract": "First float from first get_Item captured in stack+0x38; address passed to float ordering leaf. Replace unused V9 address with stored V3 at IL_004A. Preserve second field reload/null guard."
+    },
+    {
+      "token": "0x0600025D",
+      "method": "SuppliesInfo SuppliesInitialValue::GetSuppliesInfo(System.Int32)",
+      "native_start": "0x1803412a0",
+      "native_end": "0x180341317",
+      "native_sha256": "e254ced89d8235e1ceba525bacbfebc4fc76aab4ad9abcc8cfdbba589fec71a7",
+      "null_sites": [
+        21
+      ],
+      "throw_sites": [
+        121
+      ],
+      "cpp_diagnostics_before": 2,
+      "contract": "Signed negative id returns null before this/list dereference. Nonnegative size > id calls get_Item; else null. Preserve integer zeros."
+    },
+    {
+      "token": "0x06000146",
+      "method": "System.Boolean GlobalStaticVars::IsOnBoard()",
+      "native_start": "0x18031bb70",
+      "native_end": "0x18031bc51",
+      "native_sha256": "42146c323e81fc84f462fb5ff0f87b85ee89c35b448f42dbe78bc7e8537c145b",
+      "null_sites": [
+        142
+      ],
+      "throw_sites": [
+        122
+      ],
+      "cpp_diagnostics_before": 1,
+      "contract": "Unity truth of static Instance then reload Instance and physical NRE then Unity truth of board. Do not replace Unity destroyed-object semantics with reference semantics."
+    },
+    {
+      "token": "0x0600022C",
+      "method": "UnityEngine.Sprite ResourceManager::Load_supplies_sprite(System.Int32)",
+      "native_start": "0x18033a9e0",
+      "native_end": "0x18033aace",
+      "native_sha256": "f5192a3aec6a592b0e975e4f034b05a7bd9682b92ad8bee343ad449ec1dca8f6",
+      "null_sites": [
+        149,
+        110
+      ],
+      "throw_sites": [
+        99
+      ],
+      "cpp_diagnostics_before": 3,
+      "contract": "Physical static itemSprites null -> NRE, signed size > id calls item after recheck; out of range logs exact Chinese message then null; negative id reaches item exception."
+    },
+    {
+      "token": "0x06000189",
+      "method": "Device DeviceManager::GetDevicePrefab(System.Int32)",
+      "native_start": "0x180312c00",
+      "native_end": "0x180312cb0",
+      "native_sha256": "3b17e70111de36d5fee2fc33bdd27498c5d74d8d59d1619c718c1e5fe65aaee1",
+      "null_sites": [
+        140
+      ],
+      "throw_sites": [
+        123
+      ],
+      "cpp_diagnostics_before": 2,
+      "contract": "Signed size < id returns null; id == size still calls item and throws. Unity fake-null result filtering retained."
+    },
+    {
+      "token": "0x060005D8",
+      "method": "Device BoardPreview::GetDevicePrefab(System.Int32)",
+      "native_start": "0x1803976e0",
+      "native_end": "0x180397790",
+      "native_sha256": "501ba6683df1141bfaf8e080b8d8e327abc1be60440f4c5ea69cecc6a77b075f",
+      "null_sites": [
+        140
+      ],
+      "throw_sites": [
+        123
+      ],
+      "cpp_diagnostics_before": 2,
+      "contract": "Same native signed size < id and Unity fake-null filtering as DeviceManager, field offset +0x50."
+    },
+    {
+      "token": "0x0600043B",
+      "method": "Plant Zombie::FindPlant_Grid(Grid)",
+      "native_start": "0x18035fc20",
+      "native_end": "0x18035fd08",
+      "native_sha256": "ad4a5473eb40685baeee59d3c0a2e8915fc365c3f3997c27b8b16cb80b3a3c59",
+      "null_sites": [
+        166
+      ],
+      "throw_sites": [
+        161
+      ],
+      "cpp_diagnostics_before": 2,
+      "contract": "Physical Grid null -> NRE; first Unity-live plant in sheath/common/bottom order; receiver Zombie is unused."
+    },
+    {
+      "token": "0x060008B9",
+      "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::GotoAndStopAndWaitPlay(FTRuntime.SwfClipController,System.String,System.Int32)",
+      "native_start": "0x1803cac10",
+      "native_end": "0x1803cacfb",
+      "native_sha256": "2c459a313968611471dcb83e75a25ba754b61739daa7392a9b5750d8249b187e",
+      "null_sites": [
+        4,
+        86
+      ],
+      "throw_sites": [
+        170
+      ],
+      "cpp_diagnostics_before": 3,
+      "contract": "Physical controller guard; Unity-live clip sets sequence after physical clip recheck; GotoAndStop(id); construct wait(null), Subscribe(controller), return allocated wait ignoring Subscribe result."
+    },
+    {
+      "token": "0x06000361",
+      "method": "System.Collections.Generic.List`1<Zombie> Plant::EnemySeeking_plural(System.Int32)",
+      "native_start": "0x18034fed0",
+      "native_end": "0x18034ff31",
+      "native_sha256": "ed573db81194223ea664550e04612967c17444c9a31fb9d9a63aca2a2738095e",
+      "null_sites": [
+        40,
+        95,
+        126
+      ],
+      "throw_sites": [
+        182
+      ],
+      "cpp_diagnostics_before": 4,
+      "contract": "Capture attackRangeUIController native before skill branch. No intervening helper side effects before reload in CIL. Inactive skill uses range ID zero; active physical skill and UI guards precede skill.ID; GetAttackRange then EnemySeeking_plural(id,range)."
+    },
+    {
+      "token": "0x0600019C",
+      "method": "System.Boolean DialogueManager_OnBoard::TriggerCheck(DialogueTriggerType)",
+      "native_start": "0x180314840",
+      "native_end": "0x180314919",
+      "native_sha256": "7833c781028d6ea83da7f14cf911a816c71c93cdcfc41c3ff59844a0d6eabef7",
+      "null_sites": [
+        51
+      ],
+      "throw_sites": [
+        239
+      ],
+      "cpp_diagnostics_before": 1,
+      "contract": "Unity-live board prerequisite; physical dialogueList guard, signed dialogueIndex < size, nonzero matching trigger, item then LoadDialogue then true; else false."
+    }
+  ],
+  "quarantined_methods": [
+    {
+      "token": "0x0600019B",
+      "method": "System.Boolean DialogueManager_OnBoard::TestLogTrigger(BoardDialogue)",
+      "reason": "At IL_0071 reloads V4=(dialogueTriggerType==0), so type==1 path is unreachable. Native subtract-one dispatch and gameStart check require reconstruction."
+    },
+    {
+      "token": "0x060008AA",
+      "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStop(FTRuntime.SwfClipController,System.Boolean)",
+      "reason": "Unresolved Indirect call placeholder discards native event invocation; play/stop predicate also uses post-write state rather than captured prior state."
+    },
+    {
+      "token": "0x060008AC",
+      "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitRewind(FTRuntime.SwfClipController,System.Boolean)",
+      "reason": "Unresolved Indirect call placeholder discards native event invocation; play/stop predicate also uses post-write state rather than captured prior state."
+    },
+    {
+      "token": "0x060008AE",
+      "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.Boolean)",
+      "reason": "Unresolved Indirect call placeholder discards native event invocation; play/stop predicate also uses post-write state rather than captured prior state."
+    },
+    {
+      "token": "0x060008B6",
+      "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::StopAndWaitPlay(FTRuntime.SwfClipController,System.Boolean)",
+      "reason": "Unresolved Indirect call placeholder discards native event invocation; play/stop predicate also uses post-write state rather than captured prior state."
+    },
+    {
+      "token": "0x060008B7",
+      "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::StopAndWaitPlay(FTRuntime.SwfClipController,System.String)",
+      "reason": "Unresolved Indirect call placeholder discards native event invocation; play/stop predicate also uses post-write state rather than captured prior state."
+    }
+  ],
+  "behavior_limit": "Per-method outer native contract, explicit helper doubles; no whole game behavior or Apple build claim",
+  "float_helper": "0x180CC4FC0..0x180CC5000 leaf instruction traversal; no pdata entry. Initial 128-byte window includes next function and is not a function size claim."
+}

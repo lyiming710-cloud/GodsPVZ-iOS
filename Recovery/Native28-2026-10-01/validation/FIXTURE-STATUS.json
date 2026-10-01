@@ -1,0 +1,63 @@
+{
+  "positive_cases": 854,
+  "positive_failures": 0,
+  "negative_statuses": {
+    "BEHAVIOR_MISMATCH": 26,
+    "CLR_REJECTED": 2
+  },
+  "default_comparer": {
+    "Token": "0x0600080E",
+    "Name": "default_comparer",
+    "Status": "BEHAVIOR_MISMATCH",
+    "Detected": true,
+    "Failed": 21,
+    "ClrRejected": 0,
+    "ToolError": null
+  },
+  "tool_error_controls": {
+    "fault_emit": {
+      "runtime": "10.0.12",
+      "scope": "Real emitted candidate CIL; pinned original PC outer contracts with helper doubles, not original Unity player/helper execution",
+      "methods": 0,
+      "positive_cases": 0,
+      "positive_failures": 0,
+      "negative_controls": 1,
+      "tool_errors": 1,
+      "gate_pass": false,
+      "positives": [],
+      "mutations": [
+        {
+          "Token": "0x060001F1",
+          "Name": "fault_emit",
+          "Status": "TOOL_ERROR",
+          "Detected": false,
+          "Failed": 0,
+          "ClrRejected": 0,
+          "ToolError": "InfrastructureFault: Injected emitter failure\n   at Native28Fixture.Emit(MethodDefinition m, String mutant) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 60\n   at Native28Fixture.Evaluate(MethodDefinition m, String name, Boolean fault) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 115"
+        }
+      ]
+    },
+    "fault_invoke": {
+      "runtime": "10.0.12",
+      "scope": "Real emitted candidate CIL; pinned original PC outer contracts with helper doubles, not original Unity player/helper execution",
+      "methods": 0,
+      "positive_cases": 0,
+      "positive_failures": 0,
+      "negative_controls": 1,
+      "tool_errors": 1,
+      "gate_pass": false,
+      "positives": [],
+      "mutations": [
+        {
+          "Token": "0x060001F1",
+          "Name": "fault_invoke",
+          "Status": "TOOL_ERROR",
+          "Detected": false,
+          "Failed": 0,
+          "ClrRejected": 0,
+          "ToolError": "System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.\n ---> InfrastructureFault: Injected fixture invocation failure\n   at Tr.Event(String s) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 11\n   at GetPlantPrefabfault_invoke(PlantManager, Int32)\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\n   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)\n   --- End of inner exception stack trace ---\n   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)\n   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)\n   at System.Reflection.Emit.DynamicMethod.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)\n   at Native28Fixture.Invoke(DynamicMethod dm, Object[] args) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 75\n   at Native28Fixture.<>c__DisplayClass6_0.<Check>g__Test|0(String name, Func`1 setup, Object expected, String error, String[] events) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 78\n   at Native28Fixture.Check(Int32 token, DynamicMethod dm, Boolean fault) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 84\n   at Native28Fixture.Evaluate(MethodDefinition m, String name, Boolean fault) in /workspaces/GodsPVZ-native24-codespace/scripts/takeover/native28/RuntimeFixture/Program.cs:line 115"
+        }
+      ]
+    }
+  }
+}
