@@ -1,0 +1,317 @@
+{
+  "original_GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "candidate_input_sha256": "02390a90a9ced312c67b4b8ff085b5329234920c8f6e03bb3a2cdb294d1be465",
+  "approved_methods": [
+    {
+      "token": "0x0600019B",
+      "method": "System.Boolean DialogueManager_OnBoard::TestLogTrigger(BoardDialogue)",
+      "native_start": "0x180314790",
+      "native_end": "0x18031483e",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "c652b7eb9539ed3e823a0c4e3d46119e13f2a87236a3651b435e5363729ff8a0",
+      "cpp_diagnostics_before": 2,
+      "contract": "Unity-null board returns false before touching dialogue; otherwise store trigger type, read it again; kind0 true, kind1 reload board and return gameStart, other false. Physical-null dialogue/board access throws."
+    },
+    {
+      "token": "0x060008AA",
+      "method": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStop(FTRuntime.SwfClipController,System.Boolean)",
+      "native_start": "0x1803cafe0",
+      "native_end": "0x1803cb089",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "5075b2669b0ac9099cdb5e889fa737bcbb132f6896e8d0b42aca632b627df6b7",
+      "cpp_diagnostics_before": 3,
+      "contract": "Capture prior isPlaying; if false set true and timer0; optional Rewind; event OnPlayStopped only if prior false; construct wait(null), Subscribe, return allocated wait ignoring Subscribe return."
+    },
+    {
+      "token": "0x060008AC",
+      "method": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitRewind(FTRuntime.SwfClipController,System.Boolean)",
+      "native_start": "0x1803cae00",
+      "native_end": "0x1803caea9",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "6649e433143ee76a40b44774a31dea50ec14a8d69f71992d6b4a2bcf9a4e61b8",
+      "cpp_diagnostics_before": 3,
+      "contract": "Same captured prior contract, with SwfWaitRewindPlaying."
+    },
+    {
+      "token": "0x060008AE",
+      "method": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::PlayAndWaitStopOrRewind(FTRuntime.SwfClipController,System.Boolean)",
+      "native_start": "0x1803caf30",
+      "native_end": "0x1803cafd9",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "00d9bb56f2245485026a34abbe51805523e988458bf5f98bcddfb339d0b011d8",
+      "cpp_diagnostics_before": 3,
+      "contract": "Same captured prior contract, with SwfWaitStopOrRewindPlaying."
+    },
+    {
+      "token": "0x060008B6",
+      "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::StopAndWaitPlay(FTRuntime.SwfClipController,System.Boolean)",
+      "native_start": "0x1803cb110",
+      "native_end": "0x1803cb1b9",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "85fc04640bc3d75026693d60bd2ba8babafcef9fe0dd7208d1bd9735e8ad560f",
+      "cpp_diagnostics_before": 3,
+      "contract": "Capture prior; if true set false and timer0; optional Rewind; event OnStopPlaying only if prior true; wait(null), Subscribe, return allocated wait."
+    },
+    {
+      "token": "0x060008B7",
+      "method": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::StopAndWaitPlay(FTRuntime.SwfClipController,System.String)",
+      "native_start": "0x1803cb1c0",
+      "native_end": "0x1803cb2cf",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "f6e9339d72a37dd5e0628d0a003fd8cc610330b0c8b8e0e3b09a8593733ab741",
+      "cpp_diagnostics_before": 4,
+      "contract": "Physical controller guard, Unity-live clip -> reload and set_sequence; capture isPlaying after sequence, conditionally stop/reset, always Rewind, reload event after Rewind when prior true; construct/Subscribe/return allocated wait."
+    },
+    {
+      "token": "0x0600082C",
+      "method": "UnityEngine.Color FTRuntime.SwfClip::get_tint()",
+      "native_start": "0x1803c8a80",
+      "native_end": "0x1803c8a90",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "3c887408eb5f31d3d0722d2db3ac14a1e5e72b699625b11260307d28ea6ec132",
+      "cpp_diagnostics_before": 2,
+      "contract": "Copy all four tint components, no truncation to r."
+    },
+    {
+      "token": "0x0600082D",
+      "method": "System.Void FTRuntime.SwfClip::set_tint(UnityEngine.Color)",
+      "native_start": "0x1803c8e60",
+      "native_end": "0x1803c8e70",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "a6e91c0570358de984f98ac03827a18a9055433e1084dc784eb417571a3afb50",
+      "cpp_diagnostics_before": 1,
+      "contract": "Store all four tint components before UpdatePropBlock call; exceptions propagate after write."
+    },
+    {
+      "token": "0x060008A3",
+      "method": "System.Void FTRuntime.SwfSettings::Reset()",
+      "native_start": "0x1803ca450",
+      "native_end": "0x1803ca49b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "193f312011fe626c400ed317cf70e191877470710832c0939efe58632d51b6c3",
+      "cpp_diagnostics_before": 1,
+      "contract": "Store identity settings, all nine fields. Calls rebuilt pure identity body."
+    },
+    {
+      "token": "0x060008A1",
+      "method": "FTRuntime.SwfSettingsData FTRuntime.SwfSettingsData::get_identity()",
+      "native_start": "0x1803ca420",
+      "native_end": "0x1803ca450",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "ae639144a2c2736b2d51f591770299f34279236ee9cf85cfbfd923c649b1e223",
+      "cpp_diagnostics_before": 6,
+      "contract": "All nine settings fields restored from original 24-byte value: 2048,1,100, true,false,true,true,1,2. Four boolean bytes 01 00 01 01; no .cctor."
+    },
+    {
+      "token": "0x06000820",
+      "method": "System.Void FTRuntime.SwfAsset::Reset()",
+      "native_start": "0x1803c5e00",
+      "native_end": "0x1803c5f0e",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a5852155c24d4da0cc87ceda6e87fd854ccaf7a34c5cb152718ba0adefecc683",
+      "cpp_diagnostics_before": 2,
+      "contract": "Fresh byte[0] each reset, String.Empty, null Atlas, then independent identity settings copies to Settings and Overridden; preserve order."
+    },
+    {
+      "token": "0x06000160",
+      "method": "UnityEngine.Vector3 BoardConfig::Position_GridToDevice(UnityEngine.Vector3)",
+      "native_start": "0x18030ef80",
+      "native_end": "0x18030efd0",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "ad38b0787c07b8467e8b671cbcecb83c7ef4a9524c625c3a3ca89f983a7ad975",
+      "cpp_diagnostics_before": 3,
+      "contract": "Copy by-value Vector3; x +=57, y +=44; z unchanged; this unused. Original constants read directly from PE."
+    },
+    {
+      "token": "0x06000161",
+      "method": "UnityEngine.Vector3 BoardConfig::Position_GridToPlanting(UnityEngine.Vector3)",
+      "native_start": "0x18030ef80",
+      "native_end": "0x18030efd0",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "ad38b0787c07b8467e8b671cbcecb83c7ef4a9524c625c3a3ca89f983a7ad975",
+      "cpp_diagnostics_before": 3,
+      "contract": "Copy by-value Vector3; x +=57, y +=44; z unchanged; this unused. Original constants read directly from PE."
+    },
+    {
+      "token": "0x06000162",
+      "method": "UnityEngine.Vector3 BoardConfig::Position_GridToZombie(UnityEngine.Vector3)",
+      "native_start": "0x18030efd0",
+      "native_end": "0x18030f020",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "241a83d86e55992b7ab8fe1ba7d6d2b7b04962dfe3309aa607b05900a6255cce",
+      "cpp_diagnostics_before": 3,
+      "contract": "Copy by-value Vector3; x +=57, y +=28; z unchanged; this unused. Original constants read directly from PE."
+    },
+    {
+      "token": "0x0600015D",
+      "method": "UnityEngine.Vector3 BoardConfig::GetDevicePosition(System.Int32,System.Int32)",
+      "native_start": "0x18030ebd0",
+      "native_end": "0x18030ec26",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a5f78f0bba4d74ce608ed2159a8c6179a47445984ded79cdd57002606006fff9",
+      "cpp_diagnostics_before": 4,
+      "contract": "GetGridPosition(arg1,arg2), capture full result, x +=57, y +=44; z unchanged; preserve helper exceptions."
+    },
+    {
+      "token": "0x0600015E",
+      "method": "UnityEngine.Vector3 BoardConfig::GetZombiePosition(System.Int32,System.Int32)",
+      "native_start": "0x18030ef10",
+      "native_end": "0x18030ef62",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "387d15c37fa2a27cbbba6295a27a85c1d426740da8ca63f790b7b24d4baf8694",
+      "cpp_diagnostics_before": 2,
+      "contract": "GetGridPosition(arg1,arg2), capture full result, x +=57, y +=28; z unchanged; preserve helper exceptions."
+    },
+    {
+      "token": "0x0600015F",
+      "method": "UnityEngine.Vector3 BoardConfig::GetPlantingPosition(System.Int32,System.Int32)",
+      "native_start": "0x18030eeb0",
+      "native_end": "0x18030ef02",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "17e1e1e3c7a66faf853d7d43dffb6f38af1d813efe75032a12cdf6f9f3dda346",
+      "cpp_diagnostics_before": 2,
+      "contract": "GetGridPosition(arg1,arg2), capture full result, x +=57, y +=44; z unchanged; preserve helper exceptions."
+    },
+    {
+      "token": "0x060000DF",
+      "method": "UnityEngine.Vector3 AttackRange::RestraintTargetPosition_Rect(UnityEngine.Vector3)",
+      "native_start": "0x1802ffa00",
+      "native_end": "0x1802ffa20",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "37e592e9307359583385025078e4d1ad87f92e0b30485b605a30dc63fa58502f",
+      "cpp_diagnostics_before": 2,
+      "contract": "Return complete Vector3 input unchanged, this unused."
+    },
+    {
+      "token": "0x0600013C",
+      "method": "UnityEngine.AudioSource GlobalStaticVars::CreateAudioAtPoint(UnityEngine.AudioClip,UnityEngine.Vector3)",
+      "native_start": "0x18031b2c0",
+      "native_end": "0x18031b345",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b4b0eba8cfc565463116fd00385cd62f37005781743814c0efaba1fcc3fdd7ba",
+      "cpp_diagnostics_before": 1,
+      "contract": "AudioVolume before CreateAudioAtPoint(clip, by-value input position, volume, 1)."
+    },
+    {
+      "token": "0x060000A8",
+      "method": "System.Void AnimationEvent::PlayAudio(UnityEngine.AudioClip)",
+      "native_start": "0x1802fee40",
+      "native_end": "0x1802feee6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "42c22161653cdc851882e3b9d9c132a9966766f0dafce2789008eea92ec2f618",
+      "cpp_diagnostics_before": 1,
+      "contract": "Preserve full native-pinned audio chain: self transform, position, AudioVolume, CreateAudioAtPoint(clip,position,volume). Physical null guards precede engine calls; actual Vector3 value is passed."
+    },
+    {
+      "token": "0x060000AF",
+      "method": "System.Void DeviceAnimationEvent::PlayAudio(UnityEngine.AudioClip)",
+      "native_start": "0x180302360",
+      "native_end": "0x180302406",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7c74d882711f6e6298d9869fa5b84d0302e3b693d637587588f174b06a1c6e3c",
+      "cpp_diagnostics_before": 1,
+      "contract": "Preserve full native-pinned audio chain: self transform, position, AudioVolume, CreateAudioAtPoint(clip,position,volume). Physical null guards precede engine calls; actual Vector3 value is passed."
+    },
+    {
+      "token": "0x060000BB",
+      "method": "System.Void PlantAnimationEvent::PlayAudio(UnityEngine.AudioClip)",
+      "native_start": "0x180306cb0",
+      "native_end": "0x180306d92",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "08b28d726f22faebdb087ec7f4b40627156b2c926e9bab2f9c761d6f39c8dcee",
+      "cpp_diagnostics_before": 1,
+      "contract": "Preserve full native-pinned audio chain: Random.Range(.95f,1.1f) before camera/transform/position, AudioVolume, CreateAudioAtPoint(clip,position,volume,pitch). Physical null guards precede engine calls; actual Vector3 value is passed."
+    },
+    {
+      "token": "0x060002C6",
+      "method": "System.Void Board::PlayAudio_Button(UnityEngine.AudioClip)",
+      "native_start": "0x180327160",
+      "native_end": "0x180327210",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "49f26d493eca53d378ce206f4da0dd99bf5e7d54ad8fd0c725945844994b1c97",
+      "cpp_diagnostics_before": 1,
+      "contract": "Preserve full native-pinned audio chain: camera/transform/position, AudioVolume, CreateAudioAtPoint. Physical null guards precede engine calls; actual Vector3 value is passed."
+    },
+    {
+      "token": "0x0600046C",
+      "method": "System.Void Zombie::PlaySound(UnityEngine.AudioClip)",
+      "native_start": "0x180366a80",
+      "native_end": "0x180366b30",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "04485fec664f5dc29078663a3b446fa70b833b619307f47fd02b45ac6527c436",
+      "cpp_diagnostics_before": 1,
+      "contract": "Preserve full native-pinned audio chain: camera/transform/position, AudioVolume, CreateAudioAtPoint. Physical null guards precede engine calls; actual Vector3 value is passed."
+    },
+    {
+      "token": "0x060006D3",
+      "method": "System.Void SettlementUIController::PlayAudio(UnityEngine.AudioClip)",
+      "native_start": "0x1803ac8b0",
+      "native_end": "0x1803ac978",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "c002bc60833af6845df6972e599fe7dac2502c99d01b0329ab5b0cf7f79fb044",
+      "cpp_diagnostics_before": 1,
+      "contract": "Preserve full native-pinned audio chain: camera/transform/position, reload gLawnApp.audioVolume, PlayClipAtPoint. Physical null guards precede engine calls; actual Vector3 value is passed."
+    },
+    {
+      "token": "0x06000203",
+      "method": "System.Void ProjectManager::DropSpawnLevelAward(Zombie,UnityEngine.Vector3)",
+      "native_start": "0x1803235e0",
+      "native_end": "0x180323672",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "15597fb7c337d8516b37ae24f6ac949e4950b1dd9420c3d8ceb598c3ee2f0177",
+      "cpp_diagnostics_before": 1,
+      "contract": "CreateProject(2,4,by-value position), physical result guard before SetEndPosition<Zombie>(zombie)."
+    },
+    {
+      "token": "0x0600088B",
+      "method": "System.Void FTRuntime.SwfManager::ResumeGroup(System.String)",
+      "native_start": "0x1803c9d90",
+      "native_end": "0x1803c9df3",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3241f9c804c2118c49461608ab6f67c51d00d75845978da8661ddfd071f587bf",
+      "cpp_diagnostics_before": 1,
+      "contract": "Null/empty group no-op before this/set access; otherwise HashSet<string>.Remove."
+    },
+    {
+      "token": "0x0600088C",
+      "method": "System.Boolean FTRuntime.SwfManager::IsGroupPaused(System.String)",
+      "native_start": "0x1803c94f0",
+      "native_end": "0x1803c9544",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "62413cb15865a9dbe9bd53d126c41b030fc3d049c63a7bd82ee0499b9ef78ac9",
+      "cpp_diagnostics_before": 2,
+      "contract": "HashSet<string>.Contains; physical null set throws; null/empty group is a normal key."
+    },
+    {
+      "token": "0x0600088D",
+      "method": "System.Boolean FTRuntime.SwfManager::IsGroupPlaying(System.String)",
+      "native_start": "0x1803c9550",
+      "native_end": "0x1803c95a7",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "6a062f7c96cd0ac9039998a3b4e0c9017bd770d1a9d885411c30cc46453878f2",
+      "cpp_diagnostics_before": 2,
+      "contract": "Logical inverse of HashSet<string>.Contains."
+    },
+    {
+      "token": "0x0600088E",
+      "method": "System.Void FTRuntime.SwfManager::SetGroupUseUnscaledDt(System.String,System.Boolean)",
+      "native_start": "0x1803c9ea0",
+      "native_end": "0x1803c9f45",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "1c0acb1856303e60795038d20c0fcbc6e31e84ad8cc63da960ae508fb7bf6abd",
+      "cpp_diagnostics_before": 1,
+      "contract": "Null/empty group no-op; otherwise Add when true, Remove when false."
+    },
+    {
+      "token": "0x0600088F",
+      "method": "System.Boolean FTRuntime.SwfManager::IsGroupUseUnscaledDt(System.String)",
+      "native_start": "0x1803c95b0",
+      "native_end": "0x1803c9604",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a49e40070594dfd24010850f6224fd5c66fa16e8e843d6e5c9f32b36c5939ee5",
+      "cpp_diagnostics_before": 2,
+      "contract": "HashSet<string>.Contains on groupUnscales, no empty-name guard."
+    }
+  ],
+  "scope": "Original PC outer MethodBody contracts; real emitted candidate CIL + explicit helper doubles; no whole-game/device equivalence claim"
+}

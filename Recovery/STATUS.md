@@ -1,3 +1,7 @@
+## Native29 checkpoint — 2026-10-01
+
+31 methods / 65 diagnostics cleared; 6006→5941, 24 TUs still fail, 616 methods still have C++ diagnostics. Candidate SHA-256 4572e7e2d121f58e84af65c78056a42b5e919b06275d8915024401e3b4256fe2. 2266 non-target raw bodies and existing metadata rows/heaps exact; three explicit closed MemberRefs appended in new metadata section. 1915 actual CLR cases, 43 negative controls, 1353 inherited cases pass; 2236 non-target C++ functions exact. No licensed Unity/Xcode build or IPA. See [Native29](Native29-2026-10-01/README.md). Previous checkpoints retained below.
+
 > **2026-10-01 Native27验收器加固**：固定native期望，复现并拦截四个旧fixture假通过；174正用例通过、72变体分为70行为错误/2 CLR拒绝，两类工具故障均失败。游戏DLL未改，仍6033条Linux诊断、无IPA。详见[验收器修订](Native27Verifier-2026-10-01/README.md)。
 
 ## 2026-10-01 Native28（最新检查点）
