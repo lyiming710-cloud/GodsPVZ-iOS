@@ -1,3 +1,7 @@
+## Native30 checkpoint — 2026-10-01
+
+17 methods / 21 diagnostics cleared; 5941->5920, 24 TUs still fail, zero target diagnostics. Candidate SHA-256 85df0b31762b235e4bd8e83f072499777ba865d6fb196bbb06f8c4b52d6e5e2b. 2280 non-target raw bodies and existing metadata rows/heaps exact; zero appended metadata bytes. 1958 actual CLR cases, 61 negative controls, 1915 inherited cases pass; 2250 non-target C++ functions exact. No licensed Unity/Xcode build or IPA. See [Native30](Native30-2026-10-01/README.md). Previous checkpoints retained below.
+
 ## Native29 checkpoint — 2026-10-01
 
 31 methods / 65 diagnostics cleared; 6006→5941, 24 TUs still fail, 616 methods still have C++ diagnostics. Candidate SHA-256 4572e7e2d121f58e84af65c78056a42b5e919b06275d8915024401e3b4256fe2. 2266 non-target raw bodies and existing metadata rows/heaps exact; three explicit closed MemberRefs appended in new metadata section. 1915 actual CLR cases, 43 negative controls, 1353 inherited cases pass; 2236 non-target C++ functions exact. No licensed Unity/Xcode build or IPA. See [Native29](Native29-2026-10-01/README.md). Previous checkpoints retained below.

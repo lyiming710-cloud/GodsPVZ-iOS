@@ -1,0 +1,177 @@
+{
+  "original_GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "candidate_input_sha256": "4572e7e2d121f58e84af65c78056a42b5e919b06275d8915024401e3b4256fe2",
+  "approved_methods": [
+    {
+      "token": "0x060000C1",
+      "method": "System.Void ProjectAnimationEvent::PlayWinAudio()",
+      "native_start": "0x180307150",
+      "native_end": "0x18030727e",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ace6a7026768f02dd28f6f1f7412ea6b43cd8ad909561a7874ddd62beee6f9ca",
+      "cpp_diagnostics_before": 1,
+      "contract": "PlayWinAudio: read Camera.main.transform.position, AudioVolume, CreateAudioAtPoint(clip, position, volume). Null camera/transform guard."
+    },
+    {
+      "token": "0x060001C7",
+      "method": "System.Void MouseManager::AudioPlay(System.Int32)",
+      "native_start": "0x18031d390",
+      "native_end": "0x18031d4f2",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7a7b170e07fc8dadd6298d430f311d7bdeadaa8d8f8510ad193b42b8594ccb8c",
+      "cpp_diagnostics_before": 1,
+      "contract": "AudioPlay(int): switch(id) loads audio clip 0..4, reads Camera.main.transform.position, AudioVolume, CreateAudioAtPoint(clip, position, volume)."
+    },
+    {
+      "token": "0x060002B4",
+      "method": "System.Void Board::ButtonDown_Menu()",
+      "native_start": "0x180325ce0",
+      "native_end": "0x180325e1a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "f939d3cc29f7c80add1230fc8ef1db8944f3dcc80b7b714f08f3318c9db44c75",
+      "cpp_diagnostics_before": 1,
+      "contract": "ButtonDown_Menu: null-guard gameUI_down, Resources.Load Window_Menu, Instantiate under Canvas_Font, store window_Menu."
+    },
+    {
+      "token": "0x06000480",
+      "method": "System.Void Zombie::TeleportTo(UnityEngine.Vector3,System.Single,System.Boolean)",
+      "native_start": "0x180369f40",
+      "native_end": "0x180369fb8",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "87201384fc0b4d14074edbc8924a3cd153f22aad8904ca114d961de8be531aa1",
+      "cpp_diagnostics_before": 1,
+      "contract": "TeleportTo(pos, duration, isAnimate): sets transform.position to pos by value, conditionally triggers animation."
+    },
+    {
+      "token": "0x0600001F",
+      "method": "System.Void Admin_system2_boardEdior::Return()",
+      "native_start": "0x1802fce10",
+      "native_end": "0x1802fcebc",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "da48e4b5569672d0646702fd45b11619bfcfa764955b977921481f6da4ea1d3d",
+      "cpp_diagnostics_before": 1,
+      "contract": "Return: cleans up board editor UI, resets board state, executes exit callback if present."
+    },
+    {
+      "token": "0x06000060",
+      "method": "System.Void Path_enemyEditor::LoadData()",
+      "native_start": "0x180306260",
+      "native_end": "0x1803062fd",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "47f2167357c16c4e8916b22bc74119a1ecdf1ffbf1e362ae30e82faa7f81ab90",
+      "cpp_diagnostics_before": 1,
+      "contract": "LoadData: iterates path node list, resolves coordinates via GetGridCenterPosition, stores waypoint vector structures."
+    },
+    {
+      "token": "0x060003C9",
+      "method": "System.Void Project::Rotating()",
+      "native_start": "0x180378040",
+      "native_end": "0x1803780ca",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "de03f8f9ddf5e084c77471c4c14b7ba7da37f393ee605a2ca45c49e4557c1adf",
+      "cpp_diagnostics_before": 1,
+      "contract": "Rotating: transform.Rotate(0, 0, -18.0f * deltaTime, Space.World). Pinned r9d = 0."
+    },
+    {
+      "token": "0x0600026A",
+      "method": "System.Void SunManager::SunFall()",
+      "native_start": "0x180340c60",
+      "native_end": "0x180340cfb",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "da5ddcc9a919828243ab7434529c0ceb3e47e2a751642c4c1b1898766ac86cd0",
+      "cpp_diagnostics_before": 1,
+      "contract": "SunFall: checks interval against sunFallCount, ProjectManager.CreateProject spawns sun drop at computed position."
+    },
+    {
+      "token": "0x0600026B",
+      "method": "System.Void SunManager::SunPointTextUpdate()",
+      "native_start": "0x180340d00",
+      "native_end": "0x180340d3c",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "2568564358b7152b24d5cc3a56de25812130706d7bf34d4c7d118c3ad651ade5",
+      "cpp_diagnostics_before": 1,
+      "contract": "SunPointTextUpdate: Text.set_text with instance field address ldflda SunManager::sunPoint."
+    },
+    {
+      "token": "0x06000448",
+      "method": "System.Single Zombie::GetElementPoint(ElementType)",
+      "native_start": "0x180361060",
+      "native_end": "0x180361095",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b758e184f48a5f4aea88dbbc23b8febb0c6eb0823af37b0dadf3576d2e1c149a",
+      "cpp_diagnostics_before": 1,
+      "contract": "GetElementPoint(ElementType): reads element points float array by element enum type index with bounds check."
+    },
+    {
+      "token": "0x06000488",
+      "method": "System.Boolean Zombie::TryShooting()",
+      "native_start": "0x18036ad70",
+      "native_end": "0x18036adbe",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3531c8b131f48da0cd8845862c2892c38c2894ccb073cfe7675783fd08bdb183",
+      "cpp_diagnostics_before": 1,
+      "contract": "TryShooting: checks cooldown timer and range, resets cooldown, calls CreateProject, returns true on success."
+    },
+    {
+      "token": "0x060006E9",
+      "method": "System.Void WarehouseUIController::CheckSupplies(Supplies)",
+      "native_start": "0x1803adfc0",
+      "native_end": "0x1803ae055",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "fe3ef4bc3741b4bd37fb958b47668fbaa9e47202e8f740dce71308794132e3aa",
+      "cpp_diagnostics_before": 1,
+      "contract": "CheckSupplies(Supplies): evaluates unlock condition and count, updates supply button state and UI display."
+    },
+    {
+      "token": "0x06000675",
+      "method": "Popup Popup::PopupPopup(System.Int32)",
+      "native_start": "0x1803a5de0",
+      "native_end": "0x1803a5e8a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "928b897c6b9c4044629a360d2bcc1ab6ac600ddb8e1dc662fed09b20a6d8a32f",
+      "cpp_diagnostics_before": 2,
+      "contract": "PopupPopup(int): instantiates popup prefab with 1 ID parameter, initializes display, adds to UI layer."
+    },
+    {
+      "token": "0x06000673",
+      "method": "Popup Popup::PopupPopup(System.Int32,System.Int32)",
+      "native_start": "0x1803a6060",
+      "native_end": "0x1803a6119",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3fbd47492b5e9635893f5dcf02d8bb19b76c4b53f55ea035809b086689d50c9d",
+      "cpp_diagnostics_before": 2,
+      "contract": "PopupPopup(int, int): instantiates popup prefab with 2 ID parameters, initializes display, adds to UI layer."
+    },
+    {
+      "token": "0x06000704",
+      "method": "Window_Q Window_Q::PopupNewWindow(System.Int32,UnityEngine.Transform,System.Int32)",
+      "native_start": "0x1803afe60",
+      "native_end": "0x1803afe85",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "812dbde934e481ffa90633c77383eceeca0dd7e89a2bbd782699fd2329e63c04",
+      "cpp_diagnostics_before": 2,
+      "contract": "PopupNewWindow: instantiates Window_Q under parent transform with specified window type and sorting order."
+    },
+    {
+      "token": "0x060008F2",
+      "method": "System.Void FTRuntime.Internal.SwfUtils::UnpackUV(System.UInt32,System.Single&,System.Single&)",
+      "native_start": "0x1803ca720",
+      "native_end": "0x1803ca760",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "a792d0864fb78ba8bca6fc4d90c4ddd8b2ff2ad8acd0a70aea764a77b809bd37",
+      "cpp_diagnostics_before": 2,
+      "contract": "UnpackUV: decodes 32-bit uint into u, v float components via bitwise mask, shr.un 16, scaled by 1/65535f, stind.r4."
+    },
+    {
+      "token": "0x06000401",
+      "method": "System.Void Prop::DropDown()",
+      "native_start": "0x18037e320",
+      "native_end": "0x18037e400",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8fe281ca9a855d42b78f4ee090ce0ecfe011d7eb01bb6d5a7077d4a196ab8eb0",
+      "cpp_diagnostics_before": 1,
+      "contract": "DropDown: starts drop coroutine, applies downward gravity acceleration to vertical position until landing y."
+    }
+  ],
+  "scope": "Original PC outer MethodBody contracts; real emitted candidate CIL + explicit helper doubles; no whole-game/device equivalence claim"
+}

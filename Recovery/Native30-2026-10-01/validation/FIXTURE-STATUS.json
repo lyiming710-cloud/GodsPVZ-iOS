@@ -1,0 +1,101 @@
+{
+  "positive_cases": 1958,
+  "positive_failures": 0,
+  "negative_statuses": {
+    "BEHAVIOR_MISMATCH": 58,
+    "CLR_REJECTED": 3
+  },
+  "tool_faults": {
+    "fault_emit": {
+      "runtime": "10.0.12",
+      "methods": 0,
+      "positive_cases": 0,
+      "positive_failures": 0,
+      "negative_controls": 1,
+      "tool_errors": 1,
+      "gate_pass": false,
+      "scope": "Actual emitted candidate outer CIL, native-pinned independent expected values; engine/helper doubles; real CLR delegates and HashSet<string>; Settings Reset executes candidate identity body; not Unity/device acceptance",
+      "positives": [],
+      "mutations": [
+        {
+          "Token": "0x0600019B",
+          "Name": "fault_emit",
+          "Status": "TOOL_ERROR",
+          "Detected": false,
+          "Failed": 0,
+          "ClrRejected": 0,
+          "ToolError": "InfrastructureFault: Injected emitter failure\n   at Native30Fixture.Emit(MethodDefinition m, String mutant) in /workspaces/GodsPVZ-native24-codespace/.validation/native30-2026-10-01/fixture/Program.cs:line 419\n   at Native30Fixture.Eval(MethodDefinition m, String name) in /workspaces/GodsPVZ-native24-codespace/.validation/native30-2026-10-01/fixture/Program.cs:line 966"
+        }
+      ]
+    },
+    "fault_invoke": {
+      "runtime": "10.0.12",
+      "methods": 0,
+      "positive_cases": 0,
+      "positive_failures": 0,
+      "negative_controls": 1,
+      "tool_errors": 1,
+      "gate_pass": false,
+      "scope": "Actual emitted candidate outer CIL, native-pinned independent expected values; engine/helper doubles; real CLR delegates and HashSet<string>; Settings Reset executes candidate identity body; not Unity/device acceptance",
+      "positives": [],
+      "mutations": [
+        {
+          "Token": "0x0600019B",
+          "Name": "none",
+          "Status": "TOOL_ERROR",
+          "Detected": false,
+          "Failed": 0,
+          "ClrRejected": 0,
+          "ToolError": "InfrastructureFault: Injected invoke failure\n   at Native30Fixture.Invoke(DynamicMethod dm, Object[] args) in /workspaces/GodsPVZ-native24-codespace/.validation/native30-2026-10-01/fixture/Program.cs:line 513\n   at Native30Fixture.<>c__DisplayClass12_0.<Check>g__Test|0(String name, Func`1 setup, Func`2 expected, String error, String[] events) in /workspaces/GodsPVZ-native24-codespace/.validation/native30-2026-10-01/fixture/Program.cs:line 536\n   at Native30Fixture.Check(Int32 token, DynamicMethod dm) in /workspaces/GodsPVZ-native24-codespace/.validation/native30-2026-10-01/fixture/Program.cs:line 548\n   at Native30Fixture.Eval(MethodDefinition m, String name) in /workspaces/GodsPVZ-native24-codespace/.validation/native30-2026-10-01/fixture/Program.cs:line 966"
+        }
+      ]
+    }
+  },
+  "post_state_mutants": [
+    {
+      "Token": "0x060008AA",
+      "Name": "post_state",
+      "Status": "BEHAVIOR_MISMATCH",
+      "Detected": true,
+      "Failed": 43,
+      "ClrRejected": 0,
+      "ToolError": null
+    },
+    {
+      "Token": "0x060008AC",
+      "Name": "post_state",
+      "Status": "BEHAVIOR_MISMATCH",
+      "Detected": true,
+      "Failed": 43,
+      "ClrRejected": 0,
+      "ToolError": null
+    },
+    {
+      "Token": "0x060008AE",
+      "Name": "post_state",
+      "Status": "BEHAVIOR_MISMATCH",
+      "Detected": true,
+      "Failed": 43,
+      "ClrRejected": 0,
+      "ToolError": null
+    },
+    {
+      "Token": "0x060008B6",
+      "Name": "post_state",
+      "Status": "BEHAVIOR_MISMATCH",
+      "Detected": true,
+      "Failed": 43,
+      "ClrRejected": 0,
+      "ToolError": null
+    },
+    {
+      "Token": "0x060008B7",
+      "Name": "post_state",
+      "Status": "BEHAVIOR_MISMATCH",
+      "Detected": true,
+      "Failed": 37,
+      "ClrRejected": 0,
+      "ToolError": null
+    }
+  ]
+}
