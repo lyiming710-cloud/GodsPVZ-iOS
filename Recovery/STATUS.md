@@ -1,3 +1,5 @@
+> **2026-10-01 Native27验收器加固**：固定native期望，复现并拦截四个旧fixture假通过；174正用例通过、72变体分为70行为错误/2 CLR拒绝，两类工具故障均失败。游戏DLL未改，仍6033条Linux诊断、无IPA。详见[验收器修订](Native27Verifier-2026-10-01/README.md)。
+
 > **2026-10-01 Native27最新进度**：完成问题分类及十二方法批修，174个新CLR用例/66个负面变体检出，继承325用例通过。24字节变化，增量2285个非目标body完全一致。类型失败855；Linux全量错误6033，24个失败TU，仍无IPA。本轮没有Unity/Xcode dispatch。当前源码、证据和十八个待native审计队列见[Native27](Native27-2026-10-01/README.md)。
 
 > **2026-10-01 Native26最新进度**：继承Native25并完整恢复AttackRange.TestInRange_Device；255个新CLR用例及六个行为反例通过，继承70个用例通过。类型失败867；Linux全量错误6057、24个失败TU，尚无IPA。五目标之外2292个方法体原始字节不变。没有完整Unity/Xcode dispatch。源码、完整规格与完整证据见[Native26](Native26-2026-10-01/README.md)。

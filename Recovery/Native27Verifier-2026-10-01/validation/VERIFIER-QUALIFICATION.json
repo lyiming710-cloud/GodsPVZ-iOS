@@ -1,0 +1,76 @@
+{
+  "scope": "Verification-only change; Native27 game DLL unchanged; no IL2CPP/Clang/Unity rerun",
+  "candidate_sha256": "ae6ac972e0615666091b7359774f0c0ec70d01d8e5d05d0942324b7d13b34920",
+  "methods": 12,
+  "positive_cases": 174,
+  "positive_pass": true,
+  "negative_variants": 72,
+  "status_counts": {
+    "BEHAVIOR_MISMATCH": 70,
+    "CLR_REJECTED": 2
+  },
+  "four_legacy_false_acceptances_reproduced_and_rejected": [
+    {
+      "token": "0x060008B0",
+      "native_expected_action": "GotoAndPlay",
+      "legacy_accepted": true,
+      "hardened_rejected": true,
+      "status": "BEHAVIOR_MISMATCH"
+    },
+    {
+      "token": "0x060008B2",
+      "native_expected_action": "GotoAndPlay",
+      "legacy_accepted": true,
+      "hardened_rejected": true,
+      "status": "BEHAVIOR_MISMATCH"
+    },
+    {
+      "token": "0x060008B4",
+      "native_expected_action": "GotoAndPlay",
+      "legacy_accepted": true,
+      "hardened_rejected": true,
+      "status": "BEHAVIOR_MISMATCH"
+    },
+    {
+      "token": "0x060008B8",
+      "native_expected_action": "GotoAndStop",
+      "legacy_accepted": true,
+      "hardened_rejected": true,
+      "status": "BEHAVIOR_MISMATCH"
+    }
+  ],
+  "tool_faults_fail_closed": [
+    {
+      "mode": "fixture_fault_emit",
+      "exit": 2,
+      "gate_pass": false,
+      "tool_errors": 1,
+      "fault": {
+        "Token": "0x060008AB",
+        "Mutation": "fixture_fault_emit",
+        "Detected": false,
+        "Status": "TOOL_ERROR",
+        "FailingCases": 0,
+        "ClrRejectedCases": 0,
+        "ToolError": "TestInfrastructureException: Injected emitter fault"
+      }
+    },
+    {
+      "mode": "fixture_fault_invoke",
+      "exit": 2,
+      "gate_pass": false,
+      "tool_errors": 1,
+      "fault": {
+        "Token": "0x060008AB",
+        "Mutation": "fixture_fault_invoke",
+        "Detected": false,
+        "Status": "TOOL_ERROR",
+        "FailingCases": 0,
+        "ClrRejectedCases": 0,
+        "ToolError": "TargetInvocationException: Exception has been thrown by the target of an invocation."
+      }
+    }
+  ],
+  "native_contracts_cross_checked": true,
+  "runtime": "10.0.12"
+}
