@@ -1,0 +1,72 @@
+{
+  "method": "0x06000338",
+  "input_sha256": "8300c14ebac3b45cc00397c69cd72d4517366587acbe081b6e8b5a98f8fdedf9",
+  "native_evidence": "NATIVE-EVIDENCE.json",
+  "pc_native_start": "0x18034BDF0",
+  "pc_native_end": "0x18034BE2E",
+  "scope": "Contract-level reconstruction; no original helper execution",
+  "blocks": [
+    {
+      "cil_offsets": [
+        0,
+        7
+      ],
+      "native": [
+        "0x18034BDF6",
+        "0x18034BDF9",
+        "0x18034BDFD",
+        "0x18034BE00"
+      ],
+      "operation": "Load this.board and test physical null"
+    },
+    {
+      "cil_offsets": [
+        9,
+        15
+      ],
+      "native": [
+        "0x18034BE28",
+        "0x18034BE2D"
+      ],
+      "operation": "Throw NRE, no bool return"
+    },
+    {
+      "cil_offsets": [
+        16,
+        18
+      ],
+      "native": [
+        "0x18034BE02",
+        "0x18034BE05"
+      ],
+      "operation": "GetGrid(board, x, y), exactly once"
+    },
+    {
+      "cil_offsets": [
+        23,
+        28
+      ],
+      "native": [
+        "0x18034BE0A",
+        "0x18034BE0D",
+        "0x18034BE22",
+        "0x18034BE27"
+      ],
+      "operation": "Null Grid returns false"
+    },
+    {
+      "cil_offsets": [
+        29,
+        35
+      ],
+      "native": [
+        "0x18034BE0F",
+        "0x18034BE12",
+        "0x18034BE15",
+        "0x18034BE1D"
+      ],
+      "operation": "CanPlacing(grid, original Device), return its bool"
+    }
+  ],
+  "output_sha256": "9cbf08472d6c22f1b68393656ac2d36576fd6b21d49c4738f80aec2e2cbe749a"
+}
