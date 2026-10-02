@@ -1,0 +1,33 @@
+{
+  "archive_sha256": "59776cae54dba9fb74c30fdad8133b4fc62ebea7ffa8d4c6013d571c1b809131",
+  "members_verified": 845,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 1,
+    "positive_cases": 4098,
+    "positive_failures": 0,
+    "negative_controls": 7,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "alpha-zero-semantic-negative.dll",
+      "positive_failures": 4097
+    },
+    {
+      "dll": "dirty-false-semantic-negative.dll",
+      "positive_failures": 4097
+    }
+  ],
+  "append_scope_negatives": [
+    "metadata-heap-byte-scope-negative.dll",
+    "newbody-padding-scope-negative.dll",
+    "non-target-rva-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "wrong-locals-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch CIL/CLR with original constructor, supplied String.Empty/class layouts, recorded GC/base ctor and actual pinned Color value constructor; no Unity/Xcode/device acceptance"
+}
