@@ -1,0 +1,34 @@
+{
+  "archive_sha256": "feb6eae818f058e5ddb4c1eeb050000fd9be58758bbe6aa0a851344b07f1536e",
+  "members_verified": 869,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 1,
+    "positive_cases": 8235,
+    "positive_failures": 0,
+    "negative_controls": 14,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "add-overflow-semantic-negative.dll",
+      "positive_failures": 1932
+    },
+    {
+      "dll": "wrong-bool-semantic-negative.dll",
+      "positive_failures": 3887
+    }
+  ],
+  "byte_scope_negatives": [
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "target-padding-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch CIL/CLR with original signed-wrap skip-level caller, supplied objects/string identity and recorded formatter/text; reload/null/partial-effect tests and real numeric formatting; no Unity/Xcode/device acceptance"
+}

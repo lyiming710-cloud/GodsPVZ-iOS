@@ -1,0 +1,16 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060000A5",
+      "method": "System.Void SystemSkipLevel::SkipLevel(System.Int32)",
+      "start": "0x18030d780",
+      "end": "0x18030d80f",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a255fc28881a656a5c7c739e7f3961db4837c7f864c8fe5804474ad188f02028",
+      "contract": "Read playerSave first; null returns. Sum delta and level with int32 wrap, update only if signed sum > 0. Capture text before level store/format, call exact \u5f53\u524d\u5173\u5361\uff1a0 through level address, SetText true, then reread playerSave and level after text callback and commit adventureLevel. Preserve NRE and prior effects when text or reloaded Save is null."
+    }
+  ],
+  "oracle_preconditions": "Unchanged original PC SkipLevel caller with supplied objects and verified format slot; recorded formatter/text dependencies with explicit ref/receiver/Save/level stress mutations. CLR executes signed wrap/guard/capture/reload/null/partial effects and actual numeric formatter in four cultures. No original native formatter/UI/throw engine, Unity or device acceptance.",
+  "diagnostics_baseline": "Native46 full compiler result; exact parent extraction"
+}
