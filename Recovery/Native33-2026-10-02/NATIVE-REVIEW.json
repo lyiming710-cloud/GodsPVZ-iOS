@@ -1,0 +1,28 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x0600015B",
+      "method": "UnityEngine.Vector3 BoardConfig::GetGridPosition(System.Int32,System.Int32)",
+      "start": "0x18030ec90",
+      "end": "0x18030ed49",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3400dabb5de915954f4525949cfdd0b3edd6911bc11011559a96e33ed94e62dc",
+      "contract": "Require map. Read original Map.GetMapX(), then reread map and call Map.GetMapY(). x=float(unchecked(x-width/2))*114f; y=float(unchecked(height/2-y-1))*134f; z=+0. Signed division and int32 wrapping."
+    },
+    {
+      "token": "0x0600015C",
+      "method": "UnityEngine.Vector3 BoardConfig::GetGridCenterPosition(System.Int32,System.Int32)",
+      "start": "0x18030ec30",
+      "end": "0x18030ec89",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "6d6d33675e529ee3a56807ef9d6f72ca6274004b15bb155ff7ce9de60c16dc6a",
+      "contract": "Call restored GetGridPosition. Preserve all three components, then x+=57f,y+=67f; z unchanged. Original damaged copy lost y."
+    }
+  ],
+  "dependencies_unchanged": [
+    "0x06000289",
+    "0x0600028A"
+  ],
+  "oracle_preconditions": "Map metadata initialized flags 0x181ce4c6c and 0x181ce4c6d only. Controlled valid native Map/List/Row layouts. Original generic List.get_Item body executes with valid index and ignored MethodInfo. No Unity startup, native throw helper or imports executed."
+}

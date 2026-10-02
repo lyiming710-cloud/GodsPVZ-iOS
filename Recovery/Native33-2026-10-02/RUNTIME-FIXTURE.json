@@ -1,0 +1,99 @@
+{
+  "candidate_sha256": "4ce81321b2d4d7bab3918fb3e8eceb39b2f6124d033d48dddac80ec7b831abb0",
+  "oracle_sha256": "8c1aa58ec9f89627d2e96cc2edaf923acda3713cbf530bb208eaf39527e5d2a2",
+  "methods": 4,
+  "positive_cases": 56012,
+  "positive_failures": 0,
+  "negative_controls": 10,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Real CLR candidate bodies and unchanged Map helper bodies versus executed original PC coordinate closure, including original native generic List.get_Item. Valid controlled List layouts, initialized Map metadata flags. Signed int32 overflow edges, finite domains. Dynamic internal calls use explicit-this static adapters; all dependency bodies dereference this. All Vector3 channel bits compared exactly; finite signed int32 edge samples and valid List layouts, not Unity/iOS/device acceptance",
+  "positives": [
+    {
+      "token": "0x06000289",
+      "signature": "System.Int32 Map::GetMapX()",
+      "cases": 14003,
+      "failures": []
+    },
+    {
+      "token": "0x0600028A",
+      "signature": "System.Int32 Map::GetMapY()",
+      "cases": 14001,
+      "failures": []
+    },
+    {
+      "token": "0x0600015B",
+      "signature": "UnityEngine.Vector3 BoardConfig::GetGridPosition(System.Int32,System.Int32)",
+      "cases": 14004,
+      "failures": []
+    },
+    {
+      "token": "0x0600015C",
+      "signature": "UnityEngine.Vector3 BoardConfig::GetGridCenterPosition(System.Int32,System.Int32)",
+      "cases": 14004,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x06000289",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000289",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600028A",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600028A",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600015B",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600015B",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600015B",
+      "mutation": "wrong_spacing",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600015C",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600015C",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600015C",
+      "mutation": "wrong_center_y",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}
