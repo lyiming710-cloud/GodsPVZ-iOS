@@ -193,10 +193,11 @@ static class RepairNative30 {
   il.Ref(0x6F,C(m,"set_localPosition"));
   il.Arg(0).Int(1).Ref(0x7D,F(m,"propState"));
   il.Arg(0).Ref(0x7B,F(m,"propImagex"));
-  il.O(0x25).Branch(0x2C,"skip");
+  il.O(0x14); // ldnull
+  il.Ref(0x28,CallRef("System.Boolean UnityEngine.Object::op_Inequality(UnityEngine.Object,UnityEngine.Object)"));
+  il.Branch(0x2C,"bank"); // brfalse.s bank
+  il.Arg(0).Ref(0x7B,F(m,"propImagex"));
   il.Ref(0x28,C(m,"Destroy"));
-  il.Branch(0x2B,"bank");
-  il.Label("skip").O(0x26); // pop
   il.Label("bank");
   il.Arg(0).Ref(0x6F,C(m,"PropBankStateSet"));
   il.O(0x2A);

@@ -1,0 +1,194 @@
+{
+  "original_GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "candidate_input_sha256": "4572e7e2d121f58e84af65c78056a42b5e919b06275d8915024401e3b4256fe2",
+  "approved_methods": [
+    {
+      "token": "0x060000C1",
+      "method": "System.Void ProjectAnimationEvent::PlayWinAudio()",
+      "native_start": "0x180307150",
+      "native_end": "0x18030727e",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ace6a7026768f02dd28f6f1f7412ea6b43cd8ad909561a7874ddd62beee6f9ca",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "PlayWinAudio: reads Camera.main via Camera::get_main() (0x181313330); calls Component::get_transform() (0x181304510) and Transform::get_position() (0x18132f800); reads audioVolume from Board/Lawn; calls Global::CreateAudioAtPoint(winAudioClip, position, volume) (0x18029c010); throws NullReferenceException (0x180250150) if camera or transform is null."
+    },
+    {
+      "token": "0x060001C7",
+      "method": "System.Void MouseManager::AudioPlay(System.Int32)",
+      "native_start": "0x18031d390",
+      "native_end": "0x18031d4f2",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7a7b170e07fc8dadd6298d430f311d7bdeadaa8d8f8510ad193b42b8594ccb8c",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "AudioPlay(int id): switches on id (0..4) to select audioClip field from MouseManager instance; resolves Camera.main.transform.position; reads audioVolume; calls Global::CreateAudioAtPoint(clip, position, volume); skips playback if id is out of table bounds."
+    },
+    {
+      "token": "0x060002B4",
+      "method": "System.Void Board::ButtonDown_Menu()",
+      "native_start": "0x180325ce0",
+      "native_end": "0x180325e1a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "f939d3cc29f7c80add1230fc8ef1db8944f3dcc80b7b714f08f3318c9db44c75",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "ButtonDown_Menu: verifies this.gameUI_down is non-null (throws NRE if null); loads Window_Menu prefab/resource; instantiates under Canvas_Font transform; assigns instantiated window reference to this.window_Menu."
+    },
+    {
+      "token": "0x06000480",
+      "method": "System.Void Zombie::TeleportTo(UnityEngine.Vector3,System.Single,System.Boolean)",
+      "native_start": "0x180369f40",
+      "native_end": "0x180369fb8",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "87201384fc0b4d14074edbc8924a3cd153f22aad8904ca114d961de8be531aa1",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "TeleportTo(Vector3 pos, float duration, bool isAnimate): calls Component::get_transform() (throws NRE if null); sets Transform::set_position(pos) with pos passed by value; writes pos.x to this.position_x (offset 0x30) and pos.y to this.position_y (offset 0x34); if isAnimate is true, triggers animation function (0x18036c720)."
+    },
+    {
+      "token": "0x0600001F",
+      "method": "System.Void Admin_system2_boardEdior::Return()",
+      "native_start": "0x1802fce10",
+      "native_end": "0x1802fcebc",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "da48e4b5569672d0646702fd45b11619bfcfa764955b977921481f6da4ea1d3d",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "Return: resets board editor UI fields and active flags; performs board state cleanup; executes exit callback delegate if assigned."
+    },
+    {
+      "token": "0x06000060",
+      "method": "System.Void Path_enemyEditor::LoadData()",
+      "native_start": "0x180306260",
+      "native_end": "0x1803062fd",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "47f2167357c16c4e8916b22bc74119a1ecdf1ffbf1e362ae30e82faa7f81ab90",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "LoadData: iterates enemy path node collection; resolves grid center coordinates by calling BoardConfig::GetGridCenterPosition(x, y); stores resolved Vector3 waypoint positions into path data list."
+    },
+    {
+      "token": "0x060003C9",
+      "method": "System.Void Project::Rotating()",
+      "native_start": "0x180378040",
+      "native_end": "0x1803780ca",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "de03f8f9ddf5e084c77471c4c14b7ba7da37f393ee605a2ca45c49e4557c1adf",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "Rotating: reads this.projectType (offset 0x20); if projectType != 0 returns immediately; if projectType == 0, calls Component::get_transform() (throws NRE if null); calls Vector3::get_forward() (returns (0f, 0f, 1f)); calls Time::get_deltaTime(); scales angle by -18.0f * deltaTime; passes Space.Self (0); calls Transform::Rotate(axis, angle, Space.Self)."
+    },
+    {
+      "token": "0x0600026A",
+      "method": "System.Void SunManager::SunFall()",
+      "native_start": "0x180340c60",
+      "native_end": "0x180340cfb",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "da5ddcc9a919828243ab7434529c0ceb3e47e2a751642c4c1b1898766ac86cd0",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "SunFall: reads this.board (offset 0x40, throws NRE if null); reads board.projectManager (throws NRE if null); calls Vector3::get_zero(); calls ProjectManager::CreateProject(0, 0, Vector3.zero); throws NRE if created project is null; calls Project::SetNatureSunInitialPostion(); increments this.sunFallCount by 1. Note: contains no timer, interval, or cooldown check."
+    },
+    {
+      "token": "0x0600026B",
+      "method": "System.Void SunManager::SunPointTextUpdate()",
+      "native_start": "0x180340d00",
+      "native_end": "0x180340d3c",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "2568564358b7152b24d5cc3a56de25812130706d7bf34d4c7d118c3ad651ade5",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "SunPointTextUpdate: reads this.sunPointText (offset 0x48, throws NRE if null); formats this.sunPoint (int32 at offset 0x40) to string via Int32::ToString(); calls TMP_Text::set_text(string)."
+    },
+    {
+      "token": "0x06000448",
+      "method": "System.Single Zombie::GetElementPoint(ElementType)",
+      "native_start": "0x180361060",
+      "native_end": "0x180361095",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b758e184f48a5f4aea88dbbc23b8febb0c6eb0823af37b0dadf3576d2e1c149a",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "GetElementPoint(ElementType elemType): reads this.elementManager (offset 0x108, throws NRE if null); calls ElementManager::GetElement(elemType) (0x180315250); if returned element reference is null, returns 0.0f; if non-null, reads single-precision float field element.point (offset 0x24) and returns it. Note: not a float array lookup and does not perform array bounds check."
+    },
+    {
+      "token": "0x06000488",
+      "method": "System.Boolean Zombie::TryShooting()",
+      "native_start": "0x18036ad70",
+      "native_end": "0x18036adbe",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3531c8b131f48da0cd8845862c2892c38c2894ccb073cfe7675783fd08bdb183",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "TryShooting: reads this.animator (offset 0x158, throws NRE if null); calls Animator::SetTrigger(\"shooting\") (0x1812dbc00); returns boolean true. Note: contains no cooldown timer, distance/range check, or projectile instantiation logic."
+    },
+    {
+      "token": "0x060006E9",
+      "method": "System.Void WarehouseUIController::CheckSupplies(Supplies)",
+      "native_start": "0x1803adfc0",
+      "native_end": "0x1803ae055",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "fe3ef4bc3741b4bd37fb958b47668fbaa9e47202e8f740dce71308794132e3aa",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "CheckSupplies(Supplies supplies): reads this.suppliesInfoPage (offset 0x40, throws NRE if null); assigns supplies into suppliesInfoPage.supplies (offset 0x20); if supplies is non-null, reads supplies.ID (offset 0x18) and calls Supplies::GetSuppliesInfo() (0x18032fd30), storing result into suppliesInfoPage.suppliesInfo (offset 0x28); if supplies is null, sets suppliesInfoPage.suppliesInfo to null; calls Warehouse_SuppliesInfoPage::SetInfo() (0x1803ae670). Note: does not evaluate unlock conditions, levels, or item counts."
+    },
+    {
+      "token": "0x06000675",
+      "method": "Popup Popup::PopupPopup(System.Int32)",
+      "native_start": "0x1803a5de0",
+      "native_end": "0x1803a5e8a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "928b897c6b9c4044629a360d2bcc1ab6ac600ddb8e1dc662fed09b20a6d8a32f",
+      "cpp_diagnostics_before": 2,
+      "cpp_diagnostics_after": 0,
+      "contract": "PopupPopup(int id): reads static field ResourceManager.prefab_Popup (throws NRE if null); calls UnityEngine.Object::Instantiate(ResourceManager.prefab_Popup) (0x1804a0690); throws NRE if instantiated object is null; writes id parameter into popup.P (offset 0x20); returns instantiated Popup."
+    },
+    {
+      "token": "0x06000673",
+      "method": "Popup Popup::PopupPopup(System.Int32,System.Int32)",
+      "native_start": "0x1803a6060",
+      "native_end": "0x1803a6119",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3fbd47492b5e9635893f5dcf02d8bb19b76c4b53f55ea035809b086689d50c9d",
+      "cpp_diagnostics_before": 2,
+      "cpp_diagnostics_after": 0,
+      "contract": "PopupPopup(int id, int info0): reads static field ResourceManager.prefab_Popup (throws NRE if null); calls UnityEngine.Object::Instantiate(ResourceManager.prefab_Popup); throws NRE if instantiated object is null; writes id parameter into popup.P (offset 0x20); writes info0 parameter into popup.info0_int (offset 0x60); returns instantiated Popup."
+    },
+    {
+      "token": "0x06000704",
+      "method": "Window_Q Window_Q::PopupNewWindow(System.Int32,UnityEngine.Transform,System.Int32)",
+      "native_start": "0x1803afe60",
+      "native_end": "0x1803afe85",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "812dbde934e481ffa90633c77383eceeca0dd7e89a2bbd782699fd2329e63c04",
+      "cpp_diagnostics_before": 2,
+      "cpp_diagnostics_after": 0,
+      "contract": "PopupNewWindow(int type, Transform parent, int info0): calls Window_Q::Popup(type) (0x1803afd60); throws NRE if returned window is null; writes info0 into window.info0_int (offset 0x68); returns instantiated Window_Q."
+    },
+    {
+      "token": "0x060008F2",
+      "method": "System.Void FTRuntime.Internal.SwfUtils::UnpackUV(System.UInt32,System.Single&,System.Single&)",
+      "native_start": "0x1803ca720",
+      "native_end": "0x1803ca760",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "a792d0864fb78ba8bca6fc4d90c4ddd8b2ff2ad8acd0a70aea764a77b809bd37",
+      "cpp_diagnostics_before": 2,
+      "cpp_diagnostics_after": 0,
+      "contract": "UnpackUV(uint pack, ref float u, ref float v): computes u = (float)(pack >> 16) / 65535.0f; computes v = (float)(pack & 0xFFFF) / 65535.0f; stores computed single-precision floats into *u and *v."
+    },
+    {
+      "token": "0x06000401",
+      "method": "System.Void Prop::DropDown()",
+      "native_start": "0x18037e320",
+      "native_end": "0x18037e400",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8fe281ca9a855d42b78f4ee090ce0ecfe011d7eb01bb6d5a7077d4a196ab8eb0",
+      "cpp_diagnostics_before": 1,
+      "cpp_diagnostics_after": 0,
+      "contract": "DropDown: reads this.prop (offset 0x48, throws NRE if null); calls Component::get_transform() (0x18131c070, throws NRE if null); reads originalPosition (Vector3 at offsets 0x78 and 0x80); calls Transform::set_localPosition(this.originalPosition) (0x18132f910); writes 1 into this.propState (offset 0x28); reads this.propImagex (offset 0x90); calls UnityEngine.Object::op_Inequality(this.propImagex, null) (0x18131f900); if true, calls UnityEngine.Object::Destroy(this.propImagex) (0x18131e940); calls this.PropBankStateSet() (0x18037e680); returns void. Note: contains no falling loop, gravity coroutine, or landing y-coordinate check."
+    }
+  ],
+  "scope": "Original PC native MethodBody contracts grounded in disassembly and PE import maps; real emitted candidate CIL; helper doubles in CLR; not whole-game/device acceptance"
+}

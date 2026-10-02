@@ -108,7 +108,7 @@ public class Transform {
     public Vec get_position() { Tr.E("position"); return Tr.Position; }
     public void set_position(Vec v) { Tr.E("set_pos"); Tr.Position = v; }
     public void set_localPosition(Vec v) { Tr.E("set_local_pos"); localPosition = v; }
-    public void Rotate(Vec axis, float angle, int space) { Tr.E($"rotate:{BitConverter.SingleToInt32Bits(angle)}:{space}"); }
+    public void Rotate(Vec axis, float angle, int space) { Tr.E($"rotate:{BitConverter.SingleToInt32Bits(axis.x)}:{BitConverter.SingleToInt32Bits(axis.y)}:{BitConverter.SingleToInt32Bits(axis.z)}:{BitConverter.SingleToInt32Bits(angle)}:{space}"); }
 }
 
 public class Component : Obj {
@@ -459,6 +459,8 @@ static class Native30Fixture {
                 continue;
             }
             if (a is MethodReference c) {
+                if (mutant == "wrong_axis" && m.MetadataToken.ToInt32() == 0x060003C9 && c.Name == "get_forward") { Zero(typeof(Vec)); Changed(); continue; }
+                if (mutant == "plain_null_check" && m.MetadataToken.ToInt32() == 0x06000401 && c.Name == "op_Inequality") { il.Emit(RO.Pop); il.Emit(RO.Ldnull); il.Emit(RO.Cgt_Un); Changed(); continue; }
                 if (mutant == "drop_callback" && c.Name == "Invoke") { il.Emit(RO.Pop); il.Emit(RO.Pop); Changed(); continue; }
                 if (mutant == "drop_set_text" && c.Name == "set_text") { il.Emit(RO.Pop); il.Emit(RO.Pop); Changed(); continue; }
                 if (mutant == "drop_trigger" && c.Name == "SetTrigger") { il.Emit(RO.Pop); il.Emit(RO.Pop); Changed(); continue; }
@@ -840,7 +842,10 @@ static class Native30Fixture {
                 Test($"rotating:{pt}", () => {
                     Component.Transform = new Transform();
                     return new object?[] { new Project { projectType = pt } };
-                }, _ => true, null, pt == 0 ? new[] { "transform", $"rotate:{BitConverter.SingleToInt32Bits(-18.0f * 0.02f)}:0" } : Array.Empty<string>());
+                }, _ => true, null, pt == 0 ? new[] {
+                    "transform",
+                    $"rotate:{BitConverter.SingleToInt32Bits(0f)}:{BitConverter.SingleToInt32Bits(0f)}:{BitConverter.SingleToInt32Bits(1f)}:{BitConverter.SingleToInt32Bits(-18.0f * 0.02f)}:0"
+                } : Array.Empty<string>());
             }
             return rows;
         }
@@ -943,15 +948,38 @@ static class Native30Fixture {
 
         // 17. 0x06000401: Prop::DropDown()
         if (token == 0x06000401) {
-            foreach (bool hasImage in new[] { false, true }) {
-                var p = new Prop {
-                    prop = new GameObject(),
-                    originalPosition = new Vec(11, 22, 33),
-                    propState = 0,
-                    propImagex = hasImage ? new GameObject() : null
-                };
-                Test($"dropdown:{hasImage}", () => new object?[] { p }, _ => p.propState == 1 && Bits(p.prop.transform.localPosition, new Vec(11, 22, 33)), null, hasImage ? new[] { "set_local_pos", "destroy", "prop_bank" } : new[] { "set_local_pos", "prop_bank" });
-            }
+            // Case 1: Managed reference null
+            var pNull = new Prop {
+                prop = new GameObject(),
+                originalPosition = new Vec(11, 22, 33),
+                propState = 0,
+                propImagex = null
+            };
+            Test("dropdown:null", () => new object?[] { pNull }, _ => pNull.propState == 1 && Bits(pNull.prop.transform.localPosition, new Vec(11, 22, 33)), null, "set_local_pos", "prop_bank");
+
+            // Case 2: Live Unity object (Alive == true)
+            var imgLive = new GameObject { Alive = true };
+            var pLive = new Prop {
+                prop = new GameObject(),
+                originalPosition = new Vec(11, 22, 33),
+                propState = 0,
+                propImagex = imgLive
+            };
+            Test("dropdown:live", () => new object?[] { pLive }, _ => pLive.propState == 1 && Bits(pLive.prop.transform.localPosition, new Vec(11, 22, 33)) && !imgLive.Alive, null, "set_local_pos", "destroy", "prop_bank");
+
+            // Case 3: Destroyed Unity object (Alive == false, managed reference non-null)
+            var imgDead = new GameObject { Alive = false };
+            var pDead = new Prop {
+                prop = new GameObject(),
+                originalPosition = new Vec(11, 22, 33),
+                propState = 0,
+                propImagex = imgDead
+            };
+            Test("dropdown:destroyed", () => new object?[] { pDead }, _ => pDead.propState == 1 && Bits(pDead.prop.transform.localPosition, new Vec(11, 22, 33)) && !imgDead.Alive, null, "set_local_pos", "prop_bank");
+
+            // Case 4: Null this
+            Test("dropdown:null-this", () => new object?[] { null }, _ => false, "NullReferenceException");
+
             return rows;
         }
 
@@ -1007,11 +1035,18 @@ static class Native30Fixture {
                 else if (token == 0x06000488) mutation = "drop_trigger";
                 else if (token == 0x060006E9) mutation = "drop_set_info";
                 else if (token == 0x060008F2) mutation = "wrong_shift";
+                else if (token == 0x06000401) mutation = "plain_null_check";
 
                 mutants.Add(Eval(m, mutation));
                 if (token is 0x060008AA or 0x060008AC or 0x060008AE or 0x060008B6 or 0x060008B7) {
                     mutants.Add(Eval(m, "return_subscribe"));
                     mutants.Add(Eval(m, "post_state"));
+                }
+                if (token == 0x060003C9) {
+                    mutants.Add(Eval(m, "wrong_axis"));
+                }
+                if (token == 0x06000401) {
+                    mutants.Add(Eval(m, "drop_write"));
                 }
             }
 
