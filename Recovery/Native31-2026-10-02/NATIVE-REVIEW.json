@@ -1,0 +1,114 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060001A3",
+      "method": "System.Int32 Enemy::GetFlagIndex(System.Int32)",
+      "start": "0x18031a830",
+      "end": "0x18031a850",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "1388493bd83e78678aa9e0b58607cfde74b186bed4e52bd54d8b10a987554dc4",
+      "contract": "zero -> -1; otherwise unchecked(wave-1)/10, signed truncation toward zero"
+    },
+    {
+      "token": "0x0600048A",
+      "method": "System.Boolean Zombie::CanAttack_Plant(Plant)",
+      "start": "0x18035de50",
+      "end": "0x18035de7b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "99e168a76e2b9362423ee743075d75c44138b4911edc5c634adcc18e2de29496",
+      "contract": "Plant reference required; false only ID==4 && state==2; this is not read"
+    },
+    {
+      "token": "0x06000375",
+      "method": "System.Int32 Plant::GetNormalProjectileID()",
+      "start": "0x180351520",
+      "end": "0x180351550",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "cd000579ad9bd6cf2241901514381446e72553f416ee00d803cde69e760ee751",
+      "contract": "Plant.ID 4->15,5->1,7->24,otherwise -1"
+    },
+    {
+      "token": "0x060001A4",
+      "method": "System.Int32 Enemy::GetWaveIndex(System.Int32)",
+      "start": "0x18031a850",
+      "end": "0x18031a880",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "4a255cd6704a72d526fd07abbc29b5ade1ea4245ae455b0d9c755191e38b54bd",
+      "contract": "zero -> -1; otherwise unchecked(wave-1)%10, signed remainder"
+    },
+    {
+      "token": "0x060003DF",
+      "method": "System.Single Projectile::CalculateWeight(System.Single,System.Single)",
+      "start": "0x180379150",
+      "end": "0x180379180",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "25af779043c4d96db818ce650eb3bde1c94a7785d54d8ff9e331f178290913ed",
+      "contract": "abs(second)>abs(first) ? first/(first+second) : second/(first+second), ordered comparison; ties/NaN select second numerator"
+    },
+    {
+      "token": "0x0600026C",
+      "method": "System.Single SunManager::GetMaxSunFallTime(SenarioState)",
+      "start": "0x1803408d0",
+      "end": "0x180340910",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "7fce141481a12a8c5daa90635f53adb50e36d2fba0641182a5cc35f41061cdba",
+      "contract": "scenario 0->8f,8->16f,9->12f,10->24f,other->0f"
+    },
+    {
+      "token": "0x060004B9",
+      "method": "System.Single Zombie::ZA_GetArmor2Hp(Armor2Type)",
+      "start": "0x18036d4d0",
+      "end": "0x18036d510",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "86cb7464fa6c8168a154c3c3c822aaef52d84df9f013ccdf8fd08285237a768a",
+      "contract": "armor2 1..4 ->1100,240,2200,1440; other 0"
+    },
+    {
+      "token": "0x060004BA",
+      "method": "System.Single Zombie::ZA_GetArmor2Toughness(Armor2Type)",
+      "start": "0x18036d510",
+      "end": "0x18036d560",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "f1404c25e2c5906203f40733335061f4781cf03a0e5dad6d6ce83778c8c45602",
+      "contract": "armor2 1..4 ->30,5,40,30; other 0"
+    },
+    {
+      "token": "0x060004B8",
+      "method": "System.Single Zombie::ZA_GetArmor2Def(Armor2Type)",
+      "start": "0x18036d470",
+      "end": "0x18036d4d0",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "39e8e0768fdca2b5cef1309c7b6e269c8bf5c3f217f6cef5560fcd0f088919ba",
+      "contract": "armor2 1..4 ->110,20,400,120; other 0"
+    },
+    {
+      "token": "0x060004B6",
+      "method": "System.Single Zombie::ZA_GetArmor1Hp(Armor1Type)",
+      "start": "0x18036d390",
+      "end": "0x18036d400",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "c810536a48e9f5cbed84114cbc38d3d4be070279d8700fdc879ef9c50314372e",
+      "contract": "armor1 1..6 ->370,1100,2580,1680,1680,1980; other 0"
+    },
+    {
+      "token": "0x060004B7",
+      "method": "System.Single Zombie::ZA_GetArmor1Toughness(Armor1Type)",
+      "start": "0x18036d400",
+      "end": "0x18036d470",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "646037967e464fae16c4032302d7afbbc8588a950be08acc83bfc97a05087799",
+      "contract": "armor1 1..6 ->20,35,15,15,35,15; other 0"
+    },
+    {
+      "token": "0x060008F3",
+      "method": "System.Void FTRuntime.Internal.SwfUtils::UnpackFColorFromUInts(System.UInt32,System.UInt32,System.Single&,System.Single&,System.Single&,System.Single&)",
+      "start": "0x1803ca6b0",
+      "end": "0x1803ca720",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "2b4adb44e5ff9eecdbed2be744df279016d75ed81b219c1fbe0ba18347b34201",
+      "contract": "Write signed high/low short from pack0 then signed high/low short from pack1, each multiplied by exact 1/512. Preserve four store order and ref alias effects."
+    }
+  ],
+  "scope": "Executed original PC leaf bodies against real CLR candidate bodies; finite fixture-domain evidence"
+}

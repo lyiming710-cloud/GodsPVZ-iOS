@@ -1,0 +1,261 @@
+{
+  "candidate_sha256": "66b1234b13fe812adca05cfc92bf01b11f44f6427c112ca2dc101ac713b85e0b",
+  "oracle_sha256": "ac1a956a3c24e14ed16d62542c3f52c162209eb640cc08ebdc8c6ac6eb503dec",
+  "methods": 12,
+  "positive_cases": 77741,
+  "positive_failures": 0,
+  "negative_controls": 28,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Real CLR candidate CIL against executed original PC leaf machine code; no Unity helpers. Non-NaN float bits exact; NaN classification compared without payload promise. Finite input sampling except exhaustive 16-bit channel coverage; not Unity/iOS/device acceptance",
+  "positives": [
+    {
+      "token": "0x060001A3",
+      "signature": "System.Int32 Enemy::GetFlagIndex(System.Int32)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060001A4",
+      "signature": "System.Int32 Enemy::GetWaveIndex(System.Int32)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x0600026C",
+      "signature": "System.Single SunManager::GetMaxSunFallTime(SenarioState)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060004B6",
+      "signature": "System.Single Zombie::ZA_GetArmor1Hp(Armor1Type)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060004B7",
+      "signature": "System.Single Zombie::ZA_GetArmor1Toughness(Armor1Type)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060004B8",
+      "signature": "System.Single Zombie::ZA_GetArmor2Def(Armor2Type)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060004B9",
+      "signature": "System.Single Zombie::ZA_GetArmor2Hp(Armor2Type)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060004BA",
+      "signature": "System.Single Zombie::ZA_GetArmor2Toughness(Armor2Type)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x06000375",
+      "signature": "System.Int32 Plant::GetNormalProjectileID()",
+      "cases": 1030,
+      "failures": []
+    },
+    {
+      "token": "0x060003DF",
+      "signature": "System.Single Projectile::CalculateWeight(System.Single,System.Single)",
+      "cases": 2244,
+      "failures": []
+    },
+    {
+      "token": "0x0600048A",
+      "signature": "System.Boolean Zombie::CanAttack_Plant(Plant)",
+      "cases": 664,
+      "failures": []
+    },
+    {
+      "token": "0x060008F3",
+      "signature": "System.Void FTRuntime.Internal.SwfUtils::UnpackFColorFromUInts(System.UInt32,System.UInt32,System.Single\u0026,System.Single\u0026,System.Single\u0026,System.Single\u0026)",
+      "cases": 65536,
+      "failures": []
+    },
+    {
+      "token": "0x060008F3",
+      "suite": "original-native-byref-alias",
+      "cases": 35,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x060001A3",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001A3",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001A3",
+      "mutation": "divide_unsigned",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001A4",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001A4",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001A4",
+      "mutation": "reverse_remainder",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600026C",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600026C",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B6",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B6",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B7",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B7",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B8",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B8",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B9",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B9",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004BA",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004BA",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000375",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000375",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060003DF",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060003DF",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060003DF",
+      "mutation": "inverted_weight_branch",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600048A",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600048A",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600048A",
+      "mutation": "wrong_threshold",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008F3",
+      "mutation": "unsigned_channel",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008F3",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}
