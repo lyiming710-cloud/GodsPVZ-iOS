@@ -1,0 +1,432 @@
+{
+  "candidate_sha256": "53fb30fbfa2428f40b5c6642de025641312296e6fb635957974f983f6cc988ca",
+  "methods": 12,
+  "positive_cases": 19258,
+  "native_rows": 15204,
+  "natural_bcl_cases": 4030,
+  "positive_failures": 0,
+  "negative_controls": 48,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Unchanged original native event caller and CAS instructions execute under metadata and delegate/typecast/GC-barrier dependency doubles. Native observations test atomic retry CFG and field isolation. Actual CLR candidate runs public BCL Delegate.Combine/Remove and Interlocked generic CAS; deterministic competing updates use a wrapper around real CLR CAS. Natural paths and six concurrent 8-worker event groups use actual BCL CAS directly. No original delegate-engine/Unity startup or iOS/device equivalence claim",
+  "positives": [
+    {
+      "token": "0x06000822",
+      "cases": 1267,
+      "natural_bcl_cases": 328,
+      "failures": []
+    },
+    {
+      "token": "0x06000823",
+      "cases": 1267,
+      "natural_bcl_cases": 341,
+      "failures": []
+    },
+    {
+      "token": "0x06000824",
+      "cases": 1267,
+      "natural_bcl_cases": 336,
+      "failures": []
+    },
+    {
+      "token": "0x06000825",
+      "cases": 1267,
+      "natural_bcl_cases": 340,
+      "failures": []
+    },
+    {
+      "token": "0x06000826",
+      "cases": 1267,
+      "natural_bcl_cases": 341,
+      "failures": []
+    },
+    {
+      "token": "0x06000827",
+      "cases": 1267,
+      "natural_bcl_cases": 353,
+      "failures": []
+    },
+    {
+      "token": "0x06000858",
+      "cases": 1267,
+      "natural_bcl_cases": 339,
+      "failures": []
+    },
+    {
+      "token": "0x06000859",
+      "cases": 1267,
+      "natural_bcl_cases": 337,
+      "failures": []
+    },
+    {
+      "token": "0x0600085A",
+      "cases": 1267,
+      "natural_bcl_cases": 321,
+      "failures": []
+    },
+    {
+      "token": "0x0600085B",
+      "cases": 1267,
+      "natural_bcl_cases": 319,
+      "failures": []
+    },
+    {
+      "token": "0x0600085C",
+      "cases": 1267,
+      "natural_bcl_cases": 351,
+      "failures": []
+    },
+    {
+      "token": "0x0600085D",
+      "cases": 1267,
+      "natural_bcl_cases": 324,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x06000822",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000822",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000822",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000822",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000823",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000823",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000823",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000823",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000824",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000824",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000824",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000824",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000825",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000825",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000825",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000825",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000826",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000826",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000826",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000826",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000827",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000827",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000827",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000827",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000858",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000858",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000858",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000858",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000859",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000859",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000859",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000859",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085A",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085A",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085A",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085A",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085B",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085B",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085B",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085B",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085C",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085C",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085C",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085C",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085D",
+      "mutation": "opposite_operator",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085D",
+      "mutation": "no_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085D",
+      "mutation": "value_equality_retry",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600085D",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    }
+  ],
+  "stress": [
+    {
+      "add": "06000822",
+      "remove": "06000823",
+      "workers": 8,
+      "subscriptions": 256,
+      "combined": true,
+      "invoked": true,
+      "removed": true
+    },
+    {
+      "add": "06000824",
+      "remove": "06000825",
+      "workers": 8,
+      "subscriptions": 256,
+      "combined": true,
+      "invoked": true,
+      "removed": true
+    },
+    {
+      "add": "06000826",
+      "remove": "06000827",
+      "workers": 8,
+      "subscriptions": 256,
+      "combined": true,
+      "invoked": true,
+      "removed": true
+    },
+    {
+      "add": "06000858",
+      "remove": "06000859",
+      "workers": 8,
+      "subscriptions": 256,
+      "combined": true,
+      "invoked": true,
+      "removed": true
+    },
+    {
+      "add": "0600085A",
+      "remove": "0600085B",
+      "workers": 8,
+      "subscriptions": 256,
+      "combined": true,
+      "invoked": true,
+      "removed": true
+    },
+    {
+      "add": "0600085C",
+      "remove": "0600085D",
+      "workers": 8,
+      "subscriptions": 256,
+      "combined": true,
+      "invoked": true,
+      "removed": true
+    }
+  ]
+}

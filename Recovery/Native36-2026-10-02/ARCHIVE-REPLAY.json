@@ -1,0 +1,71 @@
+{
+  "archive_sha256": "05cff431769d68428133690e141212755ea8a6d0bce6b410b34184ba4954bf53",
+  "members_verified": 938,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 12,
+    "positive_cases": 19258,
+    "positive_failures": 0,
+    "negative_controls": 48,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "0x06000822-opposite-operator.dll",
+      "positive_failures": 1026
+    },
+    {
+      "dll": "0x06000823-opposite-operator.dll",
+      "positive_failures": 1080
+    },
+    {
+      "dll": "0x06000824-opposite-operator.dll",
+      "positive_failures": 1025
+    },
+    {
+      "dll": "0x06000825-opposite-operator.dll",
+      "positive_failures": 1027
+    },
+    {
+      "dll": "0x06000826-opposite-operator.dll",
+      "positive_failures": 1045
+    },
+    {
+      "dll": "0x06000827-opposite-operator.dll",
+      "positive_failures": 1010
+    },
+    {
+      "dll": "0x06000858-opposite-operator.dll",
+      "positive_failures": 1054
+    },
+    {
+      "dll": "0x06000859-opposite-operator.dll",
+      "positive_failures": 1048
+    },
+    {
+      "dll": "0x0600085A-opposite-operator.dll",
+      "positive_failures": 1048
+    },
+    {
+      "dll": "0x0600085B-opposite-operator.dll",
+      "positive_failures": 1026
+    },
+    {
+      "dll": "0x0600085C-opposite-operator.dll",
+      "positive_failures": 1043
+    },
+    {
+      "dll": "0x0600085D-opposite-operator.dll",
+      "positive_failures": 1023
+    }
+  ],
+  "metadata_negatives_rejected": [
+    "wrong-type-scope",
+    "wrong-methodspec-argument",
+    "wrong-generic-signature",
+    "wrong-image-size"
+  ],
+  "scope": "Batch CIL/CLR; original event caller and CAS with controlled delegate/typecast/GC-barrier dependencies; actual CLR concurrent checks, no original delegate engine or Unity/Xcode/device acceptance"
+}
