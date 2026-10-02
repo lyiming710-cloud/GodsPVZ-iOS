@@ -1,0 +1,25 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000225",
+      "method": "DeviceInfo ResourceManager::Load_deviceInfo(System.Int32)",
+      "start": "0x1803388c0",
+      "end": "0x180338afb",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "43311404c9c96b39e42cc1c0368fa80b28908cdb1b801b1ec5e57a18d0710a55",
+      "contract": "Preserve streaming root, DeviceData/DeviceInfo path, ID numeric filename, internal JSON reader, null-or-empty template branch, constructor then ID assignment/pretty ToJson, path/missing logs, write then generated log, and direct nullable closed FromJson return. Fix only reference-zero encoding and native-backed NRE-only terminal."
+    },
+    {
+      "token": "0x06000230",
+      "method": "ZombieInfo ResourceManager::Load_zombieInfo(System.Int32)",
+      "start": "0x18033ae30",
+      "end": "0x18033b06b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "e39fd952937c9b0cf1c146d128dd39e31f571d7bbefb4c59dcf44a649e793217",
+      "contract": "Same native-backed loader contract using ZombieData/ZombieInfo and exact zombie-specific messages and closed JsonUtility.FromJson<ZombieInfo>. All other original CIL bytes unchanged."
+    }
+  ],
+  "oracle_preconditions": "Two unchanged original PC resource callers, class initialization pre-marked complete, supplied string/class/MethodInfo identities, and recorded path/formatter/read/empty/allocation/ctor/JSON/log/write dependencies. CLR caller executes with public data/JSON/read/log doubles, actual Path/String/numeric operations and 40 real file write/read cases. No original constructors/Unity JSON/loader/class-init/throw/game/device proof. CLR newobj-null branch is not behavior-covered and reference-vs-integer-zero encoding has no CLR behavioral discriminator here.",
+  "diagnostics_baseline": "Native47 full compiler result; exact parent extraction"
+}

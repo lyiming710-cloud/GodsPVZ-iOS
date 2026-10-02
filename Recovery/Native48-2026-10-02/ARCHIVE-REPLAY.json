@@ -1,0 +1,35 @@
+{
+  "archive_sha256": "81d65a93aeff6f49ffd9e7f0371c2a424a370e626dbc0410ba06ed3ccdb2cc7f",
+  "members_verified": 873,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 2,
+    "positive_cases": 8244,
+    "positive_failures": 0,
+    "negative_controls": 20,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "wrong-id-semantic-negative.dll",
+      "positive_failures": 1658
+    },
+    {
+      "dll": "wrong-pretty-semantic-negative.dll",
+      "positive_failures": 1659
+    }
+  ],
+  "byte_scope_negatives": [
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "revert-null-scope-negative.dll",
+    "revert-throw-scope-negative.dll",
+    "section-flags-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch caller CIL/CLR with original resource callers, supplied class/string/MethodInfo identities and class-init-ready precondition; recorded external dependencies, actual Path/String/numeric and file IO tests. Repaired opcode sites are not independently CLR behavior-proven; no Unity/Xcode/device acceptance"
+}
