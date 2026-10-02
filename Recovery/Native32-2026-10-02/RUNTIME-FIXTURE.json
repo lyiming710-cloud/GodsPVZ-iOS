@@ -1,0 +1,129 @@
+{
+  "candidate_sha256": "46f2c279e677a2e02a93c11de7e0620e6ab8803b1e2f338ebbc49b7d93ff0e1e",
+  "oracle_sha256": "53025807509c7594e2b7d62de7853f403570689fa3cae65adaf8902d73f2d5f4",
+  "methods": 5,
+  "positive_cases": 93675,
+  "positive_failures": 0,
+  "negative_controls": 14,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Real CLR candidate CIL versus original PC machine code under controlled object layouts; Rect and Settings explicitly initialized Mathf class shim, Settings tested with two Epsilon preconditions. Non-NaN float bits exact; NaN classification compared without payload promise. Finite input sampling except exhaustive 16-bit channel coverage; not Unity/iOS/device acceptance",
+  "positives": [
+    {
+      "token": "0x060004B5",
+      "signature": "System.Single Zombie::ZA_GetArmor1Def(Armor1Type)",
+      "cases": 1029,
+      "failures": []
+    },
+    {
+      "token": "0x060001AB",
+      "signature": "System.Int32 EnemySelecter::GetWavePoint(System.Int32,System.Int32)",
+      "cases": 5097,
+      "failures": []
+    },
+    {
+      "token": "0x060003FC",
+      "signature": "System.Boolean Projectile::TestOutofMap()",
+      "cases": 11586,
+      "failures": []
+    },
+    {
+      "token": "0x06000470",
+      "signature": "System.Boolean Zombie::RectXTest(System.Single,System.Single,System.Single,System.Single)",
+      "cases": 58817,
+      "failures": []
+    },
+    {
+      "token": "0x060008A2",
+      "signature": "System.Boolean FTRuntime.SwfSettingsData::CheckEquals(FTRuntime.SwfSettingsData)",
+      "cases": 17146,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x060004B5",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004B5",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001AB",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001AB",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001AB",
+      "mutation": "unsigned_div",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060003FC",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060003FC",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060003FC",
+      "mutation": "wrong_scale",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000470",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000470",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000470",
+      "mutation": "inclusive_rect",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A2",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A2",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A2",
+      "mutation": "wrong_epsilon_scale",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}

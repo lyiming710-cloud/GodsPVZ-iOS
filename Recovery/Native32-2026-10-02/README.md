@@ -1,0 +1,13 @@
+# Native32 — original arithmetic and settings comparisons
+
+Candidate `46f2c279e677a2e02a93c11de7e0620e6ab8803b1e2f338ebbc49b7d93ff0e1e` derives from Native31 `66b1234b13fe812adca05cfc92bf01b11f44f6427c112ca2dc101ac713b85e0b`. Five native-backed bodies change; 2292 other raw bodies and all existing managed metadata/declarations/RVAs/PE sections remain byte-identical. Two builds produce the same DLL.
+
+93,675 CLR cases pass, compared with 93,671 executions of original PC code and four null-chain CLR assertions supported by native failure CFG. The PE oracle executes original instructions with Windows x64 ABI under controlled object layouts. Rect's Mathf metadata/class initialization flag is supplied. Settings' Mathf metadata flag and static-fields pointer are supplied, testing both Epsilon bit patterns 1 and 0x00800000. This is an explicit initialized-state precondition, not evidence of Unity startup. Neither DllMain, imports nor native throw helpers are invoked. Finite-domain comparisons cannot prove all game behaviors.
+
+14 emitted negative controls and five actual wrong-constant DLLs are rejected with zero tool errors. The fixture emits actual candidate bodies, preserving struct this as managed byref; field/method type doubles model only these inputs. `verify_types.py` is a frozen copy of the earlier subset checker with corrected value-type this handling; eight positive/negative controls pass. Parent and candidate are compared under the same checker, with no previously passing method regression. All Native24–31 CLR suites pass. The checker is not a complete ECMA verifier.
+
+Full historical Linux IL2CPP conversion passes. Clang checks all 264 units: 5837 diagnostics, 582 errored game methods, 24 failed units; all five targets compile clear. 2262 non-target generated C++ methods are unchanged. Generated metadata usage is separately compiled. This does not constitute licensed Unity iOS export or Apple Xcode acceptance. No IPA produced and no new full Actions run.
+
+String hash remains unchanged: no public String.Length MemberRef exists in the current DLL. Introducing hidden private runtime field access merely to satisfy this raw-slot scheme is not accepted. Grid-center evidence revealed dependent GetGridPosition corruption; Native33 will restore that closure rather than mask it with a fixture helper.
+
+`replay_native32.py ARCHIVE.zip FRESH_DIRECTORY` rebuilds the two candidates and audit from source, recompiles the original native oracle, requires exact TSV reproduction, re-runs CLR positives/controls and rejects the five actual wrong DLLs. Requires Linux x64, .NET10, Python3 and Clang; it does not replay full Unity/Xcode.

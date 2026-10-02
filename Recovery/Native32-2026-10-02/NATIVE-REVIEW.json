@@ -1,0 +1,51 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060004B5",
+      "method": "System.Single Zombie::ZA_GetArmor1Def(Armor1Type)",
+      "start": "0x18036d300",
+      "end": "0x18036d390",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "1bd7f3f67de0965493e2b2891dfd9313c28fbc3148f5fca4562d4ba16c0b0fad",
+      "contract": "armor1 1..6 -> 60,120,40,200,320,150 float; others +0f"
+    },
+    {
+      "token": "0x06000470",
+      "method": "System.Boolean Zombie::RectXTest(System.Single,System.Single,System.Single,System.Single)",
+      "start": "0x180366b50",
+      "end": "0x180366bd7",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "e96cf75a0a2f2159d17a29ba7138819b8262b87b177e9120b9cad28b4856704d",
+      "contract": "strict ordered (w1+w2)*0.5f > abs(x1-x2); this unused. Touching false."
+    },
+    {
+      "token": "0x060003FC",
+      "method": "System.Boolean Projectile::TestOutofMap()",
+      "start": "0x18037ca40",
+      "end": "0x18037cac2",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "0fe98aeaf2104eadcd29a1d45fb186de35b1655ac978b45a1d39304626d4f929",
+      "contract": "Require board.map. X limit=(cameraSize/540f)*1160f; Y limit=(cameraSize/540f)*670f. Return true on ordered coordinate>limit or -limit>coordinate. Read map size twice, preserve early X return."
+    },
+    {
+      "token": "0x060008A2",
+      "method": "System.Boolean FTRuntime.SwfSettingsData::CheckEquals(FTRuntime.SwfSettingsData)",
+      "start": "0x1803ca2c0",
+      "end": "0x1803ca417",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b1c8fe52ef3633da340451e00fcb1c5859d059cfc59a2a77983eeac06e863aed",
+      "contract": "Exact MaxAtlasSize,AtlasPadding; original ordered Mathf.Approximately(PixelsPerUnit), then six exact bool/enum fields. maxss selects second operand on ties/unordered. Tolerance=max(1e-6f*max(abs(a),abs(b)),Mathf.Epsilon*8f), strict > absolute difference."
+    },
+    {
+      "token": "0x060001AB",
+      "method": "System.Int32 EnemySelecter::GetWavePoint(System.Int32,System.Int32)",
+      "start": "0x18031a2f0",
+      "end": "0x18031a350",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "2f49ab66f933cf2a61d1626bc7a16be88ed7ed47d93a8a8ac5bb07328b30749e",
+      "contract": "unchecked((flag+1)*base + unchecked(wave*base)/3); if signed wave%10==9 add unchecked(base*3). Wrap int32 before signed division."
+    }
+  ],
+  "oracle_preconditions": "Controlled objects; initialized Mathf class flag for Rect; Settings metadata flag plus static-fields pointer carrying Epsilon bits 1 or 0x00800000. Original instructions remain unchanged. Not Unity initialization or license validation."
+}
