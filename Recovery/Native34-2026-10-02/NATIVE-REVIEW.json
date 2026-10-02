@@ -1,0 +1,43 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060004C5",
+      "method": "System.Boolean Save::LevelPassed(ChallengeType,System.Int32)",
+      "start": "0x180380280",
+      "end": "0x1803802f0",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "077e99434db145023d904040db8b5e0d7d1f026c04b76d2252b749bef64c27c0",
+      "contract": "challenge 0: signed level<adventureLevel; 1: rescuePassNum[level]>0 signed; 2: adventureHardPassed[level]; other false without reading this. Preserve physical null and unsigned bounds rejection."
+    },
+    {
+      "token": "0x060004C6",
+      "method": "System.Boolean Save::RecordDevice(System.Int32)",
+      "start": "0x1803802f0",
+      "end": "0x180380390",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "2fb8d82e17fd9b94a7a67da44ac3228132ab4499086557f13bde30117256afa8",
+      "contract": "If device-lock array null, allocate bool[128]. Existing true returns true; existing false writes true only at index and returns false. Allocation remains observable before failed index access."
+    },
+    {
+      "token": "0x060004D1",
+      "method": "System.Int32 PlantSave::GetTalentNum()",
+      "start": "0x180376140",
+      "end": "0x1803761e0",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "d9f49444d42a585536e8801e110e143844961942d2e16f5cefa7510bdfb1c9b3",
+      "contract": "Count names NOT equal to String.Empty, including null names. Native target 0x180B7CC30 returns inequality, despite damaged CIL naming op_Equality. Candidate uses existing public equality ref and inverted branch. talentNames required."
+    },
+    {
+      "token": "0x060001BA",
+      "method": "System.Void EnemyManager::FlushedWavelenth(System.Int32)",
+      "start": "0x180318090",
+      "end": "0x180318120",
+      "boundary_scope": "inspection window to next distinct mapped pointer; no pdata function-end claim",
+      "native_sha256": "e9e0a021cec2ea0aa9728b892b0e7941f415cd57da355496c87e79dbbf3cb4ee",
+      "contract": "Mode0 copies long/nextWave, test/nextTest; if signed theWave%10==9, doubles long into nextWave. Mode1 skips ordered (short-test)>=nextWave, but unordered falls through and writes recomputed difference/nextWave and test/nextTest. Mode2 only unfinished sets nextWave to exact float32 0.02. Other mode no-op even null this."
+    }
+  ],
+  "oracle_preconditions": "PlantSave metadata flag and class/static-fields pointer provide String.Empty; canonical empty pointer, null and nonempty length1 names. RecordDevice metadata initialized but only existing arrays exercised, no native allocation/write barrier. Native throw/import/DllMain/Unity startup paths not executed.",
+  "diagnostics_baseline": "Native32 (non-target bodies unchanged in Native33; compilation still running)"
+}

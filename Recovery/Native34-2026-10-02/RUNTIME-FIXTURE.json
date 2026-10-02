@@ -1,0 +1,111 @@
+{
+  "candidate_sha256": "a900440ee29c135761e0b5bdd7c3eace315d344769de945ff94c0438eba43e4d",
+  "oracle_sha256": "465ad6c3c14aec9666b8adc551f15c47e4e4bc4a27fceb28f674965299f19c5b",
+  "methods": 4,
+  "positive_cases": 159247,
+  "positive_failures": 0,
+  "negative_controls": 12,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Actual CLR candidate bodies versus original PC state/array bodies. Initialized String.Empty and metadata preconditions; original inequality helper sees canonical empty/null/nonempty names only. Record native execution covers existing arrays; allocation and exceptions have separate CLR/native-CFG assertions. Copied/unmodified float fields compare bits; arithmetic NaNs compare classification without payload guarantee. Finite inputs; not Unity/iOS/device acceptance",
+  "positives": [
+    {
+      "token": "0x060004C5",
+      "signature": "System.Boolean Save::LevelPassed(ChallengeType,System.Int32)",
+      "cases": 100336,
+      "failures": []
+    },
+    {
+      "token": "0x060004C6",
+      "signature": "System.Boolean Save::RecordDevice(System.Int32)",
+      "cases": 4103,
+      "failures": []
+    },
+    {
+      "token": "0x060004D1",
+      "signature": "System.Int32 PlantSave::GetTalentNum()",
+      "cases": 8194,
+      "failures": []
+    },
+    {
+      "token": "0x060001BA",
+      "signature": "System.Void EnemyManager::FlushedWavelenth(System.Int32)",
+      "cases": 46614,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x060004C5",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004C5",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004C5",
+      "mutation": "wrong_rescue_threshold",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004C6",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004C6",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004C6",
+      "mutation": "no_device_write",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004D1",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004D1",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060004D1",
+      "mutation": "invert_talent_test",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001BA",
+      "mutation": "wrong_write",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001BA",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060001BA",
+      "mutation": "unordered_skip",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}
