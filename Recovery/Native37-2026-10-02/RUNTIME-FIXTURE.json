@@ -1,0 +1,118 @@
+{
+  "candidate_sha256": "c26df0f5571d61efd0ba7e28602f3faae73b126ade7ec581f39f50e232354527",
+  "methods": 4,
+  "positive_cases": 16405,
+  "positive_failures": 0,
+  "negative_controls": 14,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Three original inlined List.Add caller bodies execute unchanged with spare capacity; metadata flags supplied and GC-barrier dependency suppressed. Insert original caller runs with controlled public List.Insert dependency. Actual CLR candidate binds public typed List.Add/Insert; private version reflection is observational test setup/readback, never candidate IL. CLR adds growth/exception/enumerator and null-Device insertion-before-failure checks. No original resize/allocator/GC/Unity engine or iOS/device equivalence claim",
+  "positives": [
+    {
+      "token": "0x06000103",
+      "cases": 4100,
+      "failures": []
+    },
+    {
+      "token": "0x06000181",
+      "cases": 4101,
+      "failures": []
+    },
+    {
+      "token": "0x06000275",
+      "cases": 4100,
+      "failures": []
+    },
+    {
+      "token": "0x06000462",
+      "cases": 4104,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x06000103",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000103",
+      "mutation": "wrong_argument",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000103",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000181",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000181",
+      "mutation": "wrong_argument",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000181",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000181",
+      "mutation": "missing_board_write",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000275",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000275",
+      "mutation": "wrong_argument",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000275",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000462",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000462",
+      "mutation": "wrong_argument",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000462",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000462",
+      "mutation": "wrong_guard",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}

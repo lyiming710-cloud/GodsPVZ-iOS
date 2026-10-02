@@ -1,0 +1,43 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000462",
+      "method": "System.Void Zombie::InsertPassNode(System.Int32,EnemyPath)",
+      "start": "0x180365970",
+      "end": "0x1803659d5",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "6b1fb288c49c5ef11df59b9311399e4dd103eda8cc79eb60ea6b04bae53fbbf2",
+      "contract": "Physical-null prePath skips Insert without checking index/value. Nonnull re-read prePath and forward index/EnemyPath exactly to typed public List.Insert; this required."
+    },
+    {
+      "token": "0x06000103",
+      "method": "System.Void BuffManager::RemoveBuff(Buff)",
+      "start": "0x180310580",
+      "end": "0x18031062b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a750bd498eabc63a41137a1b48a4ec5da3e7836b170131ada31601166cf712f6",
+      "contract": "Append Buff to buffs_toRemove through public typed List<Buff>.Add. Method name RemoveBuff means queue removal; it does not remove from that list."
+    },
+    {
+      "token": "0x06000275",
+      "method": "System.Void ZombieManager::AddNewZombie(Zombie)",
+      "start": "0x1803414f0",
+      "end": "0x18034159b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "2c702d551e24ca4176e007b92ced12438f359b0122042d3e66c05b552fa253b8",
+      "contract": "Append Zombie to zombieList, including physical null; no invented Zombie board assignment."
+    },
+    {
+      "token": "0x06000181",
+      "method": "System.Void DeviceManager::AddDevice(Device)",
+      "start": "0x1803123a0",
+      "end": "0x180312459",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "0aa14eb9d750e372eaf2e44cb80465be126c3c1df0fc74cab6c4b7101822865c",
+      "contract": "Append Device to deviceList first, then read manager board and store Device.board. Null Device is inserted before null-field-store exception."
+    }
+  ],
+  "oracle_preconditions": "Three original inlined List.Add caller bodies execute unchanged with spare capacity; metadata flags supplied, GC-barrier dependency suppressed. Original Insert caller executes unchanged with controlled List.Insert dependency. No original resize/allocator/GC/throw/Unity startup paths.",
+  "diagnostics_baseline": "Native36 full compiler result"
+}
