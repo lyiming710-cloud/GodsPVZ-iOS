@@ -1,0 +1,43 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060001A9",
+      "method": "UnityEngine.Vector3 EnemySelecter::GetRandomPosition(System.Int32,System.Int32,System.Int32)",
+      "start": "0x18031a090",
+      "end": "0x18031a0ff",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "c4a6846aad2fad1ab8584765d790f6a1161d9ba8e59699d023203cf7bb1a71e0",
+      "contract": "Capture board/config; GetGridPosition(gridX,row), ignore ID; X+57/Y+28/Z unchanged by value. Native constants independently pinned."
+    },
+    {
+      "token": "0x06000188",
+      "method": "Device DeviceManager::GetDevice(System.Int32,System.Int32)",
+      "start": "0x180312d20",
+      "end": "0x180312e81",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "666e4e4b59f2e9e07245bd50f626d5487c9aa81eed1726da36c70dba3b3da226",
+      "contract": "Capture Grid from Board.GetGrid; null Grid returns null; Unity op_Implicit tests top/sheath/common/bottom; reread accepted field after dependency callback."
+    },
+    {
+      "token": "0x0600083D",
+      "method": "System.String FTRuntime.SwfClip::GetCurrentFrameLabel(System.Int32)",
+      "start": "0x1803c7b50",
+      "end": "0x1803c7bd1",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "34fb46077be16a6dab6fc78cabe4826806134a049cb38ef85fe8f38c49f835c9",
+      "contract": "Capture current frame/Labels; missing frame/array or negative/out-of-range signed index returns String.Empty; valid selected null remains null."
+    },
+    {
+      "token": "0x06000903",
+      "method": "System.String FlashTools.Examples.PurpleFlowerLogic::GetRandomIdleSequence(FTRuntime.SwfClipController)",
+      "start": "0x1803c5870",
+      "end": "0x1803c5949",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "06f64b1269c5dc4668a0379f4bd4502767791c81ab812967445dc142eb4aee89",
+      "contract": "Capture ctrl.clip.sequence once, then loop: read current idle array length, Range(0,length), reread current static array, load selected string; compare against captured prior string; return when unequal. Preserve no retry cap and null/bounds order."
+    }
+  ],
+  "oracle_preconditions": "Four unchanged original PC callers; initialized metadata/declared static identities, typed alias graphs and recording grid/Unity truth/frame/random/string comparison/exception dependencies. Original native float/bounds/priority/captured value/array reread/loop behavior observed. CLR executes actual candidate IL with pinned real Vector3, real String.Empty and string inequality in recording wrapper. Distinct equal-content and nullable strings included. Nonterminating singleton/constant selection only prefix-observed under scripted ninth dependency throw; extra 32-call CLR mutant containment never triggers on positive candidate. No original Unity/random/string/class-init/throw/dependency implementation, iOS or full game proof.",
+  "diagnostics_baseline": "Native52 full compiler result; exact parent extraction"
+}

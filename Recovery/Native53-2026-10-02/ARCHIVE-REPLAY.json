@@ -1,0 +1,46 @@
+{
+  "archive_sha256": "429d0d42343b052ea3238807755606d7c944d6b5884b681f8c94079931f8dbb4",
+  "members_verified": 978,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 4,
+    "positive_cases": 16384,
+    "positive_failures": 0,
+    "negative_controls": 12,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "flip-loop-semantic-negative.dll",
+      "positive_failures": 1638
+    },
+    {
+      "dll": "wrong-bound-semantic-negative.dll",
+      "positive_failures": 113
+    },
+    {
+      "dll": "wrong-offset-semantic-negative.dll",
+      "positive_failures": 596
+    },
+    {
+      "dll": "wrong-priority-semantic-negative.dll",
+      "positive_failures": 1451
+    }
+  ],
+  "byte_scope_negatives": [
+    "body-padding-scope-negative.dll",
+    "flip-loop-scope-negative.dll",
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "wrong-bound-scope-negative.dll",
+    "wrong-offset-scope-negative.dll",
+    "wrong-priority-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Four unchanged original coordinate/device/label/idle-selection callers, initialized metadata, recording dependencies and typed public fixture graphs. Field and static array rereads, captured previous string, ordered priority, bounds/null and float results; no Unity/Xcode/device acceptance"
+}
