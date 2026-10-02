@@ -1,0 +1,25 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060006E8",
+      "method": "System.Void WarehouseUIController::Initialize(Save)",
+      "start": "0x1803ae420",
+      "end": "0x1803ae514",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "9a51a8464e7b197cf74026314a9506b72aea4d5968feb2054553556afd3c596b",
+      "contract": "Call ClearSuppliesItemList, capture suppliesInfoPage, clear both supplies and suppliesInfo, call SetInfo, store argument Save, capture text_money, format exact Save.coins address using N0, call captured text SetText true, then CreatSuppliesItemList. Preserve partial effects on null and helper exceptions."
+    },
+    {
+      "token": "0x060000A4",
+      "method": "System.Void SystemSkipLevel::Start0(Save)",
+      "start": "0x18030d810",
+      "end": "0x18030d89b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "963e0158594824627d7f28f65cd31af44922a171baf73164fcbcf4ea2b6871ff",
+      "contract": "Null Save returns without dereferencing this. Non-null Save is stored first. Challenge=0 copies adventureLevel; otherwise retain level. Capture text_Level before calling Int32.ToString(format) through address of level; format exact original \u5f53\u524d\u5173\u5361\uff1a0 and SetText flag=true. Null text throws after formatting."
+    }
+  ],
+  "oracle_preconditions": "Two unchanged original PC formatted-int UI callers; supplied objects and exact verified format slot identities; helpers, formatter, TMP text and GC barrier are recorded doubles. CLR candidate CIL executes with public doubles; ref-write/captured-receiver stress and null/dependency partial effects tested. Separately actual CLR Int32.ToString(string) executes under four cultures. No original native formatter/UI/helpers/GC/throw engine or device acceptance.",
+  "diagnostics_baseline": "Native45 full compiler result; exact parent extraction"
+}

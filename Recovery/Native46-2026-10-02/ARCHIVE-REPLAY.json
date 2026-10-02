@@ -1,0 +1,34 @@
+{
+  "archive_sha256": "b0b84deac56eb35c5b7fa16c618081da72f64883bd4b9caf41fa48cc7896c4b6",
+  "members_verified": 863,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 2,
+    "positive_cases": 8279,
+    "positive_failures": 0,
+    "negative_controls": 19,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "wrong-bool-semantic-negative.dll",
+      "positive_failures": 4132
+    },
+    {
+      "dll": "wrong-field-semantic-negative.dll",
+      "positive_failures": 4096
+    }
+  ],
+  "byte_scope_negatives": [
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "target-padding-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch CIL/CLR with original formatted-int UI callers, supplied objects/string identities, recorded helper/GC/formatter/text dependencies; real CLR numeric formatter and null/partial-effect tests; no Unity/Xcode/device acceptance"
+}
