@@ -1,0 +1,41 @@
+{
+  "archive_sha256": "33744d09038fb141bd1693725bbeb4910fd7b83c2e39c561df2e76261a7390da",
+  "members_verified": 881,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 4,
+    "positive_cases": 8228,
+    "positive_failures": 0,
+    "negative_controls": 26,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "skip-remove-0x0600001B-semantic-negative.dll",
+      "positive_failures": 2024
+    },
+    {
+      "dll": "skip-remove-0x0600001E-semantic-negative.dll",
+      "positive_failures": 2021
+    },
+    {
+      "dll": "skip-remove-0x0600002B-semantic-negative.dll",
+      "positive_failures": 2033
+    },
+    {
+      "dll": "skip-remove-0x06000040-semantic-negative.dll",
+      "positive_failures": 2029
+    }
+  ],
+  "append_scope_negatives": [
+    "extra-target-edit-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "wrong-closed-owner-scope-negative.dll",
+    "wrong-new-typespec-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch CIL/CLR with original editor deletion callers, recorded native dependencies and public CLR List.Remove under explicit layouts/equality preconditions; no Unity/Xcode/device acceptance"
+}
