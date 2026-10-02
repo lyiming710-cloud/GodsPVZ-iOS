@@ -1,0 +1,25 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000404",
+      "method": "System.Void Prop::OnHandUpdate()",
+      "start": "0x18037e600",
+      "end": "0x18037e67d",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3fcd165c52196e7842da91f47c5ef6f843d8de07c94496d461085e7327dea960",
+      "contract": "Capture mousePosition X/Y before Unity getter; for ItemType5 add original +50 to both; set propImagex.transform.position to value Vector3(X,Y,+0). No defensive null fallback."
+    },
+    {
+      "token": "0x060006BE",
+      "method": "System.Void SeedChooserScreen::SetCard_Choose_Position(UnityEngine.GameObject,System.Int32)",
+      "start": "0x1803aba00",
+      "end": "0x1803abaf6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ec6b01019b08891abe927b0577ab81c85ade07d8942594e940dbd819ff78a8f9",
+      "contract": "Compute X=140+float(unchecked((index%3)*230)) and Y=-210-float(unchecked((index/3)*360)) using signed truncation toward zero before getter. Set localPosition(Vector3(X,Y,+0)), then fetch Card_Choose and store page0. Preserve exception and callback order; unused this can be null."
+    }
+  ],
+  "oracle_preconditions": "Two unchanged original coordinate callers; supplied object/Transform/Card/MethodInfo identities and initialized Seed metadata; recording getter/setter/component/exception dependencies. Native SSE coordinate and signed int32 arithmetic remain original. Candidate real public Vector2/Vector3 and pure Vector3 constructor from pinned CoreModule, public fixture graph and recording Unity dependencies. No original Unity/class-init/throw/game/iOS proof; extra Prop CLR null-this case is not native-executed.",
+  "diagnostics_baseline": "Native49 full compiler result; exact parent extraction"
+}

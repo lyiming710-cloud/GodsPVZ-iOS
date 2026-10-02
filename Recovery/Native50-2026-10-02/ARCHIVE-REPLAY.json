@@ -1,0 +1,37 @@
+{
+  "archive_sha256": "d924888d98f02cc5042e60935b5b3d1d9d5779e7d510237ad6ec7dc988107d14",
+  "members_verified": 921,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 2,
+    "positive_cases": 8198,
+    "positive_failures": 0,
+    "negative_controls": 19,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "wrong-offset-semantic-negative.dll",
+      "positive_failures": 178
+    },
+    {
+      "dll": "wrong-stride-semantic-negative.dll",
+      "positive_failures": 1364
+    }
+  ],
+  "byte_scope_negatives": [
+    "body-padding-scope-negative.dll",
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-rva-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "old-root-scope-negative.dll",
+    "old-target-slot-scope-negative.dll",
+    "section-flags-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch caller CIL/CLR with original coordinate callers, supplied object/MethodInfo identities and ready Seed metadata; recording Unity dependencies, exact original SSE/int32 arithmetic and pinned real value constructors; no Unity/Xcode/device acceptance"
+}
