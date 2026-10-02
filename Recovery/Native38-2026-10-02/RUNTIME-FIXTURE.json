@@ -1,0 +1,113 @@
+{
+  "candidate_sha256": "be3bd138a4db23ac7d4f2e9046101002623ac94b1599aad0870d7fde2718066c",
+  "methods": 3,
+  "positive_cases": 28693,
+  "positive_failures": 0,
+  "negative_controls": 14,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Original caller instruction bodies and Find valid-path original List indexer execute unchanged; actual String.IsNullOrEmpty helper unchanged. Collect.Remove and Rate dictionary setter use controlled recording dependencies, not original engine proof. CLR uses actual public List/Dictionary/string APIs, public fixture fields, no visibility bypass; additionally checks order, null/bounds, signed overflow, list contents/enumerator, dictionary overwrite, NaN payloads/negative-zero bits. No original engine/Unity/iOS/device equivalence claim",
+  "positives": [
+    {
+      "token": "0x06000264",
+      "cases": 4101,
+      "failures": []
+    },
+    {
+      "token": "0x06000890",
+      "cases": 8200,
+      "failures": []
+    },
+    {
+      "token": "0x060002A0",
+      "cases": 16392,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x06000264",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000264",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000264",
+      "mutation": "wrong_arithmetic",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000264",
+      "mutation": "missing_remove",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000890",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000890",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000890",
+      "mutation": "unordered_clamp",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000890",
+      "mutation": "wrong_guard",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060002A0",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060002A0",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060002A0",
+      "mutation": "wrong_arithmetic",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060002A0",
+      "mutation": "checked_product",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060002A0",
+      "mutation": "unsigned_gate",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060002A0",
+      "mutation": "unsigned_count",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}

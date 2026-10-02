@@ -1,0 +1,34 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000264",
+      "method": "System.Void SunManager::CollectSun(Project)",
+      "start": "0x180340860",
+      "end": "0x1803408c3",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "3e7d17ba26c8eb303e2e1d73f2603509fc120915cfab865d351763bfbad615f7",
+      "contract": "Require suns, call typed public Remove and discard bool; then require Project and unchecked add value into sunPoint. Null Project removal precedes its value-field failure."
+    },
+    {
+      "token": "0x06000890",
+      "method": "System.Void FTRuntime.SwfManager::SetGroupRateScale(System.String,System.Single)",
+      "start": "0x1803c9e10",
+      "end": "0x1803c9ea0",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "d549e987dddd0f1068a7862434e7fa19eabd436d6f6d608b32818473690b2645",
+      "contract": "Null/empty group returns without this access. Read dict field before ordered clamp; negative to positive zero, greater-than float.MaxValue to max, retain negative zero and unordered NaN payload. Forward exact string and value to closed dictionary setter."
+    },
+    {
+      "token": "0x060002A0",
+      "method": "NodeAstar NodeAstar::Find(System.Collections.Generic.List`1<NodeAstar>,System.Int32,System.Int32,System.Int32)",
+      "start": "0x18032d950",
+      "end": "0x18032d9da",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ed4a8592593e2c7a3219f6b6279d82c9c588a2161a4538dc2500636eb1693482",
+      "contract": "Signed arg2 >= arg1 returns null before list access. Unchecked 32-bit arg1*arg3+arg2, signed Count<=index returns null, otherwise public indexer including its negative-index bounds exception. No invented lower-bound guard."
+    }
+  ],
+  "oracle_preconditions": "Original three callers unchanged. Find original valid-path indexer and String.IsNullOrEmpty execute unchanged. Remove and dictionary setter are controlled recording dependencies, not original engines; metadata flags/MI supplied, MXCSR8064, valid native layouts. Native throw/Unity startup not executed.",
+  "diagnostics_baseline": "Native36 compiler output during Native37 qualification"
+}

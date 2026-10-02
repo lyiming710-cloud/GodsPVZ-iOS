@@ -1,0 +1,35 @@
+{
+  "archive_sha256": "559da127f99e9f8b404aeb2108d4e54a4d61ae8f2d4efdab620efa721803e230",
+  "members_verified": 895,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 3,
+    "positive_cases": 28693,
+    "positive_failures": 0,
+    "negative_controls": 14,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "0x06000264-wrong-semantics.dll",
+      "positive_failures": 4097
+    },
+    {
+      "dll": "0x060002A0-wrong-semantics.dll",
+      "positive_failures": 2064
+    },
+    {
+      "dll": "0x06000890-wrong-semantics.dll",
+      "positive_failures": 17
+    }
+  ],
+  "metadata_corruptions_rejected": [
+    "closed-owner-metadata-negative.dll",
+    "closed-signature-metadata-negative.dll",
+    "image-size-metadata-negative.dll",
+    "root-header-metadata-negative.dll"
+  ],
+  "scope": "Three original callers; Find valid native indexer and IsNullOrEmpty unchanged; Remove/setter dependencies controlled, not original engine proof; no Unity/Xcode/device acceptance"
+}
