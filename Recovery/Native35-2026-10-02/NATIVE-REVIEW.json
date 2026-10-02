@@ -1,0 +1,43 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x0600090C",
+      "method": "System.UInt32 <PrivateImplementationDetails>::ComputeStringHash(System.String)",
+      "start": "0x1803ccf20",
+      "end": "0x1803ccf75",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "f903ab868818fca9592167daeea2a1078743a9fd631770fc7a471598b70c1417",
+      "contract": "Null returns0. Nonnull uses uint32 FNV1a seed0x811C9DC5, UTF16 code units in order, unchecked XOR/multiply0x01000193. Empty returns seed. Public String get_Length/get_Chars references only."
+    },
+    {
+      "token": "0x0600073A",
+      "method": "System.Void TMPro.TMP_TextEventHandler::SendOnWordSelection(System.String,System.Int32,System.Int32)",
+      "start": "0x1803b7fb0",
+      "end": "0x1803b8026",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ac627fe1ed427f2efdcf350a991277919c5a658c44f654f84a20718b39ba84c8",
+      "contract": "Read Word event field. Physical null skips callback; otherwise re-read field and Invoke with exact string,int,int arguments once. this required for field read."
+    },
+    {
+      "token": "0x0600073B",
+      "method": "System.Void TMPro.TMP_TextEventHandler::SendOnLineSelection(System.String,System.Int32,System.Int32)",
+      "start": "0x1803b7e40",
+      "end": "0x1803b7eb6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b54d97105fe6639b6911dd21da85bc7bc7a02049c1bcac235afed88f96b7fa85",
+      "contract": "Same forwarding contract using Line field, never Word/Link."
+    },
+    {
+      "token": "0x0600073C",
+      "method": "System.Void TMPro.TMP_TextEventHandler::SendOnLinkSelection(System.String,System.String,System.Int32)",
+      "start": "0x1803b7ec0",
+      "end": "0x1803b7f36",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "942520d679580ba09b467f059a8c42baca5416e3bee0122129de057264385df3",
+      "contract": "Same forwarding contract using Link field and exact string,string,int arguments once."
+    }
+  ],
+  "oracle_preconditions": "Original hash and valid-index get_Chars helper execute unchanged. Event caller target instructions unchanged; supplied metadata flags/MethodInfo pointers and recording doubles at two engine Invoke dependency entries. Event observations prove caller forwarding/call trace, not UnityEvent engine execution. No Unity startup/import/throw helpers.",
+  "diagnostics_baseline": "Native34 qualified compiler output"
+}

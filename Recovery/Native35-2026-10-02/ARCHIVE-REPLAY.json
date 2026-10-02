@@ -1,0 +1,39 @@
+{
+  "archive_sha256": "687642a2cd4603924b092dd42b638a32955b78e5251b89b0037f702e594e807e",
+  "members_verified": 862,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 4,
+    "positive_cases": 89489,
+    "positive_failures": 0,
+    "negative_controls": 15,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "0x0600073A-wrong-behavior.dll",
+      "positive_failures": 2527
+    },
+    {
+      "dll": "0x0600073B-wrong-behavior.dll",
+      "positive_failures": 2577
+    },
+    {
+      "dll": "0x0600073C-wrong-behavior.dll",
+      "positive_failures": 1947
+    },
+    {
+      "dll": "0x0600090C-wrong-behavior.dll",
+      "positive_failures": 1
+    }
+  ],
+  "metadata_negatives_rejected": [
+    "wrong-generic-parent",
+    "wrong-invoke-signature",
+    "wrong-public-name",
+    "wrong-image-size"
+  ],
+  "scope": "Batch CIL/CLR; original hash/get_Chars and original event caller with recording Invoke dependencies; no UnityEvent engine or Unity/Xcode/device acceptance"
+}

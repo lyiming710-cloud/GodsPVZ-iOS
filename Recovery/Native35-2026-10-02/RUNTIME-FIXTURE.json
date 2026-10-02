@@ -1,0 +1,129 @@
+{
+  "candidate_sha256": "55cf8ca5de4ee0a4eefa2a36ddf3d6df86f125a73cd5769a8558ea83cde2e0ea",
+  "oracle_sha256": "2363a26845d4c0866961a6c5121963e44953bdb230d52113baebb24835e645ea",
+  "methods": 4,
+  "positive_cases": 89489,
+  "positive_failures": 0,
+  "negative_controls": 15,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Hash actual CLR versus unchanged original hash/get_Chars machine code, exhaustive single UTF16 units plus finite sequences. Events unchanged original caller code versus actual CLR forwarding, receiver and argument identity/call count; two engine Invoke dependency recording doubles and initialized metadata preconditions. CLR adds null-this and callback exception assertions. Does not execute UnityEvent engine implementation or Unity startup; no iOS/device acceptance",
+  "positives": [
+    {
+      "token": "0x0600090C",
+      "signature": "System.UInt32 \u003CPrivateImplementationDetails\u003E::ComputeStringHash(System.String)",
+      "cases": 73736,
+      "failures": []
+    },
+    {
+      "token": "0x0600073A",
+      "signature": "System.Void TMPro.TMP_TextEventHandler::SendOnWordSelection(System.String,System.Int32,System.Int32)",
+      "cases": 5251,
+      "failures": []
+    },
+    {
+      "token": "0x0600073B",
+      "signature": "System.Void TMPro.TMP_TextEventHandler::SendOnLineSelection(System.String,System.Int32,System.Int32)",
+      "cases": 5251,
+      "failures": []
+    },
+    {
+      "token": "0x0600073C",
+      "signature": "System.Void TMPro.TMP_TextEventHandler::SendOnLinkSelection(System.String,System.String,System.Int32)",
+      "cases": 5251,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x0600090C",
+      "mutation": "wrong_seed",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600090C",
+      "mutation": "wrong_index",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600090C",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073A",
+      "mutation": "drop_callback",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073A",
+      "mutation": "swap_arguments",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073A",
+      "mutation": "wrong_guard",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073A",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073B",
+      "mutation": "drop_callback",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073B",
+      "mutation": "swap_arguments",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073B",
+      "mutation": "wrong_guard",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073B",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073C",
+      "mutation": "drop_callback",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073C",
+      "mutation": "swap_arguments",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073C",
+      "mutation": "wrong_guard",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x0600073C",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}
