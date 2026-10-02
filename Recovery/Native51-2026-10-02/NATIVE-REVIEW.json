@@ -1,0 +1,79 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000182",
+      "method": "System.Void DeviceManager::ClearDevices()",
+      "start": "0x180312460",
+      "end": "0x1803124e2",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "32843af2701c3b6abc1132406390aaadcc6498f744a1919b84b2795feea6f559",
+      "contract": "Read public Count once; index Count-1, signed index>=0; reread manager list and get_Item(index) each iteration; destroy nonnull item, decrement index. Preserve null/bounds/partial-effect order; no List.Clear or count recalc."
+    },
+    {
+      "token": "0x060001EF",
+      "method": "System.Void PlantManager::ClearPlants()",
+      "start": "0x180322660",
+      "end": "0x1803226e2",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "9d29aed21f3243c718788f1838ddf406b7c7e216b6a4eedc5337981cd2750aed",
+      "contract": "Read public Count once; index Count-1, signed index>=0; reread manager list and get_Item(index) each iteration; destroy nonnull item, decrement index. Preserve null/bounds/partial-effect order; no List.Clear or count recalc."
+    },
+    {
+      "token": "0x06000279",
+      "method": "System.Void ZombieManager::ClearZombies()",
+      "start": "0x180341900",
+      "end": "0x180341982",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "cd98a04eb21919f300d22fbde658f1e5dc48905636072b02b1229ed87ed6e327",
+      "contract": "Read public Count once; index Count-1, signed index>=0; reread manager list and get_Item(index) each iteration; destroy nonnull item, decrement index. Preserve null/bounds/partial-effect order; no List.Clear or count recalc."
+    },
+    {
+      "token": "0x06000560",
+      "method": "System.Void Almanac_DeviceHome::Open(System.Int32)",
+      "start": "0x18038a320",
+      "end": "0x18038a464",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "c2da7916c6250466ca957ecad0a0960b78f974a07cb12da8423be42d9e74f72f",
+      "contract": "Open alone gets GameObject and SetActive(true) before reading global state; capture playerSave once. Null save skips loop (Open still CheckX(input)). Index starts0; current home list.Count reread every iteration; item then captured save lock array field reread, array null/bounds before window null, Boolean array element normalized nonzero to true; SetState then increment. Open finishes CheckX(input)."
+    },
+    {
+      "token": "0x06000563",
+      "method": "System.Void Almanac_DeviceHome::SetWindowsLock()",
+      "start": "0x18038a470",
+      "end": "0x18038a57b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "840c6455bf9fe20211f3ad018dd10fe43ed8159bc48aeaa74d4fd45a1671abf1",
+      "contract": "Open alone gets GameObject and SetActive(true) before reading global state; capture playerSave once. Null save skips loop (Open still CheckX(input)). Index starts0; current home list.Count reread every iteration; item then captured save lock array field reread, array null/bounds before window null, Boolean array element normalized nonzero to true; SetState then increment. Open finishes CheckX(input)."
+    },
+    {
+      "token": "0x060005AF",
+      "method": "System.Void Almanac_ZombieHome::Open(System.Int32)",
+      "start": "0x180393820",
+      "end": "0x180393964",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "d68f367e862e798f6051060eeac847febf650091a776226d1ff7dcd89677d0d6",
+      "contract": "Open alone gets GameObject and SetActive(true) before reading global state; capture playerSave once. Null save skips loop (Open still CheckX(input)). Index starts0; current home list.Count reread every iteration; item then captured save lock array field reread, array null/bounds before window null, Boolean array element normalized nonzero to true; SetState then increment. Open finishes CheckX(input)."
+    },
+    {
+      "token": "0x060005B0",
+      "method": "System.Void Almanac_ZombieHome::SetWindowsLock()",
+      "start": "0x180393970",
+      "end": "0x180393a7b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8036fbed5bffca332694a2513ad3024f7a487202fdfd36df9afd523e4969fca7",
+      "contract": "Open alone gets GameObject and SetActive(true) before reading global state; capture playerSave once. Null save skips loop (Open still CheckX(input)). Index starts0; current home list.Count reread every iteration; item then captured save lock array field reread, array null/bounds before window null, Boolean array element normalized nonzero to true; SetState then increment. Open finishes CheckX(input)."
+    },
+    {
+      "token": "0x060002AA",
+      "method": "System.Void Board::Quit()",
+      "start": "0x180327410",
+      "end": "0x180327522",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "22eac11046b78b87df6107200065b2f11bf97d437b7f5bbd0b99130bd7f39591",
+      "contract": "ClearPlants, capture current ZombieManager after callback, inline qualified reverse zombie clear with captured manager/list rereads, then read current DeviceManager and ClearDevices; get_gameObject then Destroy even for null result. Preserve callback and exception ordering."
+    }
+  ],
+  "oracle_preconditions": "Eight unchanged original PC callers, including original nested plant/device clear calls in Board.Quit; initialized metadata/class slots and explicit object layouts; recording get_Item, destroy, SetState, Unity, check, exception dependencies. Original loop gates, count/array reads, captured manager/save and rereads retained. Actual candidate CIL uses public real List/Boolean-array operations with recording public graph. Fixture aliases entity/home classes; frozen type checker and row audit check actual signatures. No original engine/dependency/class-init/throw/iOS or whole-game proof.",
+  "diagnostics_baseline": "Native50 full compiler result; exact parent extraction"
+}

@@ -1,0 +1,44 @@
+{
+  "archive_sha256": "d08a6f4a0b6fe54787d438dbd94ff3feb78b65e30ec50f3e6f95340463d6623b",
+  "members_verified": 974,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 8,
+    "positive_cases": 16384,
+    "positive_failures": 0,
+    "negative_controls": 18,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "flip-lock-semantic-negative.dll",
+      "positive_failures": 672
+    },
+    {
+      "dll": "initial-index-count-semantic-negative.dll",
+      "positive_failures": 2736
+    },
+    {
+      "dll": "skip-index-zero-semantic-negative.dll",
+      "positive_failures": 1572
+    },
+    {
+      "dll": "wrong-clear-semantic-negative.dll",
+      "positive_failures": 816
+    }
+  ],
+  "byte_scope_negatives": [
+    "body-padding-scope-negative.dll",
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "new-count-parent-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "old-root-scope-negative.dll",
+    "section-flags-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Eight actual candidate CIL/CLR list-loop callers versus original native with ready metadata/class identities and recording dependency implementations; public real List/Boolean-array operations; no Unity/Xcode/device acceptance"
+}
