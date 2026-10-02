@@ -1,0 +1,38 @@
+{
+  "archive_sha256": "f5699625ff8d70b8540fb18e60fbac0c4f580bdf09fd15eb30d981c8352f7e30",
+  "members_verified": 921,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 1,
+    "positive_cases": 4121,
+    "positive_failures": 0,
+    "negative_controls": 12,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "index-argument-semantic-negative.dll",
+      "positive_failures": 1386
+    },
+    {
+      "dll": "skip-second-item-semantic-negative.dll",
+      "positive_failures": 1074
+    }
+  ],
+  "byte_scope_negatives": [
+    "extra-target-scope-negative.dll",
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "private-size-scope-negative.dll",
+    "revert-null-scope-negative.dll",
+    "revert-throw-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "wrong-closed-owner-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch caller CIL/CLR with original resource callers, supplied class/string/MethodInfo identities and class-init-ready precondition; recorded external dependencies, actual public List.Count/indexer and numeric/String operations, explicit equality/log/exception doubles. Repaired opcode sites are not independently CLR behavior-proven; no Unity/Xcode/device acceptance"
+}

@@ -1,0 +1,73 @@
+{
+  "candidate_sha256": "d8b152232285ea317e288a076cc399e3cce560cb2ae3f94f707e6f3d4c2d955b",
+  "methods": 1,
+  "positive_cases": 4121,
+  "positive_failures": 0,
+  "negative_controls": 12,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Actual candidate CIL emitted with public real List.Count and indexer (recording wrapper), real Int32/String, public static resource list. Original native caller with ready class-init and recording Unity equality/formatter/log/exception dependencies. Retains input-ID-independent index-zero behavior and rereads after callbacks. No original Unity/class-init/throw engine or iOS proof. CLR comparison encoding is nondiscriminative; sites rely on native/type/byte/Clang evidence.",
+  "failures": [],
+  "controls": [
+    {
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "return_early",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "index_argument",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "skip_second_item",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "skip_log",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "wrong_format",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "wrong_message",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "empty_inverted",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "flip_equality",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "cached_second_list",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "zero_count",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "return_exception",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}
