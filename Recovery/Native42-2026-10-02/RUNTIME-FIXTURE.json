@@ -1,0 +1,86 @@
+{
+  "candidate_sha256": "50959644506ab0bc33f8ca1d28cfe753fc7b29ca38d98142b2a015dd05ccaaa2",
+  "methods": 2,
+  "positive_cases": 8202,
+  "positive_failures": 0,
+  "negative_controls": 12,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "unity_core_sha256": "d4d9c2d8f48af011f2dec31328a482794eceba9f3eece005623448443c184f50",
+  "scope": "Original native caller execution uses recorded allocator/empty ctor/get/set with explicit metadata/layout preconditions. Actual candidate CIL executes through public Curve doubles and real Unity Keyframe value arrays from pinned CoreModule. Allocation-before-null, array forwarding/identity/data, fresh result, receiver capture, unused null this and dependency exception order tested. Original curve engine/allocator/throw/Unity/iOS acceptance not tested",
+  "failures": [],
+  "controls": [
+    {
+      "token": "0x06000771",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000771",
+      "mutation": "return_input",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000771",
+      "mutation": "wrong_set_receiver",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000771",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000771",
+      "mutation": "skip_getter",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000771",
+      "mutation": "skip_setter",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000817",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000817",
+      "mutation": "return_input",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000817",
+      "mutation": "wrong_set_receiver",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000817",
+      "mutation": "wrong_return",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000817",
+      "mutation": "skip_getter",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000817",
+      "mutation": "skip_setter",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}

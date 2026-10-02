@@ -1,0 +1,33 @@
+{
+  "archive_sha256": "69fa2756a79f0425f4a0949a9f3edd300fd67b5d4e5623f0471140d24479bc4b",
+  "members_verified": 896,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 2,
+    "positive_cases": 8202,
+    "positive_failures": 0,
+    "negative_controls": 12,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "wrong-receiver-0x06000771-semantic-negative.dll",
+      "positive_failures": 4096
+    },
+    {
+      "dll": "wrong-receiver-0x06000817-semantic-negative.dll",
+      "positive_failures": 4096
+    }
+  ],
+  "append_scope_negatives": [
+    "keyframe-class-signature-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "wrong-setter-owner-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch CIL/CLR with original curve-copy callers, recorded curve engines and actual pinned Keyframe value arrays under explicit layouts/class preconditions; no Unity/Xcode/device acceptance"
+}
