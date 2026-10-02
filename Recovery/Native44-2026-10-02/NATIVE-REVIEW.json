@@ -1,0 +1,25 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x0600061C",
+      "method": "System.Void GridConfig_A::Start()",
+      "start": "0x18039d5b0",
+      "end": "0x18039d618",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b4f861765ab2d601154af774412abfa23f5aaa00237accc503345979ba415586",
+      "contract": "set dropdown value from gridState; capture inputField after that callback, pass the address of passablePoint to Int32.ToString, set captured input text, then reread toggle/isHome and set toggle. Preserve native null/error order."
+    },
+    {
+      "token": "0x0600079B",
+      "method": "System.Void TMPro.Examples.TextMeshProFloatingText::.ctor()",
+      "start": "0x1803bc970",
+      "end": "0x1803bc9f2",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8000c5331cce9d14fa010e5b779203a3943b31f6eef780607b0cf6aba99c445c",
+      "contract": "Read Vector3.zero static value into lastPOS, then Quaternion.identity into lastRotation, then base MonoBehaviour ctor last. Public pinned getters have the same underlying static-field loads. Preserve unrelated fields."
+    }
+  ],
+  "oracle_preconditions": "Two unchanged original PC callers; UI setters/Int32 formatter/base constructor recording doubles, supplied metadata/class/vector static layouts and arbitrary static float bits. CLR actual pinned Vector3/Quaternion value types with controlled providers; separate real Int32.ToString/public zero/identity getter execution. No original UI/formatter/Unity/base/throw engine or device acceptance.",
+  "diagnostics_baseline": "Native43 full compiler result; exact parent extraction"
+}
