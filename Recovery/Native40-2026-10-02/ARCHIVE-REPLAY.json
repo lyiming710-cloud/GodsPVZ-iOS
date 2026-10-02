@@ -1,0 +1,37 @@
+{
+  "archive_sha256": "8894ddfbb1147ad61ec26ad3b52893e706e40534ebdb6cf42529eb0e10f53249",
+  "members_verified": 870,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 1,
+    "positive_cases": 12624,
+    "positive_failures": 0,
+    "negative_controls": 8,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "missing-flag-semantic-negative.dll",
+      "positive_failures": 900
+    },
+    {
+      "dll": "wrong-direction-semantic-negative.dll",
+      "positive_failures": 960
+    },
+    {
+      "dll": "wrong-guard-semantic-negative.dll",
+      "positive_failures": 301
+    }
+  ],
+  "append_scope_negatives": [
+    "metadata-heap-byte-scope-negative.dll",
+    "newbody-padding-scope-negative.dll",
+    "non-target-rva-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "wrong-locals-scope-negative.dll"
+  ],
+  "typed_coverage_controls_pass": true,
+  "scope": "Batch CIL/CLR and original damage dispatch with transform/scale recording dependencies and explicit object-layout preconditions; no Unity/Xcode/device acceptance"
+}

@@ -1,0 +1,16 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000447",
+      "method": "System.Void Zombie::GetDamageType(Damage&,System.Int32,System.Int32)",
+      "start": "0x180360b00",
+      "end": "0x180360d00",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "91049818dbd00eceb8c040895870d6e1e984e14dc51325fe363d11cd168686e4",
+      "contract": "Read Zombie.ID once before any Damage dereference; recover all ID3..22 dispatch entries, signed first-argument gates, ID18 second-argument choices, exact camp/attribute/flag writes, and ordered scale.x direction comparisons. Capture Damage reference before transform callbacks and write that captured object even if ref slot changes; propagate original null/dependency exceptions without fallbacks."
+    }
+  ],
+  "oracle_preconditions": "Original native body/jump table unchanged; fake initialized field-layout objects, transform/scale recording dependencies. Some callbacks reassign Damage ref slot. Original Unity transform/native throw/startup engines not executed; CLR null/exception behavior checked separately.",
+  "diagnostics_baseline": "Native39 full compiler result; parent GetDamageType bytes preserved"
+}

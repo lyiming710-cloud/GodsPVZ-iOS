@@ -1,0 +1,90 @@
+{
+  "controls": [
+    {
+      "name": "damage-ref",
+      "expected_pass": true,
+      "actual_pass": true,
+      "error": null
+    },
+    {
+      "name": "object-ref",
+      "expected_pass": true,
+      "actual_pass": true,
+      "error": null
+    },
+    {
+      "name": "string-ref",
+      "expected_pass": true,
+      "actual_pass": true,
+      "error": null
+    },
+    {
+      "name": "array-ref",
+      "expected_pass": true,
+      "actual_pass": true,
+      "error": null
+    },
+    {
+      "name": "integer-ref",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got System.Int32&"
+    },
+    {
+      "name": "value-ref",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got Value&"
+    },
+    {
+      "name": "native-address",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got I"
+    },
+    {
+      "name": "unmanaged-pointer",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got Damage*"
+    },
+    {
+      "name": "object-value",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got Damage"
+    },
+    {
+      "name": "unbound-ref",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got T&"
+    },
+    {
+      "name": "pointer-pointer",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: ldind.ref requires managed reference element address, got Damage&&"
+    },
+    {
+      "name": "wrong-return",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0002: Damage is not assignable to Other"
+    },
+    {
+      "name": "underflow",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0000: stack underflow"
+    },
+    {
+      "name": "primitive-op-remains-unsupported",
+      "expected_pass": false,
+      "actual_pass": false,
+      "error": "ldind.ref coverage IL_0001: unsupported opcode ldind.i4"
+    }
+  ],
+  "pass": true,
+  "scope": "Managed reference elements only; unmanaged addresses and remaining unsupported opcodes still reject"
+}
