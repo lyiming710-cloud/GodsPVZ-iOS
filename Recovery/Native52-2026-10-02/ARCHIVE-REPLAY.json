@@ -1,0 +1,36 @@
+{
+  "archive_sha256": "d1bd9f196b46e977306fe428976f838c36449545b535344848b016ea5146867b",
+  "members_verified": 952,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 3,
+    "positive_cases": 12288,
+    "positive_failures": 0,
+    "negative_controls": 8,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "flip-branch-semantic-negative.dll",
+      "positive_failures": 3584
+    },
+    {
+      "dll": "wrong-second-field-semantic-negative.dll",
+      "positive_failures": 1710
+    }
+  ],
+  "byte_scope_negatives": [
+    "body-padding-scope-negative.dll",
+    "flip-branch-scope-negative.dll",
+    "locals-scope-negative.dll",
+    "max-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "old-heap-scope-negative.dll",
+    "section-flags-scope-negative.dll",
+    "wrong-second-field-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Three bank position callers with original field/branch/Vector3 copy semantics and initialized metadata/default zero fields; recording Unity/exception dependencies and real pinned public Vector3 values/zero getter; no Unity/Xcode/device acceptance"
+}

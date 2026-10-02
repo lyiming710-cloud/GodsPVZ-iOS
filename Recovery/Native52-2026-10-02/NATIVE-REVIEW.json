@@ -1,0 +1,34 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x060000E9",
+      "method": "UnityEngine.Vector3 Banks::GetSunBankPosition()",
+      "start": "0x180300eb0",
+      "end": "0x180300f83",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "c1267ad26d67975bc8412d39c505f8b42830aef6898e0e7fcc7af3f221e8f00f",
+      "contract": "Use Unity Object inequality against null; if absent return public Vector3.zero, otherwise reread bank field after equality callback, get Transform then return full position Vector3 by value. Preserve NRE/dependency and field mutation ordering."
+    },
+    {
+      "token": "0x06000204",
+      "method": "UnityEngine.Vector3 ProjectManager::GetCoinBankPosition()",
+      "start": "0x180323680",
+      "end": "0x180323753",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "5d0a8bfbca3f1c3d03718fbfd8840e0e7dd25dd3085aa22306f98586a8fc1c4c",
+      "contract": "Use Unity Object inequality against null; if absent return public Vector3.zero, otherwise reread bank field after equality callback, get Transform then return full position Vector3 by value. Preserve NRE/dependency and field mutation ordering."
+    },
+    {
+      "token": "0x06000205",
+      "method": "UnityEngine.Vector3 ProjectManager::GetDiamondBankPosition()",
+      "start": "0x180323760",
+      "end": "0x180323833",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8f4c434785cf470a95e92cdaa7cebfbc4aa4012b150676c5f7992b2933f9013d",
+      "contract": "Use Unity Object inequality against null; if absent return public Vector3.zero, otherwise reread bank field after equality callback, get Transform then return full position Vector3 by value. Preserve NRE/dependency and field mutation ordering."
+    }
+  ],
+  "oracle_preconditions": "Three unchanged original PC bank position callers; ready Unity Object/Vector3 metadata, default zero static fields and supplied object/transform identities; recording equality/transform/position/NRE/exception dependencies. Native field rereads, branching and raw Vector3 copies preserved. Actual candidate CIL uses pinned real public Vector3/zero getter and recording public graph. No original Unity equality/engine/class-init/throw/dependency implementation, iOS or game proof.",
+  "diagnostics_baseline": "Native51 full compiler result; exact parent extraction"
+}
