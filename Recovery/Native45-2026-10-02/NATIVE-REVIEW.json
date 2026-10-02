@@ -1,0 +1,25 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x0600075E",
+      "method": "System.Void TMPro.Examples.CameraController::.ctor()",
+      "start": "0x1803b4560",
+      "end": "0x1803b45ed",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "070ce1d1b67ef77be38b63072eb96fe638b23c500e2b02d01323d0337667f4df",
+      "contract": "Store original eight float defaults, MovementSmoothing=true, public Vector3.zero into currentVelocity, then base ctor last; preserve unrelated fields and exact initialization before base."
+    },
+    {
+      "token": "0x060008A0",
+      "method": "System.Void FTRuntime.SwfManager::.ctor()",
+      "start": "0x1803c9f50",
+      "end": "0x1803ca114",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8c91ad4cdfb3016a9b810fe0e3f95b350d15f5c7f5978407b013a028d55241d2",
+      "contract": "Only correct two existing newobj operands to public HashSet<string>::.ctor; preserve all six allocation/construction/store operations, rateScale=1, partial exception states and base ctor order. Two sets must be empty and distinct."
+    }
+  ],
+  "oracle_preconditions": "Two unchanged original PC constructor callers; supplied Vector3 static/class and closed generic class/MethodInfo layouts. Native six allocations, collection constructors, GC barrier and base ctor are recorded doubles. CLR uses actual pinned Vector3, real public HashSet<string>/Dictionary<string,float>, controlled Swf generic collections/base ctor and separate CoreModule zero getter. No original allocator/collection/GC/Unity/base/throw engine or device acceptance.",
+  "diagnostics_baseline": "Native44 full compiler result; exact parent extraction"
+}

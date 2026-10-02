@@ -1,0 +1,35 @@
+{
+  "archive_sha256": "d111627a78b5358a27b2ce32f01968867bdcec0bada527081489ee5a9370ca0c",
+  "members_verified": 899,
+  "candidate_reproduced_exactly": true,
+  "original_native_state_oracles_reproduced_exactly_with_explicit_preconditions": true,
+  "runtime": {
+    "methods": 2,
+    "positive_cases": 8201,
+    "positive_failures": 0,
+    "negative_controls": 14,
+    "tool_errors": 0,
+    "gate_pass": true
+  },
+  "actual_dll_negatives": [
+    {
+      "dll": "alias-sets-semantic-negative.dll",
+      "positive_failures": 4097
+    },
+    {
+      "dll": "smoothing-false-semantic-negative.dll",
+      "positive_failures": 4097
+    }
+  ],
+  "append_scope_negatives": [
+    "camera-locals-scope-negative.dll",
+    "camera-padding-scope-negative.dll",
+    "camera-stack-scope-negative.dll",
+    "non-target-scope-negative.dll",
+    "swf-extra-opcode-scope-negative.dll",
+    "wrong-ctor-wire-scope-negative.dll",
+    "wrong-owner-scope-negative.dll"
+  ],
+  "generated_metadata_audit_pass": true,
+  "scope": "Batch CIL/CLR with original constructor callers, supplied generic class/MethodInfo/static layouts, recorded allocation/collections/GC/base dependencies, real public string sets/dictionary and pinned Vector3 plus separate real zero getter; no Unity/Xcode/device acceptance"
+}
