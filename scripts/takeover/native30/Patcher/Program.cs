@@ -46,13 +46,12 @@ static class RepairNative30 {
   var report=new List<object>();
   void Set(int token,IL il,int max=4){targets.Add(token,(il.Done(),max));}
 
-  // 1. Call site Vector3 argument fixes (6 sites)
+  // 1. Five native-reviewed Vector3 call sites; Return reconstructed separately
   var callSites=new (int token, int offset, int local, int arg)[]{
       (0x060000C1, 0x4E, 4, -1),
       (0x060001C7, 0x5B, 6, -1),
       (0x060002B4, 0x58, 5, -1),
       (0x06000480, 0x13, -1, 1),
-      (0x0600001F, 0x6E, 5, -1),
       (0x06000060, 0x67, 5, -1)
   };
   foreach(var(token,offset,local,arg) in callSites){
@@ -74,6 +73,20 @@ static class RepairNative30 {
       targets.Add(token,(code,sm.Body.MaxStackSize));
   }
 
+  // Full native restoration of Return: deactivate self; cache first camera transform;
+  // get a second camera position; set cached transform to (positive zero, positive zero, old z).
+  var returnMethod=M(0x0600001F);
+  var returnIL=new IL();
+  returnIL.Arg(0).Ref(0x6F,C(returnMethod,"get_gameObject")).Int(0).Ref(0x6F,C(returnMethod,"SetActive"));
+  returnIL.Ref(0x28,C(returnMethod,"get_main")).Ref(0x6F,C(returnMethod,"get_transform")).S(6);
+  returnIL.Ref(0x28,C(returnMethod,"get_main")).Ref(0x6F,C(returnMethod,"get_transform")).Ref(0x6F,C(returnMethod,"get_position")).S(5);
+  var vectorX=module.GetMemberReferences().OfType<FR>().First(f=>f.FullName=="System.Single UnityEngine.Vector3::x");
+  var vectorY=module.GetMemberReferences().OfType<FR>().First(f=>f.FullName=="System.Single UnityEngine.Vector3::y");
+  returnIL.A(5).Float(0f).Ref(0x7D,vectorX);
+  returnIL.A(5).Float(0f).Ref(0x7D,vectorY);
+  returnIL.L(6).L(5).Ref(0x6F,C(returnMethod,"set_position")).O(0x2A);
+  Set(0x0600001F,returnIL,2);
+
   // 2. 0x060003C9: Project::Rotating()
   var m=M(0x060003C9);
   var il=new IL();
@@ -82,7 +95,7 @@ static class RepairNative30 {
   il.Ref(0x28,CallRef("UnityEngine.Vector3 UnityEngine.Vector3::get_forward()"));
   il.Ref(0x28,CallRef("System.Single UnityEngine.Time::get_deltaTime()"));
   il.Float(-18.0f).O(0x5A); // mul
-  il.Int(0); // Space.Self
+  il.Int(0); // Space.World
   il.Ref(0x6F,C(m,"Rotate"));
   il.Label("ret").O(0x2A);
   Set(0x060003C9,il,5);

@@ -459,6 +459,8 @@ static class Native30Fixture {
                 continue;
             }
             if (a is MethodReference c) {
+                if (mutant == "wrong_audio_index" && c.Name == "get_Item" && m.MetadataToken.ToInt32() is 0x060000C1 or 0x060001C7 or 0x060002B4) { il.Emit(RO.Pop); il.Emit(RO.Ldc_I4_0); Changed(); }
+                if (mutant == "wrong_spawn_position" && m.MetadataToken.ToInt32() == 0x0600026A && c.Name == "get_zero") { il.Emit(RO.Call, typeof(Vec).GetMethod("get_forward")!); Changed(); continue; }
                 if (mutant == "wrong_axis" && m.MetadataToken.ToInt32() == 0x060003C9 && c.Name == "get_forward") { Zero(typeof(Vec)); Changed(); continue; }
                 if (mutant == "plain_null_check" && m.MetadataToken.ToInt32() == 0x06000401 && c.Name == "op_Inequality") { il.Emit(RO.Pop); il.Emit(RO.Ldnull); il.Emit(RO.Cgt_Un); Changed(); continue; }
                 if (mutant == "drop_callback" && c.Name == "Invoke") { il.Emit(RO.Pop); il.Emit(RO.Pop); Changed(); continue; }
@@ -486,6 +488,8 @@ static class Native30Fixture {
                 continue;
             }
             if (a is FieldReference field) {
+                if (mutant == "retain_camera_xy" && m.MetadataToken.ToInt32() == 0x0600001F && op == RO.Stfld && field.DeclaringType.FullName == "UnityEngine.Vector3" && field.Name is "x" or "y") { il.Emit(RO.Pop); il.Emit(RO.Pop); Changed(); continue; }
+
                 il.Emit(op, T(field.DeclaringType).GetField(field.Name) ?? throw new InfrastructureFault("Field unmapped " + field.FullName));
                 if (mutant == "default_color" && op == RO.Ldfld && field.Name == "_tint") { il.Emit(RO.Pop); Zero(typeof(Color)); Changed(); }
                 continue;
@@ -754,7 +758,7 @@ static class Native30Fixture {
                 var clip = clipNil ? null : new AudioClip();
                 var p = new Vec(3, -5, 7);
                 Test($"playwin:{clipNil}", () => {
-                    ResourceManager.boardClips = Enumerable.Range(0, 10).Select(_ => clip!).ToList();
+                    ResourceManager.boardClips = Enumerable.Range(0, 12).Select(_ => new AudioClip()).ToList(); ResourceManager.boardClips[4] = clip!;
                     Camera.Main = new Camera();
                     Component.Transform = new Transform();
                     Global.gLawnApp = new Lawn { audioVolume = 0.8f };
@@ -771,7 +775,7 @@ static class Native30Fixture {
                 var clip = new AudioClip();
                 var p = new Vec(4, 5, 6);
                 Test($"audioplay:{id}", () => {
-                    ResourceManager.mouseClips = Enumerable.Range(0, 10).Select(_ => clip).ToList();
+                    ResourceManager.mouseClips = Enumerable.Range(0, 10).Select(_ => new AudioClip()).ToList(); ResourceManager.mouseClips[id] = clip;
                     Camera.Main = new Camera();
                     Component.Transform = new Transform();
                     Tr.Position = p;
@@ -786,7 +790,7 @@ static class Native30Fixture {
             var clip = new AudioClip();
             var p = new Vec(1, 2, 3);
             Test("buttondown_menu", () => {
-                ResourceManager.boardClips = Enumerable.Range(0, 15).Select(_ => clip).ToList();
+                ResourceManager.boardClips = Enumerable.Range(0, 12).Select(_ => new AudioClip()).ToList(); ResourceManager.boardClips[11] = clip;
                 Camera.Main = new Camera();
                 Component.Transform = new Transform();
                 Tr.Position = p;
@@ -815,7 +819,16 @@ static class Native30Fixture {
                 Component.GameObject = new GameObject();
                 Tr.Position = new Vec(1, 2, 3);
                 return new object?[] { new Admin_system2_boardEdior() };
-            }, _ => Bits(Tr.Position, new Vec(1, 2, 3)), null, "gameobject", "active:False", "camera", "transform", "camera", "transform", "position", "set_pos");
+            }, _ => Bits(Tr.Position, new Vec(0, 0, 3)), null, "gameobject", "active:False", "camera", "transform", "camera", "transform", "position", "set_pos");
+            foreach (int mode in new[] { 1, 2, 3 }) {
+                Test("return-null:" + mode, () => {
+                    Component.GameObject = mode == 1 ? null : new GameObject();
+                    Camera.Main = mode == 2 ? null : new Camera();
+                    Component.Transform = mode == 3 ? null : new Transform();
+                    return new object?[] { new Admin_system2_boardEdior() };
+                }, _ => false, "NullReferenceException", mode == 1 ? new[] { "gameobject" } : mode == 2 ? new[] { "gameobject", "active:False", "camera" } : new[] { "gameobject", "active:False", "camera", "transform", "camera", "transform" });
+            }
+            Component.GameObject = new GameObject();
             return rows;
         }
 
@@ -850,15 +863,28 @@ static class Native30Fixture {
             return rows;
         }
 
-        // 8. 0x0600026A: SunManager::SunFall()
+        // Native CreateProject payload and counter state are independently observed.
         if (token == 0x0600026A) {
-            foreach (int count in new[] { 0, 5, 10 }) {
-                ProjectManager.Result = new Project();
-                var s = new SunManager {
-                    board = new Board { projectManager = new ProjectManager() },
-                    sunFallCount = count
-                };
-                Test($"sunfall:{count}", () => new object?[] { s }, _ => s.sunFallCount == count + 1, null, "project:0:0", "nature_sun");
+            foreach (int count in new[] { 0, 5, 10, int.MaxValue, int.MinValue }) {
+                var manager = new ProjectManager();
+                var board = new Board { projectManager = manager };
+                var sun = new SunManager { board = board, sunFallCount = count };
+                Test("sunfall:" + count, () => {
+                    ProjectManager.Result = new Project();
+                    AudioSource.LastPosition = new Vec(7, 8, 9);
+                    return new object?[] { sun };
+                }, _ => sun.sunFallCount == unchecked(count + 1) && Bits(AudioSource.LastPosition, new Vec(0, 0, 0)), null, "project:0:0", "nature_sun");
+            }
+            foreach (int mode in new[] { 1, 2, 3, 4, 5 }) {
+                var sun = new SunManager { sunFallCount = 37 };
+                Test("sunfall-failure:" + mode, () => {
+                    sun.board = mode == 1 ? null : new Board { projectManager = mode == 2 ? null : new ProjectManager() };
+                    ProjectManager.Result = mode == 3 ? null : new Project();
+                    Tr.Fail = mode == 4 ? "project:0:0" : mode == 5 ? "nature_sun" : "";
+                    return new object?[] { sun };
+                }, _ => true, mode <= 3 ? "NullReferenceException" : "ApplicationException", mode <= 2 ? Array.Empty<string>() : mode <= 4 ? new[] { "project:0:0" } : new[] { "project:0:0", "nature_sun" });
+                var last = rows[^1];
+                rows[^1] = last with { Pass = last.Pass && sun.sunFallCount == 37 };
             }
             return rows;
         }
@@ -1038,6 +1064,7 @@ static class Native30Fixture {
                 else if (token == 0x06000401) mutation = "plain_null_check";
 
                 mutants.Add(Eval(m, mutation));
+                if (token is 0x060000C1 or 0x060001C7 or 0x060002B4) mutants.Add(Eval(m, "wrong_audio_index"));
                 if (token is 0x060008AA or 0x060008AC or 0x060008AE or 0x060008B6 or 0x060008B7) {
                     mutants.Add(Eval(m, "return_subscribe"));
                     mutants.Add(Eval(m, "post_state"));
@@ -1048,6 +1075,8 @@ static class Native30Fixture {
                 if (token == 0x06000401) {
                     mutants.Add(Eval(m, "drop_write"));
                 }
+                if (token == 0x0600026A) mutants.Add(Eval(m, "wrong_spawn_position"));
+                if (token == 0x0600001F) mutants.Add(Eval(m, "retain_camera_xy"));
             }
 
             if (!fault) {

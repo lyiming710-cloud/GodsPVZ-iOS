@@ -148,6 +148,9 @@ def verify(d,types):
    else:
     if norm(el) not in ('I4','I8','I','F'):fail(i,'primitive element mismatch')
     push(el)
+  elif op=='stind.r4':
+   pop('System.Single')
+   pop('System.Single&')
   elif op in ('initobj','ldobj','stobj'):
    if op=='stobj':pop(a['type'])
    pop(a['type']+'&')

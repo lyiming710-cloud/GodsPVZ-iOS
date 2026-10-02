@@ -1,0 +1,79 @@
+{
+  "before_sha256": "1e0346e6d122f486a7bb2b7972b6029b1ceddc2a79d0ae3a1dea04afb8320786",
+  "after_sha256": "65da57f63b5737ee3bccb5a52be2f2444ccb9f831262711112a9cbc3e44b4663",
+  "scope": "stind.r4 managed Single& addresses only; unsupported native-pointer stores still rejected",
+  "controls": [
+    {
+      "name": "float-byref",
+      "accepted": true,
+      "expected": true,
+      "error": null
+    },
+    {
+      "name": "wrong-address:System.Double&",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Double& is not assignable to System.Single&"
+    },
+    {
+      "name": "wrong-address:System.Int32&",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Int32& is not assignable to System.Single&"
+    },
+    {
+      "name": "wrong-address:System.Object&",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Object& is not assignable to System.Single&"
+    },
+    {
+      "name": "wrong-address:System.Int32",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: I4 is not assignable to System.Single&"
+    },
+    {
+      "name": "wrong-address:System.IntPtr",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: I is not assignable to System.Single&"
+    },
+    {
+      "name": "wrong-address:System.Object",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Object is not assignable to System.Single&"
+    },
+    {
+      "name": "wrong-value:System.Int32",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: I4 is not assignable to System.Single"
+    },
+    {
+      "name": "wrong-value:System.Object",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Object is not assignable to System.Single"
+    },
+    {
+      "name": "wrong-value:System.Single&",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Single& is not assignable to System.Single"
+    },
+    {
+      "name": "underflow",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: System.Single& is not assignable to System.Single"
+    },
+    {
+      "name": "leftover-value",
+      "accepted": false,
+      "expected": false,
+      "error": "indirect float store IL_0002: F is not assignable to System.Single&"
+    }
+  ]
+}
