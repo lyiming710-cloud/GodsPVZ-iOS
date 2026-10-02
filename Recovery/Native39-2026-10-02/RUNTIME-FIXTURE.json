@@ -1,0 +1,78 @@
+{
+  "candidate_sha256": "79345f3a8114e8f4e52c2add7b8c337334cc0bc5435c700c2ff6e731bce0c2ba",
+  "methods": 2,
+  "positive_cases": 8264,
+  "positive_failures": 0,
+  "negative_controls": 9,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "scope": "Original native callers unchanged with supplied initialized metadata/Debug class/exact format literal and recording boxing/Log/Format dependencies. Native arguments, logging-before-write and boxed constant order verified; no original allocator/logger/formatter engine execution. CLR binds public int boxing/String.Format and controlled Debug logger; checks null/throw order and cultures. No Unity/Xcode/device equivalence",
+  "positives": [
+    {
+      "token": "0x06000091",
+      "cases": 8200,
+      "failures": []
+    },
+    {
+      "token": "0x060008A5",
+      "cases": 64,
+      "failures": []
+    }
+  ],
+  "controls": [
+    {
+      "token": "0x06000091",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000091",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000091",
+      "mutation": "wrong_argument",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000091",
+      "mutation": "missing_log",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x06000091",
+      "mutation": "wrong_box_type",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A5",
+      "mutation": "missing_operation",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A5",
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A5",
+      "mutation": "wrong_constant",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "token": "0x060008A5",
+      "mutation": "wrong_order",
+      "detected": true,
+      "tool_error": null
+    }
+  ]
+}

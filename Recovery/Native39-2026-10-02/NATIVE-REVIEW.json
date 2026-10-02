@@ -1,0 +1,25 @@
+{
+  "GameAssembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "methods": [
+    {
+      "token": "0x06000091",
+      "method": "System.Void System2::SetSenarioState(System.Int32)",
+      "start": "0x18030c780",
+      "end": "0x18030c81e",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b0737cdde36213e9c06882e1b08104814d22e58feda0bffd69a41f49cb124fef",
+      "contract": "Box exact incoming Int32 and Debug.Log before this->boardConfig->map access, then store exact bit pattern as SenarioState. Logger exceptions and null graph failures preserve ordering."
+    },
+    {
+      "token": "0x060008A5",
+      "method": "System.String FTRuntime.SwfVersion::get_AsString()",
+      "start": "0x1803ca860",
+      "end": "0x1803ca90c",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b5394f09e59a2f4fd96fc1dc89dcfdf25acfbb6d6807d727460a3946ac8dd4a4",
+      "contract": "Format existing literal {0}.{1}.{2} with three distinct Int32 boxes holding 1,3,15 in native order; return actual public String.Format result, preserving culture-dependent formatter behavior."
+    }
+  ],
+  "oracle_preconditions": "Original native caller instructions unchanged. Boxing/Log/Format recording dependencies, initialized metadata/Debug class, and exact existing managed format literal supplied. Arguments/state/order only; original allocation, logging/formatting engines and native throw/Unity startup not executed.",
+  "diagnostics_baseline": "Native36 compiler output during Native37 qualification"
+}
