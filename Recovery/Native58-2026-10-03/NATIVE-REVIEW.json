@@ -1,0 +1,41 @@
+{
+  "methods": [
+    {
+      "token": "0x0600017B",
+      "method": "System.Void DebugManager::Update()",
+      "start": "0x180311e40",
+      "end": "0x180311eb4",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "c6392fbb42de2a9ecec25e75c5d125205b0290a2e08912902eca9f1f9b64b0df",
+      "contract": "DebugManager.Update: capture DPSText before formatting; pass exact managed address of dPS and original DPS:0.0 string to existing Single.ToString(string); call set_text on captured receiver, reset dPS to positive zero only after success. Callback mutations, raw-null and dependency exceptions preserve native order. Formatter implementation is a recording dependency, not proven culture formatting."
+    },
+    {
+      "token": "0x06000477",
+      "method": "System.Void Zombie::SetLayer()",
+      "start": "0x180367440",
+      "end": "0x180367532",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "bb22777fa3587e924e428360107665d275a35ac52178a75971fadb9d3becd803",
+      "contract": "Zombie.SetLayer: Unity equality sortingGroup/null; true => gameObject.AddComponent<SortingGroup> then field assignment. Reread sortingGroup to set layer Entity; reread group and fY; multiply fY by -10. Explicit ordered/unordered guards return INT_MIN for NaN/out-of-range, matching original cvttss2si, then sortingOrder. No unchecked out-of-range platform float cast is assumed."
+    },
+    {
+      "token": "0x06000837",
+      "method": "UnityEngine.Bounds FTRuntime.SwfClip::get_currentLocalBounds()",
+      "start": "0x1803c8820",
+      "end": "0x1803c889a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "4839659d99afe8184709d51169002f8fc4ff3f79e7fd9e55140037f02fa82f80",
+      "contract": "FTRuntime.SwfClip.get_currentLocalBounds: GetCurrentBakedFrame; raw null => all-zero 24-byte Bounds; else get CachedMesh and Mesh.bounds, returning entire six-float struct. Null mesh throws; no private Bounds field access. Explicit initobj of existing Bounds TypeRef for default."
+    },
+    {
+      "token": "0x06000838",
+      "method": "UnityEngine.Bounds FTRuntime.SwfClip::get_currentWorldBounds()",
+      "start": "0x1803c88a0",
+      "end": "0x1803c896c",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "14a954f19e67a609ecb93ceda51ee0733693176c58346511a6c072e5b6b48924",
+      "contract": "FTRuntime.SwfClip.get_currentWorldBounds: Internal_UpdateMesh first; Unity implicit truth on current renderer, false => all-zero 24-byte Bounds; true => reread renderer and get Renderer.bounds complete value. Callback field changes and raw null throw remain observable."
+    }
+  ],
+  "scope": "Four unchanged original PC native callers vs actual candidate CIL. Real pinned Unity Bounds value layout, complete six-float/24-byte returns and original cvttss2si execute; formatter/text/Unity/mesh/frame/update/GC/exception helpers are recordings with ready metadata. No full helper/engine/class-init timing/game/iOS proof."
+}
