@@ -1,0 +1,73 @@
+{
+  "candidate_sha256": "6e2aa50c2127dc07e4d7f20bcb40faf28c1958db0d843a20ac9db0f17fd8ea12",
+  "methods": 8,
+  "positive_cases": 32768,
+  "positive_failures": 0,
+  "negative_controls": 12,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "failures": [],
+  "controls": [
+    {
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "board_zero_position",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "board_wrong_clip",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "die_unordered",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "die_skip_update",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "heal_wrong_y",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "heal_nan_clamp",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "prop_cache_image",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "pole_leave_jump",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "pole_wrong_name",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "pole_cache_manager",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "rotate_wrong_angle",
+      "detected": true,
+      "tool_error": null
+    }
+  ],
+  "scope": "Eight actual candidate CIL callers vs unchanged original native callers; DieTest executes actual candidate Healed transitively. Pinned Core Vector3 ctor CLR executes; CLR System.Object ctor used; other Unity/list/damage/buff/path/exception dependencies recorded with ready metadata. No complete Unity or game/iOS fidelity proof; full conversion/all units deferred to100."
+}

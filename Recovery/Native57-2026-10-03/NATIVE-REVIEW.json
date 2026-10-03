@@ -1,0 +1,77 @@
+{
+  "methods": [
+    {
+      "token": "0x06000045",
+      "method": "System.Void EnemyDataEditor::SelectInputField(UnityEngine.GameObject)",
+      "start": "0x1803049c0",
+      "end": "0x180304a6d",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "4b141d4d8f8fb9bdd2619a08107a8ba5fbd5149af7f7670af376279eb6ec00cc",
+      "contract": "EnemyDataEditor.SelectInputField: Unity Object equality against null, assign String.Empty when equality true (including recorded destroyed-object semantics), otherwise raw-null exception then get_name. Preserve old field if name/equality throws."
+    },
+    {
+      "token": "0x060002C3",
+      "method": "System.Void Board::GameWin(System.Single)",
+      "start": "0x180326eb0",
+      "end": "0x180326fd6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7e3ee0b0f2ac8771fc728ee2121f7160beef75f3ff6c9c76988a4d6c50a637eb",
+      "contract": "Board.GameWin: endTime=input, gameSpeed=1 then Time.timeScale=1; reread buttomButtons.SetActive(false), isWon=true; ResourceManager.boardClips[10], capture full cameraPosition before AudioVolume, CreateAudioAtPoint(clip,position,volume), discard return."
+    },
+    {
+      "token": "0x06000301",
+      "method": "System.Void DeviceContent/ContentDeviceData::.ctor(DeviceContent/ContentDeviceData)",
+      "start": "0x180345350",
+      "end": "0x1803453de",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b02228083df02563f26f8f8ecca6d8af2334872bb8207807675cf100c74a973f",
+      "contract": "ContentDeviceData copy ctor: name=String.Empty and camp=1 before existing System.Object base ctor, then name/camp/num copied in original order. Null source throws after initial field writes; self alias handled. Original shared empty helper bytes c20000 (ret 0) execute unchanged; address is not uniquely mapped to a method identity."
+    },
+    {
+      "token": "0x0600035D",
+      "method": "System.Boolean Plant::DieTest()",
+      "start": "0x18034e7f0",
+      "end": "0x18034e883",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7ce055468c05d554d46997f999a25c143478e2564b7a691c1c24f7ecf4606059",
+      "contract": "Plant.DieTest: isDied => false; only ordered health<0 enters. ID!=6 => true; ordered -health>barrels => true. Otherwise execute actual candidate Healed(barrels,this), clear barrels positive zero, update barrels callback, re-read health and return ordered health<0. NaN behavior and callback changes retained."
+    },
+    {
+      "token": "0x06000378",
+      "method": "System.Void Plant::Healed(System.Single,Plant)",
+      "start": "0x180351680",
+      "end": "0x180351774",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "76cf2a7480cbf28966eadc7c5571a5cf8b685bfa81f1c6e044e97bccc6f7cf7a",
+      "contract": "Plant.Healed: get own transform/position before fZ/fY/fH; replace Y with (fZ+fY)+fH-10; damage text(amount,1,Vector3 by value), then amount+current health, store sum, clamp to current maximum only ordered sum>=max. NaN does not clamp; health is unchanged on earlier dependency exception."
+    },
+    {
+      "token": "0x06000409",
+      "method": "System.Void Prop::TurnCooling()",
+      "start": "0x18037eb10",
+      "end": "0x18037ebf0",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "dcdd035f15935f1e2df766cd0940c167c9879a179515602e0154a4fe479a84e4",
+      "contract": "Prop.TurnCooling: prop.transform then reread full originalPosition by value, set localPosition; alTime=positive zero and propState=0; Unity inequality propImagex/null then reread field for Destroy; always final PropBankStateSet unless dependency throws."
+    },
+    {
+      "token": "0x060004A1",
+      "method": "System.Void Zombie::ZC_PoleJumpEnd()",
+      "start": "0x180371660",
+      "end": "0x1803716ea",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "befe89d83125935eff971ba2b3661b9c701a8134308419322c71fc603f2cbea1",
+      "contract": "Zombie.ZC_PoleJumpEnd: poleZombie_pole=false AND poleZombie_jump=false, passablePoint=100. ID==3 invokes buffManager.FindBuff(PoleCommander.speed); non-null Buff invokes reread buffManager.RemoveBuff; then Path_Finding, discard bool. Original string independently decoded from PC PE/metadata."
+    },
+    {
+      "token": "0x06000669",
+      "method": "System.Void Plant_DetaiPage::Rotating()",
+      "start": "0x1803a4450",
+      "end": "0x1803a453f",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "0512a4ceeca29fff79aa710233c10c17ecd0180a704c31ffbcf933dc69a634ad",
+      "contract": "Plant_DetaiPage.Rotating: roll.componentTransform captured before first DeltaTime, Rotate(axis(0,0,1),delta*-60,Space0); afterwards reread skillAuto componentTransform before second DeltaTime, Rotate same axis with delta*-75. Callback alias/null changes and independent delta calls retained."
+    }
+  ],
+  "scope": "Eight original PC callers; DieTest executes unchanged original native Healed and actual candidate CIL Healed transitively. Actual pinned Core Vector3 constructor and CLR base constructor; other Unity/list/GC barrier/damage/buff/path/exception dependencies supplied as recordings with ready metadata. No full engine/class-init timing/game/iOS proof."
+}
