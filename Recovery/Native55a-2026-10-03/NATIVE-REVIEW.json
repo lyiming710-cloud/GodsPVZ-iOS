@@ -1,0 +1,82 @@
+{
+  "methods": [
+    {
+      "token": "0x060000CD",
+      "method": "System.Void ZombieAnimationEvent::PlayAudio(UnityEngine.AudioClip)",
+      "start": "0x18030e030",
+      "end": "0x18030e0d6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "77d0953f39a474b3cfb4c999d8dcfb7b1386d22ed773fd749550eaf1a63d54eb",
+      "contract": "ZombieAnimationEvent.PlayAudio: capture own transform.position before AudioVolume; pass clip/Vector3/volume to CreateAudioAtPoint by value; discard result."
+    },
+    {
+      "token": "0x060000DD",
+      "method": "UnityEngine.Vector3 AttackRange::RestraintTargetPosition(UnityEngine.Vector3)",
+      "start": "0x1802ffa20",
+      "end": "0x1802ffad4",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a72d62dc984f4682a33f4aec5a45e759c4d04931f2a08e0079da3674aae11f30",
+      "contract": "AttackRange.RestraintTargetPosition: capture range type once; none(0) returns plant.transform.position; circle(2) calls circle restriction with original Vector3; other values return complete input Vector3 unchanged."
+    },
+    {
+      "token": "0x0600013B",
+      "method": "UnityEngine.AudioSource GlobalStaticVars::CreateAudioAtPoint(UnityEngine.AudioClip)",
+      "start": "0x18031b160",
+      "end": "0x18031b222",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "5b523fcc00aef92bec70ce204b9989c59250136ea3ee788824861d3af6296710",
+      "contract": "GlobalStaticVars.CreateAudioAtPoint(AudioClip): main camera, transform, position captured before volume; CreateAudioAtPoint(clip,position,volume,1), return exact AudioSource including null."
+    },
+    {
+      "token": "0x06000390",
+      "method": "System.Void Plant::PC_SSI_SkillEnd()",
+      "start": "0x180354740",
+      "end": "0x1803547b4",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "31008e25eb19a9366f3de0c8a476ce53ffe20a968679a9069c3ca5094e477aa9",
+      "contract": "Plant.PC_SSI_SkillEnd: summon first, reread current skill; chargedLayer<1 finds SSI_Characteristic_Atk on current buff manager and zeroes returned stats.value only if nonnull; preserve null exceptions and callbacks."
+    },
+    {
+      "token": "0x060003F5",
+      "method": "System.Void Projectile::PC_LightSaber_TurnToSwordFormation(System.Int32,System.Single)",
+      "start": "0x18037ba70",
+      "end": "0x18037bae1",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "4000975de3778968a1f5a95e01a55c45fd034619c6117cf1ace21727c5477165",
+      "contract": "Projectile.PC_LightSaber_TurnToSwordFormation: movementTracks=7, index=arg, speed=initialized public Vector3.zero, maxLivingTime=arg, livingTime=positive floating zero. Original native zero static initializer/accessor also executed unchanged."
+    },
+    {
+      "token": "0x06000568",
+      "method": "System.Void Almanac_DeviceWindow::SetState(System.Boolean)",
+      "start": "0x18038a700",
+      "end": "0x18038a7dc",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7601dbc9fb32d5383a5465a03d98d9d27eadcd2de81ae92aa476d045cc070d40",
+      "contract": "Almanac_DeviceWindow.SetState: question gameObject active=!state; reread portrait; white RGBA(1,1,1,1) and enabled true for state true, black RGBA(0,0,0,1) and enabled false otherwise; reread button after color callback."
+    },
+    {
+      "token": "0x060005B8",
+      "method": "System.Void Almanac_ZombieWindow::SetState(System.Boolean)",
+      "start": "0x180394160",
+      "end": "0x18039423c",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "2c85a1e1300c3116ac5421a37a7f3b0c1281883a26454043d86b8554ec4d10aa",
+      "contract": "Almanac_ZombieWindow.SetState: same native state contract with its own original field identities/offsets."
+    },
+    {
+      "token": "0x0600066A",
+      "method": "System.Void Plant_DetaiPage::Set_Position()",
+      "start": "0x1803a4540",
+      "end": "0x1803a4636",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "191bbda4212837af87c0748bd66d8f4dfe71e76114a5206e1fbcca5c92d97a2c",
+      "contract": "Plant_DetaiPage.Set_Position: Unity truth then reread plant; capture position; compute Y+30 before skill transform call; set skill position to captured X/Y+30/positive zero Z."
+    }
+  ],
+  "quarantined": [
+    "0x06000532",
+    "0x06000632"
+  ],
+  "quarantine_reason": "GUI audio bodies referenced external private Selectable.m_Interactable; the pinned public get_interactable is exactly ldarg.0/ldfld/ret, but parent lacks its MemberRef. Candidate Native55 diagnostic e2a2e3... is rejected. Native55a leaves both original Native54 method slots byte-identical. Requires a separately audited legal public getter binding before acceptance.",
+  "scope": "Eight accepted original PC callers with explicit recording external dependencies and ready metadata. Additional two GUI callers and original Core initializer/accessor are read-only observations, not extra repair targets. No full Unity/game/iOS/exception/class-init timing equivalence claim."
+}
