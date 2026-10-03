@@ -1,0 +1,59 @@
+{
+  "methods": [
+    {
+      "token": "0x06000356",
+      "method": "System.Void Plant::Update_SenarioState()",
+      "start": "0x18035c240",
+      "end": "0x18035c33a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "f7fed9048665673760cf41becb83b85176f215708685243a141d60ef925d6518",
+      "contract": "Plant.Update_SenarioState: raw-null board throws; missing boardConfig or map returns. Capture scenario state; rates1=>25,8=>125,10=>150,elsepositivezero. DeltaTime*rate; Element(type0,amount,damageNull,true); then reread elementManager.ToEffect. Callback and dependency exception order preserved; separate cleanup blocks avoid unrelated Board/Map stack type merging."
+    },
+    {
+      "token": "0x06000408",
+      "method": "System.Void Prop::SetKeyText(System.Int32)",
+      "start": "0x18037ea40",
+      "end": "0x18037eb05",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "6b66b9915b253652b4a8437abcbf1af4e2ce272a08f0fd82a32b7256ba14d979",
+      "contract": "Prop.SetKeyText: input0=>A,1=>S,2=>D,elseempty. Current keyText.SetText(string,true); reread keyText.gameObject.SetActive(true). Preserve raw-null and post-SetText alias changes."
+    },
+    {
+      "token": "0x0600046E",
+      "method": "System.Void Zombie::PlayFallSound()",
+      "start": "0x1803667c0",
+      "end": "0x1803668cc",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "a53f4b5858d56c1ff05af121f9c3f015490a25b69b03512dbf434300115de826",
+      "contract": "Zombie.PlayFallSound: board.zombieManager.audioClip_zombie captured before Random.Range(61,63), null list throws after random call; getItem(random), Camera.main.transform.position complete by-value Vector3 before AudioVolume; CreateAudioAtPoint(clip,pos,volume), discard return."
+    },
+    {
+      "token": "0x0600046F",
+      "method": "System.Void Zombie::PlayShootSound()",
+      "start": "0x1803668d0",
+      "end": "0x180366a77",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "040ae4d05ab37e82914eb1ffbd7a7ec536b23b7fe3b86ec07a6fa0020858e6f5",
+      "contract": "Zombie.PlayShootSound: AudioVolume before ID reading; only IDs6\u20138 and19\u201321 select plantClips[1], Random.Range(.9,1.1) pitch then Random.Range(.6,.8) volume factor. OtherIDs still create audio with nullclip andpitch1. Camera/position after random, by-value position. Explicit NaN branches preserve original MULSS left operand payload/quieting when both operands areNaN; fixture tests retain bitwise comparison."
+    },
+    {
+      "token": "0x06000726",
+      "method": "System.Char TMPro.TMP_DigitValidator::Validate(System.String&,System.Int32&,System.Char)",
+      "start": "0x1803b5810",
+      "end": "0x1803b58bd",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ca0c706fb37d39785c4d80cde7383cb4de757d6719cc6a16b7d540de46728e3a",
+      "contract": "TMPro.TMP_DigitValidator.Validate: narrow(char-48)toUInt16, unsigned<=9; invalid=>char0 without writes. Valid: capture *text before Char.ToString(refargument), String.Concat, write *text, increment current *position with int32 wraparound, return current charargument. Writeback uses stobj existing String/Int32 TypeRefs, unchanged signature and checker. Entire65536 char domain plus4096 extra callback/exception/overflow valid cases executed."
+    },
+    {
+      "token": "0x06000856",
+      "method": "UnityEngine.Mesh FTRuntime.SwfClipAsset/Frame::get_CachedMesh()",
+      "start": "0x1803c3fb0",
+      "end": "0x1803c4070",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "7aee28bdeff328b67bb0bc3757bf0dacc6aa21016bfb18c77b492180ece257ad",
+      "contract": "FTRuntime.SwfClipAsset.Frame.CachedMesh: Unity truth current _cachedMesh; false => Mesh ctor, assign _cachedMesh, reread set_hideFlags(20), reread mesh and MeshData for static FillGeneratedMesh. Return reread current cache, including aliaschanges. Constructors/helpers are declared recordings; no private external member access."
+    }
+  ],
+  "scope": "Six unchanged original PC callers vs actual candidate CIL, pinned Core Vector3 values. Char.ToString and String.Concat real CLR operations inside callbacks; native corresponding helper recordings implement UTF16 values. Unity/text/random/audio/list/element/mesh/GC/exception helpers are scoped recordings with ready metadata. No complete helper/engine/class-init timing/game/iOS proof."
+}

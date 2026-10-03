@@ -1,0 +1,73 @@
+{
+  "candidate_sha256": "d198bb3f63a21d95d708a66546b3b12529d52aee810508712db6e32f43b021c0",
+  "methods": 6,
+  "positive_cases": 90112,
+  "positive_failures": 0,
+  "negative_controls": 12,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "failures": [],
+  "controls": [
+    {
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "scenario_wrong_rate",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "scenario_wrong_flag",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "key_wrong_letter",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "fall_wrong_range",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "fall_reread_list",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "shoot_wrong_pitch",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "digit_no_format",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "digit_no_text_write",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "digit_no_index_write",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "mesh_wrong_branch",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "mesh_wrong_flags",
+      "detected": true,
+      "tool_error": null
+    }
+  ],
+  "scope": "Six actual candidate CIL vs unchanged PC callers with ready metadata and scoped external recordings. Char.ToString/Concat run real CLR inside wrappers; native helper recordings implement UTF16 string value behavior. All65536 char values, caller ref writes, wraparound index and callback alias/order checked. No full external helper/engine/game/iOS proof; full conversion/all TUs deferred to100."
+}
