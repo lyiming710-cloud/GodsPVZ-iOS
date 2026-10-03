@@ -1,0 +1,88 @@
+{
+  "candidate_sha256": "fbcded9c104193cd40df6a0f7e76c3dc8e543dd845cced71cfaf74c052f91b02",
+  "methods": 10,
+  "positive_cases": 40960,
+  "positive_failures": 0,
+  "negative_controls": 15,
+  "tool_errors": 0,
+  "gate_pass": true,
+  "failures": [],
+  "controls": [
+    {
+      "mutation": "illegal_stack",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "bank_wrong_x",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "device_wrong_delta",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "flicker_wrong_gain",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "flicker_after_delta",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "sun_wrong_z",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "shadow_wrong_y",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "shadow_cache",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "shadow_wrong_scale",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "track_wrong_source",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "missile_unordered",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "zombie_skip_reset",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "popup_wrong_index",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "bleep_cache_clip",
+      "detected": true,
+      "tool_error": null
+    },
+    {
+      "mutation": "bleep_zero_position",
+      "detected": true,
+      "tool_error": null
+    }
+  ],
+  "scope": "Ten actual candidate CIL callers compared with unchanged original PC native callers and explicit recording Unity/list/random/time/audio/exception dependencies. Actual pinned Core Vector3/Color constructors, Vector3 subtraction/get_zero and Mathf.Abs CLR code; original native zero initializer/accessor executed unchanged. Field/callback/null/argument and IEEE bits tested; no full Unity engine/class-init timing/game/iOS fidelity proof. Full conversion/all TU checks deferred to 100 accumulated methods."
+}

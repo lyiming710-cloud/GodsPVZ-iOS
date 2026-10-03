@@ -1,0 +1,95 @@
+{
+  "methods": [
+    {
+      "token": "0x060000EC",
+      "method": "System.Void Banks::SetCardPosition(Card,System.Int32)",
+      "start": "0x180301990",
+      "end": "0x180301a78",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "e6d26a464044e375f9b0b3c0c5f904a73a7ec20ee82826984d4125701e78b3fd",
+      "contract": "Banks.SetCardPosition: capture card transform, reread Banks.cardList_Gameobject, SetParent(parent,false); compute index*92-677 before card.gameObject call; set localPosition(X,22,+0). Reuses immutable parent Projectile.Update_Shadow local-signature blob for a float temporary; no metadata blob changes."
+    },
+    {
+      "token": "0x06000331",
+      "method": "System.Void Device::SetTransformPosition(UnityEngine.Vector3)",
+      "start": "0x18034ab50",
+      "end": "0x18034acc0",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "d1c06150a13d06d72a548a0c36b8eb8f60b390de7d8f10b9e935fc4836b48cbe",
+      "contract": "Device.SetTransformPosition: delta=input-shadow.position captured before own transform; set own position (deltaX+ownX,ownY+deltaY,ownZ+deltaZ) preserving IEEE operand order; reread shadow.position separately to store fX and fY after callbacks."
+    },
+    {
+      "token": "0x060003C7",
+      "method": "System.Void Project::Flickering()",
+      "start": "0x1803772f0",
+      "end": "0x18037741f",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "8d58966d63d8b5001e755f9e441f5df9778eb8ee33ef2e8d83a665dfca83b28b",
+      "contract": "Project.Flickering: capture old time before deltaTime; store sum, reset only ordered >0.7; RGB=1-abs(time-0.35)/0.35*0.6863, A=1. Capture color before sprite lookup and renderer callbacks; preserve mutations on exceptions."
+    },
+    {
+      "token": "0x060003CB",
+      "method": "System.Void Project::SetNatureSunInitialPostion()",
+      "start": "0x1803780d0",
+      "end": "0x1803781bb",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "b887d5c398d56d4c28816cf350dc6ddbf9f5e4775fd626c6ad8f9d8f5e36e04e",
+      "contract": "Project.SetNatureSunInitialPostion: for tracks==0 Range(-540,400), then Range(330,360), then main.orthographicSize/540; scale XY and compute Z=scale*positive zero preserving NaN/negative zero. Other tracks use three positive zeros. Set own transform position."
+    },
+    {
+      "token": "0x060003D4",
+      "method": "System.Void Projectile::Update_Shadow()",
+      "start": "0x18037ced0",
+      "end": "0x18037d033",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "20b2e9a9b19e439b32929ed5ec2dd30eeadd373489e269998a014f4848d41781",
+      "contract": "Projectile.Update_Shadow: always set shadow scale (fW/40*1.425,fD/40*1.425,+0), including null dereference. Afterwards Unity inequality then reread shadow localPosition, replace Y with current fZ_shadow and reread shadow transform before setter."
+    },
+    {
+      "token": "0x060003D7",
+      "method": "System.Void Projectile::Update_Track()",
+      "start": "0x18037d3d0",
+      "end": "0x18037d4c6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "9c51a2c564088a1e8ddad852d75a6c70ef6edab0de05e498945cdfede83ca284",
+      "contract": "Projectile.Update_Track: truth track then projectileSprite; reread track transform then sprite transform/position; pass captured complete Vector3. Preserve callbacks and null receiver exception after argument evaluation."
+    },
+    {
+      "token": "0x060003FB",
+      "method": "System.Void Projectile::TestHight_Missile()",
+      "start": "0x18037c990",
+      "end": "0x18037ca3e",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "4bdae481029eb043dc3c946fad47b12d212cb99a9b5c4ec50284b1245a5cc828",
+      "contract": "Projectile.TestHight_Missile: ordered fZ>=1200 or TestOutofMap true; NaN must call TestOutofMap. SetEulerAngles(0,-90), speed=public initialized Vector3.zero, zSpeed=-3000,zAcceleration=+0; copy current targetPosition.XY after callback, fZ=1190."
+    },
+    {
+      "token": "0x06000482",
+      "method": "System.Void Zombie::TranFromAttack()",
+      "start": "0x18036a370",
+      "end": "0x18036a45a",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "57191670fedeb112267c57ce5ad8dda0977d30032dbd2822a820cc18e18cba77",
+      "contract": "Zombie.TranFromAttack: truth targetPlant then reread and BlockZombie(this,false); current animator.SetBool(isAttacking,false); GetMoveDirection value -> SetrSpeed -> ResetMoveSpeed -> isEat=false. Preserve exception and callback order."
+    },
+    {
+      "token": "0x0600066E",
+      "method": "System.Void Popup::PlayAudio()",
+      "start": "0x1803a5ce0",
+      "end": "0x1803a5dd7",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "07e86d19830674546997f4ac24dd0d0f4afdd575a2d7741cd9587c1a87a7ee4b",
+      "contract": "Popup.PlayAudio: capture P once; values1/3 fetch zombieClips[9], otherwise clip null; Unity inequality, CreateAudioAtPoint(clip), discard exact return. Correct declared MaxStack from2 to actual3 after frozen checker independently rejected initial header."
+    },
+    {
+      "token": "0x0600067C",
+      "method": "System.Void PrepareUIController::ButtonBleep()",
+      "start": "0x1803a69b0",
+      "end": "0x1803a6b3d",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "native_sha256": "ee89bb26047ac6b6e2e42d714a43d085862b9912d37429c813d939118562712c",
+      "contract": "PrepareUIController.ButtonBleep: buttonClips[0] Unity truth, then reread list and fetch again before camera/main transform/position, AudioVolume, PlayClipAtPoint(clip,Vector3,volume). Preserve null/bounds errors and callbacks."
+    }
+  ],
+  "scope": "Ten original PC callers and explicitly supplied recording Unity/list/random/time/audio/exception dependencies with initialized metadata. Actual pinned public Core CLR methods and unchanged original native zero initialization. No complete engine/class-init timing/game/iOS proof."
+}
