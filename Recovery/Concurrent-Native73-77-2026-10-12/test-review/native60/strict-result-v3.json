@@ -1,0 +1,425 @@
+{
+  "batch": "Native60",
+  "status": "PASS",
+  "evaluated_conditions": {
+    "reproduction": true,
+    "byte_isolation": true,
+    "typed_verifier": true,
+    "member_access": true,
+    "native_oracle_actual_CIL": true,
+    "behavior_mutants": true,
+    "bad_il_and_malformed_controls": true,
+    "historical_35_regressions": true
+  },
+  "parent_sha256": "d198bb3f63a21d95d708a66546b3b12529d52aee810508712db6e32f43b021c0",
+  "candidate_sha256": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+  "target_methods": [
+    {
+      "token": "0x0600046D",
+      "name": "System.Void Zombie::PlayEatSound()",
+      "typed_verifier": "PASS",
+      "positive_cases_against_native_oracle": 4096,
+      "positive_failures": 0,
+      "mutants_rejected": [
+        "eat_skip_isdisabled",
+        "eat_wrong_range"
+      ]
+    },
+    {
+      "token": "0x060005B9",
+      "name": "System.Void Almanac_ZombieWindow::SetWindowData(Save,System.Int32)",
+      "typed_verifier": "PASS",
+      "positive_cases_against_native_oracle": 4096,
+      "positive_failures": 0,
+      "mutants_rejected": [
+        "almanac_wrong_state",
+        "almanac_no_id_write",
+        "almanac_no_null_check"
+      ]
+    }
+  ],
+  "reproduction": {
+    "passed": true,
+    "expected_sha256": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+    "actual_sha256": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35"
+  },
+  "isolation": {
+    "passed": true,
+    "metadata_identical": true,
+    "non_target_bodies_total": 2295,
+    "non_target_bodies_identical": 2295
+  },
+  "typed_verifier": {
+    "passed": true,
+    "verifier_sha256": "5175b68ae0cb9366a493499b566a7430dc1d8986d81cf17be91e0640974dd47a",
+    "non_target_drift_count": 0
+  },
+  "member_access": {
+    "passed": true,
+    "rejected": 0,
+    "unresolved": 0
+  },
+  "native_oracle_and_fixture": {
+    "passed": true,
+    "oracle_cases_recorded": 8192,
+    "oracle_tsv_hash": "978a8ee336f028c55be988f8866a5aa93dbe106553422ffe4a9e35829761809f",
+    "positive_cases_executed": 8192,
+    "positive_failures": 0,
+    "negative_controls": [
+      {
+        "mutation": "eat_skip_isdisabled",
+        "detected": true,
+        "detection_stage": "behavior_diff",
+        "cases_evaluated": 1,
+        "evidence": "0x0600046D case=1 mode=0 hook=0 diffs=obs[0]=348883319062246 vs r[11]=22196949841789009"
+      },
+      {
+        "mutation": "eat_wrong_range",
+        "detected": true,
+        "detection_stage": "behavior_diff",
+        "cases_evaluated": 1,
+        "evidence": "0x0600046D case=1 mode=0 hook=0 diffs=obs[10]=11 vs r[21]=10"
+      },
+      {
+        "mutation": "almanac_wrong_state",
+        "detected": true,
+        "detection_stage": "behavior_diff",
+        "cases_evaluated": 4097,
+        "evidence": "0x060005B9 case=4097 mode=0 hook=0 diffs=obs[8]=1 vs r[19]=0"
+      },
+      {
+        "mutation": "almanac_no_id_write",
+        "detected": true,
+        "detection_stage": "behavior_diff",
+        "cases_evaluated": 4225,
+        "evidence": "0x060005B9 case=4225 mode=0 hook=0 diffs=obs[9]=0 vs r[20]=1"
+      },
+      {
+        "mutation": "almanac_no_null_check",
+        "detected": true,
+        "detection_stage": "behavior_diff",
+        "cases_evaluated": 4100,
+        "evidence": "0x060005B9 case=4100 mode=3 hook=0 diffs=obs[0]=727730981 vs r[11]=42403,obs[1]=1 vs r[12]=0"
+      }
+    ]
+  },
+  "bad_il_and_malformed_controls": {
+    "passed": true,
+    "bad_max_stack_rejected": true,
+    "bad_branch_into_operand_rejected": true,
+    "bad_type_mismatch_rejected": true,
+    "forged_non_target_tamper_rejected": true,
+    "wrong_parent_rejected": true,
+    "existing_output_rejected": true
+  },
+  "historical_regressions": {
+    "passed": true,
+    "total_suites_passed": 35,
+    "total_suites_evaluated": 35,
+    "suites": [
+      {
+        "name": "native31",
+        "source_fixture_hash": "254e18e75247e41e0b38c4c352ac5d818b1a622f5f8c1f366403c7c4691c4531",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 77741,
+        "pass": true
+      },
+      {
+        "name": "native32",
+        "source_fixture_hash": "c801187defbefeb14ca20d3cda704143c0dd9adb59578002e58a363159c50c33",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 93675,
+        "pass": true
+      },
+      {
+        "name": "native33",
+        "source_fixture_hash": "2be14133602c1925f2f95ebaac22fdcabffc4226da22345075c3d189c7072297",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 56012,
+        "pass": true
+      },
+      {
+        "name": "native34",
+        "source_fixture_hash": "079e3daaf53af120bfc2402cead58d77597672417477dfb406170e388ac7fe6f",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 159247,
+        "pass": true
+      },
+      {
+        "name": "native35",
+        "source_fixture_hash": "67005a2ed5ed51f27c00836ef344d99fb2e6529e056f0ce62f3a2fdc53e0235e",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 89489,
+        "pass": true
+      },
+      {
+        "name": "native36",
+        "source_fixture_hash": "9c7cb776ca04d32c88a477495594b7a13d5727e72cd0138e3c05a9b38be020e8",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 19258,
+        "pass": true
+      },
+      {
+        "name": "native37",
+        "source_fixture_hash": "06f81f8d12f3230cd8a62677085c33e57093e4e003eb92a680ea996a46d91f33",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 16405,
+        "pass": true
+      },
+      {
+        "name": "native38",
+        "source_fixture_hash": "2346aec9963ea40eb2cac4f51d3b51118e1509379e32423cc60bbb4824d77451",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 28693,
+        "pass": true
+      },
+      {
+        "name": "native39",
+        "source_fixture_hash": "dd46c7511f48b1ec15e1890df13a188646da4de02f900684b495879e320c16c2",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8264,
+        "pass": true
+      },
+      {
+        "name": "native40",
+        "source_fixture_hash": "2c63e6585f91f69dba3e744d081e6dd95f3059add3a80bdde17354e3bd3c7e77",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 12624,
+        "pass": true
+      },
+      {
+        "name": "native41",
+        "source_fixture_hash": "2d491825d888fc7eb35d154eaea64c2c02bc9fcee968f91d3ce63273260125e9",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8228,
+        "pass": true
+      },
+      {
+        "name": "native42",
+        "source_fixture_hash": "e0ae84489f24836822ff65e99a6aaa934c66dc0bf285263bd2444349618955e5",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8202,
+        "pass": true
+      },
+      {
+        "name": "native43",
+        "source_fixture_hash": "74474878d6df13cd42770dda068ea3b394a9e9e01573169b122aa36f5002619d",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 4098,
+        "pass": true
+      },
+      {
+        "name": "native44",
+        "source_fixture_hash": "cc121b2ad4ec05a8f306d25674b78d0666713f16546f67303bd04bf2189a5573",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8238,
+        "pass": true
+      },
+      {
+        "name": "native45",
+        "source_fixture_hash": "fa14b11634381f97cd7c5b8b5cb0e889fca76c04183b810eaa79f55fea37418e",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8201,
+        "pass": true
+      },
+      {
+        "name": "native46",
+        "source_fixture_hash": "aa914fe390a25287082314ed45de08ae8f97e8a7f419fb0db1d54bd9f2aebe6d",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8279,
+        "pass": true
+      },
+      {
+        "name": "native47",
+        "source_fixture_hash": "22e36cd40edc0101caec682789bcb3a22fa11d5bef4051045147d9027e47fc28",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8235,
+        "pass": true
+      },
+      {
+        "name": "native48",
+        "source_fixture_hash": "3518b5ff3380c30ed93e841050ef761d7f92382b7264202800c3752801e9f690",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8244,
+        "pass": true
+      },
+      {
+        "name": "native49",
+        "source_fixture_hash": "3d2f23dee86b9e1868dab48b04ffe3579ab5d2c268b8d9924635ba3d2214ea02",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 4121,
+        "pass": true
+      },
+      {
+        "name": "native50",
+        "source_fixture_hash": "377ce0cd6b947f466314b60a13a0f916e3bd44d78976c9f9f716390c056d0517",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 8198,
+        "pass": true
+      },
+      {
+        "name": "native51",
+        "source_fixture_hash": "74791f775069a87ee9ed158d4092d6858ed380c42aff85aca870c1df9b475842",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native52",
+        "source_fixture_hash": "35371a5013c2925e4a8a7811939a32c11abfed44ac7be0a09194e041384a0d0f",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 12288,
+        "pass": true
+      },
+      {
+        "name": "native53",
+        "source_fixture_hash": "561999778ea7d27cd1eefddd437654c1de456fcec659a7040ab6b19e955120d5",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native54",
+        "source_fixture_hash": "7b909672f0368e3524e5c3a37ccb906bcde4abccc193541e60b19d0205f5d403",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native55a",
+        "source_fixture_hash": "1ce111d67399f329b5c9827e6b2502118265ee544cad67e18814f2f64cd7f333",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 32768,
+        "pass": true
+      },
+      {
+        "name": "native56",
+        "source_fixture_hash": "d42fd8f99e5620fea7948f29fa9a6f44bce989bc1ecc39952cefe938a1732b2d",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 40960,
+        "pass": true
+      },
+      {
+        "name": "native57",
+        "source_fixture_hash": "fe5c45c20b9b5b2b61ab37e4f02117f3e26145ddc16f1118da68a65ef7a999d3",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 32768,
+        "pass": true
+      },
+      {
+        "name": "native58",
+        "source_fixture_hash": "e99b27fe0a3b1282843f5e1f9a90681c1c5971fb90634ef7b332555bfe2e5abb",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native59",
+        "source_fixture_hash": "6c496b21f49368cd535b3cd355aaf7bd3ca0b3d462760e4b8fad800e55e98483",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "positive_failures": 0,
+        "positive_cases": 90112,
+        "pass": true
+      },
+      {
+        "name": "NATIVE30-CODEX",
+        "source_fixture_hash": "92cb0b2bf7869e9a8cc5d31daf4d4f64a0e63ce138cfe4956c1e63e04a11b84a",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "pass": true
+      },
+      {
+        "name": "NATIVE28",
+        "source_fixture_hash": "d53147a58f96e42380f0e05791a6a5faf02e0fa9d4b4cf9fea4479639556318e",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "pass": true
+      },
+      {
+        "name": "NATIVE27-VERIFIER",
+        "source_fixture_hash": "12e46a8e589caa21082dd22c7557d148b5f5133d4aa7119104326723b4b24365",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "pass": true
+      },
+      {
+        "name": "NATIVE26",
+        "source_fixture_hash": "e626492848bd7b54d9a451e4e51615c0418737964ff69c90fd4eae13fcadf8bd",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "pass": true
+      },
+      {
+        "name": "NATIVE25",
+        "source_fixture_hash": "0d4121ae206d34a20e4d205188bc50e3ecb4e2c324b7c3357d84e765bc35dd1b",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "pass": true
+      },
+      {
+        "name": "NATIVE24",
+        "source_fixture_hash": "771de1b7bfdacb738dceedf23a41a39bb7134a85fb7448eb5adbc99080d98275",
+        "exit_code": 0,
+        "input_candidate_hash": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+        "pass": true
+      }
+    ]
+  }
+}

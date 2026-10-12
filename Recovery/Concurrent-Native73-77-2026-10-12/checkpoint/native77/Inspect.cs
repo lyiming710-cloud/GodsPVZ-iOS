@@ -1,0 +1,18 @@
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using AssemblyDefinition=Mono.Cecil.AssemblyDefinition;
+using TypeReference=Mono.Cecil.TypeReference;
+using Mono.Cecil;
+using System.Text.Json;
+using System.Security.Cryptography;
+using MD=Mono.Cecil.MethodDefinition;
+using var a=AssemblyDefinition.ReadAssembly(args[0]);
+object Method(MethodReference m)=>new {token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,hasThis=m.HasThis};
+object Field(FieldReference f)=>new {token=$"0x{f.MetadataToken.ToInt32():X8}",name=f.FullName};
+var tokens=new[]{0x060003D9,0x06000491,0x060001E5};
+var types=a.MainModule.GetTypes().ToArray();
+var body=tokens.Select(t=>(MD)a.MainModule.LookupToken(t)).Select(m=>new {token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,m.Body.CodeSize,localSig=$"0x{m.Body.LocalVarToken.ToInt32():X8}",m.Body.MaxStackSize,eh=m.Body.ExceptionHandlers.Count,locals=m.Body.Variables.Select(v=>v.VariableType.FullName),calls=m.Body.Instructions.Select(i=>i.Operand).OfType<MethodReference>().Select(Method),types=m.Body.Instructions.Select(i=>i.Operand).OfType<TypeReference>().Select(t=>new{token=$"0x{t.MetadataToken.ToInt32():X8}",name=t.FullName})});
+var refs=a.MainModule.GetMemberReferences().OfType<MethodReference>().Where(m=>m.DeclaringType.FullName=="UnityEngine.Vector3"||m.DeclaringType.FullName=="UnityEngine.Color"||m.FullName=="UnityEngine.Transform UnityEngine.GameObject::get_transform()").Select(Method);
+var internals=types.Where(t=>new[]{"Projectile","Zombie","ZombieAnimationEvent","ParticlesManager"}.Contains(t.Name)).Select(t=>new{token=$"0x{t.MetadataToken.ToInt32():X8}",name=t.FullName,fields=t.Fields.Select(f=>new{token=$"0x{f.MetadataToken.ToInt32():X8}",name=f.FullName,attributes=f.Attributes.ToString()}),methods=t.Methods.Select(m=>new{token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,attributes=m.Attributes.ToString()})});
+var getters=new[]{0x060003D9,0x06000491,0x060001E5}.Select(t=>(MD)a.MainModule.LookupToken(t)).Select(m=>new{token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,il=m.Body.Instructions.Select(i=>i.ToString())});
+Console.WriteLine(JsonSerializer.Serialize(new{input_sha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(args[0]))).ToLowerInvariant(),targets=body,refs,internals,getters,specs=Enumerable.Range(1,new System.Reflection.PortableExecutable.PEReader(File.OpenRead(args[0])).GetMetadataReader().GetTableRowCount(System.Reflection.Metadata.Ecma335.TableIndex.TypeSpec)).Select(i=>a.MainModule.LookupToken(0x1B000000+i)).OfType<TypeReference>().Where(t=>t.FullName.Contains("SettlementUIController")).Select(t=>new{token=$"0x{t.MetadataToken.ToInt32():X8}",name=t.FullName}),external_fields=a.MainModule.GetMemberReferences().OfType<FieldReference>().Where(f=>f.DeclaringType.FullName=="UnityEngine.Vector3").Select(Field),type_refs=a.MainModule.GetTypeReferences().Select(t=>new{token=$"0x{t.MetadataToken.ToInt32():X8}",name=t.FullName,scope=t.Scope.Name})},new JsonSerializerOptions{WriteIndented=true}));

@@ -1,0 +1,406 @@
+{
+  "batch": "Native61",
+  "status": "PASS",
+  "evaluated_conditions": {
+    "reproduction": true,
+    "byte_isolation": true,
+    "typed_verifier": true,
+    "member_access": true,
+    "native_oracle_actual_CIL": true,
+    "behavior_mutants": true,
+    "bad_il_and_malformed_controls": true,
+    "historical_35_regressions": true
+  },
+  "parent_sha256": "4e1b743d87db3d78816b37e0a114b105e59b0f25fcbe6cb90e0797378d188b35",
+  "candidate_sha256": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+  "target_methods": [
+    {
+      "token": "0x0600070A",
+      "name": "System.Void Window_T::ClickExitButton()",
+      "typed_verifier": "PASS",
+      "positive_cases_against_native_oracle": 1024,
+      "positive_failures": 0,
+      "behavior": "PASS (T=5, T=3, T=15 verified)"
+    },
+    {
+      "token": "0x0600083E",
+      "name": "System.Void FTRuntime.SwfClip::Internal_UpdateMesh()",
+      "typed_verifier": "PASS",
+      "positive_cases_against_native_oracle": 1024,
+      "positive_failures": 0,
+      "behavior": "PASS (_dirtyMesh cleared, mesh & materials set)"
+    },
+    {
+      "token": "0x06000114",
+      "name": "System.Void DeviceEvent::Start(Device,System.Single)",
+      "typed_verifier": "PASS",
+      "positive_cases_against_native_oracle": 1024,
+      "positive_failures": 0,
+      "behavior": "PASS (device added, fields initialized)"
+    },
+    {
+      "token": "0x06000376",
+      "name": "System.Void Plant::SettParameter_int(System.Int32,System.Int32)",
+      "typed_verifier": "PASS",
+      "positive_cases_against_native_oracle": 1024,
+      "positive_failures": 0,
+      "behavior": "PASS (Count < index loop expansion verified)"
+    }
+  ],
+  "reproduction": {
+    "passed": true,
+    "expected_sha256": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+    "actual_sha256": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56"
+  },
+  "isolation": {
+    "passed": true,
+    "metadata_identical": true,
+    "non_target_bodies_total": 2293,
+    "non_target_bodies_identical": 2293,
+    "member_refs_added": 4
+  },
+  "typed_verifier": {
+    "passed": true,
+    "verifier_sha256": "5175b68ae0cb9366a493499b566a7430dc1d8986d81cf17be91e0640974dd47a",
+    "non_target_drift_count": 0
+  },
+  "member_access": {
+    "passed": true,
+    "rejected": 0,
+    "unresolved": 0,
+    "full_engine_resolver": "Tools/Stage9Native4Recovery/resolver/UnityEngine.CoreModule.dll (1,532,928 B)"
+  },
+  "native_oracle_and_fixture": {
+    "passed": true,
+    "oracle_cases_recorded": 4096,
+    "oracle_tsv_hash": "cea2bfc2786fbb8e13407e79b3169dec7c2c1bb76bfb4bf24ff71d836cd6187d",
+    "positive_cases_executed": 4096,
+    "positive_failures": 0,
+    "negative_controls": [
+      {
+        "mutation": "mut_376_wrong_bound",
+        "detected": true,
+        "evidence": "Expansion bound mutant altered list Count"
+      }
+    ]
+  },
+  "bad_il_and_malformed_controls": {
+    "passed": true,
+    "bad_max_stack_rejected": true,
+    "bad_branch_into_operand_rejected": true,
+    "bad_type_mismatch_rejected": true,
+    "forged_non_target_tamper_rejected": true,
+    "wrong_parent_rejected": true,
+    "existing_output_rejected": true
+  },
+  "historical_regressions": {
+    "passed": true,
+    "total_suites_passed": 35,
+    "total_suites_evaluated": 35,
+    "suites": [
+      {
+        "name": "native31",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 77741,
+        "pass": true
+      },
+      {
+        "name": "native32",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 93675,
+        "pass": true
+      },
+      {
+        "name": "native33",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 56012,
+        "pass": true
+      },
+      {
+        "name": "native34",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 159247,
+        "pass": true
+      },
+      {
+        "name": "native35",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 89489,
+        "pass": true
+      },
+      {
+        "name": "native36",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 19258,
+        "pass": true
+      },
+      {
+        "name": "native37",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 16405,
+        "pass": true
+      },
+      {
+        "name": "native38",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 28693,
+        "pass": true
+      },
+      {
+        "name": "native39",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8264,
+        "pass": true
+      },
+      {
+        "name": "native40",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 12624,
+        "pass": true
+      },
+      {
+        "name": "native41",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8228,
+        "pass": true
+      },
+      {
+        "name": "native42",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8202,
+        "pass": true
+      },
+      {
+        "name": "native43",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 4098,
+        "pass": true
+      },
+      {
+        "name": "native44",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8238,
+        "pass": true
+      },
+      {
+        "name": "native45",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8201,
+        "pass": true
+      },
+      {
+        "name": "native46",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8279,
+        "pass": true
+      },
+      {
+        "name": "native47",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8235,
+        "pass": true
+      },
+      {
+        "name": "native48",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8244,
+        "pass": true
+      },
+      {
+        "name": "native49",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 4121,
+        "pass": true
+      },
+      {
+        "name": "native50",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 8198,
+        "pass": true
+      },
+      {
+        "name": "native51",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native52",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 12288,
+        "pass": true
+      },
+      {
+        "name": "native53",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native54",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native55a",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 32768,
+        "pass": true
+      },
+      {
+        "name": "native56",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 40960,
+        "pass": true
+      },
+      {
+        "name": "native57",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 32768,
+        "pass": true
+      },
+      {
+        "name": "native58",
+        "suite_type": "standard_batch",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 16384,
+        "pass": true
+      },
+      {
+        "name": "native59",
+        "suite_type": "native59_restored",
+        "exit_code": 0,
+        "input_candidate_hash": "756b25a6bf9fb05088d86513ca63f8e8b8419dc4007546a128dd9a0bf9640d56",
+        "positive_failures": 0,
+        "positive_cases": 90112,
+        "pass": true
+      },
+      {
+        "name": "NATIVE30-CODEX",
+        "suite_type": "legacy_checkpoint",
+        "exit_code": 0,
+        "input_candidate_hash": null,
+        "pass": true
+      },
+      {
+        "name": "NATIVE28",
+        "suite_type": "legacy_checkpoint",
+        "exit_code": 0,
+        "input_candidate_hash": null,
+        "pass": true
+      },
+      {
+        "name": "NATIVE27-VERIFIER",
+        "suite_type": "legacy_checkpoint",
+        "exit_code": 0,
+        "input_candidate_hash": null,
+        "pass": true
+      },
+      {
+        "name": "NATIVE26",
+        "suite_type": "legacy_checkpoint",
+        "exit_code": 0,
+        "input_candidate_hash": null,
+        "pass": true
+      },
+      {
+        "name": "NATIVE25",
+        "suite_type": "legacy_checkpoint",
+        "exit_code": 0,
+        "input_candidate_hash": null,
+        "pass": true
+      },
+      {
+        "name": "NATIVE24",
+        "suite_type": "legacy_checkpoint",
+        "exit_code": 0,
+        "input_candidate_hash": null,
+        "pass": true
+      }
+    ]
+  }
+}

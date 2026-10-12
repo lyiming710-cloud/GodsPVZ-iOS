@@ -1,0 +1,2922 @@
+{
+  "input_sha256": "47df498caf8fd0d02a494c995654c972399e98d2d0614fa25faaf7036b125f43",
+  "targets": [
+    {
+      "token": "0x0600027C",
+      "name": "Zombie ZombieManager::PlaceNewZombie(System.Int32,System.Int32,System.Int32)",
+      "CodeSize": 341,
+      "localSig": "0x110001F8",
+      "MaxStackSize": 4,
+      "eh": 0,
+      "locals": [
+        "System.Int32",
+        "System.Int32",
+        "System.Int32",
+        "ZombieManager",
+        "System.Boolean",
+        "System.Boolean",
+        "Board",
+        "System.Boolean",
+        "System.Boolean",
+        "UnityEngine.Vector3",
+        "System.Boolean",
+        "System.NullReferenceException",
+        "Zombie",
+        "System.Object"
+      ],
+      "calls": [
+        {
+          "token": "0x0A00000B",
+          "name": "System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)",
+          "hasThis": false
+        },
+        {
+          "token": "0x0600015E",
+          "name": "UnityEngine.Vector3 BoardConfig::GetZombiePosition(System.Int32,System.Int32)",
+          "hasThis": true
+        },
+        {
+          "token": "0x06000480",
+          "name": "System.Void Zombie::TeleportTo(UnityEngine.Vector3,System.Single,System.Boolean)",
+          "hasThis": true
+        },
+        {
+          "token": "0x06000433",
+          "name": "System.Void Zombie::CreateStartPrePath()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000022",
+          "name": "System.Void System.NullReferenceException::.ctor()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0600027A",
+          "name": "Zombie ZombieManager::CreateNewZombie(System.Int32)",
+          "hasThis": true
+        }
+      ],
+      "types": []
+    },
+    {
+      "token": "0x06000208",
+      "name": "System.Boolean ProjectManager::TrySpawnLevelAward(Zombie,UnityEngine.Vector3)",
+      "CodeSize": 334,
+      "localSig": "0x110001A0",
+      "MaxStackSize": 4,
+      "eh": 0,
+      "locals": [
+        "Zombie",
+        "ProjectManager",
+        "System.Boolean",
+        "System.Boolean",
+        "Board",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Boolean",
+        "Project",
+        "System.Boolean",
+        "System.Boolean",
+        "System.NullReferenceException",
+        "System.Boolean",
+        "System.Object"
+      ],
+      "calls": [
+        {
+          "token": "0x0A00000B",
+          "name": "System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)",
+          "hasThis": false
+        },
+        {
+          "token": "0x060002D0",
+          "name": "System.Boolean Board::TestWinTargetZombie()",
+          "hasThis": true
+        },
+        {
+          "token": "0x060002C0",
+          "name": "System.Void Board::GameFinished()",
+          "hasThis": true
+        },
+        {
+          "token": "0x2B000030",
+          "name": "System.Void Project::SetEndPosition\u003CZombie\u003E(!!0)",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000022",
+          "name": "System.Void System.NullReferenceException::.ctor()",
+          "hasThis": true
+        },
+        {
+          "token": "0x06000201",
+          "name": "Project ProjectManager::CreateProject(System.Int32,System.Int32,UnityEngine.Vector3)",
+          "hasThis": true
+        }
+      ],
+      "types": []
+    },
+    {
+      "token": "0x06000173",
+      "name": "SettlementUIController BoardManager::CreatSettlementScreen(BoardConfig)",
+      "CodeSize": 332,
+      "localSig": "0x11000123",
+      "MaxStackSize": 4,
+      "eh": 0,
+      "locals": [
+        "BoardConfig",
+        "SettlementUIController",
+        "System.Collections.Generic.List\u00601\u003CSystem.Object\u003E",
+        "System.Object[]",
+        "Board",
+        "System.Boolean",
+        "System.Int32",
+        "System.Boolean",
+        "System.IndexOutOfRangeException",
+        "BoardManager",
+        "System.Int32",
+        "System.Int32"
+      ],
+      "calls": [
+        {
+          "token": "0x2B000026",
+          "name": "!!0 UnityEngine.Object::Instantiate\u003CSettlementUIController\u003E(!!0)",
+          "hasThis": false
+        },
+        {
+          "token": "0x0A000033",
+          "name": "System.Void System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::AddWithResize(!0)",
+          "hasThis": true
+        },
+        {
+          "token": "0x060006D1",
+          "name": "System.Void SettlementUIController::Settlement(BoardConfig,RewardInBoard)",
+          "hasThis": true
+        },
+        {
+          "token": "0x060006D5",
+          "name": "System.Void SettlementUIController::PopupSet(ChallengeType,System.Int32,Save)",
+          "hasThis": true
+        },
+        {
+          "token": "0x060006CF",
+          "name": "System.Void SettlementUIController::Awaken()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A00007B",
+          "name": "System.Void System.IndexOutOfRangeException::.ctor()",
+          "hasThis": true
+        }
+      ],
+      "types": [
+        {
+          "token": "0x0100001A",
+          "name": "System.Object"
+        }
+      ]
+    },
+    {
+      "token": "0x060005CE",
+      "name": "System.Void BoardPreview::Return_PrepareGameScreen()",
+      "CodeSize": 237,
+      "localSig": "0x1100045E",
+      "MaxStackSize": 2,
+      "eh": 0,
+      "locals": [
+        "BoardPreview",
+        "System.Boolean",
+        "System.Boolean",
+        "UnityEngine.Camera",
+        "UnityEngine.GameObject",
+        "UnityEngine.Transform",
+        "UnityEngine.Camera",
+        "UnityEngine.Transform",
+        "UnityEngine.Camera",
+        "UnityEngine.GameObject",
+        "UnityEngine.Vector3",
+        "System.Object"
+      ],
+      "calls": [
+        {
+          "token": "0x0A00000B",
+          "name": "System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)",
+          "hasThis": false
+        },
+        {
+          "token": "0x0A000009",
+          "name": "UnityEngine.GameObject UnityEngine.Component::get_gameObject()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000007",
+          "name": "System.Void UnityEngine.GameObject::SetActive(System.Boolean)",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000004",
+          "name": "UnityEngine.Camera UnityEngine.Camera::get_main()",
+          "hasThis": false
+        },
+        {
+          "token": "0x0A000001",
+          "name": "UnityEngine.Transform UnityEngine.Component::get_transform()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000037",
+          "name": "UnityEngine.Vector3 UnityEngine.Transform::get_position()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000004",
+          "name": "UnityEngine.Camera UnityEngine.Camera::get_main()",
+          "hasThis": false
+        },
+        {
+          "token": "0x0A000001",
+          "name": "UnityEngine.Transform UnityEngine.Component::get_transform()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000038",
+          "name": "System.Void UnityEngine.Transform::set_position(UnityEngine.Vector3)",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000004",
+          "name": "UnityEngine.Camera UnityEngine.Camera::get_main()",
+          "hasThis": false
+        },
+        {
+          "token": "0x0A00000A",
+          "name": "System.Void UnityEngine.Camera::set_orthographicSize(System.Single)",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000009",
+          "name": "UnityEngine.GameObject UnityEngine.Component::get_gameObject()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000007",
+          "name": "System.Void UnityEngine.GameObject::SetActive(System.Boolean)",
+          "hasThis": true
+        }
+      ],
+      "types": []
+    }
+  ],
+  "refs": [
+    {
+      "token": "0x0A00000D",
+      "name": "System.Boolean UnityEngine.Input::GetKeyDownInt(UnityEngine.KeyCode)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00000E",
+      "name": "System.Boolean UnityEngine.Input::GetKeyInt(UnityEngine.KeyCode)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00001F",
+      "name": "System.Boolean UnityEngine.Input::GetMouseButtonDown(System.Int32)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000023",
+      "name": "UnityEngine.Vector3 UnityEngine.Input::get_mousePosition()",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00009C",
+      "name": "System.Void UnityEngine.Vector3::.ctor(System.Single,System.Single,System.Single)",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A0000FC",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::get_zero()",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A0001D8",
+      "name": "System.Boolean UnityEngine.Input::GetKeyDown(UnityEngine.KeyCode)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A0001F9",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::op_Subtraction(UnityEngine.Vector3,UnityEngine.Vector3)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000209",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::get_one()",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00020A",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::op_Multiply(UnityEngine.Vector3,System.Single)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000211",
+      "name": "System.Void UnityEngine.Vector3::Normalize()",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A000212",
+      "name": "System.Single UnityEngine.Vector3::get_magnitude()",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A000287",
+      "name": "System.Boolean UnityEngine.Input::GetMouseButton(System.Int32)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000298",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::get_forward()",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000310",
+      "name": "System.Void UnityEngine.Input::set_simulateMouseWithTouches(System.Boolean)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000314",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::SmoothDamp(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3\u0026,System.Single,System.Single,System.Single)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00031A",
+      "name": "UnityEngine.Touch UnityEngine.Input::GetTouch(System.Int32)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000326",
+      "name": "System.Int32 UnityEngine.Input::get_touchCount()",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000340",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::op_UnaryNegation(UnityEngine.Vector3)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000341",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::op_Addition(UnityEngine.Vector3,UnityEngine.Vector3)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000344",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::get_normalized()",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A000345",
+      "name": "System.Single UnityEngine.Vector3::Dot(UnityEngine.Vector3,UnityEngine.Vector3)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A000347",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::Cross(UnityEngine.Vector3,UnityEngine.Vector3)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00037B",
+      "name": "System.Boolean UnityEngine.Input::GetKey(UnityEngine.KeyCode)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00037C",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::op_Division(UnityEngine.Vector3,System.Single)",
+      "hasThis": false
+    },
+    {
+      "token": "0x0A00043D",
+      "name": "System.Single UnityEngine.Input::GetAxis(System.String)",
+      "hasThis": false
+    }
+  ],
+  "internals": [
+    {
+      "token": "0x0200003B",
+      "name": "BoardManager",
+      "fields": [
+        {
+          "token": "0x040001AD",
+          "name": "BoardManager BoardManager::\u003CInstance\u003Ek__BackingField",
+          "attributes": "Private, Static"
+        },
+        {
+          "token": "0x040001AE",
+          "name": "ChallengeType BoardManager::challengeType",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001AF",
+          "name": "System.Int32 BoardManager::level",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001B0",
+          "name": "BoardConfig BoardManager::boardConfig",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001B1",
+          "name": "System.Collections.Generic.List\u00601\u003CSettlementUIController\u003E BoardManager::settlementUIControllers",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001B2",
+          "name": "SettlementUIController BoardManager::settlementUIControllerPrefab",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x040001B3",
+          "name": "System.Collections.Generic.List\u00601\u003CBoard\u003E BoardManager::boards",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x040001B4",
+          "name": "Board BoardManager::board",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x040001B5",
+          "name": "Save BoardManager::playerSave",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x040001B6",
+          "name": "PrepareUIController BoardManager::prepareUIController",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001B7",
+          "name": "SeedChooserScreen BoardManager::seedChooserScreen",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001B8",
+          "name": "MouseManager BoardManager::mouseManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001B9",
+          "name": "System.Collections.Generic.List\u00601\u003CBoard\u003E BoardManager::boardPrefabList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001BA",
+          "name": "UnityEngine.Sprite[] BoardManager::zombieSprites",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040001BB",
+          "name": "UnityEngine.Sprite[] BoardManager::plantSprites",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x06000169",
+          "name": "BoardManager BoardManager::get_Instance()",
+          "attributes": "Public, Static, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600016A",
+          "name": "System.Void BoardManager::set_Instance(BoardManager)",
+          "attributes": "Private, Static, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600016B",
+          "name": "System.Void BoardManager::Awake()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600016C",
+          "name": "System.Void BoardManager::Start()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600016D",
+          "name": "System.Void BoardManager::Update()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600016E",
+          "name": "System.Void BoardManager::BoardResume()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600016F",
+          "name": "Board BoardManager::Board_OnPlay()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000170",
+          "name": "System.Void BoardManager::QuitBoard(Board)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000171",
+          "name": "System.Void BoardManager::LoadBoard()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000172",
+          "name": "System.Boolean BoardManager::LoadConfigFile()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000173",
+          "name": "SettlementUIController BoardManager::CreatSettlementScreen(BoardConfig)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000174",
+          "name": "System.String BoardManager::GetBoardNumberString(ChallengeType,System.Int32)",
+          "attributes": "Public, Static, HideBySig"
+        },
+        {
+          "token": "0x06000175",
+          "name": "System.Void BoardManager::Pass()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000176",
+          "name": "System.Void BoardManager::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x02000051",
+      "name": "ProjectManager",
+      "fields": [
+        {
+          "token": "0x040002BF",
+          "name": "Board ProjectManager::board",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C0",
+          "name": "UnityEngine.GameObject ProjectManager::ProjectList_GameObject",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C1",
+          "name": "System.Collections.Generic.List\u00601\u003CProject\u003E ProjectManager::projectPrefabs",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C2",
+          "name": "System.Collections.Generic.List\u00601\u003CProject\u003E ProjectManager::projects",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C3",
+          "name": "UnityEngine.GameObject ProjectManager::moneyBank_Coin",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C4",
+          "name": "System.Int32 ProjectManager::money_Coin",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C5",
+          "name": "TMPro.TextMeshProUGUI ProjectManager::money_Coin_Text",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C6",
+          "name": "UnityEngine.GameObject ProjectManager::moneyBank_Diamond",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C7",
+          "name": "System.Int32 ProjectManager::money_Diamond",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C8",
+          "name": "TMPro.TextMeshProUGUI ProjectManager::money_Diamond_Text",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002C9",
+          "name": "System.Single ProjectManager::moneyBank_Coin_ActiveTime",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040002CA",
+          "name": "System.Single ProjectManager::moneyBank_Diamond_ActiveTime",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x060001F8",
+          "name": "System.Void ProjectManager::Start()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060001F9",
+          "name": "System.Void ProjectManager::Update()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060001FA",
+          "name": "System.Void ProjectManager::Update_Projects()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060001FB",
+          "name": "System.Void ProjectManager::Update_MoneyBank()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060001FC",
+          "name": "System.Void ProjectManager::Awake_MoneyBank(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060001FD",
+          "name": "System.Void ProjectManager::AddCoin(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060001FE",
+          "name": "System.Void ProjectManager::AddDiamond(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060001FF",
+          "name": "System.Void ProjectManager::CollectAll()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000200",
+          "name": "System.Void ProjectManager::CollectProject(Project)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000201",
+          "name": "Project ProjectManager::CreateProject(System.Int32,System.Int32,UnityEngine.Vector3)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000202",
+          "name": "Project ProjectManager::DropLootPiece(Zombie,UnityEngine.Vector3)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000203",
+          "name": "System.Void ProjectManager::DropSpawnLevelAward(Zombie,UnityEngine.Vector3)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000204",
+          "name": "UnityEngine.Vector3 ProjectManager::GetCoinBankPosition()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000205",
+          "name": "UnityEngine.Vector3 ProjectManager::GetDiamondBankPosition()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000206",
+          "name": "System.Void ProjectManager::PlayAudio_Click(Project)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000207",
+          "name": "Project ProjectManager::TouchProject(UnityEngine.Vector3)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000208",
+          "name": "System.Boolean ProjectManager::TrySpawnLevelAward(Zombie,UnityEngine.Vector3)",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000209",
+          "name": "System.Void ProjectManager::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x0200005E",
+      "name": "ZombieManager",
+      "fields": [
+        {
+          "token": "0x0400035F",
+          "name": "Board ZombieManager::board",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000360",
+          "name": "System.Collections.Generic.List\u00601\u003CUnityEngine.AudioClip\u003E ZombieManager::audioClip_zombie",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000361",
+          "name": "System.Collections.Generic.List\u00601\u003CZombie\u003E ZombieManager::zombiePrefabList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000362",
+          "name": "System.Collections.Generic.List\u00601\u003CZombie\u003E ZombieManager::zombieList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000363",
+          "name": "System.Int32 ZombieManager::numOfTotalZombie",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000364",
+          "name": "System.Single ZombieManager::ladderCD",
+          "attributes": "Public, Static, Literal, HasDefault"
+        },
+        {
+          "token": "0x04000365",
+          "name": "System.Single ZombieManager::ladderCountDown",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000366",
+          "name": "System.Boolean ZombieManager::ladderTrigger",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000367",
+          "name": "System.Int32 ZombieManager::ladderTimes",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000368",
+          "name": "System.Collections.Generic.List\u00601\u003CBoardEntry\u003E ZombieManager::effectBoardEntries",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000369",
+          "name": "ZombieManager/BoardEntryData ZombieManager::boardEntryData",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x0600026E",
+          "name": "ZombieManager/BoardEntryData ZombieManager::GetBoardEntryData()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600026F",
+          "name": "ZombieManager/BoardEntryData ZombieManager::GetBoardEntryData(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000270",
+          "name": "System.Void ZombieManager::Awake()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000271",
+          "name": "System.Void ZombieManager::Start()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000272",
+          "name": "System.Void ZombieManager::Start_BoardEntry()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000273",
+          "name": "System.Void ZombieManager::Update()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000274",
+          "name": "System.Void ZombieManager::Update_Ladder()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000275",
+          "name": "System.Void ZombieManager::AddNewZombie(Zombie)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000276",
+          "name": "System.Void ZombieManager::AllFindPath()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000277",
+          "name": "System.Void ZombieManager::BGMPasue()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000278",
+          "name": "System.Void ZombieManager::BGMUnPasue()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000279",
+          "name": "System.Void ZombieManager::ClearZombies()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600027A",
+          "name": "Zombie ZombieManager::CreateNewZombie(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600027B",
+          "name": "System.Void ZombieManager::KillAll()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600027C",
+          "name": "Zombie ZombieManager::PlaceNewZombie(System.Int32,System.Int32,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600027D",
+          "name": "System.Void ZombieManager::TriggerLadder()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600027E",
+          "name": "System.Void ZombieManager::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x02000069",
+      "name": "Board",
+      "fields": [
+        {
+          "token": "0x040003B2",
+          "name": "ChallengeType Board::challengeType",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B3",
+          "name": "System.Int32 Board::level",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B4",
+          "name": "BoardConfig Board::boardConfig",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B5",
+          "name": "Map Board::map",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B6",
+          "name": "System.Boolean Board::isFailed",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B7",
+          "name": "System.Boolean Board::isWon",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B8",
+          "name": "System.Single Board::endTime",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003B9",
+          "name": "System.Boolean Board::isFinished",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003BA",
+          "name": "System.Boolean Board::gameStart",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003BB",
+          "name": "System.Boolean Board::gamePause",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003BC",
+          "name": "System.Single Board::gameSpeed",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003BD",
+          "name": "System.Boolean Board::menuOpen",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003BE",
+          "name": "System.Boolean Board::plantSupport",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003BF",
+          "name": "System.Single Board::gameStartCountdown",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C0",
+          "name": "UnityEngine.SpriteRenderer Board::background",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C1",
+          "name": "UnityEngine.GameObject Board::UI",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C2",
+          "name": "UnityEngine.GameObject Board::UI_flagMeterButtom",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C3",
+          "name": "UnityEngine.GameObject Board::WindowsUI",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C4",
+          "name": "UnityEngine.GameObject Board::plantUI",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C5",
+          "name": "UnityEngine.GameObject Board::zombieUI",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C6",
+          "name": "UnityEngine.GameObject Board::topUI",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C7",
+          "name": "UnityEngine.GameObject Board::audioManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C8",
+          "name": "UnityEngine.GameObject Board::pause",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003C9",
+          "name": "UnityEngine.GameObject Board::menu",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003CA",
+          "name": "UnityEngine.GameObject Board::buttomButtons",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003CB",
+          "name": "UnityEngine.GameObject Board::menuButton",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003CC",
+          "name": "UnityEngine.GameObject Board::pasueButton",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003CD",
+          "name": "TMPro.TextMeshProUGUI Board::text_GameSpeed",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003CE",
+          "name": "DialogueManager_OnBoard Board::dialogueManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003CF",
+          "name": "Plant_DetaiPage Board::detailPage",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D0",
+          "name": "System.Boolean Board::onDetailPage",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D1",
+          "name": "System.Collections.Generic.List\u00601\u003CPopup\u003E Board::popups",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D2",
+          "name": "System.Boolean Board::pauseTemp",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D3",
+          "name": "System.Boolean Board::menuTemp",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D4",
+          "name": "PlantManager Board::plantManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D5",
+          "name": "ZombieManager Board::zombieManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D6",
+          "name": "ProjectileManager Board::projectileManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D7",
+          "name": "ProjectManager Board::projectManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D8",
+          "name": "DeviceManager Board::deviceManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003D9",
+          "name": "MouseManager Board::mouseManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003DA",
+          "name": "EnemyManager Board::enemyManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003DB",
+          "name": "SunManager Board::sunManager",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003DC",
+          "name": "Banks Board::banks",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003DD",
+          "name": "FlagMeter Board::flagMeter",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003DE",
+          "name": "System.Boolean Board::cardBankHidden",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003DF",
+          "name": "UnityEngine.AudioSource[] Board::audioSource",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E0",
+          "name": "UnityEngine.AudioClip[] Board::audioList1",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E1",
+          "name": "UnityEngine.AudioClip[] Board::audioList2",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E2",
+          "name": "UnityEngine.AudioClip[] Board::BGMList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E3",
+          "name": "System.Boolean Board::UI_able",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E4",
+          "name": "System.Boolean Board::zombieUI_able",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E5",
+          "name": "UnityEngine.Vector3 Board::cameraPosition",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E6",
+          "name": "UnityEngine.Vector3 Board::dithering",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E7",
+          "name": "System.Single Board::amplitude",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E8",
+          "name": "System.Single Board::shakeTime",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040003E9",
+          "name": "RewardInBoard Board::reward",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x060002A6",
+          "name": "System.Boolean Board::BoardRuntime()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002A7",
+          "name": "System.Void Board::Awake()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002A8",
+          "name": "System.Void Board::Start()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002A9",
+          "name": "System.Void Board::Start_SenarioState()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002AA",
+          "name": "System.Void Board::Quit()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002AB",
+          "name": "System.Void Board::Update()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002AC",
+          "name": "System.Void Board::Update_BoardKey()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002AD",
+          "name": "System.Void Board::Update_isWon()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002AE",
+          "name": "System.Void Board::Update_Popups()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002AF",
+          "name": "System.Void Board::FixedUpdate()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002B0",
+          "name": "System.Void Board::FixedUpdate_Shake()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002B1",
+          "name": "System.Void Board::AddReward_Plant(PlantSave)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B2",
+          "name": "System.Void Board::BGMStart()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B3",
+          "name": "System.Void Board::ButtonDown_Z()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B4",
+          "name": "System.Void Board::ButtonDown_Menu()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B5",
+          "name": "System.Void Board::ButtonDown_Pasue()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B6",
+          "name": "System.Void Board::ChangeTimeSlowDownState()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B7",
+          "name": "System.Void Board::CreateFlagMeter()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002B8",
+          "name": "System.Void Board::DisplayButtons()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002B9",
+          "name": "System.Void Board::Escape_down()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002BA",
+          "name": "System.Void Board::Fold_DetailPage(System.Boolean,System.Boolean)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002BB",
+          "name": "System.Void Board::Unfold_DetailPage(Plant,System.Boolean)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002BC",
+          "name": "System.Void Board::GameFail()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002BD",
+          "name": "System.Void Board::GameContinue()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002BE",
+          "name": "System.Void Board::GameContinue_menu()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002BF",
+          "name": "System.Void Board::GameEnd()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C0",
+          "name": "System.Void Board::GameFinished()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C1",
+          "name": "System.Void Board::GamePause(System.Boolean)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C2",
+          "name": "System.Void Board::GameStartOnBoard()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C3",
+          "name": "System.Void Board::GameWin(System.Single)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C4",
+          "name": "Grid Board::GetGrid(System.Int32,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C5",
+          "name": "System.Void Board::HideButtons()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C6",
+          "name": "System.Void Board::PlayAudio_Button(UnityEngine.AudioClip)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C7",
+          "name": "System.Void Board::PlantingPreplants()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C8",
+          "name": "System.Void Board::PopMenu()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002C9",
+          "name": "System.Void Board::QuashMenu()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002CA",
+          "name": "System.Void Board::ResumeGame()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002CB",
+          "name": "System.Void Board::ReturnMain()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002CC",
+          "name": "System.Void Board::SetNewPopup(Popup)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002CD",
+          "name": "System.Void Board::Shake(System.Single,System.Single)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002CE",
+          "name": "System.Void Board::Space_down()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060002CF",
+          "name": "System.Void Board::Speed_ButtonDown(TMPro.TextMeshProUGUI)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002D0",
+          "name": "System.Boolean Board::TestWinTargetZombie()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060002D1",
+          "name": "System.Void Board::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x020000AD",
+      "name": "BoardPreview",
+      "fields": [
+        {
+          "token": "0x04000781",
+          "name": "BoardConfig BoardPreview::boardConfig",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000782",
+          "name": "EnemySelecter BoardPreview::enemySelecter",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000783",
+          "name": "UnityEngine.SpriteRenderer BoardPreview::background",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000784",
+          "name": "System.Collections.Generic.List\u00601\u003CPlant\u003E BoardPreview::prePlants",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000785",
+          "name": "System.Collections.Generic.List\u00601\u003CZombie\u003E BoardPreview::enemyPreviews",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000786",
+          "name": "System.Collections.Generic.List\u00601\u003CDevice\u003E BoardPreview::devicePreviews",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000787",
+          "name": "System.Collections.Generic.List\u00601\u003CDevice\u003E BoardPreview::devicePrefabList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000788",
+          "name": "UnityEngine.Transform BoardPreview::prePlant",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000789",
+          "name": "UnityEngine.Transform BoardPreview::preZombie",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400078A",
+          "name": "UnityEngine.Transform BoardPreview::enemyPreview",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400078B",
+          "name": "PrepareUIController BoardPreview::prepareUIController",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400078C",
+          "name": "UnityEngine.Canvas BoardPreview::canvas",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400078D",
+          "name": "System.Single BoardPreview::time",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400078E",
+          "name": "System.Single BoardPreview::dfx",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x0400078F",
+          "name": "System.Single BoardPreview::vfx",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000790",
+          "name": "System.Single BoardPreview::a",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000791",
+          "name": "System.Single BoardPreview::mvfx",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000792",
+          "name": "System.Single BoardPreview::centerX",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000793",
+          "name": "BoardInfoPage BoardPreview::boardInfoPage",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000794",
+          "name": "AlmanacUIController BoardPreview::almanac",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000795",
+          "name": "System.Int32 BoardPreview::wave",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000796",
+          "name": "UnityEngine.UI.Button BoardPreview::button_nextWave",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000797",
+          "name": "UnityEngine.UI.Button BoardPreview::button_lastWave",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000798",
+          "name": "TMPro.TextMeshProUGUI BoardPreview::waveText",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x060005CC",
+          "name": "System.Void BoardPreview::Start()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005CD",
+          "name": "System.Void BoardPreview::Update()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005CE",
+          "name": "System.Void BoardPreview::Return_PrepareGameScreen()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005CF",
+          "name": "System.Void BoardPreview::Initialize()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005D0",
+          "name": "System.Void BoardPreview::StarCamera()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005D1",
+          "name": "System.Void BoardPreview::CreateDevicePreviews()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005D2",
+          "name": "System.Void BoardPreview::CreateDevicePreview_Device(PreDevice)",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005D3",
+          "name": "System.Void BoardPreview::CreateEnemyPreviews()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005D4",
+          "name": "System.Void BoardPreview::CreateEnemyPreview_Zombie(Enemy)",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005D5",
+          "name": "EnemySelecter BoardPreview::CreateEnemySelecter()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005D6",
+          "name": "System.Void BoardPreview::FoldBoardInfoPage()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005D7",
+          "name": "System.Void BoardPreview::UnfoldBoardInfoPage()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005D8",
+          "name": "Device BoardPreview::GetDevicePrefab(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005D9",
+          "name": "UnityEngine.Vector3 BoardPreview::GetRandomPosition(Enemy)",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060005DA",
+          "name": "System.Void BoardPreview::ReturnFromAlmanac()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005DB",
+          "name": "System.Void BoardPreview::TurnToAlmanac(Zombie)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005DC",
+          "name": "System.Boolean BoardPreview::ViewWave(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005DD",
+          "name": "System.Void BoardPreview::ViewWave_d(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060005DE",
+          "name": "System.Void BoardPreview::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x020000CE",
+      "name": "SettlementUIController",
+      "fields": [
+        {
+          "token": "0x040008D6",
+          "name": "System.Collections.Generic.List\u00601\u003CSuppliesItem\u003E SettlementUIController::lootList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040008D7",
+          "name": "UnityEngine.GameObject SettlementUIController::lootList_GameObject",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x040008D8",
+          "name": "UnityEngine.UI.Button SettlementUIController::nextLevel_Button",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x060006CD",
+          "name": "System.Void SettlementUIController::Start()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060006CE",
+          "name": "System.Void SettlementUIController::Update()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x060006CF",
+          "name": "System.Void SettlementUIController::Awaken()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D0",
+          "name": "System.Void SettlementUIController::CreatLootlist(BoardConfig,RewardInBoard)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D1",
+          "name": "System.Void SettlementUIController::Settlement(BoardConfig,RewardInBoard)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D2",
+          "name": "System.Void SettlementUIController::GenerateLootPieceItemIcons(System.Collections.Generic.List\u00601\u003CSupplies\u003E)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D3",
+          "name": "System.Void SettlementUIController::PlayAudio(UnityEngine.AudioClip)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D4",
+          "name": "System.Void SettlementUIController::NextLevel()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D5",
+          "name": "System.Void SettlementUIController::PopupSet(ChallengeType,System.Int32,Save)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060006D6",
+          "name": "System.Void SettlementUIController::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    }
+  ],
+  "getters": [
+    {
+      "token": "0x0600027C",
+      "name": "Zombie ZombieManager::PlaceNewZombie(System.Int32,System.Int32,System.Int32)",
+      "il": [
+        "IL_0000: br IL_0137",
+        "IL_0005: ldloc V_12",
+        "IL_0009: call System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)",
+        "IL_000e: stloc V_4",
+        "IL_0012: ldloc V_4",
+        "IL_0016: ldc.i4.0",
+        "IL_0017: ceq",
+        "IL_0019: stloc V_5",
+        "IL_001d: ldloc V_5",
+        "IL_0021: brtrue IL_011f",
+        "IL_0026: br IL_002b",
+        "IL_002b: ldarg.0",
+        "IL_002c: ldfld Board ZombieManager::board",
+        "IL_0031: stloc V_6",
+        "IL_0035: ldarg.0",
+        "IL_0036: ldfld Board ZombieManager::board",
+        "IL_003b: ldc.i4 0",
+        "IL_0040: ceq",
+        "IL_0042: stloc V_7",
+        "IL_0046: ldloc V_7",
+        "IL_004a: brtrue IL_0129",
+        "IL_004f: br IL_0054",
+        "IL_0054: ldloc V_6",
+        "IL_0058: ldfld BoardConfig Board::boardConfig",
+        "IL_005d: ldc.i4 0",
+        "IL_0062: ceq",
+        "IL_0064: stloc V_8",
+        "IL_0068: ldloc V_8",
+        "IL_006c: brtrue IL_0129",
+        "IL_0071: br IL_0076",
+        "IL_0076: ldloc V_6",
+        "IL_007a: ldfld BoardConfig Board::boardConfig",
+        "IL_007f: ldarg gridX",
+        "IL_0083: ldarg gridY",
+        "IL_0087: call UnityEngine.Vector3 BoardConfig::GetZombiePosition(System.Int32,System.Int32)",
+        "IL_008c: stloc V_9",
+        "IL_0090: ldloc V_12",
+        "IL_0094: ldc.i4 0",
+        "IL_0099: ceq",
+        "IL_009b: stloc V_10",
+        "IL_009f: ldloc V_10",
+        "IL_00a3: brtrue IL_0129",
+        "IL_00a8: br IL_00ad",
+        "IL_00ad: ldloc V_12",
+        "IL_00b1: ldloca V_13",
+        "IL_00b5: ldc.r4 0",
+        "IL_00ba: ldc.i4 0",
+        "IL_00bf: call System.Void Zombie::TeleportTo(UnityEngine.Vector3,System.Single,System.Boolean)",
+        "IL_00c4: ldloc V_12",
+        "IL_00c8: ldarg gridX",
+        "IL_00cc: stfld System.Int32 Zombie::gridX",
+        "IL_00d1: ldloc V_12",
+        "IL_00d5: ldarg gridY",
+        "IL_00d9: stfld System.Int32 Zombie::gridY",
+        "IL_00de: ldloc V_12",
+        "IL_00e2: ldc.r4 0.01",
+        "IL_00e7: stfld System.Single Zombie::waitingTime",
+        "IL_00ec: ldloc V_12",
+        "IL_00f0: call System.Void Zombie::CreateStartPrePath()",
+        "IL_00f5: br IL_00fa",
+        "IL_00fa: ldloc V_12",
+        "IL_00fe: ldc.i8 4294967295",
+        "IL_0107: stfld System.Int32 Zombie::wave",
+        "IL_010c: ldloc V_12",
+        "IL_0110: ldc.i4 0",
+        "IL_0115: stfld System.Int32 Zombie::enemyPoint",
+        "IL_011a: br IL_014a",
+        "IL_011f: ldnull",
+        "IL_0120: stloc V_12",
+        "IL_0124: br IL_014a",
+        "IL_0129: newobj System.Void System.NullReferenceException::.ctor()",
+        "IL_012e: stloc V_11",
+        "IL_0132: ldloc V_11",
+        "IL_0136: ret",
+        "IL_0137: ldarg.0",
+        "IL_0138: ldarg zombieID",
+        "IL_013c: call Zombie ZombieManager::CreateNewZombie(System.Int32)",
+        "IL_0141: stloc V_12",
+        "IL_0145: br IL_0005",
+        "IL_014a: ldloc V_12",
+        "IL_014e: ret",
+        "IL_014f: ldstr \u0022Warning: Method ends with non empty stack (-58), the output could be wrong!\u0022",
+        "IL_0154: pop"
+      ]
+    },
+    {
+      "token": "0x06000208",
+      "name": "System.Boolean ProjectManager::TrySpawnLevelAward(Zombie,UnityEngine.Vector3)",
+      "il": [
+        "IL_0000: br IL_0109",
+        "IL_0005: ldarg.0",
+        "IL_0006: ldfld Board ProjectManager::board",
+        "IL_000b: call System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)",
+        "IL_0010: stloc V_2",
+        "IL_0014: ldloc V_2",
+        "IL_0018: ldc.i4.0",
+        "IL_0019: ceq",
+        "IL_001b: stloc V_3",
+        "IL_001f: ldloc V_3",
+        "IL_0023: brtrue IL_00ed",
+        "IL_0028: br IL_002d",
+        "IL_002d: ldarg.0",
+        "IL_002e: ldfld Board ProjectManager::board",
+        "IL_0033: stloc V_4",
+        "IL_0037: ldarg.0",
+        "IL_0038: ldfld Board ProjectManager::board",
+        "IL_003d: ldc.i4 0",
+        "IL_0042: ceq",
+        "IL_0044: stloc V_5",
+        "IL_0048: ldloc V_5",
+        "IL_004c: brtrue IL_00fb",
+        "IL_0051: br IL_0056",
+        "IL_0056: ldloc V_4",
+        "IL_005a: ldfld System.Boolean Board::isFinished",
+        "IL_005f: ldc.i4 0",
+        "IL_0064: ceq",
+        "IL_0066: ldc.i4.0",
+        "IL_0067: ceq",
+        "IL_0069: stloc V_7",
+        "IL_006d: ldloc V_7",
+        "IL_0071: brtrue IL_00ed",
+        "IL_0076: br IL_007b",
+        "IL_007b: ldarg.0",
+        "IL_007c: ldfld Board ProjectManager::board",
+        "IL_0081: call System.Boolean Board::TestWinTargetZombie()",
+        "IL_0086: stloc V_6",
+        "IL_008a: ldloc V_6",
+        "IL_008e: ldc.i4.0",
+        "IL_008f: ceq",
+        "IL_0091: stloc V_8",
+        "IL_0095: ldloc V_8",
+        "IL_0099: brtrue IL_00ed",
+        "IL_009e: br IL_00a3",
+        "IL_00a3: ldarg.0",
+        "IL_00a4: ldfld Board ProjectManager::board",
+        "IL_00a9: ldc.i4 0",
+        "IL_00ae: ceq",
+        "IL_00b0: stloc V_10",
+        "IL_00b4: ldloc V_10",
+        "IL_00b8: brtrue IL_00fb",
+        "IL_00bd: br IL_00c2",
+        "IL_00c2: ldarg.0",
+        "IL_00c3: ldfld Board ProjectManager::board",
+        "IL_00c8: call System.Void Board::GameFinished()",
+        "IL_00cd: br IL_010e",
+        "IL_00d2: ldloc V_9",
+        "IL_00d6: ldarg zombie",
+        "IL_00da: call System.Void Project::SetEndPosition\u003CZombie\u003E(!!0)",
+        "IL_00df: ldc.i4 1",
+        "IL_00e4: stloc V_13",
+        "IL_00e8: br IL_0143",
+        "IL_00ed: ldc.i4 0",
+        "IL_00f2: stloc V_13",
+        "IL_00f6: br IL_0143",
+        "IL_00fb: newobj System.Void System.NullReferenceException::.ctor()",
+        "IL_0100: stloc V_12",
+        "IL_0104: ldloc V_12",
+        "IL_0108: ret",
+        "IL_0109: br IL_0005",
+        "IL_010e: ldarg.0",
+        "IL_010f: ldc.i4 2",
+        "IL_0114: ldc.i4 4",
+        "IL_0119: ldloca V_14",
+        "IL_011d: call Project ProjectManager::CreateProject(System.Int32,System.Int32,UnityEngine.Vector3)",
+        "IL_0122: stloc V_9",
+        "IL_0126: ldloc V_9",
+        "IL_012a: ldc.i4 0",
+        "IL_012f: ceq",
+        "IL_0131: stloc V_11",
+        "IL_0135: ldloc V_11",
+        "IL_0139: brtrue IL_00fb",
+        "IL_013e: br IL_00d2",
+        "IL_0143: ldloc V_13",
+        "IL_0147: ret",
+        "IL_0148: ldstr \u0022Warning: Method ends with non empty stack (-48), the output could be wrong!\u0022",
+        "IL_014d: pop"
+      ]
+    },
+    {
+      "token": "0x06000173",
+      "name": "SettlementUIController BoardManager::CreatSettlementScreen(BoardConfig)",
+      "il": [
+        "IL_0000: br IL_0139",
+        "IL_0005: ldarg.0",
+        "IL_0006: ldfld SettlementUIController BoardManager::settlementUIControllerPrefab",
+        "IL_000b: call !!0 UnityEngine.Object::Instantiate\u003CSettlementUIController\u003E(!!0)",
+        "IL_0010: stloc V_1",
+        "IL_0014: ldarg.0",
+        "IL_0015: ldfld System.Collections.Generic.List\u00601\u003CSettlementUIController\u003E BoardManager::settlementUIControllers",
+        "IL_001a: stloc V_2",
+        "IL_001e: br IL_0023",
+        "IL_0023: ldloc V_2",
+        "IL_0027: ldfld System.Int32 System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_version",
+        "IL_002c: ldc.i4 1",
+        "IL_0031: add",
+        "IL_0032: stloc V_11",
+        "IL_0036: ldloc V_2",
+        "IL_003a: ldloc V_11",
+        "IL_003e: stfld System.Int32 System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_version",
+        "IL_0043: ldloc V_2",
+        "IL_0047: ldfld !0[] System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_items",
+        "IL_004c: stloc V_3",
+        "IL_0050: br IL_0055",
+        "IL_0055: ldloc V_2",
+        "IL_0059: ldfld System.Int32 System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_size",
+        "IL_005e: ldloc V_3",
+        "IL_0062: ldlen",
+        "IL_0063: conv.i4",
+        "IL_0064: clt",
+        "IL_0066: stloc V_5",
+        "IL_006a: ldloc V_5",
+        "IL_006e: brtrue IL_008a",
+        "IL_0073: br IL_0078",
+        "IL_0078: ldloc V_2",
+        "IL_007c: ldloc V_1",
+        "IL_0080: call System.Void System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::AddWithResize(!0)",
+        "IL_0085: br IL_00e6",
+        "IL_008a: ldloc V_2",
+        "IL_008e: ldfld System.Int32 System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_size",
+        "IL_0093: ldc.i4 1",
+        "IL_0098: add",
+        "IL_0099: stloc V_6",
+        "IL_009d: ldloc V_2",
+        "IL_00a1: ldloc V_6",
+        "IL_00a5: stfld System.Int32 System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_size",
+        "IL_00aa: ldloc V_2",
+        "IL_00ae: ldfld System.Int32 System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::_size",
+        "IL_00b3: ldloc V_3",
+        "IL_00b7: ldlen",
+        "IL_00b8: conv.i4",
+        "IL_00b9: clt",
+        "IL_00bb: ldc.i4.0",
+        "IL_00bc: ceq",
+        "IL_00be: stloc V_7",
+        "IL_00c2: ldloc V_7",
+        "IL_00c6: brtrue IL_013e",
+        "IL_00cb: br IL_00d0",
+        "IL_00d0: ldloc V_3",
+        "IL_00d4: ldloc V_10",
+        "IL_00d8: ldloc V_1",
+        "IL_00dc: stelem.any System.Object",
+        "IL_00e1: br IL_00e6",
+        "IL_00e6: ldarg.0",
+        "IL_00e7: ldfld Board BoardManager::board",
+        "IL_00ec: stloc V_4",
+        "IL_00f0: br IL_00f5",
+        "IL_00f5: ldloc V_1",
+        "IL_00f9: ldarg boardConfig",
+        "IL_00fd: ldloc V_4",
+        "IL_0101: ldfld RewardInBoard Board::reward",
+        "IL_0106: call System.Void SettlementUIController::Settlement(BoardConfig,RewardInBoard)",
+        "IL_010b: ldloc V_1",
+        "IL_010f: ldarg.0",
+        "IL_0110: ldfld ChallengeType BoardManager::challengeType",
+        "IL_0115: ldarg.0",
+        "IL_0116: ldfld System.Int32 BoardManager::level",
+        "IL_011b: ldarg.0",
+        "IL_011c: ldfld Save BoardManager::playerSave",
+        "IL_0121: call System.Void SettlementUIController::PopupSet(ChallengeType,System.Int32,Save)",
+        "IL_0126: br IL_012b",
+        "IL_012b: ldloc V_1",
+        "IL_012f: call System.Void SettlementUIController::Awaken()",
+        "IL_0134: ldloc V_1",
+        "IL_0138: ret",
+        "IL_0139: br IL_0005",
+        "IL_013e: newobj System.Void System.IndexOutOfRangeException::.ctor()",
+        "IL_0143: stloc V_8",
+        "IL_0147: ldloc V_8",
+        "IL_014b: ret"
+      ]
+    },
+    {
+      "token": "0x060005CE",
+      "name": "System.Void BoardPreview::Return_PrepareGameScreen()",
+      "il": [
+        "IL_0000: br IL_00e8",
+        "IL_0005: ldarg.0",
+        "IL_0006: ldfld PrepareUIController BoardPreview::prepareUIController",
+        "IL_000b: call System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)",
+        "IL_0010: stloc V_1",
+        "IL_0014: ldloc V_1",
+        "IL_0018: ldc.i4.0",
+        "IL_0019: ceq",
+        "IL_001b: stloc V_2",
+        "IL_001f: ldloc V_2",
+        "IL_0023: brtrue IL_0054",
+        "IL_0028: br IL_002d",
+        "IL_002d: ldarg.0",
+        "IL_002e: ldfld PrepareUIController BoardPreview::prepareUIController",
+        "IL_0033: call UnityEngine.GameObject UnityEngine.Component::get_gameObject()",
+        "IL_0038: stloc V_4",
+        "IL_003c: br IL_0041",
+        "IL_0041: ldloc V_4",
+        "IL_0045: ldc.i4 1",
+        "IL_004a: call System.Void UnityEngine.GameObject::SetActive(System.Boolean)",
+        "IL_004f: br IL_0054",
+        "IL_0054: call UnityEngine.Camera UnityEngine.Camera::get_main()",
+        "IL_0059: stloc V_3",
+        "IL_005d: br IL_0062",
+        "IL_0062: ldloc V_3",
+        "IL_0066: call UnityEngine.Transform UnityEngine.Component::get_transform()",
+        "IL_006b: stloc V_5",
+        "IL_006f: br IL_0074",
+        "IL_0074: ldloc V_5",
+        "IL_0078: call UnityEngine.Vector3 UnityEngine.Transform::get_position()",
+        "IL_007d: stloc V_10",
+        "IL_0081: call UnityEngine.Camera UnityEngine.Camera::get_main()",
+        "IL_0086: stloc V_6",
+        "IL_008a: br IL_008f",
+        "IL_008f: ldloc V_6",
+        "IL_0093: call UnityEngine.Transform UnityEngine.Component::get_transform()",
+        "IL_0098: stloc V_7",
+        "IL_009c: br IL_00a1",
+        "IL_00a1: ldloc V_7",
+        "IL_00a5: ldloca V_11",
+        "IL_00a9: call System.Void UnityEngine.Transform::set_position(UnityEngine.Vector3)",
+        "IL_00ae: call UnityEngine.Camera UnityEngine.Camera::get_main()",
+        "IL_00b3: stloc V_8",
+        "IL_00b7: br IL_00bc",
+        "IL_00bc: ldloc V_8",
+        "IL_00c0: ldc.r4 540",
+        "IL_00c5: call System.Void UnityEngine.Camera::set_orthographicSize(System.Single)",
+        "IL_00ca: ldarg.0",
+        "IL_00cb: call UnityEngine.GameObject UnityEngine.Component::get_gameObject()",
+        "IL_00d0: stloc V_9",
+        "IL_00d4: br IL_00d9",
+        "IL_00d9: ldloc V_9",
+        "IL_00dd: ldc.i4 0",
+        "IL_00e2: call System.Void UnityEngine.GameObject::SetActive(System.Boolean)",
+        "IL_00e7: ret",
+        "IL_00e8: br IL_0005"
+      ]
+    }
+  ],
+  "specs": [
+    {
+      "token": "0x1B00003B",
+      "name": "System.Collections.Generic.List\u00601\u003CSettlementUIController\u003E"
+    }
+  ],
+  "external_fields": [
+    {
+      "token": "0x0A00001D",
+      "name": "System.Single UnityEngine.Vector3::x"
+    },
+    {
+      "token": "0x0A00008B",
+      "name": "System.Single UnityEngine.Vector3::y"
+    },
+    {
+      "token": "0x0A00009D",
+      "name": "System.Single UnityEngine.Vector3::z"
+    },
+    {
+      "token": "0x0A0000AC",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::zeroVector"
+    },
+    {
+      "token": "0x0A00020C",
+      "name": "UnityEngine.Vector3 UnityEngine.Vector3::oneVector"
+    }
+  ],
+  "type_refs": [
+    {
+      "token": "0x01000001",
+      "name": "UnityEngine.MonoBehaviour",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000002",
+      "name": "UnityEngine.GameObject",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000003",
+      "name": "System.Collections.Generic.List\u00601",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000004",
+      "name": "UnityEngine.Component",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000005",
+      "name": "UnityEngine.Transform",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000006",
+      "name": "UnityEngine.Canvas",
+      "scope": "UnityEngine.UIModule"
+    },
+    {
+      "token": "0x01000007",
+      "name": "UnityEngine.Camera",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000008",
+      "name": "UnityEngine.Object",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000009",
+      "name": "UnityEngine.Input",
+      "scope": "UnityEngine.InputLegacyModule"
+    },
+    {
+      "token": "0x0100000A",
+      "name": "UnityEngine.KeyCode",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100000B",
+      "name": "System.String",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100000C",
+      "name": "UnityEngine.Debug",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100000D",
+      "name": "UnityEngine.JsonUtility",
+      "scope": "UnityEngine.JSONSerializeModule"
+    },
+    {
+      "token": "0x0100000E",
+      "name": "System.Int32",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100000F",
+      "name": "UnityEngine.SpriteRenderer",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000010",
+      "name": "UnityEngine.UI.Toggle",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000011",
+      "name": "UnityEngine.UI.Selectable",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000012",
+      "name": "UnityEngine.Time",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000013",
+      "name": "UnityEngine.Vector3",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000014",
+      "name": "System.Collections.Generic.List\u00601/Enumerator",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000015",
+      "name": "System.ValueType",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000016",
+      "name": "System.NullReferenceException",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000017",
+      "name": "UnityEngine.Sprite",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000018",
+      "name": "System.Array",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000019",
+      "name": "TMPro.TMP_InputField",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100001A",
+      "name": "System.Object",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100001B",
+      "name": "TMPro.TMP_Dropdown",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100001C",
+      "name": "UnityEngine.UI.Button",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x0100001D",
+      "name": "UnityEngine.UI.Image",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x0100001E",
+      "name": "UnityEngine.Material",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100001F",
+      "name": "System.Single",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000020",
+      "name": "TMPro.TMP_Text",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000021",
+      "name": "TMPro.TextMeshProUGUI",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000022",
+      "name": "System.Type",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000023",
+      "name": "System.RuntimeTypeHandle",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000024",
+      "name": "System.Enum",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000025",
+      "name": "System.Math",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000026",
+      "name": "System.MathF",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000027",
+      "name": "System.Runtime.CompilerServices.RuntimeHelpers",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000028",
+      "name": "System.RuntimeFieldHandle",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000029",
+      "name": "System.IO.File",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100002A",
+      "name": "UnityEngine.UI.GridLayoutGroup",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x0100002B",
+      "name": "System.IndexOutOfRangeException",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100002C",
+      "name": "System.Int32Enum",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100002D",
+      "name": "UnityEngine.AudioClip",
+      "scope": "UnityEngine.AudioModule"
+    },
+    {
+      "token": "0x0100002E",
+      "name": "UnityEngine.AudioSource",
+      "scope": "UnityEngine.AudioModule"
+    },
+    {
+      "token": "0x0100002F",
+      "name": "UnityEngine.Random",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000030",
+      "name": "UnityEngine.Animator",
+      "scope": "UnityEngine.AnimationModule"
+    },
+    {
+      "token": "0x01000031",
+      "name": "UnityEngine.Renderer",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000032",
+      "name": "System.Collections.IEnumerator",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000033",
+      "name": "UnityEngine.Rect",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000034",
+      "name": "UnityEngine.Color",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000035",
+      "name": "UnityEngine.ScriptableObject",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000036",
+      "name": "System.IDisposable",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000037",
+      "name": "UnityEngine.SceneManagement.SceneManager",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000038",
+      "name": "System.Security.Cryptography.SHA256",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000039",
+      "name": "System.Text.Encoding",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100003A",
+      "name": "System.Security.Cryptography.HashAlgorithm",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100003B",
+      "name": "System.BitConverter",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100003C",
+      "name": "UnityEngine.Resolution",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100003D",
+      "name": "UnityEngine.Screen",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100003E",
+      "name": "UnityEngine.FullScreenMode",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100003F",
+      "name": "UnityEngine.RefreshRate",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000040",
+      "name": "System.Boolean",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000041",
+      "name": "UnityEngine.Resources",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000042",
+      "name": "UnityEngine.Rendering.SortingGroup",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000043",
+      "name": "Unity.VisualScripting.ComponentHolderProtocol",
+      "scope": "Unity.VisualScripting.Core"
+    },
+    {
+      "token": "0x01000044",
+      "name": "System.Collections.Generic.Dictionary\u00602",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000045",
+      "name": "System.IO.Path",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000046",
+      "name": "System.Globalization.CultureInfo",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000047",
+      "name": "System.IFormatProvider",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000048",
+      "name": "UnityEngine.Application",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000049",
+      "name": "System.Collections.Generic.HashSet\u00601",
+      "scope": "System.Core"
+    },
+    {
+      "token": "0x0100004A",
+      "name": "System.Collections.Generic.HashSet\u00601/Enumerator",
+      "scope": "System.Core"
+    },
+    {
+      "token": "0x0100004B",
+      "name": "UnityEngine.Vector2",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100004C",
+      "name": "UnityEngine.SerializeField",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100004D",
+      "name": "UnityEngine.UI.Graphic",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x0100004E",
+      "name": "System.Threading.CancellationTokenSource",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100004F",
+      "name": "UnityEngine.AnimatorStateInfo",
+      "scope": "UnityEngine.AnimationModule"
+    },
+    {
+      "token": "0x01000050",
+      "name": "UnityEngine.AnimationCurve",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000051",
+      "name": "UnityEngine.Space",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000052",
+      "name": "UnityEngine.Behaviour",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000053",
+      "name": "UnityEngine.Quaternion",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000054",
+      "name": "UnityEngine.Mathf",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000055",
+      "name": "UnityEngine.AnimatorClipInfo",
+      "scope": "UnityEngine.AnimationModule"
+    },
+    {
+      "token": "0x01000056",
+      "name": "UnityEngine.RectTransform",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000057",
+      "name": "UnityEngine.RectTransform/Axis",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000058",
+      "name": "System.MulticastDelegate",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000059",
+      "name": "System.IAsyncResult",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100005A",
+      "name": "System.AsyncCallback",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100005B",
+      "name": "UnityEngine.UI.ScrollRect",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x0100005C",
+      "name": "UnityEngine.ColorUtility",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100005D",
+      "name": "System.Double",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x0100005E",
+      "name": "TMPro.TextMeshPro",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100005F",
+      "name": "UnityEngine.UI.Slider",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000060",
+      "name": "UnityEngine.EventSystems.IPointerClickHandler",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000061",
+      "name": "UnityEngine.EventSystems.IEventSystemHandler",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000062",
+      "name": "UnityEngine.EventSystems.IPointerEnterHandler",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000063",
+      "name": "UnityEngine.EventSystems.IPointerExitHandler",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000064",
+      "name": "TMPro.TMP_TextUtilities",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000065",
+      "name": "TMPro.TMP_LinkInfo",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000066",
+      "name": "UnityEngine.EventSystems.PointerEventData",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000067",
+      "name": "TMPro.TMP_TextInfo",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000068",
+      "name": "TMPro.TMP_CharacterInfo",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000069",
+      "name": "UnityEngine.Color32",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100006A",
+      "name": "TMPro.TMP_MeshInfo",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100006B",
+      "name": "TMPro.TMP_VertexDataUpdateFlags",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100006C",
+      "name": "UnityEngine.UI.Scrollbar",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x0100006D",
+      "name": "UnityEngine.Events.UnityAction\u00601",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100006E",
+      "name": "TMPro.TMP_InputField/SubmitEvent",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100006F",
+      "name": "UnityEngine.Events.UnityEvent\u00601",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000070",
+      "name": "System.DateTime",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000071",
+      "name": "System.Collections.Generic.IEnumerator\u00601",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000072",
+      "name": "UnityEngine.Matrix4x4",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000073",
+      "name": "System.NotSupportedException",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000074",
+      "name": "System.Byte",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000075",
+      "name": "TMPro.TMP_InputValidator",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000076",
+      "name": "System.Char",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000077",
+      "name": "UnityEngine.RenderMode",
+      "scope": "UnityEngine.UIModule"
+    },
+    {
+      "token": "0x01000078",
+      "name": "TMPro.TMP_WordInfo",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000079",
+      "name": "TMPro.TMP_LineInfo",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100007A",
+      "name": "UnityEngine.Events.UnityEvent\u00602",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100007B",
+      "name": "UnityEngine.Events.UnityEvent\u00603",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100007C",
+      "name": "TMPro.TMP_FontAsset",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100007D",
+      "name": "UnityEngine.Font",
+      "scope": "UnityEngine.TextRenderingModule"
+    },
+    {
+      "token": "0x0100007E",
+      "name": "TMPro.TextContainer",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100007F",
+      "name": "UnityEngine.TextMesh",
+      "scope": "UnityEngine.TextRenderingModule"
+    },
+    {
+      "token": "0x01000080",
+      "name": "UnityEngine.TextAnchor",
+      "scope": "UnityEngine.TextRenderingModule"
+    },
+    {
+      "token": "0x01000081",
+      "name": "TMPro.TextAlignmentOptions",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000082",
+      "name": "UnityEngine.UI.Text",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x01000083",
+      "name": "TMPro.AtlasPopulationMode",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000084",
+      "name": "UnityEngine.TextCore.LowLevel.GlyphRenderMode",
+      "scope": "UnityEngine.TextCoreFontEngineModule"
+    },
+    {
+      "token": "0x01000085",
+      "name": "UnityEngine.Shader",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000086",
+      "name": "TMPro.TMP_Asset",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000087",
+      "name": "UnityEngine.RuntimePlatform",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000088",
+      "name": "UnityEngine.QualitySettings",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000089",
+      "name": "UnityEngine.Touch",
+      "scope": "UnityEngine.InputLegacyModule"
+    },
+    {
+      "token": "0x0100008A",
+      "name": "UnityEngine.TouchPhase",
+      "scope": "UnityEngine.InputLegacyModule"
+    },
+    {
+      "token": "0x0100008B",
+      "name": "UnityEngine.RaycastHit",
+      "scope": "UnityEngine.PhysicsModule"
+    },
+    {
+      "token": "0x0100008C",
+      "name": "UnityEngine.Ray",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100008D",
+      "name": "UnityEngine.Physics",
+      "scope": "UnityEngine.PhysicsModule"
+    },
+    {
+      "token": "0x0100008E",
+      "name": "UnityEngine.Light",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100008F",
+      "name": "UnityEngine.Coroutine",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000090",
+      "name": "UnityEngine.WaitForEndOfFrame",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000091",
+      "name": "TMPro.ShaderUtilities",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000092",
+      "name": "UnityEngine.Keyframe",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000093",
+      "name": "UnityEngine.Bounds",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000094",
+      "name": "UnityEngine.WrapMode",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000095",
+      "name": "UnityEngine.WaitForSeconds",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x01000096",
+      "name": "System.Action\u00601",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x01000097",
+      "name": "TMPro.TMPro_EventManager",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000098",
+      "name": "TMPro.FastAction\u00601",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x01000099",
+      "name": "TMPro.TMPro_ExtensionMethods",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100009A",
+      "name": "TMPro.TextContainerAnchors",
+      "scope": "Unity.TextMeshPro"
+    },
+    {
+      "token": "0x0100009B",
+      "name": "UnityEngine.Vector4",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100009C",
+      "name": "UnityEngine.Events.UnityAction\u00602",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100009D",
+      "name": "UnityEngine.Events.UnityAction\u00603",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100009E",
+      "name": "UnityEngine.Mesh",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x0100009F",
+      "name": "UnityEngine.RectTransformUtility",
+      "scope": "UnityEngine.UIModule"
+    },
+    {
+      "token": "0x010000A0",
+      "name": "UnityEngine.EventSystems.IPointerUpHandler",
+      "scope": "UnityEngine.UI"
+    },
+    {
+      "token": "0x010000A1",
+      "name": "System.Comparison\u00601",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000A2",
+      "name": "System.Collections.Generic.IList\u00601",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000A3",
+      "name": "UnityEngine.Texture2D",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000A4",
+      "name": "UnityEngine.MeshFilter",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000A5",
+      "name": "UnityEngine.MeshRenderer",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000A6",
+      "name": "UnityEngine.MaterialPropertyBlock",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000A7",
+      "name": "System.Delegate",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000A8",
+      "name": "UnityEngine.Texture",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000A9",
+      "name": "System.UInt32",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000AA",
+      "name": "UnityEngine.HideFlags",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000AB",
+      "name": "UnityEngine.UnityException",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000AC",
+      "name": "UnityEngine.CustomYieldInstruction",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000AD",
+      "name": "System.Collections.Generic.IEqualityComparer\u00601",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000AE",
+      "name": "System.ArgumentOutOfRangeException",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000AF",
+      "name": "UnityEngine.PropertyAttribute",
+      "scope": "UnityEngine.CoreModule"
+    },
+    {
+      "token": "0x010000B0",
+      "name": "System.InvalidOperationException",
+      "scope": "mscorlib"
+    },
+    {
+      "token": "0x010000B1",
+      "name": "System.Threading.Interlocked",
+      "scope": "mscorlib"
+    }
+  ]
+}
+
