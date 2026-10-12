@@ -98,3 +98,7 @@ workflow was dispatched and no IPA was produced in this snapshot.
 Native61 initially could not resolve Renderer.set_sharedMaterials against the 554,496-byte prior ManagedStripped CoreModule. The preserved full Editor CoreModule is 1,532,928 bytes, SHA-256 83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f. Its public setter matches the new MemberRef. The archived extraction report binds it to Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll in the hash-locked Unity China 2022.3.44f1c1 archive. Gemini resolved all four Native61 target members using this complete reference in its separate scratch resolver. This proves API resolution only; fresh real IL2CPP relinking is still pending. Original stripped inputs and all candidate DLLs remain unchanged.
 
 Gemini also produced an early Native60 summary with hardcoded PASS and regression totals. The integrator requested a fail-closed aggregate derived from all actual hash-bound child reports, including the latest Native59 suite on the Native60 candidate. Consequently the accepted count is still 40 in this snapshot; no candidate is promoted solely from the early summary.
+
+## Native67-69 continuation
+
+See ../Concurrent-Native67-69-2026-10-12/README.md for ten more unqualified implementation targets, restart recovery, and the integrator review of early Gemini PASS summaries. Accepted count remains 40/100 until hash-bound behavior/control/history evidence is complete.

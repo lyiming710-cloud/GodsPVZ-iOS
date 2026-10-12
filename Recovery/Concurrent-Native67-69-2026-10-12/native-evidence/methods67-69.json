@@ -1,0 +1,5773 @@
+{
+  "source_path": "audit\\native30-continuation-2026-10-02\\native55-native.json",
+  "source_sha256": "304b632ad13168da91e4b03e2824f69f053c592f59b3a089756a5e4114445277",
+  "purpose": "Original PC native evidence; embedded managed snapshots are historical Native54 input only, not the latest parents",
+  "methods": [
+    {
+      "token": "0x06000055",
+      "method": "System.Void PathDataEditor::Delete()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "PathDataEditor",
+        "name": "Delete",
+        "token": "0x6000055",
+        "va": "0x1803055b0"
+      },
+      "start": "0x1803055b0",
+      "end": "0x1803056f6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445618608,
+          6445618934
+        ]
+      ],
+      "native_sha256": "60f3f13183053d55654dd7d90d67438cd753bac6d998dbd1d60fc78191d83646",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000055.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803055b0 <.data>:\n   1803055b0:\t40 53                \trex push %rbx\n   1803055b2:\t48 83 ec 20          \tsub    $0x20,%rsp\n   1803055b6:\t80 3d 13 f5 9d 01 00 \tcmpb   $0x0,0x19df513(%rip)        # 0x181ce4ad0\n   1803055bd:\t48 8b d9             \tmov    %rcx,%rbx\n   1803055c0:\t75 2b                \tjne    0x1803055ed\n   1803055c2:\t48 8d 0d 97 4f 8a 01 \tlea    0x18a4f97(%rip),%rcx        # 0x181baa560\n   1803055c9:\te8 22 a9 f4 ff       \tcall   0x18024fef0\n   1803055ce:\t48 8d 0d 73 e8 8a 01 \tlea    0x18ae873(%rip),%rcx        # 0x181bb3e48\n   1803055d5:\te8 16 a9 f4 ff       \tcall   0x18024fef0\n   1803055da:\t48 8d 0d 1f af 8a 01 \tlea    0x18aaf1f(%rip),%rcx        # 0x181bb0500\n   1803055e1:\te8 0a a9 f4 ff       \tcall   0x18024fef0\n   1803055e6:\tc6 05 e3 f4 9d 01 01 \tmovb   $0x1,0x19df4e3(%rip)        # 0x181ce4ad0\n   1803055ed:\t48 8b 43 28          \tmov    0x28(%rbx),%rax\n   1803055f1:\t48 89 74 24 30       \tmov    %rsi,0x30(%rsp)\n   1803055f6:\t48 89 7c 24 38       \tmov    %rdi,0x38(%rsp)\n   1803055fb:\t48 85 c0             \ttest   %rax,%rax\n   1803055fe:\t0f 84 ec 00 00 00    \tje     0x1803056f0\n   180305604:\t48 8b 0d f5 ae 8a 01 \tmov    0x18aaef5(%rip),%rcx        # 0x181bb0500\n   18030560b:\t48 8b 70 40          \tmov    0x40(%rax),%rsi\n   18030560f:\t48 8b 7b 20          \tmov    0x20(%rbx),%rdi\n   180305613:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18030561a:\t75 05                \tjne    0x180305621\n   18030561c:\te8 bf ab f4 ff       \tcall   0x1802501e0\n   180305621:\t45 33 c0             \txor    %r8d,%r8d\n   180305624:\t33 d2                \txor    %edx,%edx\n   180305626:\t48 8b cf             \tmov    %rdi,%rcx\n   180305629:\te8 d2 a2 01 01       \tcall   0x18131f900\n   18030562e:\t84 c0                \ttest   %al,%al\n   180305630:\t0f 84 9d 00 00 00    \tje     0x1803056d3\n   180305636:\t48 8b 43 20          \tmov    0x20(%rbx),%rax\n   18030563a:\t48 85 c0             \ttest   %rax,%rax\n   18030563d:\t0f 84 ad 00 00 00    \tje     0x1803056f0\n   180305643:\t48 8b 48 38          \tmov    0x38(%rax),%rcx\n   180305647:\t48 85 c9             \ttest   %rcx,%rcx\n   18030564a:\t0f 84 a0 00 00 00    \tje     0x1803056f0\n   180305650:\t48 8b 49 30          \tmov    0x30(%rcx),%rcx\n   180305654:\t48 85 c9             \ttest   %rcx,%rcx\n   180305657:\t0f 84 93 00 00 00    \tje     0x1803056f0\n   18030565d:\t4c 8b 05 fc 4e 8a 01 \tmov    0x18a4efc(%rip),%r8        # 0x181baa560\n   180305664:\t48 8b d6             \tmov    %rsi,%rdx\n   180305667:\te8 24 8c 54 00       \tcall   0x18084e290\n   18030566c:\t48 8b 4b 20          \tmov    0x20(%rbx),%rcx\n   180305670:\t48 85 c9             \ttest   %rcx,%rcx\n   180305673:\t74 7b                \tje     0x1803056f0\n   180305675:\t48 8b 49 50          \tmov    0x50(%rcx),%rcx\n   180305679:\t48 85 c9             \ttest   %rcx,%rcx\n   18030567c:\t74 72                \tje     0x1803056f0\n   18030567e:\t4c 8b 05 c3 e7 8a 01 \tmov    0x18ae7c3(%rip),%r8        # 0x181bb3e48\n   180305685:\t48 8b 53 28          \tmov    0x28(%rbx),%rdx\n   180305689:\te8 02 8c 54 00       \tcall   0x18084e290\n   18030568e:\t48 8b 4b 28          \tmov    0x28(%rbx),%rcx\n   180305692:\t48 85 c9             \ttest   %rcx,%rcx\n   180305695:\t74 59                \tje     0x1803056f0\n   180305697:\t33 d2                \txor    %edx,%edx\n   180305699:\te8 32 ee ff 00       \tcall   0x1813044d0\n   18030569e:\t48 8b 0d 5b ae 8a 01 \tmov    0x18aae5b(%rip),%rcx        # 0x181bb0500\n   1803056a5:\t48 8b f8             \tmov    %rax,%rdi\n   1803056a8:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   1803056af:\t75 05                \tjne    0x1803056b6\n   1803056b1:\te8 2a ab f4 ff       \tcall   0x1802501e0\n   1803056b6:\t33 d2                \txor    %edx,%edx\n   1803056b8:\t48 8b cf             \tmov    %rdi,%rcx\n   1803056bb:\te8 80 92 01 01       \tcall   0x18131e940\n   1803056c0:\t48 8d 4b 28          \tlea    0x28(%rbx),%rcx\n   1803056c4:\t48 c7 43 28 00 00 00 \tmovq   $0x0,0x28(%rbx)\n   1803056cb:\t00 \n   1803056cc:\t33 d2                \txor    %edx,%edx\n   1803056ce:\te8 8d 9c f4 ff       \tcall   0x18024f360\n   1803056d3:\t8b 53 38             \tmov    0x38(%rbx),%edx\n   1803056d6:\t45 33 c0             \txor    %r8d,%r8d\n   1803056d9:\t48 8b cb             \tmov    %rbx,%rcx\n   1803056dc:\t48 8b 7c 24 38       \tmov    0x38(%rsp),%rdi\n   1803056e1:\t48 8b 74 24 30       \tmov    0x30(%rsp),%rsi\n   1803056e6:\t48 83 c4 20          \tadd    $0x20,%rsp\n   1803056ea:\t5b                   \tpop    %rbx\n   1803056eb:\te9 10 04 00 00       \tjmp    0x180305b00\n   1803056f0:\te8 5b aa f4 ff       \tcall   0x180250150\n   1803056f5:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void PathDataEditor::Delete()",
+        "token": "0x06000055",
+        "owner": "PathDataEditor",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "PathDataEditor",
+          "Path_enemyEditor",
+          "Enemy_boardEditor",
+          "System.Boolean",
+          "System.Boolean",
+          "Enemy",
+          "Enemy_boardEditor",
+          "System.Boolean",
+          "System.Boolean",
+          "UnityEngine.GameObject"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 209
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "br",
+            "operand": {
+              "target": 10
+            }
+          },
+          {
+            "offset": 10,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Enemy_boardEditor",
+              "identity": "Enemy_boardEditor PathDataEditor::enemy_BoardEditor"
+            }
+          },
+          {
+            "offset": 16,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 17,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object",
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": false,
+              "name": "op_Inequality",
+              "identity": "System.Boolean UnityEngine.Object::op_Inequality(UnityEngine.Object,UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 22,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 26,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 30,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 31,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 33,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 196
+            }
+          },
+          {
+            "offset": 46,
+            "opcode": "br",
+            "operand": {
+              "target": 51
+            }
+          },
+          {
+            "offset": 51,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 52,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Enemy_boardEditor",
+              "identity": "Enemy_boardEditor PathDataEditor::enemy_BoardEditor"
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 61,
+            "opcode": "br",
+            "operand": {
+              "target": 66
+            }
+          },
+          {
+            "offset": 66,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 70,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Enemy_boardEditor",
+              "type": "Enemy",
+              "identity": "Enemy Enemy_boardEditor::preEnemy"
+            }
+          },
+          {
+            "offset": 75,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "br",
+            "operand": {
+              "target": 84
+            }
+          },
+          {
+            "offset": 84,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 88,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Enemy",
+              "type": "System.Collections.Generic.List`1<EnemyPath>",
+              "identity": "System.Collections.Generic.List`1<EnemyPath> Enemy::myPath"
+            }
+          },
+          {
+            "offset": 93,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 97,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Path_enemyEditor",
+              "type": "EnemyPath",
+              "identity": "EnemyPath Path_enemyEditor::enemyPath"
+            }
+          },
+          {
+            "offset": 102,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "Remove",
+              "identity": "System.Boolean System.Collections.Generic.List`1<System.Object>::Remove(!0)"
+            }
+          },
+          {
+            "offset": 107,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 111,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 112,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Enemy_boardEditor",
+              "identity": "Enemy_boardEditor PathDataEditor::enemy_BoardEditor"
+            }
+          },
+          {
+            "offset": 117,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 121,
+            "opcode": "br",
+            "operand": {
+              "target": 126
+            }
+          },
+          {
+            "offset": 126,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 130,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Enemy_boardEditor",
+              "type": "System.Collections.Generic.List`1<Path_enemyEditor>",
+              "identity": "System.Collections.Generic.List`1<Path_enemyEditor> Enemy_boardEditor::path_EnemyEditors"
+            }
+          },
+          {
+            "offset": 135,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 136,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Path_enemyEditor",
+              "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+            }
+          },
+          {
+            "offset": 141,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "Remove",
+              "identity": "System.Boolean System.Collections.Generic.List`1<System.Object>::Remove(!0)"
+            }
+          },
+          {
+            "offset": 146,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 150,
+            "opcode": "br",
+            "operand": {
+              "target": 155
+            }
+          },
+          {
+            "offset": 155,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 156,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Path_enemyEditor",
+              "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+            }
+          },
+          {
+            "offset": 161,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.GameObject",
+              "hasThis": true,
+              "name": "get_gameObject",
+              "identity": "UnityEngine.GameObject UnityEngine.Component::get_gameObject()"
+            }
+          },
+          {
+            "offset": 166,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 170,
+            "opcode": "br",
+            "operand": {
+              "target": 175
+            }
+          },
+          {
+            "offset": 175,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 179,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Void",
+              "hasThis": false,
+              "name": "Destroy",
+              "identity": "System.Void UnityEngine.Object::Destroy(UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 184,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 185,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 186,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Path_enemyEditor",
+              "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+            }
+          },
+          {
+            "offset": 191,
+            "opcode": "br",
+            "operand": {
+              "target": 196
+            }
+          },
+          {
+            "offset": 196,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 197,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 198,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "System.Int32",
+              "identity": "System.Int32 PathDataEditor::pathIndex"
+            }
+          },
+          {
+            "offset": 203,
+            "opcode": "call",
+            "operand": {
+              "owner": "PathDataEditor",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "LoadData",
+              "identity": "System.Void PathDataEditor::LoadData(System.Int32)"
+            }
+          },
+          {
+            "offset": 208,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 209,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 210,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PathDataEditor",
+              "type": "Path_enemyEditor",
+              "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+            }
+          },
+          {
+            "offset": 215,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 219,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 11,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Enemy_boardEditor",
+            "identity": "Enemy_boardEditor PathDataEditor::enemy_BoardEditor"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "enemy_BoardEditor",
+              "token": "0x4000055",
+              "offset": 32,
+              "type_index": 13926
+            }
+          ]
+        },
+        {
+          "cil_offset": 52,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Enemy_boardEditor",
+            "identity": "Enemy_boardEditor PathDataEditor::enemy_BoardEditor"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "enemy_BoardEditor",
+              "token": "0x4000055",
+              "offset": 32,
+              "type_index": 13926
+            }
+          ]
+        },
+        {
+          "cil_offset": 70,
+          "field": {
+            "owner": "Enemy_boardEditor",
+            "type": "Enemy",
+            "identity": "Enemy Enemy_boardEditor::preEnemy"
+          },
+          "original_records": [
+            {
+              "type": "Enemy_boardEditor",
+              "namespace": "",
+              "typeIndex": 5096,
+              "name": "preEnemy",
+              "token": "0x4000051",
+              "offset": 56,
+              "type_index": 13916
+            }
+          ]
+        },
+        {
+          "cil_offset": 88,
+          "field": {
+            "owner": "Enemy",
+            "type": "System.Collections.Generic.List`1<EnemyPath>",
+            "identity": "System.Collections.Generic.List`1<EnemyPath> Enemy::myPath"
+          },
+          "original_records": [
+            {
+              "type": "Enemy",
+              "namespace": "",
+              "typeIndex": 5157,
+              "name": "myPath",
+              "token": "0x40001fd",
+              "offset": 48,
+              "type_index": 7610
+            }
+          ]
+        },
+        {
+          "cil_offset": 97,
+          "field": {
+            "owner": "Path_enemyEditor",
+            "type": "EnemyPath",
+            "identity": "EnemyPath Path_enemyEditor::enemyPath"
+          },
+          "original_records": [
+            {
+              "type": "Path_enemyEditor",
+              "namespace": "",
+              "typeIndex": 5098,
+              "name": "enemyPath",
+              "token": "0x4000068",
+              "offset": 64,
+              "type_index": 13922
+            }
+          ]
+        },
+        {
+          "cil_offset": 112,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Enemy_boardEditor",
+            "identity": "Enemy_boardEditor PathDataEditor::enemy_BoardEditor"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "enemy_BoardEditor",
+              "token": "0x4000055",
+              "offset": 32,
+              "type_index": 13926
+            }
+          ]
+        },
+        {
+          "cil_offset": 130,
+          "field": {
+            "owner": "Enemy_boardEditor",
+            "type": "System.Collections.Generic.List`1<Path_enemyEditor>",
+            "identity": "System.Collections.Generic.List`1<Path_enemyEditor> Enemy_boardEditor::path_EnemyEditors"
+          },
+          "original_records": [
+            {
+              "type": "Enemy_boardEditor",
+              "namespace": "",
+              "typeIndex": 5096,
+              "name": "path_EnemyEditors",
+              "token": "0x4000054",
+              "offset": 80,
+              "type_index": 7719
+            }
+          ]
+        },
+        {
+          "cil_offset": 136,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Path_enemyEditor",
+            "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "pathOnCheke",
+              "token": "0x4000056",
+              "offset": 40,
+              "type_index": 16819
+            }
+          ]
+        },
+        {
+          "cil_offset": 156,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Path_enemyEditor",
+            "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "pathOnCheke",
+              "token": "0x4000056",
+              "offset": 40,
+              "type_index": 16819
+            }
+          ]
+        },
+        {
+          "cil_offset": 186,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Path_enemyEditor",
+            "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "pathOnCheke",
+              "token": "0x4000056",
+              "offset": 40,
+              "type_index": 16819
+            }
+          ]
+        },
+        {
+          "cil_offset": 198,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "System.Int32",
+            "identity": "System.Int32 PathDataEditor::pathIndex"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "pathIndex",
+              "token": "0x4000058",
+              "offset": 56,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 210,
+          "field": {
+            "owner": "PathDataEditor",
+            "type": "Path_enemyEditor",
+            "identity": "Path_enemyEditor PathDataEditor::pathOnCheke"
+          },
+          "original_records": [
+            {
+              "type": "PathDataEditor",
+              "namespace": "",
+              "typeIndex": 5097,
+              "name": "pathOnCheke",
+              "token": "0x4000056",
+              "offset": 40,
+              "type_index": 16819
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 2
+    },
+    {
+      "token": "0x06000110",
+      "method": "Element Damage::FindElement(ElementType)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Damage",
+        "name": "FindElement",
+        "token": "0x6000110",
+        "va": "0x180311b90"
+      },
+      "start": "0x180311b90",
+      "end": "0x180311cc6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445669264,
+          6445669574
+        ]
+      ],
+      "native_sha256": "52ed6b5479d07426b84f8811cfe6e952561aaacb53d742b363db865d28e3370a",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000110.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180311b90 <.data>:\n   180311b90:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   180311b95:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   180311b9a:\t57                   \tpush   %rdi\n   180311b9b:\t48 83 ec 60          \tsub    $0x60,%rsp\n   180311b9f:\t8b f2                \tmov    %edx,%esi\n   180311ba1:\t48 8b d9             \tmov    %rcx,%rbx\n   180311ba4:\t80 3d 9e 2f 9d 01 00 \tcmpb   $0x0,0x19d2f9e(%rip)        # 0x181ce4b49\n   180311bab:\t75 37                \tjne    0x180311be4\n   180311bad:\t48 8d 0d 74 10 8b 01 \tlea    0x18b1074(%rip),%rcx        # 0x181bc2c28\n   180311bb4:\te8 37 e3 f3 ff       \tcall   0x18024fef0\n   180311bb9:\t48 8d 0d c0 10 8b 01 \tlea    0x18b10c0(%rip),%rcx        # 0x181bc2c80\n   180311bc0:\te8 2b e3 f3 ff       \tcall   0x18024fef0\n   180311bc5:\t48 8d 0d 0c 11 8b 01 \tlea    0x18b110c(%rip),%rcx        # 0x181bc2cd8\n   180311bcc:\te8 1f e3 f3 ff       \tcall   0x18024fef0\n   180311bd1:\t48 8d 0d b8 84 89 01 \tlea    0x18984b8(%rip),%rcx        # 0x181baa090\n   180311bd8:\te8 13 e3 f3 ff       \tcall   0x18024fef0\n   180311bdd:\tc6 05 65 2f 9d 01 01 \tmovb   $0x1,0x19d2f65(%rip)        # 0x181ce4b49\n   180311be4:\t48 8b 53 40          \tmov    0x40(%rbx),%rdx\n   180311be8:\t48 85 d2             \ttest   %rdx,%rdx\n   180311beb:\t0f 84 c3 00 00 00    \tje     0x180311cb4\n   180311bf1:\t4c 8b 05 98 84 89 01 \tmov    0x1898498(%rip),%r8        # 0x181baa090\n   180311bf8:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   180311bfd:\te8 ee 7b 50 00       \tcall   0x1808197f0\n   180311c02:\t0f 10 44 24 28       \tmovups 0x28(%rsp),%xmm0\n   180311c07:\t0f 11 44 24 40       \tmovups %xmm0,0x40(%rsp)\n   180311c0c:\tf2 0f 10 4c 24 38    \tmovsd  0x38(%rsp),%xmm1\n   180311c12:\tf2 0f 11 4c 24 50    \tmovsd  %xmm1,0x50(%rsp)\n   180311c18:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   180311c1f:\t00 00 \n   180311c21:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   180311c26:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   180311c2b:\t0f 1f 44 00 00       \tnopl   0x0(%rax,%rax,1)\n   180311c30:\t48 8b 15 49 10 8b 01 \tmov    0x18b1049(%rip),%rdx        # 0x181bc2c80\n   180311c37:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   180311c3c:\te8 3f 76 35 00       \tcall   0x180669280\n   180311c41:\t84 c0                \ttest   %al,%al\n   180311c43:\t74 31                \tje     0x180311c76\n   180311c45:\t48 8b 7c 24 50       \tmov    0x50(%rsp),%rdi\n   180311c4a:\t48 85 ff             \ttest   %rdi,%rdi\n   180311c4d:\t74 6b                \tje     0x180311cba\n   180311c4f:\t39 77 20             \tcmp    %esi,0x20(%rdi)\n   180311c52:\t75 dc                \tjne    0x180311c30\n   180311c54:\t48 8b 15 cd 0f 8b 01 \tmov    0x18b0fcd(%rip),%rdx        # 0x181bc2c28\n   180311c5b:\t48 8b cb             \tmov    %rbx,%rcx\n   180311c5e:\te8 0d 05 ff ff       \tcall   0x180302170\n   180311c63:\t48 8b c7             \tmov    %rdi,%rax\n   180311c66:\t48 8b 5c 24 70       \tmov    0x70(%rsp),%rbx\n   180311c6b:\t48 8b 74 24 78       \tmov    0x78(%rsp),%rsi\n   180311c70:\t48 83 c4 60          \tadd    $0x60,%rsp\n   180311c74:\t5f                   \tpop    %rdi\n   180311c75:\tc3                   \tret\n   180311c76:\t48 8b 15 ab 0f 8b 01 \tmov    0x18b0fab(%rip),%rdx        # 0x181bc2c28\n   180311c7d:\t48 8b cb             \tmov    %rbx,%rcx\n   180311c80:\te8 eb 04 ff ff       \tcall   0x180302170\n   180311c85:\teb 1b                \tjmp    0x180311ca2\n   180311c87:\t48 8b 15 9a 0f 8b 01 \tmov    0x18b0f9a(%rip),%rdx        # 0x181bc2c28\n   180311c8e:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   180311c93:\te8 d8 04 ff ff       \tcall   0x180302170\n   180311c98:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   180311c9d:\t48 85 c9             \ttest   %rcx,%rcx\n   180311ca0:\t75 1e                \tjne    0x180311cc0\n   180311ca2:\t33 c0                \txor    %eax,%eax\n   180311ca4:\t48 8b 5c 24 70       \tmov    0x70(%rsp),%rbx\n   180311ca9:\t48 8b 74 24 78       \tmov    0x78(%rsp),%rsi\n   180311cae:\t48 83 c4 60          \tadd    $0x60,%rsp\n   180311cb2:\t5f                   \tpop    %rdi\n   180311cb3:\tc3                   \tret\n   180311cb4:\te8 97 e4 f3 ff       \tcall   0x180250150\n   180311cb9:\t90                   \tnop\n   180311cba:\te8 91 e4 f3 ff       \tcall   0x180250150\n   180311cbf:\t90                   \tnop\n   180311cc0:\te8 9b f1 ee ff       \tcall   0x180200e60\n   180311cc5:\tcc                   \tint3\n",
+      "managed": {
+        "name": "Element Damage::FindElement(ElementType)",
+        "token": "0x06000110",
+        "owner": "Damage",
+        "ret": "Element",
+        "hasThis": true,
+        "args": [
+          "ElementType"
+        ],
+        "locals": [
+          "ElementType",
+          "System.Object",
+          "System.Object",
+          "Element",
+          "System.Boolean",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "System.Boolean",
+          "System.Boolean",
+          "Element",
+          "System.Boolean",
+          "System.Object",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "Damage",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "Method not found @1808197F0"
+          },
+          {
+            "offset": 10,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "br",
+            "operand": {
+              "target": 134
+            }
+          },
+          {
+            "offset": 16,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 20,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 25,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 27,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 31,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 35,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 39,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 43,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 118
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "br",
+            "operand": {
+              "target": 53
+            }
+          },
+          {
+            "offset": 53,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Element",
+              "type": "ElementType",
+              "identity": "ElementType Element::type"
+            }
+          },
+          {
+            "offset": 62,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 66,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 68,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 69,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 71,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 75,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 134
+            }
+          },
+          {
+            "offset": 84,
+            "opcode": "br",
+            "operand": {
+              "target": 89
+            }
+          },
+          {
+            "offset": 89,
+            "opcode": "ldstr",
+            "operand": "Method not found @180302170"
+          },
+          {
+            "offset": 94,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 95,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 100,
+            "opcode": "ldstr",
+            "operand": "Method not found @180302170"
+          },
+          {
+            "offset": 105,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 106,
+            "opcode": "br",
+            "operand": {
+              "target": 111
+            }
+          },
+          {
+            "offset": 111,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 112,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 113,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 117,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 118,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 124,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 128,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 129,
+            "opcode": "br",
+            "operand": {
+              "target": 113
+            }
+          },
+          {
+            "offset": 134,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 138,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "MoveNext",
+              "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+            }
+          },
+          {
+            "offset": 143,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 147,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 152,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 154,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 158,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 162,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 100
+            }
+          },
+          {
+            "offset": 167,
+            "opcode": "br",
+            "operand": {
+              "target": 16
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 57,
+          "field": {
+            "owner": "Element",
+            "type": "ElementType",
+            "identity": "ElementType Element::type"
+          },
+          "original_records": [
+            {
+              "type": "Element",
+              "namespace": "",
+              "typeIndex": 5130,
+              "name": "type",
+              "token": "0x4000146",
+              "offset": 32,
+              "type_index": 13866
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 2
+    },
+    {
+      "token": "0x0600023C",
+      "method": "System.Void SavesManager::DeletePlayerSave_ID(System.Int32)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "SavesManager",
+        "name": "DeletePlayerSave_ID",
+        "token": "0x600023c",
+        "va": "0x18033e650"
+      },
+      "start": "0x18033e650",
+      "end": "0x18033e784",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445852240,
+          6445852548
+        ]
+      ],
+      "native_sha256": "8f96c6be0019c7efecfcc3c174995ca86c7f81d9a3e788e3578c645cb31da196",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x0600023C.bin:     file format binary\n\n\nDisassembly of section .data:\n\n000000018033e650 <.data>:\n   18033e650:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   18033e655:\t57                   \tpush   %rdi\n   18033e656:\t48 83 ec 20          \tsub    $0x20,%rsp\n   18033e65a:\t80 3d d2 65 9a 01 00 \tcmpb   $0x0,0x19a65d2(%rip)        # 0x181ce4c33\n   18033e661:\t8b fa                \tmov    %edx,%edi\n   18033e663:\t48 8b d9             \tmov    %rcx,%rbx\n   18033e666:\t75 2b                \tjne    0x18033e693\n   18033e668:\t48 8d 0d 99 9e 87 01 \tlea    0x1879e99(%rip),%rcx        # 0x181bb8508\n   18033e66f:\te8 7c 18 f1 ff       \tcall   0x18024fef0\n   18033e674:\t48 8d 0d e5 9e 87 01 \tlea    0x1879ee5(%rip),%rcx        # 0x181bb8560\n   18033e67b:\te8 70 18 f1 ff       \tcall   0x18024fef0\n   18033e680:\t48 8d 0d 31 9f 87 01 \tlea    0x1879f31(%rip),%rcx        # 0x181bb85b8\n   18033e687:\te8 64 18 f1 ff       \tcall   0x18024fef0\n   18033e68c:\tc6 05 a0 65 9a 01 01 \tmovb   $0x1,0x19a65a0(%rip)        # 0x181ce4c33\n   18033e693:\t48 8b 43 18          \tmov    0x18(%rbx),%rax\n   18033e697:\t48 85 c0             \ttest   %rax,%rax\n   18033e69a:\t0f 84 de 00 00 00    \tje     0x18033e77e\n   18033e6a0:\t48 8b 48 18          \tmov    0x18(%rax),%rcx\n   18033e6a4:\t48 85 c9             \ttest   %rcx,%rcx\n   18033e6a7:\t0f 84 d1 00 00 00    \tje     0x18033e77e\n   18033e6ad:\t4c 8b 05 04 9f 87 01 \tmov    0x1879f04(%rip),%r8        # 0x181bb85b8\n   18033e6b4:\t8b d7                \tmov    %edi,%edx\n   18033e6b6:\te8 55 70 4e 00       \tcall   0x180825710\n   18033e6bb:\t48 8b 4b 18          \tmov    0x18(%rbx),%rcx\n   18033e6bf:\t48 8b f8             \tmov    %rax,%rdi\n   18033e6c2:\t48 85 c9             \ttest   %rcx,%rcx\n   18033e6c5:\t0f 84 b3 00 00 00    \tje     0x18033e77e\n   18033e6cb:\t48 8b 49 18          \tmov    0x18(%rcx),%rcx\n   18033e6cf:\t48 85 c9             \ttest   %rcx,%rcx\n   18033e6d2:\t0f 84 a6 00 00 00    \tje     0x18033e77e\n   18033e6d8:\t4c 8b 05 29 9e 87 01 \tmov    0x1879e29(%rip),%r8        # 0x181bb8508\n   18033e6df:\t48 8b d0             \tmov    %rax,%rdx\n   18033e6e2:\te8 a9 fb 50 00       \tcall   0x18084e290\n   18033e6e7:\t48 39 7b 10          \tcmp    %rdi,0x10(%rbx)\n   18033e6eb:\t75 7d                \tjne    0x18033e76a\n   18033e6ed:\t48 8b 43 18          \tmov    0x18(%rbx),%rax\n   18033e6f1:\t48 85 c0             \ttest   %rax,%rax\n   18033e6f4:\t0f 84 84 00 00 00    \tje     0x18033e77e\n   18033e6fa:\t48 8b 48 18          \tmov    0x18(%rax),%rcx\n   18033e6fe:\t48 85 c9             \ttest   %rcx,%rcx\n   18033e701:\t74 7b                \tje     0x18033e77e\n   18033e703:\t83 79 18 00          \tcmpl   $0x0,0x18(%rcx)\n   18033e707:\t7f 0c                \tjg     0x18033e715\n   18033e709:\t33 d2                \txor    %edx,%edx\n   18033e70b:\t48 8b cb             \tmov    %rbx,%rcx\n   18033e70e:\te8 dd 1d 00 00       \tcall   0x1803404f0\n   18033e713:\teb 4b                \tjmp    0x18033e760\n   18033e715:\t48 85 c0             \ttest   %rax,%rax\n   18033e718:\t74 64                \tje     0x18033e77e\n   18033e71a:\t48 85 c9             \ttest   %rcx,%rcx\n   18033e71d:\t74 5f                \tje     0x18033e77e\n   18033e71f:\t4c 8b 05 92 9e 87 01 \tmov    0x1879e92(%rip),%r8        # 0x181bb85b8\n   18033e726:\t33 d2                \txor    %edx,%edx\n   18033e728:\te8 e3 6f 4e 00       \tcall   0x180825710\n   18033e72d:\t48 8d 4b 10          \tlea    0x10(%rbx),%rcx\n   18033e731:\t48 89 43 10          \tmov    %rax,0x10(%rbx)\n   18033e735:\t48 8b d0             \tmov    %rax,%rdx\n   18033e738:\te8 23 0c f1 ff       \tcall   0x18024f360\n   18033e73d:\t48 8b 53 10          \tmov    0x10(%rbx),%rdx\n   18033e741:\t48 85 d2             \ttest   %rdx,%rdx\n   18033e744:\t74 38                \tje     0x18033e77e\n   18033e746:\t48 8b 4b 18          \tmov    0x18(%rbx),%rcx\n   18033e74a:\t48 8b 52 18          \tmov    0x18(%rdx),%rdx\n   18033e74e:\t48 85 c9             \ttest   %rcx,%rcx\n   18033e751:\t74 2b                \tje     0x18033e77e\n   18033e753:\t48 89 51 10          \tmov    %rdx,0x10(%rcx)\n   18033e757:\t48 83 c1 10          \tadd    $0x10,%rcx\n   18033e75b:\te8 00 0c f1 ff       \tcall   0x18024f360\n   18033e760:\t33 d2                \txor    %edx,%edx\n   18033e762:\t48 8b cb             \tmov    %rbx,%rcx\n   18033e765:\te8 86 0d 00 00       \tcall   0x18033f4f0\n   18033e76a:\t33 d2                \txor    %edx,%edx\n   18033e76c:\t48 8b cb             \tmov    %rbx,%rcx\n   18033e76f:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   18033e774:\t48 83 c4 20          \tadd    $0x20,%rsp\n   18033e778:\t5f                   \tpop    %rdi\n   18033e779:\te9 72 1b 00 00       \tjmp    0x1803402f0\n   18033e77e:\te8 cd 19 f1 ff       \tcall   0x180250150\n   18033e783:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void SavesManager::DeletePlayerSave_ID(System.Int32)",
+        "token": "0x0600023C",
+        "owner": "SavesManager",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "System.Int32"
+        ],
+        "locals": [
+          "System.Int32",
+          "SavesManager",
+          "SaveList",
+          "Save",
+          "Save",
+          "SaveList",
+          "SaveList",
+          "System.Collections.Generic.List`1<Save>",
+          "SaveList",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "Save"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 279
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SaveList",
+              "type": "System.Collections.Generic.List`1<Save>",
+              "identity": "System.Collections.Generic.List`1<Save> SaveList::saveList"
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 18,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Save>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "Save",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<Save>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 23,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 27,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 28,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "SaveList",
+              "identity": "SaveList SavesManager::saveList"
+            }
+          },
+          {
+            "offset": 33,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "br",
+            "operand": {
+              "target": 42
+            }
+          },
+          {
+            "offset": 42,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 46,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SaveList",
+              "type": "System.Collections.Generic.List`1<Save>",
+              "identity": "System.Collections.Generic.List`1<Save> SaveList::saveList"
+            }
+          },
+          {
+            "offset": 51,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 55,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "Remove",
+              "identity": "System.Boolean System.Collections.Generic.List`1<System.Object>::Remove(!0)"
+            }
+          },
+          {
+            "offset": 60,
+            "opcode": "stloc",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 64,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 65,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "Save",
+              "identity": "Save SavesManager::playerSave"
+            }
+          },
+          {
+            "offset": 70,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 74,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 76,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 77,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 79,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 83,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 87,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 272
+            }
+          },
+          {
+            "offset": 92,
+            "opcode": "br",
+            "operand": {
+              "target": 97
+            }
+          },
+          {
+            "offset": 97,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 98,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "SaveList",
+              "identity": "SaveList SavesManager::saveList"
+            }
+          },
+          {
+            "offset": 103,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 107,
+            "opcode": "br",
+            "operand": {
+              "target": 112
+            }
+          },
+          {
+            "offset": 112,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 116,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SaveList",
+              "type": "System.Collections.Generic.List`1<Save>",
+              "identity": "System.Collections.Generic.List`1<Save> SaveList::saveList"
+            }
+          },
+          {
+            "offset": 121,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 125,
+            "opcode": "br",
+            "operand": {
+              "target": 130
+            }
+          },
+          {
+            "offset": 130,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 134,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Save>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Save>::_size"
+            }
+          },
+          {
+            "offset": 139,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 144,
+            "opcode": "cgt",
+            "operand": null
+          },
+          {
+            "offset": 146,
+            "opcode": "stloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 150,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 154,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 175
+            }
+          },
+          {
+            "offset": 159,
+            "opcode": "br",
+            "operand": {
+              "target": 164
+            }
+          },
+          {
+            "offset": 164,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 165,
+            "opcode": "call",
+            "operand": {
+              "owner": "SavesManager",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "TryCreateNewPlayerSave",
+              "identity": "System.Void SavesManager::TryCreateNewPlayerSave()"
+            }
+          },
+          {
+            "offset": 170,
+            "opcode": "br",
+            "operand": {
+              "target": 261
+            }
+          },
+          {
+            "offset": 175,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 179,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 184,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Save>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "Save",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<Save>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 189,
+            "opcode": "stloc",
+            "operand": {
+              "index": 12
+            }
+          },
+          {
+            "offset": 193,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 194,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 12
+            }
+          },
+          {
+            "offset": 198,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "Save",
+              "identity": "Save SavesManager::playerSave"
+            }
+          },
+          {
+            "offset": 203,
+            "opcode": "br",
+            "operand": {
+              "target": 208
+            }
+          },
+          {
+            "offset": 208,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 209,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "Save",
+              "identity": "Save SavesManager::playerSave"
+            }
+          },
+          {
+            "offset": 214,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 218,
+            "opcode": "br",
+            "operand": {
+              "target": 223
+            }
+          },
+          {
+            "offset": 223,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 224,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "SaveList",
+              "identity": "SaveList SavesManager::saveList"
+            }
+          },
+          {
+            "offset": 229,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 233,
+            "opcode": "br",
+            "operand": {
+              "target": 238
+            }
+          },
+          {
+            "offset": 238,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 242,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 246,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Save",
+              "type": "System.String",
+              "identity": "System.String Save::playerName"
+            }
+          },
+          {
+            "offset": 251,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "SaveList",
+              "type": "System.String",
+              "identity": "System.String SaveList::defaultPlayerName"
+            }
+          },
+          {
+            "offset": 256,
+            "opcode": "br",
+            "operand": {
+              "target": 261
+            }
+          },
+          {
+            "offset": 261,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 262,
+            "opcode": "call",
+            "operand": {
+              "owner": "SavesManager",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "LoadBaseData",
+              "identity": "System.Void SavesManager::LoadBaseData()"
+            }
+          },
+          {
+            "offset": 267,
+            "opcode": "br",
+            "operand": {
+              "target": 272
+            }
+          },
+          {
+            "offset": 272,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 273,
+            "opcode": "call",
+            "operand": {
+              "owner": "SavesManager",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "SavePlayerSave",
+              "identity": "System.Void SavesManager::SavePlayerSave()"
+            }
+          },
+          {
+            "offset": 278,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 279,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 280,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SavesManager",
+              "type": "SaveList",
+              "identity": "SaveList SavesManager::saveList"
+            }
+          },
+          {
+            "offset": 285,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 289,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 9,
+          "field": {
+            "owner": "SaveList",
+            "type": "System.Collections.Generic.List`1<Save>",
+            "identity": "System.Collections.Generic.List`1<Save> SaveList::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SaveList",
+              "namespace": "",
+              "typeIndex": 5223,
+              "name": "saveList",
+              "token": "0x400064e",
+              "offset": 24,
+              "type_index": 7778
+            }
+          ]
+        },
+        {
+          "cil_offset": 28,
+          "field": {
+            "owner": "SavesManager",
+            "type": "SaveList",
+            "identity": "SaveList SavesManager::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "saveList",
+              "token": "0x4000311",
+              "offset": 24,
+              "type_index": 17824
+            }
+          ]
+        },
+        {
+          "cil_offset": 46,
+          "field": {
+            "owner": "SaveList",
+            "type": "System.Collections.Generic.List`1<Save>",
+            "identity": "System.Collections.Generic.List`1<Save> SaveList::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SaveList",
+              "namespace": "",
+              "typeIndex": 5223,
+              "name": "saveList",
+              "token": "0x400064e",
+              "offset": 24,
+              "type_index": 7778
+            }
+          ]
+        },
+        {
+          "cil_offset": 65,
+          "field": {
+            "owner": "SavesManager",
+            "type": "Save",
+            "identity": "Save SavesManager::playerSave"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "playerSave",
+              "token": "0x4000310",
+              "offset": 16,
+              "type_index": 17822
+            }
+          ]
+        },
+        {
+          "cil_offset": 98,
+          "field": {
+            "owner": "SavesManager",
+            "type": "SaveList",
+            "identity": "SaveList SavesManager::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "saveList",
+              "token": "0x4000311",
+              "offset": 24,
+              "type_index": 17824
+            }
+          ]
+        },
+        {
+          "cil_offset": 116,
+          "field": {
+            "owner": "SaveList",
+            "type": "System.Collections.Generic.List`1<Save>",
+            "identity": "System.Collections.Generic.List`1<Save> SaveList::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SaveList",
+              "namespace": "",
+              "typeIndex": 5223,
+              "name": "saveList",
+              "token": "0x400064e",
+              "offset": 24,
+              "type_index": 7778
+            }
+          ]
+        },
+        {
+          "cil_offset": 134,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Save>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Save>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 198,
+          "field": {
+            "owner": "SavesManager",
+            "type": "Save",
+            "identity": "Save SavesManager::playerSave"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "playerSave",
+              "token": "0x4000310",
+              "offset": 16,
+              "type_index": 17822
+            }
+          ]
+        },
+        {
+          "cil_offset": 209,
+          "field": {
+            "owner": "SavesManager",
+            "type": "Save",
+            "identity": "Save SavesManager::playerSave"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "playerSave",
+              "token": "0x4000310",
+              "offset": 16,
+              "type_index": 17822
+            }
+          ]
+        },
+        {
+          "cil_offset": 224,
+          "field": {
+            "owner": "SavesManager",
+            "type": "SaveList",
+            "identity": "SaveList SavesManager::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "saveList",
+              "token": "0x4000311",
+              "offset": 24,
+              "type_index": 17824
+            }
+          ]
+        },
+        {
+          "cil_offset": 246,
+          "field": {
+            "owner": "Save",
+            "type": "System.String",
+            "identity": "System.String Save::playerName"
+          },
+          "original_records": [
+            {
+              "type": "Save",
+              "namespace": "",
+              "typeIndex": 5221,
+              "name": "playerName",
+              "token": "0x4000627",
+              "offset": 24,
+              "type_index": 18412
+            }
+          ]
+        },
+        {
+          "cil_offset": 251,
+          "field": {
+            "owner": "SaveList",
+            "type": "System.String",
+            "identity": "System.String SaveList::defaultPlayerName"
+          },
+          "original_records": [
+            {
+              "type": "SaveList",
+              "namespace": "",
+              "typeIndex": 5223,
+              "name": "defaultPlayerName",
+              "token": "0x400064d",
+              "offset": 16,
+              "type_index": 18412
+            }
+          ]
+        },
+        {
+          "cil_offset": 280,
+          "field": {
+            "owner": "SavesManager",
+            "type": "SaveList",
+            "identity": "SaveList SavesManager::saveList"
+          },
+          "original_records": [
+            {
+              "type": "SavesManager",
+              "namespace": "",
+              "typeIndex": 5170,
+              "name": "saveList",
+              "token": "0x4000311",
+              "offset": 24,
+              "type_index": 17824
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x060002C3",
+      "method": "System.Void Board::GameWin(System.Single)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Board",
+        "name": "GameWin",
+        "token": "0x60002c3",
+        "va": "0x180326eb0"
+      },
+      "start": "0x180326eb0",
+      "end": "0x180326fd6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445756080,
+          6445756268
+        ],
+        [
+          6445756268,
+          6445756368
+        ],
+        [
+          6445756368,
+          6445756374
+        ]
+      ],
+      "native_sha256": "7e3ee0b0f2ac8771fc728ee2121f7160beef75f3ff6c9c76988a4d6c50a637eb",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060002C3.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180326eb0 <.data>:\n   180326eb0:\t40 53                \trex push %rbx\n   180326eb2:\t48 83 ec 40          \tsub    $0x40,%rsp\n   180326eb6:\t80 3d d7 dd 9b 01 00 \tcmpb   $0x0,0x19bddd7(%rip)        # 0x181ce4c94\n   180326ebd:\t48 8b d9             \tmov    %rcx,%rbx\n   180326ec0:\t0f 29 74 24 30       \tmovaps %xmm6,0x30(%rsp)\n   180326ec5:\t0f 28 f1             \tmovaps %xmm1,%xmm6\n   180326ec8:\t75 2b                \tjne    0x180326ef5\n   180326eca:\t48 8d 0d 47 b1 87 01 \tlea    0x187b147(%rip),%rcx        # 0x181ba2018\n   180326ed1:\te8 1a 90 f2 ff       \tcall   0x18024fef0\n   180326ed6:\t48 8d 0d 9b d3 87 01 \tlea    0x187d39b(%rip),%rcx        # 0x181ba4278\n   180326edd:\te8 0e 90 f2 ff       \tcall   0x18024fef0\n   180326ee2:\t48 8d 0d 8f f5 88 01 \tlea    0x188f58f(%rip),%rcx        # 0x181bb6478\n   180326ee9:\te8 02 90 f2 ff       \tcall   0x18024fef0\n   180326eee:\tc6 05 9f dd 9b 01 01 \tmovb   $0x1,0x19bdd9f(%rip)        # 0x181ce4c94\n   180326ef5:\tf3 0f 10 05 13 0b 28 \tmovss  0x1280b13(%rip),%xmm0        # 0x1815a7a10\n   180326efc:\t01 \n   180326efd:\t33 d2                \txor    %edx,%edx\n   180326eff:\tf3 0f 11 73 3c       \tmovss  %xmm6,0x3c(%rbx)\n   180326f04:\tc7 43 44 00 00 80 3f \tmovl   $0x3f800000,0x44(%rbx)\n   180326f0b:\te8 f0 55 00 01       \tcall   0x18132c500\n   180326f10:\t48 8b 8b a0 00 00 00 \tmov    0xa0(%rbx),%rcx\n   180326f17:\t48 85 c9             \ttest   %rcx,%rcx\n   180326f1a:\t0f 84 b0 00 00 00    \tje     0x180326fd0\n   180326f20:\t45 33 c0             \txor    %r8d,%r8d\n   180326f23:\t33 d2                \txor    %edx,%edx\n   180326f25:\te8 a6 4b ff 00       \tcall   0x18131bad0\n   180326f2a:\tc6 43 39 01          \tmovb   $0x1,0x39(%rbx)\n   180326f2e:\t48 8b 05 43 f5 88 01 \tmov    0x188f543(%rip),%rax        # 0x181bb6478\n   180326f35:\t83 b8 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rax)\n   180326f3c:\t75 0f                \tjne    0x180326f4d\n   180326f3e:\t48 8b c8             \tmov    %rax,%rcx\n   180326f41:\te8 9a 92 f2 ff       \tcall   0x1802501e0\n   180326f46:\t48 8b 05 2b f5 88 01 \tmov    0x188f52b(%rip),%rax        # 0x181bb6478\n   180326f4d:\t48 8b 80 b8 00 00 00 \tmov    0xb8(%rax),%rax\n   180326f54:\t48 8b 88 00 01 00 00 \tmov    0x100(%rax),%rcx\n   180326f5b:\t48 85 c9             \ttest   %rcx,%rcx\n   180326f5e:\t74 70                \tje     0x180326fd0\n   180326f60:\t4c 8b 05 11 d3 87 01 \tmov    0x187d311(%rip),%r8        # 0x181ba4278\n   180326f67:\tba 0a 00 00 00       \tmov    $0xa,%edx\n   180326f6c:\t48 89 7c 24 50       \tmov    %rdi,0x50(%rsp)\n   180326f71:\te8 9a e7 4f 00       \tcall   0x180825710\n   180326f76:\t48 8b 0d 9b b0 87 01 \tmov    0x187b09b(%rip),%rcx        # 0x181ba2018\n   180326f7d:\t48 8b f8             \tmov    %rax,%rdi\n   180326f80:\tf2 0f 10 b3 64 01 00 \tmovsd  0x164(%rbx),%xmm6\n   180326f87:\t00 \n   180326f88:\t8b 9b 6c 01 00 00    \tmov    0x16c(%rbx),%ebx\n   180326f8e:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   180326f95:\t75 05                \tjne    0x180326f9c\n   180326f97:\te8 44 92 f2 ff       \tcall   0x1802501e0\n   180326f9c:\t33 c9                \txor    %ecx,%ecx\n   180326f9e:\te8 fd 3e ff ff       \tcall   0x18031aea0\n   180326fa3:\t45 33 c9             \txor    %r9d,%r9d\n   180326fa6:\tf2 0f 11 74 24 20    \tmovsd  %xmm6,0x20(%rsp)\n   180326fac:\t0f 28 d0             \tmovaps %xmm0,%xmm2\n   180326faf:\t89 5c 24 28          \tmov    %ebx,0x28(%rsp)\n   180326fb3:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   180326fb8:\t48 8b cf             \tmov    %rdi,%rcx\n   180326fbb:\te8 70 42 ff ff       \tcall   0x18031b230\n   180326fc0:\t48 8b 7c 24 50       \tmov    0x50(%rsp),%rdi\n   180326fc5:\t0f 28 74 24 30       \tmovaps 0x30(%rsp),%xmm6\n   180326fca:\t48 83 c4 40          \tadd    $0x40,%rsp\n   180326fce:\t5b                   \tpop    %rbx\n   180326fcf:\tc3                   \tret\n   180326fd0:\te8 7b 91 f2 ff       \tcall   0x180250150\n   180326fd5:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void Board::GameWin(System.Single)",
+        "token": "0x060002C3",
+        "owner": "Board",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "System.Single"
+        ],
+        "locals": [
+          "System.Single",
+          "System.Single",
+          "UnityEngine.AudioSource",
+          "UnityEngine.AudioClip",
+          "Board",
+          "System.IntPtr",
+          "UnityEngine.Vector3"
+        ],
+        "maxStack": 3,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 98
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 6,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "UnityEngine.GameObject",
+              "identity": "UnityEngine.GameObject Board::buttomButtons"
+            }
+          },
+          {
+            "offset": 11,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 16,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [
+                "System.Boolean"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "SetActive",
+              "identity": "System.Void UnityEngine.GameObject::SetActive(System.Boolean)"
+            }
+          },
+          {
+            "offset": 21,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 22,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 27,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Boolean",
+              "identity": "System.Boolean Board::isWon"
+            }
+          },
+          {
+            "offset": 32,
+            "opcode": "br",
+            "operand": {
+              "target": 37
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "ldsfld",
+            "operand": {
+              "owner": "ResourceManager",
+              "type": "System.Collections.Generic.List`1<UnityEngine.AudioClip>",
+              "identity": "System.Collections.Generic.List`1<UnityEngine.AudioClip> ResourceManager::boardClips"
+            }
+          },
+          {
+            "offset": 42,
+            "opcode": "ldc.i4",
+            "operand": 10
+          },
+          {
+            "offset": 47,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<UnityEngine.AudioClip>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "UnityEngine.AudioClip",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<UnityEngine.AudioClip>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 52,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 56,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 57,
+            "opcode": "br",
+            "operand": {
+              "target": 62
+            }
+          },
+          {
+            "offset": 62,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [],
+              "ret": "System.Single",
+              "hasThis": false,
+              "name": "AudioVolume",
+              "identity": "System.Single GlobalStaticVars::AudioVolume()"
+            }
+          },
+          {
+            "offset": 67,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 71,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 75,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 83,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [
+                "UnityEngine.AudioClip",
+                "UnityEngine.Vector3",
+                "System.Single"
+              ],
+              "ret": "UnityEngine.AudioSource",
+              "hasThis": false,
+              "name": "CreateAudioAtPoint",
+              "identity": "UnityEngine.AudioSource GlobalStaticVars::CreateAudioAtPoint(UnityEngine.AudioClip,UnityEngine.Vector3,System.Single)"
+            }
+          },
+          {
+            "offset": 88,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 92,
+            "opcode": "br",
+            "operand": {
+              "target": 97
+            }
+          },
+          {
+            "offset": 97,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 98,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 99,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 103,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Single",
+              "identity": "System.Single Board::endTime"
+            }
+          },
+          {
+            "offset": 108,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 109,
+            "opcode": "ldc.r4",
+            "operand": 1
+          },
+          {
+            "offset": 114,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Single",
+              "identity": "System.Single Board::gameSpeed"
+            }
+          },
+          {
+            "offset": 119,
+            "opcode": "ldc.r4",
+            "operand": 1
+          },
+          {
+            "offset": 124,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Time",
+              "args": [
+                "System.Single"
+              ],
+              "ret": "System.Void",
+              "hasThis": false,
+              "name": "set_timeScale",
+              "identity": "System.Void UnityEngine.Time::set_timeScale(System.Single)"
+            }
+          },
+          {
+            "offset": 129,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 6,
+          "field": {
+            "owner": "Board",
+            "type": "UnityEngine.GameObject",
+            "identity": "UnityEngine.GameObject Board::buttomButtons"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "buttomButtons",
+              "token": "0x40003ca",
+              "offset": 160,
+              "type_index": 14560
+            }
+          ]
+        },
+        {
+          "cil_offset": 27,
+          "field": {
+            "owner": "Board",
+            "type": "System.Boolean",
+            "identity": "System.Boolean Board::isWon"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "isWon",
+              "token": "0x40003b7",
+              "offset": 57,
+              "type_index": 12427
+            }
+          ]
+        },
+        {
+          "cil_offset": 37,
+          "field": {
+            "owner": "ResourceManager",
+            "type": "System.Collections.Generic.List`1<UnityEngine.AudioClip>",
+            "identity": "System.Collections.Generic.List`1<UnityEngine.AudioClip> ResourceManager::boardClips"
+          },
+          "original_records": [
+            {
+              "type": "ResourceManager",
+              "namespace": "",
+              "typeIndex": 5169,
+              "name": "boardClips",
+              "token": "0x40002eb",
+              "offset": 256,
+              "type_index": 7534
+            }
+          ]
+        },
+        {
+          "cil_offset": 103,
+          "field": {
+            "owner": "Board",
+            "type": "System.Single",
+            "identity": "System.Single Board::endTime"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "endTime",
+              "token": "0x40003b8",
+              "offset": 60,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 114,
+          "field": {
+            "owner": "Board",
+            "type": "System.Single",
+            "identity": "System.Single Board::gameSpeed"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "gameSpeed",
+              "token": "0x40003bc",
+              "offset": 68,
+              "type_index": 18124
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x06000463",
+      "method": "System.Void Zombie::InsertPassNode_front(EnemyPath)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Zombie",
+        "name": "InsertPassNode_front",
+        "token": "0x6000463",
+        "va": "0x180365880"
+      },
+      "start": "0x180365880",
+      "end": "0x180365961",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446012544,
+          6446012769
+        ]
+      ],
+      "native_sha256": "5abc9a0c54e1f4b21a740766bdd1e613d791fece360c1cee8e72c305e86853be",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000463.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180365880 <.data>:\n   180365880:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   180365885:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   18036588a:\t57                   \tpush   %rdi\n   18036588b:\t48 83 ec 20          \tsub    $0x20,%rsp\n   18036588f:\t80 3d e0 f4 97 01 00 \tcmpb   $0x0,0x197f4e0(%rip)        # 0x181ce4d76\n   180365896:\t48 8b f2             \tmov    %rdx,%rsi\n   180365899:\t48 8b f9             \tmov    %rcx,%rdi\n   18036589c:\t75 1f                \tjne    0x1803658bd\n   18036589e:\t48 8d 0d 6b 4d 84 01 \tlea    0x1844d6b(%rip),%rcx        # 0x181baa610\n   1803658a5:\te8 46 a6 ee ff       \tcall   0x18024fef0\n   1803658aa:\t48 8d 0d b7 4d 84 01 \tlea    0x1844db7(%rip),%rcx        # 0x181baa668\n   1803658b1:\te8 3a a6 ee ff       \tcall   0x18024fef0\n   1803658b6:\tc6 05 b9 f4 97 01 01 \tmovb   $0x1,0x197f4b9(%rip)        # 0x181ce4d76\n   1803658bd:\t48 8b 87 20 01 00 00 \tmov    0x120(%rdi),%rax\n   1803658c4:\t33 db                \txor    %ebx,%ebx\n   1803658c6:\t8b cb                \tmov    %ebx,%ecx\n   1803658c8:\t48 85 c0             \ttest   %rax,%rax\n   1803658cb:\t0f 84 8a 00 00 00    \tje     0x18036595b\n   1803658d1:\t3b 48 18             \tcmp    0x18(%rax),%ecx\n   1803658d4:\t7d 37                \tjge    0x18036590d\n   1803658d6:\t48 8b 8f 20 01 00 00 \tmov    0x120(%rdi),%rcx\n   1803658dd:\t48 85 c9             \ttest   %rcx,%rcx\n   1803658e0:\t74 79                \tje     0x18036595b\n   1803658e2:\t4c 8b 05 7f 4d 84 01 \tmov    0x1844d7f(%rip),%r8        # 0x181baa668\n   1803658e9:\t8b d3                \tmov    %ebx,%edx\n   1803658eb:\te8 20 fe 4b 00       \tcall   0x180825710\n   1803658f0:\t48 85 c0             \ttest   %rax,%rax\n   1803658f3:\t74 66                \tje     0x18036595b\n   1803658f5:\t80 78 28 00          \tcmpb   $0x0,0x28(%rax)\n   1803658f9:\t74 12                \tje     0x18036590d\n   1803658fb:\t48 8b 87 20 01 00 00 \tmov    0x120(%rdi),%rax\n   180365902:\tff c3                \tinc    %ebx\n   180365904:\t8b cb                \tmov    %ebx,%ecx\n   180365906:\t48 85 c0             \ttest   %rax,%rax\n   180365909:\t74 50                \tje     0x18036595b\n   18036590b:\teb c4                \tjmp    0x1803658d1\n   18036590d:\t80 3d 61 f4 97 01 00 \tcmpb   $0x0,0x197f461(%rip)        # 0x181ce4d75\n   180365914:\t75 13                \tjne    0x180365929\n   180365916:\t48 8d 0d eb 4b 84 01 \tlea    0x1844beb(%rip),%rcx        # 0x181baa508\n   18036591d:\te8 ce a5 ee ff       \tcall   0x18024fef0\n   180365922:\tc6 05 4c f4 97 01 01 \tmovb   $0x1,0x197f44c(%rip)        # 0x181ce4d75\n   180365929:\t48 83 bf 20 01 00 00 \tcmpq   $0x0,0x120(%rdi)\n   180365930:\t00 \n   180365931:\t74 18                \tje     0x18036594b\n   180365933:\t4c 8b 0d ce 4b 84 01 \tmov    0x1844bce(%rip),%r9        # 0x181baa508\n   18036593a:\t4c 8b c6             \tmov    %rsi,%r8\n   18036593d:\t48 8b 8f 20 01 00 00 \tmov    0x120(%rdi),%rcx\n   180365944:\t8b d3                \tmov    %ebx,%edx\n   180365946:\te8 75 80 4e 00       \tcall   0x18084d9c0\n   18036594b:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   180365950:\t48 8b 74 24 38       \tmov    0x38(%rsp),%rsi\n   180365955:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180365959:\t5f                   \tpop    %rdi\n   18036595a:\tc3                   \tret\n   18036595b:\te8 f0 a7 ee ff       \tcall   0x180250150\n   180365960:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void Zombie::InsertPassNode_front(EnemyPath)",
+        "token": "0x06000463",
+        "owner": "Zombie",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "EnemyPath"
+        ],
+        "locals": [
+          "EnemyPath",
+          "System.Int32",
+          "System.Collections.Generic.List`1<EnemyPath>",
+          "System.Int32",
+          "System.Boolean",
+          "EnemyPath",
+          "System.Boolean",
+          "System.Boolean",
+          "Zombie"
+        ],
+        "maxStack": 3,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 171
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 13,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<EnemyPath>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<EnemyPath>::_size"
+            }
+          },
+          {
+            "offset": 18,
+            "opcode": "clt",
+            "operand": null
+          },
+          {
+            "offset": 20,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 21,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 23,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 27,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 31,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 141
+            }
+          },
+          {
+            "offset": 36,
+            "opcode": "br",
+            "operand": {
+              "target": 41
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 42,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "System.Collections.Generic.List`1<EnemyPath>",
+              "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+            }
+          },
+          {
+            "offset": 47,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 51,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<EnemyPath>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "EnemyPath",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<EnemyPath>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 56,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 60,
+            "opcode": "br",
+            "operand": {
+              "target": 65
+            }
+          },
+          {
+            "offset": 65,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 69,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "EnemyPath",
+              "type": "System.Boolean",
+              "identity": "System.Boolean EnemyPath::arrived"
+            }
+          },
+          {
+            "offset": 74,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 79,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 81,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 85,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 89,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 141
+            }
+          },
+          {
+            "offset": 94,
+            "opcode": "br",
+            "operand": {
+              "target": 99
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 100,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "System.Collections.Generic.List`1<EnemyPath>",
+              "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+            }
+          },
+          {
+            "offset": 105,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 113,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 118,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 119,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "br",
+            "operand": {
+              "target": 128
+            }
+          },
+          {
+            "offset": 128,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 132,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 136,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 141,
+            "opcode": "br",
+            "operand": {
+              "target": 204
+            }
+          },
+          {
+            "offset": 146,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 147,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "System.Collections.Generic.List`1<EnemyPath>",
+              "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+            }
+          },
+          {
+            "offset": 152,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 156,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 160,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Int32",
+                "System.Object"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Insert",
+              "identity": "System.Void System.Collections.Generic.List`1<System.Object>::Insert(System.Int32,!0)"
+            }
+          },
+          {
+            "offset": 165,
+            "opcode": "br",
+            "operand": {
+              "target": 170
+            }
+          },
+          {
+            "offset": 170,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 171,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 172,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "System.Collections.Generic.List`1<EnemyPath>",
+              "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+            }
+          },
+          {
+            "offset": 177,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 181,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 186,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 190,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 195,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 199,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 204,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 205,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "System.Collections.Generic.List`1<EnemyPath>",
+              "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+            }
+          },
+          {
+            "offset": 210,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 215,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 217,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 221,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 225,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 170
+            }
+          },
+          {
+            "offset": 230,
+            "opcode": "br",
+            "operand": {
+              "target": 146
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 13,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<EnemyPath>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<EnemyPath>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 42,
+          "field": {
+            "owner": "Zombie",
+            "type": "System.Collections.Generic.List`1<EnemyPath>",
+            "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "prePath",
+              "token": "0x40005f9",
+              "offset": 288,
+              "type_index": 7610
+            }
+          ]
+        },
+        {
+          "cil_offset": 69,
+          "field": {
+            "owner": "EnemyPath",
+            "type": "System.Boolean",
+            "identity": "System.Boolean EnemyPath::arrived"
+          },
+          "original_records": [
+            {
+              "type": "EnemyPath",
+              "namespace": "",
+              "typeIndex": 5190,
+              "name": "arrived",
+              "token": "0x40003a9",
+              "offset": 40,
+              "type_index": 12427
+            }
+          ]
+        },
+        {
+          "cil_offset": 100,
+          "field": {
+            "owner": "Zombie",
+            "type": "System.Collections.Generic.List`1<EnemyPath>",
+            "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "prePath",
+              "token": "0x40005f9",
+              "offset": 288,
+              "type_index": 7610
+            }
+          ]
+        },
+        {
+          "cil_offset": 147,
+          "field": {
+            "owner": "Zombie",
+            "type": "System.Collections.Generic.List`1<EnemyPath>",
+            "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "prePath",
+              "token": "0x40005f9",
+              "offset": 288,
+              "type_index": 7610
+            }
+          ]
+        },
+        {
+          "cil_offset": 172,
+          "field": {
+            "owner": "Zombie",
+            "type": "System.Collections.Generic.List`1<EnemyPath>",
+            "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "prePath",
+              "token": "0x40005f9",
+              "offset": 288,
+              "type_index": 7610
+            }
+          ]
+        },
+        {
+          "cil_offset": 205,
+          "field": {
+            "owner": "Zombie",
+            "type": "System.Collections.Generic.List`1<EnemyPath>",
+            "identity": "System.Collections.Generic.List`1<EnemyPath> Zombie::prePath"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "prePath",
+              "token": "0x40005f9",
+              "offset": 288,
+              "type_index": 7610
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 2
+    },
+    {
+      "token": "0x060004C1",
+      "method": "PlantSave Save::FindPlantSave(System.Int32)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Save",
+        "name": "FindPlantSave",
+        "token": "0x60004c1",
+        "va": "0x18037fc70"
+      },
+      "start": "0x18037fc70",
+      "end": "0x18037fda6",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446120048,
+          6446120358
+        ]
+      ],
+      "native_sha256": "7b619d23ca719cd2087b4ec395a00eb1ae55e66cfbcb348fc6e800d853ced26d",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060004C1.bin:     file format binary\n\n\nDisassembly of section .data:\n\n000000018037fc70 <.data>:\n   18037fc70:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   18037fc75:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   18037fc7a:\t57                   \tpush   %rdi\n   18037fc7b:\t48 83 ec 60          \tsub    $0x60,%rsp\n   18037fc7f:\t8b f2                \tmov    %edx,%esi\n   18037fc81:\t48 8b d9             \tmov    %rcx,%rbx\n   18037fc84:\t80 3d 5a 51 96 01 00 \tcmpb   $0x0,0x196515a(%rip)        # 0x181ce4de5\n   18037fc8b:\t75 37                \tjne    0x18037fcc4\n   18037fc8d:\t48 8d 0d 6c 6d 84 01 \tlea    0x1846d6c(%rip),%rcx        # 0x181bc6a00\n   18037fc94:\te8 57 02 ed ff       \tcall   0x18024fef0\n   18037fc99:\t48 8d 0d b8 6d 84 01 \tlea    0x1846db8(%rip),%rcx        # 0x181bc6a58\n   18037fca0:\te8 4b 02 ed ff       \tcall   0x18024fef0\n   18037fca5:\t48 8d 0d 04 6e 84 01 \tlea    0x1846e04(%rip),%rcx        # 0x181bc6ab0\n   18037fcac:\te8 3f 02 ed ff       \tcall   0x18024fef0\n   18037fcb1:\t48 8d 0d e8 4e 83 01 \tlea    0x1834ee8(%rip),%rcx        # 0x181bb4ba0\n   18037fcb8:\te8 33 02 ed ff       \tcall   0x18024fef0\n   18037fcbd:\tc6 05 21 51 96 01 01 \tmovb   $0x1,0x1965121(%rip)        # 0x181ce4de5\n   18037fcc4:\t48 8b 53 60          \tmov    0x60(%rbx),%rdx\n   18037fcc8:\t48 85 d2             \ttest   %rdx,%rdx\n   18037fccb:\t0f 84 c3 00 00 00    \tje     0x18037fd94\n   18037fcd1:\t4c 8b 05 c8 4e 83 01 \tmov    0x1834ec8(%rip),%r8        # 0x181bb4ba0\n   18037fcd8:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   18037fcdd:\te8 0e 9b 49 00       \tcall   0x1808197f0\n   18037fce2:\t0f 10 44 24 28       \tmovups 0x28(%rsp),%xmm0\n   18037fce7:\t0f 11 44 24 40       \tmovups %xmm0,0x40(%rsp)\n   18037fcec:\tf2 0f 10 4c 24 38    \tmovsd  0x38(%rsp),%xmm1\n   18037fcf2:\tf2 0f 11 4c 24 50    \tmovsd  %xmm1,0x50(%rsp)\n   18037fcf8:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   18037fcff:\t00 00 \n   18037fd01:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   18037fd06:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   18037fd0b:\t0f 1f 44 00 00       \tnopl   0x0(%rax,%rax,1)\n   18037fd10:\t48 8b 15 41 6d 84 01 \tmov    0x1846d41(%rip),%rdx        # 0x181bc6a58\n   18037fd17:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   18037fd1c:\te8 5f 95 2e 00       \tcall   0x180669280\n   18037fd21:\t84 c0                \ttest   %al,%al\n   18037fd23:\t74 31                \tje     0x18037fd56\n   18037fd25:\t48 8b 7c 24 50       \tmov    0x50(%rsp),%rdi\n   18037fd2a:\t48 85 ff             \ttest   %rdi,%rdi\n   18037fd2d:\t74 6b                \tje     0x18037fd9a\n   18037fd2f:\t39 77 48             \tcmp    %esi,0x48(%rdi)\n   18037fd32:\t75 dc                \tjne    0x18037fd10\n   18037fd34:\t48 8b 15 c5 6c 84 01 \tmov    0x1846cc5(%rip),%rdx        # 0x181bc6a00\n   18037fd3b:\t48 8b cb             \tmov    %rbx,%rcx\n   18037fd3e:\te8 2d 24 f8 ff       \tcall   0x180302170\n   18037fd43:\t48 8b c7             \tmov    %rdi,%rax\n   18037fd46:\t48 8b 5c 24 70       \tmov    0x70(%rsp),%rbx\n   18037fd4b:\t48 8b 74 24 78       \tmov    0x78(%rsp),%rsi\n   18037fd50:\t48 83 c4 60          \tadd    $0x60,%rsp\n   18037fd54:\t5f                   \tpop    %rdi\n   18037fd55:\tc3                   \tret\n   18037fd56:\t48 8b 15 a3 6c 84 01 \tmov    0x1846ca3(%rip),%rdx        # 0x181bc6a00\n   18037fd5d:\t48 8b cb             \tmov    %rbx,%rcx\n   18037fd60:\te8 0b 24 f8 ff       \tcall   0x180302170\n   18037fd65:\teb 1b                \tjmp    0x18037fd82\n   18037fd67:\t48 8b 15 92 6c 84 01 \tmov    0x1846c92(%rip),%rdx        # 0x181bc6a00\n   18037fd6e:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   18037fd73:\te8 f8 23 f8 ff       \tcall   0x180302170\n   18037fd78:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   18037fd7d:\t48 85 c9             \ttest   %rcx,%rcx\n   18037fd80:\t75 1e                \tjne    0x18037fda0\n   18037fd82:\t33 c0                \txor    %eax,%eax\n   18037fd84:\t48 8b 5c 24 70       \tmov    0x70(%rsp),%rbx\n   18037fd89:\t48 8b 74 24 78       \tmov    0x78(%rsp),%rsi\n   18037fd8e:\t48 83 c4 60          \tadd    $0x60,%rsp\n   18037fd92:\t5f                   \tpop    %rdi\n   18037fd93:\tc3                   \tret\n   18037fd94:\te8 b7 03 ed ff       \tcall   0x180250150\n   18037fd99:\t90                   \tnop\n   18037fd9a:\te8 b1 03 ed ff       \tcall   0x180250150\n   18037fd9f:\t90                   \tnop\n   18037fda0:\te8 bb 10 e8 ff       \tcall   0x180200e60\n   18037fda5:\tcc                   \tint3\n",
+      "managed": {
+        "name": "PlantSave Save::FindPlantSave(System.Int32)",
+        "token": "0x060004C1",
+        "owner": "Save",
+        "ret": "PlantSave",
+        "hasThis": true,
+        "args": [
+          "System.Int32"
+        ],
+        "locals": [
+          "System.Int32",
+          "System.Object",
+          "System.Object",
+          "PlantSave",
+          "System.Boolean",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "System.Boolean",
+          "System.Boolean",
+          "PlantSave",
+          "System.Boolean",
+          "System.Object",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "Save",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "Method not found @1808197F0"
+          },
+          {
+            "offset": 10,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "br",
+            "operand": {
+              "target": 134
+            }
+          },
+          {
+            "offset": 16,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 20,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 25,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 27,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 31,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 35,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 39,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 43,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 118
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "br",
+            "operand": {
+              "target": 53
+            }
+          },
+          {
+            "offset": 53,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::ID"
+            }
+          },
+          {
+            "offset": 62,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 66,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 68,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 69,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 71,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 75,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 134
+            }
+          },
+          {
+            "offset": 84,
+            "opcode": "br",
+            "operand": {
+              "target": 89
+            }
+          },
+          {
+            "offset": 89,
+            "opcode": "ldstr",
+            "operand": "Method not found @180302170"
+          },
+          {
+            "offset": 94,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 95,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 100,
+            "opcode": "ldstr",
+            "operand": "Method not found @180302170"
+          },
+          {
+            "offset": 105,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 106,
+            "opcode": "br",
+            "operand": {
+              "target": 111
+            }
+          },
+          {
+            "offset": 111,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 112,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 113,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 117,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 118,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 124,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 128,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 129,
+            "opcode": "br",
+            "operand": {
+              "target": 113
+            }
+          },
+          {
+            "offset": 134,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 138,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "MoveNext",
+              "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+            }
+          },
+          {
+            "offset": 143,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 147,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 152,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 154,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 158,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 162,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 100
+            }
+          },
+          {
+            "offset": 167,
+            "opcode": "br",
+            "operand": {
+              "target": 16
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 57,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::ID"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "ID",
+              "token": "0x400065e",
+              "offset": 72,
+              "type_index": 15454
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 2
+    },
+    {
+      "token": "0x06000590",
+      "method": "System.Void Almanac_SkillSystem::SkillUp()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Almanac_SkillSystem",
+        "name": "SkillUp",
+        "token": "0x6000590",
+        "va": "0x180390310"
+      },
+      "start": "0x180390310",
+      "end": "0x180390420",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446187280,
+          6446187552
+        ]
+      ],
+      "native_sha256": "b7c12ce27e78188e5745c62041ff25729af4b5cb9d0b47e83ab6ffbdb1754472",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000590.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180390310 <.data>:\n   180390310:\t40 53                \trex push %rbx\n   180390312:\t48 83 ec 40          \tsub    $0x40,%rsp\n   180390316:\t80 3d 37 4b 95 01 00 \tcmpb   $0x0,0x1954b37(%rip)        # 0x181ce4e54\n   18039031d:\t48 8b d9             \tmov    %rcx,%rbx\n   180390320:\t75 13                \tjne    0x180390335\n   180390322:\t48 8d 0d ef 1c 81 01 \tlea    0x1811cef(%rip),%rcx        # 0x181ba2018\n   180390329:\te8 c2 fb eb ff       \tcall   0x18024fef0\n   18039032e:\tc6 05 1f 4b 95 01 01 \tmovb   $0x1,0x1954b1f(%rip)        # 0x181ce4e54\n   180390335:\t48 8b 4b 30          \tmov    0x30(%rbx),%rcx\n   180390339:\t48 89 7c 24 50       \tmov    %rdi,0x50(%rsp)\n   18039033e:\t48 85 c9             \ttest   %rcx,%rcx\n   180390341:\t0f 84 d3 00 00 00    \tje     0x18039041a\n   180390347:\t8b 93 94 00 00 00    \tmov    0x94(%rbx),%edx\n   18039034d:\t45 33 c0             \txor    %r8d,%r8d\n   180390350:\te8 2b 5c fe ff       \tcall   0x180375f80\n   180390355:\t48 8b 53 30          \tmov    0x30(%rbx),%rdx\n   180390359:\t48 8b f8             \tmov    %rax,%rdi\n   18039035c:\t48 85 d2             \ttest   %rdx,%rdx\n   18039035f:\t0f 84 b5 00 00 00    \tje     0x18039041a\n   180390365:\tff 42 5c             \tincl   0x5c(%rdx)\n   180390368:\t48 8b 05 a9 1c 81 01 \tmov    0x1811ca9(%rip),%rax        # 0x181ba2018\n   18039036f:\t83 b8 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rax)\n   180390376:\t75 0f                \tjne    0x180390387\n   180390378:\t48 8b c8             \tmov    %rax,%rcx\n   18039037b:\te8 60 fe eb ff       \tcall   0x1802501e0\n   180390380:\t48 8b 05 91 1c 81 01 \tmov    0x1811c91(%rip),%rax        # 0x181ba2018\n   180390387:\t48 8b 80 b8 00 00 00 \tmov    0xb8(%rax),%rax\n   18039038e:\t48 8b 08             \tmov    (%rax),%rcx\n   180390391:\t48 85 c9             \ttest   %rcx,%rcx\n   180390394:\t0f 84 80 00 00 00    \tje     0x18039041a\n   18039039a:\t4c 8b 43 30          \tmov    0x30(%rbx),%r8\n   18039039e:\t4d 85 c0             \ttest   %r8,%r8\n   1803903a1:\t74 77                \tje     0x18039041a\n   1803903a3:\t48 8b 49 28          \tmov    0x28(%rcx),%rcx\n   1803903a7:\t48 85 c9             \ttest   %rcx,%rcx\n   1803903aa:\t74 6e                \tje     0x18039041a\n   1803903ac:\t45 8b 40 5c          \tmov    0x5c(%r8),%r8d\n   1803903b0:\t45 33 c9             \txor    %r9d,%r9d\n   1803903b3:\t48 8b 53 30          \tmov    0x30(%rbx),%rdx\n   1803903b7:\te8 d4 e3 fa ff       \tcall   0x18033e790\n   1803903bc:\t66 0f 6f 05 6c 7b 21 \tmovdqa 0x1217b6c(%rip),%xmm0        # 0x1815a7f30\n   1803903c3:\t01 \n   1803903c4:\t4c 8d 44 24 30       \tlea    0x30(%rsp),%r8\n   1803903c9:\t45 33 c9             \txor    %r9d,%r9d\n   1803903cc:\t0f 29 44 24 30       \tmovaps %xmm0,0x30(%rsp)\n   1803903d1:\t48 8b d7             \tmov    %rdi,%rdx\n   1803903d4:\t48 8b cb             \tmov    %rbx,%rcx\n   1803903d7:\te8 44 00 00 00       \tcall   0x180390420\n   1803903dc:\t48 8b 53 30          \tmov    0x30(%rbx),%rdx\n   1803903e0:\t48 85 d2             \ttest   %rdx,%rdx\n   1803903e3:\t74 35                \tje     0x18039041a\n   1803903e5:\t48 8b 8b 80 00 00 00 \tmov    0x80(%rbx),%rcx\n   1803903ec:\t48 85 c9             \ttest   %rcx,%rcx\n   1803903ef:\t74 29                \tje     0x18039041a\n   1803903f1:\t44 8b 4a 44          \tmov    0x44(%rdx),%r9d\n   1803903f5:\t44 8b 42 54          \tmov    0x54(%rdx),%r8d\n   1803903f9:\t8b 52 5c             \tmov    0x5c(%rdx),%edx\n   1803903fc:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   180390403:\t00 00 \n   180390405:\tc6 44 24 20 01       \tmovb   $0x1,0x20(%rsp)\n   18039040a:\te8 31 ab 00 00       \tcall   0x18039af40\n   18039040f:\t48 8b 7c 24 50       \tmov    0x50(%rsp),%rdi\n   180390414:\t48 83 c4 40          \tadd    $0x40,%rsp\n   180390418:\t5b                   \tpop    %rbx\n   180390419:\tc3                   \tret\n   18039041a:\te8 31 fd eb ff       \tcall   0x180250150\n   18039041f:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void Almanac_SkillSystem::SkillUp()",
+        "token": "0x06000590",
+        "owner": "Almanac_SkillSystem",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "Almanac_SkillSystem",
+          "Skill",
+          "PlantSave",
+          "PlantSave",
+          "PlantSave",
+          "GlobalStaticVars/LawnApp",
+          "System.Boolean",
+          "System.IntPtr",
+          "System.Object",
+          "System.Int32"
+        ],
+        "maxStack": 5,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 6,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "PlantSave",
+              "identity": "PlantSave Almanac_SkillSystem::plantSave"
+            }
+          },
+          {
+            "offset": 11,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 12,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "System.Int32",
+              "identity": "System.Int32 Almanac_SkillSystem::skillID"
+            }
+          },
+          {
+            "offset": 17,
+            "opcode": "call",
+            "operand": {
+              "owner": "PlantSave",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "Skill",
+              "hasThis": true,
+              "name": "GetSkill_ID",
+              "identity": "Skill PlantSave::GetSkill_ID(System.Int32)"
+            }
+          },
+          {
+            "offset": 22,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 26,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 27,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "PlantSave",
+              "identity": "PlantSave Almanac_SkillSystem::plantSave"
+            }
+          },
+          {
+            "offset": 32,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 36,
+            "opcode": "br",
+            "operand": {
+              "target": 41
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 45,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::skillLevel"
+            }
+          },
+          {
+            "offset": 50,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 55,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 56,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 60,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 64,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 68,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::skillLevel"
+            }
+          },
+          {
+            "offset": 73,
+            "opcode": "br",
+            "operand": {
+              "target": 199
+            }
+          },
+          {
+            "offset": 78,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 79,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "PlantSave",
+              "identity": "PlantSave Almanac_SkillSystem::plantSave"
+            }
+          },
+          {
+            "offset": 84,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 88,
+            "opcode": "br",
+            "operand": {
+              "target": 93
+            }
+          },
+          {
+            "offset": 93,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 97,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "GlobalStaticVars/LawnApp",
+              "type": "SavesManager",
+              "identity": "SavesManager GlobalStaticVars/LawnApp::savesManager"
+            }
+          },
+          {
+            "offset": 102,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 103,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "PlantSave",
+              "identity": "PlantSave Almanac_SkillSystem::plantSave"
+            }
+          },
+          {
+            "offset": 108,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 112,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::skillLevel"
+            }
+          },
+          {
+            "offset": 117,
+            "opcode": "call",
+            "operand": {
+              "owner": "SavesManager",
+              "args": [
+                "PlantSave",
+                "System.Int32"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "GetSkillData_All",
+              "identity": "System.Void SavesManager::GetSkillData_All(PlantSave,System.Int32)"
+            }
+          },
+          {
+            "offset": 122,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 123,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 127,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 131,
+            "opcode": "call",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "args": [
+                "Skill",
+                "UnityEngine.Color"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "UpdateSkillTexts",
+              "identity": "System.Void Almanac_SkillSystem::UpdateSkillTexts(Skill,UnityEngine.Color)"
+            }
+          },
+          {
+            "offset": 136,
+            "opcode": "br",
+            "operand": {
+              "target": 141
+            }
+          },
+          {
+            "offset": 141,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 142,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "PlantSave",
+              "identity": "PlantSave Almanac_SkillSystem::plantSave"
+            }
+          },
+          {
+            "offset": 147,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "br",
+            "operand": {
+              "target": 156
+            }
+          },
+          {
+            "offset": 156,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 157,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Almanac_SkillSystem",
+              "type": "Button_SkillTargetUp",
+              "identity": "Button_SkillTargetUp Almanac_SkillSystem::button_TargetUp"
+            }
+          },
+          {
+            "offset": 162,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 166,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::skillLevel"
+            }
+          },
+          {
+            "offset": 171,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 175,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::order"
+            }
+          },
+          {
+            "offset": 180,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 184,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PlantSave",
+              "type": "System.Int32",
+              "identity": "System.Int32 PlantSave::stars"
+            }
+          },
+          {
+            "offset": 189,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 193,
+            "opcode": "call",
+            "operand": {
+              "owner": "Button_SkillTargetUp",
+              "args": [
+                "System.Int32",
+                "System.Int32",
+                "System.Int32",
+                "System.Boolean"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "SetState",
+              "identity": "System.Void Button_SkillTargetUp::SetState(System.Int32,System.Int32,System.Int32,System.Boolean)"
+            }
+          },
+          {
+            "offset": 198,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 199,
+            "opcode": "ldsfld",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "type": "GlobalStaticVars/LawnApp",
+              "identity": "GlobalStaticVars/LawnApp GlobalStaticVars::gLawnApp"
+            }
+          },
+          {
+            "offset": 204,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 208,
+            "opcode": "br",
+            "operand": {
+              "target": 78
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 6,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "PlantSave",
+            "identity": "PlantSave Almanac_SkillSystem::plantSave"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "plantSave",
+              "token": "0x4000725",
+              "offset": 48,
+              "type_index": 16891
+            }
+          ]
+        },
+        {
+          "cil_offset": 12,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "System.Int32",
+            "identity": "System.Int32 Almanac_SkillSystem::skillID"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "skillID",
+              "token": "0x4000732",
+              "offset": 148,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 27,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "PlantSave",
+            "identity": "PlantSave Almanac_SkillSystem::plantSave"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "plantSave",
+              "token": "0x4000725",
+              "offset": 48,
+              "type_index": 16891
+            }
+          ]
+        },
+        {
+          "cil_offset": 45,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::skillLevel"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "skillLevel",
+              "token": "0x4000663",
+              "offset": 92,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 68,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::skillLevel"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "skillLevel",
+              "token": "0x4000663",
+              "offset": 92,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 79,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "PlantSave",
+            "identity": "PlantSave Almanac_SkillSystem::plantSave"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "plantSave",
+              "token": "0x4000725",
+              "offset": 48,
+              "type_index": 16891
+            }
+          ]
+        },
+        {
+          "cil_offset": 97,
+          "field": {
+            "owner": "GlobalStaticVars/LawnApp",
+            "type": "SavesManager",
+            "identity": "SavesManager GlobalStaticVars/LawnApp::savesManager"
+          },
+          "original_records": [
+            {
+              "type": "LawnApp",
+              "namespace": "",
+              "typeIndex": 5135,
+              "name": "savesManager",
+              "token": "0x4000166",
+              "offset": 40,
+              "type_index": 17829
+            }
+          ]
+        },
+        {
+          "cil_offset": 103,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "PlantSave",
+            "identity": "PlantSave Almanac_SkillSystem::plantSave"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "plantSave",
+              "token": "0x4000725",
+              "offset": 48,
+              "type_index": 16891
+            }
+          ]
+        },
+        {
+          "cil_offset": 112,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::skillLevel"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "skillLevel",
+              "token": "0x4000663",
+              "offset": 92,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 142,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "PlantSave",
+            "identity": "PlantSave Almanac_SkillSystem::plantSave"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "plantSave",
+              "token": "0x4000725",
+              "offset": 48,
+              "type_index": 16891
+            }
+          ]
+        },
+        {
+          "cil_offset": 157,
+          "field": {
+            "owner": "Almanac_SkillSystem",
+            "type": "Button_SkillTargetUp",
+            "identity": "Button_SkillTargetUp Almanac_SkillSystem::button_TargetUp"
+          },
+          "original_records": [
+            {
+              "type": "Almanac_SkillSystem",
+              "namespace": "",
+              "typeIndex": 5253,
+              "name": "button_TargetUp",
+              "token": "0x400072f",
+              "offset": 128,
+              "type_index": 12525
+            }
+          ]
+        },
+        {
+          "cil_offset": 166,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::skillLevel"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "skillLevel",
+              "token": "0x4000663",
+              "offset": 92,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 175,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::order"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "order",
+              "token": "0x4000661",
+              "offset": 84,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 184,
+          "field": {
+            "owner": "PlantSave",
+            "type": "System.Int32",
+            "identity": "System.Int32 PlantSave::stars"
+          },
+          "original_records": [
+            {
+              "type": "PlantSave",
+              "namespace": "",
+              "typeIndex": 5225,
+              "name": "stars",
+              "token": "0x400065d",
+              "offset": 68,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 199,
+          "field": {
+            "owner": "GlobalStaticVars",
+            "type": "GlobalStaticVars/LawnApp",
+            "identity": "GlobalStaticVars/LawnApp GlobalStaticVars::gLawnApp"
+          },
+          "original_records": [
+            {
+              "type": "GlobalStaticVars",
+              "namespace": "",
+              "typeIndex": 5137,
+              "name": "gLawnApp",
+              "token": "0x400015e",
+              "offset": 0,
+              "type_index": 21682
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x06000683",
+      "method": "System.Void PrepareUIController::ReloadPlantSave(System.Int32)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "PrepareUIController",
+        "name": "ReloadPlantSave",
+        "token": "0x6000683",
+        "va": "0x1803a7150"
+      },
+      "start": "0x1803a7150",
+      "end": "0x1803a7273",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446281040,
+          6446281331
+        ]
+      ],
+      "native_sha256": "45eb8e5b66582e4660b24c6bfb7fdde6dc80201711fd5874f35a3ca00b6a849f",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000683.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803a7150 <.data>:\n   1803a7150:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   1803a7155:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   1803a715a:\t57                   \tpush   %rdi\n   1803a715b:\t48 83 ec 60          \tsub    $0x60,%rsp\n   1803a715f:\t8b fa                \tmov    %edx,%edi\n   1803a7161:\t48 8b f1             \tmov    %rcx,%rsi\n   1803a7164:\t80 3d 83 dd 93 01 00 \tcmpb   $0x0,0x193dd83(%rip)        # 0x181ce4eee\n   1803a716b:\t75 37                \tjne    0x1803a71a4\n   1803a716d:\t48 8d 0d 34 aa 81 01 \tlea    0x181aa34(%rip),%rcx        # 0x181bc1ba8\n   1803a7174:\te8 77 8d ea ff       \tcall   0x18024fef0\n   1803a7179:\t48 8d 0d 80 aa 81 01 \tlea    0x181aa80(%rip),%rcx        # 0x181bc1c00\n   1803a7180:\te8 6b 8d ea ff       \tcall   0x18024fef0\n   1803a7185:\t48 8d 0d cc aa 81 01 \tlea    0x181aacc(%rip),%rcx        # 0x181bc1c58\n   1803a718c:\te8 5f 8d ea ff       \tcall   0x18024fef0\n   1803a7191:\t48 8d 0d a0 ef 7f 01 \tlea    0x17fefa0(%rip),%rcx        # 0x181ba6138\n   1803a7198:\te8 53 8d ea ff       \tcall   0x18024fef0\n   1803a719d:\tc6 05 4a dd 93 01 01 \tmovb   $0x1,0x193dd4a(%rip)        # 0x181ce4eee\n   1803a71a4:\t48 8b 56 28          \tmov    0x28(%rsi),%rdx\n   1803a71a8:\t48 85 d2             \ttest   %rdx,%rdx\n   1803a71ab:\t0f 84 bc 00 00 00    \tje     0x1803a726d\n   1803a71b1:\t4c 8b 05 80 ef 7f 01 \tmov    0x17fef80(%rip),%r8        # 0x181ba6138\n   1803a71b8:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   1803a71bd:\te8 2e 26 47 00       \tcall   0x1808197f0\n   1803a71c2:\t0f 10 44 24 28       \tmovups 0x28(%rsp),%xmm0\n   1803a71c7:\t0f 11 44 24 40       \tmovups %xmm0,0x40(%rsp)\n   1803a71cc:\tf2 0f 10 4c 24 38    \tmovsd  0x38(%rsp),%xmm1\n   1803a71d2:\tf2 0f 11 4c 24 50    \tmovsd  %xmm1,0x50(%rsp)\n   1803a71d8:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   1803a71df:\t00 00 \n   1803a71e1:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   1803a71e6:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   1803a71eb:\t0f 1f 44 00 00       \tnopl   0x0(%rax,%rax,1)\n   1803a71f0:\t48 8b 15 09 aa 81 01 \tmov    0x181aa09(%rip),%rdx        # 0x181bc1c00\n   1803a71f7:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   1803a71fc:\te8 7f 20 2c 00       \tcall   0x180669280\n   1803a7201:\t84 c0                \ttest   %al,%al\n   1803a7203:\t74 20                \tje     0x1803a7225\n   1803a7205:\t48 8b 4c 24 50       \tmov    0x50(%rsp),%rcx\n   1803a720a:\t48 85 c9             \ttest   %rcx,%rcx\n   1803a720d:\t74 52                \tje     0x1803a7261\n   1803a720f:\t39 79 24             \tcmp    %edi,0x24(%rcx)\n   1803a7212:\t75 dc                \tjne    0x1803a71f0\n   1803a7214:\t45 33 c0             \txor    %r8d,%r8d\n   1803a7217:\t48 8b 96 80 00 00 00 \tmov    0x80(%rsi),%rdx\n   1803a721e:\te8 fd d0 f9 ff       \tcall   0x180344320\n   1803a7223:\teb cb                \tjmp    0x1803a71f0\n   1803a7225:\t48 8b 15 7c a9 81 01 \tmov    0x181a97c(%rip),%rdx        # 0x181bc1ba8\n   1803a722c:\t48 8b cb             \tmov    %rbx,%rcx\n   1803a722f:\te8 3c af f5 ff       \tcall   0x180302170\n   1803a7234:\teb 1b                \tjmp    0x1803a7251\n   1803a7236:\t48 8b 15 6b a9 81 01 \tmov    0x181a96b(%rip),%rdx        # 0x181bc1ba8\n   1803a723d:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   1803a7242:\te8 29 af f5 ff       \tcall   0x180302170\n   1803a7247:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   1803a724c:\t48 85 c9             \ttest   %rcx,%rcx\n   1803a724f:\t75 16                \tjne    0x1803a7267\n   1803a7251:\t48 8b 5c 24 70       \tmov    0x70(%rsp),%rbx\n   1803a7256:\t48 8b 74 24 78       \tmov    0x78(%rsp),%rsi\n   1803a725b:\t48 83 c4 60          \tadd    $0x60,%rsp\n   1803a725f:\t5f                   \tpop    %rdi\n   1803a7260:\tc3                   \tret\n   1803a7261:\te8 ea 8e ea ff       \tcall   0x180250150\n   1803a7266:\t90                   \tnop\n   1803a7267:\te8 f4 9b e5 ff       \tcall   0x180200e60\n   1803a726c:\tcc                   \tint3\n   1803a726d:\te8 de 8e ea ff       \tcall   0x180250150\n   1803a7272:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void PrepareUIController::ReloadPlantSave(System.Int32)",
+        "token": "0x06000683",
+        "owner": "PrepareUIController",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "System.Int32"
+        ],
+        "locals": [
+          "System.Int32",
+          "System.Object",
+          "System.Boolean",
+          "Card_Choose",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "PrepareUIController",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "Method not found @1808197F0"
+          },
+          {
+            "offset": 10,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 12,
+            "opcode": "br",
+            "operand": {
+              "target": 140
+            }
+          },
+          {
+            "offset": 17,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 21,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 26,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 28,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 32,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 36,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 118
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "br",
+            "operand": {
+              "target": 46
+            }
+          },
+          {
+            "offset": 46,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 50,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Card_Choose",
+              "type": "System.Int32",
+              "identity": "System.Int32 Card_Choose::plantID"
+            }
+          },
+          {
+            "offset": 55,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 59,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 61,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 62,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 64,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 68,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 72,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 140
+            }
+          },
+          {
+            "offset": 77,
+            "opcode": "br",
+            "operand": {
+              "target": 82
+            }
+          },
+          {
+            "offset": 82,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 86,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 87,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "PrepareUIController",
+              "type": "Save",
+              "identity": "Save PrepareUIController::playerSave"
+            }
+          },
+          {
+            "offset": 92,
+            "opcode": "call",
+            "operand": {
+              "owner": "Card_Choose",
+              "args": [
+                "Save"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "ReloadPlantSave",
+              "identity": "System.Void Card_Choose::ReloadPlantSave(Save)"
+            }
+          },
+          {
+            "offset": 97,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 98,
+            "opcode": "br",
+            "operand": {
+              "target": 140
+            }
+          },
+          {
+            "offset": 103,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 107,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<Card_Choose>",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Dispose",
+              "identity": "System.Void System.Collections.Generic.List`1/Enumerator<Card_Choose>::Dispose()"
+            }
+          },
+          {
+            "offset": 112,
+            "opcode": "br",
+            "operand": {
+              "target": 117
+            }
+          },
+          {
+            "offset": 117,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 118,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 124,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 128,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 129,
+            "opcode": "br",
+            "operand": {
+              "target": 134
+            }
+          },
+          {
+            "offset": 134,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 135,
+            "opcode": "br",
+            "operand": {
+              "target": 178
+            }
+          },
+          {
+            "offset": 140,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 144,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "MoveNext",
+              "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+            }
+          },
+          {
+            "offset": 149,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 153,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 157,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 158,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 160,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 164,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 168,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 103
+            }
+          },
+          {
+            "offset": 173,
+            "opcode": "br",
+            "operand": {
+              "target": 17
+            }
+          },
+          {
+            "offset": 178,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 183,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 184,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 50,
+          "field": {
+            "owner": "Card_Choose",
+            "type": "System.Int32",
+            "identity": "System.Int32 Card_Choose::plantID"
+          },
+          "original_records": [
+            {
+              "type": "Card_Choose",
+              "namespace": "",
+              "typeIndex": 5199,
+              "name": "plantID",
+              "token": "0x4000429",
+              "offset": 36,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 87,
+          "field": {
+            "owner": "PrepareUIController",
+            "type": "Save",
+            "identity": "Save PrepareUIController::playerSave"
+          },
+          "original_records": [
+            {
+              "type": "PrepareUIController",
+              "namespace": "",
+              "typeIndex": 5284,
+              "name": "playerSave",
+              "token": "0x400088e",
+              "offset": 128,
+              "type_index": 17822
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x060006BF",
+      "method": "System.Int32 SeedChooserScreen::SerialNumberOfCard_ChooseBeenChoose()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "SeedChooserScreen",
+        "name": "SerialNumberOfCard_ChooseBeenChoose",
+        "token": "0x60006bf",
+        "va": "0x1803ab3f0"
+      },
+      "start": "0x1803ab3f0",
+      "end": "0x1803ab50f",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446298096,
+          6446298383
+        ]
+      ],
+      "native_sha256": "cd27957adbac22588cf22b6932b2e861098867e2d1f071aba8cf87165904dcb9",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060006BF.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803ab3f0 <.data>:\n   1803ab3f0:\t48 89 5c 24 10       \tmov    %rbx,0x10(%rsp)\n   1803ab3f5:\t57                   \tpush   %rdi\n   1803ab3f6:\t48 83 ec 60          \tsub    $0x60,%rsp\n   1803ab3fa:\t48 8b d9             \tmov    %rcx,%rbx\n   1803ab3fd:\t80 3d 0c 9b 93 01 00 \tcmpb   $0x0,0x1939b0c(%rip)        # 0x181ce4f10\n   1803ab404:\t75 37                \tjne    0x1803ab43d\n   1803ab406:\t48 8d 0d 9b 67 81 01 \tlea    0x181679b(%rip),%rcx        # 0x181bc1ba8\n   1803ab40d:\te8 de 4a ea ff       \tcall   0x18024fef0\n   1803ab412:\t48 8d 0d e7 67 81 01 \tlea    0x18167e7(%rip),%rcx        # 0x181bc1c00\n   1803ab419:\te8 d2 4a ea ff       \tcall   0x18024fef0\n   1803ab41e:\t48 8d 0d 33 68 81 01 \tlea    0x1816833(%rip),%rcx        # 0x181bc1c58\n   1803ab425:\te8 c6 4a ea ff       \tcall   0x18024fef0\n   1803ab42a:\t48 8d 0d 07 ad 7f 01 \tlea    0x17fad07(%rip),%rcx        # 0x181ba6138\n   1803ab431:\te8 ba 4a ea ff       \tcall   0x18024fef0\n   1803ab436:\tc6 05 d3 9a 93 01 01 \tmovb   $0x1,0x1939ad3(%rip)        # 0x181ce4f10\n   1803ab43d:\t33 ff                \txor    %edi,%edi\n   1803ab43f:\t89 7c 24 70          \tmov    %edi,0x70(%rsp)\n   1803ab443:\t48 8b 53 20          \tmov    0x20(%rbx),%rdx\n   1803ab447:\t48 85 d2             \ttest   %rdx,%rdx\n   1803ab44a:\t0f 84 ad 00 00 00    \tje     0x1803ab4fd\n   1803ab450:\t4c 8b 05 e1 ac 7f 01 \tmov    0x17face1(%rip),%r8        # 0x181ba6138\n   1803ab457:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   1803ab45c:\te8 8f e3 46 00       \tcall   0x1808197f0\n   1803ab461:\t0f 10 44 24 28       \tmovups 0x28(%rsp),%xmm0\n   1803ab466:\t0f 11 44 24 40       \tmovups %xmm0,0x40(%rsp)\n   1803ab46b:\tf2 0f 10 4c 24 38    \tmovsd  0x38(%rsp),%xmm1\n   1803ab471:\tf2 0f 11 4c 24 50    \tmovsd  %xmm1,0x50(%rsp)\n   1803ab477:\t48 89 7c 24 28       \tmov    %rdi,0x28(%rsp)\n   1803ab47c:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   1803ab481:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   1803ab486:\t66 66 0f 1f 84 00 00 \tdata16 nopw 0x0(%rax,%rax,1)\n   1803ab48d:\t00 00 00 \n   1803ab490:\t48 8b 15 69 67 81 01 \tmov    0x1816769(%rip),%rdx        # 0x181bc1c00\n   1803ab497:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   1803ab49c:\te8 df dd 2b 00       \tcall   0x180669280\n   1803ab4a1:\t84 c0                \ttest   %al,%al\n   1803ab4a3:\t74 1b                \tje     0x1803ab4c0\n   1803ab4a5:\t48 8b 44 24 50       \tmov    0x50(%rsp),%rax\n   1803ab4aa:\t48 85 c0             \ttest   %rax,%rax\n   1803ab4ad:\t74 54                \tje     0x1803ab503\n   1803ab4af:\t80 b8 04 01 00 00 00 \tcmpb   $0x0,0x104(%rax)\n   1803ab4b6:\t74 d8                \tje     0x1803ab490\n   1803ab4b8:\tff c7                \tinc    %edi\n   1803ab4ba:\t89 7c 24 70          \tmov    %edi,0x70(%rsp)\n   1803ab4be:\teb d0                \tjmp    0x1803ab490\n   1803ab4c0:\t48 8b 15 e1 66 81 01 \tmov    0x18166e1(%rip),%rdx        # 0x181bc1ba8\n   1803ab4c7:\t48 8b cb             \tmov    %rbx,%rcx\n   1803ab4ca:\te8 a1 6c f5 ff       \tcall   0x180302170\n   1803ab4cf:\teb 1f                \tjmp    0x1803ab4f0\n   1803ab4d1:\t48 8b 15 d0 66 81 01 \tmov    0x18166d0(%rip),%rdx        # 0x181bc1ba8\n   1803ab4d8:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   1803ab4dd:\te8 8e 6c f5 ff       \tcall   0x180302170\n   1803ab4e2:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   1803ab4e7:\t48 85 c9             \ttest   %rcx,%rcx\n   1803ab4ea:\t75 1d                \tjne    0x1803ab509\n   1803ab4ec:\t8b 7c 24 70          \tmov    0x70(%rsp),%edi\n   1803ab4f0:\t8b c7                \tmov    %edi,%eax\n   1803ab4f2:\t48 8b 5c 24 78       \tmov    0x78(%rsp),%rbx\n   1803ab4f7:\t48 83 c4 60          \tadd    $0x60,%rsp\n   1803ab4fb:\t5f                   \tpop    %rdi\n   1803ab4fc:\tc3                   \tret\n   1803ab4fd:\te8 4e 4c ea ff       \tcall   0x180250150\n   1803ab502:\t90                   \tnop\n   1803ab503:\te8 48 4c ea ff       \tcall   0x180250150\n   1803ab508:\t90                   \tnop\n   1803ab509:\te8 52 59 e5 ff       \tcall   0x180200e60\n   1803ab50e:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Int32 SeedChooserScreen::SerialNumberOfCard_ChooseBeenChoose()",
+        "token": "0x060006BF",
+        "owner": "SeedChooserScreen",
+        "ret": "System.Int32",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "System.Object",
+          "System.Object",
+          "System.Object",
+          "System.Int32",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Int32",
+          "System.Boolean",
+          "System.Object",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "SeedChooserScreen",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "Method not found @1808197F0"
+          },
+          {
+            "offset": 10,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 16,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 20,
+            "opcode": "br",
+            "operand": {
+              "target": 146
+            }
+          },
+          {
+            "offset": 25,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 29,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 34,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 36,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 40,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 44,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 52,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 130
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "br",
+            "operand": {
+              "target": 62
+            }
+          },
+          {
+            "offset": 62,
+            "opcode": "ldstr",
+            "operand": "Unmanaged memory load: [v56 @ stack_-30+104]"
+          },
+          {
+            "offset": 67,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 68,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 69,
+            "opcode": "conv.i",
+            "operand": null
+          },
+          {
+            "offset": 70,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 75,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 77,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 81,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 85,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 146
+            }
+          },
+          {
+            "offset": 90,
+            "opcode": "br",
+            "operand": {
+              "target": 95
+            }
+          },
+          {
+            "offset": 95,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 104,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 105,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "br",
+            "operand": {
+              "target": 146
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "ldstr",
+            "operand": "Method not found @180302170"
+          },
+          {
+            "offset": 119,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 120,
+            "opcode": "br",
+            "operand": {
+              "target": 184
+            }
+          },
+          {
+            "offset": 125,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 129,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 130,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 135,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 136,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 140,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 141,
+            "opcode": "br",
+            "operand": {
+              "target": 125
+            }
+          },
+          {
+            "offset": 146,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 150,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "MoveNext",
+              "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+            }
+          },
+          {
+            "offset": 155,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 159,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 163,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 164,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 166,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 170,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 174,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 114
+            }
+          },
+          {
+            "offset": 179,
+            "opcode": "br",
+            "operand": {
+              "target": 25
+            }
+          },
+          {
+            "offset": 184,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 188,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [],
+      "diagnostics_before": 2
+    },
+    {
+      "token": "0x06000877",
+      "method": "System.Void FTRuntime.SwfClipController::TimerTick()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "SwfClipController",
+        "name": "TimerTick",
+        "token": "0x6000877",
+        "va": "0x1803c6cb0"
+      },
+      "start": "0x1803c6cb0",
+      "end": "0x1803c6d97",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446410928,
+          6446411159
+        ]
+      ],
+      "native_sha256": "6ba264eb8916cc5a74647f2e430a767ca7e5319aaf0fafe8717fea01994d0072",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000877.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803c6cb0 <.data>:\n   1803c6cb0:\t40 53                \trex push %rbx\n   1803c6cb2:\t48 83 ec 20          \tsub    $0x20,%rsp\n   1803c6cb6:\t33 d2                \txor    %edx,%edx\n   1803c6cb8:\t48 8b d9             \tmov    %rcx,%rbx\n   1803c6cbb:\te8 d0 f7 ff ff       \tcall   0x1803c6490\n   1803c6cc0:\t84 c0                \ttest   %al,%al\n   1803c6cc2:\t75 31                \tjne    0x1803c6cf5\n   1803c6cc4:\t8b 43 5c             \tmov    0x5c(%rbx),%eax\n   1803c6cc7:\t85 c0                \ttest   %eax,%eax\n   1803c6cc9:\t75 30                \tjne    0x1803c6cfb\n   1803c6ccb:\t38 43 28             \tcmp    %al,0x28(%rbx)\n   1803c6cce:\t74 25                \tje     0x1803c6cf5\n   1803c6cd0:\t48 83 7b 30 00       \tcmpq   $0x0,0x30(%rbx)\n   1803c6cd5:\t88 43 28             \tmov    %al,0x28(%rbx)\n   1803c6cd8:\t89 43 2c             \tmov    %eax,0x2c(%rbx)\n   1803c6cdb:\t74 18                \tje     0x1803c6cf5\n   1803c6cdd:\t48 8b 43 30          \tmov    0x30(%rbx),%rax\n   1803c6ce1:\t48 8b d3             \tmov    %rbx,%rdx\n   1803c6ce4:\t4c 8b 40 28          \tmov    0x28(%rax),%r8\n   1803c6ce8:\t48 8b 48 40          \tmov    0x40(%rax),%rcx\n   1803c6cec:\t48 83 c4 20          \tadd    $0x20,%rsp\n   1803c6cf0:\t5b                   \tpop    %rbx\n   1803c6cf1:\t48 ff 60 18          \trex.W jmp *0x18(%rax)\n   1803c6cf5:\t48 83 c4 20          \tadd    $0x20,%rsp\n   1803c6cf9:\t5b                   \tpop    %rbx\n   1803c6cfa:\tc3                   \tret\n   1803c6cfb:\t33 d2                \txor    %edx,%edx\n   1803c6cfd:\t48 8b cb             \tmov    %rbx,%rcx\n   1803c6d00:\t83 f8 01             \tcmp    $0x1,%eax\n   1803c6d03:\t75 0a                \tjne    0x1803c6d0f\n   1803c6d05:\t48 83 c4 20          \tadd    $0x20,%rsp\n   1803c6d09:\t5b                   \tpop    %rbx\n   1803c6d0a:\te9 61 fc ff ff       \tjmp    0x1803c6970\n   1803c6d0f:\t48 89 7c 24 30       \tmov    %rdi,0x30(%rsp)\n   1803c6d14:\te8 37 d0 ff ff       \tcall   0x1803c3d50\n   1803c6d19:\t48 8d 0d 28 63 7d 01 \tlea    0x17d6328(%rip),%rcx        # 0x181b9d048\n   1803c6d20:\t89 44 24 40          \tmov    %eax,0x40(%rsp)\n   1803c6d24:\te8 e7 91 e8 ff       \tcall   0x18024ff10\n   1803c6d29:\t48 8b c8             \tmov    %rax,%rcx\n   1803c6d2c:\t48 8d 54 24 40       \tlea    0x40(%rsp),%rdx\n   1803c6d31:\te8 0a 86 e8 ff       \tcall   0x18024f340\n   1803c6d36:\t48 8d 0d d3 f5 7e 01 \tlea    0x17ef5d3(%rip),%rcx        # 0x181bb6310\n   1803c6d3d:\t48 8b d8             \tmov    %rax,%rbx\n   1803c6d40:\te8 cb 91 e8 ff       \tcall   0x18024ff10\n   1803c6d45:\t48 8b c8             \tmov    %rax,%rcx\n   1803c6d48:\t45 33 c0             \txor    %r8d,%r8d\n   1803c6d4b:\t48 8b d3             \tmov    %rbx,%rdx\n   1803c6d4e:\te8 9d 02 7b 00       \tcall   0x180b76ff0\n   1803c6d53:\t48 8d 0d 96 a5 7f 01 \tlea    0x17fa596(%rip),%rcx        # 0x181bc12f0\n   1803c6d5a:\t48 8b d8             \tmov    %rax,%rbx\n   1803c6d5d:\te8 ae 91 e8 ff       \tcall   0x18024ff10\n   1803c6d62:\t48 8b c8             \tmov    %rax,%rcx\n   1803c6d65:\te8 96 93 e8 ff       \tcall   0x180250100\n   1803c6d6a:\t45 33 c0             \txor    %r8d,%r8d\n   1803c6d6d:\t48 8b d3             \tmov    %rbx,%rdx\n   1803c6d70:\t48 8b c8             \tmov    %rax,%rcx\n   1803c6d73:\t48 8b f8             \tmov    %rax,%rdi\n   1803c6d76:\te8 b5 b5 f6 00       \tcall   0x181332330\n   1803c6d7b:\t48 8d 0d fe 5f 80 01 \tlea    0x1805ffe(%rip),%rcx        # 0x181bccd80\n   1803c6d82:\te8 89 91 e8 ff       \tcall   0x18024ff10\n   1803c6d87:\t48 8b d0             \tmov    %rax,%rdx\n   1803c6d8a:\t48 8b cf             \tmov    %rdi,%rcx\n   1803c6d8d:\te8 7e 93 e8 ff       \tcall   0x180250110\n   1803c6d92:\t48 8b 7c 24 30       \tmov    0x30(%rsp),%rdi\n",
+      "managed": {
+        "name": "System.Void FTRuntime.SwfClipController::TimerTick()",
+        "token": "0x06000877",
+        "owner": "FTRuntime.SwfClipController",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "FTRuntime.SwfClipController",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Object",
+          "System.Object",
+          "FTRuntime.SwfClipController/LoopModes",
+          "System.Action`1<FTRuntime.SwfClipController>",
+          "System.Object",
+          "System.Object",
+          "System.Object",
+          "System.Object",
+          "System.Object",
+          "System.Object",
+          "System.Object",
+          "System.String",
+          "System.Object",
+          "UnityEngine.UnityException",
+          "System.Object",
+          "FTRuntime.SwfClipController/LoopModes"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 1,
+            "opcode": "call",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "NextClipFrame",
+              "identity": "System.Boolean FTRuntime.SwfClipController::NextClipFrame()"
+            }
+          },
+          {
+            "offset": 6,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 10,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 162
+            }
+          },
+          {
+            "offset": 19,
+            "opcode": "br",
+            "operand": {
+              "target": 24
+            }
+          },
+          {
+            "offset": 24,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 25,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "FTRuntime.SwfClipController/LoopModes",
+              "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+            }
+          },
+          {
+            "offset": 30,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 35,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 37,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 38,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 40,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 44,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 163
+            }
+          },
+          {
+            "offset": 53,
+            "opcode": "br",
+            "operand": {
+              "target": 58
+            }
+          },
+          {
+            "offset": 58,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 59,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "System.Boolean",
+              "identity": "System.Boolean FTRuntime.SwfClipController::_isPlaying"
+            }
+          },
+          {
+            "offset": 64,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 65,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "FTRuntime.SwfClipController/LoopModes",
+              "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+            }
+          },
+          {
+            "offset": 70,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 72,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 76,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 80,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 162
+            }
+          },
+          {
+            "offset": 85,
+            "opcode": "br",
+            "operand": {
+              "target": 90
+            }
+          },
+          {
+            "offset": 90,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 91,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "System.Action`1<FTRuntime.SwfClipController>",
+              "identity": "System.Action`1<FTRuntime.SwfClipController> FTRuntime.SwfClipController::OnStopPlayingEvent"
+            }
+          },
+          {
+            "offset": 96,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 101,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 103,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 107,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 108,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 109,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "FTRuntime.SwfClipController/LoopModes",
+              "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "System.Boolean",
+              "identity": "System.Boolean FTRuntime.SwfClipController::_isPlaying"
+            }
+          },
+          {
+            "offset": 119,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 120,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 121,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "FTRuntime.SwfClipController/LoopModes",
+              "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+            }
+          },
+          {
+            "offset": 126,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "System.Single",
+              "identity": "System.Single FTRuntime.SwfClipController::_tickTimer"
+            }
+          },
+          {
+            "offset": 131,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 135,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 162
+            }
+          },
+          {
+            "offset": 140,
+            "opcode": "br",
+            "operand": {
+              "target": 145
+            }
+          },
+          {
+            "offset": 145,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 146,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "System.Action`1<FTRuntime.SwfClipController>",
+              "identity": "System.Action`1<FTRuntime.SwfClipController> FTRuntime.SwfClipController::OnStopPlayingEvent"
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 155,
+            "opcode": "ldstr",
+            "operand": "Indirect call: [v114 @ rax_v15 (System.Action`1<FTRuntime.SwfClipController>)+18] (should have been resolved before IL gen)"
+          },
+          {
+            "offset": 160,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 161,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 162,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 163,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 164,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "type": "FTRuntime.SwfClipController/LoopModes",
+              "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+            }
+          },
+          {
+            "offset": 169,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 174,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 176,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 177,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 179,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 183,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 187,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 204
+            }
+          },
+          {
+            "offset": 192,
+            "opcode": "br",
+            "operand": {
+              "target": 197
+            }
+          },
+          {
+            "offset": 197,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 198,
+            "opcode": "call",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Rewind",
+              "identity": "System.Void FTRuntime.SwfClipController::Rewind()"
+            }
+          },
+          {
+            "offset": 203,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 204,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 205,
+            "opcode": "call",
+            "operand": {
+              "owner": "FTRuntime.SwfClipController",
+              "args": [],
+              "ret": "FTRuntime.SwfClipController/LoopModes",
+              "hasThis": true,
+              "name": "get_loopMode",
+              "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::get_loopMode()"
+            }
+          },
+          {
+            "offset": 210,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 214,
+            "opcode": "ldstr",
+            "operand": "Method not found @18024FF10"
+          },
+          {
+            "offset": 219,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 220,
+            "opcode": "br",
+            "operand": {
+              "target": 225
+            }
+          },
+          {
+            "offset": 225,
+            "opcode": "ldstr",
+            "operand": "Unknown call target operand: \"il2cpp_value_box\""
+          },
+          {
+            "offset": 230,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 231,
+            "opcode": "br",
+            "operand": {
+              "target": 236
+            }
+          },
+          {
+            "offset": 236,
+            "opcode": "ldstr",
+            "operand": "SwfClipController. Incorrect loop mode: {0}"
+          },
+          {
+            "offset": 241,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 16
+            }
+          },
+          {
+            "offset": 245,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.String",
+              "args": [
+                "System.String",
+                "System.Object"
+              ],
+              "ret": "System.String",
+              "hasThis": false,
+              "name": "Format",
+              "identity": "System.String System.String::Format(System.String,System.Object)"
+            }
+          },
+          {
+            "offset": 250,
+            "opcode": "stloc",
+            "operand": {
+              "index": 17
+            }
+          },
+          {
+            "offset": 254,
+            "opcode": "ldstr",
+            "operand": "Method not found @18024FF10"
+          },
+          {
+            "offset": 259,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 260,
+            "opcode": "br",
+            "operand": {
+              "target": 265
+            }
+          },
+          {
+            "offset": 265,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 17
+            }
+          },
+          {
+            "offset": 269,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "UnityEngine.UnityException",
+              "args": [
+                "System.String"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void UnityEngine.UnityException::.ctor(System.String)"
+            }
+          },
+          {
+            "offset": 274,
+            "opcode": "stloc",
+            "operand": {
+              "index": 19
+            }
+          },
+          {
+            "offset": 278,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 279,
+            "opcode": "br",
+            "operand": {
+              "target": 284
+            }
+          },
+          {
+            "offset": 284,
+            "opcode": "ldstr",
+            "operand": "Method not found @18024FF10"
+          },
+          {
+            "offset": 289,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 290,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 19
+            }
+          },
+          {
+            "offset": 294,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 295,
+            "opcode": "br",
+            "operand": {
+              "target": 300
+            }
+          },
+          {
+            "offset": 300,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 25,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "FTRuntime.SwfClipController/LoopModes",
+            "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_loopMode",
+              "token": "0x4000a9a",
+              "offset": 92,
+              "type_index": 23090
+            }
+          ]
+        },
+        {
+          "cil_offset": 59,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "System.Boolean",
+            "identity": "System.Boolean FTRuntime.SwfClipController::_isPlaying"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_isPlaying",
+              "token": "0x4000a90",
+              "offset": 40,
+              "type_index": 12423
+            }
+          ]
+        },
+        {
+          "cil_offset": 65,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "FTRuntime.SwfClipController/LoopModes",
+            "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_loopMode",
+              "token": "0x4000a9a",
+              "offset": 92,
+              "type_index": 23090
+            }
+          ]
+        },
+        {
+          "cil_offset": 91,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "System.Action`1<FTRuntime.SwfClipController>",
+            "identity": "System.Action`1<FTRuntime.SwfClipController> FTRuntime.SwfClipController::OnStopPlayingEvent"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "OnStopPlayingEvent",
+              "token": "0x4000a92",
+              "offset": 48,
+              "type_index": 3706
+            }
+          ]
+        },
+        {
+          "cil_offset": 109,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "FTRuntime.SwfClipController/LoopModes",
+            "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_loopMode",
+              "token": "0x4000a9a",
+              "offset": 92,
+              "type_index": 23090
+            }
+          ]
+        },
+        {
+          "cil_offset": 114,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "System.Boolean",
+            "identity": "System.Boolean FTRuntime.SwfClipController::_isPlaying"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_isPlaying",
+              "token": "0x4000a90",
+              "offset": 40,
+              "type_index": 12423
+            }
+          ]
+        },
+        {
+          "cil_offset": 121,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "FTRuntime.SwfClipController/LoopModes",
+            "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_loopMode",
+              "token": "0x4000a9a",
+              "offset": 92,
+              "type_index": 23090
+            }
+          ]
+        },
+        {
+          "cil_offset": 126,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "System.Single",
+            "identity": "System.Single FTRuntime.SwfClipController::_tickTimer"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_tickTimer",
+              "token": "0x4000a91",
+              "offset": 44,
+              "type_index": 18120
+            }
+          ]
+        },
+        {
+          "cil_offset": 146,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "System.Action`1<FTRuntime.SwfClipController>",
+            "identity": "System.Action`1<FTRuntime.SwfClipController> FTRuntime.SwfClipController::OnStopPlayingEvent"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "OnStopPlayingEvent",
+              "token": "0x4000a92",
+              "offset": 48,
+              "type_index": 3706
+            }
+          ]
+        },
+        {
+          "cil_offset": 164,
+          "field": {
+            "owner": "FTRuntime.SwfClipController",
+            "type": "FTRuntime.SwfClipController/LoopModes",
+            "identity": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode"
+          },
+          "original_records": [
+            {
+              "type": "SwfClipController",
+              "namespace": "FTRuntime",
+              "typeIndex": 5378,
+              "name": "_loopMode",
+              "token": "0x4000a9a",
+              "offset": 92,
+              "type_index": 23090
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    }
+  ]
+}

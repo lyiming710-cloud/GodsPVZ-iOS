@@ -1,0 +1,990 @@
+{
+  "input_sha256": "b87bd9b8670f5cc41fa3a138de156dac1aeeb8699b4aaa4cc67a7d99cda2bb3c",
+  "targets": [
+    {
+      "token": "0x0600023C",
+      "name": "System.Void SavesManager::DeletePlayerSave_ID(System.Int32)",
+      "CodeSize": 294,
+      "localSig": "0x110001C5",
+      "MaxStackSize": 2,
+      "eh": 0,
+      "locals": [
+        "System.Int32",
+        "SavesManager",
+        "SaveList",
+        "Save",
+        "Save",
+        "SaveList",
+        "SaveList",
+        "System.Collections.Generic.List\u00601\u003CSave\u003E",
+        "SaveList",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Boolean",
+        "Save"
+      ],
+      "calls": [
+        {
+          "token": "0x0A000194",
+          "name": "!0 System.Collections.Generic.List\u00601\u003CSave\u003E::get_Item(System.Int32)",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000036",
+          "name": "System.Boolean System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::Remove(!0)",
+          "hasThis": true
+        },
+        {
+          "token": "0x0600024F",
+          "name": "System.Void SavesManager::TryCreateNewPlayerSave()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A000194",
+          "name": "!0 System.Collections.Generic.List\u00601\u003CSave\u003E::get_Item(System.Int32)",
+          "hasThis": true
+        },
+        {
+          "token": "0x06000243",
+          "name": "System.Void SavesManager::LoadBaseData()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0600024B",
+          "name": "System.Void SavesManager::SavePlayerSave()",
+          "hasThis": true
+        }
+      ],
+      "types": []
+    },
+    {
+      "token": "0x06000877",
+      "name": "System.Void FTRuntime.SwfClipController::TimerTick()",
+      "CodeSize": 301,
+      "localSig": "0x11000654",
+      "MaxStackSize": 2,
+      "eh": 0,
+      "locals": [
+        "FTRuntime.SwfClipController",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Boolean",
+        "System.Object",
+        "System.Object",
+        "FTRuntime.SwfClipController/LoopModes",
+        "System.Action\u00601\u003CFTRuntime.SwfClipController\u003E",
+        "System.Object",
+        "System.Object",
+        "System.Object",
+        "System.Object",
+        "System.Object",
+        "System.Object",
+        "System.Object",
+        "System.String",
+        "System.Object",
+        "UnityEngine.UnityException",
+        "System.Object",
+        "FTRuntime.SwfClipController/LoopModes"
+      ],
+      "calls": [
+        {
+          "token": "0x06000878",
+          "name": "System.Boolean FTRuntime.SwfClipController::NextClipFrame()",
+          "hasThis": true
+        },
+        {
+          "token": "0x06000875",
+          "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+          "hasThis": true
+        },
+        {
+          "token": "0x06000868",
+          "name": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::get_loopMode()",
+          "hasThis": true
+        },
+        {
+          "token": "0x0A00026E",
+          "name": "System.String System.String::Format(System.String,System.Object)",
+          "hasThis": false
+        },
+        {
+          "token": "0x0A0003AE",
+          "name": "System.Void UnityEngine.UnityException::.ctor(System.String)",
+          "hasThis": true
+        }
+      ],
+      "types": []
+    }
+  ],
+  "refs": [
+    {
+      "token": "0x0A000193",
+      "name": "System.Void System.Collections.Generic.List\u00601\u003CSave\u003E::Add(!0)",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A000194",
+      "name": "!0 System.Collections.Generic.List\u00601\u003CSave\u003E::get_Item(System.Int32)",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A00019C",
+      "name": "System.Int32 System.Collections.Generic.List\u00601\u003CSave\u003E::get_Count()",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A00019E",
+      "name": "System.Void System.Collections.Generic.List\u00601\u003CSave\u003E::.ctor()",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A0003CB",
+      "name": "System.Void System.Action\u00601\u003CFTRuntime.SwfClipController\u003E::.ctor(System.Object,System.IntPtr)",
+      "hasThis": true
+    },
+    {
+      "token": "0x0A0003FE",
+      "name": "System.Void System.Action\u00601\u003CFTRuntime.SwfClipController\u003E::Invoke(!0)",
+      "hasThis": true
+    }
+  ],
+  "internals": [
+    {
+      "token": "0x02000053",
+      "name": "SavesManager",
+      "fields": [
+        {
+          "token": "0x04000310",
+          "name": "Save SavesManager::playerSave",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000311",
+          "name": "SaveList SavesManager::saveList",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000312",
+          "name": "PlantsInitialValue SavesManager::plantsInitialValue",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x06000236",
+          "name": "System.Void SavesManager::Awake()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000237",
+          "name": "System.Void SavesManager::Start()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000238",
+          "name": "System.Void SavesManager::BackupPlayerSave()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000239",
+          "name": "System.Void SavesManager::LoadPlantInitialValue()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600023A",
+          "name": "System.Void SavesManager::CreateNewPlayerSave(System.String)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600023B",
+          "name": "System.Void SavesManager::CreateNewPlayerSaveList()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600023C",
+          "name": "System.Void SavesManager::DeletePlayerSave_ID(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600023D",
+          "name": "System.Void SavesManager::GetSupplies(Supplies)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600023E",
+          "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600023F",
+          "name": "PlantSave SavesManager::InitializeNewPlantSave(System.Int32,System.Int32,System.Int32,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000240",
+          "name": "System.Void SavesManager::InitializeNewPlantSaveList(Save)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000241",
+          "name": "System.Void SavesManager::InitializeNewPropSaveList(Save)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000242",
+          "name": "System.Void SavesManager::InitializeSave(Save)",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000243",
+          "name": "System.Void SavesManager::LoadBaseData()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000244",
+          "name": "System.Void SavesManager::LoadFirstSave()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000245",
+          "name": "System.Void SavesManager::LoadPlayerSave(System.String)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000246",
+          "name": "System.Void SavesManager::LoadPlayerSave_ID(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000247",
+          "name": "System.Void SavesManager::LoadPlayerSaves()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000248",
+          "name": "System.Void SavesManager::PassLevel(ChallengeType,System.Int32,BoardConfig)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000249",
+          "name": "System.Void SavesManager::ReloadPlantSaveData(PlantSave)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600024A",
+          "name": "System.Void SavesManager::RenamePlayer(System.String)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600024B",
+          "name": "System.Void SavesManager::SavePlayerSave()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600024C",
+          "name": "System.Void SavesManager::SetDefaultPlayer(System.String)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600024D",
+          "name": "System.Void SavesManager::GetSkillData(Skill,System.Int32,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600024E",
+          "name": "System.Void SavesManager::GetSkillData_All(PlantSave,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600024F",
+          "name": "System.Void SavesManager::TryCreateNewPlayerSave()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000250",
+          "name": "System.Void SavesManager::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x02000086",
+      "name": "Save",
+      "fields": [
+        {
+          "token": "0x04000626",
+          "name": "System.String Save::administratorMode",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000627",
+          "name": "System.String Save::playerName",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000628",
+          "name": "System.Int32 Save::adventureLevel",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000629",
+          "name": "System.Int32 Save::lenthOfSeedBank",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400062A",
+          "name": "System.Int32 Save::lenthOfPropBank",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400062B",
+          "name": "System.Boolean Save::adventureExtensionUnlock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400062C",
+          "name": "System.Boolean Save::miniGameUnlock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400062D",
+          "name": "System.Boolean Save::puzzleUnlock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400062E",
+          "name": "System.Boolean Save::survivalUnlock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400062F",
+          "name": "System.Boolean Save::surviveRestUnlock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000630",
+          "name": "System.Boolean Save::gamblingUnlock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000631",
+          "name": "System.Boolean Save::silverSunflowerTrophy",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000632",
+          "name": "System.Boolean Save::goldenSunflowerTrophy",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000633",
+          "name": "System.Int32[] Save::rescuePassNum",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000634",
+          "name": "System.Int32[] Save::minigamePassNum",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000635",
+          "name": "System.Int32[] Save::adventureHardMaxStarNum",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000636",
+          "name": "System.Boolean[] Save::adventureHardPassed",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000637",
+          "name": "System.Int32 Save::puzzleLevel1",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000638",
+          "name": "System.Int32 Save::puzzleLevel2",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000639",
+          "name": "System.Collections.Generic.List\u00601\u003CPlantSave\u003E Save::plantSaves",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400063A",
+          "name": "System.Collections.Generic.List\u00601\u003CPropSave\u003E Save::propSaves",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400063B",
+          "name": "System.Int32 Save::coins",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400063C",
+          "name": "System.Int32 Save::diamond",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400063D",
+          "name": "System.Collections.Generic.List\u00601\u003CSupplies\u003E Save::supplies",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400063E",
+          "name": "System.Boolean[] Save::almanac_ZombieLock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400063F",
+          "name": "System.Boolean[] Save::almanac_DeviceLock",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000640",
+          "name": "System.Boolean[] Save::key_Tutorial",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000641",
+          "name": "System.Int32 Save::defaultTeamID",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000642",
+          "name": "System.Collections.Generic.List\u00601\u003CTeam\u003E Save::teams",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000643",
+          "name": "System.Single Save::BGMVolume",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000644",
+          "name": "System.Single Save::audioVlume",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000645",
+          "name": "System.Boolean Save::fullscreen",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000646",
+          "name": "System.Boolean Save::autoTimeSlow",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x04000647",
+          "name": "System.Int32 Save::resolutionScale",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x060004BF",
+          "name": "System.Void Save::CompletenessTest()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C0",
+          "name": "System.Void Save::Copy(Save)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C1",
+          "name": "PlantSave Save::FindPlantSave(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C2",
+          "name": "System.Void Save::GetPlantSave(PlantSave)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C3",
+          "name": "PropSave Save::GetPropSave(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C4",
+          "name": "Supplies Save::GetSupplies(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C5",
+          "name": "System.Boolean Save::LevelPassed(ChallengeType,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C6",
+          "name": "System.Boolean Save::RecordDevice(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x060004C7",
+          "name": "System.Void Save::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x02000088",
+      "name": "SaveList",
+      "fields": [
+        {
+          "token": "0x0400064D",
+          "name": "System.String SaveList::defaultPlayerName",
+          "attributes": "Public"
+        },
+        {
+          "token": "0x0400064E",
+          "name": "System.Collections.Generic.List\u00601\u003CSave\u003E SaveList::saveList",
+          "attributes": "Public"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x060004C9",
+          "name": "System.Void SaveList::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    },
+    {
+      "token": "0x02000121",
+      "name": "FTRuntime.SwfClipController",
+      "fields": [
+        {
+          "token": "0x04000A8F",
+          "name": "FTRuntime.SwfClip FTRuntime.SwfClipController::_clip",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A90",
+          "name": "System.Boolean FTRuntime.SwfClipController::_isPlaying",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A91",
+          "name": "System.Single FTRuntime.SwfClipController::_tickTimer",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A92",
+          "name": "System.Action\u00601\u003CFTRuntime.SwfClipController\u003E FTRuntime.SwfClipController::OnStopPlayingEvent",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A93",
+          "name": "System.Action\u00601\u003CFTRuntime.SwfClipController\u003E FTRuntime.SwfClipController::OnPlayStoppedEvent",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A94",
+          "name": "System.Action\u00601\u003CFTRuntime.SwfClipController\u003E FTRuntime.SwfClipController::OnRewindPlayingEvent",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A95",
+          "name": "System.Boolean FTRuntime.SwfClipController::_autoPlay",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A96",
+          "name": "System.Boolean FTRuntime.SwfClipController::_useUnscaledDt",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A97",
+          "name": "System.Single FTRuntime.SwfClipController::_rateScale",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A98",
+          "name": "System.String FTRuntime.SwfClipController::_groupName",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A99",
+          "name": "FTRuntime.SwfClipController/PlayModes FTRuntime.SwfClipController::_playMode",
+          "attributes": "Private"
+        },
+        {
+          "token": "0x04000A9A",
+          "name": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode",
+          "attributes": "Private"
+        }
+      ],
+      "methods": [
+        {
+          "token": "0x06000858",
+          "name": "System.Void FTRuntime.SwfClipController::add_OnStopPlayingEvent(System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000859",
+          "name": "System.Void FTRuntime.SwfClipController::remove_OnStopPlayingEvent(System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600085A",
+          "name": "System.Void FTRuntime.SwfClipController::add_OnPlayStoppedEvent(System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600085B",
+          "name": "System.Void FTRuntime.SwfClipController::remove_OnPlayStoppedEvent(System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600085C",
+          "name": "System.Void FTRuntime.SwfClipController::add_OnRewindPlayingEvent(System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600085D",
+          "name": "System.Void FTRuntime.SwfClipController::remove_OnRewindPlayingEvent(System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600085E",
+          "name": "System.Boolean FTRuntime.SwfClipController::get_autoPlay()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600085F",
+          "name": "System.Void FTRuntime.SwfClipController::set_autoPlay(System.Boolean)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000860",
+          "name": "System.Boolean FTRuntime.SwfClipController::get_useUnscaledDt()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000861",
+          "name": "System.Void FTRuntime.SwfClipController::set_useUnscaledDt(System.Boolean)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000862",
+          "name": "System.Single FTRuntime.SwfClipController::get_rateScale()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000863",
+          "name": "System.Void FTRuntime.SwfClipController::set_rateScale(System.Single)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000864",
+          "name": "System.String FTRuntime.SwfClipController::get_groupName()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000865",
+          "name": "System.Void FTRuntime.SwfClipController::set_groupName(System.String)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000866",
+          "name": "FTRuntime.SwfClipController/PlayModes FTRuntime.SwfClipController::get_playMode()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000867",
+          "name": "System.Void FTRuntime.SwfClipController::set_playMode(FTRuntime.SwfClipController/PlayModes)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000868",
+          "name": "FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::get_loopMode()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x06000869",
+          "name": "System.Void FTRuntime.SwfClipController::set_loopMode(FTRuntime.SwfClipController/LoopModes)",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600086A",
+          "name": "FTRuntime.SwfClip FTRuntime.SwfClipController::get_clip()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600086B",
+          "name": "System.Boolean FTRuntime.SwfClipController::get_isPlaying()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600086C",
+          "name": "System.Boolean FTRuntime.SwfClipController::get_isStopped()",
+          "attributes": "Public, HideBySig, SpecialName"
+        },
+        {
+          "token": "0x0600086D",
+          "name": "System.Void FTRuntime.SwfClipController::GotoAndStop(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600086E",
+          "name": "System.Void FTRuntime.SwfClipController::GotoAndStop(System.String,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x0600086F",
+          "name": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000870",
+          "name": "System.Void FTRuntime.SwfClipController::GotoAndPlay(System.String,System.Int32)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000871",
+          "name": "System.Void FTRuntime.SwfClipController::Stop(System.Boolean)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000872",
+          "name": "System.Void FTRuntime.SwfClipController::Stop(System.String)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000873",
+          "name": "System.Void FTRuntime.SwfClipController::Play(System.Boolean)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000874",
+          "name": "System.Void FTRuntime.SwfClipController::Play(System.String)",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000875",
+          "name": "System.Void FTRuntime.SwfClipController::Rewind()",
+          "attributes": "Public, HideBySig"
+        },
+        {
+          "token": "0x06000876",
+          "name": "System.Void FTRuntime.SwfClipController::Internal_Update(System.Single,System.Single)",
+          "attributes": "Assembly, HideBySig"
+        },
+        {
+          "token": "0x06000877",
+          "name": "System.Void FTRuntime.SwfClipController::TimerTick()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000878",
+          "name": "System.Boolean FTRuntime.SwfClipController::NextClipFrame()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x06000879",
+          "name": "System.Void FTRuntime.SwfClipController::Awake()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600087A",
+          "name": "System.Void FTRuntime.SwfClipController::OnEnable()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600087B",
+          "name": "System.Void FTRuntime.SwfClipController::OnDisable()",
+          "attributes": "Private, HideBySig"
+        },
+        {
+          "token": "0x0600087C",
+          "name": "System.Void FTRuntime.SwfClipController::.ctor()",
+          "attributes": "Public, HideBySig, SpecialName, RTSpecialName"
+        }
+      ]
+    }
+  ],
+  "getters": [
+    {
+      "token": "0x0600023C",
+      "name": "System.Void SavesManager::DeletePlayerSave_ID(System.Int32)",
+      "il": [
+        "IL_0000: br IL_0117",
+        "IL_0005: ldloc V_2",
+        "IL_0009: ldfld System.Collections.Generic.List\u00601\u003CSave\u003E SaveList::saveList",
+        "IL_000e: ldarg playerSaveID",
+        "IL_0012: call !0 System.Collections.Generic.List\u00601\u003CSave\u003E::get_Item(System.Int32)",
+        "IL_0017: stloc V_4",
+        "IL_001b: ldarg.0",
+        "IL_001c: ldfld SaveList SavesManager::saveList",
+        "IL_0021: stloc V_6",
+        "IL_0025: br IL_002a",
+        "IL_002a: ldloc V_6",
+        "IL_002e: ldfld System.Collections.Generic.List\u00601\u003CSave\u003E SaveList::saveList",
+        "IL_0033: ldloc V_4",
+        "IL_0037: call System.Boolean System.Collections.Generic.List\u00601\u003CSystem.Object\u003E::Remove(!0)",
+        "IL_003c: stloc V_11",
+        "IL_0040: ldarg.0",
+        "IL_0041: ldfld Save SavesManager::playerSave",
+        "IL_0046: ldloc V_4",
+        "IL_004a: ceq",
+        "IL_004c: ldc.i4.0",
+        "IL_004d: ceq",
+        "IL_004f: stloc V_9",
+        "IL_0053: ldloc V_9",
+        "IL_0057: brtrue IL_0110",
+        "IL_005c: br IL_0061",
+        "IL_0061: ldarg.0",
+        "IL_0062: ldfld SaveList SavesManager::saveList",
+        "IL_0067: stloc V_5",
+        "IL_006b: br IL_0070",
+        "IL_0070: ldloc V_5",
+        "IL_0074: ldfld System.Collections.Generic.List\u00601\u003CSave\u003E SaveList::saveList",
+        "IL_0079: stloc V_7",
+        "IL_007d: br IL_0082",
+        "IL_0082: ldloc V_7",
+        "IL_0086: ldfld System.Int32 System.Collections.Generic.List\u00601\u003CSave\u003E::_size",
+        "IL_008b: ldc.i4 0",
+        "IL_0090: cgt",
+        "IL_0092: stloc V_10",
+        "IL_0096: ldloc V_10",
+        "IL_009a: brtrue IL_00af",
+        "IL_009f: br IL_00a4",
+        "IL_00a4: ldarg.0",
+        "IL_00a5: call System.Void SavesManager::TryCreateNewPlayerSave()",
+        "IL_00aa: br IL_0105",
+        "IL_00af: ldloc V_7",
+        "IL_00b3: ldc.i4 0",
+        "IL_00b8: call !0 System.Collections.Generic.List\u00601\u003CSave\u003E::get_Item(System.Int32)",
+        "IL_00bd: stloc V_12",
+        "IL_00c1: ldarg.0",
+        "IL_00c2: ldloc V_12",
+        "IL_00c6: stfld Save SavesManager::playerSave",
+        "IL_00cb: br IL_00d0",
+        "IL_00d0: ldarg.0",
+        "IL_00d1: ldfld Save SavesManager::playerSave",
+        "IL_00d6: stloc V_3",
+        "IL_00da: br IL_00df",
+        "IL_00df: ldarg.0",
+        "IL_00e0: ldfld SaveList SavesManager::saveList",
+        "IL_00e5: stloc V_8",
+        "IL_00e9: br IL_00ee",
+        "IL_00ee: ldloc V_8",
+        "IL_00f2: ldloc V_3",
+        "IL_00f6: ldfld System.String Save::playerName",
+        "IL_00fb: stfld System.String SaveList::defaultPlayerName",
+        "IL_0100: br IL_0105",
+        "IL_0105: ldarg.0",
+        "IL_0106: call System.Void SavesManager::LoadBaseData()",
+        "IL_010b: br IL_0110",
+        "IL_0110: ldarg.0",
+        "IL_0111: call System.Void SavesManager::SavePlayerSave()",
+        "IL_0116: ret",
+        "IL_0117: ldarg.0",
+        "IL_0118: ldfld SaveList SavesManager::saveList",
+        "IL_011d: stloc V_2",
+        "IL_0121: br IL_0005"
+      ]
+    },
+    {
+      "token": "0x06000877",
+      "name": "System.Void FTRuntime.SwfClipController::TimerTick()",
+      "il": [
+        "IL_0000: ldarg.0",
+        "IL_0001: call System.Boolean FTRuntime.SwfClipController::NextClipFrame()",
+        "IL_0006: stloc V_1",
+        "IL_000a: ldloc V_1",
+        "IL_000e: brtrue IL_00a2",
+        "IL_0013: br IL_0018",
+        "IL_0018: ldarg.0",
+        "IL_0019: ldfld FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode",
+        "IL_001e: ldc.i4 0",
+        "IL_0023: ceq",
+        "IL_0025: ldc.i4.0",
+        "IL_0026: ceq",
+        "IL_0028: stloc V_2",
+        "IL_002c: ldloc V_2",
+        "IL_0030: brtrue IL_00a3",
+        "IL_0035: br IL_003a",
+        "IL_003a: ldarg.0",
+        "IL_003b: ldfld System.Boolean FTRuntime.SwfClipController::_isPlaying",
+        "IL_0040: ldarg.0",
+        "IL_0041: ldfld FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode",
+        "IL_0046: ceq",
+        "IL_0048: stloc V_3",
+        "IL_004c: ldloc V_3",
+        "IL_0050: brtrue IL_00a2",
+        "IL_0055: br IL_005a",
+        "IL_005a: ldarg.0",
+        "IL_005b: ldfld System.Action\u00601\u003CFTRuntime.SwfClipController\u003E FTRuntime.SwfClipController::OnStopPlayingEvent",
+        "IL_0060: ldc.i4 0",
+        "IL_0065: ceq",
+        "IL_0067: stloc V_4",
+        "IL_006b: ldarg.0",
+        "IL_006c: ldarg.0",
+        "IL_006d: ldfld FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode",
+        "IL_0072: stfld System.Boolean FTRuntime.SwfClipController::_isPlaying",
+        "IL_0077: ldarg.0",
+        "IL_0078: ldarg.0",
+        "IL_0079: ldfld FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode",
+        "IL_007e: stfld System.Single FTRuntime.SwfClipController::_tickTimer",
+        "IL_0083: ldloc V_4",
+        "IL_0087: brtrue IL_00a2",
+        "IL_008c: br IL_0091",
+        "IL_0091: ldarg.0",
+        "IL_0092: ldfld System.Action\u00601\u003CFTRuntime.SwfClipController\u003E FTRuntime.SwfClipController::OnStopPlayingEvent",
+        "IL_0097: stloc V_9",
+        "IL_009b: ldstr \u0022Indirect call: [v114 @ rax_v15 (System.Action\u00601\u003CFTRuntime.SwfClipController\u003E)\u002B18] (should have been resolved before IL gen)\u0022",
+        "IL_00a0: pop",
+        "IL_00a1: ret",
+        "IL_00a2: ret",
+        "IL_00a3: ldarg.0",
+        "IL_00a4: ldfld FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::_loopMode",
+        "IL_00a9: ldc.i4 1",
+        "IL_00ae: ceq",
+        "IL_00b0: ldc.i4.0",
+        "IL_00b1: ceq",
+        "IL_00b3: stloc V_5",
+        "IL_00b7: ldloc V_5",
+        "IL_00bb: brtrue IL_00cc",
+        "IL_00c0: br IL_00c5",
+        "IL_00c5: ldarg.0",
+        "IL_00c6: call System.Void FTRuntime.SwfClipController::Rewind()",
+        "IL_00cb: ret",
+        "IL_00cc: ldarg.0",
+        "IL_00cd: call FTRuntime.SwfClipController/LoopModes FTRuntime.SwfClipController::get_loopMode()",
+        "IL_00d2: stloc V_8",
+        "IL_00d6: ldstr \u0022Method not found @18024FF10\u0022",
+        "IL_00db: pop",
+        "IL_00dc: br IL_00e1",
+        "IL_00e1: ldstr \u0022Unknown call target operand: \u0022il2cpp_value_box\u0022\u0022",
+        "IL_00e6: pop",
+        "IL_00e7: br IL_00ec",
+        "IL_00ec: ldstr \u0022SwfClipController. Incorrect loop mode: {0}\u0022",
+        "IL_00f1: ldloc V_16",
+        "IL_00f5: call System.String System.String::Format(System.String,System.Object)",
+        "IL_00fa: stloc V_17",
+        "IL_00fe: ldstr \u0022Method not found @18024FF10\u0022",
+        "IL_0103: pop",
+        "IL_0104: br IL_0109",
+        "IL_0109: ldloc V_17",
+        "IL_010d: newobj System.Void UnityEngine.UnityException::.ctor(System.String)",
+        "IL_0112: stloc V_19",
+        "IL_0116: nop",
+        "IL_0117: br IL_011c",
+        "IL_011c: ldstr \u0022Method not found @18024FF10\u0022",
+        "IL_0121: pop",
+        "IL_0122: ldloc V_19",
+        "IL_0126: throw",
+        "IL_0127: br IL_012c",
+        "IL_012c: ret"
+      ]
+    }
+  ]
+}
+
