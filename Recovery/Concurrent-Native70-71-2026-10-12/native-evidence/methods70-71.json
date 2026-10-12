@@ -1,0 +1,3996 @@
+{
+  "source_path": "audit\\native30-continuation-2026-10-02\\native55-native.json",
+  "source_sha256": "304b632ad13168da91e4b03e2824f69f053c592f59b3a089756a5e4114445277",
+  "purpose": "Original PC native; embedded managed snapshots are historical Native54 only",
+  "methods": [
+    {
+      "token": "0x060001FA",
+      "method": "System.Void ProjectManager::Update_Projects()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "ProjectManager",
+        "name": "Update_Projects",
+        "token": "0x60001fa",
+        "va": "0x180323fd0"
+      },
+      "start": "0x180323fd0",
+      "end": "0x180324127",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445744080,
+          6445744423
+        ]
+      ],
+      "native_sha256": "4671a3a3616a6730dec0eb487d8b8a319241cac59024e7c74e7bce36cd85290a",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060001FA.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180323fd0 <.data>:\n   180323fd0:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   180323fd5:\t57                   \tpush   %rdi\n   180323fd6:\t48 83 ec 70          \tsub    $0x70,%rsp\n   180323fda:\t0f 29 74 24 60       \tmovaps %xmm6,0x60(%rsp)\n   180323fdf:\t48 8b f9             \tmov    %rcx,%rdi\n   180323fe2:\t80 3d 05 0c 9c 01 00 \tcmpb   $0x0,0x19c0c05(%rip)        # 0x181ce4bee\n   180323fe9:\t75 37                \tjne    0x180324022\n   180323feb:\t48 8d 0d 36 2f 8a 01 \tlea    0x18a2f36(%rip),%rcx        # 0x181bc6f28\n   180323ff2:\te8 f9 be f2 ff       \tcall   0x18024fef0\n   180323ff7:\t48 8d 0d 82 2f 8a 01 \tlea    0x18a2f82(%rip),%rcx        # 0x181bc6f80\n   180323ffe:\te8 ed be f2 ff       \tcall   0x18024fef0\n   180324003:\t48 8d 0d ce 2f 8a 01 \tlea    0x18a2fce(%rip),%rcx        # 0x181bc6fd8\n   18032400a:\te8 e1 be f2 ff       \tcall   0x18024fef0\n   18032400f:\t48 8d 0d ea 17 89 01 \tlea    0x18917ea(%rip),%rcx        # 0x181bb5800\n   180324016:\te8 d5 be f2 ff       \tcall   0x18024fef0\n   18032401b:\tc6 05 cc 0b 9c 01 01 \tmovb   $0x1,0x19c0bcc(%rip)        # 0x181ce4bee\n   180324022:\t48 8b 57 38          \tmov    0x38(%rdi),%rdx\n   180324026:\t48 85 d2             \ttest   %rdx,%rdx\n   180324029:\t0f 84 f2 00 00 00    \tje     0x180324121\n   18032402f:\t4c 8b 05 ca 17 89 01 \tmov    0x18917ca(%rip),%r8        # 0x181bb5800\n   180324036:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   18032403b:\te8 b0 57 4f 00       \tcall   0x1808197f0\n   180324040:\t0f 10 44 24 28       \tmovups 0x28(%rsp),%xmm0\n   180324045:\t0f 11 44 24 40       \tmovups %xmm0,0x40(%rsp)\n   18032404a:\tf2 0f 10 4c 24 38    \tmovsd  0x38(%rsp),%xmm1\n   180324050:\tf2 0f 11 4c 24 50    \tmovsd  %xmm1,0x50(%rsp)\n   180324056:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   18032405d:\t00 00 \n   18032405f:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   180324064:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   180324069:\tf3 0f 10 35 93 39 28 \tmovss  0x1283993(%rip),%xmm6        # 0x1815a7a04\n   180324070:\t01 \n   180324071:\t48 8b 15 08 2f 8a 01 \tmov    0x18a2f08(%rip),%rdx        # 0x181bc6f80\n   180324078:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   18032407d:\te8 fe 51 34 00       \tcall   0x180669280\n   180324082:\t84 c0                \ttest   %al,%al\n   180324084:\t74 4a                \tje     0x1803240d0\n   180324086:\t48 8b 4c 24 50       \tmov    0x50(%rsp),%rcx\n   18032408b:\t48 85 c9             \ttest   %rcx,%rcx\n   18032408e:\t0f 84 81 00 00 00    \tje     0x180324115\n   180324094:\t83 79 24 01          \tcmpl   $0x1,0x24(%rcx)\n   180324098:\t74 0c                \tje     0x1803240a6\n   18032409a:\t83 79 24 02          \tcmpl   $0x2,0x24(%rcx)\n   18032409e:\t74 06                \tje     0x1803240a6\n   1803240a0:\t83 79 24 08          \tcmpl   $0x8,0x24(%rcx)\n   1803240a4:\t75 cb                \tjne    0x180324071\n   1803240a6:\t83 79 58 05          \tcmpl   $0x5,0x58(%rcx)\n   1803240aa:\t75 c5                \tjne    0x180324071\n   1803240ac:\tf3 0f 10 41 38       \tmovss  0x38(%rcx),%xmm0\n   1803240b1:\t0f 2f c6             \tcomiss %xmm6,%xmm0\n   1803240b4:\t72 bb                \tjb     0x180324071\n   1803240b6:\t48 8b 57 20          \tmov    0x20(%rdi),%rdx\n   1803240ba:\t48 85 d2             \ttest   %rdx,%rdx\n   1803240bd:\t74 50                \tje     0x18032410f\n   1803240bf:\t45 33 c0             \txor    %r8d,%r8d\n   1803240c2:\t48 8b 92 10 01 00 00 \tmov    0x110(%rdx),%rdx\n   1803240c9:\te8 42 22 05 00       \tcall   0x180376310\n   1803240ce:\teb a1                \tjmp    0x180324071\n   1803240d0:\t48 8b 15 51 2e 8a 01 \tmov    0x18a2e51(%rip),%rdx        # 0x181bc6f28\n   1803240d7:\t48 8b cb             \tmov    %rbx,%rcx\n   1803240da:\te8 91 e0 fd ff       \tcall   0x180302170\n   1803240df:\teb 1b                \tjmp    0x1803240fc\n   1803240e1:\t48 8b 15 40 2e 8a 01 \tmov    0x18a2e40(%rip),%rdx        # 0x181bc6f28\n   1803240e8:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   1803240ed:\te8 7e e0 fd ff       \tcall   0x180302170\n   1803240f2:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   1803240f7:\t48 85 c9             \ttest   %rcx,%rcx\n   1803240fa:\t75 1f                \tjne    0x18032411b\n   1803240fc:\t48 8b 9c 24 80 00 00 \tmov    0x80(%rsp),%rbx\n   180324103:\t00 \n   180324104:\t0f 28 74 24 60       \tmovaps 0x60(%rsp),%xmm6\n   180324109:\t48 83 c4 70          \tadd    $0x70,%rsp\n   18032410d:\t5f                   \tpop    %rdi\n   18032410e:\tc3                   \tret\n   18032410f:\te8 3c c0 f2 ff       \tcall   0x180250150\n   180324114:\t90                   \tnop\n   180324115:\te8 36 c0 f2 ff       \tcall   0x180250150\n   18032411a:\t90                   \tnop\n   18032411b:\te8 40 cd ed ff       \tcall   0x180200e60\n   180324120:\tcc                   \tint3\n   180324121:\te8 2a c0 f2 ff       \tcall   0x180250150\n   180324126:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void ProjectManager::Update_Projects()",
+        "token": "0x060001FA",
+        "owner": "ProjectManager",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "System.Object",
+          "Project",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "Board",
+          "System.Boolean",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "ProjectManager",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "Method not found @1808197F0"
+          },
+          {
+            "offset": 10,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 12,
+            "opcode": "br",
+            "operand": {
+              "target": 298
+            }
+          },
+          {
+            "offset": 17,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 21,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 26,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 28,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 32,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 36,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 282
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "br",
+            "operand": {
+              "target": 46
+            }
+          },
+          {
+            "offset": 46,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 50,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Project",
+              "type": "System.Int32",
+              "identity": "System.Int32 Project::ID"
+            }
+          },
+          {
+            "offset": 55,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 60,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 62,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 66,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 70,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 151
+            }
+          },
+          {
+            "offset": 75,
+            "opcode": "br",
+            "operand": {
+              "target": 80
+            }
+          },
+          {
+            "offset": 80,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 84,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Project",
+              "type": "System.Int32",
+              "identity": "System.Int32 Project::ID"
+            }
+          },
+          {
+            "offset": 89,
+            "opcode": "ldc.i4",
+            "operand": 2
+          },
+          {
+            "offset": 94,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 96,
+            "opcode": "stloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 100,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 104,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 151
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "br",
+            "operand": {
+              "target": 114
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 118,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Project",
+              "type": "System.Int32",
+              "identity": "System.Int32 Project::ID"
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "ldc.i4",
+            "operand": 8
+          },
+          {
+            "offset": 128,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 130,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 131,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 133,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 137,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 141,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 298
+            }
+          },
+          {
+            "offset": 146,
+            "opcode": "br",
+            "operand": {
+              "target": 151
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 155,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Project",
+              "type": "System.Int32",
+              "identity": "System.Int32 Project::movementTracks"
+            }
+          },
+          {
+            "offset": 160,
+            "opcode": "ldc.i4",
+            "operand": 5
+          },
+          {
+            "offset": 165,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 167,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 168,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 170,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 174,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 178,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 298
+            }
+          },
+          {
+            "offset": 183,
+            "opcode": "br",
+            "operand": {
+              "target": 188
+            }
+          },
+          {
+            "offset": 188,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 192,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Project",
+              "type": "System.Single",
+              "identity": "System.Single Project::stayedTime"
+            }
+          },
+          {
+            "offset": 197,
+            "opcode": "ldc.r4",
+            "operand": 0.4
+          },
+          {
+            "offset": 202,
+            "opcode": "clt",
+            "operand": null
+          },
+          {
+            "offset": 204,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 208,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 212,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 298
+            }
+          },
+          {
+            "offset": 217,
+            "opcode": "br",
+            "operand": {
+              "target": 222
+            }
+          },
+          {
+            "offset": 222,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 223,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "ProjectManager",
+              "type": "Board",
+              "identity": "Board ProjectManager::board"
+            }
+          },
+          {
+            "offset": 228,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 232,
+            "opcode": "br",
+            "operand": {
+              "target": 237
+            }
+          },
+          {
+            "offset": 237,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 241,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 245,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "MouseManager",
+              "identity": "MouseManager Board::mouseManager"
+            }
+          },
+          {
+            "offset": 250,
+            "opcode": "call",
+            "operand": {
+              "owner": "Project",
+              "args": [
+                "MouseManager"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Click",
+              "identity": "System.Void Project::Click(MouseManager)"
+            }
+          },
+          {
+            "offset": 255,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 256,
+            "opcode": "br",
+            "operand": {
+              "target": 298
+            }
+          },
+          {
+            "offset": 261,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 265,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<Project>",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Dispose",
+              "identity": "System.Void System.Collections.Generic.List`1/Enumerator<Project>::Dispose()"
+            }
+          },
+          {
+            "offset": 270,
+            "opcode": "br",
+            "operand": {
+              "target": 275
+            }
+          },
+          {
+            "offset": 275,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 276,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 277,
+            "opcode": "br",
+            "operand": {
+              "target": 336
+            }
+          },
+          {
+            "offset": 282,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 287,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 288,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 292,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 293,
+            "opcode": "br",
+            "operand": {
+              "target": 276
+            }
+          },
+          {
+            "offset": 298,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 302,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "MoveNext",
+              "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+            }
+          },
+          {
+            "offset": 307,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 311,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 315,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 316,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 318,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 322,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 326,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 261
+            }
+          },
+          {
+            "offset": 331,
+            "opcode": "br",
+            "operand": {
+              "target": 17
+            }
+          },
+          {
+            "offset": 336,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 341,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 342,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 50,
+          "field": {
+            "owner": "Project",
+            "type": "System.Int32",
+            "identity": "System.Int32 Project::ID"
+          },
+          "original_records": [
+            {
+              "type": "Project",
+              "namespace": "",
+              "typeIndex": 5210,
+              "name": "ID",
+              "token": "0x4000516",
+              "offset": 36,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 84,
+          "field": {
+            "owner": "Project",
+            "type": "System.Int32",
+            "identity": "System.Int32 Project::ID"
+          },
+          "original_records": [
+            {
+              "type": "Project",
+              "namespace": "",
+              "typeIndex": 5210,
+              "name": "ID",
+              "token": "0x4000516",
+              "offset": 36,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 118,
+          "field": {
+            "owner": "Project",
+            "type": "System.Int32",
+            "identity": "System.Int32 Project::ID"
+          },
+          "original_records": [
+            {
+              "type": "Project",
+              "namespace": "",
+              "typeIndex": 5210,
+              "name": "ID",
+              "token": "0x4000516",
+              "offset": 36,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 155,
+          "field": {
+            "owner": "Project",
+            "type": "System.Int32",
+            "identity": "System.Int32 Project::movementTracks"
+          },
+          "original_records": [
+            {
+              "type": "Project",
+              "namespace": "",
+              "typeIndex": 5210,
+              "name": "movementTracks",
+              "token": "0x4000520",
+              "offset": 88,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 192,
+          "field": {
+            "owner": "Project",
+            "type": "System.Single",
+            "identity": "System.Single Project::stayedTime"
+          },
+          "original_records": [
+            {
+              "type": "Project",
+              "namespace": "",
+              "typeIndex": 5210,
+              "name": "stayedTime",
+              "token": "0x400051b",
+              "offset": 56,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 223,
+          "field": {
+            "owner": "ProjectManager",
+            "type": "Board",
+            "identity": "Board ProjectManager::board"
+          },
+          "original_records": [
+            {
+              "type": "ProjectManager",
+              "namespace": "",
+              "typeIndex": 5168,
+              "name": "board",
+              "token": "0x40002bf",
+              "offset": 32,
+              "type_index": 12396
+            }
+          ]
+        },
+        {
+          "cil_offset": 245,
+          "field": {
+            "owner": "Board",
+            "type": "MouseManager",
+            "identity": "MouseManager Board::mouseManager"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "mouseManager",
+              "token": "0x40003d9",
+              "offset": 272,
+              "type_index": 16341
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x060002AE",
+      "method": "System.Void Board::Update_Popups()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Board",
+        "name": "Update_Popups",
+        "token": "0x60002ae",
+        "va": "0x180328db0"
+      },
+      "start": "0x180328db0",
+      "end": "0x180328f22",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445764016,
+          6445764115
+        ],
+        [
+          6445764115,
+          6445764194
+        ],
+        [
+          6445764194,
+          6445764386
+        ]
+      ],
+      "native_sha256": "6c429e66e7a453fed3d817cecb40c0f5a6b08b5d0f40960846245938c585054b",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060002AE.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180328db0 <.data>:\n   180328db0:\t40 53                \trex push %rbx\n   180328db2:\t48 83 ec 20          \tsub    $0x20,%rsp\n   180328db6:\t80 3d c8 be 9b 01 00 \tcmpb   $0x0,0x19bbec8(%rip)        # 0x181ce4c85\n   180328dbd:\t48 8b d9             \tmov    %rcx,%rbx\n   180328dc0:\t75 37                \tjne    0x180328df9\n   180328dc2:\t48 8d 0d 07 c4 88 01 \tlea    0x188c407(%rip),%rcx        # 0x181bb51d0\n   180328dc9:\te8 22 71 f2 ff       \tcall   0x18024fef0\n   180328dce:\t48 8d 0d 53 c4 88 01 \tlea    0x188c453(%rip),%rcx        # 0x181bb5228\n   180328dd5:\te8 16 71 f2 ff       \tcall   0x18024fef0\n   180328dda:\t48 8d 0d 9f c4 88 01 \tlea    0x188c49f(%rip),%rcx        # 0x181bb5280\n   180328de1:\te8 0a 71 f2 ff       \tcall   0x18024fef0\n   180328de6:\t48 8d 0d 13 77 88 01 \tlea    0x1887713(%rip),%rcx        # 0x181bb0500\n   180328ded:\te8 fe 70 f2 ff       \tcall   0x18024fef0\n   180328df2:\tc6 05 8c be 9b 01 01 \tmovb   $0x1,0x19bbe8c(%rip)        # 0x181ce4c85\n   180328df9:\t48 8b 83 d8 00 00 00 \tmov    0xd8(%rbx),%rax\n   180328e00:\t48 85 c0             \ttest   %rax,%rax\n   180328e03:\t0f 84 13 01 00 00    \tje     0x180328f1c\n   180328e09:\t83 78 18 00          \tcmpl   $0x0,0x18(%rax)\n   180328e0d:\t0f 8e d0 00 00 00    \tjle    0x180328ee3\n   180328e13:\t48 89 7c 24 30       \tmov    %rdi,0x30(%rsp)\n   180328e18:\t4c 8b 05 61 c4 88 01 \tmov    0x188c461(%rip),%r8        # 0x181bb5280\n   180328e1f:\t33 d2                \txor    %edx,%edx\n   180328e21:\t48 8b c8             \tmov    %rax,%rcx\n   180328e24:\te8 e7 c8 4f 00       \tcall   0x180825710\n   180328e29:\t48 8b 0d d0 76 88 01 \tmov    0x18876d0(%rip),%rcx        # 0x181bb0500\n   180328e30:\t48 8b f8             \tmov    %rax,%rdi\n   180328e33:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   180328e3a:\t75 05                \tjne    0x180328e41\n   180328e3c:\te8 9f 73 f2 ff       \tcall   0x1802501e0\n   180328e41:\t45 33 c0             \txor    %r8d,%r8d\n   180328e44:\t33 d2                \txor    %edx,%edx\n   180328e46:\t48 8b cf             \tmov    %rdi,%rcx\n   180328e49:\te8 12 69 ff 00       \tcall   0x18131f760\n   180328e4e:\t48 8b 8b d8 00 00 00 \tmov    0xd8(%rbx),%rcx\n   180328e55:\t48 8b 7c 24 30       \tmov    0x30(%rsp),%rdi\n   180328e5a:\t84 c0                \ttest   %al,%al\n   180328e5c:\t0f 85 87 00 00 00    \tjne    0x180328ee9\n   180328e62:\t48 85 c9             \ttest   %rcx,%rcx\n   180328e65:\t0f 84 b1 00 00 00    \tje     0x180328f1c\n   180328e6b:\t4c 8b 05 0e c4 88 01 \tmov    0x188c40e(%rip),%r8        # 0x181bb5280\n   180328e72:\t33 d2                \txor    %edx,%edx\n   180328e74:\te8 97 c8 4f 00       \tcall   0x180825710\n   180328e79:\t48 85 c0             \ttest   %rax,%rax\n   180328e7c:\t0f 84 9a 00 00 00    \tje     0x180328f1c\n   180328e82:\t33 d2                \txor    %edx,%edx\n   180328e84:\t48 8b c8             \tmov    %rax,%rcx\n   180328e87:\te8 44 b6 fd 00       \tcall   0x1813044d0\n   180328e8c:\t48 85 c0             \ttest   %rax,%rax\n   180328e8f:\t0f 84 87 00 00 00    \tje     0x180328f1c\n   180328e95:\t33 d2                \txor    %edx,%edx\n   180328e97:\t48 8b c8             \tmov    %rax,%rcx\n   180328e9a:\te8 71 30 ff 00       \tcall   0x18131bf10\n   180328e9f:\t84 c0                \ttest   %al,%al\n   180328ea1:\t75 40                \tjne    0x180328ee3\n   180328ea3:\t48 8b 8b d8 00 00 00 \tmov    0xd8(%rbx),%rcx\n   180328eaa:\t48 85 c9             \ttest   %rcx,%rcx\n   180328ead:\t74 6d                \tje     0x180328f1c\n   180328eaf:\t4c 8b 05 ca c3 88 01 \tmov    0x188c3ca(%rip),%r8        # 0x181bb5280\n   180328eb6:\t33 d2                \txor    %edx,%edx\n   180328eb8:\te8 53 c8 4f 00       \tcall   0x180825710\n   180328ebd:\t48 85 c0             \ttest   %rax,%rax\n   180328ec0:\t74 5a                \tje     0x180328f1c\n   180328ec2:\t33 d2                \txor    %edx,%edx\n   180328ec4:\t48 8b c8             \tmov    %rax,%rcx\n   180328ec7:\te8 04 b6 fd 00       \tcall   0x1813044d0\n   180328ecc:\t48 85 c0             \ttest   %rax,%rax\n   180328ecf:\t74 4b                \tje     0x180328f1c\n   180328ed1:\t45 33 c0             \txor    %r8d,%r8d\n   180328ed4:\tb2 01                \tmov    $0x1,%dl\n   180328ed6:\t48 8b c8             \tmov    %rax,%rcx\n   180328ed9:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180328edd:\t5b                   \tpop    %rbx\n   180328ede:\te9 ed 2b ff 00       \tjmp    0x18131bad0\n   180328ee3:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180328ee7:\t5b                   \tpop    %rbx\n   180328ee8:\tc3                   \tret\n   180328ee9:\t48 85 c9             \ttest   %rcx,%rcx\n   180328eec:\t74 2e                \tje     0x180328f1c\n   180328eee:\t4c 8b 05 db c2 88 01 \tmov    0x188c2db(%rip),%r8        # 0x181bb51d0\n   180328ef5:\t33 d2                \txor    %edx,%edx\n   180328ef7:\te8 94 51 52 00       \tcall   0x18084e090\n   180328efc:\t48 8b 83 d8 00 00 00 \tmov    0xd8(%rbx),%rax\n   180328f03:\t48 85 c0             \ttest   %rax,%rax\n   180328f06:\t74 14                \tje     0x180328f1c\n   180328f08:\t83 78 18 00          \tcmpl   $0x0,0x18(%rax)\n   180328f0c:\t7e d5                \tjle    0x180328ee3\n   180328f0e:\t4c 8b 05 6b c3 88 01 \tmov    0x188c36b(%rip),%r8        # 0x181bb5280\n   180328f15:\t33 d2                \txor    %edx,%edx\n   180328f17:\t48 8b c8             \tmov    %rax,%rcx\n   180328f1a:\teb 9c                \tjmp    0x180328eb8\n   180328f1c:\te8 2f 72 f2 ff       \tcall   0x180250150\n   180328f21:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void Board::Update_Popups()",
+        "token": "0x060002AE",
+        "owner": "Board",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "System.Collections.Generic.List`1<Popup>",
+          "System.Boolean",
+          "System.Int32",
+          "System.Boolean",
+          "Popup",
+          "UnityEngine.GameObject",
+          "System.Boolean",
+          "UnityEngine.Component",
+          "UnityEngine.GameObject",
+          "System.Collections.Generic.List`1<Popup>",
+          "System.Collections.Generic.List`1<Popup>",
+          "Popup",
+          "System.Boolean",
+          "Board"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 313
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Popup>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Popup>::_size"
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 19,
+            "opcode": "cgt",
+            "operand": null
+          },
+          {
+            "offset": 21,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 22,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 24,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 28,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 32,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 221
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "br",
+            "operand": {
+              "target": 42
+            }
+          },
+          {
+            "offset": 42,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 46,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 51,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Popup>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "Popup",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<Popup>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 56,
+            "opcode": "stloc",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 60,
+            "opcode": "br",
+            "operand": {
+              "target": 65
+            }
+          },
+          {
+            "offset": 65,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 69,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 70,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object",
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": false,
+              "name": "op_Equality",
+              "identity": "System.Boolean UnityEngine.Object::op_Equality(UnityEngine.Object,UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 75,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 83,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 222
+            }
+          },
+          {
+            "offset": 88,
+            "opcode": "br",
+            "operand": {
+              "target": 93
+            }
+          },
+          {
+            "offset": 93,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 94,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Collections.Generic.List`1<Popup>",
+              "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 104,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Popup>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "Popup",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<Popup>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 113,
+            "opcode": "br",
+            "operand": {
+              "target": 118
+            }
+          },
+          {
+            "offset": 118,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 122,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.GameObject",
+              "hasThis": true,
+              "name": "get_gameObject",
+              "identity": "UnityEngine.GameObject UnityEngine.Component::get_gameObject()"
+            }
+          },
+          {
+            "offset": 127,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 131,
+            "opcode": "br",
+            "operand": {
+              "target": 136
+            }
+          },
+          {
+            "offset": 136,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 140,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "get_activeSelf",
+              "identity": "System.Boolean UnityEngine.GameObject::get_activeSelf()"
+            }
+          },
+          {
+            "offset": 145,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 149,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 153,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 221
+            }
+          },
+          {
+            "offset": 158,
+            "opcode": "br",
+            "operand": {
+              "target": 163
+            }
+          },
+          {
+            "offset": 163,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 168,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 172,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 173,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 174,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Collections.Generic.List`1<Popup>",
+              "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+            }
+          },
+          {
+            "offset": 179,
+            "opcode": "stloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 183,
+            "opcode": "br",
+            "operand": {
+              "target": 328
+            }
+          },
+          {
+            "offset": 188,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 192,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.GameObject",
+              "hasThis": true,
+              "name": "get_gameObject",
+              "identity": "UnityEngine.GameObject UnityEngine.Component::get_gameObject()"
+            }
+          },
+          {
+            "offset": 197,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 201,
+            "opcode": "br",
+            "operand": {
+              "target": 206
+            }
+          },
+          {
+            "offset": 206,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 210,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 215,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [
+                "System.Boolean"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "SetActive",
+              "identity": "System.Void UnityEngine.GameObject::SetActive(System.Boolean)"
+            }
+          },
+          {
+            "offset": 220,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 221,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 222,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 223,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Collections.Generic.List`1<Popup>",
+              "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+            }
+          },
+          {
+            "offset": 228,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 233,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "RemoveAt",
+              "identity": "System.Void System.Collections.Generic.List`1<System.Object>::RemoveAt(System.Int32)"
+            }
+          },
+          {
+            "offset": 238,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 239,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Collections.Generic.List`1<Popup>",
+              "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+            }
+          },
+          {
+            "offset": 244,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 248,
+            "opcode": "br",
+            "operand": {
+              "target": 253
+            }
+          },
+          {
+            "offset": 253,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 257,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Popup>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Popup>::_size"
+            }
+          },
+          {
+            "offset": 262,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 267,
+            "opcode": "cgt",
+            "operand": null
+          },
+          {
+            "offset": 269,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 270,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 272,
+            "opcode": "stloc",
+            "operand": {
+              "index": 12
+            }
+          },
+          {
+            "offset": 276,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 12
+            }
+          },
+          {
+            "offset": 280,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 221
+            }
+          },
+          {
+            "offset": 285,
+            "opcode": "br",
+            "operand": {
+              "target": 290
+            }
+          },
+          {
+            "offset": 290,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 295,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 299,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 300,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 304,
+            "opcode": "stloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 308,
+            "opcode": "br",
+            "operand": {
+              "target": 328
+            }
+          },
+          {
+            "offset": 313,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 314,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Board",
+              "type": "System.Collections.Generic.List`1<Popup>",
+              "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+            }
+          },
+          {
+            "offset": 319,
+            "opcode": "stloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 323,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 328,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 332,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 336,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Popup>",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "Popup",
+              "hasThis": true,
+              "name": "get_Item",
+              "identity": "!0 System.Collections.Generic.List`1<Popup>::get_Item(System.Int32)"
+            }
+          },
+          {
+            "offset": 341,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 345,
+            "opcode": "br",
+            "operand": {
+              "target": 188
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 9,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Popup>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Popup>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 94,
+          "field": {
+            "owner": "Board",
+            "type": "System.Collections.Generic.List`1<Popup>",
+            "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "popups",
+              "token": "0x40003d1",
+              "offset": 216,
+              "type_index": 7735
+            }
+          ]
+        },
+        {
+          "cil_offset": 174,
+          "field": {
+            "owner": "Board",
+            "type": "System.Collections.Generic.List`1<Popup>",
+            "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "popups",
+              "token": "0x40003d1",
+              "offset": 216,
+              "type_index": 7735
+            }
+          ]
+        },
+        {
+          "cil_offset": 223,
+          "field": {
+            "owner": "Board",
+            "type": "System.Collections.Generic.List`1<Popup>",
+            "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "popups",
+              "token": "0x40003d1",
+              "offset": 216,
+              "type_index": 7735
+            }
+          ]
+        },
+        {
+          "cil_offset": 239,
+          "field": {
+            "owner": "Board",
+            "type": "System.Collections.Generic.List`1<Popup>",
+            "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "popups",
+              "token": "0x40003d1",
+              "offset": 216,
+              "type_index": 7735
+            }
+          ]
+        },
+        {
+          "cil_offset": 257,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Popup>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Popup>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 314,
+          "field": {
+            "owner": "Board",
+            "type": "System.Collections.Generic.List`1<Popup>",
+            "identity": "System.Collections.Generic.List`1<Popup> Board::popups"
+          },
+          "original_records": [
+            {
+              "type": "Board",
+              "namespace": "",
+              "typeIndex": 5192,
+              "name": "popups",
+              "token": "0x40003d1",
+              "offset": 216,
+              "type_index": 7735
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x06000318",
+      "method": "System.Void Device::DC_Bonfire()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Device",
+        "name": "DC_Bonfire",
+        "token": "0x6000318",
+        "va": "0x180347a70"
+      },
+      "start": "0x180347a70",
+      "end": "0x180347b9c",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445890160,
+          6445890219
+        ],
+        [
+          6445890219,
+          6445890226
+        ],
+        [
+          6445890226,
+          6445890371
+        ],
+        [
+          6445890371,
+          6445890443
+        ],
+        [
+          6445890443,
+          6445890454
+        ],
+        [
+          6445890454,
+          6445890460
+        ]
+      ],
+      "native_sha256": "72120692405b0f247cce8dff519f55312715c3714f4f0460c9476c37ed87dfe1",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000318.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180347a70 <.data>:\n   180347a70:\t40 53                \trex push %rbx\n   180347a72:\t48 83 ec 60          \tsub    $0x60,%rsp\n   180347a76:\t80 3d 48 d2 99 01 00 \tcmpb   $0x0,0x199d248(%rip)        # 0x181ce4cc5\n   180347a7d:\t48 8b d9             \tmov    %rcx,%rbx\n   180347a80:\t0f 29 7c 24 40       \tmovaps %xmm7,0x40(%rsp)\n   180347a85:\t75 13                \tjne    0x180347a9a\n   180347a87:\t48 8d 0d 6a 51 86 01 \tlea    0x186516a(%rip),%rcx        # 0x181bacbf8\n   180347a8e:\te8 5d 84 f0 ff       \tcall   0x18024fef0\n   180347a93:\tc6 05 2b d2 99 01 01 \tmovb   $0x1,0x199d22b(%rip)        # 0x181ce4cc5\n   180347a9a:\tf3 0f 10 43 74       \tmovss  0x74(%rbx),%xmm0\n   180347a9f:\t0f 57 ff             \txorps  %xmm7,%xmm7\n   180347aa2:\t0f 2f c7             \tcomiss %xmm7,%xmm0\n   180347aa5:\t0f 86 e0 00 00 00    \tjbe    0x180347b8b\n   180347aab:\t0f 29 74 24 50       \tmovaps %xmm6,0x50(%rsp)\n   180347ab0:\t33 c9                \txor    %ecx,%ecx\n   180347ab2:\t44 0f 29 44 24 30    \tmovaps %xmm8,0x30(%rsp)\n   180347ab8:\t0f 28 f0             \tmovaps %xmm0,%xmm6\n   180347abb:\te8 30 48 fe 00       \tcall   0x18132c2f0\n   180347ac0:\tf3 0f 59 05 8c 01 26 \tmulss  0x126018c(%rip),%xmm0        # 0x1815a7c54\n   180347ac7:\t01 \n   180347ac8:\t33 d2                \txor    %edx,%edx\n   180347aca:\t48 8b cb             \tmov    %rbx,%rcx\n   180347acd:\tf3 0f 5c f0          \tsubss  %xmm0,%xmm6\n   180347ad1:\tf3 0f 11 73 74       \tmovss  %xmm6,0x74(%rbx)\n   180347ad6:\te8 05 fa ff ff       \tcall   0x1803474e0\n   180347adb:\t0f 2f 7b 74          \tcomiss 0x74(%rbx),%xmm7\n   180347adf:\t72 11                \tjb     0x180347af2\n   180347ae1:\t33 d2                \txor    %edx,%edx\n   180347ae3:\tc7 43 74 00 00 00 00 \tmovl   $0x0,0x74(%rbx)\n   180347aea:\t48 8b cb             \tmov    %rbx,%rcx\n   180347aed:\te8 ee e6 ff ff       \tcall   0x1803461e0\n   180347af2:\t48 8b 0d ff 50 86 01 \tmov    0x18650ff(%rip),%rcx        # 0x181bacbf8\n   180347af9:\tf3 0f 10 73 74       \tmovss  0x74(%rbx),%xmm6\n   180347afe:\tf3 44 0f 10 43 78    \tmovss  0x78(%rbx),%xmm8\n   180347b04:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   180347b0b:\t75 05                \tjne    0x180347b12\n   180347b0d:\te8 ce 86 f0 ff       \tcall   0x1802501e0\n   180347b12:\tf2 0f 10 0d fe fe 25 \tmovsd  0x125fefe(%rip),%xmm1        # 0x1815a7a18\n   180347b19:\t01 \n   180347b1a:\t45 33 c0             \txor    %r8d,%r8d\n   180347b1d:\tf3 41 0f 5e f0       \tdivss  %xmm8,%xmm6\n   180347b22:\t0f 5a c6             \tcvtps2pd %xmm6,%xmm0\n   180347b25:\te8 a6 e5 95 00       \tcall   0x180ca60d0\n   180347b2a:\t0f 57 f6             \txorps  %xmm6,%xmm6\n   180347b2d:\tf2 0f 5a f0          \tcvtsd2ss %xmm0,%xmm6\n   180347b31:\t48 8b 8b c0 00 00 00 \tmov    0xc0(%rbx),%rcx\n   180347b38:\t44 0f 28 44 24 30    \tmovaps 0x30(%rsp),%xmm8\n   180347b3e:\t48 85 c9             \ttest   %rcx,%rcx\n   180347b41:\t74 53                \tje     0x180347b96\n   180347b43:\t33 d2                \txor    %edx,%edx\n   180347b45:\te8 26 45 fd 00       \tcall   0x18131c070\n   180347b4a:\t48 85 c0             \ttest   %rax,%rax\n   180347b4d:\t74 47                \tje     0x180347b96\n   180347b4f:\t45 33 c0             \txor    %r8d,%r8d\n   180347b52:\tba 01 00 00 00       \tmov    $0x1,%edx\n   180347b57:\t48 8b c8             \tmov    %rax,%rcx\n   180347b5a:\te8 81 60 fe 00       \tcall   0x18132dbe0\n   180347b5f:\t48 85 c0             \ttest   %rax,%rax\n   180347b62:\t74 32                \tje     0x180347b96\n   180347b64:\t0f 28 c6             \tmovaps %xmm6,%xmm0\n   180347b67:\tf3 0f 11 7c 24 28    \tmovss  %xmm7,0x28(%rsp)\n   180347b6d:\t0f 14 c6             \tunpcklps %xmm6,%xmm0\n   180347b70:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   180347b75:\t45 33 c0             \txor    %r8d,%r8d\n   180347b78:\tf2 0f 11 44 24 20    \tmovsd  %xmm0,0x20(%rsp)\n   180347b7e:\t48 8b c8             \tmov    %rax,%rcx\n   180347b81:\te8 ca 7e fe 00       \tcall   0x18132fa50\n   180347b86:\t0f 28 74 24 50       \tmovaps 0x50(%rsp),%xmm6\n   180347b8b:\t0f 28 7c 24 40       \tmovaps 0x40(%rsp),%xmm7\n   180347b90:\t48 83 c4 60          \tadd    $0x60,%rsp\n   180347b94:\t5b                   \tpop    %rbx\n   180347b95:\tc3                   \tret\n   180347b96:\te8 b5 85 f0 ff       \tcall   0x180250150\n   180347b9b:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void Device::DC_Bonfire()",
+        "token": "0x06000318",
+        "owner": "Device",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "Device",
+          "System.Boolean",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Double",
+          "System.Boolean",
+          "System.Double",
+          "UnityEngine.Transform",
+          "UnityEngine.Transform",
+          "System.Object"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 239
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Time",
+              "args": [],
+              "ret": "System.Single",
+              "hasThis": false,
+              "name": "get_deltaTime",
+              "identity": "System.Single UnityEngine.Time::get_deltaTime()"
+            }
+          },
+          {
+            "offset": 10,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 18,
+            "opcode": "conv.r4",
+            "operand": null
+          },
+          {
+            "offset": 19,
+            "opcode": "ldc.r4",
+            "operand": 10
+          },
+          {
+            "offset": 24,
+            "opcode": "conv.r4",
+            "operand": null
+          },
+          {
+            "offset": 25,
+            "opcode": "mul",
+            "operand": null
+          },
+          {
+            "offset": 26,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 30,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 31,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::healthPoint"
+            }
+          },
+          {
+            "offset": 36,
+            "opcode": "conv.r4",
+            "operand": null
+          },
+          {
+            "offset": 37,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "conv.r4",
+            "operand": null
+          },
+          {
+            "offset": 42,
+            "opcode": "sub",
+            "operand": null
+          },
+          {
+            "offset": 43,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 47,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 48,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 52,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::healthPoint"
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 58,
+            "opcode": "call",
+            "operand": {
+              "owner": "Device",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "DC_BonfireWarm",
+              "identity": "System.Void Device::DC_BonfireWarm()"
+            }
+          },
+          {
+            "offset": 63,
+            "opcode": "br",
+            "operand": {
+              "target": 68
+            }
+          },
+          {
+            "offset": 68,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 73,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 74,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::healthPoint"
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "clt",
+            "operand": null
+          },
+          {
+            "offset": 81,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 85,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 89,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 121
+            }
+          },
+          {
+            "offset": 94,
+            "opcode": "br",
+            "operand": {
+              "target": 99
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 100,
+            "opcode": "ldc.r4",
+            "operand": 0
+          },
+          {
+            "offset": 105,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::healthPoint"
+            }
+          },
+          {
+            "offset": 110,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 111,
+            "opcode": "call",
+            "operand": {
+              "owner": "Device",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Broken",
+              "identity": "System.Void Device::Broken()"
+            }
+          },
+          {
+            "offset": 116,
+            "opcode": "br",
+            "operand": {
+              "target": 121
+            }
+          },
+          {
+            "offset": 121,
+            "opcode": "br",
+            "operand": {
+              "target": 126
+            }
+          },
+          {
+            "offset": 126,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 127,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::healthPoint"
+            }
+          },
+          {
+            "offset": 132,
+            "opcode": "conv.r8",
+            "operand": null
+          },
+          {
+            "offset": 133,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 134,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::maxHealthPoint"
+            }
+          },
+          {
+            "offset": 139,
+            "opcode": "conv.r8",
+            "operand": null
+          },
+          {
+            "offset": 140,
+            "opcode": "div",
+            "operand": null
+          },
+          {
+            "offset": 141,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 145,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 149,
+            "opcode": "ldc.r8",
+            "operand": 0.5
+          },
+          {
+            "offset": 158,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Math",
+              "args": [
+                "System.Double",
+                "System.Double"
+              ],
+              "ret": "System.Double",
+              "hasThis": false,
+              "name": "Pow",
+              "identity": "System.Double System.Math::Pow(System.Double,System.Double)"
+            }
+          },
+          {
+            "offset": 163,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 167,
+            "opcode": "ldstr",
+            "operand": "Not implemented instruction: \"cvtsd2ss xmm6,xmm0\""
+          },
+          {
+            "offset": 172,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 173,
+            "opcode": "br",
+            "operand": {
+              "target": 178
+            }
+          },
+          {
+            "offset": 178,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 179,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Device",
+              "type": "UnityEngine.GameObject",
+              "identity": "UnityEngine.GameObject Device::animationGroup"
+            }
+          },
+          {
+            "offset": 184,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.GameObject::get_transform()"
+            }
+          },
+          {
+            "offset": 189,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 193,
+            "opcode": "br",
+            "operand": {
+              "target": 198
+            }
+          },
+          {
+            "offset": 198,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 202,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 207,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [
+                "System.Int32"
+              ],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "GetChild",
+              "identity": "UnityEngine.Transform UnityEngine.Transform::GetChild(System.Int32)"
+            }
+          },
+          {
+            "offset": 212,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 216,
+            "opcode": "br",
+            "operand": {
+              "target": 221
+            }
+          },
+          {
+            "offset": 221,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 225,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 229,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [
+                "UnityEngine.Vector3"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "set_localScale",
+              "identity": "System.Void UnityEngine.Transform::set_localScale(UnityEngine.Vector3)"
+            }
+          },
+          {
+            "offset": 234,
+            "opcode": "br",
+            "operand": {
+              "target": 273
+            }
+          },
+          {
+            "offset": 239,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 240,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Device",
+              "type": "System.Single",
+              "identity": "System.Single Device::healthPoint"
+            }
+          },
+          {
+            "offset": 245,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 250,
+            "opcode": "cgt",
+            "operand": null
+          },
+          {
+            "offset": 252,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 253,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 255,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 259,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 263,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 273
+            }
+          },
+          {
+            "offset": 268,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 273,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 274,
+            "opcode": "ldstr",
+            "operand": "Warning: Method ends with non empty stack (-68), the output could be wrong!"
+          },
+          {
+            "offset": 279,
+            "opcode": "pop",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 31,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "healthPoint",
+              "token": "0x4000474",
+              "offset": 116,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 52,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "healthPoint",
+              "token": "0x4000474",
+              "offset": 116,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 74,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "healthPoint",
+              "token": "0x4000474",
+              "offset": 116,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 105,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "healthPoint",
+              "token": "0x4000474",
+              "offset": 116,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 127,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "healthPoint",
+              "token": "0x4000474",
+              "offset": 116,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 134,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::maxHealthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "maxHealthPoint",
+              "token": "0x4000475",
+              "offset": 120,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 179,
+          "field": {
+            "owner": "Device",
+            "type": "UnityEngine.GameObject",
+            "identity": "UnityEngine.GameObject Device::animationGroup"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "animationGroup",
+              "token": "0x4000485",
+              "offset": 192,
+              "type_index": 14560
+            }
+          ]
+        },
+        {
+          "cil_offset": 240,
+          "field": {
+            "owner": "Device",
+            "type": "System.Single",
+            "identity": "System.Single Device::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Device",
+              "namespace": "",
+              "typeIndex": 5206,
+              "name": "healthPoint",
+              "token": "0x4000474",
+              "offset": 116,
+              "type_index": 18124
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x060003AA",
+      "method": "System.Void Plant::ST_Chomperviking_Classify(System.Collections.Generic.List`1<Zombie>,System.Collections.Generic.List`1<Zombie>,Zombie,Damage)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "Plant",
+        "name": "ST_Chomperviking_Classify",
+        "token": "0x60003aa",
+        "va": "0x180356c70"
+      },
+      "start": "0x180356c70",
+      "end": "0x180356d8f",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445952112,
+          6445952399
+        ]
+      ],
+      "native_sha256": "45d717157d909821626ee3073c7383089276b29f367d990b95103396ffdafffd",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060003AA.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180356c70 <.data>:\n   180356c70:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   180356c75:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   180356c7a:\t57                   \tpush   %rdi\n   180356c7b:\t48 83 ec 20          \tsub    $0x20,%rsp\n   180356c7f:\t80 3d ab e0 98 01 00 \tcmpb   $0x0,0x198e0ab(%rip)        # 0x181ce4d31\n   180356c86:\t49 8b d9             \tmov    %r9,%rbx\n   180356c89:\t49 8b f0             \tmov    %r8,%rsi\n   180356c8c:\t48 8b fa             \tmov    %rdx,%rdi\n   180356c8f:\t75 13                \tjne    0x180356ca4\n   180356c91:\t48 8d 0d 48 c9 86 01 \tlea    0x186c948(%rip),%rcx        # 0x181bc35e0\n   180356c98:\te8 53 92 ef ff       \tcall   0x18024fef0\n   180356c9d:\tc6 05 8d e0 98 01 01 \tmovb   $0x1,0x198e08d(%rip)        # 0x181ce4d31\n   180356ca4:\t48 85 db             \ttest   %rbx,%rbx\n   180356ca7:\t0f 84 d6 00 00 00    \tje     0x180356d83\n   180356cad:\t83 bb 84 00 00 00 00 \tcmpl   $0x0,0x84(%rbx)\n   180356cb4:\t75 54                \tjne    0x180356d0a\n   180356cb6:\t83 bb 9c 00 00 00 00 \tcmpl   $0x0,0x9c(%rbx)\n   180356cbd:\t75 4b                \tjne    0x180356d0a\n   180356cbf:\t48 8b 44 24 50       \tmov    0x50(%rsp),%rax\n   180356cc4:\t48 85 c0             \ttest   %rax,%rax\n   180356cc7:\t0f 84 b6 00 00 00    \tje     0x180356d83\n   180356ccd:\tf3 0f 10 40 10       \tmovss  0x10(%rax),%xmm0\n   180356cd2:\tf3 0f 59 05 76 0f 25 \tmulss  0x1250f76(%rip),%xmm0        # 0x1815a7c50\n   180356cd9:\t01 \n   180356cda:\t0f 2f 43 70          \tcomiss 0x70(%rbx),%xmm0\n   180356cde:\t76 2a                \tjbe    0x180356d0a\n   180356ce0:\t48 85 f6             \ttest   %rsi,%rsi\n   180356ce3:\t0f 84 9a 00 00 00    \tje     0x180356d83\n   180356ce9:\t4c 8b 05 f0 c8 86 01 \tmov    0x186c8f0(%rip),%r8        # 0x181bc35e0\n   180356cf0:\t48 8b d3             \tmov    %rbx,%rdx\n   180356cf3:\t48 8b ce             \tmov    %rsi,%rcx\n   180356cf6:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   180356cfb:\t48 8b 74 24 38       \tmov    0x38(%rsp),%rsi\n   180356d00:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180356d04:\t5f                   \tpop    %rdi\n   180356d05:\te9 66 c1 ca ff       \tjmp    0x180002e70\n   180356d0a:\t48 85 ff             \ttest   %rdi,%rdi\n   180356d0d:\t74 74                \tje     0x180356d83\n   180356d0f:\t4c 8b 05 ca c8 86 01 \tmov    0x186c8ca(%rip),%r8        # 0x181bc35e0\n   180356d16:\tff 47 1c             \tincl   0x1c(%rdi)\n   180356d19:\t48 8b 4f 10          \tmov    0x10(%rdi),%rcx\n   180356d1d:\t48 63 57 18          \tmovslq 0x18(%rdi),%rdx\n   180356d21:\t48 85 c9             \ttest   %rcx,%rcx\n   180356d24:\t74 5d                \tje     0x180356d83\n   180356d26:\t3b 51 18             \tcmp    0x18(%rcx),%edx\n   180356d29:\t72 29                \tjb     0x180356d54\n   180356d2b:\t49 8b 40 20          \tmov    0x20(%r8),%rax\n   180356d2f:\t48 8b d3             \tmov    %rbx,%rdx\n   180356d32:\t48 8b cf             \tmov    %rdi,%rcx\n   180356d35:\t4c 8b 80 c0 00 00 00 \tmov    0xc0(%rax),%r8\n   180356d3c:\t4d 8b 40 70          \tmov    0x70(%r8),%r8\n   180356d40:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   180356d45:\t48 8b 74 24 38       \tmov    0x38(%rsp),%rsi\n   180356d4a:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180356d4e:\t5f                   \tpop    %rdi\n   180356d4f:\te9 8c 0f 4f 00       \tjmp    0x180847ce0\n   180356d54:\t8d 42 01             \tlea    0x1(%rdx),%eax\n   180356d57:\t89 47 18             \tmov    %eax,0x18(%rdi)\n   180356d5a:\t3b 51 18             \tcmp    0x18(%rcx),%edx\n   180356d5d:\t73 2a                \tjae    0x180356d89\n   180356d5f:\t48 89 5c d1 20       \tmov    %rbx,0x20(%rcx,%rdx,8)\n   180356d64:\t48 8d 0c d1          \tlea    (%rcx,%rdx,8),%rcx\n   180356d68:\t48 83 c1 20          \tadd    $0x20,%rcx\n   180356d6c:\t48 8b d3             \tmov    %rbx,%rdx\n   180356d6f:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   180356d74:\t48 8b 74 24 38       \tmov    0x38(%rsp),%rsi\n   180356d79:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180356d7d:\t5f                   \tpop    %rdi\n   180356d7e:\te9 dd 85 ef ff       \tjmp    0x18024f360\n   180356d83:\te8 c8 93 ef ff       \tcall   0x180250150\n   180356d88:\tcc                   \tint3\n   180356d89:\te8 b2 93 ef ff       \tcall   0x180250140\n   180356d8e:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void Plant::ST_Chomperviking_Classify(System.Collections.Generic.List`1<Zombie>,System.Collections.Generic.List`1<Zombie>,Zombie,Damage)",
+        "token": "0x060003AA",
+        "owner": "Plant",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "System.Collections.Generic.List`1<Zombie>",
+          "System.Collections.Generic.List`1<Zombie>",
+          "Zombie",
+          "Damage"
+        ],
+        "locals": [
+          "Zombie",
+          "System.Collections.Generic.List`1<Zombie>",
+          "System.Collections.Generic.List`1<Zombie>",
+          "System.Boolean",
+          "System.Single",
+          "Zombie[]",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Int32",
+          "System.Boolean",
+          "System.Object",
+          "System.Object",
+          "System.Int32",
+          "System.Int32"
+        ],
+        "maxStack": 3,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "Armor1Type",
+              "identity": "Armor1Type Zombie::armor1Type"
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 19,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 21,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 22,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 24,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 28,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 32,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 149
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "br",
+            "operand": {
+              "target": 42
+            }
+          },
+          {
+            "offset": 42,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 46,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "Armor2Type",
+              "identity": "Armor2Type Zombie::armor2Type"
+            }
+          },
+          {
+            "offset": 51,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 56,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 58,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 59,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 61,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 65,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 69,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 149
+            }
+          },
+          {
+            "offset": 74,
+            "opcode": "br",
+            "operand": {
+              "target": 79
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "ldstr",
+            "operand": "Unmanaged memory load: [v151 @ stack_28+10]"
+          },
+          {
+            "offset": 84,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 85,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 86,
+            "opcode": "conv.i",
+            "operand": null
+          },
+          {
+            "offset": 87,
+            "opcode": "conv.r4",
+            "operand": null
+          },
+          {
+            "offset": 88,
+            "opcode": "ldc.r4",
+            "operand": 7
+          },
+          {
+            "offset": 93,
+            "opcode": "conv.r4",
+            "operand": null
+          },
+          {
+            "offset": 94,
+            "opcode": "mul",
+            "operand": null
+          },
+          {
+            "offset": 95,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 99,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 103,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 107,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Zombie",
+              "type": "System.Single",
+              "identity": "System.Single Zombie::healthPoint"
+            }
+          },
+          {
+            "offset": 112,
+            "opcode": "cgt",
+            "operand": null
+          },
+          {
+            "offset": 114,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 115,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 117,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 121,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 125,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 149
+            }
+          },
+          {
+            "offset": 130,
+            "opcode": "br",
+            "operand": {
+              "target": 135
+            }
+          },
+          {
+            "offset": 135,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 139,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 143,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "args": [
+                "Zombie"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Add",
+              "identity": "System.Void System.Collections.Generic.List`1<Zombie>::Add(!0)"
+            }
+          },
+          {
+            "offset": 148,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 149,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 153,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_version"
+            }
+          },
+          {
+            "offset": 158,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 163,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 164,
+            "opcode": "stloc",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 168,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 172,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 13
+            }
+          },
+          {
+            "offset": 176,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_version"
+            }
+          },
+          {
+            "offset": 181,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 185,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "type": "Zombie[]",
+              "identity": "!0[] System.Collections.Generic.List`1<Zombie>::_items"
+            }
+          },
+          {
+            "offset": 190,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 194,
+            "opcode": "br",
+            "operand": {
+              "target": 199
+            }
+          },
+          {
+            "offset": 199,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 203,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_size"
+            }
+          },
+          {
+            "offset": 208,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 212,
+            "opcode": "ldlen",
+            "operand": null
+          },
+          {
+            "offset": 213,
+            "opcode": "conv.i4",
+            "operand": null
+          },
+          {
+            "offset": 214,
+            "opcode": "clt",
+            "operand": null
+          },
+          {
+            "offset": 216,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 220,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 224,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 248
+            }
+          },
+          {
+            "offset": 229,
+            "opcode": "br",
+            "operand": {
+              "target": 234
+            }
+          },
+          {
+            "offset": 234,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 238,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 242,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Object"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "AddWithResize",
+              "identity": "System.Void System.Collections.Generic.List`1<System.Object>::AddWithResize(!0)"
+            }
+          },
+          {
+            "offset": 247,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 248,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 252,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_size"
+            }
+          },
+          {
+            "offset": 257,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 262,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 263,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 267,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 271,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 275,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<Zombie>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_size"
+            }
+          },
+          {
+            "offset": 280,
+            "opcode": "br",
+            "operand": {
+              "target": 285
+            }
+          },
+          {
+            "offset": 285,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 289,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 12
+            }
+          },
+          {
+            "offset": 293,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 297,
+            "opcode": "stelem.any",
+            "operand": {
+              "type": "Zombie"
+            }
+          },
+          {
+            "offset": 302,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 9,
+          "field": {
+            "owner": "Zombie",
+            "type": "Armor1Type",
+            "identity": "Armor1Type Zombie::armor1Type"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "armor1Type",
+              "token": "0x40005c2",
+              "offset": 132,
+              "type_index": 11988
+            }
+          ]
+        },
+        {
+          "cil_offset": 46,
+          "field": {
+            "owner": "Zombie",
+            "type": "Armor2Type",
+            "identity": "Armor2Type Zombie::armor2Type"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "armor2Type",
+              "token": "0x40005c8",
+              "offset": 156,
+              "type_index": 11991
+            }
+          ]
+        },
+        {
+          "cil_offset": 107,
+          "field": {
+            "owner": "Zombie",
+            "type": "System.Single",
+            "identity": "System.Single Zombie::healthPoint"
+          },
+          "original_records": [
+            {
+              "type": "Zombie",
+              "namespace": "",
+              "typeIndex": 5219,
+              "name": "healthPoint",
+              "token": "0x40005bd",
+              "offset": 112,
+              "type_index": 18124
+            }
+          ]
+        },
+        {
+          "cil_offset": 153,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Zombie>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_version"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 176,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Zombie>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_version"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 185,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Zombie>",
+            "type": "Zombie[]",
+            "identity": "!0[] System.Collections.Generic.List`1<Zombie>::_items"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 203,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Zombie>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 252,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Zombie>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 275,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<Zombie>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<Zombie>::_size"
+          },
+          "original_records": []
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x06000532",
+      "method": "System.Void AdventureMenu_ModeButton::PlayAudio(UnityEngine.AudioClip)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "AdventureMenu_ModeButton",
+        "name": "PlayAudio",
+        "token": "0x6000532",
+        "va": "0x180374b80"
+      },
+      "start": "0x180374b80",
+      "end": "0x180374c7b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446074752,
+          6446074899
+        ],
+        [
+          6446074899,
+          6446074986
+        ],
+        [
+          6446074986,
+          6446075003
+        ]
+      ],
+      "native_sha256": "542b4d7cb4489c945b43288dc20d0a25503e8be4875e10c1e51322968ef67e70",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000532.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180374b80 <.data>:\n   180374b80:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   180374b85:\t57                   \tpush   %rdi\n   180374b86:\t48 83 ec 40          \tsub    $0x40,%rsp\n   180374b8a:\t80 3d 86 02 97 01 00 \tcmpb   $0x0,0x1970286(%rip)        # 0x181ce4e17\n   180374b91:\t48 8b fa             \tmov    %rdx,%rdi\n   180374b94:\t48 8b d9             \tmov    %rcx,%rbx\n   180374b97:\t75 1f                \tjne    0x180374bb8\n   180374b99:\t48 8d 0d 78 d4 82 01 \tlea    0x182d478(%rip),%rcx        # 0x181ba2018\n   180374ba0:\te8 4b b3 ed ff       \tcall   0x18024fef0\n   180374ba5:\t48 8d 0d 54 b9 83 01 \tlea    0x183b954(%rip),%rcx        # 0x181bb0500\n   180374bac:\te8 3f b3 ed ff       \tcall   0x18024fef0\n   180374bb1:\tc6 05 5f 02 97 01 01 \tmovb   $0x1,0x197025f(%rip)        # 0x181ce4e17\n   180374bb8:\t48 8b 43 40          \tmov    0x40(%rbx),%rax\n   180374bbc:\t48 85 c0             \ttest   %rax,%rax\n   180374bbf:\t0f 84 b0 00 00 00    \tje     0x180374c75\n   180374bc5:\t80 b8 d8 00 00 00 00 \tcmpb   $0x0,0xd8(%rax)\n   180374bcc:\t0f 84 98 00 00 00    \tje     0x180374c6a\n   180374bd2:\t48 8b 0d 27 b9 83 01 \tmov    0x183b927(%rip),%rcx        # 0x181bb0500\n   180374bd9:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   180374be0:\t75 05                \tjne    0x180374be7\n   180374be2:\te8 f9 b5 ed ff       \tcall   0x1802501e0\n   180374be7:\t33 d2                \txor    %edx,%edx\n   180374be9:\t48 8b cf             \tmov    %rdi,%rcx\n   180374bec:\te8 7f ac fa 00       \tcall   0x18131f870\n   180374bf1:\t84 c0                \ttest   %al,%al\n   180374bf3:\t74 75                \tje     0x180374c6a\n   180374bf5:\t33 c9                \txor    %ecx,%ecx\n   180374bf7:\te8 c4 db f6 00       \tcall   0x1812e27c0\n   180374bfc:\t48 85 c0             \ttest   %rax,%rax\n   180374bff:\t74 74                \tje     0x180374c75\n   180374c01:\t33 d2                \txor    %edx,%edx\n   180374c03:\t48 8b c8             \tmov    %rax,%rcx\n   180374c06:\te8 05 f9 f8 00       \tcall   0x181304510\n   180374c0b:\t48 85 c0             \ttest   %rax,%rax\n   180374c0e:\t74 65                \tje     0x180374c75\n   180374c10:\t45 33 c0             \txor    %r8d,%r8d\n   180374c13:\t0f 29 74 24 30       \tmovaps %xmm6,0x30(%rsp)\n   180374c18:\t48 8b d0             \tmov    %rax,%rdx\n   180374c1b:\t48 8d 4c 24 20       \tlea    0x20(%rsp),%rcx\n   180374c20:\te8 7b a7 fb 00       \tcall   0x18132f3a0\n   180374c25:\t48 8b 0d ec d3 82 01 \tmov    0x182d3ec(%rip),%rcx        # 0x181ba2018\n   180374c2c:\tf2 0f 10 30          \tmovsd  (%rax),%xmm6\n   180374c30:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   180374c37:\t8b 58 08             \tmov    0x8(%rax),%ebx\n   180374c3a:\t75 05                \tjne    0x180374c41\n   180374c3c:\te8 9f b5 ed ff       \tcall   0x1802501e0\n   180374c41:\t33 c9                \txor    %ecx,%ecx\n   180374c43:\te8 58 62 fa ff       \tcall   0x18031aea0\n   180374c48:\t45 33 c9             \txor    %r9d,%r9d\n   180374c4b:\tf2 0f 11 74 24 20    \tmovsd  %xmm6,0x20(%rsp)\n   180374c51:\t0f 28 d0             \tmovaps %xmm0,%xmm2\n   180374c54:\t89 5c 24 28          \tmov    %ebx,0x28(%rsp)\n   180374c58:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   180374c5d:\t48 8b cf             \tmov    %rdi,%rcx\n   180374c60:\te8 cb 65 fa ff       \tcall   0x18031b230\n   180374c65:\t0f 28 74 24 30       \tmovaps 0x30(%rsp),%xmm6\n   180374c6a:\t48 8b 5c 24 50       \tmov    0x50(%rsp),%rbx\n   180374c6f:\t48 83 c4 40          \tadd    $0x40,%rsp\n   180374c73:\t5f                   \tpop    %rdi\n   180374c74:\tc3                   \tret\n   180374c75:\te8 d6 b4 ed ff       \tcall   0x180250150\n   180374c7a:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void AdventureMenu_ModeButton::PlayAudio(UnityEngine.AudioClip)",
+        "token": "0x06000532",
+        "owner": "AdventureMenu_ModeButton",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "UnityEngine.AudioClip"
+        ],
+        "locals": [
+          "UnityEngine.AudioClip",
+          "UnityEngine.UI.Button",
+          "System.Boolean",
+          "UnityEngine.Camera",
+          "UnityEngine.Transform",
+          "System.Single",
+          "UnityEngine.AudioSource",
+          "System.Boolean",
+          "System.Boolean",
+          "UnityEngine.Vector3",
+          "AdventureMenu_ModeButton",
+          "System.Single"
+        ],
+        "maxStack": 3,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 168
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "UnityEngine.UI.Selectable",
+              "type": "System.Boolean",
+              "identity": "System.Boolean UnityEngine.UI.Selectable::m_Interactable"
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 19,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 21,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 25,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 29,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 34,
+            "opcode": "br",
+            "operand": {
+              "target": 39
+            }
+          },
+          {
+            "offset": 39,
+            "opcode": "br",
+            "operand": {
+              "target": 44
+            }
+          },
+          {
+            "offset": 44,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": false,
+              "name": "op_Implicit",
+              "identity": "System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 53,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 61,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 62,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 64,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 68,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 72,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 77,
+            "opcode": "br",
+            "operand": {
+              "target": 82
+            }
+          },
+          {
+            "offset": 82,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Camera",
+              "args": [],
+              "ret": "UnityEngine.Camera",
+              "hasThis": false,
+              "name": "get_main",
+              "identity": "UnityEngine.Camera UnityEngine.Camera::get_main()"
+            }
+          },
+          {
+            "offset": 87,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 91,
+            "opcode": "br",
+            "operand": {
+              "target": 96
+            }
+          },
+          {
+            "offset": 96,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 100,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.Component::get_transform()"
+            }
+          },
+          {
+            "offset": 105,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "br",
+            "operand": {
+              "target": 114
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 118,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [],
+              "ret": "UnityEngine.Vector3",
+              "hasThis": true,
+              "name": "get_position",
+              "identity": "UnityEngine.Vector3 UnityEngine.Transform::get_position()"
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 127,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 128,
+            "opcode": "br",
+            "operand": {
+              "target": 133
+            }
+          },
+          {
+            "offset": 133,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [],
+              "ret": "System.Single",
+              "hasThis": false,
+              "name": "AudioVolume",
+              "identity": "System.Single GlobalStaticVars::AudioVolume()"
+            }
+          },
+          {
+            "offset": 138,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 142,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 146,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 150,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 154,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [
+                "UnityEngine.AudioClip",
+                "UnityEngine.Vector3",
+                "System.Single"
+              ],
+              "ret": "UnityEngine.AudioSource",
+              "hasThis": false,
+              "name": "CreateAudioAtPoint",
+              "identity": "UnityEngine.AudioSource GlobalStaticVars::CreateAudioAtPoint(UnityEngine.AudioClip,UnityEngine.Vector3,System.Single)"
+            }
+          },
+          {
+            "offset": 159,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 163,
+            "opcode": "br",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 168,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 169,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AdventureMenu_ModeButton",
+              "type": "UnityEngine.UI.Button",
+              "identity": "UnityEngine.UI.Button AdventureMenu_ModeButton::button"
+            }
+          },
+          {
+            "offset": 174,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 178,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 183,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 9,
+          "field": {
+            "owner": "UnityEngine.UI.Selectable",
+            "type": "System.Boolean",
+            "identity": "System.Boolean UnityEngine.UI.Selectable::m_Interactable"
+          },
+          "original_records": [
+            {
+              "type": "Selectable",
+              "namespace": "UnityEngine.UI",
+              "typeIndex": 6679,
+              "name": "m_Interactable",
+              "token": "0x400020d",
+              "offset": 216,
+              "type_index": 12423
+            }
+          ]
+        },
+        {
+          "cil_offset": 169,
+          "field": {
+            "owner": "AdventureMenu_ModeButton",
+            "type": "UnityEngine.UI.Button",
+            "identity": "UnityEngine.UI.Button AdventureMenu_ModeButton::button"
+          },
+          "original_records": [
+            {
+              "type": "AdventureMenu_ModeButton",
+              "namespace": "",
+              "typeIndex": 5244,
+              "name": "button",
+              "token": "0x40006b7",
+              "offset": 64,
+              "type_index": 12519
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x06000632",
+      "method": "System.Void LevelItem_HA::PlayAudio(UnityEngine.AudioClip)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "LevelItem_HA",
+        "name": "PlayAudio",
+        "token": "0x6000632",
+        "va": "0x18039e470"
+      },
+      "start": "0x18039e470",
+      "end": "0x18039e56b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446244976,
+          6446245123
+        ],
+        [
+          6446245123,
+          6446245210
+        ],
+        [
+          6446245210,
+          6446245227
+        ]
+      ],
+      "native_sha256": "3facaaf2f05cd1ea10802bf4d2845e993edcb393e4b48b7cc33f7f0686e5452f",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000632.bin:     file format binary\n\n\nDisassembly of section .data:\n\n000000018039e470 <.data>:\n   18039e470:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   18039e475:\t57                   \tpush   %rdi\n   18039e476:\t48 83 ec 40          \tsub    $0x40,%rsp\n   18039e47a:\t80 3d 33 6a 94 01 00 \tcmpb   $0x0,0x1946a33(%rip)        # 0x181ce4eb4\n   18039e481:\t48 8b fa             \tmov    %rdx,%rdi\n   18039e484:\t48 8b d9             \tmov    %rcx,%rbx\n   18039e487:\t75 1f                \tjne    0x18039e4a8\n   18039e489:\t48 8d 0d 88 3b 80 01 \tlea    0x1803b88(%rip),%rcx        # 0x181ba2018\n   18039e490:\te8 5b 1a eb ff       \tcall   0x18024fef0\n   18039e495:\t48 8d 0d 64 20 81 01 \tlea    0x1812064(%rip),%rcx        # 0x181bb0500\n   18039e49c:\te8 4f 1a eb ff       \tcall   0x18024fef0\n   18039e4a1:\tc6 05 0c 6a 94 01 01 \tmovb   $0x1,0x1946a0c(%rip)        # 0x181ce4eb4\n   18039e4a8:\t48 8b 43 30          \tmov    0x30(%rbx),%rax\n   18039e4ac:\t48 85 c0             \ttest   %rax,%rax\n   18039e4af:\t0f 84 b0 00 00 00    \tje     0x18039e565\n   18039e4b5:\t80 b8 d8 00 00 00 00 \tcmpb   $0x0,0xd8(%rax)\n   18039e4bc:\t0f 84 98 00 00 00    \tje     0x18039e55a\n   18039e4c2:\t48 8b 0d 37 20 81 01 \tmov    0x1812037(%rip),%rcx        # 0x181bb0500\n   18039e4c9:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18039e4d0:\t75 05                \tjne    0x18039e4d7\n   18039e4d2:\te8 09 1d eb ff       \tcall   0x1802501e0\n   18039e4d7:\t33 d2                \txor    %edx,%edx\n   18039e4d9:\t48 8b cf             \tmov    %rdi,%rcx\n   18039e4dc:\te8 8f 13 f8 00       \tcall   0x18131f870\n   18039e4e1:\t84 c0                \ttest   %al,%al\n   18039e4e3:\t74 75                \tje     0x18039e55a\n   18039e4e5:\t33 c9                \txor    %ecx,%ecx\n   18039e4e7:\te8 d4 42 f4 00       \tcall   0x1812e27c0\n   18039e4ec:\t48 85 c0             \ttest   %rax,%rax\n   18039e4ef:\t74 74                \tje     0x18039e565\n   18039e4f1:\t33 d2                \txor    %edx,%edx\n   18039e4f3:\t48 8b c8             \tmov    %rax,%rcx\n   18039e4f6:\te8 15 60 f6 00       \tcall   0x181304510\n   18039e4fb:\t48 85 c0             \ttest   %rax,%rax\n   18039e4fe:\t74 65                \tje     0x18039e565\n   18039e500:\t45 33 c0             \txor    %r8d,%r8d\n   18039e503:\t0f 29 74 24 30       \tmovaps %xmm6,0x30(%rsp)\n   18039e508:\t48 8b d0             \tmov    %rax,%rdx\n   18039e50b:\t48 8d 4c 24 20       \tlea    0x20(%rsp),%rcx\n   18039e510:\te8 8b 0e f9 00       \tcall   0x18132f3a0\n   18039e515:\t48 8b 0d fc 3a 80 01 \tmov    0x1803afc(%rip),%rcx        # 0x181ba2018\n   18039e51c:\tf2 0f 10 30          \tmovsd  (%rax),%xmm6\n   18039e520:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18039e527:\t8b 58 08             \tmov    0x8(%rax),%ebx\n   18039e52a:\t75 05                \tjne    0x18039e531\n   18039e52c:\te8 af 1c eb ff       \tcall   0x1802501e0\n   18039e531:\t33 c9                \txor    %ecx,%ecx\n   18039e533:\te8 68 c9 f7 ff       \tcall   0x18031aea0\n   18039e538:\t45 33 c9             \txor    %r9d,%r9d\n   18039e53b:\tf2 0f 11 74 24 20    \tmovsd  %xmm6,0x20(%rsp)\n   18039e541:\t0f 28 d0             \tmovaps %xmm0,%xmm2\n   18039e544:\t89 5c 24 28          \tmov    %ebx,0x28(%rsp)\n   18039e548:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   18039e54d:\t48 8b cf             \tmov    %rdi,%rcx\n   18039e550:\te8 db cc f7 ff       \tcall   0x18031b230\n   18039e555:\t0f 28 74 24 30       \tmovaps 0x30(%rsp),%xmm6\n   18039e55a:\t48 8b 5c 24 50       \tmov    0x50(%rsp),%rbx\n   18039e55f:\t48 83 c4 40          \tadd    $0x40,%rsp\n   18039e563:\t5f                   \tpop    %rdi\n   18039e564:\tc3                   \tret\n   18039e565:\te8 e6 1b eb ff       \tcall   0x180250150\n   18039e56a:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void LevelItem_HA::PlayAudio(UnityEngine.AudioClip)",
+        "token": "0x06000632",
+        "owner": "LevelItem_HA",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "UnityEngine.AudioClip"
+        ],
+        "locals": [
+          "UnityEngine.AudioClip",
+          "UnityEngine.UI.Button",
+          "System.Boolean",
+          "UnityEngine.Camera",
+          "UnityEngine.Transform",
+          "System.Single",
+          "UnityEngine.AudioSource",
+          "System.Boolean",
+          "System.Boolean",
+          "UnityEngine.Vector3",
+          "LevelItem_HA",
+          "System.Single"
+        ],
+        "maxStack": 3,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 168
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "UnityEngine.UI.Selectable",
+              "type": "System.Boolean",
+              "identity": "System.Boolean UnityEngine.UI.Selectable::m_Interactable"
+            }
+          },
+          {
+            "offset": 14,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 19,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 21,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 25,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 29,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 34,
+            "opcode": "br",
+            "operand": {
+              "target": 39
+            }
+          },
+          {
+            "offset": 39,
+            "opcode": "br",
+            "operand": {
+              "target": 44
+            }
+          },
+          {
+            "offset": 44,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": false,
+              "name": "op_Implicit",
+              "identity": "System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 53,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 57,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 61,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 62,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 64,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 68,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 72,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 77,
+            "opcode": "br",
+            "operand": {
+              "target": 82
+            }
+          },
+          {
+            "offset": 82,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Camera",
+              "args": [],
+              "ret": "UnityEngine.Camera",
+              "hasThis": false,
+              "name": "get_main",
+              "identity": "UnityEngine.Camera UnityEngine.Camera::get_main()"
+            }
+          },
+          {
+            "offset": 87,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 91,
+            "opcode": "br",
+            "operand": {
+              "target": 96
+            }
+          },
+          {
+            "offset": 96,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 100,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.Component::get_transform()"
+            }
+          },
+          {
+            "offset": 105,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "br",
+            "operand": {
+              "target": 114
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 118,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [],
+              "ret": "UnityEngine.Vector3",
+              "hasThis": true,
+              "name": "get_position",
+              "identity": "UnityEngine.Vector3 UnityEngine.Transform::get_position()"
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 127,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 128,
+            "opcode": "br",
+            "operand": {
+              "target": 133
+            }
+          },
+          {
+            "offset": 133,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [],
+              "ret": "System.Single",
+              "hasThis": false,
+              "name": "AudioVolume",
+              "identity": "System.Single GlobalStaticVars::AudioVolume()"
+            }
+          },
+          {
+            "offset": 138,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 142,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 146,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 150,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 154,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [
+                "UnityEngine.AudioClip",
+                "UnityEngine.Vector3",
+                "System.Single"
+              ],
+              "ret": "UnityEngine.AudioSource",
+              "hasThis": false,
+              "name": "CreateAudioAtPoint",
+              "identity": "UnityEngine.AudioSource GlobalStaticVars::CreateAudioAtPoint(UnityEngine.AudioClip,UnityEngine.Vector3,System.Single)"
+            }
+          },
+          {
+            "offset": 159,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 163,
+            "opcode": "br",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 168,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 169,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "LevelItem_HA",
+              "type": "UnityEngine.UI.Button",
+              "identity": "UnityEngine.UI.Button LevelItem_HA::button"
+            }
+          },
+          {
+            "offset": 174,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 178,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 183,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 9,
+          "field": {
+            "owner": "UnityEngine.UI.Selectable",
+            "type": "System.Boolean",
+            "identity": "System.Boolean UnityEngine.UI.Selectable::m_Interactable"
+          },
+          "original_records": [
+            {
+              "type": "Selectable",
+              "namespace": "UnityEngine.UI",
+              "typeIndex": 6679,
+              "name": "m_Interactable",
+              "token": "0x400020d",
+              "offset": 216,
+              "type_index": 12423
+            }
+          ]
+        },
+        {
+          "cil_offset": 169,
+          "field": {
+            "owner": "LevelItem_HA",
+            "type": "UnityEngine.UI.Button",
+            "identity": "UnityEngine.UI.Button LevelItem_HA::button"
+          },
+          "original_records": [
+            {
+              "type": "LevelItem_HA",
+              "namespace": "",
+              "typeIndex": 5278,
+              "name": "button",
+              "token": "0x400083b",
+              "offset": 48,
+              "type_index": 12519
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    }
+  ]
+}

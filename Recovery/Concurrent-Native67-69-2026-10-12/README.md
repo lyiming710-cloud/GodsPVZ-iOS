@@ -54,3 +54,7 @@ Remote repo is `/workspaces/GodsPVZ-native24-codespace` in Codespace `glowing-tr
 New candidates live under `/tmp/godspvz-native67-codex-2026-10-12` through native69. A new immutable Release snapshot saves source, binaries, candidates, generation logs, input parent and primary native/constant evidence. Test scratch outputs are owned by Gemini and must be archived separately when complete, with failed runs preserved.
 
 Full IL2CPP conversion and all translation units remain deferred until 100 qualified unique methods. At that point Gemini executes that gate, followed by licensed Unity/export and real macOS Xcode compilation when qualified. Historical Native53 results remain 516 errored methods, 5668 diagnostics and 24 failed TUs out of 264; they are not current Native69 measurements. No new Actions run or IPA was created in this checkpoint.
+
+## Native70-71 continuation
+
+See ../Concurrent-Native70-71-2026-10-12/README.md for six more unqualified implementation targets, restart recovery, and the integrator review of early Gemini PASS summaries. Accepted count remains 40/100 until hash-bound behavior/control/history evidence is complete.

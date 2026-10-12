@@ -1,0 +1,1 @@
+Unqualified implementation checkpoint: ten new methods in Native67-69, 34 pending across Native60-69. Accepted Native59 base remains 40/100. All tests delegated to AGY Gemini 3.8 Flash; no new full conversion, Unity/Xcode run or IPA. Archive SHA-256: 6c025b8e428222198e8fe536605ea0f7cac4b861550724026508843dcc31ff00

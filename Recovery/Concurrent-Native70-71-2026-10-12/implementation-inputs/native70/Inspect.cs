@@ -1,0 +1,14 @@
+using Mono.Cecil;
+using System.Text.Json;
+using System.Security.Cryptography;
+using MD=Mono.Cecil.MethodDefinition;
+using var a=AssemblyDefinition.ReadAssembly(args[0]);
+object Method(MethodReference m)=>new {token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,hasThis=m.HasThis};
+object Field(FieldReference f)=>new {token=$"0x{f.MetadataToken.ToInt32():X8}",name=f.FullName};
+var tokens=new[]{0x060001FA,0x060002AE,0x060003AA,0x06000318,0x06000261};
+var types=a.MainModule.GetTypes().ToArray();
+var body=tokens.Select(t=>(MD)a.MainModule.LookupToken(t)).Select(m=>new {token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,m.Body.CodeSize,localSig=$"0x{m.Body.LocalVarToken.ToInt32():X8}",m.Body.MaxStackSize,eh=m.Body.ExceptionHandlers.Count,locals=m.Body.Variables.Select(v=>v.VariableType.FullName),calls=m.Body.Instructions.Select(i=>i.Operand).OfType<MethodReference>().Select(Method),types=m.Body.Instructions.Select(i=>i.Operand).OfType<TypeReference>().Select(t=>new{token=$"0x{t.MetadataToken.ToInt32():X8}",name=t.FullName})});
+var refs=a.MainModule.GetMemberReferences().OfType<MethodReference>().Where(m=>m.DeclaringType.FullName=="UnityEngine.Vector3"||m.DeclaringType.FullName.Contains("<Project>")||m.DeclaringType.FullName.Contains("<Popup>")||m.Name=="Add"&&m.DeclaringType.FullName.Contains("<Zombie>")).Select(Method);
+var internals=types.Where(t=>new[]{"ProjectManager","Board","Plant","Project","Device","Damage","Zombie"}.Contains(t.Name)).Select(t=>new{token=$"0x{t.MetadataToken.ToInt32():X8}",name=t.FullName,fields=t.Fields.Select(f=>new{token=$"0x{f.MetadataToken.ToInt32():X8}",name=f.FullName,attributes=f.Attributes.ToString()}),methods=t.Methods.Select(m=>new{token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,attributes=m.Attributes.ToString()})});
+var getters=new[]{0x060001FA,0x060002AE,0x060003AA,0x06000318,0x06000261}.Select(t=>(MD)a.MainModule.LookupToken(t)).Select(m=>new{token=$"0x{m.MetadataToken.ToInt32():X8}",name=m.FullName,il=m.Body.Instructions.Select(i=>i.ToString())});
+Console.WriteLine(JsonSerializer.Serialize(new{input_sha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(args[0]))).ToLowerInvariant(),targets=body,refs,internals,getters},new JsonSerializerOptions{WriteIndented=true}));

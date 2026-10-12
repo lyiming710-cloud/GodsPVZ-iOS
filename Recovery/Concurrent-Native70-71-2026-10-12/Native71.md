@@ -1,0 +1,15 @@
+# Native71 pending button audio recovery — 2026-10-12
+
+**UNQUALIFIED_IMPLEMENTATION_SNAPSHOT.** Two new targets: `0x06000532 AdventureMenu_ModeButton.PlayAudio(AudioClip)` and `0x06000632 LevelItem_HA.PlayAudio(AudioClip)`. Native59 remains the accepted base, 40/100. Combined with Native70, this continuation adds six methods; Native60–71 now contain 40 pending unique methods. Generated methods are not accepted methods.
+
+Parent Native70: `775d43f4413940b5c2e1cb440fff0933e6c58388d7794992baff72fcbe8c8973`.
+
+Original PC native reads button at +64/+48 respectively, then Selectable.m_Interactable at +216. The previous private field reference is inaccessible from the game assembly. Both reconstructed bodies use the public Selectable.get_interactable getter. The preserved real managed-support UnityEngine.UI.dll contains this exact public getter as MethodDef `0x0600042F`: `ldarg.0; ldfld m_Interactable; ret`. This establishes helper field-read equivalence; it does not replace caller behavior tests or fresh IL2CPP linking. There is no added Unity pseudo-null check on the button.
+
+Reference evidence: `/workspaces/GodsPVZ-native24-codespace/.validation/native25-2026-10-01/native24-restored/managed-support/UnityEngine.UI.dll`, 262,656 bytes, SHA-256 `a6733875d7f72e29a82b2e2a849c7fd7bf4905aca5524e895978787f68525403`, assembly `UnityEngine.UI, Version=1.0.0.0`, MVID `bdabb907-01ef-4baa-8a1a-8b4c2eb7ae94`. This is a preserved historical Unity gate reference, not a newly verified full Editor installation. The two resolver locations first inspected contain no UI DLL. Full raw source inspection report is archived.
+
+After interactable succeeds, test the input clip using Unity.Object.op_Implicit; false returns. Obtain Camera.main, transform and position in order, retaining the by-value Vector3 before AudioVolume runs. Call CreateAudioAtPoint with the original clip argument, captured position and returned volume, then discard the AudioSource. Missing button, camera or transform must still throw where native throws; no defensive skip is added. MaxStack is 3. Existing local signature and original metadata rows remain unchanged; one public getter MemberRef and its bounded missing name string are appended.
+
+Gemini owns all testing. Each target still needs exact-hash actual CIL/native oracle comparison, false/true/destroyed clip and button cases, null and exception paths, changes during camera/transform/position/volume calls, bit-exact positions, behavior mutants, non-target method isolation and historical regressions. Reuse the true inspected getter body when building fixtures; do not stub it into a configurable boolean that silently changes its behavior. Do not report API accessibility or construction as full qualification.
+
+Native60's strict aggregation still requires every original native/CIL behavior and control gate. A later summary that drops its behavior conditions cannot promote the accepted count. Native65's frozen ldftn coverage gap remains explicit. No full conversion/translation-unit gate, Unity/Xcode build or IPA has been performed for this snapshot.

@@ -1,0 +1,1 @@
+Unqualified six-method Native70-71 implementation snapshot. Accepted base remains Native59 40/100, with 40 pending across Native60-71. No full gate or IPA. Archive SHA-256: 7fa90052ca648d81d5dd17fa57e0b8aa16bec9bcd5317156caa922555777ac01

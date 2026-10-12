@@ -1,0 +1,24 @@
+# Native70 pending implementation — 2026-10-12
+
+**UNQUALIFIED_IMPLEMENTATION_SNAPSHOT.** Native59 remains the accepted base, 40/100. Native60–69 have 34 pending unique methods; Native70 adds four for 38 pending. No new full IL2CPP/translation-unit check, Unity/Xcode run or IPA. Test execution belongs to AGY Gemini 3.8 Flash; the integrator is continuing source work while the tester first repairs Native60's fail-closed evidence aggregation.
+
+Input Native69 SHA-256: `67611b6286fe37c58f706eaab114037bc1bce4a10187a3f28e8327e519e28359`.
+
+Native70 candidate SHA-256: `775d43f4413940b5c2e1cb440fff0933e6c58388d7794992baff72fcbe8c8973`.
+
+## Scope and primary evidence
+
+- `0x060001FA ProjectManager.Update_Projects`: actual typed foreach with finally. Only IDs 1, 2 and 8 qualify, then movementTracks==5 and stayedTime>=0.4f. NaN does not qualify. Call Click using the current board.mouseManager each time. Reuse the Project iterator bindings and enum/current local signature already appended in Native66; no duplicate TypeSpec or signature is added.
+- `0x060002AE Board.Update_Popups`: this is a first-entry queue operation, not a foreach. Initial list Count<=0 returns. The Unity equality callback may change the list; reread it before either branch. A dead first entry is removed and the next entry, if present, is activated without an activeSelf check. A live entry checks activeSelf and activates only if false, rereading the list after that callback. Use public List<Popup>.Count and RemoveAt rather than its private _size.
+- `0x060003AA Plant.ST_Chomperviking_Classify`: the plant this pointer is unused. Zombie armor1Type/armor2Type!=0 chooses the normal list and must not evaluate Damage. Otherwise damagePoint*7f > healthPoint, ordered, chooses the other list; all other values including unordered NaN choose normal. Both branches call the existing public List<Zombie>.Add, retaining the genuine collection side effects instead of reconstructing private array writes.
+- `0x06000318 Device.DC_Bonfire`: positive ordered health triggers decay using the captured pre-deltaTime health, deltaTime*10f, then DC_BonfireWarm. After that callback, nonpositive ordered health is zeroed before Broken; NaN skips that branch. Reread health/maxHealth after callbacks, divide as single precision, convert the ratio to double for Pow(ratio,0.5d), convert the result to single, and set child 1 localScale=(scale,scale,+0). Vector3 is constructed by value using the existing public constructor. Explicit conv.r4 boundaries retain the native single-precision operation stages; behavioral bit equality still requires independent testing.
+
+Only two public MemberRefs are appended: closed List<Popup>.get_Count and RemoveAt. Existing metadata rows, heaps, signatures and TypeSpecs are retained. ProjectManager's scoped local signature header is rebound to the already existing enum/current signature. Its finally clause fits the original reserved body slot. These implementation properties are subject to independent byte isolation and semantic gates; generation alone does not prove them.
+
+The original PC native evidence and actual current-parent metadata inspection are archived with the checkpoint. Original constants were read from GameAssembly SHA `9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d`: `0x1815A7C50` = 7f (0000e040), `0x1815A7C54` = 10f (00002041), `0x1815A7A18` = 0.5d (000000000000e03f), `0x1815A7A04` = 0.4f (cdcccc3e). Original Damage+16=damagePoint; ProjectManager+56=projects.
+
+## Required tester work
+
+Every target needs exact parent/candidate/source/fixture/tool hashes, actual candidate CIL execution against original native byte recordings, alias-changing callbacks, null/Unity pseudo-null and exception paths, floating-point boundaries including NaN/Inf/-0, discriminating emitted mutants, full method/EH isolation and the existing historical regressions on this candidate. The independent iterator tests must exercise normal and exceptional Dispose, invalidated list versions and no further Click after failure. Queue cases must distinguish removal from a live inactive entry and changes during equality/activeSelf callbacks. Classify controls must catch wrong multiplier, wrong armor condition and wrong list selection. Bonfire controls must catch reads taken after deltaTime instead of before, wrong decay factor, wrong post-warm NaN guard and incorrect scale/vector arguments.
+
+Native65's frozen-verifier ldftn coverage gap and incomplete upstream behavior evidence still prevent chain qualification. Do not treat a parent-chain blocker as the only missing gate if this batch's behavioral tests have not run. Do not replace a tool coverage error with a hardcoded PASS. Read the prior [Native67–69 checkpoint](../Concurrent-Native67-69-2026-10-12/README.md) for the restart recovery paths, exact engine API reference and early test-report limitations.
