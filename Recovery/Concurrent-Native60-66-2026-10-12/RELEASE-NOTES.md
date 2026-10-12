@@ -1,0 +1,1 @@
+Unqualified implementation snapshot for 24 methods in Native60–66. The accepted baseline remains Native59 / 40 methods of the Batch100 checkpoint. Independent AGY Gemini 3.8 Flash qualification is pending. This is not an IPA or a full IL2CPP/Clang pass. See Recovery/Concurrent-Native60-66-2026-10-12/README.md and PIPELINE.json at commit 763a76a18e53f465e591e975e15a7a3ceee61e1e.
