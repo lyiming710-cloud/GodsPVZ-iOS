@@ -1,0 +1,1 @@
+Unqualified four-method Native72 source and evidence snapshot. Accepted count remains 40/100, pending count 44 across Native60-72. No full Unity/Xcode gate or IPA. Archive SHA-256: 76831fae19bfc91c1ae5b254034920cf5e9283416eb3d045d4132f8b8f23b39e

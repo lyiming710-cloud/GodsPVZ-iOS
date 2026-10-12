@@ -9,3 +9,5 @@ The Native60 strict v2 result still omitted native-oracle/actual-CIL behavior co
 Sources, compiled patchers, candidates, pinned Native69 parent, generation logs and input/native evidence are saved in the corresponding unqualified Release archive. Original failed inspection attempts and prior unqualified candidate versions are retained; no candidate is overwritten or promoted. Main/production remain outside this pending chain.
 
 Full IL2CPP conversion plus all translation units remain deferred until 100 qualified unique methods. No new licensed Unity/Xcode build, Actions dispatch or IPA exists for this checkpoint. The latest candidate is Native71, SHA e2cbc546cf479f12076d27661aabecf77acf00f27c02eca3f939983eb2794a8e, parent Native70 SHA 775d43f4413940b5c2e1cb440fff0933e6c58388d7794992baff72fcbe8c8973.
+
+Continue at ../Concurrent-Native72-2026-10-12/README.md: four additional unqualified source implementations; 44 pending unique methods.

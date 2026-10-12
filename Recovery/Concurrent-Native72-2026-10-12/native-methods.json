@@ -1,0 +1,2083 @@
+{
+  "source_path": "audit\\native30-continuation-2026-10-02\\native55-native.json",
+  "source_sha256": "304b632ad13168da91e4b03e2824f69f053c592f59b3a089756a5e4114445277",
+  "purpose": "Original PC native; embedded managed records are historical Native54 only",
+  "methods": [
+    {
+      "token": "0x0600013A",
+      "method": "System.Boolean GlobalStaticVars::ChangeSprite(System.Collections.Generic.List`1<UnityEngine.GameObject>,System.String,UnityEngine.Sprite)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "GlobalStaticVars",
+        "name": "ChangeSprite",
+        "token": "0x600013a",
+        "va": "0x18031b050"
+      },
+      "start": "0x18031b050",
+      "end": "0x18031b15f",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445707344,
+          6445707615
+        ]
+      ],
+      "native_sha256": "97cd769bfd289581587d69f3ecfda99b8c72a5e5c5e4a64d872b99fadcb646c2",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x0600013A.bin:     file format binary\n\n\nDisassembly of section .data:\n\n000000018031b050 <.data>:\n   18031b050:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   18031b055:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   18031b05a:\t57                   \tpush   %rdi\n   18031b05b:\t48 83 ec 20          \tsub    $0x20,%rsp\n   18031b05f:\t80 3d fe 9a 9c 01 00 \tcmpb   $0x0,0x19c9afe(%rip)        # 0x181ce4b64\n   18031b066:\t49 8b f0             \tmov    %r8,%rsi\n   18031b069:\t48 8b da             \tmov    %rdx,%rbx\n   18031b06c:\t48 8b f9             \tmov    %rcx,%rdi\n   18031b06f:\t75 2b                \tjne    0x18031b09c\n   18031b071:\t48 8d 0d 40 a1 88 01 \tlea    0x188a140(%rip),%rcx        # 0x181ba51b8\n   18031b078:\te8 73 4e f3 ff       \tcall   0x18024fef0\n   18031b07d:\t48 8d 0d 94 6f 88 01 \tlea    0x1886f94(%rip),%rcx        # 0x181ba2018\n   18031b084:\te8 67 4e f3 ff       \tcall   0x18024fef0\n   18031b089:\t48 8d 0d 70 54 89 01 \tlea    0x1895470(%rip),%rcx        # 0x181bb0500\n   18031b090:\te8 5b 4e f3 ff       \tcall   0x18024fef0\n   18031b095:\tc6 05 c8 9a 9c 01 01 \tmovb   $0x1,0x19c9ac8(%rip)        # 0x181ce4b64\n   18031b09c:\t48 8b 0d 75 6f 88 01 \tmov    0x1886f75(%rip),%rcx        # 0x181ba2018\n   18031b0a3:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18031b0aa:\t75 05                \tjne    0x18031b0b1\n   18031b0ac:\te8 2f 51 f3 ff       \tcall   0x1802501e0\n   18031b0b1:\t45 33 c0             \txor    %r8d,%r8d\n   18031b0b4:\t48 8b d3             \tmov    %rbx,%rdx\n   18031b0b7:\t48 8b cf             \tmov    %rdi,%rcx\n   18031b0ba:\te8 d1 06 00 00       \tcall   0x18031b790\n   18031b0bf:\t48 8b 0d 3a 54 89 01 \tmov    0x189543a(%rip),%rcx        # 0x181bb0500\n   18031b0c6:\t48 8b d8             \tmov    %rax,%rbx\n   18031b0c9:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18031b0d0:\t75 05                \tjne    0x18031b0d7\n   18031b0d2:\te8 09 51 f3 ff       \tcall   0x1802501e0\n   18031b0d7:\t45 33 c0             \txor    %r8d,%r8d\n   18031b0da:\t33 d2                \txor    %edx,%edx\n   18031b0dc:\t48 8b cb             \tmov    %rbx,%rcx\n   18031b0df:\te8 7c 46 00 01       \tcall   0x18131f760\n   18031b0e4:\t84 c0                \ttest   %al,%al\n   18031b0e6:\t75 5f                \tjne    0x18031b147\n   18031b0e8:\t48 85 db             \ttest   %rbx,%rbx\n   18031b0eb:\t74 6c                \tje     0x18031b159\n   18031b0ed:\t48 8b 15 c4 a0 88 01 \tmov    0x188a0c4(%rip),%rdx        # 0x181ba51b8\n   18031b0f4:\t48 8b cb             \tmov    %rbx,%rcx\n   18031b0f7:\te8 84 2b 15 00       \tcall   0x18046dc80\n   18031b0fc:\t48 8b 0d fd 53 89 01 \tmov    0x18953fd(%rip),%rcx        # 0x181bb0500\n   18031b103:\t48 8b d8             \tmov    %rax,%rbx\n   18031b106:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18031b10d:\t75 05                \tjne    0x18031b114\n   18031b10f:\te8 cc 50 f3 ff       \tcall   0x1802501e0\n   18031b114:\t33 d2                \txor    %edx,%edx\n   18031b116:\t48 8b cb             \tmov    %rbx,%rcx\n   18031b119:\te8 52 47 00 01       \tcall   0x18131f870\n   18031b11e:\t84 c0                \ttest   %al,%al\n   18031b120:\t74 25                \tje     0x18031b147\n   18031b122:\t48 85 db             \ttest   %rbx,%rbx\n   18031b125:\t74 32                \tje     0x18031b159\n   18031b127:\t45 33 c0             \txor    %r8d,%r8d\n   18031b12a:\t48 8b d6             \tmov    %rsi,%rdx\n   18031b12d:\t48 8b cb             \tmov    %rbx,%rcx\n   18031b130:\te8 bb df 00 01       \tcall   0x1813290f0\n   18031b135:\tb0 01                \tmov    $0x1,%al\n   18031b137:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   18031b13c:\t48 8b 74 24 38       \tmov    0x38(%rsp),%rsi\n   18031b141:\t48 83 c4 20          \tadd    $0x20,%rsp\n   18031b145:\t5f                   \tpop    %rdi\n   18031b146:\tc3                   \tret\n   18031b147:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   18031b14c:\t32 c0                \txor    %al,%al\n   18031b14e:\t48 8b 74 24 38       \tmov    0x38(%rsp),%rsi\n   18031b153:\t48 83 c4 20          \tadd    $0x20,%rsp\n   18031b157:\t5f                   \tpop    %rdi\n   18031b158:\tc3                   \tret\n   18031b159:\te8 f2 4f f3 ff       \tcall   0x180250150\n   18031b15e:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Boolean GlobalStaticVars::ChangeSprite(System.Collections.Generic.List`1<UnityEngine.GameObject>,System.String,UnityEngine.Sprite)",
+        "token": "0x0600013A",
+        "owner": "GlobalStaticVars",
+        "ret": "System.Boolean",
+        "hasThis": false,
+        "args": [
+          "System.Collections.Generic.List`1<UnityEngine.GameObject>",
+          "System.String",
+          "UnityEngine.Sprite"
+        ],
+        "locals": [
+          "UnityEngine.Sprite",
+          "System.String",
+          "System.Collections.Generic.List`1<UnityEngine.GameObject>",
+          "UnityEngine.GameObject",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "UnityEngine.SpriteRenderer",
+          "System.Boolean",
+          "System.NullReferenceException"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 208
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 9,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 13,
+            "opcode": "call",
+            "operand": {
+              "owner": "GlobalStaticVars",
+              "args": [
+                "System.Collections.Generic.List`1<UnityEngine.GameObject>",
+                "System.String"
+              ],
+              "ret": "UnityEngine.GameObject",
+              "hasThis": false,
+              "name": "GetAnimationSprite_Name",
+              "identity": "UnityEngine.GameObject GlobalStaticVars::GetAnimationSprite_Name(System.Collections.Generic.List`1<UnityEngine.GameObject>,System.String)"
+            }
+          },
+          {
+            "offset": 18,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 22,
+            "opcode": "br",
+            "operand": {
+              "target": 27
+            }
+          },
+          {
+            "offset": 27,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 31,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 32,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object",
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": false,
+              "name": "op_Inequality",
+              "identity": "System.Boolean UnityEngine.Object::op_Inequality(UnityEngine.Object,UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 45,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 55
+            }
+          },
+          {
+            "offset": 50,
+            "opcode": "br",
+            "operand": {
+              "target": 188
+            }
+          },
+          {
+            "offset": 55,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 59,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 64,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 66,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 70,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 74,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 194
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "br",
+            "operand": {
+              "target": 84
+            }
+          },
+          {
+            "offset": 84,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 88,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [],
+              "ret": "UnityEngine.SpriteRenderer",
+              "hasThis": true,
+              "name": "GetComponent",
+              "identity": "!!0 UnityEngine.GameObject::GetComponent<UnityEngine.SpriteRenderer>()"
+            }
+          },
+          {
+            "offset": 93,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 97,
+            "opcode": "br",
+            "operand": {
+              "target": 102
+            }
+          },
+          {
+            "offset": 102,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 106,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Object",
+              "args": [
+                "UnityEngine.Object"
+              ],
+              "ret": "System.Boolean",
+              "hasThis": false,
+              "name": "op_Implicit",
+              "identity": "System.Boolean UnityEngine.Object::op_Implicit(UnityEngine.Object)"
+            }
+          },
+          {
+            "offset": 111,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 115,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 119,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 120,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 122,
+            "opcode": "stloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 126,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 130,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 188
+            }
+          },
+          {
+            "offset": 135,
+            "opcode": "br",
+            "operand": {
+              "target": 140
+            }
+          },
+          {
+            "offset": 140,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 144,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 149,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 151,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 155,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 159,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 194
+            }
+          },
+          {
+            "offset": 164,
+            "opcode": "br",
+            "operand": {
+              "target": 169
+            }
+          },
+          {
+            "offset": 169,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 173,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 177,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.SpriteRenderer",
+              "args": [
+                "UnityEngine.Sprite"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "set_sprite",
+              "identity": "System.Void UnityEngine.SpriteRenderer::set_sprite(UnityEngine.Sprite)"
+            }
+          },
+          {
+            "offset": 182,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 187,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 188,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 193,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 194,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 199,
+            "opcode": "stloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 203,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 207,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 208,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [],
+      "diagnostics_before": 2
+    },
+    {
+      "token": "0x0600021A",
+      "method": "System.Void ResourceManager::LoadAnimation()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "ResourceManager",
+        "name": "LoadAnimation",
+        "token": "0x600021a",
+        "va": "0x1803301d0"
+      },
+      "start": "0x1803301d0",
+      "end": "0x180330338",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6445793744,
+          6445794104
+        ]
+      ],
+      "native_sha256": "4c632c2a1dcec4f5cba4ce5826a19be572f399f4aaf13235ec288e76a2ee5878",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x0600021A.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803301d0 <.data>:\n   1803301d0:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   1803301d5:\t57                   \tpush   %rdi\n   1803301d6:\t48 83 ec 20          \tsub    $0x20,%rsp\n   1803301da:\t80 3d 32 4a 9b 01 00 \tcmpb   $0x0,0x19b4a32(%rip)        # 0x181ce4c13\n   1803301e1:\t75 5b                \tjne    0x18033023e\n   1803301e3:\t48 8d 0d 26 c8 87 01 \tlea    0x187c826(%rip),%rcx        # 0x181baca10\n   1803301ea:\te8 01 fd f1 ff       \tcall   0x18024fef0\n   1803301ef:\t48 8d 0d 82 3c 89 01 \tlea    0x1893c82(%rip),%rcx        # 0x181bc3e78\n   1803301f6:\te8 f5 fc f1 ff       \tcall   0x18024fef0\n   1803301fb:\t48 8d 0d e6 16 88 01 \tlea    0x18816e6(%rip),%rcx        # 0x181bb18e8\n   180330202:\te8 e9 fc f1 ff       \tcall   0x18024fef0\n   180330207:\t48 8d 0d 6a 62 88 01 \tlea    0x188626a(%rip),%rcx        # 0x181bb6478\n   18033020e:\te8 dd fc f1 ff       \tcall   0x18024fef0\n   180330213:\t48 8d 0d d6 ce 89 01 \tlea    0x189ced6(%rip),%rcx        # 0x181bcd0f0\n   18033021a:\te8 d1 fc f1 ff       \tcall   0x18024fef0\n   18033021f:\t48 8d 0d ca 66 89 01 \tlea    0x18966ca(%rip),%rcx        # 0x181bc68f0\n   180330226:\te8 c5 fc f1 ff       \tcall   0x18024fef0\n   18033022b:\t48 8d 0d a6 5d 88 01 \tlea    0x1885da6(%rip),%rcx        # 0x181bb5fd8\n   180330232:\te8 b9 fc f1 ff       \tcall   0x18024fef0\n   180330237:\tc6 05 d5 49 9b 01 01 \tmovb   $0x1,0x19b49d5(%rip)        # 0x181ce4c13\n   18033023e:\t48 8b 0d a3 16 88 01 \tmov    0x18816a3(%rip),%rcx        # 0x181bb18e8\n   180330245:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18033024c:\t75 05                \tjne    0x180330253\n   18033024e:\te8 8d ff f1 ff       \tcall   0x1802501e0\n   180330253:\t48 8b 15 7e 5d 88 01 \tmov    0x1885d7e(%rip),%rdx        # 0x181bb5fd8\n   18033025a:\t45 33 c0             \txor    %r8d,%r8d\n   18033025d:\t48 8b 0d 8c 66 89 01 \tmov    0x189668c(%rip),%rcx        # 0x181bc68f0\n   180330264:\te8 97 43 95 00       \tcall   0x180c84600\n   180330269:\t48 8b 0d 08 62 88 01 \tmov    0x1886208(%rip),%rcx        # 0x181bb6478\n   180330270:\t48 8b f8             \tmov    %rax,%rdi\n   180330273:\t83 b9 e0 00 00 00 00 \tcmpl   $0x0,0xe0(%rcx)\n   18033027a:\t75 0c                \tjne    0x180330288\n   18033027c:\te8 5f ff f1 ff       \tcall   0x1802501e0\n   180330281:\t48 8b 0d f0 61 88 01 \tmov    0x18861f0(%rip),%rcx        # 0x181bb6478\n   180330288:\t48 8b 89 b8 00 00 00 \tmov    0xb8(%rcx),%rcx\n   18033028f:\t45 33 c0             \txor    %r8d,%r8d\n   180330292:\t48 8b 15 57 ce 89 01 \tmov    0x189ce57(%rip),%rdx        # 0x181bcd0f0\n   180330299:\t48 8b 99 a0 01 00 00 \tmov    0x1a0(%rcx),%rbx\n   1803302a0:\t48 8b cf             \tmov    %rdi,%rcx\n   1803302a3:\te8 58 43 95 00       \tcall   0x180c84600\n   1803302a8:\t48 8b 15 61 c7 87 01 \tmov    0x187c761(%rip),%rdx        # 0x181baca10\n   1803302af:\t48 8b c8             \tmov    %rax,%rcx\n   1803302b2:\te8 49 b7 14 00       \tcall   0x18047ba00\n   1803302b7:\t4c 8b c8             \tmov    %rax,%r9\n   1803302ba:\t48 85 db             \ttest   %rbx,%rbx\n   1803302bd:\t74 6d                \tje     0x18033032c\n   1803302bf:\t48 8b 05 b2 3b 89 01 \tmov    0x1893bb2(%rip),%rax        # 0x181bc3e78\n   1803302c6:\tff 43 1c             \tincl   0x1c(%rbx)\n   1803302c9:\t48 8b 53 10          \tmov    0x10(%rbx),%rdx\n   1803302cd:\t48 63 4b 18          \tmovslq 0x18(%rbx),%rcx\n   1803302d1:\t48 85 d2             \ttest   %rdx,%rdx\n   1803302d4:\t74 56                \tje     0x18033032c\n   1803302d6:\t3b 4a 18             \tcmp    0x18(%rdx),%ecx\n   1803302d9:\t72 24                \tjb     0x1803302ff\n   1803302db:\t48 8b 40 20          \tmov    0x20(%rax),%rax\n   1803302df:\t49 8b d1             \tmov    %r9,%rdx\n   1803302e2:\t48 8b cb             \tmov    %rbx,%rcx\n   1803302e5:\t4c 8b 80 c0 00 00 00 \tmov    0xc0(%rax),%r8\n   1803302ec:\t4d 8b 40 70          \tmov    0x70(%r8),%r8\n   1803302f0:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   1803302f5:\t48 83 c4 20          \tadd    $0x20,%rsp\n   1803302f9:\t5f                   \tpop    %rdi\n   1803302fa:\te9 e1 79 51 00       \tjmp    0x180847ce0\n   1803302ff:\t8d 41 01             \tlea    0x1(%rcx),%eax\n   180330302:\t89 43 18             \tmov    %eax,0x18(%rbx)\n   180330305:\t48 8b c1             \tmov    %rcx,%rax\n   180330308:\t3b 4a 18             \tcmp    0x18(%rdx),%ecx\n   18033030b:\t73 25                \tjae    0x180330332\n   18033030d:\t4c 89 4c ca 20       \tmov    %r9,0x20(%rdx,%rcx,8)\n   180330312:\t48 83 c0 04          \tadd    $0x4,%rax\n   180330316:\t48 8d 0c c2          \tlea    (%rdx,%rax,8),%rcx\n   18033031a:\t49 8b d1             \tmov    %r9,%rdx\n   18033031d:\t48 8b 5c 24 30       \tmov    0x30(%rsp),%rbx\n   180330322:\t48 83 c4 20          \tadd    $0x20,%rsp\n   180330326:\t5f                   \tpop    %rdi\n   180330327:\te9 34 f0 f1 ff       \tjmp    0x18024f360\n   18033032c:\te8 1f fe f1 ff       \tcall   0x180250150\n   180330331:\tcc                   \tint3\n   180330332:\te8 09 fe f1 ff       \tcall   0x180250140\n   180330337:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void ResourceManager::LoadAnimation()",
+        "token": "0x0600021A",
+        "owner": "ResourceManager",
+        "ret": "System.Void",
+        "hasThis": false,
+        "args": [],
+        "locals": [
+          "System.String",
+          "System.Collections.Generic.List`1<System.Object>",
+          "System.String",
+          "Zombie_charred",
+          "System.Object[]",
+          "System.Boolean",
+          "System.Int32",
+          "System.IntPtr",
+          "System.Int32",
+          "System.Int32"
+        ],
+        "maxStack": 3,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 183
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "prefabs"
+          },
+          {
+            "offset": 10,
+            "opcode": "ldstr",
+            "operand": "Charred"
+          },
+          {
+            "offset": 15,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.IO.Path",
+              "args": [
+                "System.String",
+                "System.String"
+              ],
+              "ret": "System.String",
+              "hasThis": false,
+              "name": "Combine",
+              "identity": "System.String System.IO.Path::Combine(System.String,System.String)"
+            }
+          },
+          {
+            "offset": 20,
+            "opcode": "stloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 24,
+            "opcode": "br",
+            "operand": {
+              "target": 188
+            }
+          },
+          {
+            "offset": 29,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 33,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_version"
+            }
+          },
+          {
+            "offset": 38,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 43,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 44,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 48,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 52,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 56,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_version"
+            }
+          },
+          {
+            "offset": 61,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 65,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "type": "System.Object[]",
+              "identity": "!0[] System.Collections.Generic.List`1<System.Object>::_items"
+            }
+          },
+          {
+            "offset": 70,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 74,
+            "opcode": "br",
+            "operand": {
+              "target": 79
+            }
+          },
+          {
+            "offset": 79,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 83,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_size"
+            }
+          },
+          {
+            "offset": 88,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 92,
+            "opcode": "ldlen",
+            "operand": null
+          },
+          {
+            "offset": 93,
+            "opcode": "conv.i4",
+            "operand": null
+          },
+          {
+            "offset": 94,
+            "opcode": "clt",
+            "operand": null
+          },
+          {
+            "offset": 96,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 100,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 104,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 128
+            }
+          },
+          {
+            "offset": 109,
+            "opcode": "br",
+            "operand": {
+              "target": 114
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 118,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 122,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "args": [
+                "System.Object"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "AddWithResize",
+              "identity": "System.Void System.Collections.Generic.List`1<System.Object>::AddWithResize(!0)"
+            }
+          },
+          {
+            "offset": 127,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 128,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 132,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_size"
+            }
+          },
+          {
+            "offset": 137,
+            "opcode": "ldc.i4",
+            "operand": 1
+          },
+          {
+            "offset": 142,
+            "opcode": "add",
+            "operand": null
+          },
+          {
+            "offset": 143,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 147,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 155,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1<System.Object>",
+              "type": "System.Int32",
+              "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_size"
+            }
+          },
+          {
+            "offset": 160,
+            "opcode": "br",
+            "operand": {
+              "target": 165
+            }
+          },
+          {
+            "offset": 165,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 169,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 173,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 177,
+            "opcode": "stelem.any",
+            "operand": {
+              "type": "System.Object"
+            }
+          },
+          {
+            "offset": 182,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 183,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 188,
+            "opcode": "ldsfld",
+            "operand": {
+              "owner": "ResourceManager",
+              "type": "System.Collections.Generic.List`1<Zombie_charred>",
+              "identity": "System.Collections.Generic.List`1<Zombie_charred> ResourceManager::zombie_Charreds"
+            }
+          },
+          {
+            "offset": 193,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 197,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 201,
+            "opcode": "ldstr",
+            "operand": "Zombie_charred"
+          },
+          {
+            "offset": 206,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.IO.Path",
+              "args": [
+                "System.String",
+                "System.String"
+              ],
+              "ret": "System.String",
+              "hasThis": false,
+              "name": "Combine",
+              "identity": "System.String System.IO.Path::Combine(System.String,System.String)"
+            }
+          },
+          {
+            "offset": 211,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 215,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 219,
+            "opcode": "call",
+            "operand": {
+              "owner": "InternalResourceLoader",
+              "args": [
+                "System.String"
+              ],
+              "ret": "Zombie_charred",
+              "hasThis": false,
+              "name": "Load",
+              "identity": "!!0 InternalResourceLoader::Load<Zombie_charred>(System.String)"
+            }
+          },
+          {
+            "offset": 224,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 228,
+            "opcode": "br",
+            "operand": {
+              "target": 29
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 33,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<System.Object>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_version"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 56,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<System.Object>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_version"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 65,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<System.Object>",
+            "type": "System.Object[]",
+            "identity": "!0[] System.Collections.Generic.List`1<System.Object>::_items"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 83,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<System.Object>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 132,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<System.Object>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 155,
+          "field": {
+            "owner": "System.Collections.Generic.List`1<System.Object>",
+            "type": "System.Int32",
+            "identity": "System.Int32 System.Collections.Generic.List`1<System.Object>::_size"
+          },
+          "original_records": []
+        },
+        {
+          "cil_offset": 188,
+          "field": {
+            "owner": "ResourceManager",
+            "type": "System.Collections.Generic.List`1<Zombie_charred>",
+            "identity": "System.Collections.Generic.List`1<Zombie_charred> ResourceManager::zombie_Charreds"
+          },
+          "original_records": [
+            {
+              "type": "ResourceManager",
+              "namespace": "",
+              "typeIndex": 5169,
+              "name": "zombie_Charreds",
+              "token": "0x40002ff",
+              "offset": 416,
+              "type_index": 7967
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 1
+    },
+    {
+      "token": "0x06000544",
+      "method": "System.Void AlmanacUIController::CheckOtherAlmanac()",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "AlmanacUIController",
+        "name": "CheckOtherAlmanac",
+        "token": "0x6000544",
+        "va": "0x1803877b0"
+      },
+      "start": "0x1803877b0",
+      "end": "0x1803878e8",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446151600,
+          6446151912
+        ]
+      ],
+      "native_sha256": "95cb476cce2e1d69ae914cfe00205989ec318c875938757cc631150d711c3aef",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x06000544.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803877b0 <.data>:\n   1803877b0:\t40 53                \trex push %rbx\n   1803877b2:\t48 83 ec 30          \tsub    $0x30,%rsp\n   1803877b6:\t0f b6 91 9c 00 00 00 \tmovzbl 0x9c(%rcx),%edx\n   1803877bd:\t48 8b d9             \tmov    %rcx,%rbx\n   1803877c0:\t84 d2                \ttest   %dl,%dl\n   1803877c2:\t0f 94 c0             \tsete   %al\n   1803877c5:\t88 81 9c 00 00 00    \tmov    %al,0x9c(%rcx)\n   1803877cb:\t48 8b 89 a8 00 00 00 \tmov    0xa8(%rcx),%rcx\n   1803877d2:\t84 d2                \ttest   %dl,%dl\n   1803877d4:\t74 78                \tje     0x18038784e\n   1803877d6:\t48 85 c9             \ttest   %rcx,%rcx\n   1803877d9:\t0f 84 03 01 00 00    \tje     0x1803878e2\n   1803877df:\t33 d2                \txor    %edx,%edx\n   1803877e1:\te8 2a cd f7 00       \tcall   0x181304510\n   1803877e6:\tf3 0f 10 0d 22 02 22 \tmovss  0x1220222(%rip),%xmm1        # 0x1815a7a10\n   1803877ed:\t01 \n   1803877ee:\t48 85 c0             \ttest   %rax,%rax\n   1803877f1:\t0f 84 eb 00 00 00    \tje     0x1803878e2\n   1803877f7:\t0f 28 c1             \tmovaps %xmm1,%xmm0\n   1803877fa:\tf3 0f 11 4c 24 28    \tmovss  %xmm1,0x28(%rsp)\n   180387800:\t0f 14 c1             \tunpcklps %xmm1,%xmm0\n   180387803:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   180387808:\t45 33 c0             \txor    %r8d,%r8d\n   18038780b:\tf2 0f 11 44 24 20    \tmovsd  %xmm0,0x20(%rsp)\n   180387811:\t48 8b c8             \tmov    %rax,%rcx\n   180387814:\te8 37 82 fa 00       \tcall   0x18132fa50\n   180387819:\t48 8b 8b a0 00 00 00 \tmov    0xa0(%rbx),%rcx\n   180387820:\t48 85 c9             \ttest   %rcx,%rcx\n   180387823:\t0f 84 b9 00 00 00    \tje     0x1803878e2\n   180387829:\t33 d2                \txor    %edx,%edx\n   18038782b:\te8 40 48 f9 00       \tcall   0x18131c070\n   180387830:\tf3 0f 10 0d 8c 06 22 \tmovss  0x122068c(%rip),%xmm1        # 0x1815a7ec4\n   180387837:\t01 \n   180387838:\t0f 57 d2             \txorps  %xmm2,%xmm2\n   18038783b:\t48 85 c0             \ttest   %rax,%rax\n   18038783e:\t0f 84 9e 00 00 00    \tje     0x1803878e2\n   180387844:\tf3 0f 10 05 80 06 22 \tmovss  0x1220680(%rip),%xmm0        # 0x1815a7ecc\n   18038784b:\t01 \n   18038784c:\teb 6f                \tjmp    0x1803878bd\n   18038784e:\t48 85 c9             \ttest   %rcx,%rcx\n   180387851:\t0f 84 8b 00 00 00    \tje     0x1803878e2\n   180387857:\t33 d2                \txor    %edx,%edx\n   180387859:\te8 b2 cc f7 00       \tcall   0x181304510\n   18038785e:\tf3 0f 10 0d aa 01 22 \tmovss  0x12201aa(%rip),%xmm1        # 0x1815a7a10\n   180387865:\t01 \n   180387866:\t48 85 c0             \ttest   %rax,%rax\n   180387869:\t74 77                \tje     0x1803878e2\n   18038786b:\tf3 0f 10 05 e1 02 22 \tmovss  0x12202e1(%rip),%xmm0        # 0x1815a7b54\n   180387872:\t01 \n   180387873:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   180387878:\t0f 14 c1             \tunpcklps %xmm1,%xmm0\n   18038787b:\t45 33 c0             \txor    %r8d,%r8d\n   18038787e:\t48 8b c8             \tmov    %rax,%rcx\n   180387881:\tf2 0f 11 44 24 20    \tmovsd  %xmm0,0x20(%rsp)\n   180387887:\tf3 0f 11 4c 24 28    \tmovss  %xmm1,0x28(%rsp)\n   18038788d:\te8 be 81 fa 00       \tcall   0x18132fa50\n   180387892:\t48 8b 8b a0 00 00 00 \tmov    0xa0(%rbx),%rcx\n   180387899:\t48 85 c9             \ttest   %rcx,%rcx\n   18038789c:\t74 44                \tje     0x1803878e2\n   18038789e:\t33 d2                \txor    %edx,%edx\n   1803878a0:\te8 cb 47 f9 00       \tcall   0x18131c070\n   1803878a5:\tf3 0f 10 0d 17 06 22 \tmovss  0x1220617(%rip),%xmm1        # 0x1815a7ec4\n   1803878ac:\t01 \n   1803878ad:\t0f 57 d2             \txorps  %xmm2,%xmm2\n   1803878b0:\t48 85 c0             \ttest   %rax,%rax\n   1803878b3:\t74 2d                \tje     0x1803878e2\n   1803878b5:\tf3 0f 10 05 0b 06 22 \tmovss  0x122060b(%rip),%xmm0        # 0x1815a7ec8\n   1803878bc:\t01 \n   1803878bd:\t0f 14 c1             \tunpcklps %xmm1,%xmm0\n   1803878c0:\t48 8d 54 24 20       \tlea    0x20(%rsp),%rdx\n   1803878c5:\t45 33 c0             \txor    %r8d,%r8d\n   1803878c8:\tf2 0f 11 44 24 20    \tmovsd  %xmm0,0x20(%rsp)\n   1803878ce:\t48 8b c8             \tmov    %rax,%rcx\n   1803878d1:\tf3 0f 11 54 24 28    \tmovss  %xmm2,0x28(%rsp)\n   1803878d7:\te8 34 80 fa 00       \tcall   0x18132f910\n   1803878dc:\t48 83 c4 30          \tadd    $0x30,%rsp\n   1803878e0:\t5b                   \tpop    %rbx\n   1803878e1:\tc3                   \tret\n   1803878e2:\te8 69 88 ec ff       \tcall   0x180250150\n   1803878e7:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void AlmanacUIController::CheckOtherAlmanac()",
+        "token": "0x06000544",
+        "owner": "AlmanacUIController",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [],
+        "locals": [
+          "System.Boolean",
+          "System.Boolean",
+          "UnityEngine.Transform",
+          "System.Object",
+          "UnityEngine.Transform",
+          "System.Object",
+          "UnityEngine.Transform",
+          "AlmanacUIController"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 1,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "System.Boolean",
+              "identity": "System.Boolean AlmanacUIController::crossbarExpand"
+            }
+          },
+          {
+            "offset": 6,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 11,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 13,
+            "opcode": "stloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 17,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 18,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 0
+            }
+          },
+          {
+            "offset": 22,
+            "opcode": "stfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "System.Boolean",
+              "identity": "System.Boolean AlmanacUIController::crossbarExpand"
+            }
+          },
+          {
+            "offset": 27,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 28,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "System.Boolean",
+              "identity": "System.Boolean AlmanacUIController::crossbarExpand"
+            }
+          },
+          {
+            "offset": 33,
+            "opcode": "not",
+            "operand": null
+          },
+          {
+            "offset": 34,
+            "opcode": "stloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 38,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 42,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 123
+            }
+          },
+          {
+            "offset": 47,
+            "opcode": "br",
+            "operand": {
+              "target": 52
+            }
+          },
+          {
+            "offset": 52,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 53,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "UnityEngine.UI.Image",
+              "identity": "UnityEngine.UI.Image AlmanacUIController::image_CrossbarController"
+            }
+          },
+          {
+            "offset": 58,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.Component::get_transform()"
+            }
+          },
+          {
+            "offset": 63,
+            "opcode": "stloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 67,
+            "opcode": "br",
+            "operand": {
+              "target": 72
+            }
+          },
+          {
+            "offset": 72,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 76,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 80,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [
+                "UnityEngine.Vector3"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "set_localScale",
+              "identity": "System.Void UnityEngine.Transform::set_localScale(UnityEngine.Vector3)"
+            }
+          },
+          {
+            "offset": 85,
+            "opcode": "br",
+            "operand": {
+              "target": 90
+            }
+          },
+          {
+            "offset": 90,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 91,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "UnityEngine.GameObject",
+              "identity": "UnityEngine.GameObject AlmanacUIController::crossbar"
+            }
+          },
+          {
+            "offset": 96,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.GameObject::get_transform()"
+            }
+          },
+          {
+            "offset": 101,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 105,
+            "opcode": "br",
+            "operand": {
+              "target": 110
+            }
+          },
+          {
+            "offset": 110,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 114,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 118,
+            "opcode": "br",
+            "operand": {
+              "target": 194
+            }
+          },
+          {
+            "offset": 123,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 124,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "UnityEngine.UI.Image",
+              "identity": "UnityEngine.UI.Image AlmanacUIController::image_CrossbarController"
+            }
+          },
+          {
+            "offset": 129,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Component",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.Component::get_transform()"
+            }
+          },
+          {
+            "offset": 134,
+            "opcode": "stloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 138,
+            "opcode": "br",
+            "operand": {
+              "target": 143
+            }
+          },
+          {
+            "offset": 143,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 4
+            }
+          },
+          {
+            "offset": 147,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 151,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [
+                "UnityEngine.Vector3"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "set_localScale",
+              "identity": "System.Void UnityEngine.Transform::set_localScale(UnityEngine.Vector3)"
+            }
+          },
+          {
+            "offset": 156,
+            "opcode": "br",
+            "operand": {
+              "target": 161
+            }
+          },
+          {
+            "offset": 161,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 162,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "AlmanacUIController",
+              "type": "UnityEngine.GameObject",
+              "identity": "UnityEngine.GameObject AlmanacUIController::crossbar"
+            }
+          },
+          {
+            "offset": 167,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.GameObject",
+              "args": [],
+              "ret": "UnityEngine.Transform",
+              "hasThis": true,
+              "name": "get_transform",
+              "identity": "UnityEngine.Transform UnityEngine.GameObject::get_transform()"
+            }
+          },
+          {
+            "offset": 172,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 176,
+            "opcode": "br",
+            "operand": {
+              "target": 181
+            }
+          },
+          {
+            "offset": 181,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 185,
+            "opcode": "stloc",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 189,
+            "opcode": "br",
+            "operand": {
+              "target": 194
+            }
+          },
+          {
+            "offset": 194,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 198,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 3
+            }
+          },
+          {
+            "offset": 202,
+            "opcode": "call",
+            "operand": {
+              "owner": "UnityEngine.Transform",
+              "args": [
+                "UnityEngine.Vector3"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "set_localPosition",
+              "identity": "System.Void UnityEngine.Transform::set_localPosition(UnityEngine.Vector3)"
+            }
+          },
+          {
+            "offset": 207,
+            "opcode": "ret",
+            "operand": null
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 1,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "System.Boolean",
+            "identity": "System.Boolean AlmanacUIController::crossbarExpand"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "crossbarExpand",
+              "token": "0x40006ce",
+              "offset": 156,
+              "type_index": 12427
+            }
+          ]
+        },
+        {
+          "cil_offset": 22,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "System.Boolean",
+            "identity": "System.Boolean AlmanacUIController::crossbarExpand"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "crossbarExpand",
+              "token": "0x40006ce",
+              "offset": 156,
+              "type_index": 12427
+            }
+          ]
+        },
+        {
+          "cil_offset": 28,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "System.Boolean",
+            "identity": "System.Boolean AlmanacUIController::crossbarExpand"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "crossbarExpand",
+              "token": "0x40006ce",
+              "offset": 156,
+              "type_index": 12427
+            }
+          ]
+        },
+        {
+          "cil_offset": 53,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "UnityEngine.UI.Image",
+            "identity": "UnityEngine.UI.Image AlmanacUIController::image_CrossbarController"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "image_CrossbarController",
+              "token": "0x40006d0",
+              "offset": 168,
+              "type_index": 15329
+            }
+          ]
+        },
+        {
+          "cil_offset": 91,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "UnityEngine.GameObject",
+            "identity": "UnityEngine.GameObject AlmanacUIController::crossbar"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "crossbar",
+              "token": "0x40006cf",
+              "offset": 160,
+              "type_index": 14560
+            }
+          ]
+        },
+        {
+          "cil_offset": 124,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "UnityEngine.UI.Image",
+            "identity": "UnityEngine.UI.Image AlmanacUIController::image_CrossbarController"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "image_CrossbarController",
+              "token": "0x40006d0",
+              "offset": 168,
+              "type_index": 15329
+            }
+          ]
+        },
+        {
+          "cil_offset": 162,
+          "field": {
+            "owner": "AlmanacUIController",
+            "type": "UnityEngine.GameObject",
+            "identity": "UnityEngine.GameObject AlmanacUIController::crossbar"
+          },
+          "original_records": [
+            {
+              "type": "AlmanacUIController",
+              "namespace": "",
+              "typeIndex": 5246,
+              "name": "crossbar",
+              "token": "0x40006cf",
+              "offset": 160,
+              "type_index": 14560
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 3
+    },
+    {
+      "token": "0x060006BC",
+      "method": "System.Void SeedChooserScreen::SetPrechooseList(System.Collections.Generic.List`1<Card_Choose>,System.Int32)",
+      "record": {
+        "image": "Assembly-CSharp.dll",
+        "type": "SeedChooserScreen",
+        "name": "SetPrechooseList",
+        "token": "0x60006bc",
+        "va": "0x1803abe20"
+      },
+      "start": "0x1803abe20",
+      "end": "0x1803abf5b",
+      "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+      "pdata_parts": [
+        [
+          6446300704,
+          6446301019
+        ]
+      ],
+      "native_sha256": "51e53449dd72b8cfa78bc19f3cd32e25f5044e83fbe157e288f22b5248e71ab6",
+      "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060006BC.bin:     file format binary\n\n\nDisassembly of section .data:\n\n00000001803abe20 <.data>:\n   1803abe20:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   1803abe25:\t48 89 74 24 10       \tmov    %rsi,0x10(%rsp)\n   1803abe2a:\t57                   \tpush   %rdi\n   1803abe2b:\t48 83 ec 60          \tsub    $0x60,%rsp\n   1803abe2f:\t41 8b f0             \tmov    %r8d,%esi\n   1803abe32:\t48 8b da             \tmov    %rdx,%rbx\n   1803abe35:\t48 8b f9             \tmov    %rcx,%rdi\n   1803abe38:\t80 3d ce 90 93 01 00 \tcmpb   $0x0,0x19390ce(%rip)        # 0x181ce4f0d\n   1803abe3f:\t75 37                \tjne    0x1803abe78\n   1803abe41:\t48 8d 0d 60 5d 81 01 \tlea    0x1815d60(%rip),%rcx        # 0x181bc1ba8\n   1803abe48:\te8 a3 40 ea ff       \tcall   0x18024fef0\n   1803abe4d:\t48 8d 0d ac 5d 81 01 \tlea    0x1815dac(%rip),%rcx        # 0x181bc1c00\n   1803abe54:\te8 97 40 ea ff       \tcall   0x18024fef0\n   1803abe59:\t48 8d 0d f8 5d 81 01 \tlea    0x1815df8(%rip),%rcx        # 0x181bc1c58\n   1803abe60:\te8 8b 40 ea ff       \tcall   0x18024fef0\n   1803abe65:\t48 8d 0d cc a2 7f 01 \tlea    0x17fa2cc(%rip),%rcx        # 0x181ba6138\n   1803abe6c:\te8 7f 40 ea ff       \tcall   0x18024fef0\n   1803abe71:\tc6 05 95 90 93 01 01 \tmovb   $0x1,0x1939095(%rip)        # 0x181ce4f0d\n   1803abe78:\t45 33 c0             \txor    %r8d,%r8d\n   1803abe7b:\t48 8b d3             \tmov    %rbx,%rdx\n   1803abe7e:\t48 8b cf             \tmov    %rdi,%rcx\n   1803abe81:\te8 7a fc ff ff       \tcall   0x1803abb00\n   1803abe86:\t48 8b 57 20          \tmov    0x20(%rdi),%rdx\n   1803abe8a:\t48 85 d2             \ttest   %rdx,%rdx\n   1803abe8d:\t0f 84 c2 00 00 00    \tje     0x1803abf55\n   1803abe93:\t4c 8b 05 9e a2 7f 01 \tmov    0x17fa29e(%rip),%r8        # 0x181ba6138\n   1803abe9a:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   1803abe9f:\te8 4c d9 46 00       \tcall   0x1808197f0\n   1803abea4:\t0f 10 44 24 28       \tmovups 0x28(%rsp),%xmm0\n   1803abea9:\t0f 11 44 24 40       \tmovups %xmm0,0x40(%rsp)\n   1803abeae:\tf2 0f 10 4c 24 38    \tmovsd  0x38(%rsp),%xmm1\n   1803abeb4:\tf2 0f 11 4c 24 50    \tmovsd  %xmm1,0x50(%rsp)\n   1803abeba:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   1803abec1:\t00 00 \n   1803abec3:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   1803abec8:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   1803abecd:\t0f 1f 00             \tnopl   (%rax)\n   1803abed0:\t48 8b 15 29 5d 81 01 \tmov    0x1815d29(%rip),%rdx        # 0x181bc1c00\n   1803abed7:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   1803abedc:\te8 9f d3 2b 00       \tcall   0x180669280\n   1803abee1:\t84 c0                \ttest   %al,%al\n   1803abee3:\t74 22                \tje     0x1803abf07\n   1803abee5:\t48 8b 54 24 50       \tmov    0x50(%rsp),%rdx\n   1803abeea:\t48 85 d2             \ttest   %rdx,%rdx\n   1803abeed:\t74 5a                \tje     0x1803abf49\n   1803abeef:\t39 72 24             \tcmp    %esi,0x24(%rdx)\n   1803abef2:\t75 dc                \tjne    0x1803abed0\n   1803abef4:\t48 8b 4f 50          \tmov    0x50(%rdi),%rcx\n   1803abef8:\t48 85 c9             \ttest   %rcx,%rcx\n   1803abefb:\t74 46                \tje     0x1803abf43\n   1803abefd:\t45 33 c0             \txor    %r8d,%r8d\n   1803abf00:\te8 5b 5d ff ff       \tcall   0x1803a1c60\n   1803abf05:\teb c9                \tjmp    0x1803abed0\n   1803abf07:\t48 8b 15 9a 5c 81 01 \tmov    0x1815c9a(%rip),%rdx        # 0x181bc1ba8\n   1803abf0e:\t48 8b cb             \tmov    %rbx,%rcx\n   1803abf11:\te8 5a 62 f5 ff       \tcall   0x180302170\n   1803abf16:\teb 1b                \tjmp    0x1803abf33\n   1803abf18:\t48 8b 15 89 5c 81 01 \tmov    0x1815c89(%rip),%rdx        # 0x181bc1ba8\n   1803abf1f:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   1803abf24:\te8 47 62 f5 ff       \tcall   0x180302170\n   1803abf29:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   1803abf2e:\t48 85 c9             \ttest   %rcx,%rcx\n   1803abf31:\t75 1c                \tjne    0x1803abf4f\n   1803abf33:\t48 8b 5c 24 70       \tmov    0x70(%rsp),%rbx\n   1803abf38:\t48 8b 74 24 78       \tmov    0x78(%rsp),%rsi\n   1803abf3d:\t48 83 c4 60          \tadd    $0x60,%rsp\n   1803abf41:\t5f                   \tpop    %rdi\n   1803abf42:\tc3                   \tret\n   1803abf43:\te8 08 42 ea ff       \tcall   0x180250150\n   1803abf48:\t90                   \tnop\n   1803abf49:\te8 02 42 ea ff       \tcall   0x180250150\n   1803abf4e:\t90                   \tnop\n   1803abf4f:\te8 0c 4f e5 ff       \tcall   0x180200e60\n   1803abf54:\tcc                   \tint3\n   1803abf55:\te8 f6 41 ea ff       \tcall   0x180250150\n   1803abf5a:\tcc                   \tint3\n",
+      "managed": {
+        "name": "System.Void SeedChooserScreen::SetPrechooseList(System.Collections.Generic.List`1<Card_Choose>,System.Int32)",
+        "token": "0x060006BC",
+        "owner": "SeedChooserScreen",
+        "ret": "System.Void",
+        "hasThis": true,
+        "args": [
+          "System.Collections.Generic.List`1<Card_Choose>",
+          "System.Int32"
+        ],
+        "locals": [
+          "System.Int32",
+          "System.Collections.Generic.List`1<Card_Choose>",
+          "SeedChooserScreen",
+          "System.IntPtr",
+          "System.Object",
+          "System.IntPtr",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "Card_Choose",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Boolean",
+          "System.Object",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>",
+          "System.Collections.Generic.List`1/Enumerator<System.Object>"
+        ],
+        "maxStack": 2,
+        "instructions": [
+          {
+            "offset": 0,
+            "opcode": "br",
+            "operand": {
+              "target": 138
+            }
+          },
+          {
+            "offset": 5,
+            "opcode": "ldstr",
+            "operand": "Method not found @1808197F0"
+          },
+          {
+            "offset": 10,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 11,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 12,
+            "opcode": "conv.i",
+            "operand": null
+          },
+          {
+            "offset": 13,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 17,
+            "opcode": "br",
+            "operand": {
+              "target": 176
+            }
+          },
+          {
+            "offset": 22,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 26,
+            "opcode": "ldc.i4",
+            "operand": 0
+          },
+          {
+            "offset": 31,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 33,
+            "opcode": "stloc",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 37,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 14
+            }
+          },
+          {
+            "offset": 41,
+            "opcode": "stloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 45,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 11
+            }
+          },
+          {
+            "offset": 49,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 160
+            }
+          },
+          {
+            "offset": 54,
+            "opcode": "br",
+            "operand": {
+              "target": 59
+            }
+          },
+          {
+            "offset": 59,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 63,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "Card_Choose",
+              "type": "System.Int32",
+              "identity": "System.Int32 Card_Choose::plantID"
+            }
+          },
+          {
+            "offset": 68,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 2
+            }
+          },
+          {
+            "offset": 72,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 74,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 75,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 77,
+            "opcode": "stloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 81,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 9
+            }
+          },
+          {
+            "offset": 85,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 176
+            }
+          },
+          {
+            "offset": 90,
+            "opcode": "br",
+            "operand": {
+              "target": 95
+            }
+          },
+          {
+            "offset": 95,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 96,
+            "opcode": "ldfld",
+            "operand": {
+              "owner": "SeedChooserScreen",
+              "type": "SeedChooserScreen/PlantDetail",
+              "identity": "SeedChooserScreen/PlantDetail SeedChooserScreen::plantDetail"
+            }
+          },
+          {
+            "offset": 101,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 7
+            }
+          },
+          {
+            "offset": 105,
+            "opcode": "call",
+            "operand": {
+              "owner": "SeedChooserScreen/PlantDetail",
+              "args": [
+                "Card_Choose"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "Awake",
+              "identity": "System.Void SeedChooserScreen/PlantDetail::Awake(Card_Choose)"
+            }
+          },
+          {
+            "offset": 110,
+            "opcode": "ldnull",
+            "operand": null
+          },
+          {
+            "offset": 111,
+            "opcode": "stloc",
+            "operand": {
+              "index": 5
+            }
+          },
+          {
+            "offset": 115,
+            "opcode": "br",
+            "operand": {
+              "target": 176
+            }
+          },
+          {
+            "offset": 120,
+            "opcode": "ldstr",
+            "operand": "Method not found @180302170"
+          },
+          {
+            "offset": 125,
+            "opcode": "pop",
+            "operand": null
+          },
+          {
+            "offset": 126,
+            "opcode": "br",
+            "operand": {
+              "target": 131
+            }
+          },
+          {
+            "offset": 131,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 132,
+            "opcode": "nop",
+            "operand": null
+          },
+          {
+            "offset": 133,
+            "opcode": "br",
+            "operand": {
+              "target": 153
+            }
+          },
+          {
+            "offset": 138,
+            "opcode": "ldarg.0",
+            "operand": null
+          },
+          {
+            "offset": 139,
+            "opcode": "ldarg",
+            "operand": {
+              "index": 1
+            }
+          },
+          {
+            "offset": 143,
+            "opcode": "call",
+            "operand": {
+              "owner": "SeedChooserScreen",
+              "args": [
+                "System.Collections.Generic.List`1<Card_Choose>"
+              ],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": "SetPrechooseList",
+              "identity": "System.Void SeedChooserScreen::SetPrechooseList(System.Collections.Generic.List`1<Card_Choose>)"
+            }
+          },
+          {
+            "offset": 148,
+            "opcode": "br",
+            "operand": {
+              "target": 5
+            }
+          },
+          {
+            "offset": 153,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 158,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 159,
+            "opcode": "ret",
+            "operand": null
+          },
+          {
+            "offset": 160,
+            "opcode": "newobj",
+            "operand": {
+              "owner": "System.NullReferenceException",
+              "args": [],
+              "ret": "System.Void",
+              "hasThis": true,
+              "name": ".ctor",
+              "identity": "System.Void System.NullReferenceException::.ctor()"
+            }
+          },
+          {
+            "offset": 165,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 166,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 6
+            }
+          },
+          {
+            "offset": 170,
+            "opcode": "throw",
+            "operand": null
+          },
+          {
+            "offset": 171,
+            "opcode": "br",
+            "operand": {
+              "target": 132
+            }
+          },
+          {
+            "offset": 176,
+            "opcode": "ldloca",
+            "operand": {
+              "index": 14
+            }
+          },
+          {
+            "offset": 180,
+            "opcode": "call",
+            "operand": {
+              "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+              "args": [],
+              "ret": "System.Boolean",
+              "hasThis": true,
+              "name": "MoveNext",
+              "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+            }
+          },
+          {
+            "offset": 185,
+            "opcode": "stloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 189,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 8
+            }
+          },
+          {
+            "offset": 193,
+            "opcode": "ldc.i4.0",
+            "operand": null
+          },
+          {
+            "offset": 194,
+            "opcode": "ceq",
+            "operand": null
+          },
+          {
+            "offset": 196,
+            "opcode": "stloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 200,
+            "opcode": "ldloc",
+            "operand": {
+              "index": 10
+            }
+          },
+          {
+            "offset": 204,
+            "opcode": "brtrue",
+            "operand": {
+              "target": 120
+            }
+          },
+          {
+            "offset": 209,
+            "opcode": "br",
+            "operand": {
+              "target": 22
+            }
+          }
+        ],
+        "handlers": []
+      },
+      "fields": [
+        {
+          "cil_offset": 63,
+          "field": {
+            "owner": "Card_Choose",
+            "type": "System.Int32",
+            "identity": "System.Int32 Card_Choose::plantID"
+          },
+          "original_records": [
+            {
+              "type": "Card_Choose",
+              "namespace": "",
+              "typeIndex": 5199,
+              "name": "plantID",
+              "token": "0x4000429",
+              "offset": 36,
+              "type_index": 15454
+            }
+          ]
+        },
+        {
+          "cil_offset": 96,
+          "field": {
+            "owner": "SeedChooserScreen",
+            "type": "SeedChooserScreen/PlantDetail",
+            "identity": "SeedChooserScreen/PlantDetail SeedChooserScreen::plantDetail"
+          },
+          "original_records": [
+            {
+              "type": "SeedChooserScreen",
+              "namespace": "",
+              "typeIndex": 5292,
+              "name": "plantDetail",
+              "token": "0x40008be",
+              "offset": 80,
+              "type_index": 22879
+            }
+          ]
+        }
+      ],
+      "diagnostics_before": 2
+    }
+  ]
+}
