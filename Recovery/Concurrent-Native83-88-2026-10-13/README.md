@@ -53,3 +53,5 @@ The incomplete SkillManager investigation in `evidence/native88-spec-2026-10-13`
 ## Remaining gates
 
 The last complete conversion/TU measurement is the historical Native53 result:516 errored methods,5668 diagnostics and24 failing translation units of264. No current full measurement exists, so do not subtract12 methods from those counts. No new Unity/Xcode workflow was started, no Apple compile or device test was executed, and **no qualified IPA has been produced**. Continue implementation and Gemini acceptance concurrently; reach100 qualified unique methods before the deferred full conversion/all-TU gate, then require the licensed Unity export and real Apple Xcode build for an unsigned IPA.
+
+Continue at ../Concurrent-Native89-2026-10-13/README.md:2 additional pending static SkillManager implementations, pending84, accepted42/100. Earlier Release keeps its publication-time ledger.

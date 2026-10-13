@@ -1,0 +1,1 @@
+Two pending static SkillManager bodies, exact Binding<Plant> restoration and source-backed capture/partial-write order. Accepted base Native60 remains42/100, pending84, implemented total126. Integrator executed no acceptance tests; all tests assigned to Gemini. No full build or IPA. Archive SHA256 4298951523e26cbe05fb8b6f87889b083738bfb275205f810ce3bb826324d076

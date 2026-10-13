@@ -1,0 +1,58 @@
+{"checkpoint_path": "/workspaces/GodsPVZ-native24-codespace/.validation/native83-86-2026-10-13-checkpoints/native89-generated.zip", "checkpoint_bytes": 4458196, "checkpoint_sha256": "e14c661edb3f01758261c0bc530595cdec1b276adcc886f5eeb42568ac4ae613"}
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "bff7fa2956077e5ac06a4b903fbb5a1be4aad989ac6b5cb08fd7d0aa6e690951",
+  "candidate_sha256": "734c48fb95821c4fd28c66ffe53c27781887fe7bf1a04bf61b4fe41af023c889",
+  "metadata": {
+    "old_root_offset": 14008320,
+    "old_root_size": 402558,
+    "new_root_offset": 14411776,
+    "new_root_size": 402568,
+    "extended_section_header": 456,
+    "old_virtual_size": 13276320,
+    "new_virtual_size": 13679240,
+    "old_raw_size": 13276672,
+    "new_raw_size": 13679616,
+    "added": [
+      {
+        "kind": "MethodSpec",
+        "token": "0x2B0000B8",
+        "method": "0x060000C4",
+        "type_argument": "0x02000078 Plant",
+        "instantiation_hex": "0A011281E0",
+        "signature_index": 60526
+      }
+    ],
+    "blob_heap_added_bytes": 6,
+    "methodspec_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x06000517",
+      "method": "System.Void SkillManager::Awake149(Plant,Zombie,Projectile,Damage)",
+      "header": 427240,
+      "code_start": 427252,
+      "reserved_code_size": 140,
+      "new_code_size": 108,
+      "old_max": 2,
+      "new_max": 5,
+      "local_sig": 285213657,
+      "code_sha256": "6d18f20a13297bc3ab98f60b1e730cc6bb507e075792a8fa393dd136a2515f8c"
+    },
+    {
+      "token": "0x06000510",
+      "method": "System.Void SkillManager::Function16(Plant,Zombie,Projectile,Damage)",
+      "header": 423292,
+      "code_start": 423304,
+      "reserved_code_size": 364,
+      "new_code_size": 240,
+      "old_max": 3,
+      "new_max": 7,
+      "local_sig": 285213652,
+      "code_sha256": "4c51324114ffd67c072a45a9874cedd4795bf64eb9634ed507ca603bca41e896"
+    }
+  ],
+  "scope": "Two original-native-backed static SkillManager methods with exact Plant/Zombie/Projectile/Damage parameter identities; Awake149 sets blockable before creation, retains captured particle/component, restores Binding\u003CPlant\u003E(plant,true,\u002B0,PlantSkill), acquires plant position before delayed effect-transform fault; Function16 captures skill before creation, captures position before fresh Damage, retains first value_float array for damage/penetration, rereads value_float after FindElement, preserves ordered partial writes and late projectile null fault, Initial\u003CPlant\u003E with speed1675/fZ70, fresh camp captured before damage/camp writes; one exact Binding\u003CPlant\u003E MethodSpec, no local mutations, complete oversize body relocation if needed; no tests executed; pending parent chain"
+}
