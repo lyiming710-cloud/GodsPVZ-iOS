@@ -1,0 +1,48 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "20ec9187fb3edc51d80cd486a70f6e5e91d7a1958ce4f4db456a2bee7124fa11",
+  "candidate_sha256": "78aae6f5b3e96006a5bf278fabe1a7e86dbfcd7dfe2ac6279d1df47035d272d8",
+  "metadata_scope": "Existing table rows except target MethodDef RVA remain unchanged by construction; no new rows or heap edits",
+  "methods": [
+    {
+      "token": "0x06000199",
+      "method": "System.Void DialogueManager_OnBoard::PlayAudio(DialogueAudioType)",
+      "old_reserved_code_size": 209,
+      "new_code_size": 228,
+      "old_max": 4,
+      "new_max": 4,
+      "local_sig": 285212993,
+      "code_sha256": "c4834beb707c89948f8c25e702468ea102dba6290a16b6abf94d63e43f131fc0",
+      "relocation": {
+        "old_rva": 114040,
+        "new_rva": 14027776,
+        "body_offset": 14007808,
+        "active_root_offset": 13604352,
+        "active_root_size": 402547,
+        "method_row_offset_in_root": 28312,
+        "method_row_rva_file_offset": 13632664,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 14007808,
+        "new_image_bytes": 14008320,
+        "old_virtual_size": 12872430,
+        "new_virtual_size": 12872944,
+        "old_raw_size": 12872704,
+        "new_raw_size": 12873216,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    },
+    {
+      "token": "0x06000386",
+      "method": "System.Void Plant::PC_PotatoBoom()",
+      "header": 282636,
+      "code_start": 282648,
+      "reserved_code_size": 339,
+      "new_code_size": 292,
+      "old_max": 4,
+      "new_max": 4,
+      "local_sig": 285213381,
+      "code_sha256": "6d5ed466aba89aea826fc3e519d4ec065f36224ac955944527ac000451af6fdc"
+    }
+  ],
+  "scope": "Two complete original-native-backed callers; PlayAudio captures AudioVolume first, original seven-entry enum dispatch, captures dialogue list before exact Random pairs and checks it afterwards, retained clip Unity inequality on every path, typed position and pitch1; PotatoBoom discards AreaDamage bool, rereads board, exact Shake order, legal pure Particles getter, delayed first-effect null failure after plant position, second transform getter on same particle, captured clip without null skip and ordered Camera-volume-Random-audio-PlantDie; full bodies only target RVA relocations if oversize, all signatures/metadata rows otherwise intact; dependency M0600013E known clip-length/timeScale ordering gap remains explicitly unqualified pending separate repair; no tests executed; parent chain pending"
+}

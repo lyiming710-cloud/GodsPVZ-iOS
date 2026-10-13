@@ -1,0 +1,87 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "b3284d01f0a57c9d22f6297741e96a831874cb0a584af2e165b98c42def84587",
+  "candidate_sha256": "ba1b6ae5cd5b27b89797c16484cab5a6eb52157deab0bd4251e5fefe1aa562b0",
+  "metadata": {
+    "old_root_offset": 12796928,
+    "old_root_size": 402509,
+    "new_root_offset": 13200384,
+    "new_root_size": 402519,
+    "extended_section_header": 456,
+    "old_virtual_size": 12065032,
+    "new_virtual_size": 12467799,
+    "old_raw_size": 12065280,
+    "new_raw_size": 12468224,
+    "added": [
+      {
+        "kind": "MethodSpec",
+        "token": "0x2B0000B7",
+        "method": "0x060003ED",
+        "type_argument": "0x02000084 Zombie",
+        "instantiation_hex": "0A01128210",
+        "signature_index": 60493
+      }
+    ],
+    "blob_heap_added_bytes": 6,
+    "methodspec_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x06000443",
+      "method": "Damage Zombie::GetDamage(System.Int32,Projectile,System.Int32)",
+      "old_reserved_code_size": 129,
+      "new_code_size": 401,
+      "old_max": 5,
+      "new_max": 5,
+      "local_sig": 285213515,
+      "code_sha256": "ed3d75d1feeaf692b97c1305c20b3cd9a6797e0e868c8187b0efbe1666321cc8",
+      "relocation": {
+        "old_rva": 357320,
+        "new_rva": 13623296,
+        "body_offset": 13603328,
+        "active_root_offset": 13200384,
+        "active_root_size": 402519,
+        "method_row_offset_in_root": 37860,
+        "method_row_rva_file_offset": 13238244,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 13603328,
+        "new_image_bytes": 13603840,
+        "old_virtual_size": 12467799,
+        "new_virtual_size": 12468637,
+        "old_raw_size": 12468224,
+        "new_raw_size": 12468736,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    },
+    {
+      "token": "0x0600047D",
+      "method": "System.Void Zombie::Shooting()",
+      "old_reserved_code_size": 219,
+      "new_code_size": 268,
+      "old_max": 4,
+      "new_max": 7,
+      "local_sig": 285213559,
+      "code_sha256": "979c108271ddd5208b27b7cd86184d20b050731998ef0b012822a2d98afa510a",
+      "relocation": {
+        "old_rva": 382784,
+        "new_rva": 13623808,
+        "body_offset": 13603840,
+        "active_root_offset": 13200384,
+        "active_root_size": 402519,
+        "method_row_offset_in_root": 38672,
+        "method_row_rva_file_offset": 13239056,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 13603840,
+        "new_image_bytes": 13604352,
+        "old_virtual_size": 12468637,
+        "new_virtual_size": 12469016,
+        "old_raw_size": 12468736,
+        "new_raw_size": 12469248,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    }
+  ],
+  "scope": "Two complete original-native-backed Zombie bodies; GetDamage retains constructor camp timing, one byref slot across ordered helpers, late raw-null failure, two ID snapshots, exact Single operand/order and post-AddElement board reread; Shooting preserves 17-case dispatch, late projectile null failure after position/GetDamage, captured full position, exact speed bits, current fZ plus120 and post-Initial camp; one explicit MethodSpec Initial\u003CZombie\u003E bound to six-argument public generic definition, no shared signature mutation; complete oversize bodies relocated with target-only RVA changes and old slots preserved; no tests executed; unqualified parent chain pending"
+}

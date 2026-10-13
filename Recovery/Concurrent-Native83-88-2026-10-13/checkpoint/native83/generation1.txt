@@ -1,0 +1,72 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "48b9e89e941c041d6c11c4064ad05d9384a1a4dd51d5f8d3fad9192cbda5adbf",
+  "candidate_sha256": "d1727135f7fcb7141a62ad5bbe0e2342e6d25efb97d25b59ae223bb26fcd9975",
+  "metadata": {
+    "old_root_offset": 12393472,
+    "old_root_size": 402505,
+    "new_root_offset": 12796928,
+    "new_root_size": 402509,
+    "extended_section_header": 456,
+    "old_virtual_size": 11661655,
+    "new_virtual_size": 12064333,
+    "old_raw_size": 11661824,
+    "new_raw_size": 12064768,
+    "added": [
+      {
+        "kind": "MemberRef",
+        "token": "0x0A000448",
+        "name": "Insert",
+        "parent": 100,
+        "name_index": 48892,
+        "signature_index": 2396
+      }
+    ],
+    "blob_heap_added_bytes": 0,
+    "table_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x06000056",
+      "method": "System.Void PathDataEditor::InsertNewPath()",
+      "header": 25192,
+      "code_start": 25204,
+      "reserved_code_size": 312,
+      "new_code_size": 177,
+      "old_max": 4,
+      "new_max": 4,
+      "old_local_sig": 285212735,
+      "local_sig": 285212735,
+      "code_sha256": "4f1b276f9d2fb231abe470474efeb32f0f88e009c18c27e942d91c2bfda58989"
+    },
+    {
+      "token": "0x06000119",
+      "method": "System.Void HoleTeleport::.ctor(Zombie,System.Int32,System.Int32)",
+      "header": 80784,
+      "code_start": 80796,
+      "reserved_code_size": 293,
+      "new_code_size": 111,
+      "old_max": 4,
+      "new_max": 4,
+      "old_local_sig": 285212900,
+      "local_sig": 285212900,
+      "code_sha256": "5f77da66cb356e255e2e129d021f0292aaffc77e00b52b037e57e08d05da742f"
+    },
+    {
+      "token": "0x060000E0",
+      "method": "System.Void AttackRange::.ctor()",
+      "header": 66892,
+      "code_start": 66904,
+      "reserved_code_size": 92,
+      "new_code_size": 40,
+      "old_max": 2,
+      "new_max": 2,
+      "old_local_sig": 285212851,
+      "local_sig": 285212851,
+      "code_sha256": "b71349196c80e3ff90f7c7dc19542f94215f6248fea3c21a4f0e9cb9ebc8f0cf"
+    }
+  ],
+  "scope": "Three original-native-backed bodies including explicit transitive constructor repair; path insertion captures initial Enemy, uses captured pre-allocation grid args and post-constructor current list, rereads editor/index across Insert/Instantiate/LoadData/SetParent callbacks, parent getter precedes child-null failure, wrapping index additions; HoleTeleport calls correct DeviceEvent base, stores fields before one real Hide allocation, retains constructor allocation chain and clip/position/audio capture with1.2 volume and1.5 pitch; AttackRange allocates Rect/Single/Vector3 lists in original order and ends in no-op Object base call, removes diagnostic string; one typed public Path_enemyEditor Insert reference, all local signatures and method RVAs unchanged; no tests executed; parent chain pending"
+}

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<stdin>", line 14, in <module>
+RuntimeError: System.IO.DirectoryNotFoundException: Could not find a part of the path '/tmp/godspvz-native85-codex-2026-10-13/candidate1.dll'.
+   at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String path, OpenFlags flags, Int32 mode, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.File.OpenHandle(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize)
+   at System.IO.File.ReadAllBytes(String path)
+   at RepairNative86.Run(String[] args) in /tmp/godspvz-native86-codex-2026-10-13/Patcher/Program.cs:line 89
+   at RepairNative86.Main(String[] args) in /tmp/godspvz-native86-codex-2026-10-13/Patcher/Program.cs:line 86
+
+shell closed: exit status 1

@@ -1,0 +1,66 @@
+{"checkpoint_path": "/workspaces/GodsPVZ-native24-codespace/.validation/native83-86-2026-10-13-checkpoints/native88-generated.zip", "checkpoint_bytes": 4339770, "checkpoint_sha256": "1c4609a625427d0335950e567ae54a49d41699a65eac8cf978b5a9ce39968e18"}
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "78aae6f5b3e96006a5bf278fabe1a7e86dbfcd7dfe2ac6279d1df47035d272d8",
+  "candidate_sha256": "bff7fa2956077e5ac06a4b903fbb5a1be4aad989ac6b5cb08fd7d0aa6e690951",
+  "metadata": {
+    "old_root_offset": 13604352,
+    "old_root_size": 402547,
+    "new_root_offset": 14008320,
+    "new_root_size": 402558,
+    "extended_section_header": 456,
+    "old_virtual_size": 12872944,
+    "new_virtual_size": 13275774,
+    "old_raw_size": 12873216,
+    "new_raw_size": 13276160,
+    "added": [
+      {
+        "kind": "StandAloneSig",
+        "token": "0x110006E2",
+        "target": "0x0600013E",
+        "active_local": 2,
+        "type": "System.Single captured clip.length",
+        "old_signature_hex": "070212090C",
+        "signature_hex": "070312090C0C",
+        "signature_index": 60519
+      }
+    ],
+    "blob_heap_added_bytes": 7,
+    "standalonesig_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x0600013E",
+      "method": "UnityEngine.AudioSource GlobalStaticVars::CreateAudioAtPoint(UnityEngine.AudioClip,UnityEngine.Vector3,System.Single,System.Single)",
+      "old_reserved_code_size": 145,
+      "new_code_size": 148,
+      "old_max": 4,
+      "new_max": 4,
+      "old_local_sig": 285212925,
+      "local_sig": 285214434,
+      "unchanged_code_prefix_length": 105,
+      "unchanged_prefix_sha256": "23205e89466afe7d88fec58ed7ea8fadd00c3b7f4d2e8b88f8409669cf11ddac",
+      "code_sha256": "fa5b4ddfec370654c81646b786b20c6d38503214c1d7f5a812f430d5d7220591",
+      "relocation": {
+        "old_rva": 94076,
+        "new_rva": 14431232,
+        "body_offset": 14411264,
+        "active_root_offset": 14008320,
+        "active_root_size": 402558,
+        "method_row_offset_in_root": 27038,
+        "method_row_rva_file_offset": 14035358,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 14411264,
+        "new_image_bytes": 14411776,
+        "old_virtual_size": 13275774,
+        "new_virtual_size": 13276320,
+        "old_raw_size": 13276160,
+        "new_raw_size": 13276672,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    }
+  ],
+  "scope": "One explicit existing helper ordering repair: preserves original145-byte-body prefix through AudioSource.Play byte-for-byte, captures clip.length before any Time.timeScale getter, ordered floor comparison retains optional second getter including NaN branch, captured length multiplied on left by selected Single factor on right with explicit Single rounding, same captured GameObject Destroy and AudioSource return; one appended target-only Single local signature, complete148-byte body relocated and only its MethodDef RVA updated, original slot unchanged; other pre-existing helper behavior is preserved and full native/CIL dependency acceptance remains pending; no tests executed"
+}

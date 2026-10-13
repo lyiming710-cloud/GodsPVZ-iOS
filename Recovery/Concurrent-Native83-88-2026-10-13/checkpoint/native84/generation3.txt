@@ -1,0 +1,48 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "d1727135f7fcb7141a62ad5bbe0e2342e6d25efb97d25b59ae223bb26fcd9975",
+  "candidate_sha256": "b3284d01f0a57c9d22f6297741e96a831874cb0a584af2e165b98c42def84587",
+  "metadata_scope": "Existing table rows except target MethodDef RVA remain unchanged by construction; no new rows or heap edits",
+  "methods": [
+    {
+      "token": "0x060001C8",
+      "method": "System.Void MouseManager::DropDownAll()",
+      "old_reserved_code_size": 88,
+      "new_code_size": 252,
+      "old_max": 2,
+      "new_max": 3,
+      "local_sig": 285213039,
+      "code_sha256": "9d6aef6b10bacd8b0ba6574b5f3d0b706f65530c17bfb718ee1e42536bb77aa0",
+      "relocation": {
+        "old_rva": 131532,
+        "new_rva": 13219840,
+        "body_offset": 13199872,
+        "active_root_offset": 12796928,
+        "active_root_size": 402509,
+        "method_row_offset_in_root": 28970,
+        "method_row_rva_file_offset": 12825898,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 13199872,
+        "new_image_bytes": 13200384,
+        "old_virtual_size": 12064333,
+        "new_virtual_size": 12065032,
+        "old_raw_size": 12064768,
+        "new_raw_size": 12065280,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    },
+    {
+      "token": "0x060002CE",
+      "method": "System.Void Board::Space_down()",
+      "header": 217812,
+      "code_start": 217824,
+      "reserved_code_size": 354,
+      "new_code_size": 175,
+      "old_max": 3,
+      "new_max": 3,
+      "local_sig": 285213241,
+      "code_sha256": "a21f12b7d7fec1c33b0e49087f014b25d871b0af6f4a66d65620dea42668e2de"
+    }
+  ],
+  "scope": "Two complete original-native-backed callers; DropDownAll dispatches once and retains distinct Unity predicates, callback field rereads, static Destroy(null), captured board/Fold receiver, and ordinary-tail Reset; Space_down continues after BoardResume, captures pause state before pauseTemp write, captures clip/position before volume, uses exact three-argument audio and ordered partial writes; legal proven BoardManager getter; no new metadata rows, heap edits or local signature changes; complete oversize DropDownAll appended with target-only MethodDef RVA update; no tests executed; unqualified parent chain pending"
+}

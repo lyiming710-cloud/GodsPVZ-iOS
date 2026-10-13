@@ -1,0 +1,84 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "ba1b6ae5cd5b27b89797c16484cab5a6eb52157deab0bd4251e5fefe1aa562b0",
+  "candidate_sha256": "20ec9187fb3edc51d80cd486a70f6e5e91d7a1958ce4f4db456a2bee7124fa11",
+  "metadata": {
+    "old_root_offset": 13200384,
+    "old_root_size": 402519,
+    "new_root_offset": 13604352,
+    "new_root_size": 402547,
+    "extended_section_header": 456,
+    "old_virtual_size": 12469016,
+    "new_virtual_size": 12871795,
+    "old_raw_size": 12469248,
+    "new_raw_size": 12872192,
+    "added": [
+      {
+        "kind": "MemberRef",
+        "token": "0x0A000449",
+        "name": "get_position",
+        "declaring_type": "0x01000066",
+        "parent": 817,
+        "signature_hex": "200011812D",
+        "signature_index": 40884,
+        "name_index": 31137
+      },
+      {
+        "kind": "StandAloneSig",
+        "token": "0x110006E1",
+        "target": "0x060006DF",
+        "active_local": 9,
+        "old_signature_hex": "0709121D080202020E1283401C118195",
+        "signature_hex": "070A121D080202020E1283401C11819511812D",
+        "signature_index": 60499
+      }
+    ],
+    "blob_heap_added_bytes": 20,
+    "memberref_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x060006DF",
+      "method": "System.Void TextLink::OnPointerClick(UnityEngine.EventSystems.PointerEventData)",
+      "header": 583664,
+      "code_start": 583676,
+      "reserved_code_size": 209,
+      "new_code_size": 133,
+      "old_max": 3,
+      "new_max": 4,
+      "old_local_sig": 285214003,
+      "local_sig": 285214433,
+      "code_sha256": "1ba8627ddee6d6b7844052de576a0eb83a3ec048c0a4928a4d2f86dbafa0afff"
+    },
+    {
+      "token": "0x060006FE",
+      "method": "System.Void Window_Q::Yes()",
+      "old_reserved_code_size": 83,
+      "new_code_size": 226,
+      "old_max": 2,
+      "new_max": 3,
+      "local_sig": 285214025,
+      "code_sha256": "00d97aa51dceaa4bda9a9768a84a6ed9839d2e90540da1db81c1984c8419ecf7",
+      "relocation": {
+        "old_rva": 598772,
+        "new_rva": 14027264,
+        "body_offset": 14007296,
+        "active_root_offset": 13604352,
+        "active_root_size": 402547,
+        "method_row_offset_in_root": 47646,
+        "method_row_rva_file_offset": 13651998,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 14007296,
+        "new_image_bytes": 14007808,
+        "old_virtual_size": 12871795,
+        "new_virtual_size": 12872430,
+        "old_raw_size": 12872192,
+        "new_raw_size": 12872704,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    }
+  ],
+  "scope": "Two complete original-native-backed callers; TextLink captures old text before event position and Camera, passes Vector3 by value, writes saved Find index before exact -1 return, rereads current text, copies array struct before GetLinkID and captures string across Log; one proven public PointerEventData position MemberRef and one target-only appended Vector2 local signature; Window retains six-case switch, initial/reread signed index distinctions, Unity equality/implicit and raw manager checks, captured item/list across callbacks, reread current MainUI after deletion, exact return-versus-Destroy scope without finally; complete oversize Window body relocated with only its MethodDef RVA changed; no tests executed; unqualified parent chain pending"
+}

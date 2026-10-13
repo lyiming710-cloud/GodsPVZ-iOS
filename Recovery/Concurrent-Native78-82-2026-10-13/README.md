@@ -53,3 +53,5 @@ Complete conversion/all translation-unit work remains deferred until **100 indep
 No GitHub Actions workflow, licensed Unity/Xcode build, IPA export or device test was initiated by this checkpoint. The deliverable remains an unsigned IPA; none has been qualified. Do not change main, broaden the frozen verifier, overwrite published candidate hashes, skip native callback/alias/exception observations, or convert missing evidence into an OK verdict.
 
 The Release snapshot includes source projects, candidates78–82, pinned parent77, generator binaries/runtime files, build/generation logs, current metadata inventories, original-source specifications/helper evidence, a file manifest and pipeline ledger. Original PC inputs and large historical Xcode archives remain at their existing registered archive/Release locations.
+
+Later checkpoint: ../Concurrent-Native83-88-2026-10-13/README.md. Native60 has since been explicitly promoted to42/100; Native83-88 add12pending implementations,82pending total. The earlier immutable Release preserves its publication-time ledger.
