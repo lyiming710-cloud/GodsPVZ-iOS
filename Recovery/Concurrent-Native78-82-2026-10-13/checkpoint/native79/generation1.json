@@ -1,0 +1,80 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "de2f98d4e793b91fba17ba7eff3aeba3130282f5e477f0daae1aa358287868f7",
+  "candidate_sha256": "3b3bcfca51402e1eedf5d59fbe1bf9d923336730325550205f960bd8a8bceec6",
+  "metadata": {
+    "old_root_offset": 11185664,
+    "old_root_size": 402352,
+    "new_root_offset": 11588096,
+    "new_root_size": 402400,
+    "extended_section_header": 456,
+    "old_virtual_size": 10452912,
+    "new_virtual_size": 10855392,
+    "old_raw_size": 10452992,
+    "new_raw_size": 10855424,
+    "added": [
+      {
+        "kind": "MemberRef",
+        "token": "0x0A000444",
+        "name": "get_eulerAngles",
+        "parent": 665,
+        "name_index": 53457,
+        "signature_index": 1247
+      },
+      {
+        "kind": "StandAloneSig",
+        "token": "0x110006DE",
+        "target": "0x06000365",
+        "signature_index": 60388,
+        "old_signature_hex": "070B1281E0020212091215121512809412824402181C",
+        "signature_hex": "070C1281E0020212091215121512809412824402181C0C"
+      }
+    ],
+    "blob_heap_added_bytes": 24,
+    "table_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 16
+  },
+  "methods": [
+    {
+      "token": "0x06000238",
+      "method": "System.Void SavesManager::BackupPlayerSave()",
+      "header": 168916,
+      "code_start": 168928,
+      "reserved_code_size": 318,
+      "new_code_size": 86,
+      "old_max": 3,
+      "new_max": 3,
+      "old_local_sig": 285213121,
+      "local_sig": 285213121,
+      "code_sha256": "0d5cf762c5839d274e5253e063431201b65954d22c43caa1e6c6f7203c5672c9"
+    },
+    {
+      "token": "0x06000365",
+      "method": "System.Void Plant::Explode()",
+      "header": 271324,
+      "code_start": 271336,
+      "reserved_code_size": 279,
+      "new_code_size": 185,
+      "old_max": 4,
+      "new_max": 4,
+      "old_local_sig": 285213354,
+      "local_sig": 285214430,
+      "code_sha256": "6452d766fac8c641f85321739bb4f66b76dd6a53fbf437486eb9593857dc493f"
+    },
+    {
+      "token": "0x0600075F",
+      "method": "System.Void TMPro.Examples.ObjectSpin::Awake()",
+      "header": 616236,
+      "code_start": 616248,
+      "reserved_code_size": 254,
+      "new_code_size": 132,
+      "old_max": 2,
+      "new_max": 4,
+      "old_local_sig": 285214099,
+      "local_sig": 285214099,
+      "code_sha256": "3e40ff49d647a0279550b3d9f3e87b4f2dad4b7116a08623662ade81b26eda7f"
+    }
+  ],
+  "scope": "Three original-native-backed bodies; Save allocation/ctor before Initialize, current source reread after Copy, typed public Add, original backup suffix and post-save MainUI lookup; explosion captured particle and two transform getters, fZ-first float32 y before transform null and x read, exact scale/shake, Damage Boolean discarded and skill captured after AreaDamage; spin uses proven public Quaternion.get_eulerAngles with typed quaternion address, writes computed rotation before second transform failure, captured Light and black alpha-one fallback converted through Color32; one appended public MemberRef and one scoped local signature; no tests executed; unqualified parent chain pending"
+}

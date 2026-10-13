@@ -1,0 +1,1037 @@
+[
+  {
+    "token": "0x060001AC",
+    "method": "ZombieSelect EnemySelecter::ZombieSelectRandomGet(System.Collections.Generic.List`1<ZombieSelect>,System.Single)",
+    "record": {
+      "image": "Assembly-CSharp.dll",
+      "type": "EnemySelecter",
+      "name": "ZombieSelectRandomGet",
+      "token": "0x60001ac",
+      "va": "0x18031a490"
+    },
+    "start": "0x18031a490",
+    "end": "0x18031a5e4",
+    "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+    "pdata_parts": [
+      [
+        6445704336,
+        6445704676
+      ]
+    ],
+    "native_sha256": "ff733f276783e28fcd1fd1c5c692374910edde5d49e22afea3fc815d52bfee0b",
+    "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060001AC.bin:     file format binary\n\n\nDisassembly of section .data:\n\n000000018031a490 <.data>:\n   18031a490:\t48 89 5c 24 08       \tmov    %rbx,0x8(%rsp)\n   18031a495:\t57                   \tpush   %rdi\n   18031a496:\t48 83 ec 70          \tsub    $0x70,%rsp\n   18031a49a:\t0f 29 74 24 60       \tmovaps %xmm6,0x60(%rsp)\n   18031a49f:\t0f 28 f2             \tmovaps %xmm2,%xmm6\n   18031a4a2:\t48 8b da             \tmov    %rdx,%rbx\n   18031a4a5:\t80 3d 01 a7 9c 01 00 \tcmpb   $0x0,0x19ca701(%rip)        # 0x181ce4bad\n   18031a4ac:\t75 37                \tjne    0x18031a4e5\n   18031a4ae:\t48 8d 0d ab 05 8b 01 \tlea    0x18b05ab(%rip),%rcx        # 0x181bcaa60\n   18031a4b5:\te8 36 5a f3 ff       \tcall   0x18024fef0\n   18031a4ba:\t48 8d 0d ef 05 8b 01 \tlea    0x18b05ef(%rip),%rcx        # 0x181bcaab0\n   18031a4c1:\te8 2a 5a f3 ff       \tcall   0x18024fef0\n   18031a4c6:\t48 8d 0d 3b 06 8b 01 \tlea    0x18b063b(%rip),%rcx        # 0x181bcab08\n   18031a4cd:\te8 1e 5a f3 ff       \tcall   0x18024fef0\n   18031a4d2:\t48 8d 0d 87 96 8a 01 \tlea    0x18a9687(%rip),%rcx        # 0x181bc3b60\n   18031a4d9:\te8 12 5a f3 ff       \tcall   0x18024fef0\n   18031a4de:\tc6 05 c8 a6 9c 01 01 \tmovb   $0x1,0x19ca6c8(%rip)        # 0x181ce4bad\n   18031a4e5:\t45 33 c0             \txor    %r8d,%r8d\n   18031a4e8:\t0f 28 ce             \tmovaps %xmm6,%xmm1\n   18031a4eb:\t0f 57 c0             \txorps  %xmm0,%xmm0\n   18031a4ee:\te8 5d 2e ff 00       \tcall   0x18130d350\n   18031a4f3:\t0f 28 f0             \tmovaps %xmm0,%xmm6\n   18031a4f6:\t48 85 db             \ttest   %rbx,%rbx\n   18031a4f9:\t0f 84 d3 00 00 00    \tje     0x18031a5d2\n   18031a4ff:\t4c 8b 05 5a 96 8a 01 \tmov    0x18a965a(%rip),%r8        # 0x181bc3b60\n   18031a506:\t48 8b d3             \tmov    %rbx,%rdx\n   18031a509:\t48 8d 4c 24 28       \tlea    0x28(%rsp),%rcx\n   18031a50e:\te8 dd f2 4f 00       \tcall   0x1808197f0\n   18031a513:\t0f 10 4c 24 28       \tmovups 0x28(%rsp),%xmm1\n   18031a518:\t0f 11 4c 24 40       \tmovups %xmm1,0x40(%rsp)\n   18031a51d:\tf2 0f 10 54 24 38    \tmovsd  0x38(%rsp),%xmm2\n   18031a523:\tf2 0f 11 54 24 50    \tmovsd  %xmm2,0x50(%rsp)\n   18031a529:\t48 c7 44 24 28 00 00 \tmovq   $0x0,0x28(%rsp)\n   18031a530:\t00 00 \n   18031a532:\t48 8d 5c 24 40       \tlea    0x40(%rsp),%rbx\n   18031a537:\t48 89 5c 24 30       \tmov    %rbx,0x30(%rsp)\n   18031a53c:\t0f 1f 40 00          \tnopl   0x0(%rax)\n   18031a540:\t48 8b 15 69 05 8b 01 \tmov    0x18b0569(%rip),%rdx        # 0x181bcaab0\n   18031a547:\t48 8d 4c 24 40       \tlea    0x40(%rsp),%rcx\n   18031a54c:\te8 2f ed 34 00       \tcall   0x180669280\n   18031a551:\t84 c0                \ttest   %al,%al\n   18031a553:\t74 3c                \tje     0x18031a591\n   18031a555:\t48 8b 7c 24 50       \tmov    0x50(%rsp),%rdi\n   18031a55a:\t48 85 ff             \ttest   %rdi,%rdi\n   18031a55d:\t74 79                \tje     0x18031a5d8\n   18031a55f:\t0f 2f 77 1c          \tcomiss 0x1c(%rdi),%xmm6\n   18031a563:\t77 25                \tja     0x18031a58a\n   18031a565:\t48 8b 15 f4 04 8b 01 \tmov    0x18b04f4(%rip),%rdx        # 0x181bcaa60\n   18031a56c:\t48 8b cb             \tmov    %rbx,%rcx\n   18031a56f:\te8 fc 7b fe ff       \tcall   0x180302170\n   18031a574:\t48 8b c7             \tmov    %rdi,%rax\n   18031a577:\t48 8b 9c 24 80 00 00 \tmov    0x80(%rsp),%rbx\n   18031a57e:\t00 \n   18031a57f:\t0f 28 74 24 60       \tmovaps 0x60(%rsp),%xmm6\n   18031a584:\t48 83 c4 70          \tadd    $0x70,%rsp\n   18031a588:\t5f                   \tpop    %rdi\n   18031a589:\tc3                   \tret\n   18031a58a:\tf3 0f 5c 77 1c       \tsubss  0x1c(%rdi),%xmm6\n   18031a58f:\teb af                \tjmp    0x18031a540\n   18031a591:\t48 8b 15 c8 04 8b 01 \tmov    0x18b04c8(%rip),%rdx        # 0x181bcaa60\n   18031a598:\t48 8b cb             \tmov    %rbx,%rcx\n   18031a59b:\te8 d0 7b fe ff       \tcall   0x180302170\n   18031a5a0:\teb 1b                \tjmp    0x18031a5bd\n   18031a5a2:\t48 8b 15 b7 04 8b 01 \tmov    0x18b04b7(%rip),%rdx        # 0x181bcaa60\n   18031a5a9:\t48 8b 4c 24 30       \tmov    0x30(%rsp),%rcx\n   18031a5ae:\te8 bd 7b fe ff       \tcall   0x180302170\n   18031a5b3:\t48 8b 4c 24 28       \tmov    0x28(%rsp),%rcx\n   18031a5b8:\t48 85 c9             \ttest   %rcx,%rcx\n   18031a5bb:\t75 21                \tjne    0x18031a5de\n   18031a5bd:\t33 c0                \txor    %eax,%eax\n   18031a5bf:\t48 8b 9c 24 80 00 00 \tmov    0x80(%rsp),%rbx\n   18031a5c6:\t00 \n   18031a5c7:\t0f 28 74 24 60       \tmovaps 0x60(%rsp),%xmm6\n   18031a5cc:\t48 83 c4 70          \tadd    $0x70,%rsp\n   18031a5d0:\t5f                   \tpop    %rdi\n   18031a5d1:\tc3                   \tret\n   18031a5d2:\te8 79 5b f3 ff       \tcall   0x180250150\n   18031a5d7:\t90                   \tnop\n   18031a5d8:\te8 73 5b f3 ff       \tcall   0x180250150\n   18031a5dd:\t90                   \tnop\n   18031a5de:\te8 7d 68 ee ff       \tcall   0x180200e60\n   18031a5e3:\tcc                   \tint3\n",
+    "managed": {
+      "name": "ZombieSelect EnemySelecter::ZombieSelectRandomGet(System.Collections.Generic.List`1<ZombieSelect>,System.Single)",
+      "token": "0x060001AC",
+      "owner": "EnemySelecter",
+      "ret": "ZombieSelect",
+      "hasThis": true,
+      "args": [
+        "System.Collections.Generic.List`1<ZombieSelect>",
+        "System.Single"
+      ],
+      "locals": [
+        "System.Single",
+        "System.Collections.Generic.List`1<ZombieSelect>",
+        "System.IntPtr",
+        "System.Single",
+        "System.Object",
+        "ZombieSelect",
+        "System.Boolean",
+        "System.Collections.Generic.List`1/Enumerator<System.Object>",
+        "System.Boolean",
+        "System.Single",
+        "System.Boolean",
+        "ZombieSelect",
+        "System.Boolean",
+        "System.Object",
+        "System.Collections.Generic.List`1/Enumerator<System.Object>",
+        "System.Collections.Generic.List`1/Enumerator<System.Object>"
+      ],
+      "maxStack": 2,
+      "instructions": [
+        {
+          "offset": 0,
+          "opcode": "br",
+          "operand": {
+            "target": 148
+          }
+        },
+        {
+          "offset": 5,
+          "opcode": "ldstr",
+          "operand": "Method not found @1808197F0"
+        },
+        {
+          "offset": 10,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 11,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 3
+          }
+        },
+        {
+          "offset": 15,
+          "opcode": "stloc",
+          "operand": {
+            "index": 9
+          }
+        },
+        {
+          "offset": 19,
+          "opcode": "br",
+          "operand": {
+            "target": 187
+          }
+        },
+        {
+          "offset": 24,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 5
+          }
+        },
+        {
+          "offset": 28,
+          "opcode": "ldc.i4",
+          "operand": 0
+        },
+        {
+          "offset": 33,
+          "opcode": "ceq",
+          "operand": null
+        },
+        {
+          "offset": 35,
+          "opcode": "stloc",
+          "operand": {
+            "index": 8
+          }
+        },
+        {
+          "offset": 39,
+          "opcode": "ldloca",
+          "operand": {
+            "index": 15
+          }
+        },
+        {
+          "offset": 43,
+          "opcode": "stloc",
+          "operand": {
+            "index": 7
+          }
+        },
+        {
+          "offset": 47,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 8
+          }
+        },
+        {
+          "offset": 51,
+          "opcode": "brtrue",
+          "operand": {
+            "target": 171
+          }
+        },
+        {
+          "offset": 56,
+          "opcode": "br",
+          "operand": {
+            "target": 61
+          }
+        },
+        {
+          "offset": 61,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 9
+          }
+        },
+        {
+          "offset": 65,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 5
+          }
+        },
+        {
+          "offset": 69,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "ZombieSelect",
+            "type": "System.Single",
+            "identity": "System.Single ZombieSelect::weight"
+          }
+        },
+        {
+          "offset": 74,
+          "opcode": "cgt",
+          "operand": null
+        },
+        {
+          "offset": 76,
+          "opcode": "stloc",
+          "operand": {
+            "index": 10
+          }
+        },
+        {
+          "offset": 80,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 10
+          }
+        },
+        {
+          "offset": 84,
+          "opcode": "brtrue",
+          "operand": {
+            "target": 105
+          }
+        },
+        {
+          "offset": 89,
+          "opcode": "br",
+          "operand": {
+            "target": 94
+          }
+        },
+        {
+          "offset": 94,
+          "opcode": "ldstr",
+          "operand": "Method not found @180302170"
+        },
+        {
+          "offset": 99,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 100,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 5
+          }
+        },
+        {
+          "offset": 104,
+          "opcode": "ret",
+          "operand": null
+        },
+        {
+          "offset": 105,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 9
+          }
+        },
+        {
+          "offset": 109,
+          "opcode": "conv.r4",
+          "operand": null
+        },
+        {
+          "offset": 110,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 5
+          }
+        },
+        {
+          "offset": 114,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "ZombieSelect",
+            "type": "System.Single",
+            "identity": "System.Single ZombieSelect::weight"
+          }
+        },
+        {
+          "offset": 119,
+          "opcode": "conv.r4",
+          "operand": null
+        },
+        {
+          "offset": 120,
+          "opcode": "sub",
+          "operand": null
+        },
+        {
+          "offset": 121,
+          "opcode": "stloc",
+          "operand": {
+            "index": 9
+          }
+        },
+        {
+          "offset": 125,
+          "opcode": "br",
+          "operand": {
+            "target": 187
+          }
+        },
+        {
+          "offset": 130,
+          "opcode": "ldstr",
+          "operand": "Method not found @180302170"
+        },
+        {
+          "offset": 135,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 136,
+          "opcode": "br",
+          "operand": {
+            "target": 141
+          }
+        },
+        {
+          "offset": 141,
+          "opcode": "ldnull",
+          "operand": null
+        },
+        {
+          "offset": 142,
+          "opcode": "ret",
+          "operand": null
+        },
+        {
+          "offset": 143,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 11
+          }
+        },
+        {
+          "offset": 147,
+          "opcode": "ret",
+          "operand": null
+        },
+        {
+          "offset": 148,
+          "opcode": "ldc.r4",
+          "operand": 0
+        },
+        {
+          "offset": 153,
+          "opcode": "ldarg",
+          "operand": {
+            "index": 2
+          }
+        },
+        {
+          "offset": 157,
+          "opcode": "call",
+          "operand": {
+            "owner": "UnityEngine.Random",
+            "args": [
+              "System.Single",
+              "System.Single"
+            ],
+            "ret": "System.Single",
+            "hasThis": false,
+            "name": "Range",
+            "identity": "System.Single UnityEngine.Random::Range(System.Single,System.Single)"
+          }
+        },
+        {
+          "offset": 162,
+          "opcode": "stloc",
+          "operand": {
+            "index": 3
+          }
+        },
+        {
+          "offset": 166,
+          "opcode": "br",
+          "operand": {
+            "target": 5
+          }
+        },
+        {
+          "offset": 171,
+          "opcode": "newobj",
+          "operand": {
+            "owner": "System.NullReferenceException",
+            "args": [],
+            "ret": "System.Void",
+            "hasThis": true,
+            "name": ".ctor",
+            "identity": "System.Void System.NullReferenceException::.ctor()"
+          }
+        },
+        {
+          "offset": 176,
+          "opcode": "throw",
+          "operand": null
+        },
+        {
+          "offset": 177,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 7
+          }
+        },
+        {
+          "offset": 181,
+          "opcode": "throw",
+          "operand": null
+        },
+        {
+          "offset": 182,
+          "opcode": "br",
+          "operand": {
+            "target": 143
+          }
+        },
+        {
+          "offset": 187,
+          "opcode": "ldloca",
+          "operand": {
+            "index": 15
+          }
+        },
+        {
+          "offset": 191,
+          "opcode": "call",
+          "operand": {
+            "owner": "System.Collections.Generic.List`1/Enumerator<System.Object>",
+            "args": [],
+            "ret": "System.Boolean",
+            "hasThis": true,
+            "name": "MoveNext",
+            "identity": "System.Boolean System.Collections.Generic.List`1/Enumerator<System.Object>::MoveNext()"
+          }
+        },
+        {
+          "offset": 196,
+          "opcode": "stloc",
+          "operand": {
+            "index": 6
+          }
+        },
+        {
+          "offset": 200,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 6
+          }
+        },
+        {
+          "offset": 204,
+          "opcode": "ldc.i4.0",
+          "operand": null
+        },
+        {
+          "offset": 205,
+          "opcode": "ceq",
+          "operand": null
+        },
+        {
+          "offset": 207,
+          "opcode": "stloc",
+          "operand": {
+            "index": 12
+          }
+        },
+        {
+          "offset": 211,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 12
+          }
+        },
+        {
+          "offset": 215,
+          "opcode": "brtrue",
+          "operand": {
+            "target": 130
+          }
+        },
+        {
+          "offset": 220,
+          "opcode": "br",
+          "operand": {
+            "target": 24
+          }
+        }
+      ],
+      "handlers": []
+    },
+    "fields": [
+      {
+        "cil_offset": 69,
+        "field": {
+          "owner": "ZombieSelect",
+          "type": "System.Single",
+          "identity": "System.Single ZombieSelect::weight"
+        },
+        "original_records": [
+          {
+            "type": "ZombieSelect",
+            "namespace": "",
+            "typeIndex": 5158,
+            "name": "weight",
+            "token": "0x4000202",
+            "offset": 28,
+            "type_index": 18124
+          }
+        ]
+      },
+      {
+        "cil_offset": 114,
+        "field": {
+          "owner": "ZombieSelect",
+          "type": "System.Single",
+          "identity": "System.Single ZombieSelect::weight"
+        },
+        "original_records": [
+          {
+            "type": "ZombieSelect",
+            "namespace": "",
+            "typeIndex": 5158,
+            "name": "weight",
+            "token": "0x4000202",
+            "offset": 28,
+            "type_index": 18124
+          }
+        ]
+      }
+    ],
+    "diagnostics_before": 2
+  },
+  {
+    "token": "0x060003C5",
+    "method": "System.Void Project::GetEndPosition()",
+    "record": {
+      "image": "Assembly-CSharp.dll",
+      "type": "Project",
+      "name": "GetEndPosition",
+      "token": "0x60003c5",
+      "va": "0x180377420"
+    },
+    "start": "0x180377420",
+    "end": "0x18037762c",
+    "boundary_scope": "contiguous pdata bounded by next mapped pointer",
+    "pdata_parts": [
+      [
+        6446085152,
+        6446085676
+      ]
+    ],
+    "native_sha256": "42f01cb0da02d449d49e0f2ebff1a9c2c078c840b5689c7ebce977681747af5e",
+    "disassembly": "\n/workspaces/GodsPVZ-native24-codespace/.validation/native55-2026-10-02/native/0x060003C5.bin:     file format binary\n\n\nDisassembly of section .data:\n\n0000000180377420 <.data>:\n   180377420:\t40 53                \trex push %rbx\n   180377422:\t48 83 ec 40          \tsub    $0x40,%rsp\n   180377426:\t83 79 58 00          \tcmpl   $0x0,0x58(%rcx)\n   18037742a:\t48 8b d9             \tmov    %rcx,%rbx\n   18037742d:\t0f 85 84 00 00 00    \tjne    0x1803774b7\n   180377433:\t33 d2                \txor    %edx,%edx\n   180377435:\te8 d6 d0 f8 00       \tcall   0x181304510\n   18037743a:\t48 85 c0             \ttest   %rax,%rax\n   18037743d:\t0f 84 bf 01 00 00    \tje     0x180377602\n   180377443:\t45 33 c0             \txor    %r8d,%r8d\n   180377446:\t48 8d 4c 24 20       \tlea    0x20(%rsp),%rcx\n   18037744b:\t48 8b d0             \tmov    %rax,%rdx\n   18037744e:\te8 4d 7f fb 00       \tcall   0x18132f3a0\n   180377453:\tf3 0f 10 0d e5 05 23 \tmovss  0x12305e5(%rip),%xmm1        # 0x1815a7a40\n   18037745a:\t01 \n   18037745b:\t45 33 c0             \txor    %r8d,%r8d\n   18037745e:\tf3 0f 10 05 0a 0a 23 \tmovss  0x1230a0a(%rip),%xmm0        # 0x1815a7e70\n   180377465:\t01 \n   180377466:\t8b 08                \tmov    (%rax),%ecx\n   180377468:\t89 4b 5c             \tmov    %ecx,0x5c(%rbx)\n   18037746b:\te8 e0 5e f9 00       \tcall   0x18130d350\n   180377470:\tf2 0f 10 4b 5c       \tmovsd  0x5c(%rbx),%xmm1\n   180377475:\t4c 8d 44 24 20       \tlea    0x20(%rsp),%r8\n   18037747a:\t0f c6 c9 e1          \tshufps $0xe1,%xmm1,%xmm1\n   18037747e:\t48 8d 4c 24 30       \tlea    0x30(%rsp),%rcx\n   180377483:\tf3 0f 10 c8          \tmovss  %xmm0,%xmm1\n   180377487:\t45 33 c9             \txor    %r9d,%r9d\n   18037748a:\t0f c6 c9 e1          \tshufps $0xe1,%xmm1,%xmm1\n   18037748e:\t48 8b d3             \tmov    %rbx,%rdx\n   180377491:\tf2 0f 11 4b 5c       \tmovsd  %xmm1,0x5c(%rbx)\n   180377496:\t8b 43 64             \tmov    0x64(%rbx),%eax\n   180377499:\t89 44 24 28          \tmov    %eax,0x28(%rsp)\n   18037749d:\tf2 0f 11 4c 24 20    \tmovsd  %xmm1,0x20(%rsp)\n   1803774a3:\te8 88 0a 00 00       \tcall   0x180377f30\n   1803774a8:\tf2 0f 10 00          \tmovsd  (%rax),%xmm0\n   1803774ac:\t8b 48 08             \tmov    0x8(%rax),%ecx\n   1803774af:\tf2 0f 11 43 5c       \tmovsd  %xmm0,0x5c(%rbx)\n   1803774b4:\t89 4b 64             \tmov    %ecx,0x64(%rbx)\n   1803774b7:\t83 7b 58 04          \tcmpl   $0x4,0x58(%rbx)\n   1803774bb:\t0f 85 ce 00 00 00    \tjne    0x18037758f\n   1803774c1:\t48 63 43 24          \tmovslq 0x24(%rbx),%rax\n   1803774c5:\t83 f8 08             \tcmp    $0x8,%eax\n   1803774c8:\t0f 87 c1 00 00 00    \tja     0x18037758f\n   1803774ce:\t48 8d 15 2b 8b c8 ff \tlea    -0x3774d5(%rip),%rdx        # 0x180000000\n   1803774d5:\t8b 8c 82 08 76 37 00 \tmov    0x377608(%rdx,%rax,4),%ecx\n   1803774dc:\t48 03 ca             \tadd    %rdx,%rcx\n   1803774df:\tff e1                \tjmp    *%rcx\n   1803774e1:\t48 8b 43 48          \tmov    0x48(%rbx),%rax\n   1803774e5:\t48 85 c0             \ttest   %rax,%rax\n   1803774e8:\t0f 84 14 01 00 00    \tje     0x180377602\n   1803774ee:\t48 8b 90 28 01 00 00 \tmov    0x128(%rax),%rdx\n   1803774f5:\t48 85 d2             \ttest   %rdx,%rdx\n   1803774f8:\t0f 84 04 01 00 00    \tje     0x180377602\n   1803774fe:\t45 33 c0             \txor    %r8d,%r8d\n   180377501:\t48 8d 4c 24 30       \tlea    0x30(%rsp),%rcx\n   180377506:\te8 a5 99 f8 ff       \tcall   0x180300eb0\n   18037750b:\tf2 0f 10 00          \tmovsd  (%rax),%xmm0\n   18037750f:\t8b 48 08             \tmov    0x8(%rax),%ecx\n   180377512:\tf2 0f 11 43 5c       \tmovsd  %xmm0,0x5c(%rbx)\n   180377517:\t89 4b 64             \tmov    %ecx,0x64(%rbx)\n   18037751a:\tf3 0f 10 43 60       \tmovss  0x60(%rbx),%xmm0\n   18037751f:\tf3 0f 58 05 bd 06 23 \taddss  0x12306bd(%rip),%xmm0        # 0x1815a7be4\n   180377526:\t01 \n   180377527:\tf3 0f 11 43 60       \tmovss  %xmm0,0x60(%rbx)\n   18037752c:\t48 83 c4 40          \tadd    $0x40,%rsp\n   180377530:\t5b                   \tpop    %rbx\n   180377531:\tc3                   \tret\n   180377532:\t48 8b 43 48          \tmov    0x48(%rbx),%rax\n   180377536:\t48 85 c0             \ttest   %rax,%rax\n   180377539:\t0f 84 c3 00 00 00    \tje     0x180377602\n   18037753f:\t48 8b 90 00 01 00 00 \tmov    0x100(%rax),%rdx\n   180377546:\t48 85 d2             \ttest   %rdx,%rdx\n   180377549:\t0f 84 b3 00 00 00    \tje     0x180377602\n   18037754f:\t45 33 c0             \txor    %r8d,%r8d\n   180377552:\t48 8d 4c 24 30       \tlea    0x30(%rsp),%rcx\n   180377557:\te8 04 c2 fa ff       \tcall   0x180323760\n   18037755c:\tf2 0f 10 00          \tmovsd  (%rax),%xmm0\n   180377560:\t8b 48 08             \tmov    0x8(%rax),%ecx\n   180377563:\tf2 0f 11 43 5c       \tmovsd  %xmm0,0x5c(%rbx)\n   180377568:\t89 4b 64             \tmov    %ecx,0x64(%rbx)\n   18037756b:\tf3 0f 10 43 60       \tmovss  0x60(%rbx),%xmm0\n   180377570:\tf3 0f 5c 05 68 06 23 \tsubss  0x1230668(%rip),%xmm0        # 0x1815a7be0\n   180377577:\t01 \n   180377578:\tf3 0f 11 43 60       \tmovss  %xmm0,0x60(%rbx)\n   18037757d:\tf3 0f 10 4b 5c       \tmovss  0x5c(%rbx),%xmm1\n   180377582:\tf3 0f 5c 0d 9a 08 23 \tsubss  0x123089a(%rip),%xmm1        # 0x1815a7e24\n   180377589:\t01 \n   18037758a:\tf3 0f 11 4b 5c       \tmovss  %xmm1,0x5c(%rbx)\n   18037758f:\t48 83 c4 40          \tadd    $0x40,%rsp\n   180377593:\t5b                   \tpop    %rbx\n   180377594:\tc3                   \tret\n   180377595:\t33 c0                \txor    %eax,%eax\n   180377597:\t4c 8d 44 24 20       \tlea    0x20(%rsp),%r8\n   18037759c:\t89 43 5c             \tmov    %eax,0x5c(%rbx)\n   18037759f:\t48 8d 4c 24 30       \tlea    0x30(%rsp),%rcx\n   1803775a4:\t48 c7 43 60 00 00 e6 \tmovq   $0x42e60000,0x60(%rbx)\n   1803775ab:\t42 \n   1803775ac:\t45 33 c9             \txor    %r9d,%r9d\n   1803775af:\tf2 0f 10 43 5c       \tmovsd  0x5c(%rbx),%xmm0\n   1803775b4:\t48 8b d3             \tmov    %rbx,%rdx\n   1803775b7:\tf2 0f 11 44 24 20    \tmovsd  %xmm0,0x20(%rsp)\n   1803775bd:\t89 44 24 28          \tmov    %eax,0x28(%rsp)\n   1803775c1:\te8 6a 09 00 00       \tcall   0x180377f30\n   1803775c6:\tf2 0f 10 00          \tmovsd  (%rax),%xmm0\n   1803775ca:\t8b 48 08             \tmov    0x8(%rax),%ecx\n   1803775cd:\tf2 0f 11 43 5c       \tmovsd  %xmm0,0x5c(%rbx)\n   1803775d2:\t89 4b 64             \tmov    %ecx,0x64(%rbx)\n   1803775d5:\t48 83 c4 40          \tadd    $0x40,%rsp\n   1803775d9:\t5b                   \tpop    %rbx\n   1803775da:\tc3                   \tret\n   1803775db:\t48 8b 43 48          \tmov    0x48(%rbx),%rax\n   1803775df:\t48 85 c0             \ttest   %rax,%rax\n   1803775e2:\t74 1e                \tje     0x180377602\n   1803775e4:\t48 8b 90 00 01 00 00 \tmov    0x100(%rax),%rdx\n   1803775eb:\t48 85 d2             \ttest   %rdx,%rdx\n   1803775ee:\t74 12                \tje     0x180377602\n   1803775f0:\t45 33 c0             \txor    %r8d,%r8d\n   1803775f3:\t48 8d 4c 24 30       \tlea    0x30(%rsp),%rcx\n   1803775f8:\te8 83 c0 fa ff       \tcall   0x180323680\n   1803775fd:\te9 5a ff ff ff       \tjmp    0x18037755c\n   180377602:\te8 49 8b ed ff       \tcall   0x180250150\n   180377607:\tcc                   \tint3\n   180377608:\te1 74                \tloope  0x18037767e\n   18037760a:\t37                   \t(bad)\n   18037760b:\t00 db                \tadd    %bl,%bl\n   18037760d:\t75 37                \tjne    0x180377646\n   18037760f:\t00 db                \tadd    %bl,%bl\n   180377611:\t75 37                \tjne    0x18037764a\n   180377613:\t00 32                \tadd    %dh,(%rdx)\n   180377615:\t75 37                \tjne    0x18037764e\n   180377617:\t00 95 75 37 00 95    \tadd    %dl,-0x6affc88b(%rbp)\n   18037761d:\t75 37                \tjne    0x180377656\n   18037761f:\t00 8f 75 37 00 8f    \tadd    %cl,-0x70ffc88b(%rdi)\n   180377625:\t75 37                \tjne    0x18037765e\n   180377627:\t00 db                \tadd    %bl,%bl\n   180377629:\t75 37                \tjne    0x180377662\n\t...\n",
+    "managed": {
+      "name": "System.Void Project::GetEndPosition()",
+      "token": "0x060003C5",
+      "owner": "Project",
+      "ret": "System.Void",
+      "hasThis": true,
+      "args": [],
+      "locals": [
+        "Project",
+        "System.Boolean",
+        "UnityEngine.Transform",
+        "UnityEngine.Vector3",
+        "UnityEngine.Vector3",
+        "System.Single",
+        "UnityEngine.Vector3",
+        "System.Object"
+      ],
+      "maxStack": 2,
+      "instructions": [
+        {
+          "offset": 0,
+          "opcode": "ldarg.0",
+          "operand": null
+        },
+        {
+          "offset": 1,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "Project",
+            "type": "System.Int32",
+            "identity": "System.Int32 Project::movementTracks"
+          }
+        },
+        {
+          "offset": 6,
+          "opcode": "ldc.i4",
+          "operand": 0
+        },
+        {
+          "offset": 11,
+          "opcode": "ceq",
+          "operand": null
+        },
+        {
+          "offset": 13,
+          "opcode": "ldc.i4.0",
+          "operand": null
+        },
+        {
+          "offset": 14,
+          "opcode": "ceq",
+          "operand": null
+        },
+        {
+          "offset": 16,
+          "opcode": "stloc",
+          "operand": {
+            "index": 1
+          }
+        },
+        {
+          "offset": 20,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 1
+          }
+        },
+        {
+          "offset": 24,
+          "opcode": "brtrue",
+          "operand": {
+            "target": 161
+          }
+        },
+        {
+          "offset": 29,
+          "opcode": "br",
+          "operand": {
+            "target": 34
+          }
+        },
+        {
+          "offset": 34,
+          "opcode": "ldarg.0",
+          "operand": null
+        },
+        {
+          "offset": 35,
+          "opcode": "call",
+          "operand": {
+            "owner": "UnityEngine.Component",
+            "args": [],
+            "ret": "UnityEngine.Transform",
+            "hasThis": true,
+            "name": "get_transform",
+            "identity": "UnityEngine.Transform UnityEngine.Component::get_transform()"
+          }
+        },
+        {
+          "offset": 40,
+          "opcode": "stloc",
+          "operand": {
+            "index": 2
+          }
+        },
+        {
+          "offset": 44,
+          "opcode": "ldstr",
+          "operand": "Invalid instruction: 28 Invalid \"Jump target not found in method: 0x180377602\""
+        },
+        {
+          "offset": 49,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 50,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 2
+          }
+        },
+        {
+          "offset": 54,
+          "opcode": "call",
+          "operand": {
+            "owner": "UnityEngine.Transform",
+            "args": [],
+            "ret": "UnityEngine.Vector3",
+            "hasThis": true,
+            "name": "get_position",
+            "identity": "UnityEngine.Vector3 UnityEngine.Transform::get_position()"
+          }
+        },
+        {
+          "offset": 59,
+          "opcode": "stloc",
+          "operand": {
+            "index": 4
+          }
+        },
+        {
+          "offset": 63,
+          "opcode": "br",
+          "operand": {
+            "target": 68
+          }
+        },
+        {
+          "offset": 68,
+          "opcode": "ldarg.0",
+          "operand": null
+        },
+        {
+          "offset": 69,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 4
+          }
+        },
+        {
+          "offset": 73,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "UnityEngine.Vector3",
+            "type": "System.Single",
+            "identity": "System.Single UnityEngine.Vector3::x"
+          }
+        },
+        {
+          "offset": 78,
+          "opcode": "stfld",
+          "operand": {
+            "owner": "Project",
+            "type": "UnityEngine.Vector3",
+            "identity": "UnityEngine.Vector3 Project::endPosition"
+          }
+        },
+        {
+          "offset": 83,
+          "opcode": "ldc.r4",
+          "operand": -380
+        },
+        {
+          "offset": 88,
+          "opcode": "ldc.r4",
+          "operand": 120
+        },
+        {
+          "offset": 93,
+          "opcode": "call",
+          "operand": {
+            "owner": "UnityEngine.Random",
+            "args": [
+              "System.Single",
+              "System.Single"
+            ],
+            "ret": "System.Single",
+            "hasThis": false,
+            "name": "Range",
+            "identity": "System.Single UnityEngine.Random::Range(System.Single,System.Single)"
+          }
+        },
+        {
+          "offset": 98,
+          "opcode": "stloc",
+          "operand": {
+            "index": 5
+          }
+        },
+        {
+          "offset": 102,
+          "opcode": "ldarg.0",
+          "operand": null
+        },
+        {
+          "offset": 103,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 6
+          }
+        },
+        {
+          "offset": 107,
+          "opcode": "stfld",
+          "operand": {
+            "owner": "Project",
+            "type": "UnityEngine.Vector3",
+            "identity": "UnityEngine.Vector3 Project::endPosition"
+          }
+        },
+        {
+          "offset": 112,
+          "opcode": "ldarg.0",
+          "operand": null
+        },
+        {
+          "offset": 113,
+          "opcode": "ldloca",
+          "operand": {
+            "index": 7
+          }
+        },
+        {
+          "offset": 117,
+          "opcode": "call",
+          "operand": {
+            "owner": "Project",
+            "args": [
+              "UnityEngine.Vector3"
+            ],
+            "ret": "UnityEngine.Vector3",
+            "hasThis": true,
+            "name": "PositionRevision_Camera",
+            "identity": "UnityEngine.Vector3 Project::PositionRevision_Camera(UnityEngine.Vector3)"
+          }
+        },
+        {
+          "offset": 122,
+          "opcode": "stloc",
+          "operand": {
+            "index": 3
+          }
+        },
+        {
+          "offset": 126,
+          "opcode": "br",
+          "operand": {
+            "target": 131
+          }
+        },
+        {
+          "offset": 131,
+          "opcode": "ldarg.0",
+          "operand": null
+        },
+        {
+          "offset": 132,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 3
+          }
+        },
+        {
+          "offset": 136,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "UnityEngine.Vector3",
+            "type": "System.Single",
+            "identity": "System.Single UnityEngine.Vector3::x"
+          }
+        },
+        {
+          "offset": 141,
+          "opcode": "stfld",
+          "operand": {
+            "owner": "Project",
+            "type": "UnityEngine.Vector3",
+            "identity": "UnityEngine.Vector3 Project::endPosition"
+          }
+        },
+        {
+          "offset": 146,
+          "opcode": "ldloc",
+          "operand": {
+            "index": 3
+          }
+        },
+        {
+          "offset": 150,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "UnityEngine.Vector3",
+            "type": "System.Single",
+            "identity": "System.Single UnityEngine.Vector3::z"
+          }
+        },
+        {
+          "offset": 155,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 156,
+          "opcode": "br",
+          "operand": {
+            "target": 161
+          }
+        },
+        {
+          "offset": 161,
+          "opcode": "ldstr",
+          "operand": "Invalid instruction: 75 Invalid \"Jump target not found in method: 0x18037758F\""
+        },
+        {
+          "offset": 166,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 167,
+          "opcode": "ldstr",
+          "operand": "Invalid instruction: 90 Invalid \"Jump target not found in method: 0x18037758F\""
+        },
+        {
+          "offset": 172,
+          "opcode": "pop",
+          "operand": null
+        },
+        {
+          "offset": 173,
+          "opcode": "ret",
+          "operand": null
+        },
+        {
+          "offset": 174,
+          "opcode": "ldstr",
+          "operand": "Warning: Method ends with non empty stack (-48), the output could be wrong!"
+        },
+        {
+          "offset": 179,
+          "opcode": "pop",
+          "operand": null
+        }
+      ],
+      "handlers": []
+    },
+    "fields": [
+      {
+        "cil_offset": 1,
+        "field": {
+          "owner": "Project",
+          "type": "System.Int32",
+          "identity": "System.Int32 Project::movementTracks"
+        },
+        "original_records": [
+          {
+            "type": "Project",
+            "namespace": "",
+            "typeIndex": 5210,
+            "name": "movementTracks",
+            "token": "0x4000520",
+            "offset": 88,
+            "type_index": 15454
+          }
+        ]
+      },
+      {
+        "cil_offset": 73,
+        "field": {
+          "owner": "UnityEngine.Vector3",
+          "type": "System.Single",
+          "identity": "System.Single UnityEngine.Vector3::x"
+        },
+        "original_records": [
+          {
+            "type": "Vector3",
+            "namespace": "UnityEngine",
+            "typeIndex": 4008,
+            "name": "x",
+            "token": "0x40004cd",
+            "offset": 16,
+            "type_index": 18124
+          }
+        ]
+      },
+      {
+        "cil_offset": 78,
+        "field": {
+          "owner": "Project",
+          "type": "UnityEngine.Vector3",
+          "identity": "UnityEngine.Vector3 Project::endPosition"
+        },
+        "original_records": [
+          {
+            "type": "Project",
+            "namespace": "",
+            "typeIndex": 5210,
+            "name": "endPosition",
+            "token": "0x4000521",
+            "offset": 92,
+            "type_index": 19913
+          }
+        ]
+      },
+      {
+        "cil_offset": 107,
+        "field": {
+          "owner": "Project",
+          "type": "UnityEngine.Vector3",
+          "identity": "UnityEngine.Vector3 Project::endPosition"
+        },
+        "original_records": [
+          {
+            "type": "Project",
+            "namespace": "",
+            "typeIndex": 5210,
+            "name": "endPosition",
+            "token": "0x4000521",
+            "offset": 92,
+            "type_index": 19913
+          }
+        ]
+      },
+      {
+        "cil_offset": 136,
+        "field": {
+          "owner": "UnityEngine.Vector3",
+          "type": "System.Single",
+          "identity": "System.Single UnityEngine.Vector3::x"
+        },
+        "original_records": [
+          {
+            "type": "Vector3",
+            "namespace": "UnityEngine",
+            "typeIndex": 4008,
+            "name": "x",
+            "token": "0x40004cd",
+            "offset": 16,
+            "type_index": 18124
+          }
+        ]
+      },
+      {
+        "cil_offset": 141,
+        "field": {
+          "owner": "Project",
+          "type": "UnityEngine.Vector3",
+          "identity": "UnityEngine.Vector3 Project::endPosition"
+        },
+        "original_records": [
+          {
+            "type": "Project",
+            "namespace": "",
+            "typeIndex": 5210,
+            "name": "endPosition",
+            "token": "0x4000521",
+            "offset": 92,
+            "type_index": 19913
+          }
+        ]
+      },
+      {
+        "cil_offset": 150,
+        "field": {
+          "owner": "UnityEngine.Vector3",
+          "type": "System.Single",
+          "identity": "System.Single UnityEngine.Vector3::z"
+        },
+        "original_records": [
+          {
+            "type": "Vector3",
+            "namespace": "UnityEngine",
+            "typeIndex": 4008,
+            "name": "z",
+            "token": "0x40004cf",
+            "offset": 24,
+            "type_index": 18124
+          }
+        ]
+      }
+    ],
+    "diagnostics_before": 3
+  }
+]

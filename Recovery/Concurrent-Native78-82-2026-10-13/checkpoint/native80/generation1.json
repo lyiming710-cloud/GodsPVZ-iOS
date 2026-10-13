@@ -1,0 +1,67 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "3b3bcfca51402e1eedf5d59fbe1bf9d923336730325550205f960bd8a8bceec6",
+  "candidate_sha256": "119c847000d84922e5089cfed3bb464366251aa05597f4c7fa22706368211950",
+  "metadata": {
+    "old_root_offset": 11588096,
+    "old_root_size": 402400,
+    "new_root_offset": 11990528,
+    "new_root_size": 402437,
+    "extended_section_header": 456,
+    "old_virtual_size": 10855392,
+    "new_virtual_size": 11257861,
+    "old_raw_size": 10855424,
+    "new_raw_size": 11258368,
+    "added": [
+      {
+        "kind": "StandAloneSig",
+        "token": "0x110006DF",
+        "target": "0x060003A0",
+        "active_local": 10,
+        "signature_index": 60412,
+        "old_signature_hex": "070F0C1C12090202021C123D021279151151011C1281E0151151011C120918",
+        "signature_hex": "070F0C1C12090202021C123D0212791511510112091281E0151151011C120918"
+      }
+    ],
+    "blob_heap_added_bytes": 33,
+    "table_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x06000206",
+      "method": "System.Void ProjectManager::PlayAudio_Click(Project)",
+      "header": 143948,
+      "code_start": 143960,
+      "reserved_code_size": 214,
+      "new_code_size": 157,
+      "old_max": 4,
+      "new_max": 4,
+      "old_local_sig": 285213086,
+      "local_sig": 285213086,
+      "code_sha256": "fd14834e69748af9419bc87523669e3044c2134a45f43c835311c80696588e43"
+    },
+    {
+      "token": "0x060003A0",
+      "method": "System.Void Plant::SetBrightness(System.Single)",
+      "header": 292688,
+      "code_start": 292700,
+      "reserved_code_size": 218,
+      "new_code_size": 63,
+      "old_max": 3,
+      "new_max": 3,
+      "old_local_sig": 285213402,
+      "local_sig": 285214431,
+      "code_sha256": "28f8fd6f68af19c8885372d322d39df4e7d92f06b85db530b1b9b145f848ade2",
+      "new_finally": {
+        "section_offset": 292764,
+        "try_start": 13,
+        "try_length": 41,
+        "handler_start": 54,
+        "handler_length": 8
+      }
+    }
+  ],
+  "scope": "Two original-native-backed bodies; typed GameObject foreach with finally, per-iteration static brightness name and raw-null faults, no brightness assignment or clamp; public Renderer.get_material original native pointer aliases private GetMaterial but full reference persistent branch explicitly requires target-runtime qualification; original audio float dispatch and order/captured arguments; only one scoped enumerator local signature added, no MemberRef additions; no tests executed; unqualified parent chain pending"
+}

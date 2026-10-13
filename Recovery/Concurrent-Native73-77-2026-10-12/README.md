@@ -70,3 +70,5 @@ Native61 v3 claims full completion, but Native61Fixture_final.cs has a few stand
 Native65's frozen checker does not support ldftn. Keep `verify_types.py` SHA-256 `5175b68ae0cb9366a493499b566a7430dc1d8986d81cf17be91e0640974dd47a` unchanged and require an independent legal-delegate supplement with real valid/invalid CLR execution and signature/receiver/callback controls. Do not rewrite legal candidate IL to avoid the checker limitation.
 
 The last full compiler measurement remains Native53: 516 errored methods, 5,668 diagnostics, 24 failed translation units. Pending method counts must not be subtracted from it. Full IL2CPP/all-TU work remains deferred to the accepted-method threshold; qualification and actual Unity/Xcode/unsigned IPA remain separate gates.
+
+Continue at ../Concurrent-Native78-82-2026-10-13/README.md: 11 additional pending implementations,72 pending total; original Gemini message interface restored; accepted ledger remains40/100.

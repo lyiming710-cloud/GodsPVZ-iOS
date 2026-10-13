@@ -1,0 +1,33 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "290767e0d4e513612c56b3d06cff3edf0894e58808a6338d6c6b87019a2a3f83",
+  "candidate_sha256": "de2f98d4e793b91fba17ba7eff3aeba3130282f5e477f0daae1aa358287868f7",
+  "metadata_unchanged_by_construction": true,
+  "methods": [
+    {
+      "token": "0x0600061D",
+      "method": "System.Void GridConfig_A::SetGridState(System.Int32)",
+      "header": 529800,
+      "code_start": 529812,
+      "reserved_code_size": 210,
+      "new_code_size": 84,
+      "old_max": 4,
+      "new_max": 4,
+      "local_sig": 285213855,
+      "code_sha256": "e3e936d17f2643f6ce56bb6079b6f6b49b764dca384c7c7072d737fa58eb4f48"
+    },
+    {
+      "token": "0x06000483",
+      "method": "System.Void Zombie::TranToAttack(Plant)",
+      "header": 376700,
+      "code_start": 376712,
+      "reserved_code_size": 281,
+      "new_code_size": 118,
+      "old_max": 3,
+      "new_max": 3,
+      "local_sig": 285213565,
+      "code_sha256": "bd4f459bcca29bf4c4c9a170eb1932fb572933445249d053f7f7f67639e0bf8f"
+    }
+  ],
+  "scope": "Two original-native-backed bodies; GridState typeof and boxed Int32 independently mapped from original usage cells; one GetTypeFromHandle; invalid state logs then continues with zero; system and targetPlant rereads after Unity comparisons/callbacks; native method does not assign targetPlant; raw-null branches throw NullReferenceException; public Vector3.get_zero exact getter IL evidence; all metadata and local signatures unchanged; no tests executed; unqualified parent chain pending"
+}

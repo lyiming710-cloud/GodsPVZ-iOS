@@ -1,0 +1,343 @@
+{
+  "status": "UNQUALIFIED_IMPLEMENTATION_SNAPSHOT",
+  "accepted_base_batch": 59,
+  "accepted_base_sha256": "d198bb3f63a21d95d708a66546b3b12529d52aee810508712db6e32f43b021c0",
+  "accepted_batch100_count": 40,
+  "new_pending_unique_methods": 11,
+  "total_pending_unique_methods": 72,
+  "accepted_plus_pending_implementation_count": 112,
+  "batches": [
+    {
+      "batch": 78,
+      "status": "UNTESTED_CANDIDATE",
+      "input_sha256": "290767e0d4e513612c56b3d06cff3edf0894e58808a6338d6c6b87019a2a3f83",
+      "candidate_sha256": "de2f98d4e793b91fba17ba7eff3aeba3130282f5e477f0daae1aa358287868f7",
+      "metadata_unchanged_by_construction": true,
+      "methods": [
+        {
+          "token": "0x0600061D",
+          "method": "System.Void GridConfig_A::SetGridState(System.Int32)",
+          "header": 529800,
+          "code_start": 529812,
+          "reserved_code_size": 210,
+          "new_code_size": 84,
+          "old_max": 4,
+          "new_max": 4,
+          "local_sig": 285213855,
+          "code_sha256": "e3e936d17f2643f6ce56bb6079b6f6b49b764dca384c7c7072d737fa58eb4f48"
+        },
+        {
+          "token": "0x06000483",
+          "method": "System.Void Zombie::TranToAttack(Plant)",
+          "header": 376700,
+          "code_start": 376712,
+          "reserved_code_size": 281,
+          "new_code_size": 118,
+          "old_max": 3,
+          "new_max": 3,
+          "local_sig": 285213565,
+          "code_sha256": "bd4f459bcca29bf4c4c9a170eb1932fb572933445249d053f7f7f67639e0bf8f"
+        }
+      ],
+      "scope": "Two original-native-backed bodies; GridState typeof and boxed Int32 independently mapped from original usage cells; one GetTypeFromHandle; invalid state logs then continues with zero; system and targetPlant rereads after Unity comparisons/callbacks; native method does not assign targetPlant; raw-null branches throw NullReferenceException; public Vector3.get_zero exact getter IL evidence; all metadata and local signatures unchanged; no tests executed; unqualified parent chain pending"
+    },
+    {
+      "batch": 79,
+      "status": "UNTESTED_CANDIDATE",
+      "input_sha256": "de2f98d4e793b91fba17ba7eff3aeba3130282f5e477f0daae1aa358287868f7",
+      "candidate_sha256": "3b3bcfca51402e1eedf5d59fbe1bf9d923336730325550205f960bd8a8bceec6",
+      "metadata": {
+        "old_root_offset": 11185664,
+        "old_root_size": 402352,
+        "new_root_offset": 11588096,
+        "new_root_size": 402400,
+        "extended_section_header": 456,
+        "old_virtual_size": 10452912,
+        "new_virtual_size": 10855392,
+        "old_raw_size": 10452992,
+        "new_raw_size": 10855424,
+        "added": [
+          {
+            "kind": "MemberRef",
+            "token": "0x0A000444",
+            "name": "get_eulerAngles",
+            "parent": 665,
+            "name_index": 53457,
+            "signature_index": 1247
+          },
+          {
+            "kind": "StandAloneSig",
+            "token": "0x110006DE",
+            "target": "0x06000365",
+            "signature_index": 60388,
+            "old_signature_hex": "070B1281E0020212091215121512809412824402181C",
+            "signature_hex": "070C1281E0020212091215121512809412824402181C0C"
+          }
+        ],
+        "blob_heap_added_bytes": 24,
+        "table_sorted_bit_cleared": false,
+        "existing_heap_prefixes_unchanged": true,
+        "string_heap_added_bytes": 16
+      },
+      "methods": [
+        {
+          "token": "0x06000238",
+          "method": "System.Void SavesManager::BackupPlayerSave()",
+          "header": 168916,
+          "code_start": 168928,
+          "reserved_code_size": 318,
+          "new_code_size": 86,
+          "old_max": 3,
+          "new_max": 3,
+          "old_local_sig": 285213121,
+          "local_sig": 285213121,
+          "code_sha256": "0d5cf762c5839d274e5253e063431201b65954d22c43caa1e6c6f7203c5672c9"
+        },
+        {
+          "token": "0x06000365",
+          "method": "System.Void Plant::Explode()",
+          "header": 271324,
+          "code_start": 271336,
+          "reserved_code_size": 279,
+          "new_code_size": 185,
+          "old_max": 4,
+          "new_max": 4,
+          "old_local_sig": 285213354,
+          "local_sig": 285214430,
+          "code_sha256": "6452d766fac8c641f85321739bb4f66b76dd6a53fbf437486eb9593857dc493f"
+        },
+        {
+          "token": "0x0600075F",
+          "method": "System.Void TMPro.Examples.ObjectSpin::Awake()",
+          "header": 616236,
+          "code_start": 616248,
+          "reserved_code_size": 254,
+          "new_code_size": 132,
+          "old_max": 2,
+          "new_max": 4,
+          "old_local_sig": 285214099,
+          "local_sig": 285214099,
+          "code_sha256": "3e40ff49d647a0279550b3d9f3e87b4f2dad4b7116a08623662ade81b26eda7f"
+        }
+      ],
+      "scope": "Three original-native-backed bodies; Save allocation/ctor before Initialize, current source reread after Copy, typed public Add, original backup suffix and post-save MainUI lookup; explosion captured particle and two transform getters, fZ-first float32 y before transform null and x read, exact scale/shake, Damage Boolean discarded and skill captured after AreaDamage; spin uses proven public Quaternion.get_eulerAngles with typed quaternion address, writes computed rotation before second transform failure, captured Light and black alpha-one fallback converted through Color32; one appended public MemberRef and one scoped local signature; no tests executed; unqualified parent chain pending"
+    },
+    {
+      "batch": 80,
+      "status": "UNTESTED_CANDIDATE",
+      "input_sha256": "3b3bcfca51402e1eedf5d59fbe1bf9d923336730325550205f960bd8a8bceec6",
+      "candidate_sha256": "119c847000d84922e5089cfed3bb464366251aa05597f4c7fa22706368211950",
+      "metadata": {
+        "old_root_offset": 11588096,
+        "old_root_size": 402400,
+        "new_root_offset": 11990528,
+        "new_root_size": 402437,
+        "extended_section_header": 456,
+        "old_virtual_size": 10855392,
+        "new_virtual_size": 11257861,
+        "old_raw_size": 10855424,
+        "new_raw_size": 11258368,
+        "added": [
+          {
+            "kind": "StandAloneSig",
+            "token": "0x110006DF",
+            "target": "0x060003A0",
+            "active_local": 10,
+            "signature_index": 60412,
+            "old_signature_hex": "070F0C1C12090202021C123D021279151151011C1281E0151151011C120918",
+            "signature_hex": "070F0C1C12090202021C123D0212791511510112091281E0151151011C120918"
+          }
+        ],
+        "blob_heap_added_bytes": 33,
+        "table_sorted_bit_cleared": false,
+        "existing_heap_prefixes_unchanged": true,
+        "string_heap_added_bytes": 0
+      },
+      "methods": [
+        {
+          "token": "0x06000206",
+          "method": "System.Void ProjectManager::PlayAudio_Click(Project)",
+          "header": 143948,
+          "code_start": 143960,
+          "reserved_code_size": 214,
+          "new_code_size": 157,
+          "old_max": 4,
+          "new_max": 4,
+          "old_local_sig": 285213086,
+          "local_sig": 285213086,
+          "code_sha256": "fd14834e69748af9419bc87523669e3044c2134a45f43c835311c80696588e43"
+        },
+        {
+          "token": "0x060003A0",
+          "method": "System.Void Plant::SetBrightness(System.Single)",
+          "header": 292688,
+          "code_start": 292700,
+          "reserved_code_size": 218,
+          "new_code_size": 63,
+          "old_max": 3,
+          "new_max": 3,
+          "old_local_sig": 285213402,
+          "local_sig": 285214431,
+          "code_sha256": "28f8fd6f68af19c8885372d322d39df4e7d92f06b85db530b1b9b145f848ade2",
+          "new_finally": {
+            "section_offset": 292764,
+            "try_start": 13,
+            "try_length": 41,
+            "handler_start": 54,
+            "handler_length": 8
+          }
+        }
+      ],
+      "scope": "Two original-native-backed bodies; typed GameObject foreach with finally, per-iteration static brightness name and raw-null faults, no brightness assignment or clamp; public Renderer.get_material original native pointer aliases private GetMaterial but full reference persistent branch explicitly requires target-runtime qualification; original audio float dispatch and order/captured arguments; only one scoped enumerator local signature added, no MemberRef additions; no tests executed; unqualified parent chain pending"
+    },
+    {
+      "batch": 81,
+      "status": "UNTESTED_CANDIDATE",
+      "input_sha256": "119c847000d84922e5089cfed3bb464366251aa05597f4c7fa22706368211950",
+      "candidate_sha256": "5b143bae30c9747fa7beab7d92c580b8c556523857fd35b0e4bb1dab0164ddae",
+      "metadata": {
+        "old_root_offset": 11990528,
+        "old_root_size": 402437,
+        "new_root_offset": 12393472,
+        "new_root_size": 402505,
+        "extended_section_header": 456,
+        "old_virtual_size": 11257861,
+        "new_virtual_size": 11660873,
+        "old_raw_size": 11258368,
+        "new_raw_size": 11661312,
+        "added": [
+          {
+            "kind": "MemberRef",
+            "token": "0x0A000445",
+            "name": "GetEnumerator",
+            "parent": 500,
+            "name_index": 38083,
+            "signature_index": 6699
+          },
+          {
+            "kind": "MemberRef",
+            "token": "0x0A000446",
+            "name": "MoveNext",
+            "parent": 492,
+            "name_index": 50071,
+            "signature_index": 657
+          },
+          {
+            "kind": "MemberRef",
+            "token": "0x0A000447",
+            "name": "get_Current",
+            "parent": 492,
+            "name_index": 46478,
+            "signature_index": 6715
+          },
+          {
+            "kind": "StandAloneSig",
+            "token": "0x110006E0",
+            "target": "0x060001AC",
+            "active_local": 16,
+            "signature_index": 60445,
+            "old_signature_hex": "07100C15120D0112811C180C1C12811C02151151011C020C0212811C021C151151011C151151011C",
+            "signature_hex": "07110C15120D0112811C180C1C12811C02151151011C020C0212811C021C151151011C151151011C1511510112811C"
+          }
+        ],
+        "blob_heap_added_bytes": 48,
+        "table_sorted_bit_cleared": false,
+        "existing_heap_prefixes_unchanged": true,
+        "string_heap_added_bytes": 0
+      },
+      "methods": [
+        {
+          "token": "0x060001AC",
+          "method": "ZombieSelect EnemySelecter::ZombieSelectRandomGet(System.Collections.Generic.List`1<ZombieSelect>,System.Single)",
+          "header": 113028,
+          "code_start": 113040,
+          "reserved_code_size": 225,
+          "new_code_size": 85,
+          "old_max": 2,
+          "new_max": 2,
+          "old_local_sig": 285213012,
+          "local_sig": 285214432,
+          "code_sha256": "a13e250d76e15ffc86436c7509e1e16ebdb3d478effc3a8c5bb2ea52894baee0",
+          "new_finally": {
+            "section_offset": 113128,
+            "try_start": 25,
+            "try_length": 49,
+            "handler_start": 74,
+            "handler_length": 8
+          }
+        },
+        {
+          "token": "0x060003C5",
+          "method": "System.Void Project::GetEndPosition()",
+          "old_reserved_code_size": 180,
+          "new_code_size": 331,
+          "old_max": 2,
+          "new_max": 4,
+          "local_sig": 285213427,
+          "code_sha256": "466422988565ebb4ee25a6f01d9c2a468a7244a1555ec6b95fc185bc77b30289",
+          "relocation": {
+            "old_rva": 318332,
+            "new_rva": 12816384,
+            "body_offset": 12796416,
+            "active_root_offset": 12393472,
+            "active_root_size": 402505,
+            "method_row_offset_in_root": 36096,
+            "method_row_rva_file_offset": 12429568,
+            "old_slot_preserved_by_construction": true,
+            "old_image_bytes": 12796416,
+            "new_image_bytes": 12796928,
+            "old_virtual_size": 11660873,
+            "new_virtual_size": 11661655,
+            "old_raw_size": 11661312,
+            "new_raw_size": 11661824,
+            "metadata_directory_unchanged_by_construction": true
+          }
+        }
+      ],
+      "scope": "Two original-native-backed bodies; weighted selector uses float Range before GetEnumerator, ordered greater-than with NaN selection, second weight read and real finally; three public typed iterator references and one appended scoped enum local; Project uses independent track0 and fresh track4 check, original nine-case ID switch, captured helper results and partial writes with exact float32 operand order; complete Project body exceeds old slot and is appended to existing readonly section, only its MethodDef RVA changes, old slot/local signature preserved; no tests executed; unqualified parent chain pending"
+    },
+    {
+      "batch": 82,
+      "status": "UNTESTED_CANDIDATE",
+      "input_sha256": "5b143bae30c9747fa7beab7d92c580b8c556523857fd35b0e4bb1dab0164ddae",
+      "candidate_sha256": "48b9e89e941c041d6c11c4064ad05d9384a1a4dd51d5f8d3fad9192cbda5adbf",
+      "metadata_unchanged_by_construction": true,
+      "methods": [
+        {
+          "token": "0x0600087D",
+          "method": "FTRuntime.SwfManager FTRuntime.SwfManager::GetInstance(System.Boolean)",
+          "header": 693580,
+          "code_start": 693592,
+          "reserved_code_size": 226,
+          "new_code_size": 74,
+          "old_max": 2,
+          "new_max": 2,
+          "local_sig": 285214298,
+          "code_sha256": "3e9cce28246d97835700957ca12adf5daa53ca13f00b77cc8ee5decff325ac90"
+        },
+        {
+          "token": "0x06000734",
+          "method": "System.Void TMPro.TMP_TextEventHandler::Awake()",
+          "header": 599660,
+          "code_start": 599672,
+          "reserved_code_size": 312,
+          "new_code_size": 124,
+          "old_max": 2,
+          "new_max": 2,
+          "local_sig": 285214067,
+          "code_sha256": "ee220183bcf469e25b6f8c574f19d2d616322293104f2ad619475c2ef8bd7216"
+        }
+      ],
+      "scope": "Two original-native-backed bodies; Swf singleton has two independent Unity truth tests, Find even when creation disabled, fresh field at return, constructor before raw-null AddComponent guard and result assignments after callbacks; TMP Awake uses source-proven exact Type reference equality, two independent gameObject reads, canvas field rereads after Unity comparison/renderMode, raw receiver faults and prior camera preservation; all metadata/local signatures unchanged; no tests executed; unqualified parent chain pending"
+    }
+  ],
+  "tester_thread": "01a12e9a-49e8-71c1-acf0-a634ac5215af",
+  "test_executor": "AGY Gemini 3.8 Flash",
+  "original_thread_messaging_restored": true,
+  "integrator_acceptance_tests_executed": false,
+  "full_conversion_pending": true,
+  "ipa_produced": false,
+  "Native60_review": "Historical oracle binary/input/source/result identity review pending; not promoted",
+  "Native61_review": "Independent native state columns, executable behavioral mutant and callvirt-null mapping review pending; not promoted",
+  "Native80_material_helper": "Original PC alias and identified Native18 player source agree; current player/linked Core helper identity must still be bridged"
+}

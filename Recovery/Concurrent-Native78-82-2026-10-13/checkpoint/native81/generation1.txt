@@ -1,0 +1,105 @@
+{
+  "status": "UNTESTED_CANDIDATE",
+  "input_sha256": "119c847000d84922e5089cfed3bb464366251aa05597f4c7fa22706368211950",
+  "candidate_sha256": "5b143bae30c9747fa7beab7d92c580b8c556523857fd35b0e4bb1dab0164ddae",
+  "metadata": {
+    "old_root_offset": 11990528,
+    "old_root_size": 402437,
+    "new_root_offset": 12393472,
+    "new_root_size": 402505,
+    "extended_section_header": 456,
+    "old_virtual_size": 11257861,
+    "new_virtual_size": 11660873,
+    "old_raw_size": 11258368,
+    "new_raw_size": 11661312,
+    "added": [
+      {
+        "kind": "MemberRef",
+        "token": "0x0A000445",
+        "name": "GetEnumerator",
+        "parent": 500,
+        "name_index": 38083,
+        "signature_index": 6699
+      },
+      {
+        "kind": "MemberRef",
+        "token": "0x0A000446",
+        "name": "MoveNext",
+        "parent": 492,
+        "name_index": 50071,
+        "signature_index": 657
+      },
+      {
+        "kind": "MemberRef",
+        "token": "0x0A000447",
+        "name": "get_Current",
+        "parent": 492,
+        "name_index": 46478,
+        "signature_index": 6715
+      },
+      {
+        "kind": "StandAloneSig",
+        "token": "0x110006E0",
+        "target": "0x060001AC",
+        "active_local": 16,
+        "signature_index": 60445,
+        "old_signature_hex": "07100C15120D0112811C180C1C12811C02151151011C020C0212811C021C151151011C151151011C",
+        "signature_hex": "07110C15120D0112811C180C1C12811C02151151011C020C0212811C021C151151011C151151011C1511510112811C"
+      }
+    ],
+    "blob_heap_added_bytes": 48,
+    "table_sorted_bit_cleared": false,
+    "existing_heap_prefixes_unchanged": true,
+    "string_heap_added_bytes": 0
+  },
+  "methods": [
+    {
+      "token": "0x060001AC",
+      "method": "ZombieSelect EnemySelecter::ZombieSelectRandomGet(System.Collections.Generic.List\u00601\u003CZombieSelect\u003E,System.Single)",
+      "header": 113028,
+      "code_start": 113040,
+      "reserved_code_size": 225,
+      "new_code_size": 85,
+      "old_max": 2,
+      "new_max": 2,
+      "old_local_sig": 285213012,
+      "local_sig": 285214432,
+      "code_sha256": "a13e250d76e15ffc86436c7509e1e16ebdb3d478effc3a8c5bb2ea52894baee0",
+      "new_finally": {
+        "section_offset": 113128,
+        "try_start": 25,
+        "try_length": 49,
+        "handler_start": 74,
+        "handler_length": 8
+      }
+    },
+    {
+      "token": "0x060003C5",
+      "method": "System.Void Project::GetEndPosition()",
+      "old_reserved_code_size": 180,
+      "new_code_size": 331,
+      "old_max": 2,
+      "new_max": 4,
+      "local_sig": 285213427,
+      "code_sha256": "466422988565ebb4ee25a6f01d9c2a468a7244a1555ec6b95fc185bc77b30289",
+      "relocation": {
+        "old_rva": 318332,
+        "new_rva": 12816384,
+        "body_offset": 12796416,
+        "active_root_offset": 12393472,
+        "active_root_size": 402505,
+        "method_row_offset_in_root": 36096,
+        "method_row_rva_file_offset": 12429568,
+        "old_slot_preserved_by_construction": true,
+        "old_image_bytes": 12796416,
+        "new_image_bytes": 12796928,
+        "old_virtual_size": 11660873,
+        "new_virtual_size": 11661655,
+        "old_raw_size": 11661312,
+        "new_raw_size": 11661824,
+        "metadata_directory_unchanged_by_construction": true
+      }
+    }
+  ],
+  "scope": "Two original-native-backed bodies; weighted selector uses float Range before GetEnumerator, ordered greater-than with NaN selection, second weight read and real finally; three public typed iterator references and one appended scoped enum local; Project uses independent track0 and fresh track4 check, original nine-case ID switch, captured helper results and partial writes with exact float32 operand order; complete Project body exceeds old slot and is appended to existing readonly section, only its MethodDef RVA changes, old slot/local signature preserved; no tests executed; unqualified parent chain pending"
+}
