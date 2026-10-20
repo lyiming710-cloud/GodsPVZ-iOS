@@ -1,0 +1,119 @@
+Plant::Update_Color
+{"token": "0x06000352", "name": "Plant::Update_Color", "signature": "200001", "rva": 267044, "max_stack": 2, "code_size": 428, "local_sig": 285213338, "locals_blob": "071a1c1c1c1c1c1281e01281a412812c1180d10202021c12090202123d021180d102123d1c151151011c151151011c151151011c0c", "eh_count": 0, "il_sha256": "3aece88e84898c281289435c7a21418d6a20920c92f8cd76e7e349f437bfd4d7"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0001)
+IL_0009: pop            None
+IL_000A: ldloc          local(0x0002)
+IL_000E: pop            None
+IL_000F: ldloc          local(0x0003)
+IL_0013: pop            None
+IL_0014: ldloc          local(0x0004)
+IL_0018: pop            None
+IL_0019: br             {'target': 351}
+IL_001E: ldloc          local(0x0006)
+IL_0022: ldfld          {'token': '0x040003D9', 'identity': 'Board::mouseManager'}
+IL_0027: stloc          local(0x0007)
+IL_002B: br             {'target': 48}
+IL_0030: br             {'target': 53}
+IL_0035: ldloc          local(0x0007)
+IL_0039: ldfld          {'token': '0x04000243', 'identity': 'MouseManager::plantOnGlove'}
+IL_003E: ldarg.0        None
+IL_003F: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_0044: stloc          local(0x0009)
+IL_0048: ldloc          local(0x0009)
+IL_004C: ldc.i4.0       None
+IL_004D: ceq            None
+IL_004F: stloc          local(0x000B)
+IL_0053: nop            None
+IL_0054: ldloc          local(0x000B)
+IL_0058: brtrue         {'target': 104}
+IL_005D: br             {'target': 98}
+IL_0062: nop            None
+IL_0063: br             {'target': 104}
+IL_0068: ldarg.0        None
+IL_0069: ldfld          {'token': '0x040004D6', 'identity': 'Plant::elementManager'}
+IL_006E: call           {'token': '0x06000128', 'identity': 'ElementManager::GetElementColor'}
+IL_0073: stloc          local(0x0008)
+IL_0077: nop            None
+IL_0078: br             {'target': 125}
+IL_007D: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0082: pop            None
+IL_0083: nop            None
+IL_0084: br             {'target': 384}
+IL_0089: ldloc          local(0x000D)
+IL_008D: ldc.i4         0
+IL_0092: ceq            None
+IL_0094: stloc          local(0x000F)
+IL_0098: ldloca         local(0x0017)
+IL_009C: stloc          local(0x0018)
+IL_00A0: ldloc          local(0x000F)
+IL_00A4: brtrue         {'target': 329}
+IL_00A9: br             {'target': 174}
+IL_00AE: ldloc          local(0x000D)
+IL_00B2: call           {'token': '0x2B000011', 'identity': '0x2b000011'}
+IL_00B7: stloc          local(0x0010)
+IL_00BB: ldloc          local(0x0010)
+IL_00BF: ldc.i4         0
+IL_00C4: ceq            None
+IL_00C6: stloc          local(0x0011)
+IL_00CA: ldloc          local(0x0011)
+IL_00CE: brtrue         {'target': 318}
+IL_00D3: br             {'target': 216}
+IL_00D8: ldloc          local(0x0010)
+IL_00DC: call           {'token': '0x0A0001E7', 'identity': 'UnityEngine.SpriteRenderer::get_color / sig 20001180d1'}
+IL_00E1: stloc          local(0x0012)
+IL_00E5: ldloc          local(0x000D)
+IL_00E9: ldc.i4         0
+IL_00EE: ceq            None
+IL_00F0: stloc          local(0x0013)
+IL_00F4: ldloca         local(0x0016)
+IL_00F8: stloc          local(0x0018)
+IL_00FC: ldloc          local(0x0013)
+IL_0100: brtrue         {'target': 373}
+IL_0105: br             {'target': 266}
+IL_010A: ldloc          local(0x000D)
+IL_010E: call           {'token': '0x2B000011', 'identity': '0x2b000011'}
+IL_0113: stloc          local(0x0014)
+IL_0117: br             {'target': 284}
+IL_011C: ldloc          local(0x0014)
+IL_0120: ldloca         local(0x0019)
+IL_0124: call           {'token': '0x0A000097', 'identity': 'UnityEngine.SpriteRenderer::set_color / sig 2001011180d1'}
+IL_0129: nop            None
+IL_012A: br             {'target': 384}
+IL_012F: ldloca         local(0x0017)
+IL_0133: call           {'token': '0x0A000128', 'identity': 'TypeSpec:49::Dispose / sig 200001'}
+IL_0138: br             {'target': 317}
+IL_013D: ret            None
+IL_013E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0143: throw          None
+IL_0144: br             {'target': 329}
+IL_0149: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_014E: throw          None
+IL_014F: ldloc          local(0x0018)
+IL_0153: throw          None
+IL_0154: br             {'target': 345}
+IL_0159: nop            None
+IL_015A: br             {'target': 366}
+IL_015F: ldarg.0        None
+IL_0160: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_0165: stloc          local(0x0006)
+IL_0169: br             {'target': 30}
+IL_016E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0173: throw          None
+IL_0174: ret            None
+IL_0175: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_017A: throw          None
+IL_017B: br             {'target': 318}
+IL_0180: ldloca         local(0x0017)
+IL_0184: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0189: stloc          local(0x000E)
+IL_018D: ldloc          local(0x000E)
+IL_0191: ldc.i4.0       None
+IL_0192: ceq            None
+IL_0194: stloc          local(0x000A)
+IL_0198: ldloc          local(0x000A)
+IL_019C: brtrue         {'target': 303}
+IL_01A1: br             {'target': 137}
+IL_01A6: ldstr          {'token': '0x700060B9', 'identity': 'Warning: Method ends with non empty stack (-D0), the output could be wrong!'}
+IL_01AB: pop            None
