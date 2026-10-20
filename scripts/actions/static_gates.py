@@ -785,12 +785,16 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
     def build_tool(cs_file: pathlib.Path, tool_name: str) -> pathlib.Path:
         t_dir = tools_bin / tool_name
         t_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(cs_file, t_dir / cs_file.name)
+        cs_content = cs_file.read_text(encoding="utf-8")
+        if "using System.Collections.Generic;" not in cs_content:
+            cs_content = "using System;\nusing System.Collections.Generic;\n" + cs_content
+        (t_dir / cs_file.name).write_text(cs_content, encoding="utf-8")
         csproj_txt = f"""<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Cecil" HintPath="{cecil_dll}" />
