@@ -1,0 +1,95 @@
+TMPro.Examples.TMP_FrameRateCounter::Awake
+{"token": "0x060007B2", "name": "TMPro.Examples.TMP_FrameRateCounter::Awake", "signature": "200001", "rva": 640668, "max_stack": 2, "code_size": 366, "local_sig": 285214158, "locals_blob": "070c1284100202121d12091281791281f1127912151c12151c", "eh_count": 0, "il_sha256": "ca8979858b868dfd663f4be42870712ec6a1824553d39964c16c5e4ac2161d0b"}
+IL_0000: br             {'target': 324}
+IL_0005: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_000A: stloc          local(0x0003)
+IL_000E: ldarg.0        None
+IL_000F: ldloc          local(0x0003)
+IL_0013: stfld          {'token': '0x040009FC', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_camera'}
+IL_0018: br             {'target': 29}
+IL_001D: br             {'target': 34}
+IL_0022: ldc.i4         9999
+IL_0027: call           {'token': '0x0A000251', 'identity': 'UnityEngine.Application::set_targetFrameRate / sig 00010108'}
+IL_002C: ldstr          {'token': '0x7002165B', 'identity': 'Frame Counter'}
+IL_0031: newobj         {'token': '0x0A0000F3', 'identity': 'UnityEngine.GameObject::.ctor / sig 2001010e'}
+IL_0036: stloc          local(0x0004)
+IL_003A: br             {'target': 63}
+IL_003F: nop            None
+IL_0040: br             {'target': 69}
+IL_0045: ldloc          local(0x0004)
+IL_0049: call           {'token': '0x2B00009A', 'identity': '0x2b00009a'}
+IL_004E: stloc          local(0x0005)
+IL_0052: ldarg.0        None
+IL_0053: ldloc          local(0x0005)
+IL_0057: stfld          {'token': '0x040009FA', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_TextMeshPro'}
+IL_005C: br             {'target': 97}
+IL_0061: ldstr          {'token': '0x70021677', 'identity': 'Fonts & Materials/LiberationSans SDF'}
+IL_0066: call           {'token': '0x2B0000A2', 'identity': '0x2b0000a2'}
+IL_006B: stloc          local(0x0006)
+IL_006F: br             {'target': 116}
+IL_0074: ldarg.0        None
+IL_0075: ldfld          {'token': '0x040009FA', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_TextMeshPro'}
+IL_007A: ldloc          local(0x0006)
+IL_007E: call           {'token': '0x0A0002F9', 'identity': 'TMPro.TMP_Text::set_font / sig 2001011281f1'}
+IL_0083: ldstr          {'token': '0x700216C1', 'identity': 'Fonts & Materials/LiberationSans SDF - Overlay'}
+IL_0088: call           {'token': '0x2B00009B', 'identity': '0x2b00009b'}
+IL_008D: stloc          local(0x0007)
+IL_0091: br             {'target': 150}
+IL_0096: ldarg.0        None
+IL_0097: ldfld          {'token': '0x040009FA', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_TextMeshPro'}
+IL_009C: ldloc          local(0x0007)
+IL_00A0: call           {'token': '0x0A000359', 'identity': 'TMPro.TMP_Text::set_fontSharedMaterial / sig 2001011279'}
+IL_00A5: ldloc          local(0x0004)
+IL_00A9: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00AE: stloc          local(0x000A)
+IL_00B2: ldarg.0        None
+IL_00B3: ldloc          local(0x000A)
+IL_00B7: stfld          {'token': '0x040009FB', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_frameCounter_transform'}
+IL_00BC: br             {'target': 193}
+IL_00C1: ldarg.0        None
+IL_00C2: ldfld          {'token': '0x040009FC', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_camera'}
+IL_00C7: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_00CC: stloc          local(0x0008)
+IL_00D0: br             {'target': 213}
+IL_00D5: ldarg.0        None
+IL_00D6: ldfld          {'token': '0x040009FB', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_frameCounter_transform'}
+IL_00DB: ldloc          local(0x0008)
+IL_00DF: call           {'token': '0x0A00006E', 'identity': 'UnityEngine.Transform::set_parentInternal / sig 2001011215'}
+IL_00E4: br             {'target': 233}
+IL_00E9: ldarg.0        None
+IL_00EA: ldfld          {'token': '0x040009FB', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_frameCounter_transform'}
+IL_00EF: ldloca         local(0x000B)
+IL_00F3: call           {'token': '0x0A000358', 'identity': 'UnityEngine.Transform::set_localRotation / sig 20010111814d'}
+IL_00F8: br             {'target': 253}
+IL_00FD: ldarg.0        None
+IL_00FE: ldfld          {'token': '0x040009FA', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_TextMeshPro'}
+IL_0103: ldc.i4         0
+IL_0108: call           {'token': '0x0A0002FC', 'identity': 'TMPro.TMP_Text::set_enableWordWrapping / sig 20010102'}
+IL_010D: br             {'target': 274}
+IL_0112: ldarg.0        None
+IL_0113: ldfld          {'token': '0x040009FA', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::m_TextMeshPro'}
+IL_0118: ldc.r4         24.0
+IL_011D: call           {'token': '0x0A0002A3', 'identity': 'TMPro.TMP_Text::set_fontSize / sig 2001010c'}
+IL_0122: ldarg.0        None
+IL_0123: ldarg.0        None
+IL_0124: ldfld          {'token': '0x040009F7', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::AnchorPosition'}
+IL_0129: call           {'token': '0x060007B5', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::Set_FrameCounter_Position'}
+IL_012E: br             {'target': 307}
+IL_0133: ldarg.0        None
+IL_0134: ldarg.0        None
+IL_0135: ldfld          {'token': '0x040009F7', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::AnchorPosition'}
+IL_013A: stfld          {'token': '0x040009FD', 'identity': 'TMPro.Examples.TMP_FrameRateCounter::last_AnchorPosition'}
+IL_013F: br             {'target': 359}
+IL_0144: ldarg.0        None
+IL_0145: call           {'token': '0x0A000272', 'identity': 'UnityEngine.Behaviour::get_enabled / sig 200002'}
+IL_014A: stloc          local(0x0001)
+IL_014E: ldloc          local(0x0001)
+IL_0152: ldc.i4.0       None
+IL_0153: ceq            None
+IL_0155: stloc          local(0x0002)
+IL_0159: ldloc          local(0x0002)
+IL_015D: brtrue         {'target': 359}
+IL_0162: br             {'target': 5}
+IL_0167: ret            None
+IL_0168: ldstr          {'token': '0x70000E97', 'identity': 'Warning: Method ends with non empty stack (-38), the output could be wrong!'}
+IL_016D: pop            None

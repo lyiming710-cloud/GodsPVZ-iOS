@@ -1,0 +1,155 @@
+PlantAnimationEvent::PC_SW_CreateCircle
+{"token": "0x060000B9", "name": "PlantAnimationEvent::PC_SW_CreateCircle", "signature": "20010108", "rva": 62504, "max_stack": 2, "code_size": 593, "local_sig": 285212818, "locals_blob": "071808021281e0021281e0120912150212150202020202114d1c080202124c124c1d114d181c", "eh_count": 0, "il_sha256": "8e410bee837b2f2c29173bf452198cd959be01ec6f2ef54f09654c85959fd55a"}
+IL_0000: br             {'target': 581}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_000B: ldnull         None
+IL_000C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0011: stloc          local(0x0001)
+IL_0015: ldloc          local(0x0001)
+IL_0019: brtrue         {'target': 35}
+IL_001E: br             {'target': 586}
+IL_0023: ldarg.0        None
+IL_0024: ldfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_0029: stloc          local(0x0002)
+IL_002D: br             {'target': 50}
+IL_0032: ldloc          local(0x0002)
+IL_0036: ldfld          {'token': '0x040004B4', 'identity': 'Plant::order'}
+IL_003B: ldc.i4         0
+IL_0040: cgt            None
+IL_0042: ldc.i4.0       None
+IL_0043: ceq            None
+IL_0045: stloc          local(0x0003)
+IL_0049: ldloc          local(0x0003)
+IL_004D: brtrue         {'target': 586}
+IL_0052: br             {'target': 87}
+IL_0057: ldloc          local(0x0002)
+IL_005B: ldfld          {'token': '0x040004D7', 'identity': 'Plant::elementLv'}
+IL_0060: ldc.i4         2
+IL_0065: clt            None
+IL_0067: stloc          local(0x000A)
+IL_006B: ldloc          local(0x000A)
+IL_006F: brtrue         {'target': 586}
+IL_0074: br             {'target': 121}
+IL_0079: ldc.i4         6
+IL_007E: newarr         {'token': '0x01000013', 'identity': 'UnityEngine.Vector3'}
+IL_0083: stloc          local(0x0015)
+IL_0087: br             {'target': 140}
+IL_008C: ldloc          local(0x000F)
+IL_0090: pop            None
+IL_0091: ldc.i4         0
+IL_0096: pop            None
+IL_0097: br             {'target': 156}
+IL_009C: ldloc          local(0x000F)
+IL_00A0: pop            None
+IL_00A1: ldc.i4         0
+IL_00A6: pop            None
+IL_00A7: br             {'target': 172}
+IL_00AC: ldloc          local(0x000F)
+IL_00B0: pop            None
+IL_00B1: ldc.i4         0
+IL_00B6: pop            None
+IL_00B7: br             {'target': 188}
+IL_00BC: ldloc          local(0x000F)
+IL_00C0: pop            None
+IL_00C1: ldc.i4         0
+IL_00C6: pop            None
+IL_00C7: br             {'target': 204}
+IL_00CC: ldloc          local(0x000F)
+IL_00D0: pop            None
+IL_00D1: ldc.i4         0
+IL_00D6: pop            None
+IL_00D7: br             {'target': 220}
+IL_00DC: ldloc          local(0x000F)
+IL_00E0: pop            None
+IL_00E1: ldc.i4         0
+IL_00E6: pop            None
+IL_00E7: ldarg          argument(0x0001)
+IL_00EB: ldc.i8         4294967293
+IL_00F4: and            None
+IL_00F5: stloc          local(0x0010)
+IL_00F9: ldloc          local(0x0010)
+IL_00FD: ldc.i4         0
+IL_0102: ceq            None
+IL_0104: stloc          local(0x0011)
+IL_0108: ldloc          local(0x0011)
+IL_010C: brtrue         {'target': 310}
+IL_0111: br             {'target': 278}
+IL_0116: ldarg          argument(0x0001)
+IL_011A: ldc.i4         4
+IL_011F: ceq            None
+IL_0121: ldc.i4.0       None
+IL_0122: ceq            None
+IL_0124: stloc          local(0x0012)
+IL_0128: ldloc          local(0x0012)
+IL_012C: brtrue         {'target': 359}
+IL_0131: br             {'target': 310}
+IL_0136: ldarg.0        None
+IL_0137: ldfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_013C: stloc          local(0x0004)
+IL_0140: br             {'target': 325}
+IL_0145: ldloc          local(0x0004)
+IL_0149: ldfld          {'token': '0x040004D7', 'identity': 'Plant::elementLv'}
+IL_014E: ldc.i4         3
+IL_0153: clt            None
+IL_0155: stloc          local(0x000B)
+IL_0159: ldloc          local(0x000B)
+IL_015D: brtrue         {'target': 586}
+IL_0162: br             {'target': 359}
+IL_0167: br             {'target': 364}
+IL_016C: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_0171: ldc.i4         11
+IL_0176: call           {'token': '0x060001EA', 'identity': 'ParticlesManager::CreatNewParticle'}
+IL_017B: stloc          local(0x0005)
+IL_017F: br             {'target': 388}
+IL_0184: ldarg.0        None
+IL_0185: ldfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_018A: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_018F: stloc          local(0x0006)
+IL_0193: br             {'target': 408}
+IL_0198: ldloc          local(0x0006)
+IL_019C: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_01A1: stloc          local(0x000E)
+IL_01A5: br             {'target': 426}
+IL_01AA: br             {'target': 431}
+IL_01AF: ldloc          local(0x0005)
+IL_01B3: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_01B8: stloc          local(0x0007)
+IL_01BC: ldloc          local(0x0007)
+IL_01C0: ldc.i4.0       None
+IL_01C1: ceq            None
+IL_01C3: stloc          local(0x000C)
+IL_01C7: ldloc          local(0x000C)
+IL_01CB: brtrue         {'target': 586}
+IL_01D0: br             {'target': 469}
+IL_01D5: ldloc          local(0x0005)
+IL_01D9: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_01DE: stloc          local(0x0008)
+IL_01E2: br             {'target': 487}
+IL_01E7: ldloc          local(0x0008)
+IL_01EB: ldloca         local(0x0017)
+IL_01EF: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_01F4: ldloc          local(0x0005)
+IL_01F8: call           {'token': '0x2B00000F', 'identity': '0x2b00000f'}
+IL_01FD: stloc          local(0x0013)
+IL_0201: br             {'target': 518}
+IL_0206: br             {'target': 523}
+IL_020B: ldloc          local(0x0013)
+IL_020F: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0214: stloc          local(0x0009)
+IL_0218: ldloc          local(0x0009)
+IL_021C: ldc.i4.0       None
+IL_021D: ceq            None
+IL_021F: stloc          local(0x000D)
+IL_0223: ldloc          local(0x000D)
+IL_0227: brtrue         {'target': 586}
+IL_022C: br             {'target': 561}
+IL_0231: ldloc          local(0x0013)
+IL_0235: ldarg.0        None
+IL_0236: ldfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_023B: stfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_0240: br             {'target': 586}
+IL_0245: br             {'target': 5}
+IL_024A: ret            None
+IL_024B: ldstr          {'token': '0x70001C14', 'identity': 'Warning: Method ends with non empty stack (-78), the output could be wrong!'}
+IL_0250: pop            None

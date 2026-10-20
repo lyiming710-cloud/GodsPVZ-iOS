@@ -1,0 +1,149 @@
+Zombie::ZC_IVH_Skill1_Portal
+{"token": "0x0600048F", "name": "Zombie::ZC_IVH_Skill1_Portal", "signature": "200001", "rva": 388528, "max_stack": 4, "code_size": 516, "local_sig": 285213575, "locals_blob": "071d1282101281a41280fc021c1281d41c021c0808080202081c1c1c1c0202021281c802021281d4151151011c151151011c1281c8", "eh_count": 0, "il_sha256": "28b20ea10dae5f17f3198b3d16317f006d864d39956372d1a371ca2671267d24"}
+IL_0000: br             {'target': 439}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_000E: stloc          local(0x0002)
+IL_0012: br             {'target': 23}
+IL_0017: ldloc          local(0x0002)
+IL_001B: ldfld          {'token': '0x040001D5', 'identity': 'DeviceManager::devicePrefabList'}
+IL_0020: ldc.i4         13
+IL_0025: call           {'token': '0x0A000127', 'identity': 'TypeSpec:42::get_Item / sig 2001130008'}
+IL_002A: stloc          local(0x0005)
+IL_002E: ldarg.0        None
+IL_002F: ldfld          {'token': '0x040005C1', 'identity': 'Zombie::brokenLevel'}
+IL_0034: ldc.i4         2
+IL_0039: sub            None
+IL_003A: stloc          local(0x0008)
+IL_003E: ldarg.0        None
+IL_003F: ldfld          {'token': '0x040005C1', 'identity': 'Zombie::brokenLevel'}
+IL_0044: ldc.i4         2
+IL_0049: xor            None
+IL_004A: stloc          local(0x0009)
+IL_004E: ldarg.0        None
+IL_004F: ldfld          {'token': '0x040005C1', 'identity': 'Zombie::brokenLevel'}
+IL_0054: ldloc          local(0x0008)
+IL_0058: xor            None
+IL_0059: stloc          local(0x000A)
+IL_005D: ldloc          local(0x0009)
+IL_0061: ldloc          local(0x000A)
+IL_0065: and            None
+IL_0066: stloc          local(0x000B)
+IL_006A: ldloc          local(0x000B)
+IL_006E: ldc.i4         0
+IL_0073: clt            None
+IL_0075: stloc          local(0x000C)
+IL_0079: ldloc          local(0x0008)
+IL_007D: ldc.i4         0
+IL_0082: clt            None
+IL_0084: stloc          local(0x000D)
+IL_0088: ldloc          local(0x000D)
+IL_008C: ldloc          local(0x000C)
+IL_0090: ceq            None
+IL_0092: ldc.i4.0       None
+IL_0093: ceq            None
+IL_0095: stloc          local(0x0003)
+IL_0099: br             {'target': 158}
+IL_009E: ldloc          local(0x0001)
+IL_00A2: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_00A7: call           {'token': '0x06000289', 'identity': 'Map::GetMapX'}
+IL_00AC: stloc          local(0x000E)
+IL_00B0: ldloc          local(0x0003)
+IL_00B4: ldc.i4         2
+IL_00B9: add            None
+IL_00BA: stloc          local(0x0004)
+IL_00BE: ldstr          {'token': '0x70012357', 'identity': 'Method not found @1804910B0'}
+IL_00C3: pop            None
+IL_00C4: br             {'target': 201}
+IL_00C9: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00CE: pop            None
+IL_00CF: nop            None
+IL_00D0: nop            None
+IL_00D1: br             {'target': 472}
+IL_00D6: ldc.i4         13
+IL_00DB: newobj         {'token': '0x060002FB', 'identity': 'DeviceData::.ctor'}
+IL_00E0: stloc          local(0x0016)
+IL_00E4: nop            None
+IL_00E5: br             {'target': 234}
+IL_00EA: ldloc          local(0x0016)
+IL_00EE: ldc.i4         0
+IL_00F3: ceq            None
+IL_00F5: stloc          local(0x0017)
+IL_00F9: ldloc          local(0x0017)
+IL_00FD: brtrue         {'target': 417}
+IL_0102: br             {'target': 263}
+IL_0107: ldloc          local(0x0016)
+IL_010B: ldarg.0        None
+IL_010C: ldfld          {'token': '0x040005F1', 'identity': 'Zombie::camp'}
+IL_0111: stfld          {'token': '0x04000455', 'identity': 'DeviceData::camp'}
+IL_0116: ldloc          local(0x0012)
+IL_011A: ldc.i4         0
+IL_011F: ceq            None
+IL_0121: stloc          local(0x0018)
+IL_0125: ldloc          local(0x0018)
+IL_0129: brtrue         {'target': 461}
+IL_012E: br             {'target': 307}
+IL_0133: nop            None
+IL_0134: ldloc          local(0x0002)
+IL_0138: ldloc          local(0x0016)
+IL_013C: ldstr          {'token': '0x7001238F', 'identity': 'Unmanaged memory load: [v262 @ stack_-40+1C]'}
+IL_0141: pop            None
+IL_0142: ldc.i4.0       None
+IL_0143: conv.i         None
+IL_0144: ldstr          {'token': '0x700123E9', 'identity': 'Unmanaged memory load: [v262 @ stack_-40+20]'}
+IL_0149: pop            None
+IL_014A: ldc.i4.0       None
+IL_014B: conv.i         None
+IL_014C: call           {'token': '0x0600018A', 'identity': 'DeviceManager::PlaceDevice'}
+IL_0151: stloc          local(0x0019)
+IL_0155: br             {'target': 346}
+IL_015A: ldloc          local(0x0019)
+IL_015E: ldnull         None
+IL_015F: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0164: stloc          local(0x0013)
+IL_0168: ldloc          local(0x0013)
+IL_016C: ldc.i4.0       None
+IL_016D: ceq            None
+IL_016F: stloc          local(0x0014)
+IL_0173: nop            None
+IL_0174: ldloc          local(0x0014)
+IL_0178: brtrue         {'target': 472}
+IL_017D: br             {'target': 386}
+IL_0182: ldloc          local(0x0019)
+IL_0186: ldarg.0        None
+IL_0187: stfld          {'token': '0x0400048A', 'identity': 'Device::targetZombie'}
+IL_018C: nop            None
+IL_018D: br             {'target': 472}
+IL_0192: ldloca         local(0x001B)
+IL_0196: call           {'token': '0x0A0001BA', 'identity': 'TypeSpec:83::Dispose / sig 200001'}
+IL_019B: br             {'target': 416}
+IL_01A0: ret            None
+IL_01A1: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01A6: throw          None
+IL_01A7: ldloc          local(0x001C)
+IL_01AB: throw          None
+IL_01AC: br             {'target': 433}
+IL_01B1: nop            None
+IL_01B2: br             {'target': 454}
+IL_01B7: ldarg.0        None
+IL_01B8: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_01BD: stloc          local(0x0001)
+IL_01C1: br             {'target': 5}
+IL_01C6: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01CB: throw          None
+IL_01CC: ret            None
+IL_01CD: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01D2: throw          None
+IL_01D3: br             {'target': 417}
+IL_01D8: ldloca         local(0x001B)
+IL_01DC: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_01E1: stloc          local(0x0015)
+IL_01E5: ldloc          local(0x0015)
+IL_01E9: ldc.i4.0       None
+IL_01EA: ceq            None
+IL_01EC: stloc          local(0x0007)
+IL_01F0: ldloc          local(0x0007)
+IL_01F4: brtrue         {'target': 402}
+IL_01F9: br             {'target': 214}
+IL_01FE: ldstr          {'token': '0x70000298', 'identity': 'Warning: Method ends with non empty stack (-70), the output could be wrong!'}
+IL_0203: pop            None

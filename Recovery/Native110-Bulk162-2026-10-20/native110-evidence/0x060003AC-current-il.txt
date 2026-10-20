@@ -1,0 +1,142 @@
+Plant::ST_Potatomortar
+{"token": "0x060003AC", "name": "Plant::ST_Potatomortar", "signature": "200001", "rva": 305988, "max_stack": 4, "code_size": 528, "local_sig": 285213409, "locals_blob": "071b1c1c1281e01c1c114d02021282441281a4121512809402114d081281f41c1c1c1c0202081c114d1c0c", "eh_count": 0, "il_sha256": "4539ed5dc8d1624ce0ca2cf46330ebfddd0399addbd2f4cbcd0d0cdfbf81e078"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0001)
+IL_0009: pop            None
+IL_000A: ldloc          local(0x0003)
+IL_000E: pop            None
+IL_000F: ldloc          local(0x0004)
+IL_0013: pop            None
+IL_0014: br             {'target': 477}
+IL_0019: ldarg.0        None
+IL_001A: ldfld          {'token': '0x040004DF', 'identity': 'Plant::animationSprites'}
+IL_001F: ldstr          {'token': '0x70001CE5', 'identity': 'Potatomortar_shell3'}
+IL_0024: call           {'token': '0x06000141', 'identity': 'GlobalStaticVars::GetAnimationSpritePosition'}
+IL_0029: stloc          local(0x0005)
+IL_002D: nop            None
+IL_002E: br             {'target': 51}
+IL_0033: ldarg.0        None
+IL_0034: ldfld          {'token': '0x040004DB', 'identity': 'Plant::targetZombie'}
+IL_0039: ldnull         None
+IL_003A: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_003F: stloc          local(0x0006)
+IL_0043: ldloc          local(0x0006)
+IL_0047: brtrue         {'target': 81}
+IL_004C: br             {'target': 165}
+IL_0051: br             {'target': 86}
+IL_0056: ldarg.0        None
+IL_0057: ldfld          {'token': '0x040004DC', 'identity': 'Plant::targetDevice'}
+IL_005C: ldnull         None
+IL_005D: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0062: stloc          local(0x0007)
+IL_0066: ldloc          local(0x0007)
+IL_006A: ldc.i4.0       None
+IL_006B: ceq            None
+IL_006D: stloc          local(0x000C)
+IL_0071: ldloc          local(0x000C)
+IL_0075: brtrue         {'target': 482}
+IL_007A: br             {'target': 127}
+IL_007F: ldarg.0        None
+IL_0080: ldfld          {'token': '0x040004DC', 'identity': 'Plant::targetDevice'}
+IL_0085: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_008A: stloc          local(0x000A)
+IL_008E: br             {'target': 147}
+IL_0093: ldloc          local(0x000A)
+IL_0097: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_009C: stloc          local(0x000D)
+IL_00A0: br             {'target': 190}
+IL_00A5: ldarg.0        None
+IL_00A6: ldfld          {'token': '0x040004DB', 'identity': 'Plant::targetZombie'}
+IL_00AB: ldc.r4         1.0499999523162842
+IL_00B0: call           {'token': '0x06000450', 'identity': 'Zombie::GetPredictedPosition'}
+IL_00B5: stloc          local(0x000D)
+IL_00B9: br             {'target': 190}
+IL_00BE: ldarg.0        None
+IL_00BF: ldloc          local(0x000D)
+IL_00C3: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_00C8: stfld          {'token': '0x040004DE', 'identity': 'Plant::targetPosition'}
+IL_00CD: ldloc          local(0x000D)
+IL_00D1: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_00D6: pop            None
+IL_00D7: br             {'target': 482}
+IL_00DC: ldloc          local(0x0009)
+IL_00E0: ldfld          {'token': '0x040003D6', 'identity': 'Board::projectileManager'}
+IL_00E5: ldc.i4         15
+IL_00EA: call           {'token': '0x060001F6', 'identity': 'ProjectileManager::CrateNewProjectile'}
+IL_00EF: stloc          local(0x000F)
+IL_00F3: br             {'target': 248}
+IL_00F8: ldstr          {'token': '0x7000E672', 'identity': 'Method not found @1804A24E0'}
+IL_00FD: pop            None
+IL_00FE: ldarg.0        None
+IL_00FF: ldloc          local(0x000F)
+IL_0103: ldc.i4         15
+IL_0108: ldc.i4         0
+IL_010D: call           {'token': '0x0600036D', 'identity': 'Plant::GetDamage'}
+IL_0112: stloc          local(0x000B)
+IL_0116: br             {'target': 283}
+IL_011B: ldarg.0        None
+IL_011C: ldfld          {'token': '0x040004D5', 'identity': 'Plant::supperHit'}
+IL_0121: ldc.i4         0
+IL_0126: ceq            None
+IL_0128: stloc          local(0x0014)
+IL_012C: ldloc          local(0x0014)
+IL_0130: brtrue         {'target': 498}
+IL_0135: br             {'target': 314}
+IL_013A: ldarg.0        None
+IL_013B: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_0140: stloc          local(0x0008)
+IL_0144: br             {'target': 329}
+IL_0149: ldloc          local(0x0008)
+IL_014D: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_0152: ldc.i4         1
+IL_0157: ceq            None
+IL_0159: ldc.i4.0       None
+IL_015A: ceq            None
+IL_015C: stloc          local(0x0015)
+IL_0160: ldloc          local(0x0015)
+IL_0164: brtrue         {'target': 498}
+IL_0169: br             {'target': 366}
+IL_016E: ldloc          local(0x0008)
+IL_0172: ldarg.0        None
+IL_0173: ldloc          local(0x000B)
+IL_0177: call           {'token': '0x060004E1', 'identity': 'Skill::Function'}
+IL_017C: ldarg.0        None
+IL_017D: ldc.i4         0
+IL_0182: stfld          {'token': '0x040004D5', 'identity': 'Plant::supperHit'}
+IL_0187: br             {'target': 498}
+IL_018C: ldarg.0        None
+IL_018D: ldfld          {'token': '0x040004DF', 'identity': 'Plant::animationSprites'}
+IL_0192: ldstr          {'token': '0x70001CE5', 'identity': 'Potatomortar_shell3'}
+IL_0197: call           {'token': '0x06000145', 'identity': 'GlobalStaticVars::HideSprite'}
+IL_019C: br             {'target': 417}
+IL_01A1: ldarg.0        None
+IL_01A2: ldfld          {'token': '0x040004FE', 'identity': 'Plant::parameter_ints'}
+IL_01A7: ldc.i4         0
+IL_01AC: call           {'token': '0x0A00006B', 'identity': 'TypeSpec:21::get_Item / sig 2001130008'}
+IL_01B1: stloc          local(0x0016)
+IL_01B5: ldloc          local(0x0016)
+IL_01B9: ldc.i4         1
+IL_01BE: sub            None
+IL_01BF: stloc          local(0x000E)
+IL_01C3: ldarg.0        None
+IL_01C4: ldfld          {'token': '0x040004FE', 'identity': 'Plant::parameter_ints'}
+IL_01C9: ldc.i4         0
+IL_01CE: ldloc          local(0x000E)
+IL_01D2: call           {'token': '0x0A0001FA', 'identity': 'TypeSpec:21::set_Item / sig 200201081300'}
+IL_01D7: br             {'target': 476}
+IL_01DC: ret            None
+IL_01DD: br             {'target': 25}
+IL_01E2: nop            None
+IL_01E3: ldarg.0        None
+IL_01E4: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_01E9: stloc          local(0x0009)
+IL_01ED: br             {'target': 220}
+IL_01F2: ldloc          local(0x000F)
+IL_01F6: ldloc          local(0x000B)
+IL_01FA: ldarg.0        None
+IL_01FB: ldfld          {'token': '0x040004C8', 'identity': 'Plant::camp'}
+IL_0200: call           {'token': '0x060003F7', 'identity': 'Projectile::SetDamage'}
+IL_0205: br             {'target': 396}
+IL_020A: ldstr          {'token': '0x700060B9', 'identity': 'Warning: Method ends with non empty stack (-D0), the output could be wrong!'}
+IL_020F: pop            None

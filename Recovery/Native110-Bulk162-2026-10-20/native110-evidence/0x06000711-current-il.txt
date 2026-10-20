@@ -1,0 +1,168 @@
+Zombie_Select::Initialize
+{"token": "0x06000711", "name": "Zombie_Select::Initialize", "signature": "20020112821002", "rva": 604152, "max_stack": 2, "code_size": 667, "local_sig": 285214040, "locals_blob": "071802128210128358021282100212821012810912821012151280d412821012821002020212090202121512150212211c", "eh_count": 0, "il_sha256": "8921be742f151ac8dea661d7b881d6d00430ad15b6e287eeb5aa74d57cd0bb6e"}
+IL_0000: br             {'target': 631}
+IL_0005: ldarg          argument(0x0001)
+IL_0009: ldnull         None
+IL_000A: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_000F: stloc          local(0x0003)
+IL_0013: ldloc          local(0x0003)
+IL_0017: brtrue         {'target': 33}
+IL_001C: br             {'target': 543}
+IL_0021: br             {'target': 38}
+IL_0026: ldarg          argument(0x0001)
+IL_002A: call           {'token': '0x2B00004F', 'identity': '0x2b00004f'}
+IL_002F: stloc          local(0x0004)
+IL_0033: ldarg.0        None
+IL_0034: ldloc          local(0x0004)
+IL_0038: stfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_003D: br             {'target': 66}
+IL_0042: ldarg.0        None
+IL_0043: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_0048: stloc          local(0x0006)
+IL_004C: br             {'target': 81}
+IL_0051: ldloc          local(0x0006)
+IL_0055: ldc.i4         0
+IL_005A: stfld          {'token': '0x040005D7', 'identity': 'Zombie::isOnBoard'}
+IL_005F: ldarg.0        None
+IL_0060: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_0065: stloc          local(0x000B)
+IL_0069: br             {'target': 110}
+IL_006E: ldloc          local(0x000B)
+IL_0072: ldfld          {'token': '0x040005FF', 'identity': 'Zombie::sortingGroup'}
+IL_0077: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_007C: stloc          local(0x000E)
+IL_0080: ldloc          local(0x000E)
+IL_0084: brtrue         {'target': 172}
+IL_0089: br             {'target': 142}
+IL_008E: ldarg.0        None
+IL_008F: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_0094: call           {'token': '0x2B00002A', 'identity': '0x2b00002a'}
+IL_0099: stloc          local(0x0007)
+IL_009D: br             {'target': 162}
+IL_00A2: ldloc          local(0x0007)
+IL_00A6: pop            None
+IL_00A7: br             {'target': 172}
+IL_00AC: ldarg.0        None
+IL_00AD: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_00B2: stloc          local(0x0008)
+IL_00B6: br             {'target': 187}
+IL_00BB: ldloc          local(0x0008)
+IL_00BF: ldfld          {'token': '0x040005FF', 'identity': 'Zombie::sortingGroup'}
+IL_00C4: ldstr          {'token': '0x70017224', 'identity': 'UpperUI'}
+IL_00C9: call           {'token': '0x0A00015A', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingLayerName / sig 2001010e'}
+IL_00CE: ldarg.0        None
+IL_00CF: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_00D4: stloc          local(0x000C)
+IL_00D8: br             {'target': 221}
+IL_00DD: ldloc          local(0x000C)
+IL_00E1: ldfld          {'token': '0x040005FF', 'identity': 'Zombie::sortingGroup'}
+IL_00E6: ldc.i4         10000
+IL_00EB: call           {'token': '0x0A00015B', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingOrder / sig 20010108'}
+IL_00F0: br             {'target': 245}
+IL_00F5: ldarg.0        None
+IL_00F6: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_00FB: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0100: stloc          local(0x0013)
+IL_0104: ldarg.0        None
+IL_0105: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_010A: stloc          local(0x0009)
+IL_010E: br             {'target': 275}
+IL_0113: ldloc          local(0x0013)
+IL_0117: ldloc          local(0x0009)
+IL_011B: call           {'token': '0x0A00006E', 'identity': 'UnityEngine.Transform::set_parentInternal / sig 2001011215'}
+IL_0120: br             {'target': 293}
+IL_0125: ldarg.0        None
+IL_0126: ldfld          {'token': '0x04000913', 'identity': 'Zombie_Select::zombie'}
+IL_012B: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0130: stloc          local(0x0014)
+IL_0134: br             {'target': 313}
+IL_0139: ldloc          local(0x0014)
+IL_013D: ldloca         local(0x0017)
+IL_0141: call           {'token': '0x0A000042', 'identity': 'UnityEngine.Transform::set_localPosition / sig 200101114d'}
+IL_0146: ldarg.0        None
+IL_0147: ldarg          argument(0x0002)
+IL_014B: stfld          {'token': '0x04000916', 'identity': 'Zombie_Select::select'}
+IL_0150: br             {'target': 341}
+IL_0155: br             {'target': 346}
+IL_015A: ldarg          argument(0x0001)
+IL_015E: ldfld          {'token': '0x040005B9', 'identity': 'Zombie::ID'}
+IL_0163: call           {'token': '0x06000230', 'identity': 'ResourceManager::Load_zombieInfo'}
+IL_0168: stloc          local(0x000A)
+IL_016C: ldloc          local(0x000A)
+IL_0170: ldc.i4         0
+IL_0175: ceq            None
+IL_0177: stloc          local(0x0012)
+IL_017B: ldloc          local(0x0012)
+IL_017F: brtrue         {'target': 620}
+IL_0184: br             {'target': 393}
+IL_0189: ldloc          local(0x000A)
+IL_018D: ldfld          {'token': '0x0400017D', 'identity': 'ZombieInfo::isElite'}
+IL_0192: ldc.i4         0
+IL_0197: ceq            None
+IL_0199: ldc.i4.0       None
+IL_019A: ceq            None
+IL_019C: stloc          local(0x000D)
+IL_01A0: ldc.i4         1
+IL_01A5: stloc          local(0x0005)
+IL_01A9: ldloc          local(0x000D)
+IL_01AD: brtrue         {'target': 457}
+IL_01B2: br             {'target': 439}
+IL_01B7: ldloc          local(0x000A)
+IL_01BB: ldfld          {'token': '0x0400017E', 'identity': 'ZombieInfo::isBoss'}
+IL_01C0: stloc          local(0x0005)
+IL_01C4: br             {'target': 457}
+IL_01C9: ldloc          local(0x0005)
+IL_01CD: ldc.i4         0
+IL_01D2: ceq            None
+IL_01D4: stloc          local(0x0015)
+IL_01D8: ldarg.0        None
+IL_01D9: ldfld          {'token': '0x04000914', 'identity': 'Zombie_Select::selectButton'}
+IL_01DE: ldloc          local(0x0015)
+IL_01E2: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01E7: br             {'target': 492}
+IL_01EC: ldarg.0        None
+IL_01ED: ldfld          {'token': '0x04000915', 'identity': 'Zombie_Select::image_lock'}
+IL_01F2: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_01F7: stloc          local(0x0010)
+IL_01FB: br             {'target': 512}
+IL_0200: ldloc          local(0x0005)
+IL_0204: ldc.i4         0
+IL_0209: ceq            None
+IL_020B: stloc          local(0x0011)
+IL_020F: ldloc          local(0x0011)
+IL_0213: ldc.i4.0       None
+IL_0214: ceq            None
+IL_0216: stloc          local(0x000F)
+IL_021A: br             {'target': 643}
+IL_021F: ldarg.0        None
+IL_0220: ldc.i4         0
+IL_0225: stfld          {'token': '0x04000916', 'identity': 'Zombie_Select::select'}
+IL_022A: ldarg.0        None
+IL_022B: call           {'token': '0x0600070F', 'identity': 'Zombie_Select::UpdateSelectButtonImage'}
+IL_0230: br             {'target': 565}
+IL_0235: ldarg.0        None
+IL_0236: ldfld          {'token': '0x04000914', 'identity': 'Zombie_Select::selectButton'}
+IL_023B: ldc.i4         0
+IL_0240: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0245: br             {'target': 586}
+IL_024A: ldarg.0        None
+IL_024B: ldfld          {'token': '0x04000915', 'identity': 'Zombie_Select::image_lock'}
+IL_0250: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0255: stloc          local(0x0010)
+IL_0259: br             {'target': 606}
+IL_025E: ldc.i4         1
+IL_0263: stloc          local(0x000F)
+IL_0267: br             {'target': 643}
+IL_026C: ldstr          {'token': '0x7001D667', 'identity': 'Invalid instruction: 453 Invalid "Jump target not found in method: 0x1803B1C50"'}
+IL_0271: pop            None
+IL_0272: br             {'target': 636}
+IL_0277: br             {'target': 5}
+IL_027C: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0281: throw          None
+IL_0282: ret            None
+IL_0283: ldloc          local(0x0010)
+IL_0287: ldloc          local(0x000F)
+IL_028B: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0290: br             {'target': 620}
+IL_0295: ldstr          {'token': '0x70000E97', 'identity': 'Warning: Method ends with non empty stack (-38), the output could be wrong!'}
+IL_029A: pop            None

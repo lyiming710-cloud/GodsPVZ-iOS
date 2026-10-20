@@ -1,0 +1,173 @@
+BoardPreview::CreateEnemyPreview_Zombie
+{"token": "0x060005D4", "name": "BoardPreview::CreateEnemyPreview_Zombie", "signature": "200101128118", "rva": 514064, "max_stack": 3, "code_size": 733, "local_sig": 285213796, "locals_blob": "071d1281181d1c128210121512091215114d12814c1280c415120d011c1282181d02128210080802080e0e12821002114d18180c1282b4081808", "eh_count": 0, "il_sha256": "cf51b6cc51d0e232b2ad79ca2b6d59828fe8143c3bbb453073d60df0a4e7c894"}
+IL_0000: br             {'target': 713}
+IL_0005: ldsfld         {'token': '0x040002F7', 'identity': 'ResourceManager::zombiePrefabs'}
+IL_000A: ldarg          argument(0x0001)
+IL_000E: ldfld          {'token': '0x040001F7', 'identity': 'Enemy::id'}
+IL_0013: call           {'token': '0x0A00006C', 'identity': 'TypeSpec:20::get_Item / sig 2001130008'}
+IL_0018: stloc          local(0x000C)
+IL_001C: br             {'target': 33}
+IL_0021: ldloc          local(0x000C)
+IL_0025: ldnull         None
+IL_0026: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_002B: stloc          local(0x000F)
+IL_002F: ldloc          local(0x000F)
+IL_0033: brtrue         {'target': 61}
+IL_0038: br             {'target': 639}
+IL_003D: br             {'target': 66}
+IL_0042: ldsfld         {'token': '0x040002F7', 'identity': 'ResourceManager::zombiePrefabs'}
+IL_0047: ldarg          argument(0x0001)
+IL_004B: ldfld          {'token': '0x040001F7', 'identity': 'Enemy::id'}
+IL_0050: call           {'token': '0x0A00006C', 'identity': 'TypeSpec:20::get_Item / sig 2001130008'}
+IL_0055: stloc          local(0x0013)
+IL_0059: br             {'target': 94}
+IL_005E: ldloc          local(0x0013)
+IL_0062: call           {'token': '0x2B00004F', 'identity': '0x2b00004f'}
+IL_0067: stloc          local(0x0002)
+IL_006B: nop            None
+IL_006C: br             {'target': 113}
+IL_0071: ldloc          local(0x0002)
+IL_0075: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_007A: stloc          local(0x0003)
+IL_007E: br             {'target': 131}
+IL_0083: ldloc          local(0x0003)
+IL_0087: ldloca         local(0x0018)
+IL_008B: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0090: ldloc          local(0x0002)
+IL_0094: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0099: stloc          local(0x0004)
+IL_009D: br             {'target': 162}
+IL_00A2: ldloc          local(0x0004)
+IL_00A6: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00AB: stloc          local(0x0005)
+IL_00AF: br             {'target': 180}
+IL_00B4: ldloc          local(0x0005)
+IL_00B8: ldarg.0        None
+IL_00B9: ldfld          {'token': '0x0400078A', 'identity': 'BoardPreview::enemyPreview'}
+IL_00BE: ldc.i4         0
+IL_00C3: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_00C8: ldloc          local(0x0002)
+IL_00CC: ldarg          argument(0x0001)
+IL_00D0: ldfld          {'token': '0x040001F8', 'identity': 'Enemy::row'}
+IL_00D5: stfld          {'token': '0x040005AC', 'identity': 'Zombie::gridY'}
+IL_00DA: ldloc          local(0x0002)
+IL_00DE: ldarg          argument(0x0001)
+IL_00E2: ldfld          {'token': '0x040001FC', 'identity': 'Enemy::waitingTime'}
+IL_00E7: stfld          {'token': '0x040005F6', 'identity': 'Zombie::waitingTime'}
+IL_00EC: ldloc          local(0x0002)
+IL_00F0: ldnull         None
+IL_00F1: stfld          {'token': '0x040005F9', 'identity': 'Zombie::prePath'}
+IL_00F6: br             {'target': 251}
+IL_00FB: ldloc          local(0x0002)
+IL_00FF: ldarg          argument(0x0001)
+IL_0103: ldfld          {'token': '0x040001FB', 'identity': 'Enemy::wave'}
+IL_0108: stfld          {'token': '0x040005BA', 'identity': 'Zombie::wave'}
+IL_010D: ldarg.0        None
+IL_010E: ldfld          {'token': '0x04000785', 'identity': 'BoardPreview::enemyPreviews'}
+IL_0113: stloc          local(0x0009)
+IL_0117: br             {'target': 284}
+IL_011C: ldloc          local(0x0009)
+IL_0120: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0125: ldc.i4         1
+IL_012A: add            None
+IL_012B: stloc          local(0x001C)
+IL_012F: ldloc          local(0x0009)
+IL_0133: ldloc          local(0x001C)
+IL_0137: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_013C: ldloc          local(0x0009)
+IL_0140: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_0145: stloc          local(0x0001)
+IL_0149: br             {'target': 334}
+IL_014E: ldloc          local(0x0009)
+IL_0152: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0157: ldloc          local(0x0001)
+IL_015B: ldlen          None
+IL_015C: conv.i4        None
+IL_015D: clt            None
+IL_015F: stloc          local(0x0014)
+IL_0163: ldloc          local(0x0014)
+IL_0167: brtrue         {'target': 387}
+IL_016C: br             {'target': 369}
+IL_0171: ldloc          local(0x0009)
+IL_0175: ldloc          local(0x0002)
+IL_0179: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_017E: br             {'target': 446}
+IL_0183: ldloc          local(0x0009)
+IL_0187: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_018C: ldc.i4         1
+IL_0191: add            None
+IL_0192: stloc          local(0x000D)
+IL_0196: ldloc          local(0x0009)
+IL_019A: ldloc          local(0x000D)
+IL_019E: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01A3: br             {'target': 424}
+IL_01A8: ldloc          local(0x0001)
+IL_01AC: ldloc          local(0x001A)
+IL_01B0: ldloc          local(0x0002)
+IL_01B4: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_01B9: br             {'target': 446}
+IL_01BE: ldloc          local(0x0002)
+IL_01C2: ldfld          {'token': '0x04000613', 'identity': 'Zombie::shadow'}
+IL_01C7: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_01CC: stloc          local(0x0006)
+IL_01D0: ldloc          local(0x0002)
+IL_01D4: ldloc          local(0x0006)
+IL_01D8: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_01DD: stfld          {'token': '0x040005AD', 'identity': 'Zombie::fX'}
+IL_01E2: br             {'target': 487}
+IL_01E7: ldloc          local(0x0002)
+IL_01EB: ldfld          {'token': '0x04000613', 'identity': 'Zombie::shadow'}
+IL_01F0: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_01F5: stloc          local(0x0015)
+IL_01F9: ldloc          local(0x0002)
+IL_01FD: ldloc          local(0x0015)
+IL_0201: ldfld          {'token': '0x0A00008B', 'identity': 'UnityEngine.Vector3::y / sig 060c'}
+IL_0206: stfld          {'token': '0x040005AE', 'identity': 'Zombie::fY'}
+IL_020B: ldloc          local(0x0002)
+IL_020F: call           {'token': '0x06000477', 'identity': 'Zombie::SetLayer'}
+IL_0214: br             {'target': 537}
+IL_0219: ldloc          local(0x0002)
+IL_021D: ldc.i4         0
+IL_0222: stfld          {'token': '0x040005D7', 'identity': 'Zombie::isOnBoard'}
+IL_0227: br             {'target': 718}
+IL_022C: ldloc          local(0x0008)
+IL_0230: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_0235: stloc          local(0x0007)
+IL_0239: br             {'target': 574}
+IL_023E: ldloc          local(0x0007)
+IL_0242: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_0247: stloc          local(0x000A)
+IL_024B: br             {'target': 592}
+IL_0250: ldloc          local(0x000A)
+IL_0254: ldfld          {'token': '0x0400063E', 'identity': 'Save::almanac_ZombieLock'}
+IL_0259: stloc          local(0x000B)
+IL_025D: br             {'target': 610}
+IL_0262: ldarg          argument(0x0001)
+IL_0266: ldfld          {'token': '0x040001F7', 'identity': 'Enemy::id'}
+IL_026B: stloc          local(0x000E)
+IL_026F: br             {'target': 628}
+IL_0274: ldc.i4         1
+IL_0279: pop            None
+IL_027A: br             {'target': 732}
+IL_027F: ldarg          argument(0x0001)
+IL_0283: ldc.i4         16
+IL_0288: add            None
+IL_0289: stloc          local(0x0010)
+IL_028D: ldloc          local(0x0010)
+IL_0291: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0296: stloc          local(0x0011)
+IL_029A: ldstr          {'token': '0x7001A482', 'identity': '不存在ID'}
+IL_029F: ldloc          local(0x0011)
+IL_02A3: ldstr          {'token': '0x7001A48E', 'identity': '的僵尸'}
+IL_02A8: call           {'token': '0x0A00010B', 'identity': 'System.String::Concat / sig 00030e0e0e0e'}
+IL_02AD: stloc          local(0x0012)
+IL_02B1: br             {'target': 694}
+IL_02B6: br             {'target': 699}
+IL_02BB: ldloc          local(0x0012)
+IL_02BF: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_02C4: br             {'target': 732}
+IL_02C9: br             {'target': 5}
+IL_02CE: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_02D3: stloc          local(0x0008)
+IL_02D7: br             {'target': 556}
+IL_02DC: ret            None

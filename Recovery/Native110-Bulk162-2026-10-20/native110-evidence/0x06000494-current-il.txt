@@ -1,0 +1,126 @@
+Zombie::ZC_IVH_Skill3_Portal
+{"token": "0x06000494", "name": "Zombie::ZC_IVH_Skill3_Portal", "signature": "200001", "rva": 394224, "max_stack": 4, "code_size": 455, "local_sig": 285213580, "locals_blob": "07171282101281a41280fc1281d41c080208081c1c1c1c021281c802021281d40202151151011c151151011c1281c8", "eh_count": 0, "il_sha256": "244ac7bf10cef337d44078a8e44ca642438d0e985192246ab6e2ad74c7316973"}
+IL_0000: br             {'target': 389}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_000E: stloc          local(0x0002)
+IL_0012: br             {'target': 23}
+IL_0017: ldloc          local(0x0002)
+IL_001B: ldfld          {'token': '0x040001D5', 'identity': 'DeviceManager::devicePrefabList'}
+IL_0020: ldc.i4         13
+IL_0025: call           {'token': '0x0A000127', 'identity': 'TypeSpec:42::get_Item / sig 2001130008'}
+IL_002A: stloc          local(0x0003)
+IL_002E: br             {'target': 51}
+IL_0033: ldloc          local(0x0001)
+IL_0037: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_003C: call           {'token': '0x06000289', 'identity': 'Map::GetMapX'}
+IL_0041: stloc          local(0x0007)
+IL_0045: ldloc          local(0x0001)
+IL_0049: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_004E: call           {'token': '0x06000289', 'identity': 'Map::GetMapX'}
+IL_0053: stloc          local(0x0008)
+IL_0057: br             {'target': 92}
+IL_005C: ldloc          local(0x0007)
+IL_0060: ldc.i4         1
+IL_0065: sub            None
+IL_0066: stloc          local(0x0005)
+IL_006A: ldstr          {'token': '0x70012357', 'identity': 'Method not found @1804910B0'}
+IL_006F: pop            None
+IL_0070: br             {'target': 117}
+IL_0075: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_007A: pop            None
+IL_007B: nop            None
+IL_007C: br             {'target': 411}
+IL_0081: ldc.i4         13
+IL_0086: newobj         {'token': '0x060002FB', 'identity': 'DeviceData::.ctor'}
+IL_008B: stloc          local(0x000E)
+IL_008F: nop            None
+IL_0090: br             {'target': 149}
+IL_0095: ldloc          local(0x000E)
+IL_0099: ldc.i4         0
+IL_009E: ceq            None
+IL_00A0: stloc          local(0x000F)
+IL_00A4: ldloc          local(0x000F)
+IL_00A8: brtrue         {'target': 367}
+IL_00AD: br             {'target': 178}
+IL_00B2: ldloc          local(0x000E)
+IL_00B6: ldarg.0        None
+IL_00B7: ldfld          {'token': '0x040005F1', 'identity': 'Zombie::camp'}
+IL_00BC: stfld          {'token': '0x04000455', 'identity': 'DeviceData::camp'}
+IL_00C1: ldloc          local(0x000C)
+IL_00C5: ldc.i4         0
+IL_00CA: ceq            None
+IL_00CC: stloc          local(0x0010)
+IL_00D0: ldloc          local(0x0010)
+IL_00D4: brtrue         {'target': 356}
+IL_00D9: br             {'target': 222}
+IL_00DE: ldstr          {'token': '0x7001382E', 'identity': 'Unmanaged memory load: [v254 @ stack_-40+20]'}
+IL_00E3: pop            None
+IL_00E4: ldc.i4.0       None
+IL_00E5: conv.i         None
+IL_00E6: stloc          local(0x0005)
+IL_00EA: ldloc          local(0x0002)
+IL_00EE: ldloc          local(0x000E)
+IL_00F2: ldstr          {'token': '0x70013888', 'identity': 'Unmanaged memory load: [v254 @ stack_-40+1C]'}
+IL_00F7: pop            None
+IL_00F8: ldc.i4.0       None
+IL_00F9: conv.i         None
+IL_00FA: ldstr          {'token': '0x7001382E', 'identity': 'Unmanaged memory load: [v254 @ stack_-40+20]'}
+IL_00FF: pop            None
+IL_0100: ldc.i4.0       None
+IL_0101: conv.i         None
+IL_0102: call           {'token': '0x0600018A', 'identity': 'DeviceManager::PlaceDevice'}
+IL_0107: stloc          local(0x0011)
+IL_010B: br             {'target': 272}
+IL_0110: ldloc          local(0x0011)
+IL_0114: ldnull         None
+IL_0115: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_011A: stloc          local(0x0012)
+IL_011E: ldloc          local(0x0012)
+IL_0122: ldc.i4.0       None
+IL_0123: ceq            None
+IL_0125: stloc          local(0x0013)
+IL_0129: ldloc          local(0x0013)
+IL_012D: brtrue         {'target': 326}
+IL_0132: br             {'target': 311}
+IL_0137: ldloc          local(0x0011)
+IL_013B: ldarg.0        None
+IL_013C: stfld          {'token': '0x0400048A', 'identity': 'Device::targetZombie'}
+IL_0141: br             {'target': 326}
+IL_0146: ldloc          local(0x0011)
+IL_014A: call           {'token': '0x0600031B', 'identity': 'Device::DC_PortalSummonFlag'}
+IL_014F: nop            None
+IL_0150: br             {'target': 411}
+IL_0155: ldloca         local(0x0015)
+IL_0159: call           {'token': '0x0A0001BA', 'identity': 'TypeSpec:83::Dispose / sig 200001'}
+IL_015E: br             {'target': 355}
+IL_0163: ret            None
+IL_0164: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0169: throw          None
+IL_016A: br             {'target': 367}
+IL_016F: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0174: throw          None
+IL_0175: ldloc          local(0x0016)
+IL_0179: throw          None
+IL_017A: br             {'target': 383}
+IL_017F: nop            None
+IL_0180: br             {'target': 404}
+IL_0185: ldarg.0        None
+IL_0186: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_018B: stloc          local(0x0001)
+IL_018F: br             {'target': 5}
+IL_0194: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0199: throw          None
+IL_019A: ret            None
+IL_019B: ldloca         local(0x0015)
+IL_019F: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_01A4: stloc          local(0x000D)
+IL_01A8: ldloc          local(0x000D)
+IL_01AC: ldc.i4.0       None
+IL_01AD: ceq            None
+IL_01AF: stloc          local(0x0006)
+IL_01B3: ldloc          local(0x0006)
+IL_01B7: brtrue         {'target': 341}
+IL_01BC: br             {'target': 129}
+IL_01C1: ldstr          {'token': '0x70000298', 'identity': 'Warning: Method ends with non empty stack (-70), the output could be wrong!'}
+IL_01C6: pop            None

@@ -1,0 +1,154 @@
+Zombie::ZC_SPHTryShooting
+{"token": "0x060004B1", "name": "Zombie::ZC_SPHTryShooting", "signature": "200101114d", "rva": 405732, "max_stack": 4, "code_size": 604, "local_sig": 285213601, "locals_blob": "07181d12090c0c1d12091215021d1181551215121512751d1209021d120902020202020211813d1280c11282101c1c", "eh_count": 0, "il_sha256": "374c1b6c54a49c6ab5ee0255c1b5dfc3e91e2be055febac234a28ee57932ded6"}
+IL_0000: br             {'target': 588}
+IL_0005: ldloc          local(0x0000)
+IL_0009: ldc.i4         0
+IL_000E: ldelem         {'token': '0x01000002', 'identity': 'UnityEngine.GameObject'}
+IL_0013: ldarg.0        None
+IL_0014: ldfld          {'token': '0x040005E1', 'identity': 'Zombie::SPH_shootReady'}
+IL_0019: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_001E: ldarg.0        None
+IL_001F: ldfld          {'token': '0x04000614', 'identity': 'Zombie::UI'}
+IL_0024: stloc          local(0x0003)
+IL_0028: br             {'target': 45}
+IL_002D: ldloc          local(0x0003)
+IL_0031: ldc.i4         0
+IL_0036: ldelem         {'token': '0x01000002', 'identity': 'UnityEngine.GameObject'}
+IL_003B: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0040: stloc          local(0x0004)
+IL_0044: br             {'target': 73}
+IL_0049: ldloc          local(0x0004)
+IL_004D: ldloca         local(0x0016)
+IL_0051: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0056: br             {'target': 91}
+IL_005B: ldarg.0        None
+IL_005C: ldfld          {'token': '0x040005FE', 'identity': 'Zombie::animator'}
+IL_0061: ldnull         None
+IL_0062: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0067: stloc          local(0x0005)
+IL_006B: ldloc          local(0x0005)
+IL_006F: ldc.i4.0       None
+IL_0070: ceq            None
+IL_0072: stloc          local(0x000E)
+IL_0076: ldloc          local(0x000E)
+IL_007A: brtrue         {'target': 449}
+IL_007F: br             {'target': 132}
+IL_0084: ldarg.0        None
+IL_0085: ldfld          {'token': '0x040005FE', 'identity': 'Zombie::animator'}
+IL_008A: ldc.i4         0
+IL_008F: call           {'token': '0x0A000231', 'identity': 'UnityEngine.Animator::GetCurrentAnimatorClipInfo / sig 20011d11815508'}
+IL_0094: stloc          local(0x0006)
+IL_0098: br             {'target': 157}
+IL_009D: ldloc          local(0x0006)
+IL_00A1: ldlen          None
+IL_00A2: conv.i4        None
+IL_00A3: ldc.i4         0
+IL_00A8: ceq            None
+IL_00AA: stloc          local(0x000F)
+IL_00AE: ldloc          local(0x000F)
+IL_00B2: brtrue         {'target': 449}
+IL_00B7: br             {'target': 188}
+IL_00BC: ldarg.0        None
+IL_00BD: ldfld          {'token': '0x040005FE', 'identity': 'Zombie::animator'}
+IL_00C2: ldc.i4         0
+IL_00C7: call           {'token': '0x0A0001E8', 'identity': 'UnityEngine.Animator::GetCurrentAnimatorStateInfo / sig 200111813d08'}
+IL_00CC: stloc          local(0x0013)
+IL_00D0: ldstr          {'token': '0x70014932', 'identity': 'Method not found @1802FB140'}
+IL_00D5: pop            None
+IL_00D6: br             {'target': 219}
+IL_00DB: ldarg.0        None
+IL_00DC: ldfld          {'token': '0x04000614', 'identity': 'Zombie::UI'}
+IL_00E1: stloc          local(0x000C)
+IL_00E5: br             {'target': 234}
+IL_00EA: ldloc          local(0x000C)
+IL_00EE: ldc.i4         0
+IL_00F3: ldelem         {'token': '0x01000002', 'identity': 'UnityEngine.GameObject'}
+IL_00F8: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00FD: stloc          local(0x0007)
+IL_0101: br             {'target': 262}
+IL_0106: ldloc          local(0x0007)
+IL_010A: ldc.i4         1
+IL_010F: call           {'token': '0x0A000002', 'identity': 'UnityEngine.Transform::GetChild / sig 2001121508'}
+IL_0114: stloc          local(0x0008)
+IL_0118: br             {'target': 285}
+IL_011D: ldloc          local(0x0008)
+IL_0121: call           {'token': '0x2B000054', 'identity': '0x2b000054'}
+IL_0126: stloc          local(0x0009)
+IL_012A: br             {'target': 303}
+IL_012F: ldloc          local(0x0001)
+IL_0133: ldc.r4         1.0
+IL_0138: call           {'token': '0x0A000232', 'identity': 'System.MathF::FMod / sig 00020c0c0c'}
+IL_013D: stloc          local(0x0002)
+IL_0141: ldloc          local(0x0009)
+IL_0145: ldloc          local(0x0002)
+IL_0149: call           {'token': '0x0A0000F0', 'identity': 'UnityEngine.UI.Image::set_fillAmount / sig 2001010c'}
+IL_014E: br             {'target': 339}
+IL_0153: ldarg.0        None
+IL_0154: ldfld          {'token': '0x04000614', 'identity': 'Zombie::UI'}
+IL_0159: stloc          local(0x000A)
+IL_015D: br             {'target': 354}
+IL_0162: ldloc          local(0x000A)
+IL_0166: ldc.i4         0
+IL_016B: ldelem         {'token': '0x01000002', 'identity': 'UnityEngine.GameObject'}
+IL_0170: call           {'token': '0x2B000061', 'identity': '0x2b000061'}
+IL_0175: stloc          local(0x0014)
+IL_0179: br             {'target': 382}
+IL_017E: ldloc          local(0x0014)
+IL_0182: ldnull         None
+IL_0183: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0188: stloc          local(0x000B)
+IL_018C: ldloc          local(0x000B)
+IL_0190: ldc.i4.0       None
+IL_0191: ceq            None
+IL_0193: stloc          local(0x0010)
+IL_0197: ldloc          local(0x0010)
+IL_019B: brtrue         {'target': 449}
+IL_01A0: br             {'target': 421}
+IL_01A5: ldloc          local(0x0014)
+IL_01A9: ldc.i4         0
+IL_01AE: ldc.i4         0
+IL_01B3: ldloc          local(0x0001)
+IL_01B7: call           {'token': '0x0A0001E9', 'identity': 'UnityEngine.Animator::Play / sig 20030108080c'}
+IL_01BC: br             {'target': 449}
+IL_01C1: ldarg.0        None
+IL_01C2: ldfld          {'token': '0x040005E1', 'identity': 'Zombie::SPH_shootReady'}
+IL_01C7: ldc.i4         0
+IL_01CC: ceq            None
+IL_01CE: stloc          local(0x0011)
+IL_01D2: ldloc          local(0x0011)
+IL_01D6: brtrue         {'target': 603}
+IL_01DB: br             {'target': 480}
+IL_01E0: ldarg.0        None
+IL_01E1: ldfld          {'token': '0x040005E0', 'identity': 'Zombie::SPH_chargeReady'}
+IL_01E6: ldc.i4         0
+IL_01EB: ceq            None
+IL_01ED: stloc          local(0x0012)
+IL_01F1: ldloc          local(0x0012)
+IL_01F5: brtrue         {'target': 603}
+IL_01FA: br             {'target': 511}
+IL_01FF: ldarg.0        None
+IL_0200: ldfld          {'token': '0x040005E2', 'identity': 'Zombie::SPH_shooting'}
+IL_0205: ldc.i4         0
+IL_020A: ceq            None
+IL_020C: ldc.i4.0       None
+IL_020D: ceq            None
+IL_020F: stloc          local(0x000D)
+IL_0213: ldloc          local(0x000D)
+IL_0217: brtrue         {'target': 603}
+IL_021C: br             {'target': 545}
+IL_0221: ldarg.0        None
+IL_0222: ldfld          {'token': '0x040005FE', 'identity': 'Zombie::animator'}
+IL_0227: ldstr          {'token': '0x7000EBD9', 'identity': 'ShootingTrigger'}
+IL_022C: call           {'token': '0x0A000087', 'identity': 'UnityEngine.Animator::SetTrigger / sig 2001010e'}
+IL_0231: ldarg.0        None
+IL_0232: ldc.i4         0
+IL_0237: stfld          {'token': '0x040005E0', 'identity': 'Zombie::SPH_chargeReady'}
+IL_023C: ldarg.0        None
+IL_023D: ldc.i4         1
+IL_0242: stfld          {'token': '0x040005E2', 'identity': 'Zombie::SPH_shooting'}
+IL_0247: br             {'target': 603}
+IL_024C: ldarg.0        None
+IL_024D: ldfld          {'token': '0x04000614', 'identity': 'Zombie::UI'}
+IL_0252: stloc          local(0x0000)
+IL_0256: br             {'target': 5}
+IL_025B: ret            None

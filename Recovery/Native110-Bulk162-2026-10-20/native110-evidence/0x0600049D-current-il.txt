@@ -1,0 +1,98 @@
+Zombie::ZC_NutBoom
+{"token": "0x0600049D", "name": "Zombie::ZC_NutBoom", "signature": "200001", "rva": 396512, "max_stack": 4, "code_size": 413, "local_sig": 285213583, "locals_blob": "0714128210128094020c121d121502121512151280b502020c1280b91209114d020c1818", "eh_count": 0, "il_sha256": "346507afeb15b63364ac18e784719c706ca162d68d12f46b365d901a9a1d1c75"}
+IL_0000: br             {'target': 378}
+IL_0005: ldloc          local(0x0001)
+IL_0009: call           {'token': '0x0600010C', 'identity': 'Damage::AreaDamage'}
+IL_000E: stloc          local(0x0002)
+IL_0012: ldarg.0        None
+IL_0013: call           {'token': '0x06000436', 'identity': 'Zombie::DestroyZombie'}
+IL_0018: br             {'target': 29}
+IL_001D: br             {'target': 34}
+IL_0022: ldsfld         {'token': '0x040002F1', 'identity': 'ResourceManager::particleClips'}
+IL_0027: ldc.i4         1
+IL_002C: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_0031: stloc          local(0x0009)
+IL_0035: br             {'target': 58}
+IL_003A: ldloc          local(0x0009)
+IL_003E: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0043: stloc          local(0x000A)
+IL_0047: ldloc          local(0x000A)
+IL_004B: ldc.i4.0       None
+IL_004C: ceq            None
+IL_004E: stloc          local(0x000B)
+IL_0052: ldloc          local(0x000B)
+IL_0056: brtrue         {'target': 408}
+IL_005B: br             {'target': 96}
+IL_0060: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_0065: stloc          local(0x0004)
+IL_0069: br             {'target': 110}
+IL_006E: ldloc          local(0x0004)
+IL_0072: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0077: stloc          local(0x0005)
+IL_007B: br             {'target': 128}
+IL_0080: ldloc          local(0x0005)
+IL_0084: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0089: stloc          local(0x000F)
+IL_008D: br             {'target': 146}
+IL_0092: call           {'token': '0x06000138', 'identity': 'GlobalStaticVars::AudioVolume'}
+IL_0097: stloc          local(0x0011)
+IL_009B: ldc.r4         0.8999999761581421
+IL_00A0: ldc.r4         1.100000023841858
+IL_00A5: call           {'token': '0x0A000083', 'identity': 'UnityEngine.Random::Range / sig 00020c0c0c'}
+IL_00AA: stloc          local(0x000C)
+IL_00AE: br             {'target': 179}
+IL_00B3: ldloc          local(0x0009)
+IL_00B7: ldloca         local(0x0003)
+IL_00BB: ldloc          local(0x0011)
+IL_00BF: ldloc          local(0x000C)
+IL_00C3: call           {'token': '0x0600013E', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_00C8: stloc          local(0x000D)
+IL_00CC: ldloc          local(0x000F)
+IL_00D0: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_00D5: stloc          local(0x0003)
+IL_00D9: br             {'target': 408}
+IL_00DE: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_00E3: ldc.i4         2
+IL_00E8: call           {'token': '0x060001EA', 'identity': 'ParticlesManager::CreatNewParticle'}
+IL_00ED: stloc          local(0x000E)
+IL_00F1: br             {'target': 246}
+IL_00F6: ldloc          local(0x000E)
+IL_00FA: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_00FF: stloc          local(0x0006)
+IL_0103: ldloc          local(0x0006)
+IL_0107: ldc.i4.0       None
+IL_0108: ceq            None
+IL_010A: stloc          local(0x0010)
+IL_010E: ldloc          local(0x0010)
+IL_0112: brtrue         {'target': 377}
+IL_0117: br             {'target': 284}
+IL_011C: ldloc          local(0x000E)
+IL_0120: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0125: stloc          local(0x0007)
+IL_0129: br             {'target': 302}
+IL_012E: ldloc          local(0x0007)
+IL_0132: ldloca         local(0x0003)
+IL_0136: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_013B: ldloc          local(0x000E)
+IL_013F: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0144: stloc          local(0x0008)
+IL_0148: br             {'target': 333}
+IL_014D: ldloc          local(0x0008)
+IL_0151: ldloca         local(0x0003)
+IL_0155: call           {'token': '0x0A0000E5', 'identity': 'UnityEngine.Transform::set_localScale / sig 200101114d'}
+IL_015A: br             {'target': 351}
+IL_015F: ldarg.0        None
+IL_0160: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_0165: ldc.r4         0.15000000596046448
+IL_016A: ldc.r4         8.0
+IL_016F: call           {'token': '0x060002CD', 'identity': 'Board::Shake'}
+IL_0174: br             {'target': 377}
+IL_0179: ret            None
+IL_017A: ldarg.0        None
+IL_017B: ldc.i8         4294967295
+IL_0184: ldnull         None
+IL_0185: ldc.i4         0
+IL_018A: call           {'token': '0x06000443', 'identity': 'Zombie::GetDamage'}
+IL_018F: stloc          local(0x0001)
+IL_0193: br             {'target': 5}
+IL_0198: br             {'target': 222}
