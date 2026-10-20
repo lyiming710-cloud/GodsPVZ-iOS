@@ -1,0 +1,434 @@
+#!/usr/bin/env python3
+"""
+Candidate Preparation & Isolation Runner for GodsPVZ Native Actions Takeover (Bulk162 / Native110).
+
+Automates:
+  1. Source bundle / capsule manifest integrity verification.
+  2. Parent (Native93) and baseline (Bulk152) SHA verification.
+  3. Patcher project compilation (dotnet build).
+  4. Deterministic candidate construction (candidate1.dll == candidate2.dll).
+  5. Strict construction negative controls (exit==3 check for overwrite refusal and wrong parent refusal).
+  6. True body baseline comparison across RVAs (header bytes, IL, EH, padding) + InitLocals negative control.
+  7. Full independent isolation audit & 14 negative controls (via static_gates.py).
+  8. Complete static type-flow, MemberAccess, and EagerVerifier gates execution (via static_gates.py).
+  9. PRE-CONVERTER MANIFEST GENERATION (CANDIDATE-PREPARATION-MANIFEST.json saved BEFORE downstream call).
+  10. Downstream verification handoff to actions_verifier_runner.py with candidate override.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+import time
+
+EXPECTED_PARENT_SHA = "b074224112d46a959de074d3090ab6d0614b036959c66c63b4f49954472e2162"
+EXPECTED_PARENT_BYTES = 16033792
+EXPECTED_BASELINE_SHA = "8ef0f2bc62658bd7a4bdeb2cb25a10cadaa9f5418e8f97910f7ac1b9604823b1"
+EXPECTED_BASELINE_BYTES = 16518144
+EXPECTED_SOURCE_MANIFEST_SHA = "63f1e651fce1576110482efd3d70bca104e938683bd3d20f150022ae3aa8e793"
+
+def sha256_bytes(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+def sha256_file(p: pathlib.Path) -> str:
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
+def run_logged(cmd: list, log_prefix: pathlib.Path, cwd: pathlib.Path = None, env: dict = None) -> subprocess.CompletedProcess:
+    log_prefix.parent.mkdir(parents=True, exist_ok=True)
+    log_prefix.with_suffix(".argv.json").write_text(json.dumps(cmd, indent=2), encoding="utf-8")
+    t0 = time.time()
+    p = subprocess.run(cmd, cwd=str(cwd) if cwd else None, env=env, capture_output=True, text=True)
+    dur = time.time() - t0
+    log_prefix.with_suffix(".stdout.log").write_text(p.stdout, encoding="utf-8")
+    log_prefix.with_suffix(".stderr.log").write_text(p.stderr, encoding="utf-8")
+    log_prefix.with_suffix(".exitcode.txt").write_text(str(p.returncode), encoding="utf-8")
+    return p
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="GodsPVZ Candidate Preparation Runner (Bulk162/Native110)")
+    parser.add_argument("--capsule-dir", default=None, help="Path to extracted capsule directory")
+    parser.add_argument("--source-dir", default=None, help="Path to source files directory (default: <capsule>/src)")
+    parser.add_argument("--parent-dll", default=None, help="Path to frozen parent DLL (Native93)")
+    parser.add_argument("--baseline-candidate-dll", default=None, help="Path to baseline candidate DLL (Bulk152)")
+    parser.add_argument("--wrong-parent-dll", default=None, help="Path to wrong parent DLL for negative control")
+    parser.add_argument("--portable-root", default=os.environ.get("PORTABLE_ROOT", "./portable_root"), help="Path to portable root directory")
+    parser.add_argument("--output-dir", default=os.environ.get("PREPARE_OUTPUT_DIR", "./prepare_output"), help="Path to fresh output directory")
+    parser.add_argument("--deps-dir", default=None, help="Path to Python deps directory (contains dnfile)")
+    parser.add_argument("--tools-dir", default=None, help="Path to tools directory (contains MemberAccess.dll etc)")
+    parser.add_argument("--support-dir", default=None, help="Path to authentic ManagedStripped support directory")
+    parser.add_argument("--verifier-runner", default=None, help="Path to actions_verifier_runner.py")
+    parser.add_argument("--skip-portable-verifier", action="store_true", help="Skip running downstream verifier")
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    output_dir = pathlib.Path(args.output_dir).resolve()
+    if output_dir.exists():
+        raise FileExistsError(f"Output directory already exists: {output_dir}. Fresh directory required.")
+    output_dir.mkdir(parents=True, exist_ok=False)
+
+    res_dir = output_dir / "results"
+    res_dir.mkdir(parents=True, exist_ok=True)
+    cand_dir = output_dir / "candidates"
+    cand_dir.mkdir(parents=True, exist_ok=True)
+    bin_dir = output_dir / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+
+    capsule_dir = pathlib.Path(args.capsule_dir).resolve() if args.capsule_dir else None
+    portable_root = pathlib.Path(args.portable_root).resolve()
+
+    # Resolve deps-dir and add to sys.path / PYTHONPATH
+    deps_dir = None
+    if args.deps_dir:
+        deps_dir = pathlib.Path(args.deps_dir).resolve()
+    elif capsule_dir and (capsule_dir / "deps").exists():
+        deps_dir = capsule_dir / "deps"
+    if deps_dir and deps_dir.exists():
+        sys.path.insert(0, str(deps_dir))
+        os.environ["PYTHONPATH"] = f"{deps_dir}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
+        print(f"Added Python deps to path: {deps_dir}")
+
+    # Import static_gates module
+    script_dir = pathlib.Path(__file__).resolve().parent
+    sys.path.insert(0, str(script_dir))
+    import static_gates
+
+    # Verify dnfile availability
+    try:
+        import dnfile
+        print("dnfile imported successfully.")
+    except ImportError:
+        print("ERROR: dnfile could not be imported! Please check --deps-dir.")
+        sys.exit(10)
+
+    # Resolve source-dir
+    src_dir = None
+    if args.source_dir:
+        src_dir = pathlib.Path(args.source_dir).resolve()
+    elif capsule_dir and (capsule_dir / "src").exists():
+        src_dir = capsule_dir / "src"
+    if not src_dir or not src_dir.exists():
+        print(f"ERROR: Source directory not found: {src_dir}")
+        sys.exit(11)
+    print(f"Using source directory: {src_dir}")
+
+    # Resolve tools-dir
+    tools_dir = None
+    if args.tools_dir:
+        tools_dir = pathlib.Path(args.tools_dir).resolve()
+    elif capsule_dir and (capsule_dir / "tools").exists():
+        tools_dir = capsule_dir / "tools"
+    elif (portable_root / "tools").exists():
+        tools_dir = portable_root / "tools"
+    if not tools_dir or not tools_dir.exists():
+        print(f"ERROR: Tools directory not found: {tools_dir}")
+        sys.exit(11)
+    print(f"Using tools directory: {tools_dir}")
+
+    # Resolve support-dir
+    support_dir = None
+    if args.support_dir:
+        support_dir = pathlib.Path(args.support_dir).resolve()
+    elif (portable_root / "work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped").exists():
+        support_dir = portable_root / "work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped"
+    elif (portable_root / "ManagedStripped").exists():
+        support_dir = portable_root / "ManagedStripped"
+    if not support_dir or not support_dir.exists():
+        print(f"ERROR: Managed support directory not found: {support_dir}")
+        sys.exit(11)
+    print(f"Using managed support directory: {support_dir}")
+
+    # Resolve cecil dll
+    cecil_dll = None
+    for c in [
+        tools_dir / "member-access-bin/Mono.Cecil.dll",
+        tools_dir / "Mono.Cecil.dll",
+        portable_root / "tools/Mono.Cecil.dll"
+    ]:
+        if c.exists():
+            cecil_dll = c.resolve()
+            break
+    if not cecil_dll:
+        print("ERROR: Mono.Cecil.dll not found!")
+        sys.exit(11)
+    print(f"Using Mono.Cecil.dll: {cecil_dll}")
+
+    # Phase 1: Source Manifest & Lineage Validation
+    print("\n[PHASE 1] Validating Source Manifest & Lineage...")
+    man_path = src_dir / "SOURCE-MANIFEST.json"
+    if not man_path.exists():
+        print(f"ERROR: SOURCE-MANIFEST.json not found in {src_dir}")
+        sys.exit(12)
+    actual_man_sha = sha256_file(man_path)
+    if actual_man_sha != EXPECTED_SOURCE_MANIFEST_SHA:
+        print(f"ERROR: Source manifest SHA mismatch! {actual_man_sha} != {EXPECTED_SOURCE_MANIFEST_SHA}")
+        sys.exit(12)
+    man_data = json.loads(man_path.read_text(encoding="utf-8"))
+    for f_entry in man_data["files"]:
+        f_p = src_dir / f_entry["path"]
+        if not f_p.exists() or f_p.stat().st_size != f_entry["bytes"] or sha256_file(f_p) != f_entry["sha256"]:
+            print(f"ERROR: Manifest file corrupted: {f_entry['path']}")
+            sys.exit(12)
+    print("SOURCE-MANIFEST.json (SHA 63f1...e793) validated: 100% MATCH.")
+
+    lineage = json.loads((src_dir / "SOURCE-LINEAGE.json").read_text(encoding="utf-8"))
+    new_target_tokens_hex = lineage["new_target_tokens"]
+    assert len(new_target_tokens_hex) == 10, f"Expected 10 new targets, got {len(new_target_tokens_hex)}"
+    new_target_tokens = {int(x, 16) for x in new_target_tokens_hex}
+    print(f"Loaded new targets from lineage: {new_target_tokens_hex}")
+
+    plan = json.loads((src_dir / "IMPLEMENTATION-PLAN.json").read_text(encoding="utf-8"))
+    body_targets = {int(t["token"], 16) for t in plan["targets"]}
+    assert len(body_targets) == 162, f"Expected 162 body targets, got {len(body_targets)}"
+    meta_add = json.loads((src_dir / "METADATA-ADDITIONS.json").read_text(encoding="utf-8"))
+    assert len(meta_add["member_definitions"]) == 70, f"Expected 70 member_definitions, got {len(meta_add['member_definitions'])}"
+    assert len(meta_add["local_blobs"]) == 107, f"Expected 107 local_blobs, got {len(meta_add['local_blobs'])}"
+
+    const_map = {c["name"]: int(c["token"]) for c in meta_add.get("constants", [])}
+    expected_new_locals = {}
+    for t in plan["targets"]:
+        tok = int(t["token"], 16)
+        ls_str = t.get("new_local_sig_token") or t.get("local_sig_token")
+        new_loc = int(ls_str, 16) if ls_str else const_map[t["local_constant"]]
+        expected_new_locals[tok] = new_loc
+
+    prog_cs = (src_dir / "Program.cs").read_text(encoding="utf-8")
+    import re
+    target_to_batch = {
+        int(m.group(1), 16): m.group(2)
+        for m in re.finditer(r"\(Token:(0x[0-9A-Fa-f]+),\s*Code:(N\d+)_", prog_cs)
+    }
+    assert len(target_to_batch) == 162
+
+    # Phase 2: Validate Parent DLL, Baseline Candidate, and Wrong Parent DLL
+    print("\n[PHASE 2] Validating Parent, Baseline, and Control Binaries...")
+    parent_dll = None
+    if args.parent_dll:
+        parent_dll = pathlib.Path(args.parent_dll).resolve()
+    elif capsule_dir and (capsule_dir / "inputs/parent_native93.dll").exists():
+        parent_dll = capsule_dir / "inputs/parent_native93.dll"
+    elif (portable_root / "inputs/parent_native93.dll").exists():
+        parent_dll = portable_root / "inputs/parent_native93.dll"
+    if not parent_dll or not parent_dll.exists():
+        print(f"ERROR: Parent DLL not found: {parent_dll}")
+        sys.exit(13)
+    p_sha = sha256_file(parent_dll)
+    if p_sha != EXPECTED_PARENT_SHA or parent_dll.stat().st_size != EXPECTED_PARENT_BYTES:
+        print(f"ERROR: Parent DLL SHA mismatch! {p_sha} != {EXPECTED_PARENT_SHA}. Refusing fallback!")
+        sys.exit(13)
+    print(f"Parent Native93 DLL verified: SHA {p_sha} ({parent_dll.stat().st_size} bytes).")
+
+    baseline_dll = None
+    if args.baseline_candidate_dll:
+        baseline_dll = pathlib.Path(args.baseline_candidate_dll).resolve()
+    elif (portable_root / "work/candidate1.dll").exists():
+        baseline_dll = portable_root / "work/candidate1.dll"
+    if not baseline_dll or not baseline_dll.exists():
+        print(f"ERROR: Baseline candidate DLL (Bulk152) not found: {baseline_dll}")
+        sys.exit(14)
+    b_sha = sha256_file(baseline_dll)
+    if b_sha != EXPECTED_BASELINE_SHA or baseline_dll.stat().st_size != EXPECTED_BASELINE_BYTES:
+        print(f"ERROR: Baseline candidate DLL SHA mismatch! {b_sha} != {EXPECTED_BASELINE_SHA}")
+        sys.exit(14)
+    print(f"Baseline Bulk152 Candidate verified: SHA {b_sha} ({baseline_dll.stat().st_size} bytes).")
+
+    wrong_parent_dll = None
+    if args.wrong_parent_dll:
+        wrong_parent_dll = pathlib.Path(args.wrong_parent_dll).resolve()
+    elif (portable_root / "inputs/wrong_parent_native92.dll").exists():
+        wrong_parent_dll = portable_root / "inputs/wrong_parent_native92.dll"
+    elif baseline_dll.exists():
+        wrong_parent_dll = baseline_dll
+    if not wrong_parent_dll or not wrong_parent_dll.exists():
+        print(f"ERROR: Wrong parent DLL not found for negative control: {wrong_parent_dll}")
+        sys.exit(15)
+    print(f"Wrong parent DLL for negative control: {wrong_parent_dll.name}")
+
+    # Phase 3: Build Patcher
+    print("\n[PHASE 3] Compiling Bulk162 Patcher...")
+    csprojs = list(src_dir.glob("*.csproj"))
+    if not csprojs:
+        print("ERROR: No .csproj found in src directory!")
+        sys.exit(16)
+    csproj_file = csprojs[0]
+    obj_dir = output_dir / "obj"
+    r_build = run_logged([
+        "dotnet", "build", str(csproj_file),
+        "-c", "Release",
+        "-p:UseSharedCompilation=false",
+        "--disable-build-servers",
+        f"-p:BaseIntermediateOutputPath={obj_dir}/",
+        f"-p:IntermediateOutputPath={obj_dir}/",
+        "-o", str(bin_dir),
+        "--nologo"
+    ], res_dir / "build_patcher")
+    if r_build.returncode != 0:
+        print("ERROR: Patcher compilation failed!")
+        print(r_build.stderr or r_build.stdout)
+        sys.exit(r_build.returncode)
+    patcher_dll = bin_dir / f"{csproj_file.stem}.dll"
+    print(f"Patcher compiled: {patcher_dll.name} ({patcher_dll.stat().st_size} bytes, SHA {sha256_file(patcher_dll)})")
+
+    # Phase 4: Deterministic Construction
+    print("\n[PHASE 4] Constructing Bulk162 Candidate (Two Independent Runs)...")
+    c1 = cand_dir / "candidate1.dll"
+    c2 = cand_dir / "candidate2.dll"
+    j1 = res_dir / "construction1.json"
+    j2 = res_dir / "construction2.json"
+    r_run1 = run_logged(["dotnet", str(patcher_dll), str(parent_dll), str(c1), str(j1)], res_dir / "run1_patcher")
+    r_run2 = run_logged(["dotnet", str(patcher_dll), str(parent_dll), str(c2), str(j2)], res_dir / "run2_patcher")
+    if r_run1.returncode != 0 or r_run2.returncode != 0:
+        print(f"ERROR: Candidate construction failed: run1={r_run1.returncode}, run2={r_run2.returncode}")
+        sys.exit(r_run1.returncode if r_run1.returncode != 0 else r_run2.returncode)
+    c1_sha = sha256_file(c1)
+    c2_sha = sha256_file(c2)
+    if c1_sha != c2_sha or c1.stat().st_size != c2.stat().st_size:
+        print(f"ERROR: Determinism assertion failed! {c1_sha} != {c2_sha}")
+        sys.exit(17)
+    print(f"Bulk162 Candidate constructed deterministically: {c1.stat().st_size} bytes, SHA-256 = {c1_sha}")
+
+    # Phase 5: Strict Negative Controls (Must return exit code 3)
+    print("\n[PHASE 5] Executing Strict Negative Controls (exit==3 check)...")
+    c1_pre_bytes = c1.read_bytes()
+    r_ctrl_exist = run_logged([
+        "dotnet", str(patcher_dll), str(parent_dll), str(c1), str(res_dir / "unused.json")
+    ], res_dir / "control_refuse_existing_output")
+    if r_ctrl_exist.returncode != 3:
+        print(f"ERROR: Overwrite negative control failed! Expected exit code 3, got {r_ctrl_exist.returncode}")
+        sys.exit(18)
+    if c1.read_bytes() != c1_pre_bytes:
+        print("ERROR: Existing candidate file was corrupted during refusal test!")
+        sys.exit(18)
+    print("Negative control 1 (refuse existing output): PASS (exitcode 3, file unchanged).")
+
+    never_dll = cand_dir / "never.dll"
+    if never_dll.exists(): never_dll.unlink()
+    r_ctrl_wp = run_logged([
+        "dotnet", str(patcher_dll), str(wrong_parent_dll), str(never_dll), str(res_dir / "unused_wp.json")
+    ], res_dir / "control_refuse_wrong_parent")
+    if r_ctrl_wp.returncode != 3:
+        print(f"ERROR: Wrong parent negative control failed! Expected exit code 3, got {r_ctrl_wp.returncode}")
+        sys.exit(19)
+    if never_dll.exists():
+        print("ERROR: Target file was created despite wrong parent rejection!")
+        sys.exit(19)
+    print("Negative control 2 (refuse wrong parent): PASS (exitcode 3, target not created).")
+
+    # Phase 6: True Body Baseline Candidate Comparison & InitLocals Negative Control
+    print("\n[PHASE 6] Comparing against Baseline Bulk152 Candidate across RVAs...")
+    diff_report = static_gates.compare_against_baseline(baseline_dll.read_bytes(), c1.read_bytes(), new_target_tokens)
+    (res_dir / "BASELINE-CANDIDATE-COMPARISON.json").write_text(json.dumps(diff_report, indent=2), encoding="utf-8")
+    print(f"Baseline comparison: exactly {diff_report['body_diff_methods_count']} new targets differ, all other 2307 methods byte-identical: PASS.")
+
+    print("Executing InitLocals bit-flip negative control on baseline comparator...")
+    nc_initlocals = static_gates.run_initlocals_negative_control(baseline_dll.read_bytes(), c1.read_bytes(), new_target_tokens)
+    print("Negative control (InitLocals bit-flip rejection): PASS.")
+
+    # Phase 7: Full Independent Isolation Audit & 14 Negative Controls
+    print("\n[PHASE 7] Running Full Independent Isolation Audit & 14 Negative Controls...")
+    p_bytes = parent_dll.read_bytes()
+    c_bytes = c1.read_bytes()
+    ok, msg, iso_report = static_gates.audit_isolation_bulk162(p_bytes, c_bytes, body_targets, target_to_batch, expected_new_locals, meta_add)
+    if not ok:
+        print(f"ERROR: Isolation audit failed: {msg}")
+        sys.exit(20)
+    assert iso_report["non_target_methods_checked_total"] == 2155
+    assert iso_report["body_targets_count"] == 162
+    assert iso_report["finally_targets_verified_count"] == 30
+    print(f"Isolation audit PASS: 162 targets, 2155 non-targets preserved, 30 finally regions verified.")
+
+    print("Executing 14 negative controls on isolation auditor...")
+    nc_results = static_gates.run_14_negative_controls(p_bytes, c_bytes, body_targets, target_to_batch, expected_new_locals, meta_add)
+    iso_report["negative_controls_on_isolation_and_eh_verifier"] = nc_results
+    (res_dir / "INDEPENDENT-ISOLATION-REPORT.json").write_text(json.dumps(iso_report, indent=2), encoding="utf-8")
+    print("All 14 negative controls on isolation auditor rejected successfully!")
+
+    # Phase 8: Static Type-Flow, MemberAccess & EagerVerifier Gates
+    print("\n[PHASE 8] Executing Type-Flow, MemberAccess & EagerVerifier Gates...")
+    static_pipeline_res = static_gates.run_type_flow_and_member_access_gates(
+        cand_dll=c1,
+        support_dir=support_dir,
+        tools_dir=tools_dir,
+        output_dir=output_dir,
+        new_target_tokens=new_target_tokens,
+        all_target_tokens=body_targets,
+        cecil_dll=cecil_dll
+    )
+    (res_dir / "STATIC-GATES-PIPELINE-REPORT.json").write_text(json.dumps(static_pipeline_res, indent=2), encoding="utf-8")
+    print("All static type-flow and member access gates passed successfully.")
+
+    # Phase 9: PRE-CONVERTER MANIFEST GENERATION
+    # Manifest is written to disk BEFORE invoking downstream verifier to guarantee receipt
+    manifest = {
+        "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "parent": {"name": parent_dll.name, "bytes": len(p_bytes), "sha256": p_sha},
+        "baseline": {"name": baseline_dll.name, "bytes": len(baseline_dll.read_bytes()), "sha256": b_sha},
+        "candidate": {"name": c1.name, "bytes": len(c_bytes), "sha256": c1_sha},
+        "new_target_tokens": list(new_target_tokens_hex),
+        "total_targets_count": 162,
+        "inherited_targets_count": 152,
+        "non_target_methods_count": 2155,
+        "construction": {"deterministic": True, "refuse_existing_output_exit_3": True, "refuse_wrong_parent_exit_3": True},
+        "baseline_comparison": diff_report,
+        "initlocals_negative_control": nc_initlocals,
+        "isolation_audit": {"status": "PASS", "14_negative_controls_rejected": True},
+        "static_gates_pipeline": static_pipeline_res,
+        "verifier_chain": {"executed": not args.skip_portable_verifier, "status": "PENDING"}
+    }
+    manifest_path = output_dir / "CANDIDATE-PREPARATION-MANIFEST.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(f"\nPre-converter candidate manifest written to {manifest_path.name}.")
+
+    # Phase 10: Verification Chain Hand-off
+    verifier_exit = 0
+    if not args.skip_portable_verifier:
+        print("\n[PHASE 10] Calling actions_verifier_runner.py with new candidate...")
+        v_runner = None
+        if args.verifier_runner:
+            v_runner = pathlib.Path(args.verifier_runner).resolve()
+        else:
+            sibling = script_dir / "actions_verifier_runner.py"
+            if sibling.exists(): v_runner = sibling
+        if not v_runner or not v_runner.exists():
+            print(f"ERROR: actions_verifier_runner.py not found at {v_runner}!")
+            sys.exit(21)
+        v_cmd = [
+            sys.executable, str(v_runner),
+            "--portable-root", str(portable_root),
+            "--candidate-dll", str(c1),
+            "--output-dir", str(output_dir / "verifier_output")
+        ]
+        r_ver = run_logged(v_cmd, res_dir / "run_verifier_chain")
+        verifier_exit = r_ver.returncode
+        print(f"Downstream verifier completed with exit code: {verifier_exit}")
+
+        # Update manifest with final verifier status
+        manifest["verifier_chain"] = {
+            "executed": True,
+            "exit_code": verifier_exit,
+            "status": "PASS" if verifier_exit == 0 else "FAIL_DOWNSTREAM_GATE"
+        }
+        manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+    print("\n=================================================================")
+    print(f"BULK162 CANDIDATE PREPARATION COMPLETE: SHA {c1_sha}")
+    print(f"Manifest written to: {manifest_path}")
+    print(f"Verifier Exit Code: {verifier_exit}")
+    print("=================================================================")
+
+    if verifier_exit != 0:
+        print(f"GATE RESULT: NON-ZERO EXIT REQUIRED (Verifier exit code {verifier_exit}).")
+        sys.exit(verifier_exit)
+    sys.exit(0)
+
+if __name__ == "__main__":
+    main()
+

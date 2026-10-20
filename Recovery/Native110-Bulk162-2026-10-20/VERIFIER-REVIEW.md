@@ -1,0 +1,11 @@
+# Execution runner review and limits
+
+The execution implementation was authored by the AGY Flash collaboration thread, then copied into `scripts/actions/prepare_bulk162_candidate.py` and `scripts/actions/static_gates.py`. The original delivery remains in the local `verifier-authored` directory. The primary author reviewed source without executing patchers, fixtures, compilers or game code locally.
+
+The first drafts were not accepted for dispatch. Review found an overbroad baseline allowlist, a comparison that treated relocated but identical bodies as changes, omitted method-header flags, incomplete static gates, and a receipt written too late. The final runner compares exactly the ten new bodies against Bulk152, checks raw header/IL/EH bytes across independent RVAs, includes an InitLocals mutation control, executes the original fourteen isolation controls, and writes the candidate receipt before downstream conversion.
+
+The final repository copy additionally requires complete, unique 162-method coverage in exported and typed results. The frozen checker must retain precisely its seven known unsupported methods; the extended checker must pass the whole set. The stack-underflow control must return its documented rejection code. MemberAccess must inspect 162 methods, and its private-field negative control must produce exactly one explicit access rejection with no unresolved references. All static command lines, stdout, stderr and exit codes are saved. EagerVerifier must resolve all 1,170 MemberRefs, including the 70 appended rows. A downstream failure is labelled `FAIL_DOWNSTREAM_GATE`, without guessing whether the failed component was the oracle, fixture, converter or compiler.
+
+These checks establish construction, isolation and scoped static properties only after their actual Actions execution succeeds. They do not independently prove the ten restored methods' runtime behavior. The archived Native109 fixture still uses dependency stubs. No formal promotion, licensed Unity result, Apple build, IPA or device acceptance follows from source review or a green report generator.
+
+The original frozen tool files in the source capsule remain unchanged. New runner guards do not rewrite their acceptance rules. Failed controls, unsupported instructions and unproven interactions must stay visible in the run evidence.
