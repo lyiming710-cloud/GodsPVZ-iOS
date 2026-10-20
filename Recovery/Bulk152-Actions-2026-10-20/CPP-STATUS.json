@@ -1,0 +1,66 @@
+{
+  "compiler": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+  "candidate_sha256": "8ef0f2bc62658bd7a4bdeb2cb25a10cadaa9f5418e8f97910f7ac1b9604823b1",
+  "candidate_size": 16518144,
+  "total_generated_cpp_files": 760,
+  "godspvzruntime1_tu_count": 19,
+  "godspvzruntime1_failing_tu_count": 19,
+  "total_errors_in_game_tus": 4502,
+  "mapped_methods_count": 2267,
+  "methods_with_errors_count": 235,
+  "clean_methods_count": 2032,
+  "unmapped_errors_count": 0,
+  "included_file_errors_count": 58,
+  "error_categories": {
+    "no_matching_function_call": 381,
+    "pointer_integer_comparison": 1844,
+    "no_viable_overloaded_operator": 207,
+    "integer_pointer_mismatch": 1047,
+    "other": 783,
+    "invalid_binary_operands": 130,
+    "invalid_cast": 56,
+    "incompatible_pointer_assignment": 40,
+    "type_initialization_mismatch": 14
+  },
+  "sample_error_messages": {
+    "no_matching_function_call": "no matching function for call to 'Camera_ScreenToWorldPoint_m5EA3148F070985EC72127AAC3448D8D6ABE6E7E5'",
+    "pointer_integer_comparison": "comparison between pointer and integer ('Device_boardEditor_tA8ECFA849F39428CB085EEDF2570A1E331F63787 *' and 'int32_t' (aka 'int'))",
+    "no_viable_overloaded_operator": "no viable overloaded '='",
+    "integer_pointer_mismatch": "incompatible integer to pointer conversion assigning to 'String_t *' from 'int32_t' (aka 'int')",
+    "other": "incompatible pointer types assigning to 'String_t *' from 'Admin_system2_boardEdior_t8F69D4425320BBDC97C41799C58558CFDE398E79 *'",
+    "invalid_binary_operands": "invalid operands to binary expression ('RuntimeObject *' (aka 'Il2CppObject *') and 'int32_t' (aka 'int'))",
+    "invalid_cast": "cannot cast from type 'float' to pointer type 'float *'",
+    "incompatible_pointer_assignment": "assigning to 'RuntimeObject *' (aka 'Il2CppObject *') from incompatible type 'float'",
+    "type_initialization_mismatch": "cannot initialize return object of type 'typename pick_bigger<long, Il2CppObject *>::type' (aka 'long') with an rvalue of type 'Il2CppObject *'"
+  },
+  "roster_108_evaluation": {
+    "total_roster_methods": 108,
+    "generated_and_mapped": 108,
+    "attributed_clean_count": 108,
+    "attributed_errored_count": 0,
+    "enclosing_tu_failed_count": 108,
+    "note": "All 108 roster methods reside within GodsPVZRuntime1*.cpp compilation units. Every roster method body has 0 attributed errors, but each enclosing game compilation unit has exit code 1 due to remaining un-reconstructed methods in the same file."
+  },
+  "comparison_against_baselines": {
+    "native53_baseline": {
+      "profile": "Historical Canary stripped mscorlib (1,798,144 B), stripped CoreModule (554,496 B)",
+      "raw_errors": 5668,
+      "methods_with_errors": 516,
+      "clean_methods": 1751
+    },
+    "native90_reference": {
+      "profile": "Linux syntax check with stripped mscorlib + CoreModule with set_sharedMaterials",
+      "raw_errors": 5430,
+      "methods_with_errors": 393,
+      "clean_methods": 1874
+    },
+    "bulk152_current": {
+      "profile": "Official coherent iOS Player profile (11293d74 CoreModule + 214 AOT BCLs)",
+      "raw_errors": 4502,
+      "methods_with_errors": 235,
+      "clean_methods": 2032,
+      "raw_error_diff_vs_native53": -1166,
+      "methods_with_errors_diff_vs_native53": -281
+    }
+  }
+}

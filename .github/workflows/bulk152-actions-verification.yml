@@ -1,0 +1,105 @@
+name: Bulk152 portable Linux verification
+
+on:
+  push:
+    branches: [ci/bulk152-actions-migration-2026-10-20]
+    paths: ['.github/workflows/bulk152-actions-verification.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: bulk152-portable-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      NUGET_XMLDOC_MODE: skip
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.401'
+      - name: Record host and install Clang 18 if needed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v clang++-18 >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y clang-18 g++
+          fi
+          mkdir -p "$RUNNER_TEMP/bulk152-bin"
+          ln -s "$(command -v clang++-18)" "$RUNNER_TEMP/bulk152-bin/clang++"
+          echo "$RUNNER_TEMP/bulk152-bin" >> "$GITHUB_PATH"
+          uname -a
+          df -h
+          free -h
+          dotnet --info
+          clang++-18 --version
+          g++ --version
+      - name: Download immutable diagnostic checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bulk152-downloads"
+          gh release download bulk152-actions-checkpoint-2026-10-20 \
+            --repo lyiming710-cloud/GodsPVZ-iOS \
+            --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz \
+            --pattern PORTABLE-MANIFEST.json \
+            --dir "$RUNNER_TEMP/bulk152-downloads"
+      - name: Authenticate and restore all checkpoint files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/restore_bulk152_checkpoint.py \
+            --downloads "$RUNNER_TEMP/bulk152-downloads" \
+            --destination "$RUNNER_TEMP/bulk152-portable" \
+            --receipt .validation/bulk152-restore-receipt.json
+      - name: Execute fresh Native109, IL2CPP and full game TU checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/verify_bulk152_portable.py \
+            --portable-root "$RUNNER_TEMP/bulk152-portable" \
+            --output-dir "$GITHUB_WORKSPACE/.validation/bulk152-run" \
+            --native109-oracle-cpp "$RUNNER_TEMP/bulk152-portable/work/native109_oracle.cpp" \
+            --native109-fixture-cs "$RUNNER_TEMP/bulk152-portable/work/Native109Fixture.cs" \
+            --roster-json "$RUNNER_TEMP/bulk152-portable/work/PRIMARY-ACCEPTANCE-2026-10-16.json" \
+            --il2cpp-argv-json "$RUNNER_TEMP/bulk152-portable/work/results/il2cpp_conversion/il2cpp_convert.argv.json"
+      - name: Preserve fresh generated sources when present
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          stage=.validation/bulk152-run/il2cpp_stage
+          if [ -d "$stage/il2cppOutput" ]; then
+            tar -czf .validation/bulk152-generated-sources.tar.gz \
+              -C "$stage" il2cppOutput
+          fi
+      - name: Upload complete diagnostics even on a failed gate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bulk152-Linux-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: warn
+          path: |
+            .validation/bulk152-restore-receipt.json
+            .validation/bulk152-run/results/
+            .validation/bulk152-run/oracle_run/
+            .validation/bulk152-run/fixture_run/*.json
+            .validation/bulk152-run/fixture_run/*.log
+            .validation/bulk152-run/fixture_run/*.txt
+            .validation/bulk152-run/*.json
+            .validation/bulk152-generated-sources.tar.gz

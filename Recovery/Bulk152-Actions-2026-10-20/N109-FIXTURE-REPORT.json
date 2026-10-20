@@ -1,0 +1,88 @@
+{
+  "batch": "Native109",
+  "verified_at_utc": "2026-10-20T10:26:19.694307+00:00",
+  "candidate_sha256": "8ef0f2bc62658bd7a4bdeb2cb25a10cadaa9f5418e8f97910f7ac1b9604823b1",
+  "total_positive_cases": 768,
+  "positive_pass": 768,
+  "positive_fail": 0,
+  "oracle_signal_clean": true,
+  "unexpected_signal_count": 0,
+  "oracle_exit_code": 0,
+  "fixture_exit_code": 0,
+  "methods": {
+    "0x06000115": {
+      "token": "0x06000115",
+      "name": "DeviceEvent::Update",
+      "signature": "System.Void DeviceEvent::Update()",
+      "role": "historical_direct_target",
+      "positive_cases": 256,
+      "positive_pass": 256,
+      "positive_fail": 0,
+      "oracle_signal_clean": true,
+      "mutants": [
+        {
+          "mutant": "mut_0115_skip_countdown_check",
+          "detected_deltas": 224,
+          "total_cases": 256,
+          "status": "DETECTED"
+        }
+      ],
+      "interaction_chain": "0115 -> 011A (calls ClimbLadder.Update_Climb on ClimbLadder instances after removal check)"
+    },
+    "0x0600011A": {
+      "token": "0x0600011A",
+      "name": "ClimbLadder::Update_Climb",
+      "signature": "System.Void ClimbLadder::Update_Climb()",
+      "role": "explicit_companion",
+      "positive_cases": 256,
+      "positive_pass": 256,
+      "positive_fail": 0,
+      "oracle_signal_clean": true,
+      "mutants": [
+        {
+          "mutant": "mut_011A_invert_threshold",
+          "detected_deltas": 168,
+          "total_cases": 256,
+          "status": "DETECTED"
+        },
+        {
+          "mutant": "mut_011A_time_before_capture",
+          "detected_deltas": 24,
+          "total_cases": 256,
+          "status": "DETECTED"
+        }
+      ],
+      "interaction_chain": "ClimbLadder companion preserving captured fX before Time.get_deltaTime"
+    },
+    "0x060001D3": {
+      "token": "0x060001D3",
+      "name": "MouseManager::MouseDownUpdateOnBoardPreview",
+      "signature": "System.Boolean MouseManager::MouseDownUpdateOnBoardPreview()",
+      "role": "historical_direct_target",
+      "positive_cases": 256,
+      "positive_pass": 256,
+      "positive_fail": 0,
+      "oracle_signal_clean": true,
+      "mutants": [
+        {
+          "mutant": "mut_01D3_omit_click",
+          "detected_deltas": 106,
+          "total_cases": 256,
+          "status": "DETECTED"
+        },
+        {
+          "mutant": "mut_01D3_reuse_field",
+          "detected_deltas": 256,
+          "total_cases": 256,
+          "status": "DETECTED"
+        }
+      ],
+      "interaction_chain": "01D3 -> 01E0 (GetZombieUnderMouse) -> 0677 (PrepareUIController.get_Instance) -> 05DB (TurnToAlmanac)"
+    }
+  },
+  "mutants_summary": {
+    "total_mutants": 5,
+    "detected_mutants": 5,
+    "all_controls_passed": true
+  }
+}
