@@ -30,6 +30,8 @@ No new formal method promotion is made. The prior 112-method scoped ledger remai
 
 Workflow: `.github/workflows/bulk152-actions-verification.yml`, on Ubuntu 24.04, .NET SDK 10.0.401 and Clang 18. It requires no Codespace, Unity credentials or local editor.
 
+First replay: [Actions run 39416885984](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39416885984), executed commit `bc77466c1055ccd1f5ff26b169440d48c5fe9f97`. The clean runner downloaded the release checkpoint and authenticated all 4,173 files. The archived finite Native109 tests replayed at 768/768 and five detected mutants, with zero unexpected oracle signals. IL2CPP generated 760 C++ files, including 19 game TUs; all 19 game TUs failed Clang with 4,502 diagnostics and 235 heuristically attributed methods. The job correctly concluded **failure**. Both the fresh generated-source preservation and evidence artifact upload succeeded. This confirms this scoped pipeline runs without Codespaces; it does not qualify the game or the stubbed interaction chain.
+
 1. Download the frozen diagnostic assets using the repository token.
 2. Check both outer SHA-256 values, reject unsafe/duplicate archive members, then check every extracted file against the manifest.
 3. Rebuild and execute the actual archived oracle and CIL fixture in a new output directory, retaining the finite-test scope limitation.
