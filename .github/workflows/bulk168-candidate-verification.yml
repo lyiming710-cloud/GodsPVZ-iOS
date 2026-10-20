@@ -45,7 +45,7 @@ jobs:
           g++ --version
       - name: Download frozen inputs, tools capsule, baseline candidate and Bulk168 source
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -111,7 +111,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk168-Linux-evidence-\${{ github.run_id }}-\${{ github.run_attempt }}
+          name: Bulk168-Linux-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           include-hidden-files: true
           retention-days: 3
           if-no-files-found: warn
