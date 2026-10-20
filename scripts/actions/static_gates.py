@@ -442,8 +442,11 @@ def audit_isolation_bulk162(parent_bytes: bytes, cand_bytes: bytes, body_targets
             off_c = pe_c["rva_to_off"](c_rva)
             if (off_c % 4) != 0:
                 return False, f"Target {tok:#x} body offset not 4-byte aligned", {}
-            sp = parse_raw_method_body_span(parent_bytes, off_p)
-            sc = parse_raw_method_body_span(cand_bytes, off_c)
+            try:
+                sp = parse_raw_method_body_span(parent_bytes, off_p)
+                sc = parse_raw_method_body_span(cand_bytes, off_c)
+            except Exception as e:
+                return False, f"Target {tok:#x} body/EH parse error: {e}", {}
             old_slot_untouched = (parent_bytes[off_p:off_p + sp[0]] == cand_bytes[off_p:off_p + sp[0]])
             exp_local_sig = expected_new_locals[tok]
             if not old_slot_untouched or sc[4] != exp_local_sig:
@@ -481,8 +484,11 @@ def audit_isolation_bulk162(parent_bytes: bytes, cand_bytes: bytes, body_targets
                 if p_rva != c_rva: return False, f"Non-target method {tok:#x} RVA changed", {}
                 off_p = pe_p["rva_to_off"](p_rva)
                 off_c = pe_c["rva_to_off"](c_rva)
-                sp = parse_raw_method_body_span(parent_bytes, off_p)
-                sc = parse_raw_method_body_span(cand_bytes, off_c)
+                try:
+                    sp = parse_raw_method_body_span(parent_bytes, off_p)
+                    sc = parse_raw_method_body_span(cand_bytes, off_c)
+                except Exception as e:
+                    return False, f"Non-target method {tok:#x} body/EH parse error: {e}", {}
                 if sp != sc or parent_bytes[off_p:off_p + sp[0]] != cand_bytes[off_c:off_c + sc[0]]:
                     return False, f"Non-target method {tok:#x} body changed", {}
                 non_target_with_rva += 1
