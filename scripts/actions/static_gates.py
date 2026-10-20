@@ -788,6 +788,11 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
         cs_content = cs_file.read_text(encoding="utf-8")
         if "using System.Collections.Generic;" not in cs_content:
             cs_content = "using System;\nusing System.Collections.Generic;\n" + cs_content
+        if "JsonNumberHandling.AllowNamedFloatingPointLiterals" not in cs_content:
+            cs_content = cs_content.replace(
+                "new JsonSerializerOptions { WriteIndented = true }",
+                "new JsonSerializerOptions { WriteIndented = true, NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals }"
+            )
         (t_dir / cs_file.name).write_text(cs_content, encoding="utf-8")
         csproj_txt = f"""<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
