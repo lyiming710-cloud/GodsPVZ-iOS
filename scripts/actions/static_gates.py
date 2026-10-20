@@ -25,7 +25,6 @@ import hashlib
 import json
 import os
 import pathlib
-import shutil
 import struct
 import subprocess
 import sys
@@ -172,6 +171,8 @@ def parse_raw_method_body_span(image: bytes, file_offset: int):
         clauses_list = []
         if more_sects:
             pad_end = align(pos, 4)
+            if any(image[k] != 0 for k in range(pos, pad_end)):
+                raise ValueError("Non-zero alignment padding before EH section")
             pos = pad_end
             eh_start = pos
             while True:
@@ -182,6 +183,8 @@ def parse_raw_method_body_span(image: bytes, file_offset: int):
                     raise ValueError(f"Unexpected EH section kind {skind:#x}")
                 if is_fat:
                     sect_len = image[pos+1] | (image[pos+2] << 8) | (image[pos+3] << 16)
+                    if (sect_len - 4) % 24 != 0 or sect_len < 28:
+                        raise ValueError(f"Invalid fat EH section length {sect_len}")
                     n_cl = (sect_len - 4) // 24
                     eh_clauses += n_cl
                     for ci in range(n_cl):
@@ -253,6 +256,7 @@ def audit_isolation_bulk162(parent_bytes: bytes, cand_bytes: bytes, body_targets
     if mp["heap_sizes"] != mc["heap_sizes"] or mp["valid_mask"] != mc["valid_mask"] or mp["sorted_mask"] != mc["sorted_mask"]:
         return False, "Metadata header mask/heap_sizes changed", {}
 
+    # Verify table row counts: MemberRef 1100->1170 (+70), StandAloneSig 1765->1872 (+107), TypeSpec 173->175 (+2), MethodSpec 185->187 (+2)
     for tid, cnt_p in mp["row_counts"].items():
         cnt_c = mc["row_counts"][tid]
         if tid == 0x0A:
@@ -299,16 +303,32 @@ def audit_isolation_bulk162(parent_bytes: bytes, cand_bytes: bytes, body_targets
 
     str_p = mp["streams"]["#Strings"]["bytes"]
     str_c = mc["streams"]["#Strings"]["bytes"]
-    if len(str_c) < len(str_p) or str_c[:len(str_p)] != str_p:
-        return False, "#Strings prefix mismatch", {}
+    exp_str_suffix = b"get_xMin\x00get_yMin\x00get_width\x00get_height\x00SetParent\x00"
+    if len(str_c) != len(str_p) + 49 or str_c[:len(str_p)] != str_p or str_c[len(str_p):] != exp_str_suffix:
+        return False, f"#Strings prefix or suffix mismatch: {len(str_p)} -> {len(str_c)}", {}
 
     blob_p = mp["streams"]["#Blob"]["bytes"]
     blob_c = mc["streams"]["#Blob"]["bytes"]
-    if len(blob_c) < len(blob_p) or blob_c[:len(blob_p)] != blob_p:
-        return False, "#Blob prefix mismatch", {}
+    if len(blob_c) != len(blob_p) + 1177 or blob_c[:len(blob_p)] != blob_p:
+        return False, f"#Blob prefix or length mismatch: {len(blob_p)} -> {len(blob_c)}", {}
 
     tp = mp["streams"]["#~"]["bytes"]
     tc = mc["streams"]["#~"]["bytes"]
+    if len(tc) != len(tp) + 646:
+        return False, f"Unexpected #~ stream size: {len(tp)} -> {len(tc)} (expected +646)", {}
+
+    ord_p = sorted(mp["stream_headers"], key=lambda x: x[1])
+    ord_c = sorted(mc["stream_headers"], key=lambda x: x[1])
+    for i, ((np_name, np_off, np_sz), (nc_name, nc_off, nc_sz)) in enumerate(zip(ord_p, ord_c)):
+        if np_name != nc_name or (nc_off % 4) != 0:
+            return False, f"Stream order or 4-byte alignment violated on {nc_name}: off={nc_off}", {}
+        old_end = np_off + np_sz
+        old_next = ord_p[i+1][1] if i+1 < len(ord_p) else len(mp['root_bytes'])
+        old_gap = mp['root_bytes'][old_end:old_next]
+        new_end = nc_off + nc_sz
+        if mc['root_bytes'][new_end:new_end+len(old_gap)] != old_gap:
+            return False, f"Old gap after {nc_name} not preserved!", {}
+
     dn_p = dnfile.dnPE(data=parent_bytes)
     dn_c = dnfile.dnPE(data=cand_bytes)
 
@@ -316,6 +336,8 @@ def audit_isolation_bulk162(parent_bytes: bytes, cand_bytes: bytes, body_targets
     pos_c = mc["tables_data_start"]
     appended_memberrefs = []
     appended_standalonesigs = []
+    appended_typespecs = []
+    appended_methodspecs = []
     table_checks = {}
 
     for tbl_p, tbl_c in zip(dn_p.net.mdtables.tables_list, dn_c.net.mdtables.tables_list):
@@ -358,10 +380,47 @@ def audit_isolation_bulk162(parent_bytes: bytes, cand_bytes: bytes, body_targets
                 if actual_blob_hex != exp_blob_hex:
                     return False, f"Appended StandAloneSig {0x11000000|rid:#x} blob mismatch", {}
                 appended_standalonesigs.append({"token": f"0x{0x11000000|rid:08X}", "rid": rid, "blob": actual_blob_hex})
+        elif tid == 0x1B:
+            for rid, exp_ts_hex, exp_meaning in [
+                (174, "1d1180dc", "ChallengeType[] (TypeDef 0x02000037)"),
+                (175, "151151011282e4", "System.Collections.Generic.List<EntrySelecter_Entry>/Enumerator (TypeDef 0x020000B9)"),
+            ]:
+                roff_c = pos_c + (rid - 1) * rsize
+                rc = tc[roff_c:roff_c + rsize]
+                ts_row = dn_c.net.mdtables.TypeSpec.rows[rid - 1]
+                actual_blob_hex = bytes(ts_row.Signature.value).hex()
+                if actual_blob_hex != exp_ts_hex:
+                    return False, f"Appended TypeSpec {0x1B000000|rid:#x} blob mismatch: {actual_blob_hex}", {}
+                appended_typespecs.append({
+                    "token": f"0x{0x1B000000|rid:08X}", "rid": rid,
+                    "meaning": exp_meaning,
+                    "signature_hex": actual_blob_hex
+                })
+        elif tid == 0x2B:
+            ms_old_d = dn_c.net.mdtables.MethodSpec.rows[13 - 1]
+            if bytes(ms_old_d.Instantiation.value).hex() != "0a011180b1":
+                return False, "Old MethodSpec 0x2B00000D modified!", {}
+            ms_old_56 = dn_c.net.mdtables.MethodSpec.rows[86 - 1]
+            if bytes(ms_old_56.Instantiation.value).hex() != "0a011281f4":
+                return False, "Old MethodSpec 0x2B000056 (NewCircleRange<Plant>) modified!", {}
+            for rid, exp_mcoded, exp_inst_hex in [(186, 253, "0a011180dc"), (187, 969, "0a01128210")]:
+                roff_c = pos_c + (rid - 1) * rsize
+                rc = tc[roff_c:roff_c + rsize]
+                ms_row = dn_c.net.mdtables.MethodSpec.rows[rid - 1]
+                actual_inst_hex = bytes(ms_row.Instantiation.value).hex()
+                method_coded = struct.unpack_from("<H", rc, 0)[0]
+                if method_coded != exp_mcoded or actual_inst_hex != exp_inst_hex:
+                    return False, f"Appended MethodSpec {0x2B000000|rid:#x} mismatch", {}
+                appended_methodspecs.append({
+                    "token": f"0x{0x2B000000|rid:08X}", "rid": rid, "method_coded": method_coded, "inst": actual_inst_hex
+                })
 
         table_checks[tname] = {"rows_before": nrows_p, "rows_after": nrows_c, "row_size": rsize, "authorized_modifications": allowed_mods}
         pos_p += nrows_p * rsize
         pos_c += nrows_c * rsize
+
+    if tp[pos_p:] != tc[pos_c:]:
+        return False, "Trailing #~ bytes mismatch", {}
 
     mrows_p = dn_p.net.mdtables.MethodDef.rows
     mrows_c = dn_c.net.mdtables.MethodDef.rows
