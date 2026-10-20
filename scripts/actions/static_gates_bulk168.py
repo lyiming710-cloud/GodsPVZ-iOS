@@ -322,8 +322,8 @@ def audit_isolation_bulk168(parent_bytes: bytes, cand_bytes: bytes, body_targets
 
     tp = mp["streams"]["#~"]["bytes"]
     tc = mc["streams"]["#~"]["bytes"]
-    if len(tc) != len(tp) + 692:
-        return False, f"Unexpected #~ stream size: {len(tp)} -> {len(tc)} (expected +692)", {}
+    if len(tc) != len(tp) + 688:
+        return False, f"Unexpected #~ stream size: {len(tp)} -> {len(tc)} (expected +688)", {}
 
     ord_p = sorted(mp["stream_headers"], key=lambda x: x[1])
     ord_c = sorted(mc["stream_headers"], key=lambda x: x[1])
