@@ -25,6 +25,7 @@ import hashlib
 import json
 import os
 import pathlib
+import shutil
 import struct
 import subprocess
 import sys
