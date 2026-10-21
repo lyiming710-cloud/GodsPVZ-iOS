@@ -323,7 +323,7 @@ def audit_isolation_bulk188(parent_bytes: bytes, cand_bytes: bytes, body_targets
 
     blob_p = mp["streams"]["#Blob"]["bytes"]
     blob_c = mc["streams"]["#Blob"]["bytes"]
-    if len(blob_c) != len(blob_p) + 1400 or blob_c[:len(blob_p)] != blob_p:
+    if len(blob_c) != len(blob_p) + 1479 or blob_c[:len(blob_p)] != blob_p:
         return False, f"#Blob prefix or length mismatch: {len(blob_p)} -> {len(blob_c)}", {}
 
     tp = mp["streams"]["#~"]["bytes"]
