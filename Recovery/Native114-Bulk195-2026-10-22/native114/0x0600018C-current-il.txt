@@ -1,0 +1,167 @@
+DeviceManager::SSS_CreateIceCube
+{"token": "0x0600018C", "name": "DeviceManager::SSS_CreateIceCube", "signature": "20030108081280e0", "rva": 111292, "max_stack": 3, "code_size": 691, "local_sig": 285212982, "locals_blob": "071808081280e01281c81181a01d1c15120d011c1280f8081281c81c1281cc08021c1c021c0218181280fc0808", "eh_count": 0, "il_sha256": "c5514495f3980272c257becf47e0ccbdddb716b919570a3b193f8c9cf20be245"}
+IL_0000: br             {'target': 579}
+IL_0005: ldloc          local(0x0003)
+IL_0009: ldstr          {'token': '0x70005223', 'identity': '未知的冰块'}
+IL_000E: stfld          {'token': '0x04000454', 'identity': 'DeviceData::name'}
+IL_0013: ldloc          local(0x0003)
+IL_0017: ldc.r4         6000.0
+IL_001C: stfld          {'token': '0x0400045A', 'identity': 'DeviceData::icePoint'}
+IL_0021: ldloc          local(0x0003)
+IL_0025: ldc.i4         2
+IL_002A: stfld          {'token': '0x04000455', 'identity': 'DeviceData::camp'}
+IL_002F: ldloc          local(0x0003)
+IL_0033: ldc.r4         6000.0
+IL_0038: stfld          {'token': '0x0400045B', 'identity': 'DeviceData::maxIcePoint'}
+IL_003D: ldnull         None
+IL_003E: stloc          local(0x0007)
+IL_0042: br             {'target': 71}
+IL_0047: br             {'target': 599}
+IL_004C: ldloc          local(0x0007)
+IL_0050: ldloc          local(0x0009)
+IL_0054: stfld          {'token': '0x040001D3', 'identity': 'PreDevice::data'}
+IL_0059: ldstr          {'token': '0x70000331', 'identity': 'Method not found @180302170'}
+IL_005E: pop            None
+IL_005F: br             {'target': 100}
+IL_0064: ldloc          local(0x0007)
+IL_0068: ldarg          argument(0x0001)
+IL_006C: stfld          {'token': '0x040001D0', 'identity': 'PreDevice::gridX'}
+IL_0071: ldloc          local(0x0007)
+IL_0075: ldarg          argument(0x0002)
+IL_0079: stfld          {'token': '0x040001D1', 'identity': 'PreDevice::gridY'}
+IL_007E: ldloc          local(0x0007)
+IL_0082: ldloc          local(0x0003)
+IL_0086: stfld          {'token': '0x040001D3', 'identity': 'PreDevice::data'}
+IL_008B: ldloc          local(0x0007)
+IL_008F: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0094: stfld          {'token': '0x040001D2', 'identity': 'PreDevice::entryKey'}
+IL_0099: br             {'target': 158}
+IL_009E: newobj         {'token': '0x060002FE', 'identity': 'DeviceContent::.ctor'}
+IL_00A3: stloc          local(0x000B)
+IL_00A7: nop            None
+IL_00A8: br             {'target': 173}
+IL_00AD: ldloc          local(0x000B)
+IL_00B1: ldc.i4         2
+IL_00B6: stfld          {'token': '0x0400045C', 'identity': 'DeviceContent::contentType'}
+IL_00BB: ldc.i4         0
+IL_00C0: ldc.i4         5
+IL_00C5: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_00CA: stloc          local(0x000C)
+IL_00CE: ldloc          local(0x000C)
+IL_00D2: ldc.i4         0
+IL_00D7: ceq            None
+IL_00D9: stloc          local(0x000D)
+IL_00DD: ldloc          local(0x000D)
+IL_00E1: brtrue         {'target': 402}
+IL_00E6: br             {'target': 235}
+IL_00EB: ldloc          local(0x000C)
+IL_00EF: ldc.i4         1
+IL_00F4: sub            None
+IL_00F5: stloc          local(0x000E)
+IL_00F9: ldc.i4         2
+IL_00FE: stloc          local(0x0004)
+IL_0102: ldloc          local(0x000D)
+IL_0106: brtrue         {'target': 637}
+IL_010B: br             {'target': 272}
+IL_0110: ldloc          local(0x000E)
+IL_0114: ldc.i4         1
+IL_0119: sub            None
+IL_011A: stloc          local(0x0011)
+IL_011E: ldloc          local(0x000D)
+IL_0122: brtrue         {'target': 388}
+IL_0127: br             {'target': 300}
+IL_012C: ldloc          local(0x0011)
+IL_0130: ldc.i4         1
+IL_0135: sub            None
+IL_0136: stloc          local(0x000F)
+IL_013A: ldloc          local(0x000D)
+IL_013E: brtrue         {'target': 374}
+IL_0143: br             {'target': 328}
+IL_0148: ldloc          local(0x000F)
+IL_014C: ldc.i4         1
+IL_0151: ceq            None
+IL_0153: ldc.i4.0       None
+IL_0154: ceq            None
+IL_0156: stloc          local(0x0010)
+IL_015A: ldloc          local(0x0010)
+IL_015E: brtrue         {'target': 402}
+IL_0163: br             {'target': 360}
+IL_0168: ldc.i4         7
+IL_016D: stloc          local(0x0004)
+IL_0171: br             {'target': 637}
+IL_0176: ldc.i4         14
+IL_017B: stloc          local(0x0004)
+IL_017F: br             {'target': 637}
+IL_0184: ldc.i4         4
+IL_0189: stloc          local(0x0004)
+IL_018D: br             {'target': 637}
+IL_0192: ldc.i4         0
+IL_0197: stloc          local(0x0004)
+IL_019B: br             {'target': 637}
+IL_01A0: ldloc          local(0x0006)
+IL_01A4: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_01A9: ldc.i4         1
+IL_01AE: add            None
+IL_01AF: stloc          local(0x0017)
+IL_01B3: ldloc          local(0x0006)
+IL_01B7: ldloc          local(0x0017)
+IL_01BB: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_01C0: ldloc          local(0x0006)
+IL_01C4: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_01C9: stloc          local(0x0005)
+IL_01CD: br             {'target': 466}
+IL_01D2: ldloc          local(0x0006)
+IL_01D6: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01DB: ldloc          local(0x0005)
+IL_01DF: ldlen          None
+IL_01E0: conv.i4        None
+IL_01E1: clt            None
+IL_01E3: stloc          local(0x0012)
+IL_01E7: ldloc          local(0x0012)
+IL_01EB: brtrue         {'target': 520}
+IL_01F0: br             {'target': 501}
+IL_01F5: ldloc          local(0x0006)
+IL_01F9: ldloc          local(0x0007)
+IL_01FD: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_0202: br             {'target': 519}
+IL_0207: ret            None
+IL_0208: ldloc          local(0x0006)
+IL_020C: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0211: ldc.i4         1
+IL_0216: add            None
+IL_0217: stloc          local(0x0008)
+IL_021B: ldloc          local(0x0006)
+IL_021F: ldloc          local(0x0008)
+IL_0223: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0228: br             {'target': 557}
+IL_022D: ldloc          local(0x0005)
+IL_0231: ldloc          local(0x0016)
+IL_0235: ldloc          local(0x0007)
+IL_0239: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_023E: br             {'target': 519}
+IL_0243: ldc.i4         3
+IL_0248: newobj         {'token': '0x060002FB', 'identity': 'DeviceData::.ctor'}
+IL_024D: stloc          local(0x0003)
+IL_0251: nop            None
+IL_0252: br             {'target': 5}
+IL_0257: ldloc          local(0x0007)
+IL_025B: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0260: stfld          {'token': '0x040001D2', 'identity': 'PreDevice::entryKey'}
+IL_0265: ldc.i8         4294967295
+IL_026E: newobj         {'token': '0x060002FB', 'identity': 'DeviceData::.ctor'}
+IL_0273: stloc          local(0x0009)
+IL_0277: nop            None
+IL_0278: br             {'target': 76}
+IL_027D: ldloc          local(0x000B)
+IL_0281: ldloc          local(0x0004)
+IL_0285: stfld          {'token': '0x0400045D', 'identity': 'DeviceContent::contenID'}
+IL_028A: ldloc          local(0x0003)
+IL_028E: ldloc          local(0x000B)
+IL_0292: stfld          {'token': '0x04000459', 'identity': 'DeviceData::content'}
+IL_0297: ldloc          local(0x0007)
+IL_029B: ldloc          local(0x0003)
+IL_029F: stfld          {'token': '0x040001D3', 'identity': 'PreDevice::data'}
+IL_02A4: ldarg.0        None
+IL_02A5: ldfld          {'token': '0x040001D7', 'identity': 'DeviceManager::preDeviceList'}
+IL_02AA: stloc          local(0x0006)
+IL_02AE: br             {'target': 416}
