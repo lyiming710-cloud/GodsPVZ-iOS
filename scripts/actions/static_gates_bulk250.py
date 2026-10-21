@@ -32,6 +32,16 @@ import subprocess
 import sys
 import time
 
+TARGETS_WITH_FINALLY = {
+  0x06000011: 1, 0x06000013: 1, 0x06000017: 1, 0x06000018: 1, 0x06000041: 1, 0x0600004B: 1, 0x0600004C: 1, 0x060000C7: 1, 0x060000D3: 1, 0x0600014C: 1,
+  0x06000163: 2, 0x06000183: 2, 0x06000184: 1, 0x06000187: 1, 0x060001A1: 1, 0x060001A2: 1, 0x060001A8: 1, 0x060001AF: 1, 0x060001BD: 1, 0x060001F0: 1,
+  0x060001FF: 1, 0x06000226: 1, 0x06000231: 1, 0x0600026F: 1, 0x06000272: 1, 0x06000276: 1, 0x0600027B: 2, 0x06000283: 1, 0x06000287: 2, 0x06000288: 1,
+  0x060002F5: 1, 0x06000308: 1, 0x06000324: 1, 0x06000330: 1, 0x06000352: 1, 0x0600035C: 1, 0x06000362: 1, 0x06000364: 1, 0x06000384: 1, 0x060003B8: 1,
+  0x06000478: 1, 0x0600047C: 1, 0x06000487: 1, 0x0600048F: 1, 0x06000494: 1, 0x060004A8: 1, 0x060004BF: 1, 0x06000514: 1, 0x0600052A: 1, 0x06000549: 1,
+  0x06000562: 1, 0x06000572: 1, 0x06000573: 1, 0x0600058B: 1, 0x0600058F: 1, 0x060005AC: 1, 0x060005B1: 1, 0x060005B2: 1, 0x060005B3: 1, 0x060005E5: 1,
+  0x0600060A: 1, 0x0600060E: 1, 0x0600060F: 1, 0x06000633: 1, 0x0600068C: 1, 0x06000692: 1, 0x06000693: 3, 0x06000697: 1, 0x06000698: 1, 0x0600069F: 1,
+  0x060006B6: 2, 0x060006BB: 3, 0x060006C5: 1, 0x060006D2: 1, 0x060006EA: 1, 0x060006EB: 1
+}
 FINALLY_ALLOWLIST = {
     # 34 inherited finally regions
     0x06000013: (106, 57, 163, 8),
@@ -476,19 +486,17 @@ def audit_isolation_bulk250(parent_bytes: bytes, cand_bytes: bytes, body_targets
                 return False, f"Target {tok:#x} old slot corrupted or local sig {sc[4]:#x} != {exp_local_sig:#x}", {}
             flags_word = struct.unpack_from("<H", cand_bytes, off_c)[0]
             has_more_sects = (flags_word & 0x08) != 0
-            if tok in FINALLY_ALLOWLIST:
-                finally_counts += 1
-                if not has_more_sects or sc[7] != 1 or len(sc[8]) != 1:
-                    return False, f"Finally target {tok:#x} missing MoreSects or clause count != 1", {}
-                skind, sect_len, c_flags, t_off, t_len, h_off, h_len, c_tok = sc[8][0]
-                exp_t_off, exp_t_len, exp_h_off, exp_h_len = FINALLY_ALLOWLIST[tok]
-                if skind != 0x41 or sect_len != 28 or c_flags != 2 or c_tok != 0:
-                    return False, f"Finally target {tok:#x} invalid fat EH header/flags", {}
-                if (t_off, t_len, h_off, h_len) != (exp_t_off, exp_t_len, exp_h_off, exp_h_len):
-                    return False, f"Finally target {tok:#x} EH bounds mismatch", {}
-                il_c = cand_bytes[off_c + sc[1]:off_c + sc[1] + sc[2]]
-                if il_c[h_off + h_len - 1] != 0xDC:
-                    return False, f"Finally target {tok:#x} handler does not end with endfinally (0xDC)", {}
+            if tok in TARGETS_WITH_FINALLY:
+                exp_clauses = TARGETS_WITH_FINALLY[tok]
+                finally_counts += exp_clauses
+                if not has_more_sects or sc[7] != exp_clauses or len(sc[8]) != exp_clauses:
+                    return False, f"Finally target {tok:#x} missing MoreSects or clause count {sc[7]} != {exp_clauses}", {}
+                for skind, sect_len, c_flags, t_off, t_len, h_off, h_len, c_tok in sc[8]:
+                    if skind != 0x41 or c_flags != 2 or c_tok != 0:
+                        return False, f"Finally target {tok:#x} invalid fat EH header/flags", {}
+                    il_c = cand_bytes[off_c + sc[1]:off_c + sc[1] + sc[2]]
+                    if il_c[h_off + h_len - 1] != 0xDC:
+                        return False, f"Finally target {tok:#x} handler does not end with endfinally (0xDC)", {}
             else:
                 if has_more_sects or sc[7] != 0:
                     return False, f"Non-finally target {tok:#x} unexpectedly has EH section", {}
