@@ -165,7 +165,7 @@ def main():
     print("SOURCE-MANIFEST.json (SHA 68914bbc...71d95d) validated: 100% MATCH.")
 
     lineage = json.loads((src_dir / "SOURCE-LINEAGE.json").read_text(encoding="utf-8"))
-    delta_tokens_hex = lineage["new_target_tokens"]
+    delta_tokens_hex = lineage.get("new_source_batch_tokens", lineage.get("new_target_tokens"))
     assert len(delta_tokens_hex) == 50, f"Expected 50 new targets vs Bulk200, got {len(delta_tokens_hex)}"
     new_target_tokens = {int(x, 16) for x in delta_tokens_hex}
     print(f"Loaded 50 new targets from lineage")
