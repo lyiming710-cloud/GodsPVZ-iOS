@@ -1,0 +1,113 @@
+Card_Choose::Choose_Being
+{"token": "0x060002F4", "name": "Card_Choose::Choose_Being", "signature": "200001", "rva": 231620, "max_stack": 2, "code_size": 435, "local_sig": 285213259, "locals_blob": "07151281c00202080812751c12151215120912090e1c12832c0812832c1180d11180d11180d1081c", "eh_count": 0, "il_sha256": "ef3d221923213c68456a43d8246fdc8be62586c340a04ff4caf13f2e111a0526"}
+IL_0000: br             {'target': 394}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000445', 'identity': 'Card_Choose::seedChooserScreen'}
+IL_000B: call           {'token': '0x060006BF', 'identity': 'SeedChooserScreen::SerialNumberOfCard_ChooseBeenChoose'}
+IL_0010: stloc          local(0x0003)
+IL_0014: ldarg.0        None
+IL_0015: ldfld          {'token': '0x04000445', 'identity': 'Card_Choose::seedChooserScreen'}
+IL_001A: stloc          local(0x000D)
+IL_001E: br             {'target': 35}
+IL_0023: ldloc          local(0x000D)
+IL_0027: ldfld          {'token': '0x040008BC', 'identity': 'SeedChooserScreen::prepareUIController'}
+IL_002C: call           {'token': '0x0600067F', 'identity': 'PrepareUIController::GetCardBankLenth'}
+IL_0031: stloc          local(0x0004)
+IL_0035: ldloc          local(0x0003)
+IL_0039: ldloc          local(0x0004)
+IL_003D: clt            None
+IL_003F: ldc.i4.0       None
+IL_0040: ceq            None
+IL_0042: stloc          local(0x0002)
+IL_0046: ldloc          local(0x0002)
+IL_004A: brtrue         {'target': 428}
+IL_004F: br             {'target': 84}
+IL_0054: ldarg.0        None
+IL_0055: ldc.i4         1
+IL_005A: stfld          {'token': '0x04000448', 'identity': 'Card_Choose::isChosen'}
+IL_005F: br             {'target': 100}
+IL_0064: ldarg.0        None
+IL_0065: ldfld          {'token': '0x04000436', 'identity': 'Card_Choose::chosen'}
+IL_006A: call           {'token': '0x2B000054', 'identity': '0x2b000054'}
+IL_006F: stloc          local(0x0005)
+IL_0073: br             {'target': 120}
+IL_0078: ldloc          local(0x0005)
+IL_007C: call           {'token': '0x0A0001DD', 'identity': 'UnityEngine.UI.Graphic::get_color / sig 20001180d1'}
+IL_0081: stloc          local(0x0010)
+IL_0085: ldloc          local(0x0005)
+IL_0089: call           {'token': '0x0A0001DD', 'identity': 'UnityEngine.UI.Graphic::get_color / sig 20001180d1'}
+IL_008E: stloc          local(0x0011)
+IL_0092: ldloc          local(0x0005)
+IL_0096: call           {'token': '0x0A0001DD', 'identity': 'UnityEngine.UI.Graphic::get_color / sig 20001180d1'}
+IL_009B: stloc          local(0x0012)
+IL_009F: ldloc          local(0x0005)
+IL_00A3: ldloca         local(0x0014)
+IL_00A7: call           {'token': '0x0A0001DE', 'identity': 'UnityEngine.UI.Graphic::set_color / sig 2001011180d1'}
+IL_00AC: br             {'target': 177}
+IL_00B1: ldarg.0        None
+IL_00B2: ldfld          {'token': '0x04000436', 'identity': 'Card_Choose::chosen'}
+IL_00B7: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_00BC: stloc          local(0x0007)
+IL_00C0: br             {'target': 197}
+IL_00C5: ldloc          local(0x0007)
+IL_00C9: ldc.i4         0
+IL_00CE: call           {'token': '0x0A000002', 'identity': 'UnityEngine.Transform::GetChild / sig 2001121508'}
+IL_00D3: stloc          local(0x0008)
+IL_00D7: br             {'target': 220}
+IL_00DC: ldloc          local(0x0008)
+IL_00E0: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_00E5: stloc          local(0x0009)
+IL_00E9: br             {'target': 238}
+IL_00EE: ldloc          local(0x0009)
+IL_00F2: ldc.i4         1
+IL_00F7: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_00FC: br             {'target': 257}
+IL_0101: ldarg.0        None
+IL_0102: ldfld          {'token': '0x04000444', 'identity': 'Card_Choose::serialNumBeChosenText'}
+IL_0107: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_010C: stloc          local(0x000A)
+IL_0110: br             {'target': 277}
+IL_0115: ldloc          local(0x000A)
+IL_0119: ldc.i4         1
+IL_011E: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0123: ldloc          local(0x0003)
+IL_0127: ldc.i4         1
+IL_012C: add            None
+IL_012D: stloc          local(0x0013)
+IL_0131: ldarg.0        None
+IL_0132: ldc.i4         264
+IL_0137: add            None
+IL_0138: stloc          local(0x000E)
+IL_013C: ldarg.0        None
+IL_013D: ldloc          local(0x0013)
+IL_0141: stfld          {'token': '0x04000449', 'identity': 'Card_Choose::serialNumBeChosen'}
+IL_0146: ldloc          local(0x000E)
+IL_014A: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_014F: stloc          local(0x000B)
+IL_0153: br             {'target': 344}
+IL_0158: ldarg.0        None
+IL_0159: ldfld          {'token': '0x04000444', 'identity': 'Card_Choose::serialNumBeChosenText'}
+IL_015E: ldloc          local(0x000B)
+IL_0162: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_0167: ldarg.0        None
+IL_0168: ldfld          {'token': '0x04000445', 'identity': 'Card_Choose::seedChooserScreen'}
+IL_016D: stloc          local(0x000F)
+IL_0171: br             {'target': 374}
+IL_0176: ldloc          local(0x000F)
+IL_017A: ldfld          {'token': '0x040008BE', 'identity': 'SeedChooserScreen::plantDetail'}
+IL_017F: ldarg.0        None
+IL_0180: call           {'token': '0x060006C2', 'identity': 'PlantDetail::Awake'}
+IL_0185: br             {'target': 428}
+IL_018A: ldarg.0        None
+IL_018B: ldfld          {'token': '0x04000448', 'identity': 'Card_Choose::isChosen'}
+IL_0190: ldc.i4         0
+IL_0195: ceq            None
+IL_0197: ldc.i4.0       None
+IL_0198: ceq            None
+IL_019A: stloc          local(0x0001)
+IL_019E: ldloc          local(0x0001)
+IL_01A2: brtrue         {'target': 428}
+IL_01A7: br             {'target': 5}
+IL_01AC: ret            None
+IL_01AD: ldstr          {'token': '0x700009BA', 'identity': 'Warning: Method ends with non empty stack (-58), the output could be wrong!'}
+IL_01B2: pop            None

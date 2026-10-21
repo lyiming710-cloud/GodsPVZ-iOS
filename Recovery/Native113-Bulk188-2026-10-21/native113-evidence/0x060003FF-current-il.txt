@@ -1,0 +1,184 @@
+Prop::Update
+{"token": "0x060003FF", "name": "Prop::Update", "signature": "200001", "rva": 334308, "max_stack": 2, "code_size": 653, "local_sig": 285213467, "locals_blob": "071b1281fc121d114d114d1281a41215021c020c0c0c12750e121502021c114d1c0202020c0c0c0c", "eh_count": 0, "il_sha256": "da5fdf18684d142ab6dc1ea386cd50580f3116c63cfc055c3a0a9762fc7dd293"}
+IL_0000: br             {'target': 589}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldloca         local(0x0019)
+IL_000D: call           {'token': '0x0A00001C', 'identity': 'UnityEngine.Camera::ScreenToWorldPoint / sig 2001114d114d'}
+IL_0012: stloc          local(0x0003)
+IL_0016: ldarg.0        None
+IL_0017: ldloc          local(0x0003)
+IL_001B: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_0020: stfld          {'token': '0x04000586', 'identity': 'Prop::mousePosition'}
+IL_0025: ldloc          local(0x0007)
+IL_0029: pop            None
+IL_002A: br             {'target': 47}
+IL_002F: ldarg.0        None
+IL_0030: ldfld          {'token': '0x04000578', 'identity': 'Prop::board'}
+IL_0035: ldnull         None
+IL_0036: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_003B: stloc          local(0x0008)
+IL_003F: ldloc          local(0x0008)
+IL_0043: brtrue         {'target': 77}
+IL_0048: br             {'target': 286}
+IL_004D: ldarg.0        None
+IL_004E: ldfld          {'token': '0x04000578', 'identity': 'Prop::board'}
+IL_0053: stloc          local(0x0004)
+IL_0057: br             {'target': 92}
+IL_005C: ldloc          local(0x0004)
+IL_0060: ldfld          {'token': '0x040003BA', 'identity': 'Board::gameStart'}
+IL_0065: ldc.i4         0
+IL_006A: ceq            None
+IL_006C: stloc          local(0x0015)
+IL_0070: ldloc          local(0x0015)
+IL_0074: brtrue         {'target': 286}
+IL_0079: br             {'target': 126}
+IL_007E: ldarg.0        None
+IL_007F: ldfld          {'token': '0x04000579', 'identity': 'Prop::propState'}
+IL_0084: ldc.i4         0
+IL_0089: ceq            None
+IL_008B: stloc          local(0x0016)
+IL_008F: ldloc          local(0x0016)
+IL_0093: brtrue         {'target': 287}
+IL_0098: br             {'target': 157}
+IL_009D: ldarg.0        None
+IL_009E: ldfld          {'token': '0x04000579', 'identity': 'Prop::propState'}
+IL_00A3: ldc.i4         1
+IL_00A8: sub            None
+IL_00A9: stloc          local(0x0013)
+IL_00AD: ldloc          local(0x0016)
+IL_00B1: brtrue         {'target': 286}
+IL_00B6: br             {'target': 187}
+IL_00BB: ldloc          local(0x0013)
+IL_00BF: ldc.i4         1
+IL_00C4: ceq            None
+IL_00C6: ldc.i4.0       None
+IL_00C7: ceq            None
+IL_00C9: stloc          local(0x0014)
+IL_00CD: ldloc          local(0x0014)
+IL_00D1: brtrue         {'target': 286}
+IL_00D6: br             {'target': 219}
+IL_00DB: ldarg.0        None
+IL_00DC: ldfld          {'token': '0x0400057A', 'identity': 'Prop::propType'}
+IL_00E1: ldc.i4         5
+IL_00E6: ceq            None
+IL_00E8: ldc.i4.0       None
+IL_00E9: ceq            None
+IL_00EB: stloc          local(0x0006)
+IL_00EF: ldloc          local(0x0006)
+IL_00F3: brtrue         {'target': 248}
+IL_00F8: ldarg.0        None
+IL_00F9: ldfld          {'token': '0x04000589', 'identity': 'Prop::propImagex'}
+IL_00FE: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0103: stloc          local(0x0005)
+IL_0107: br             {'target': 268}
+IL_010C: ldloc          local(0x0005)
+IL_0110: ldloca         local(0x0019)
+IL_0114: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0119: br             {'target': 286}
+IL_011E: ret            None
+IL_011F: ldstr          {'token': '0x7000FC43', 'identity': 'Unmanaged memory load: [181CE4DD8]'}
+IL_0124: pop            None
+IL_0125: ldc.i4.0       None
+IL_0126: conv.i         None
+IL_0127: ldc.i4         0
+IL_012C: ceq            None
+IL_012E: ldc.i4.0       None
+IL_012F: ceq            None
+IL_0131: stloc          local(0x000F)
+IL_0135: ldloc          local(0x000F)
+IL_0139: brtrue         {'target': 612}
+IL_013E: br             {'target': 323}
+IL_0143: ldc.i4         1
+IL_0148: pop            None
+IL_0149: br             {'target': 612}
+IL_014E: ldarg.0        None
+IL_014F: ldfld          {'token': '0x0400057D', 'identity': 'Prop::cdTime'}
+IL_0154: conv.r4        None
+IL_0155: ldloc          local(0x000B)
+IL_0159: conv.r4        None
+IL_015A: sub            None
+IL_015B: stloc          local(0x0018)
+IL_015F: ldloc          local(0x0018)
+IL_0163: conv.r4        None
+IL_0164: ldarg.0        None
+IL_0165: ldfld          {'token': '0x0400057D', 'identity': 'Prop::cdTime'}
+IL_016A: conv.r4        None
+IL_016B: div            None
+IL_016C: stloc          local(0x0009)
+IL_0170: ldarg.0        None
+IL_0171: ldfld          {'token': '0x04000582', 'identity': 'Prop::cdCover1'}
+IL_0176: ldloc          local(0x0009)
+IL_017A: call           {'token': '0x0A0000F0', 'identity': 'UnityEngine.UI.Image::set_fillAmount / sig 2001010c'}
+IL_017F: ldarg.0        None
+IL_0180: ldfld          {'token': '0x04000582', 'identity': 'Prop::cdCover1'}
+IL_0185: stloc          local(0x000C)
+IL_0189: br             {'target': 398}
+IL_018E: ldc.r4         1.0
+IL_0193: conv.r4        None
+IL_0194: ldloc          local(0x000C)
+IL_0198: ldfld          {'token': '0x0A0001EC', 'identity': 'UnityEngine.UI.Image::m_FillAmount / sig 060c'}
+IL_019D: conv.r4        None
+IL_019E: sub            None
+IL_019F: stloc          local(0x000A)
+IL_01A3: ldarg.0        None
+IL_01A4: ldfld          {'token': '0x04000583', 'identity': 'Prop::cdCover2'}
+IL_01A9: ldloc          local(0x000A)
+IL_01AD: call           {'token': '0x0A0000F0', 'identity': 'UnityEngine.UI.Image::set_fillAmount / sig 2001010c'}
+IL_01B2: ldloca         local(0x001A)
+IL_01B6: ldstr          {'token': '0x7000B8C9', 'identity': '0.0s'}
+IL_01BB: call           {'token': '0x0A000125', 'identity': 'System.Single::ToString / sig 20010e0e'}
+IL_01C0: stloc          local(0x000D)
+IL_01C4: br             {'target': 457}
+IL_01C9: ldarg.0        None
+IL_01CA: ldfld          {'token': '0x04000584', 'identity': 'Prop::CDText'}
+IL_01CF: ldloc          local(0x000D)
+IL_01D3: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_01D8: ldarg.0        None
+IL_01D9: ldfld          {'token': '0x0400057E', 'identity': 'Prop::alTime'}
+IL_01DE: ldarg.0        None
+IL_01DF: ldfld          {'token': '0x0400057D', 'identity': 'Prop::cdTime'}
+IL_01E4: clt            None
+IL_01E6: stloc          local(0x0010)
+IL_01EA: ldloc          local(0x0010)
+IL_01EE: brtrue         {'target': 286}
+IL_01F3: br             {'target': 504}
+IL_01F8: ldarg.0        None
+IL_01F9: ldc.i4         1
+IL_01FE: stfld          {'token': '0x04000579', 'identity': 'Prop::propState'}
+IL_0203: ldarg.0        None
+IL_0204: call           {'token': '0x06000406', 'identity': 'Prop::PropBankStateSet'}
+IL_0209: br             {'target': 526}
+IL_020E: ldarg.0        None
+IL_020F: ldfld          {'token': '0x04000581', 'identity': 'Prop::prop'}
+IL_0214: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0219: stloc          local(0x000E)
+IL_021D: br             {'target': 546}
+IL_0222: ldloc          local(0x000E)
+IL_0226: call           {'token': '0x0A00020D', 'identity': 'UnityEngine.Transform::get_localPosition / sig 2000114d'}
+IL_022B: stloc          local(0x0012)
+IL_022F: ldarg.0        None
+IL_0230: ldloc          local(0x0012)
+IL_0234: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_0239: stfld          {'token': '0x04000587', 'identity': 'Prop::originalPosition'}
+IL_023E: ldloc          local(0x0012)
+IL_0242: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_0247: pop            None
+IL_0248: br             {'target': 286}
+IL_024D: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_0252: stloc          local(0x0001)
+IL_0256: call           {'token': '0x0A000023', 'identity': 'UnityEngine.Input::get_mousePosition / sig 0000114d'}
+IL_025B: stloc          local(0x0002)
+IL_025F: br             {'target': 5}
+IL_0264: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0269: stloc          local(0x0017)
+IL_026D: ldloc          local(0x0017)
+IL_0271: conv.r4        None
+IL_0272: ldarg.0        None
+IL_0273: ldfld          {'token': '0x0400057E', 'identity': 'Prop::alTime'}
+IL_0278: conv.r4        None
+IL_0279: add            None
+IL_027A: stloc          local(0x000B)
+IL_027E: ldarg.0        None
+IL_027F: ldloc          local(0x000B)
+IL_0283: stfld          {'token': '0x0400057E', 'identity': 'Prop::alTime'}
+IL_0288: br             {'target': 334}

@@ -1,0 +1,112 @@
+Device::Start_Ani
+{"token": "0x06000306", "name": "Device::Start_Ani", "signature": "200001", "rva": 237740, "max_stack": 3, "code_size": 463, "local_sig": 285213275, "locals_blob": "070f02021c1c021281cc1c1281d41d0e1c1c1c1c1c1c", "eh_count": 0, "il_sha256": "496c0867a0cd0068407b443a92c108346ba10b21c179163afda3ed5b70d8bd99"}
+IL_0000: br             {'target': 368}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000470', 'identity': 'Device::content'}
+IL_000B: ldc.i4         0
+IL_0010: ceq            None
+IL_0012: stloc          local(0x0001)
+IL_0016: ldloc          local(0x0001)
+IL_001A: brtrue         {'target': 402}
+IL_001F: br             {'target': 36}
+IL_0024: ldc.i4         6
+IL_0029: newarr         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_002E: stloc          local(0x0008)
+IL_0032: br             {'target': 55}
+IL_0037: ldloc          local(0x0008)
+IL_003B: ldc.i4         0
+IL_0040: ldstr          {'token': '0x70008CCD', 'identity': 'Present'}
+IL_0045: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_004A: br             {'target': 79}
+IL_004F: ldloc          local(0x0008)
+IL_0053: ldc.i4         1
+IL_0058: ldstr          {'token': '0x7000BCA1', 'identity': 'PresentOpen'}
+IL_005D: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0062: br             {'target': 103}
+IL_0067: ldloc          local(0x0008)
+IL_006B: ldc.i4         2
+IL_0070: ldstr          {'token': '0x7000BCB9', 'identity': 'ZombiePresent'}
+IL_0075: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_007A: br             {'target': 127}
+IL_007F: ldloc          local(0x0008)
+IL_0083: ldc.i4         3
+IL_0088: ldstr          {'token': '0x7000BCD5', 'identity': 'ZombiePresentOpen'}
+IL_008D: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0092: br             {'target': 151}
+IL_0097: ldloc          local(0x0008)
+IL_009B: ldc.i4         4
+IL_00A0: ldstr          {'token': '0x7000BCF9', 'identity': 'FacilitiesPresent'}
+IL_00A5: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_00AA: br             {'target': 175}
+IL_00AF: ldloc          local(0x0008)
+IL_00B3: ldc.i4         5
+IL_00B8: ldstr          {'token': '0x7000BD1D', 'identity': 'FacilitiesPresentOpen'}
+IL_00BD: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_00C2: ldarg.0        None
+IL_00C3: ldfld          {'token': '0x04000470', 'identity': 'Device::content'}
+IL_00C8: stloc          local(0x0005)
+IL_00CC: br             {'target': 209}
+IL_00D1: ldloc          local(0x0005)
+IL_00D5: ldfld          {'token': '0x0400045C', 'identity': 'DeviceContent::contentType'}
+IL_00DA: ldc.i4         1
+IL_00DF: sub            None
+IL_00E0: stloc          local(0x0006)
+IL_00E4: ldloc          local(0x0006)
+IL_00E8: ldc.i4         7
+IL_00ED: cgt            None
+IL_00EF: stloc          local(0x0004)
+IL_00F3: ldloc          local(0x0004)
+IL_00F7: brtrue         {'target': 298}
+IL_00FC: br             {'target': 257}
+IL_0101: ldc.i8         6442450944
+IL_010A: stloc          local(0x0002)
+IL_010E: ldstr          {'token': '0x7000BD49', 'identity': 'Unmanaged memory load: [v118 @ rdx_v15+34B2F4+v238 @ rax_v16*4]'}
+IL_0113: pop            None
+IL_0114: ldc.i4.0       None
+IL_0115: conv.i         None
+IL_0116: ldc.i8         6442450944
+IL_011F: add            None
+IL_0120: stloc          local(0x0003)
+IL_0124: ldstr          {'token': '0x7000BDC9', 'identity': 'Indirect jump: v124 @ rcx_v18 (should have been resolved before IL gen)'}
+IL_0129: pop            None
+IL_012A: br             {'target': 303}
+IL_012F: ldarg.0        None
+IL_0130: ldfld          {'token': '0x04000488', 'identity': 'Device::animationSprites'}
+IL_0135: ldloc          local(0x0008)
+IL_0139: ldc.i4         2
+IL_013E: ldelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0143: call           {'token': '0x06000145', 'identity': 'GlobalStaticVars::HideSprite'}
+IL_0148: br             {'target': 403}
+IL_014D: ldarg.0        None
+IL_014E: ldfld          {'token': '0x04000488', 'identity': 'Device::animationSprites'}
+IL_0153: ldloc          local(0x0008)
+IL_0157: ldc.i4         4
+IL_015C: ldelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0161: call           {'token': '0x06000145', 'identity': 'GlobalStaticVars::HideSprite'}
+IL_0166: br             {'target': 363}
+IL_016B: br             {'target': 433}
+IL_0170: ldarg.0        None
+IL_0171: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0176: ldc.i4         3
+IL_017B: ceq            None
+IL_017D: ldc.i4.0       None
+IL_017E: ceq            None
+IL_0180: stloc          local(0x0000)
+IL_0184: ldloc          local(0x0000)
+IL_0188: brtrue         {'target': 402}
+IL_018D: br             {'target': 5}
+IL_0192: ret            None
+IL_0193: ldarg.0        None
+IL_0194: ldfld          {'token': '0x04000488', 'identity': 'Device::animationSprites'}
+IL_0199: ldloc          local(0x0008)
+IL_019D: ldc.i4         3
+IL_01A2: ldelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_01A7: call           {'token': '0x06000145', 'identity': 'GlobalStaticVars::HideSprite'}
+IL_01AC: br             {'target': 333}
+IL_01B1: ldarg.0        None
+IL_01B2: ldfld          {'token': '0x04000488', 'identity': 'Device::animationSprites'}
+IL_01B7: ldloc          local(0x0008)
+IL_01BB: ldc.i4         5
+IL_01C0: ldelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_01C5: call           {'token': '0x06000145', 'identity': 'GlobalStaticVars::HideSprite'}
+IL_01CA: br             {'target': 402}
