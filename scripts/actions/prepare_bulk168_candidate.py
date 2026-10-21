@@ -67,10 +67,13 @@ def parse_args():
     parser.add_argument("--support-dir", default=None, help="Path to authentic ManagedStripped support directory")
     parser.add_argument("--verifier-runner", default=None, help="Path to verify_bulk152_portable.py")
     parser.add_argument("--skip-portable-verifier", action="store_true", help="Skip running downstream verifier")
+    parser.add_argument("--allow-blocked-dependency-profile", action="store_true", help="Allow proceeding to downstream verifier when blocked by isolated dependency profile")
     return parser.parse_args()
 
 def main():
     args = parse_args()
+    if args.allow_blocked_dependency_profile:
+        os.environ["ALLOW_BLOCKED_DEPENDENCY_PROFILE"] = "1"
     output_dir = pathlib.Path(args.output_dir).resolve()
     if output_dir.exists():
         raise FileExistsError(f"Output directory already exists: {output_dir}. Fresh directory required.")

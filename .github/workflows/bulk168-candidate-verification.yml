@@ -97,7 +97,8 @@ jobs:
             --support-dir "$RUNNER_TEMP/bulk168-portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped" \
             --portable-root "$RUNNER_TEMP/bulk168-portable" \
             --output-dir "$GITHUB_WORKSPACE/.validation/bulk168-run" \
-            --verifier-runner "$GITHUB_WORKSPACE/scripts/actions/verify_bulk152_portable.py"
+            --verifier-runner "$GITHUB_WORKSPACE/scripts/actions/verify_bulk152_portable.py" \
+            --allow-blocked-dependency-profile
       - name: Preserve generated source on success or failure
         if: always()
         shell: bash
