@@ -82,6 +82,14 @@ jobs:
           set -euo pipefail
           export PYTHONPATH="$RUNNER_TEMP/native110-capsule/deps"
           python3 scripts/actions/prepare_bulk188_candidate.py             --source-dir "$RUNNER_TEMP/native113-source/native-bulk188-codex-2026-10-21"             --parent-dll "$RUNNER_TEMP/native110-capsule/inputs/parent_native93.dll"             --baseline-candidate-dll "$RUNNER_TEMP/bulk188-downloads/candidate1.dll"             --wrong-parent-dll "$RUNNER_TEMP/bulk188-downloads/candidate1.dll"             --deps-dir "$RUNNER_TEMP/native110-capsule/deps"             --tools-dir "$RUNNER_TEMP/native110-capsule/tools"             --support-dir "$RUNNER_TEMP/bulk188-portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped"             --portable-root "$RUNNER_TEMP/bulk188-portable"             --output-dir "$GITHUB_WORKSPACE/.validation/bulk188-run"             --verifier-runner "$GITHUB_WORKSPACE/scripts/actions/verify_bulk152_portable.py"             --allow-blocked-dependency-profile
+      - name: Execute Native113 and key methods candidate CIL behavioral verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONPATH="$RUNNER_TEMP/native110-capsule/deps"
+          cand="$GITHUB_WORKSPACE/.validation/bulk188-run/candidates/candidate1.dll"
+          report="$GITHUB_WORKSPACE/.validation/bulk188-run/results/CANDIDATE-BEHAVIOR-SUITE-REPORT.json"
+          python3 scripts/actions/test_behavior_bulk188.py --candidate-dll "$cand" --output-json "$report"
       - name: Preserve generated source on success or failure
         if: always()
         shell: bash
