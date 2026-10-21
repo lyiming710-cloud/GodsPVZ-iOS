@@ -1,0 +1,171 @@
+SeedChooserScreen::SetPrechooseList
+{"token": "0x060006BB", "name": "SeedChooserScreen::SetPrechooseList", "signature": "20010115120d011281c0", "rva": 573924, "max_stack": 2, "code_size": 613, "local_sig": 285213968, "locals_blob": "071b15120d011281c01c1c1281c002020202021c02020202021c0202021c15120d011281c0151151011c12832c151151011c128330151151011c151151011c", "eh_count": 0, "il_sha256": "c168cd88628f604819af0506baa8962e41d45a3ca8d731a65352463799fdf462"}
+IL_0000: ldstr          {'token': '0x7001C137', 'identity': 'Unmanaged memory load: [181CE4F0C]'}
+IL_0005: pop            None
+IL_0006: ldc.i4.0       None
+IL_0007: conv.i         None
+IL_0008: ldc.i4         0
+IL_000D: ceq            None
+IL_000F: ldc.i4.0       None
+IL_0010: ceq            None
+IL_0012: stloc          local(0x000B)
+IL_0016: br             {'target': 27}
+IL_001B: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0020: pop            None
+IL_0021: br             {'target': 475}
+IL_0026: ldloc          local(0x0003)
+IL_002A: ldc.i4         0
+IL_002F: ceq            None
+IL_0031: stloc          local(0x0008)
+IL_0035: ldloc          local(0x0008)
+IL_0039: brtrue         {'target': 410}
+IL_003E: br             {'target': 67}
+IL_0043: ldloc          local(0x0003)
+IL_0047: ldfld          {'token': '0x04000448', 'identity': 'Card_Choose::isChosen'}
+IL_004C: ldc.i4         0
+IL_0051: ceq            None
+IL_0053: stloc          local(0x0005)
+IL_0057: ldloc          local(0x0005)
+IL_005B: brtrue         {'target': 475}
+IL_0060: br             {'target': 101}
+IL_0065: ldloc          local(0x0003)
+IL_0069: call           {'token': '0x060002F5', 'identity': 'Card_Choose::Choose_Reset'}
+IL_006E: br             {'target': 475}
+IL_0073: ldstr          {'token': '0x70000331', 'identity': 'Method not found @180302170'}
+IL_0078: pop            None
+IL_0079: br             {'target': 126}
+IL_007E: ldarg.0        None
+IL_007F: ldfld          {'token': '0x040008BE', 'identity': 'SeedChooserScreen::plantDetail'}
+IL_0084: ldnull         None
+IL_0085: call           {'token': '0x060006C2', 'identity': 'PlantDetail::Awake'}
+IL_008A: br             {'target': 143}
+IL_008F: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0094: pop            None
+IL_0095: nop            None
+IL_0096: br             {'target': 569}
+IL_009B: ldarg.0        None
+IL_009C: ldfld          {'token': '0x040008B8', 'identity': 'SeedChooserScreen::card_ChooseList'}
+IL_00A1: ldc.i4         0
+IL_00A6: ceq            None
+IL_00A8: stloc          local(0x0011)
+IL_00AC: ldloca         local(0x0017)
+IL_00B0: stloc          local(0x0018)
+IL_00B4: ldloc          local(0x0011)
+IL_00B8: brtrue         {'target': 453}
+IL_00BD: br             {'target': 194}
+IL_00C2: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00C7: pop            None
+IL_00C8: nop            None
+IL_00C9: br             {'target': 520}
+IL_00CE: ldloc          local(0x0014)
+IL_00D2: ldc.i4         0
+IL_00D7: ceq            None
+IL_00D9: stloc          local(0x000E)
+IL_00DD: ldloca         local(0x001A)
+IL_00E1: stloc          local(0x0018)
+IL_00E5: ldloc          local(0x000E)
+IL_00E9: brtrue         {'target': 437}
+IL_00EE: br             {'target': 243}
+IL_00F3: ldloc          local(0x0003)
+IL_00F7: ldc.i4         0
+IL_00FC: ceq            None
+IL_00FE: stloc          local(0x000C)
+IL_0102: ldloca         local(0x001A)
+IL_0106: stloc          local(0x0018)
+IL_010A: ldloc          local(0x000C)
+IL_010E: brtrue         {'target': 426}
+IL_0113: br             {'target': 280}
+IL_0118: ldstr          {'token': '0x7001C17D', 'identity': 'Unmanaged memory load: [v484 @ stack_-28 (System.Collections.Generic.List`1<Card_Choose>)+24]'}
+IL_011D: pop            None
+IL_011E: ldc.i4.0       None
+IL_011F: conv.i         None
+IL_0120: ldloc          local(0x0003)
+IL_0124: ldfld          {'token': '0x04000429', 'identity': 'Card_Choose::plantID'}
+IL_0129: ceq            None
+IL_012B: ldc.i4.0       None
+IL_012C: ceq            None
+IL_012E: stloc          local(0x000B)
+IL_0132: ldloc          local(0x000B)
+IL_0136: brtrue         {'target': 520}
+IL_013B: br             {'target': 320}
+IL_0140: ldloc          local(0x0014)
+IL_0144: call           {'token': '0x060002F4', 'identity': 'Card_Choose::Choose_Being'}
+IL_0149: ldarg.0        None
+IL_014A: ldfld          {'token': '0x040008BE', 'identity': 'SeedChooserScreen::plantDetail'}
+IL_014F: ldc.i4         0
+IL_0154: ceq            None
+IL_0156: stloc          local(0x000A)
+IL_015A: ldloc          local(0x000A)
+IL_015E: brtrue         {'target': 558}
+IL_0163: br             {'target': 360}
+IL_0168: ldarg.0        None
+IL_0169: ldfld          {'token': '0x040008BE', 'identity': 'SeedChooserScreen::plantDetail'}
+IL_016E: ldloc          local(0x0014)
+IL_0172: call           {'token': '0x060006C2', 'identity': 'PlantDetail::Awake'}
+IL_0177: nop            None
+IL_0178: br             {'target': 520}
+IL_017D: ldloca         local(0x001A)
+IL_0181: call           {'token': '0x0A0001DF', 'identity': 'TypeSpec:88::Dispose / sig 200001'}
+IL_0186: br             {'target': 569}
+IL_018B: ldloca         local(0x0017)
+IL_018F: call           {'token': '0x0A0001DF', 'identity': 'TypeSpec:88::Dispose / sig 200001'}
+IL_0194: br             {'target': 409}
+IL_0199: ret            None
+IL_019A: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_019F: throw          None
+IL_01A0: ldloc          local(0x0003)
+IL_01A4: throw          None
+IL_01A5: br             {'target': 558}
+IL_01AA: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01AF: throw          None
+IL_01B0: br             {'target': 437}
+IL_01B5: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01BA: throw          None
+IL_01BB: ldloc          local(0x0018)
+IL_01BF: throw          None
+IL_01C0: br             {'target': 453}
+IL_01C5: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01CA: throw          None
+IL_01CB: ldloc          local(0x0018)
+IL_01CF: throw          None
+IL_01D0: br             {'target': 469}
+IL_01D5: nop            None
+IL_01D6: br             {'target': 513}
+IL_01DB: ldloca         local(0x0017)
+IL_01DF: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_01E4: stloc          local(0x0004)
+IL_01E8: ldloc          local(0x0004)
+IL_01EC: ldc.i4.0       None
+IL_01ED: ceq            None
+IL_01EF: stloc          local(0x0007)
+IL_01F3: ldloc          local(0x0007)
+IL_01F7: brtrue         {'target': 115}
+IL_01FC: br             {'target': 38}
+IL_0201: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0206: throw          None
+IL_0207: ret            None
+IL_0208: ldloca         local(0x001A)
+IL_020C: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0211: stloc          local(0x000D)
+IL_0215: ldloc          local(0x000D)
+IL_0219: ldc.i4.0       None
+IL_021A: ceq            None
+IL_021C: stloc          local(0x0012)
+IL_0220: ldloc          local(0x0012)
+IL_0224: brtrue         {'target': 381}
+IL_0229: br             {'target': 206}
+IL_022E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0233: throw          None
+IL_0234: br             {'target': 426}
+IL_0239: ldloca         local(0x0017)
+IL_023D: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0242: stloc          local(0x0010)
+IL_0246: ldloc          local(0x0010)
+IL_024A: ldc.i4.0       None
+IL_024B: ceq            None
+IL_024D: stloc          local(0x0006)
+IL_0251: ldloc          local(0x0006)
+IL_0255: brtrue         {'target': 395}
+IL_025A: br             {'target': 155}
+IL_025F: ldstr          {'token': '0x70013795', 'identity': 'Warning: Method ends with non empty stack (-B0), the output could be wrong!'}
+IL_0264: pop            None

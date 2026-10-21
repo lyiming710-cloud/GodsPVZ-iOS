@@ -1,0 +1,183 @@
+SettlementUIController::GenerateLootPieceItemIcons
+{"token": "0x060006D2", "name": "SettlementUIController::GenerateLootPieceItemIcons", "signature": "20010115120d01128234", "rva": 588288, "max_stack": 3, "code_size": 700, "local_sig": 285213990, "locals_blob": "071d15120d011282341c1282341815120d011c02020202128204021209021215021209021215021215021d1c08151151011c151151011c1282341c12833808", "eh_count": 0, "il_sha256": "cb340339c62dddaf738908a341aed4b3e0ea5849cec8833379cf85ea76baa1e5"}
+IL_0000: br             {'target': 5}
+IL_0005: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_000A: pop            None
+IL_000B: ldc.i4.0       None
+IL_000C: conv.i         None
+IL_000D: stloc          local(0x0003)
+IL_0011: br             {'target': 649}
+IL_0016: ldloc          local(0x0002)
+IL_001A: ldc.i4         0
+IL_001F: ceq            None
+IL_0021: stloc          local(0x0008)
+IL_0025: ldloc          local(0x0008)
+IL_0029: brtrue         {'target': 627}
+IL_002E: br             {'target': 51}
+IL_0033: ldloc          local(0x0002)
+IL_0037: ldc.i4         1
+IL_003C: call           {'token': '0x060004D9', 'identity': 'Supplies::CreatSuppliesItem'}
+IL_0041: stloc          local(0x0009)
+IL_0045: ldloc          local(0x0009)
+IL_0049: ldc.i4         0
+IL_004E: ceq            None
+IL_0050: stloc          local(0x000A)
+IL_0054: ldloc          local(0x000A)
+IL_0058: brtrue         {'target': 616}
+IL_005D: br             {'target': 98}
+IL_0062: ldloc          local(0x0009)
+IL_0066: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_006B: stloc          local(0x000B)
+IL_006F: ldloc          local(0x000B)
+IL_0073: ldc.i4         0
+IL_0078: ceq            None
+IL_007A: stloc          local(0x000C)
+IL_007E: ldloc          local(0x000C)
+IL_0082: brtrue         {'target': 605}
+IL_0087: br             {'target': 140}
+IL_008C: ldloc          local(0x000B)
+IL_0090: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0095: stloc          local(0x000D)
+IL_0099: ldloc          local(0x000D)
+IL_009D: ldc.i4         0
+IL_00A2: ceq            None
+IL_00A4: stloc          local(0x000E)
+IL_00A8: ldloc          local(0x000E)
+IL_00AC: brtrue         {'target': 594}
+IL_00B1: br             {'target': 182}
+IL_00B6: ldloc          local(0x000D)
+IL_00BA: ldloca         local(0x001A)
+IL_00BE: call           {'token': '0x0A0000E5', 'identity': 'UnityEngine.Transform::set_localScale / sig 200101114d'}
+IL_00C3: ldloc          local(0x0009)
+IL_00C7: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_00CC: stloc          local(0x000F)
+IL_00D0: br             {'target': 213}
+IL_00D5: ldloc          local(0x000F)
+IL_00D9: ldc.i4         0
+IL_00DE: ceq            None
+IL_00E0: stloc          local(0x0010)
+IL_00E4: ldloc          local(0x0010)
+IL_00E8: brtrue         {'target': 583}
+IL_00ED: br             {'target': 242}
+IL_00F2: ldloc          local(0x000F)
+IL_00F6: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00FB: stloc          local(0x0011)
+IL_00FF: ldarg.0        None
+IL_0100: ldfld          {'token': '0x040008D7', 'identity': 'SettlementUIController::lootList_GameObject'}
+IL_0105: ldc.i4         0
+IL_010A: ceq            None
+IL_010C: stloc          local(0x0012)
+IL_0110: ldloc          local(0x0012)
+IL_0114: brtrue         {'target': 572}
+IL_0119: br             {'target': 286}
+IL_011E: ldarg.0        None
+IL_011F: ldfld          {'token': '0x040008D7', 'identity': 'SettlementUIController::lootList_GameObject'}
+IL_0124: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0129: stloc          local(0x0013)
+IL_012D: ldloc          local(0x0011)
+IL_0131: ldc.i4         0
+IL_0136: ceq            None
+IL_0138: stloc          local(0x0014)
+IL_013C: ldloc          local(0x0014)
+IL_0140: brtrue         {'target': 561}
+IL_0145: br             {'target': 330}
+IL_014A: ldloc          local(0x0011)
+IL_014E: ldloc          local(0x0013)
+IL_0152: ldc.i4         0
+IL_0157: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_015C: ldarg.0        None
+IL_015D: ldfld          {'token': '0x040008D6', 'identity': 'SettlementUIController::lootList'}
+IL_0162: stloc          local(0x0004)
+IL_0166: br             {'target': 363}
+IL_016B: ldloc          local(0x0004)
+IL_016F: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0174: ldc.i4         1
+IL_0179: add            None
+IL_017A: stloc          local(0x001C)
+IL_017E: ldloc          local(0x0004)
+IL_0182: ldloc          local(0x001C)
+IL_0186: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_018B: ldloc          local(0x0004)
+IL_018F: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_0194: stloc          local(0x0015)
+IL_0198: ldloc          local(0x0004)
+IL_019C: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01A1: stloc          local(0x0003)
+IL_01A5: br             {'target': 426}
+IL_01AA: ldloc          local(0x0004)
+IL_01AE: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01B3: ldloc          local(0x0015)
+IL_01B7: ldlen          None
+IL_01B8: conv.i4        None
+IL_01B9: clt            None
+IL_01BB: stloc          local(0x0005)
+IL_01BF: ldloc          local(0x0005)
+IL_01C3: brtrue         {'target': 486}
+IL_01C8: br             {'target': 461}
+IL_01CD: ldloc          local(0x0004)
+IL_01D1: ldloc          local(0x0009)
+IL_01D5: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_01DA: nop            None
+IL_01DB: ldc.i4.0       None
+IL_01DC: conv.i         None
+IL_01DD: stloc          local(0x0003)
+IL_01E1: br             {'target': 649}
+IL_01E6: ldloc          local(0x0004)
+IL_01EA: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01EF: ldc.i4         1
+IL_01F4: add            None
+IL_01F5: stloc          local(0x0016)
+IL_01F9: ldloc          local(0x0004)
+IL_01FD: ldloc          local(0x0016)
+IL_0201: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0206: br             {'target': 523}
+IL_020B: ldloc          local(0x0015)
+IL_020F: ldloc          local(0x0003)
+IL_0213: ldloc          local(0x0009)
+IL_0217: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_021C: nop            None
+IL_021D: br             {'target': 649}
+IL_0222: ldloca         local(0x0018)
+IL_0226: call           {'token': '0x0A00011C', 'identity': 'TypeSpec:57::Dispose / sig 200001'}
+IL_022B: br             {'target': 560}
+IL_0230: ret            None
+IL_0231: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0236: throw          None
+IL_0237: br             {'target': 572}
+IL_023C: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0241: throw          None
+IL_0242: br             {'target': 583}
+IL_0247: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_024C: throw          None
+IL_024D: br             {'target': 594}
+IL_0252: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0257: throw          None
+IL_0258: br             {'target': 605}
+IL_025D: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0262: throw          None
+IL_0263: br             {'target': 616}
+IL_0268: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_026D: throw          None
+IL_026E: br             {'target': 627}
+IL_0273: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0278: throw          None
+IL_0279: ldloc          local(0x0019)
+IL_027D: throw          None
+IL_027E: br             {'target': 643}
+IL_0283: nop            None
+IL_0284: br             {'target': 687}
+IL_0289: ldloca         local(0x0018)
+IL_028D: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0292: stloc          local(0x0006)
+IL_0296: ldloc          local(0x0006)
+IL_029A: ldc.i4.0       None
+IL_029B: ceq            None
+IL_029D: stloc          local(0x0007)
+IL_02A1: ldloc          local(0x0007)
+IL_02A5: brtrue         {'target': 546}
+IL_02AA: br             {'target': 22}
+IL_02AF: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02B4: throw          None
+IL_02B5: ret            None
+IL_02B6: ldstr          {'token': '0x70000CA0', 'identity': 'Warning: Method ends with non empty stack (-80), the output could be wrong!'}
+IL_02BB: pop            None

@@ -1,0 +1,331 @@
+Almanac_PlantDetail::LoadPlant
+{"token": "0x0600057E", "name": "Almanac_PlantDetail::LoadPlant", "signature": "20010108", "rva": 469532, "max_stack": 2, "code_size": 1236, "local_sig": 285213731, "locals_blob": "07290802020212091281e01215121512151281091281e0121512110202020202020202020202020202020e1281e0021281e0021c1209020202128294151151011c151151011c", "eh_count": 0, "il_sha256": "cf42590ab25f56a21f19da0c28fe4616ae293f2b4eee13493bc1ec8a0fb0f91d"}
+IL_0000: br             {'target': 1150}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_000B: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0010: stloc          local(0x0001)
+IL_0014: ldloc          local(0x0001)
+IL_0018: ldc.i4.0       None
+IL_0019: ceq            None
+IL_001B: stloc          local(0x0002)
+IL_001F: ldloc          local(0x0002)
+IL_0023: brtrue         {'target': 120}
+IL_0028: br             {'target': 45}
+IL_002D: ldarg.0        None
+IL_002E: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_0033: stloc          local(0x000C)
+IL_0037: ldarg.0        None
+IL_0038: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_003D: ldc.i4         0
+IL_0042: ceq            None
+IL_0044: stloc          local(0x0003)
+IL_0048: ldloc          local(0x0003)
+IL_004C: brtrue         {'target': 1138}
+IL_0051: br             {'target': 86}
+IL_0056: ldarg.0        None
+IL_0057: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_005C: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0061: stloc          local(0x0004)
+IL_0065: br             {'target': 106}
+IL_006A: ldloc          local(0x0004)
+IL_006E: call           {'token': '0x0A000025', 'identity': 'UnityEngine.Object::Destroy / sig 0001011221'}
+IL_0073: br             {'target': 120}
+IL_0078: br             {'target': 125}
+IL_007D: ldarg          argument(0x0001)
+IL_0081: call           {'token': '0x0600020D', 'identity': 'ResourceManager::GetPlantPrefabPath'}
+IL_0086: stloc          local(0x001C)
+IL_008A: ldloc          local(0x001C)
+IL_008E: call           {'token': '0x2B000048', 'identity': '0x2b000048'}
+IL_0093: stloc          local(0x001D)
+IL_0097: br             {'target': 156}
+IL_009C: br             {'target': 161}
+IL_00A1: ldloc          local(0x001D)
+IL_00A5: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_00AA: stloc          local(0x001E)
+IL_00AE: ldloc          local(0x001E)
+IL_00B2: brtrue         {'target': 204}
+IL_00B7: br             {'target': 188}
+IL_00BC: br             {'target': 193}
+IL_00C1: ldstr          {'token': '0x70018655', 'identity': '加载植物预制件失败'}
+IL_00C6: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_00CB: ret            None
+IL_00CC: br             {'target': 209}
+IL_00D1: ldloc          local(0x001D)
+IL_00D5: call           {'token': '0x2B000029', 'identity': '0x2b000029'}
+IL_00DA: stloc          local(0x001F)
+IL_00DE: ldarg.0        None
+IL_00DF: ldloc          local(0x001F)
+IL_00E3: stfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_00E8: br             {'target': 237}
+IL_00ED: ldarg.0        None
+IL_00EE: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_00F3: stloc          local(0x000C)
+IL_00F7: ldarg.0        None
+IL_00F8: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_00FD: ldc.i4         0
+IL_0102: ceq            None
+IL_0104: stloc          local(0x000D)
+IL_0108: ldloc          local(0x000D)
+IL_010C: brtrue         {'target': 1138}
+IL_0111: br             {'target': 278}
+IL_0116: ldarg.0        None
+IL_0117: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_011C: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0121: stloc          local(0x0006)
+IL_0125: ldarg.0        None
+IL_0126: ldfld          {'token': '0x040006EF', 'identity': 'Almanac_PlantDetail::plantPot'}
+IL_012B: ldc.i4         0
+IL_0130: ceq            None
+IL_0132: stloc          local(0x000E)
+IL_0136: ldarg.0        None
+IL_0137: ldfld          {'token': '0x040006EF', 'identity': 'Almanac_PlantDetail::plantPot'}
+IL_013C: stloc          local(0x000C)
+IL_0140: ldloc          local(0x000E)
+IL_0144: brtrue         {'target': 1138}
+IL_0149: br             {'target': 334}
+IL_014E: ldarg.0        None
+IL_014F: ldfld          {'token': '0x040006EF', 'identity': 'Almanac_PlantDetail::plantPot'}
+IL_0154: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0159: stloc          local(0x0007)
+IL_015D: ldloc          local(0x0006)
+IL_0161: ldc.i4         0
+IL_0166: ceq            None
+IL_0168: stloc          local(0x000F)
+IL_016C: ldarg.0        None
+IL_016D: ldfld          {'token': '0x040006EF', 'identity': 'Almanac_PlantDetail::plantPot'}
+IL_0172: stloc          local(0x000C)
+IL_0176: ldloc          local(0x000F)
+IL_017A: brtrue         {'target': 1138}
+IL_017F: br             {'target': 388}
+IL_0184: ldloc          local(0x0006)
+IL_0188: ldloc          local(0x0007)
+IL_018C: call           {'token': '0x0A00006E', 'identity': 'UnityEngine.Transform::set_parentInternal / sig 2001011215'}
+IL_0191: ldarg.0        None
+IL_0192: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_0197: stloc          local(0x000C)
+IL_019B: ldarg.0        None
+IL_019C: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_01A1: ldc.i4         0
+IL_01A6: ceq            None
+IL_01A8: stloc          local(0x0010)
+IL_01AC: ldloc          local(0x0010)
+IL_01B0: brtrue         {'target': 1138}
+IL_01B5: br             {'target': 442}
+IL_01BA: ldarg.0        None
+IL_01BB: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_01C0: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_01C5: stloc          local(0x0008)
+IL_01C9: ldloc          local(0x0008)
+IL_01CD: ldc.i4         0
+IL_01D2: ceq            None
+IL_01D4: stloc          local(0x0011)
+IL_01D8: ldloc          local(0x0011)
+IL_01DC: brtrue         {'target': 1138}
+IL_01E1: br             {'target': 486}
+IL_01E6: ldloc          local(0x0008)
+IL_01EA: ldloca         local(0x0027)
+IL_01EE: call           {'token': '0x0A000042', 'identity': 'UnityEngine.Transform::set_localPosition / sig 200101114d'}
+IL_01F3: ldarg.0        None
+IL_01F4: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_01F9: call           {'token': '0x2B00002A', 'identity': '0x2b00002a'}
+IL_01FE: stloc          local(0x0009)
+IL_0202: br             {'target': 519}
+IL_0207: ldloc          local(0x0009)
+IL_020B: ldc.i4         0
+IL_0210: ceq            None
+IL_0212: stloc          local(0x0012)
+IL_0216: ldarg.0        None
+IL_0217: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_021C: stloc          local(0x000C)
+IL_0220: ldloc          local(0x0012)
+IL_0224: brtrue         {'target': 1138}
+IL_0229: br             {'target': 558}
+IL_022E: ldloc          local(0x0009)
+IL_0232: ldstr          {'token': '0x700068A4', 'identity': 'UI'}
+IL_0237: call           {'token': '0x0A00015A', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingLayerName / sig 2001010e'}
+IL_023C: ldloc          local(0x0009)
+IL_0240: ldc.i4         100
+IL_0245: call           {'token': '0x0A00015B', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingOrder / sig 20010108'}
+IL_024A: br             {'target': 591}
+IL_024F: ldarg.0        None
+IL_0250: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_0255: stloc          local(0x000C)
+IL_0259: ldarg.0        None
+IL_025A: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_025F: ldc.i4         0
+IL_0264: ceq            None
+IL_0266: stloc          local(0x0013)
+IL_026A: ldloc          local(0x0013)
+IL_026E: brtrue         {'target': 1138}
+IL_0273: br             {'target': 632}
+IL_0278: ldstr          {'token': '0x70018669', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+70]'}
+IL_027D: pop            None
+IL_027E: ldc.i4.0       None
+IL_027F: conv.i         None
+IL_0280: ldc.i4         0
+IL_0285: ceq            None
+IL_0287: stloc          local(0x0020)
+IL_028B: ldloc          local(0x0020)
+IL_028F: brtrue         {'target': 683}
+IL_0294: br             {'target': 665}
+IL_0299: ldstr          {'token': '0x70018669', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+70]'}
+IL_029E: pop            None
+IL_029F: ldc.i4.0       None
+IL_02A0: conv.i         None
+IL_02A1: call           {'token': '0x060005BE', 'identity': 'AttackRangeUIController::CollapseView'}
+IL_02A6: br             {'target': 683}
+IL_02AB: ldarg.0        None
+IL_02AC: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_02B1: stloc          local(0x000A)
+IL_02B5: ldarg.0        None
+IL_02B6: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_02BB: ldc.i4         0
+IL_02C0: ceq            None
+IL_02C2: stloc          local(0x0014)
+IL_02C6: ldstr          {'token': '0x70018669', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+70]'}
+IL_02CB: pop            None
+IL_02CC: ldc.i4.0       None
+IL_02CD: conv.i         None
+IL_02CE: stloc          local(0x000C)
+IL_02D2: ldloc          local(0x0014)
+IL_02D6: brtrue         {'target': 1138}
+IL_02DB: br             {'target': 736}
+IL_02E0: ldloc          local(0x000A)
+IL_02E4: ldfld          {'token': '0x040004EA', 'identity': 'Plant::UI_HP'}
+IL_02E9: ldc.i4         0
+IL_02EE: ceq            None
+IL_02F0: stloc          local(0x0015)
+IL_02F4: ldloc          local(0x000A)
+IL_02F8: ldfld          {'token': '0x040004EA', 'identity': 'Plant::UI_HP'}
+IL_02FD: stloc          local(0x000C)
+IL_0301: ldloc          local(0x0015)
+IL_0305: brtrue         {'target': 1138}
+IL_030A: br             {'target': 783}
+IL_030F: ldloc          local(0x000A)
+IL_0313: ldfld          {'token': '0x040004EA', 'identity': 'Plant::UI_HP'}
+IL_0318: ldc.i4         0
+IL_031D: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0322: ldarg.0        None
+IL_0323: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_0328: stloc          local(0x000C)
+IL_032C: ldarg.0        None
+IL_032D: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_0332: ldc.i4         0
+IL_0337: ceq            None
+IL_0339: stloc          local(0x0016)
+IL_033D: ldloc          local(0x0016)
+IL_0341: brtrue         {'target': 1138}
+IL_0346: br             {'target': 843}
+IL_034B: ldstr          {'token': '0x700186EE', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+1B0]'}
+IL_0350: pop            None
+IL_0351: ldc.i4.0       None
+IL_0352: conv.i         None
+IL_0353: ldc.i4         0
+IL_0358: ceq            None
+IL_035A: stloc          local(0x0017)
+IL_035E: ldstr          {'token': '0x700186EE', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+1B0]'}
+IL_0363: pop            None
+IL_0364: ldc.i4.0       None
+IL_0365: conv.i         None
+IL_0366: stloc          local(0x000C)
+IL_036A: ldloc          local(0x0017)
+IL_036E: brtrue         {'target': 1138}
+IL_0373: br             {'target': 888}
+IL_0378: ldstr          {'token': '0x700186EE', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+1B0]'}
+IL_037D: pop            None
+IL_037E: ldc.i4.0       None
+IL_037F: conv.i         None
+IL_0380: ldc.i4         0
+IL_0385: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_038A: ldarg.0        None
+IL_038B: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_0390: stloc          local(0x0005)
+IL_0394: ldarg.0        None
+IL_0395: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_039A: ldc.i4         0
+IL_039F: ceq            None
+IL_03A1: stloc          local(0x0018)
+IL_03A5: ldstr          {'token': '0x700186EE', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+1B0]'}
+IL_03AA: pop            None
+IL_03AB: ldc.i4.0       None
+IL_03AC: conv.i         None
+IL_03AD: stloc          local(0x000C)
+IL_03B1: ldloc          local(0x0018)
+IL_03B5: brtrue         {'target': 1138}
+IL_03BA: br             {'target': 959}
+IL_03BF: ldloc          local(0x0005)
+IL_03C3: ldfld          {'token': '0x040004EF', 'identity': 'Plant::UI_Characteristic'}
+IL_03C8: ldc.i4         0
+IL_03CD: ceq            None
+IL_03CF: stloc          local(0x0019)
+IL_03D3: ldstr          {'token': '0x700186EE', 'identity': 'Unmanaged memory load: [v198 @ rcx_v4 (UnityEngine.Component)+1B0]'}
+IL_03D8: pop            None
+IL_03D9: ldc.i4.0       None
+IL_03DA: conv.i         None
+IL_03DB: stloc          local(0x000C)
+IL_03DF: ldloc          local(0x0019)
+IL_03E3: brtrue         {'target': 1138}
+IL_03E8: br             {'target': 1005}
+IL_03ED: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_03F2: pop            None
+IL_03F3: nop            None
+IL_03F4: br             {'target': 1155}
+IL_03F9: ldloc          local(0x0022)
+IL_03FD: ldc.i4         0
+IL_0402: ceq            None
+IL_0404: stloc          local(0x0024)
+IL_0408: ldloc          local(0x0024)
+IL_040C: brtrue         {'target': 1155}
+IL_0411: br             {'target': 1046}
+IL_0416: ldloc          local(0x0022)
+IL_041A: ldc.i4         0
+IL_041F: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0424: nop            None
+IL_0425: br             {'target': 1155}
+IL_042A: ldloca         local(0x0028)
+IL_042E: call           {'token': '0x0A000128', 'identity': 'TypeSpec:49::Dispose / sig 200001'}
+IL_0433: br             {'target': 1193}
+IL_0438: ldarg.0        None
+IL_0439: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_043E: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0443: stloc          local(0x000B)
+IL_0447: ldloc          local(0x000B)
+IL_044B: ldc.i4         0
+IL_0450: ceq            None
+IL_0452: stloc          local(0x001A)
+IL_0456: ldloc          local(0x001A)
+IL_045A: brtrue         {'target': 1138}
+IL_045F: br             {'target': 1124}
+IL_0464: ldloc          local(0x000B)
+IL_0468: ldloca         local(0x0027)
+IL_046C: call           {'token': '0x0A0000E5', 'identity': 'UnityEngine.Transform::set_localScale / sig 200101114d'}
+IL_0471: ret            None
+IL_0472: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0477: throw          None
+IL_0478: nop            None
+IL_0479: br             {'target': 1224}
+IL_047E: br             {'target': 5}
+IL_0483: ldloca         local(0x0028)
+IL_0487: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_048C: stloc          local(0x0023)
+IL_0490: ldloc          local(0x0023)
+IL_0494: ldc.i4.0       None
+IL_0495: ceq            None
+IL_0497: stloc          local(0x0025)
+IL_049B: ldloc          local(0x0025)
+IL_049F: brtrue         {'target': 1066}
+IL_04A4: br             {'target': 1017}
+IL_04A9: ldarg.0        None
+IL_04AA: ldfld          {'token': '0x040006EE', 'identity': 'Almanac_PlantDetail::plant'}
+IL_04AF: ldc.i4         0
+IL_04B4: ceq            None
+IL_04B6: stloc          local(0x001B)
+IL_04BA: ldloc          local(0x001B)
+IL_04BE: brtrue         {'target': 1138}
+IL_04C3: br             {'target': 1080}
+IL_04C8: ldloc          local(0x000C)
+IL_04CC: throw          None
+IL_04CD: ret            None
+IL_04CE: ldstr          {'token': '0x70000298', 'identity': 'Warning: Method ends with non empty stack (-70), the output could be wrong!'}
+IL_04D3: pop            None

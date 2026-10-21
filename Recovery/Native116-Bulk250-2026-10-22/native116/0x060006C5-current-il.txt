@@ -1,0 +1,182 @@
+PlantDetail::SkillButton_OnClick
+{"token": "0x060006C5", "name": "PlantDetail::SkillButton_OnClick", "signature": "20010108", "rva": 579756, "max_stack": 2, "code_size": 716, "local_sig": 285213978, "locals_blob": "07210812833008120908021215121512091281c012091215121512091281c0021c02128244020202021c02021c121102021209151151011c151151011c", "eh_count": 0, "il_sha256": "0c56cc929172995b75095e34e9262b501fec86999193cb9d44ab928c663d056e"}
+IL_0000: br             {'target': 5}
+IL_0005: ldarg          argument(0x0001)
+IL_0009: ldc.i4         1
+IL_000E: sub            None
+IL_000F: stloc          local(0x0002)
+IL_0013: ldarg.0        None
+IL_0014: ldfld          {'token': '0x040008C7', 'identity': 'PlantDetail::skillButton'}
+IL_0019: ldloc          local(0x0002)
+IL_001D: call           {'token': '0x0A000006', 'identity': 'TypeSpec:1::get_Item / sig 2001130008'}
+IL_0022: stloc          local(0x0003)
+IL_0026: br             {'target': 43}
+IL_002B: ldloc          local(0x0003)
+IL_002F: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0034: stloc          local(0x0006)
+IL_0038: br             {'target': 61}
+IL_003D: ldloc          local(0x0006)
+IL_0041: ldc.i4         2
+IL_0046: call           {'token': '0x0A000002', 'identity': 'UnityEngine.Transform::GetChild / sig 2001121508'}
+IL_004B: stloc          local(0x0007)
+IL_004F: br             {'target': 84}
+IL_0054: ldloc          local(0x0007)
+IL_0058: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_005D: stloc          local(0x0008)
+IL_0061: br             {'target': 102}
+IL_0066: ldloc          local(0x0008)
+IL_006A: ldc.i4         0
+IL_006F: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0074: br             {'target': 121}
+IL_0079: ldarg.0        None
+IL_007A: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_007F: ldnull         None
+IL_0080: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0085: stloc          local(0x0011)
+IL_0089: ldloc          local(0x0011)
+IL_008D: brtrue         {'target': 151}
+IL_0092: br             {'target': 648}
+IL_0097: ldarg.0        None
+IL_0098: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_009D: stloc          local(0x0009)
+IL_00A1: br             {'target': 166}
+IL_00A6: ldloc          local(0x0009)
+IL_00AA: ldfld          {'token': '0x0400042F', 'identity': 'Card_Choose::plantSave'}
+IL_00AF: ldarg          argument(0x0001)
+IL_00B3: call           {'token': '0x060004CB', 'identity': 'PlantSave::GetSkill_ID'}
+IL_00B8: stloc          local(0x0012)
+IL_00BC: ldloc          local(0x0012)
+IL_00C0: ldc.i4         0
+IL_00C5: ceq            None
+IL_00C7: stloc          local(0x0013)
+IL_00CB: ldloc          local(0x0013)
+IL_00CF: brtrue         {'target': 648}
+IL_00D4: br             {'target': 217}
+IL_00D9: ldloc          local(0x0012)
+IL_00DD: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_00E2: ldc.i4         0
+IL_00E7: ceq            None
+IL_00E9: stloc          local(0x0014)
+IL_00ED: ldloc          local(0x0014)
+IL_00F1: brtrue         {'target': 648}
+IL_00F6: br             {'target': 251}
+IL_00FB: ldloc          local(0x0012)
+IL_00FF: ldfld          {'token': '0x04000693', 'identity': 'Skill::unlock'}
+IL_0104: ldc.i4         0
+IL_0109: ceq            None
+IL_010B: stloc          local(0x0015)
+IL_010F: ldloc          local(0x0015)
+IL_0113: brtrue         {'target': 648}
+IL_0118: br             {'target': 285}
+IL_011D: ldarg          argument(0x0001)
+IL_0121: ldc.i4         1
+IL_0126: sub            None
+IL_0127: stloc          local(0x0010)
+IL_012B: ldc.i4         0
+IL_0130: stloc          local(0x0004)
+IL_0134: br             {'target': 313}
+IL_0139: ldarg.0        None
+IL_013A: ldfld          {'token': '0x040008C7', 'identity': 'PlantDetail::skillButton'}
+IL_013F: ldloc          local(0x0004)
+IL_0143: call           {'token': '0x0A000006', 'identity': 'TypeSpec:1::get_Item / sig 2001130008'}
+IL_0148: stloc          local(0x000A)
+IL_014C: br             {'target': 337}
+IL_0151: ldloc          local(0x000A)
+IL_0155: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_015A: stloc          local(0x000B)
+IL_015E: br             {'target': 355}
+IL_0163: ldloc          local(0x000B)
+IL_0167: ldc.i4         2
+IL_016C: call           {'token': '0x0A000002', 'identity': 'UnityEngine.Transform::GetChild / sig 2001121508'}
+IL_0171: stloc          local(0x000C)
+IL_0175: br             {'target': 378}
+IL_017A: ldloc          local(0x000C)
+IL_017E: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0183: stloc          local(0x000D)
+IL_0187: br             {'target': 396}
+IL_018C: ldloc          local(0x0004)
+IL_0190: ldloc          local(0x0010)
+IL_0194: sub            None
+IL_0195: stloc          local(0x0017)
+IL_0199: ldloc          local(0x0017)
+IL_019D: ldc.i4         0
+IL_01A2: ceq            None
+IL_01A4: stloc          local(0x0018)
+IL_01A8: ldloc          local(0x0018)
+IL_01AC: ldc.i4.0       None
+IL_01AD: ceq            None
+IL_01AF: stloc          local(0x0005)
+IL_01B3: ldloc          local(0x000D)
+IL_01B7: ldloc          local(0x0005)
+IL_01BB: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_01C0: ldloc          local(0x0004)
+IL_01C4: ldc.i4         1
+IL_01C9: add            None
+IL_01CA: stloc          local(0x0004)
+IL_01CE: ldloc          local(0x0004)
+IL_01D2: ldc.i4         3
+IL_01D7: clt            None
+IL_01D9: stloc          local(0x000F)
+IL_01DD: ldloc          local(0x000F)
+IL_01E1: brtrue         {'target': 313}
+IL_01E6: br             {'target': 491}
+IL_01EB: ldarg.0        None
+IL_01EC: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_01F1: stloc          local(0x000E)
+IL_01F5: br             {'target': 506}
+IL_01FA: ldloc          local(0x000E)
+IL_01FE: ldfld          {'token': '0x0400042F', 'identity': 'Card_Choose::plantSave'}
+IL_0203: ldc.i4         0
+IL_0208: ceq            None
+IL_020A: stloc          local(0x0019)
+IL_020E: ldloc          local(0x0019)
+IL_0212: brtrue         {'target': 555}
+IL_0217: br             {'target': 540}
+IL_021C: ldarg.0        None
+IL_021D: ldloc          local(0x0012)
+IL_0221: call           {'token': '0x060006C6', 'identity': 'PlantDetail::LoadSkillData'}
+IL_0226: br             {'target': 555}
+IL_022B: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0230: pop            None
+IL_0231: nop            None
+IL_0232: br             {'target': 678}
+IL_0237: ldloc          local(0x001B)
+IL_023B: ldc.i4         0
+IL_0240: ceq            None
+IL_0242: stloc          local(0x001D)
+IL_0246: ldloc          local(0x001D)
+IL_024A: brtrue         {'target': 662}
+IL_024F: br             {'target': 596}
+IL_0254: ldloc          local(0x001B)
+IL_0258: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_025D: stloc          local(0x001E)
+IL_0261: br             {'target': 614}
+IL_0266: ldloc          local(0x001E)
+IL_026A: ldc.i4         1
+IL_026F: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0274: nop            None
+IL_0275: br             {'target': 678}
+IL_027A: ldloca         local(0x0020)
+IL_027E: call           {'token': '0x0A0002B0', 'identity': 'TypeSpec:127::Dispose / sig 200001'}
+IL_0283: br             {'target': 648}
+IL_0288: ret            None
+IL_0289: nop            None
+IL_028A: br             {'target': 655}
+IL_028F: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0294: throw          None
+IL_0295: ret            None
+IL_0296: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_029B: throw          None
+IL_029C: ldloc          local(0x001B)
+IL_02A0: throw          None
+IL_02A1: br             {'target': 649}
+IL_02A6: ldloca         local(0x0020)
+IL_02AA: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_02AF: stloc          local(0x001C)
+IL_02B3: ldloc          local(0x001C)
+IL_02B7: ldc.i4.0       None
+IL_02B8: ceq            None
+IL_02BA: stloc          local(0x0016)
+IL_02BE: ldloc          local(0x0016)
+IL_02C2: brtrue         {'target': 634}
+IL_02C7: br             {'target': 567}

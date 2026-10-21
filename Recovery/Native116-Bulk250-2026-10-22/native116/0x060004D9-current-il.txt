@@ -1,0 +1,209 @@
+Supplies::CreatSuppliesItem
+{"token": "0x060004D9", "name": "Supplies::CreatSuppliesItem", "signature": "200112820402", "rva": 421084, "max_stack": 3, "code_size": 835, "local_sig": 285213631, "locals_blob": "07230212823402081259128204020e1c1c1c120912090202020202020202020202021281590d0d0d1c020218181c", "eh_count": 0, "il_sha256": "3f8b080a4d350cbbd9d8611f669bcc3174896e784d2eed150e68b740022929ad"}
+IL_0000: br             {'target': 786}
+IL_0005: ldsfld         {'token': '0x040002FD', 'identity': 'ResourceManager::prefab_SuppliesItem'}
+IL_000A: ldnull         None
+IL_000B: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0010: stloc          local(0x0002)
+IL_0014: ldloc          local(0x0002)
+IL_0018: brtrue         {'target': 34}
+IL_001D: br             {'target': 770}
+IL_0022: br             {'target': 791}
+IL_0027: ldsfld         {'token': '0x040002FD', 'identity': 'ResourceManager::prefab_SuppliesItem'}
+IL_002C: call           {'token': '0x2B000068', 'identity': '0x2b000068'}
+IL_0031: stloc          local(0x0005)
+IL_0035: ldloc          local(0x0005)
+IL_0039: ldc.i4         0
+IL_003E: ceq            None
+IL_0040: stloc          local(0x0006)
+IL_0044: ldloc          local(0x0006)
+IL_0048: brtrue         {'target': 772}
+IL_004D: br             {'target': 82}
+IL_0052: ldloc          local(0x0005)
+IL_0056: ldarg.0        None
+IL_0057: call           {'token': '0x06000413', 'identity': 'SuppliesItem::LoadSupplies'}
+IL_005C: ldloc          local(0x0005)
+IL_0060: ldfld          {'token': '0x04000590', 'identity': 'SuppliesItem::supplies'}
+IL_0065: ldc.i4         0
+IL_006A: ceq            None
+IL_006C: stloc          local(0x000E)
+IL_0070: ldloc          local(0x000E)
+IL_0074: brtrue         {'target': 772}
+IL_0079: br             {'target': 126}
+IL_007E: ldloca         local(0x0003)
+IL_0082: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0087: stloc          local(0x0007)
+IL_008B: ldloc          local(0x0005)
+IL_008F: ldfld          {'token': '0x04000596', 'identity': 'SuppliesItem::text1'}
+IL_0094: ldc.i4         0
+IL_0099: ceq            None
+IL_009B: stloc          local(0x000F)
+IL_009F: ldloc          local(0x000F)
+IL_00A3: brtrue         {'target': 772}
+IL_00A8: br             {'target': 173}
+IL_00AD: ldloc          local(0x0005)
+IL_00B1: ldfld          {'token': '0x04000596', 'identity': 'SuppliesItem::text1'}
+IL_00B6: ldloc          local(0x0007)
+IL_00BA: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_00BF: ldloc          local(0x0005)
+IL_00C3: ldfld          {'token': '0x04000595', 'identity': 'SuppliesItem::text1_Back'}
+IL_00C8: ldc.i4         0
+IL_00CD: ceq            None
+IL_00CF: stloc          local(0x0010)
+IL_00D3: ldloc          local(0x0010)
+IL_00D7: brtrue         {'target': 772}
+IL_00DC: br             {'target': 225}
+IL_00E1: ldloc          local(0x0005)
+IL_00E5: ldfld          {'token': '0x04000595', 'identity': 'SuppliesItem::text1_Back'}
+IL_00EA: call           {'token': '0x0A00023D', 'identity': 'UnityEngine.UI.Graphic::get_rectTransform / sig 2000128159'}
+IL_00EF: stloc          local(0x0019)
+IL_00F3: br             {'target': 248}
+IL_00F8: ldloc          local(0x0019)
+IL_00FC: ldc.i4         0
+IL_0101: ceq            None
+IL_0103: stloc          local(0x0011)
+IL_0107: ldloc          local(0x0011)
+IL_010B: brtrue         {'target': 772}
+IL_0110: br             {'target': 277}
+IL_0115: ldloc          local(0x0003)
+IL_0119: call           {'token': '0x0A00023E', 'identity': 'System.Math::Log10 / sig 00010d0d'}
+IL_011E: stloc          local(0x001A)
+IL_0122: ldloc          local(0x001A)
+IL_0126: conv.r8        None
+IL_0127: ldc.i4         14
+IL_012C: conv.r8        None
+IL_012D: mul            None
+IL_012E: stloc          local(0x001B)
+IL_0132: ldloc          local(0x001B)
+IL_0136: conv.r8        None
+IL_0137: ldc.i4         39
+IL_013C: conv.r8        None
+IL_013D: add            None
+IL_013E: stloc          local(0x001C)
+IL_0142: ldloc          local(0x0019)
+IL_0146: ldc.i4         0
+IL_014B: ldloc          local(0x001C)
+IL_014F: call           {'token': '0x0A00023F', 'identity': 'UnityEngine.RectTransform::SetSizeWithCurrentAnchors / sig 20020111815d0c'}
+IL_0154: br             {'target': 345}
+IL_0159: ldloc          local(0x0003)
+IL_015D: ldc.i4         0
+IL_0162: ceq            None
+IL_0164: ldc.i4.0       None
+IL_0165: ceq            None
+IL_0167: stloc          local(0x000D)
+IL_016B: ldloc          local(0x000D)
+IL_016F: brtrue         {'target': 796}
+IL_0174: br             {'target': 377}
+IL_0179: nop            None
+IL_017A: ldloc          local(0x0005)
+IL_017E: ldfld          {'token': '0x04000592', 'identity': 'SuppliesItem::background'}
+IL_0183: ldc.i4         0
+IL_0188: ceq            None
+IL_018A: stloc          local(0x0012)
+IL_018E: ldloc          local(0x0012)
+IL_0192: brtrue         {'target': 772}
+IL_0197: br             {'target': 412}
+IL_019C: ldloc          local(0x0005)
+IL_01A0: ldfld          {'token': '0x04000592', 'identity': 'SuppliesItem::background'}
+IL_01A5: ldloca         local(0x0022)
+IL_01A9: call           {'token': '0x0A0001DE', 'identity': 'UnityEngine.UI.Graphic::set_color / sig 2001011180d1'}
+IL_01AE: nop            None
+IL_01AF: ldloc          local(0x0005)
+IL_01B3: ldfld          {'token': '0x04000593', 'identity': 'SuppliesItem::roll'}
+IL_01B8: ldc.i4         0
+IL_01BD: ceq            None
+IL_01BF: stloc          local(0x0013)
+IL_01C3: ldloc          local(0x0013)
+IL_01C7: brtrue         {'target': 772}
+IL_01CC: br             {'target': 465}
+IL_01D1: ldloc          local(0x0005)
+IL_01D5: ldfld          {'token': '0x04000593', 'identity': 'SuppliesItem::roll'}
+IL_01DA: ldloca         local(0x0022)
+IL_01DE: call           {'token': '0x0A0001DE', 'identity': 'UnityEngine.UI.Graphic::set_color / sig 2001011180d1'}
+IL_01E3: ldloc          local(0x0005)
+IL_01E7: ldfld          {'token': '0x04000594', 'identity': 'SuppliesItem::image'}
+IL_01EC: ldc.i4         0
+IL_01F1: ceq            None
+IL_01F3: stloc          local(0x0014)
+IL_01F7: ldloc          local(0x0014)
+IL_01FB: brtrue         {'target': 772}
+IL_0200: br             {'target': 517}
+IL_0205: ldloc          local(0x0005)
+IL_0209: ldfld          {'token': '0x04000594', 'identity': 'SuppliesItem::image'}
+IL_020E: ldloca         local(0x0022)
+IL_0212: call           {'token': '0x0A0001DE', 'identity': 'UnityEngine.UI.Graphic::set_color / sig 2001011180d1'}
+IL_0217: br             {'target': 796}
+IL_021C: ldloc          local(0x0005)
+IL_0220: ldfld          {'token': '0x04000595', 'identity': 'SuppliesItem::text1_Back'}
+IL_0225: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_022A: stloc          local(0x000B)
+IL_022E: ldloc          local(0x000B)
+IL_0232: ldc.i4         0
+IL_0237: ceq            None
+IL_0239: stloc          local(0x0015)
+IL_023D: ldloc          local(0x0015)
+IL_0241: brtrue         {'target': 772}
+IL_0246: br             {'target': 587}
+IL_024B: ldloc          local(0x000B)
+IL_024F: ldarg          argument(0x0001)
+IL_0253: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0258: ldarg.0        None
+IL_0259: ldfld          {'token': '0x04000678', 'identity': 'Supplies::ID'}
+IL_025E: ldc.i4         50
+IL_0263: ceq            None
+IL_0265: stloc          local(0x001E)
+IL_0269: ldloc          local(0x001E)
+IL_026D: brtrue         {'target': 665}
+IL_0272: br             {'target': 631}
+IL_0277: ldarg.0        None
+IL_0278: ldfld          {'token': '0x04000678', 'identity': 'Supplies::ID'}
+IL_027D: ldc.i4         51
+IL_0282: ceq            None
+IL_0284: ldc.i4.0       None
+IL_0285: ceq            None
+IL_0287: stloc          local(0x001F)
+IL_028B: ldloc          local(0x001F)
+IL_028F: brtrue         {'target': 765}
+IL_0294: br             {'target': 665}
+IL_0299: ldloc          local(0x0005)
+IL_029D: ldfld          {'token': '0x04000595', 'identity': 'SuppliesItem::text1_Back'}
+IL_02A2: ldc.i4         0
+IL_02A7: ceq            None
+IL_02A9: stloc          local(0x0016)
+IL_02AD: ldloc          local(0x0016)
+IL_02B1: brtrue         {'target': 772}
+IL_02B6: br             {'target': 699}
+IL_02BB: ldloc          local(0x0005)
+IL_02BF: ldfld          {'token': '0x04000595', 'identity': 'SuppliesItem::text1_Back'}
+IL_02C4: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_02C9: stloc          local(0x000C)
+IL_02CD: ldloc          local(0x000C)
+IL_02D1: ldc.i4         0
+IL_02D6: ceq            None
+IL_02D8: stloc          local(0x0017)
+IL_02DC: ldloc          local(0x0017)
+IL_02E0: brtrue         {'target': 772}
+IL_02E5: br             {'target': 746}
+IL_02EA: ldloc          local(0x000C)
+IL_02EE: ldc.i4         0
+IL_02F3: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_02F8: br             {'target': 765}
+IL_02FD: ldloc          local(0x0005)
+IL_0301: ret            None
+IL_0302: ldnull         None
+IL_0303: ret            None
+IL_0304: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0309: stloc          local(0x0004)
+IL_030D: ldloc          local(0x0004)
+IL_0311: ret            None
+IL_0312: br             {'target': 830}
+IL_0317: br             {'target': 39}
+IL_031C: ldloc          local(0x0005)
+IL_0320: ldfld          {'token': '0x04000595', 'identity': 'SuppliesItem::text1_Back'}
+IL_0325: ldc.i4         0
+IL_032A: ceq            None
+IL_032C: stloc          local(0x0018)
+IL_0330: ldloc          local(0x0018)
+IL_0334: brtrue         {'target': 772}
+IL_0339: br             {'target': 540}
+IL_033E: br             {'target': 5}

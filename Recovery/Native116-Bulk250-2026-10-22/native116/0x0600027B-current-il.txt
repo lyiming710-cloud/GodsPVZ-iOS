@@ -1,0 +1,122 @@
+ZombieManager::KillAll
+{"token": "0x0600027B", "name": "ZombieManager::KillAll", "signature": "200001", "rva": 195324, "max_stack": 3, "code_size": 450, "local_sig": 285213175, "locals_blob": "071215120d011282101c128210021c02020202021c0202128094151151011c128178151151011c128094", "eh_count": 0, "il_sha256": "3cf823913659db536f2e3731436d4e24ebe9352322a20ee4e05372c568d3fa26"}
+IL_0000: br             {'target': 314}
+IL_0005: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_000A: pop            None
+IL_000B: nop            None
+IL_000C: br             {'target': 357}
+IL_0011: ldloc          local(0x0002)
+IL_0015: ldc.i4         0
+IL_001A: ceq            None
+IL_001C: stloc          local(0x0008)
+IL_0020: ldloc          local(0x0008)
+IL_0024: brtrue         {'target': 336}
+IL_0029: br             {'target': 46}
+IL_002E: ldloc          local(0x0002)
+IL_0032: ldfld          {'token': '0x040005D2', 'identity': 'Zombie::isDied'}
+IL_0037: ldc.i4         0
+IL_003C: ceq            None
+IL_003E: ldc.i4.0       None
+IL_003F: ceq            None
+IL_0041: stloc          local(0x0005)
+IL_0045: ldloc          local(0x0005)
+IL_0049: brtrue         {'target': 357}
+IL_004E: br             {'target': 83}
+IL_0053: ldloc          local(0x0000)
+IL_0057: ldloc          local(0x0002)
+IL_005B: call           {'token': '0x0A0000DB', 'identity': 'TypeSpec:20::Add / sig 2001011300'}
+IL_0060: nop            None
+IL_0061: br             {'target': 357}
+IL_0066: ldloca         local(0x0010)
+IL_006A: call           {'token': '0x0A00015E', 'identity': 'TypeSpec:46::Dispose / sig 200001'}
+IL_006F: br             {'target': 116}
+IL_0074: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0079: pop            None
+IL_007A: nop            None
+IL_007B: br             {'target': 406}
+IL_0080: newobj         {'token': '0x06000112', 'identity': 'Damage::.ctor'}
+IL_0085: stloc          local(0x000D)
+IL_0089: nop            None
+IL_008A: br             {'target': 143}
+IL_008F: ldloc          local(0x000D)
+IL_0093: ldc.i4         0
+IL_0098: ceq            None
+IL_009A: stloc          local(0x000B)
+IL_009E: ldloc          local(0x000B)
+IL_00A2: brtrue         {'target': 292}
+IL_00A7: br             {'target': 172}
+IL_00AC: ldloc          local(0x000D)
+IL_00B0: ldc.r4         100000000.0
+IL_00B5: stfld          {'token': '0x04000123', 'identity': 'Damage::damagePoint'}
+IL_00BA: ldloc          local(0x000D)
+IL_00BE: ldc.i4         4
+IL_00C3: stfld          {'token': '0x04000125', 'identity': 'Damage::damageAttribute'}
+IL_00C8: ldloc          local(0x000D)
+IL_00CC: ldc.i4         257
+IL_00D1: stfld          {'token': '0x04000129', 'identity': 'Damage::anti_air_able'}
+IL_00D6: ldloc          local(0x000D)
+IL_00DA: ldc.i4         1
+IL_00DF: stfld          {'token': '0x0400012B', 'identity': 'Damage::anti_submarine_able'}
+IL_00E4: ldloc          local(0x0002)
+IL_00E8: ldc.i4         0
+IL_00ED: ceq            None
+IL_00EF: stloc          local(0x0009)
+IL_00F3: ldloc          local(0x0009)
+IL_00F7: brtrue         {'target': 395}
+IL_00FC: br             {'target': 257}
+IL_0101: ldloc          local(0x0002)
+IL_0105: ldloc          local(0x000D)
+IL_0109: ldnull         None
+IL_010A: call           {'token': '0x0600047F', 'identity': 'Zombie::TakeDamage'}
+IL_010F: nop            None
+IL_0110: br             {'target': 406}
+IL_0115: ldloca         local(0x0010)
+IL_0119: call           {'token': '0x0A00015E', 'identity': 'TypeSpec:46::Dispose / sig 200001'}
+IL_011E: br             {'target': 291}
+IL_0123: ret            None
+IL_0124: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0129: throw          None
+IL_012A: ldloc          local(0x0011)
+IL_012E: throw          None
+IL_012F: br             {'target': 308}
+IL_0134: nop            None
+IL_0135: br             {'target': 329}
+IL_013A: newobj         {'token': '0x0A0000D8', 'identity': 'TypeSpec:20::.ctor / sig 200001'}
+IL_013F: stloc          local(0x0000)
+IL_0143: nop            None
+IL_0144: br             {'target': 5}
+IL_0149: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_014E: throw          None
+IL_014F: ret            None
+IL_0150: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0155: throw          None
+IL_0156: ldloca         local(0x0010)
+IL_015A: stloc          local(0x0011)
+IL_015E: ldnull         None
+IL_015F: throw          None
+IL_0160: br             {'target': 395}
+IL_0165: ldloca         local(0x0010)
+IL_0169: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_016E: stloc          local(0x0003)
+IL_0172: ldloc          local(0x0003)
+IL_0176: ldc.i4.0       None
+IL_0177: ceq            None
+IL_0179: stloc          local(0x0007)
+IL_017D: ldloc          local(0x0007)
+IL_0181: brtrue         {'target': 102}
+IL_0186: br             {'target': 17}
+IL_018B: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0190: throw          None
+IL_0191: br             {'target': 292}
+IL_0196: ldloca         local(0x0010)
+IL_019A: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_019F: stloc          local(0x000C)
+IL_01A3: ldloc          local(0x000C)
+IL_01A7: ldc.i4.0       None
+IL_01A8: ceq            None
+IL_01AA: stloc          local(0x0006)
+IL_01AE: ldloc          local(0x0006)
+IL_01B2: brtrue         {'target': 277}
+IL_01B7: br             {'target': 128}
+IL_01BC: ldstr          {'token': '0x700005CF', 'identity': 'Warning: Method ends with non empty stack (-60), the output could be wrong!'}
+IL_01C1: pop            None

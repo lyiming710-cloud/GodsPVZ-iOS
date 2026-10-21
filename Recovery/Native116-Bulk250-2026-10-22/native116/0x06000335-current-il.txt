@@ -1,0 +1,176 @@
+Device::SetUIs
+{"token": "0x06000335", "name": "Device::SetUIs", "signature": "200001", "rva": 257380, "max_stack": 5, "code_size": 671, "local_sig": 285213315, "locals_blob": "07181281d41c1281dc02021d1209021215121502121512151d12091d12091281a41281a4020202021c020202", "eh_count": 0, "il_sha256": "960e6e38b7b42bc7d6d8901475e1da5ed46a3128fc9159a578ed20c61efa32f9"}
+IL_0000: br             {'target': 5}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000493', 'identity': 'Device::hpUIController'}
+IL_000B: ldarg.0        None
+IL_000C: call           {'token': '0x0600033C', 'identity': 'HPUIController::Start'}
+IL_0011: ldarg.0        None
+IL_0012: ldfld          {'token': '0x04000492', 'identity': 'Device::iceUIController'}
+IL_0017: stloc          local(0x0002)
+IL_001B: br             {'target': 32}
+IL_0020: br             {'target': 666}
+IL_0025: ldloc          local(0x0002)
+IL_0029: ldfld          {'token': '0x0400049C', 'identity': 'ICEUIController::gameObject'}
+IL_002E: ldnull         None
+IL_002F: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0034: stloc          local(0x0003)
+IL_0038: ldloc          local(0x0003)
+IL_003C: brtrue         {'target': 70}
+IL_0041: br             {'target': 244}
+IL_0046: ldc.i4         0
+IL_004B: ldarg.0        None
+IL_004C: ldfld          {'token': '0x04000479', 'identity': 'Device::icePoint'}
+IL_0051: clt            None
+IL_0053: ldc.i4.0       None
+IL_0054: ceq            None
+IL_0056: stloc          local(0x0010)
+IL_005A: ldloc          local(0x0010)
+IL_005E: brtrue         {'target': 220}
+IL_0063: br             {'target': 104}
+IL_0068: ldloc          local(0x0002)
+IL_006C: ldfld          {'token': '0x0400049C', 'identity': 'ICEUIController::gameObject'}
+IL_0071: ldc.i4         1
+IL_0076: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_007B: br             {'target': 128}
+IL_0080: ldarg.0        None
+IL_0081: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0086: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_008B: stloc          local(0x0004)
+IL_008F: ldloc          local(0x0004)
+IL_0093: ldc.i4.0       None
+IL_0094: ceq            None
+IL_0096: stloc          local(0x0015)
+IL_009A: ldloc          local(0x0015)
+IL_009E: brtrue         {'target': 189}
+IL_00A3: br             {'target': 168}
+IL_00A8: ldarg.0        None
+IL_00A9: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_00AE: ldc.r4         0.0
+IL_00B3: call           {'token': '0x0A0001EA', 'identity': 'UnityEngine.Animator::set_speed / sig 2001010c'}
+IL_00B8: br             {'target': 189}
+IL_00BD: ldloc          local(0x0002)
+IL_00C1: ldarg.0        None
+IL_00C2: ldfld          {'token': '0x04000479', 'identity': 'Device::icePoint'}
+IL_00C7: ldarg.0        None
+IL_00C8: ldfld          {'token': '0x0400047A', 'identity': 'Device::maxIcePoint'}
+IL_00CD: ldarg.0        None
+IL_00CE: ldloc          local(0x0016)
+IL_00D2: call           {'token': '0x06000342', 'identity': 'ICEUIController::Update'}
+IL_00D7: br             {'target': 244}
+IL_00DC: ldloc          local(0x0002)
+IL_00E0: ldfld          {'token': '0x0400049C', 'identity': 'ICEUIController::gameObject'}
+IL_00E5: ldc.i4         0
+IL_00EA: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_00EF: br             {'target': 244}
+IL_00F4: br             {'target': 249}
+IL_00F9: ldarg.0        None
+IL_00FA: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_00FF: ldnull         None
+IL_0100: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0105: stloc          local(0x0012)
+IL_0109: ldloc          local(0x0012)
+IL_010D: brtrue         {'target': 279}
+IL_0112: br             {'target': 665}
+IL_0117: ldarg.0        None
+IL_0118: ldfld          {'token': '0x04000490', 'identity': 'Device::UI'}
+IL_011D: stloc          local(0x0005)
+IL_0121: ldc.i4         0
+IL_0126: stloc          local(0x0001)
+IL_012A: ldc.i4         0
+IL_012F: stloc          local(0x0014)
+IL_0133: br             {'target': 312}
+IL_0138: ldloc          local(0x0014)
+IL_013C: ldloc          local(0x0005)
+IL_0140: ldlen          None
+IL_0141: conv.i4        None
+IL_0142: clt            None
+IL_0144: ldc.i4.0       None
+IL_0145: ceq            None
+IL_0147: stloc          local(0x0011)
+IL_014B: ldloc          local(0x0011)
+IL_014F: brtrue         {'target': 548}
+IL_0154: br             {'target': 345}
+IL_0159: ldarg.0        None
+IL_015A: ldfld          {'token': '0x04000490', 'identity': 'Device::UI'}
+IL_015F: stloc          local(0x000C)
+IL_0163: br             {'target': 360}
+IL_0168: br             {'target': 365}
+IL_016D: ldloc          local(0x000C)
+IL_0171: ldloc          local(0x0001)
+IL_0175: ldelem         {'token': '0x01000002', 'identity': 'UnityEngine.GameObject'}
+IL_017A: ldnull         None
+IL_017B: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0180: stloc          local(0x0006)
+IL_0184: ldloc          local(0x0006)
+IL_0188: ldc.i4.0       None
+IL_0189: ceq            None
+IL_018B: stloc          local(0x0017)
+IL_018F: ldloc          local(0x0017)
+IL_0193: brtrue         {'target': 506}
+IL_0198: br             {'target': 413}
+IL_019D: ldarg.0        None
+IL_019E: ldfld          {'token': '0x04000490', 'identity': 'Device::UI'}
+IL_01A3: stloc          local(0x000D)
+IL_01A7: br             {'target': 428}
+IL_01AC: ldloc          local(0x000D)
+IL_01B0: ldloc          local(0x0001)
+IL_01B4: ldelem         {'token': '0x01000002', 'identity': 'UnityEngine.GameObject'}
+IL_01B9: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_01BE: stloc          local(0x0007)
+IL_01C2: ldarg.0        None
+IL_01C3: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_01C8: stloc          local(0x000E)
+IL_01CC: br             {'target': 465}
+IL_01D1: ldloc          local(0x000E)
+IL_01D5: ldfld          {'token': '0x040003C5', 'identity': 'Board::zombieUI'}
+IL_01DA: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_01DF: stloc          local(0x0008)
+IL_01E3: br             {'target': 488}
+IL_01E8: ldloc          local(0x0007)
+IL_01EC: ldloc          local(0x0008)
+IL_01F0: call           {'token': '0x0A00006E', 'identity': 'UnityEngine.Transform::set_parentInternal / sig 2001011215'}
+IL_01F5: br             {'target': 506}
+IL_01FA: ldarg.0        None
+IL_01FB: ldfld          {'token': '0x04000490', 'identity': 'Device::UI'}
+IL_0200: stloc          local(0x0005)
+IL_0204: ldloc          local(0x0001)
+IL_0208: ldc.i4         1
+IL_020D: add            None
+IL_020E: stloc          local(0x0001)
+IL_0212: br             {'target': 535}
+IL_0217: ldloc          local(0x0001)
+IL_021B: stloc          local(0x0014)
+IL_021F: br             {'target': 312}
+IL_0224: br             {'target': 553}
+IL_0229: ldarg.0        None
+IL_022A: ldfld          {'token': '0x04000491', 'identity': 'Device::UI_HP'}
+IL_022F: ldnull         None
+IL_0230: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0235: stloc          local(0x0009)
+IL_0239: ldloc          local(0x0009)
+IL_023D: ldc.i4.0       None
+IL_023E: ceq            None
+IL_0240: stloc          local(0x0013)
+IL_0244: ldloc          local(0x0013)
+IL_0248: brtrue         {'target': 665}
+IL_024D: br             {'target': 594}
+IL_0252: ldarg.0        None
+IL_0253: ldfld          {'token': '0x04000491', 'identity': 'Device::UI_HP'}
+IL_0258: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_025D: stloc          local(0x000A)
+IL_0261: ldarg.0        None
+IL_0262: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_0267: stloc          local(0x000F)
+IL_026B: br             {'target': 624}
+IL_0270: ldloc          local(0x000F)
+IL_0274: ldfld          {'token': '0x040003C5', 'identity': 'Board::zombieUI'}
+IL_0279: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_027E: stloc          local(0x000B)
+IL_0282: br             {'target': 647}
+IL_0287: ldloc          local(0x000A)
+IL_028B: ldloc          local(0x000B)
+IL_028F: call           {'token': '0x0A00006E', 'identity': 'UnityEngine.Transform::set_parentInternal / sig 2001011215'}
+IL_0294: br             {'target': 665}
+IL_0299: ret            None
+IL_029A: br             {'target': 37}

@@ -1,0 +1,162 @@
+Skill::Function
+{"token": "0x060004E3", "name": "Skill::Function", "signature": "2004011281e01282101281f4128094", "rva": 423560, "max_stack": 3, "code_size": 634, "local_sig": 285213640, "locals_blob": "07231281f41282101281e01c1c1c1c0202081c1c1c0202020c08021c021c1c02020202021c1c12824418181808", "eh_count": 0, "il_sha256": "8d545da9e7fa0905aac231557706b5a741877e0e5e7a3e889ad32260d4ad90a2"}
+IL_0000: br             {'target': 613}
+IL_0005: ldstr          {'token': '0x70016385', 'identity': '技能生效'}
+IL_000A: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_000F: br             {'target': 20}
+IL_0014: ldarg          argument(0x0001)
+IL_0018: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_001D: stloc          local(0x0007)
+IL_0021: ldloc          local(0x0007)
+IL_0025: ldc.i4.0       None
+IL_0026: ceq            None
+IL_0028: stloc          local(0x0008)
+IL_002C: ldc.i4         0
+IL_0031: stloc          local(0x0009)
+IL_0035: ldloc          local(0x0008)
+IL_0039: brtrue         {'target': 618}
+IL_003E: br             {'target': 67}
+IL_0043: ldarg          argument(0x0001)
+IL_0047: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_004C: ldc.i4         2
+IL_0051: mul            None
+IL_0052: stloc          local(0x000A)
+IL_0056: ldarg          argument(0x0001)
+IL_005A: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_005F: ldloc          local(0x000A)
+IL_0063: add            None
+IL_0064: stloc          local(0x000B)
+IL_0068: ldloc          local(0x000B)
+IL_006C: ldarg.0        None
+IL_006D: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_0072: add            None
+IL_0073: stloc          local(0x0009)
+IL_0077: br             {'target': 618}
+IL_007C: ldsfld         {'token': '0x040006A1', 'identity': 'SkillManager::dictionary_Function'}
+IL_0081: ldloc          local(0x0009)
+IL_0085: ldloca         local(0x000C)
+IL_0089: call           {'token': '0x0A000240', 'identity': 'TypeSpec:96::TryGetValue / sig 2002021300101301'}
+IL_008E: stloc          local(0x000F)
+IL_0092: ldloc          local(0x000C)
+IL_0096: ldc.i4         0
+IL_009B: ceq            None
+IL_009D: stloc          local(0x0012)
+IL_00A1: ldloc          local(0x0012)
+IL_00A5: brtrue         {'target': 623}
+IL_00AA: br             {'target': 175}
+IL_00AF: ldstr          {'token': '0x7001638F', 'identity': 'Indirect call: [v148 @ stack_10_v3 (System.Object)+18] (should have been resolved before IL gen)'}
+IL_00B4: pop            None
+IL_00B5: br             {'target': 623}
+IL_00BA: ldarg          argument(0x0001)
+IL_00BE: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_00C3: stloc          local(0x000D)
+IL_00C7: ldloc          local(0x000D)
+IL_00CB: ldc.i4.0       None
+IL_00CC: ceq            None
+IL_00CE: stloc          local(0x0014)
+IL_00D2: ldloc          local(0x0014)
+IL_00D6: brtrue         {'target': 628}
+IL_00DB: br             {'target': 224}
+IL_00E0: ldarg.0        None
+IL_00E1: ldfld          {'token': '0x04000691', 'identity': 'Skill::type'}
+IL_00E6: ldc.i4         0
+IL_00EB: ceq            None
+IL_00ED: ldc.i4.0       None
+IL_00EE: ceq            None
+IL_00F0: stloc          local(0x000E)
+IL_00F4: ldloc          local(0x000E)
+IL_00F8: brtrue         {'target': 628}
+IL_00FD: br             {'target': 258}
+IL_0102: ldarg          argument(0x0001)
+IL_0106: ldfld          {'token': '0x040004D3', 'identity': 'Plant::skillRemainTime'}
+IL_010B: conv.r4        None
+IL_010C: ldc.r4         1.0
+IL_0111: conv.r4        None
+IL_0112: sub            None
+IL_0113: stloc          local(0x0010)
+IL_0117: ldarg          argument(0x0001)
+IL_011B: ldloc          local(0x0010)
+IL_011F: stfld          {'token': '0x040004D3', 'identity': 'Plant::skillRemainTime'}
+IL_0124: ldc.i4         0
+IL_0129: ldloc          local(0x0010)
+IL_012D: clt            None
+IL_012F: stloc          local(0x0018)
+IL_0133: ldloc          local(0x0018)
+IL_0137: brtrue         {'target': 628}
+IL_013C: br             {'target': 321}
+IL_0141: br             {'target': 629}
+IL_0146: ldstr          {'token': '0x70016452', 'identity': '技能结束'}
+IL_014B: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_0150: br             {'target': 341}
+IL_0155: ldarg          argument(0x0001)
+IL_0159: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_015E: stloc          local(0x001A)
+IL_0162: ldloc          local(0x001A)
+IL_0166: ldc.i4.0       None
+IL_0167: ceq            None
+IL_0169: stloc          local(0x001B)
+IL_016D: ldc.i4         0
+IL_0172: stloc          local(0x0011)
+IL_0176: ldloc          local(0x001B)
+IL_017A: brtrue         {'target': 546}
+IL_017F: br             {'target': 388}
+IL_0184: ldarg          argument(0x0001)
+IL_0188: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_018D: ldc.i4         2
+IL_0192: mul            None
+IL_0193: stloc          local(0x001C)
+IL_0197: ldarg          argument(0x0001)
+IL_019B: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_01A0: ldloc          local(0x001C)
+IL_01A4: add            None
+IL_01A5: stloc          local(0x001D)
+IL_01A9: ldloc          local(0x001D)
+IL_01AD: ldarg.0        None
+IL_01AE: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_01B3: add            None
+IL_01B4: stloc          local(0x0011)
+IL_01B8: ldarg          argument(0x0001)
+IL_01BC: ldc.i4         0
+IL_01C1: stfld          {'token': '0x040004D2', 'identity': 'Plant::skillOngoing'}
+IL_01C6: ldarg          argument(0x0001)
+IL_01CA: ldc.r4         0.0
+IL_01CF: stfld          {'token': '0x040004D3', 'identity': 'Plant::skillRemainTime'}
+IL_01D4: br             {'target': 473}
+IL_01D9: ldarg          argument(0x0001)
+IL_01DD: ldfld          {'token': '0x040004E3', 'identity': 'Plant::animator'}
+IL_01E2: ldsfld         {'token': '0x0400069D', 'identity': 'Skill::ani_SkillHash'}
+IL_01E7: ldc.i4         0
+IL_01EC: call           {'token': '0x0A0001F7', 'identity': 'UnityEngine.Animator::SetBool / sig 2002010802'}
+IL_01F1: ldarg.0        None
+IL_01F2: ldfld          {'token': '0x0400069A', 'identity': 'Skill::chargedLayer'}
+IL_01F7: ldc.i4         1
+IL_01FC: sub            None
+IL_01FD: stloc          local(0x0022)
+IL_0201: ldarg.0        None
+IL_0202: ldloc          local(0x0022)
+IL_0206: stfld          {'token': '0x0400069A', 'identity': 'Skill::chargedLayer'}
+IL_020B: ldarg          argument(0x0001)
+IL_020F: ldc.i8         4294967295
+IL_0218: call           {'token': '0x060003B2', 'identity': 'Plant::SkillUIUpdate'}
+IL_021D: br             {'target': 546}
+IL_0222: br             {'target': 551}
+IL_0227: ldsfld         {'token': '0x040006A2', 'identity': 'SkillManager::dictionary_End'}
+IL_022C: ldloc          local(0x0011)
+IL_0230: ldloca         local(0x0015)
+IL_0234: call           {'token': '0x0A000240', 'identity': 'TypeSpec:96::TryGetValue / sig 2002021300101301'}
+IL_0239: stloc          local(0x0017)
+IL_023D: ldloc          local(0x0015)
+IL_0241: ldc.i4         0
+IL_0246: ceq            None
+IL_0248: stloc          local(0x0019)
+IL_024C: ldloc          local(0x0019)
+IL_0250: brtrue         {'target': 628}
+IL_0255: br             {'target': 602}
+IL_025A: ldstr          {'token': '0x7001645C', 'identity': 'Indirect call: [v384 @ stack_-38_v4 (System.Object)+18] (should have been resolved before IL gen)'}
+IL_025F: pop            None
+IL_0260: br             {'target': 628}
+IL_0265: br             {'target': 5}
+IL_026A: br             {'target': 124}
+IL_026F: br             {'target': 186}
+IL_0274: ret            None
+IL_0275: br             {'target': 326}

@@ -1,0 +1,121 @@
+HoleTeleport::Teleport
+{"token": "0x06000118", "name": "HoleTeleport::Teleport", "signature": "200001", "rva": 87964, "max_stack": 4, "code_size": 485, "local_sig": 285212899, "locals_blob": "07161280a01282101281a4121d1215128210114d0c1280b9080e080e0e1c1280801280b5114d0c1c0c18", "eh_count": 0, "il_sha256": "df4674000316a86f73467cd0f1a1e006ceea722bd2ff0e87b90df6c74ea77150"}
+IL_0000: br             {'target': 470}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_000E: stloc          local(0x0002)
+IL_0012: br             {'target': 23}
+IL_0017: ldloc          local(0x0002)
+IL_001B: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_0020: ldarg.0        None
+IL_0021: ldfld          {'token': '0x0400013F', 'identity': 'HoleTeleport::gridX'}
+IL_0026: ldarg.0        None
+IL_0027: ldfld          {'token': '0x04000140', 'identity': 'HoleTeleport::gridY'}
+IL_002C: call           {'token': '0x0600015B', 'identity': 'BoardConfig::GetGridPosition'}
+IL_0031: stloc          local(0x0006)
+IL_0035: ldarg.0        None
+IL_0036: ldc.i4         40
+IL_003B: add            None
+IL_003C: stloc          local(0x0009)
+IL_0040: nop            None
+IL_0041: ldloc          local(0x0009)
+IL_0045: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_004A: stloc          local(0x000A)
+IL_004E: br             {'target': 83}
+IL_0053: ldarg.0        None
+IL_0054: ldc.i4         44
+IL_0059: add            None
+IL_005A: stloc          local(0x000B)
+IL_005E: ldloc          local(0x000B)
+IL_0062: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0067: stloc          local(0x000C)
+IL_006B: ldstr          {'token': '0x700044C3', 'identity': '传送至 '}
+IL_0070: ldloc          local(0x000A)
+IL_0074: ldstr          {'token': '0x700044CD', 'identity': ','}
+IL_0079: ldloc          local(0x000C)
+IL_007D: call           {'token': '0x0A0000E0', 'identity': 'System.String::Concat / sig 00040e0e0e0e0e'}
+IL_0082: stloc          local(0x000D)
+IL_0086: br             {'target': 139}
+IL_008B: br             {'target': 144}
+IL_0090: ldloc          local(0x000D)
+IL_0094: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_0099: ldloc          local(0x0013)
+IL_009D: box            {'token': '0x01000013', 'identity': 'UnityEngine.Vector3'}
+IL_00A2: stloc          local(0x000E)
+IL_00A6: br             {'target': 171}
+IL_00AB: ldloc          local(0x000E)
+IL_00AF: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_00B4: br             {'target': 185}
+IL_00B9: ldarg.0        None
+IL_00BA: ldfld          {'token': '0x0400013E', 'identity': 'HoleTeleport::zombie'}
+IL_00BF: ldloca         local(0x0014)
+IL_00C3: ldloc          local(0x0006)
+IL_00C7: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_00CC: ldc.i4         1
+IL_00D1: call           {'token': '0x06000480', 'identity': 'Zombie::TeleportTo'}
+IL_00D6: newobj         {'token': '0x060000F5', 'identity': 'Buff::.ctor'}
+IL_00DB: stloc          local(0x000F)
+IL_00DF: br             {'target': 228}
+IL_00E4: nop            None
+IL_00E5: ldloc          local(0x000F)
+IL_00E9: ldc.i4         0
+IL_00EE: stfld          {'token': '0x04000115', 'identity': 'Hide::hide'}
+IL_00F3: ldloc          local(0x000F)
+IL_00F7: ldarg.0        None
+IL_00F8: ldfld          {'token': '0x0400013E', 'identity': 'HoleTeleport::zombie'}
+IL_00FD: stfld          {'token': '0x04000116', 'identity': 'Hide::zombie'}
+IL_0102: br             {'target': 263}
+IL_0107: ldloc          local(0x000F)
+IL_010B: ldc.r4         0.5
+IL_0110: stfld          {'token': '0x04000107', 'identity': 'Buff::duration'}
+IL_0115: ldloc          local(0x000F)
+IL_0119: ldc.i4         0
+IL_011E: stfld          {'token': '0x04000106', 'identity': 'Buff::buffType'}
+IL_0123: ldloc          local(0x000F)
+IL_0127: ldc.i4         0
+IL_012C: stfld          {'token': '0x04000108', 'identity': 'Buff::original'}
+IL_0131: ldarg.0        None
+IL_0132: ldfld          {'token': '0x0400013E', 'identity': 'HoleTeleport::zombie'}
+IL_0137: stloc          local(0x0005)
+IL_013B: br             {'target': 320}
+IL_0140: ldloc          local(0x0005)
+IL_0144: ldfld          {'token': '0x0400061A', 'identity': 'Zombie::buffManager'}
+IL_0149: ldloc          local(0x000F)
+IL_014D: call           {'token': '0x06000102', 'identity': 'BuffManager::AddBuff'}
+IL_0152: br             {'target': 343}
+IL_0157: ldsfld         {'token': '0x040002EF', 'identity': 'ResourceManager::zombieClips'}
+IL_015C: ldc.i4         6
+IL_0161: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_0166: stloc          local(0x0010)
+IL_016A: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_016F: stloc          local(0x0003)
+IL_0173: br             {'target': 376}
+IL_0178: ldloc          local(0x0003)
+IL_017C: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0181: stloc          local(0x0004)
+IL_0185: br             {'target': 394}
+IL_018A: ldloc          local(0x0004)
+IL_018E: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0193: stloc          local(0x0011)
+IL_0197: nop            None
+IL_0198: br             {'target': 413}
+IL_019D: call           {'token': '0x06000138', 'identity': 'GlobalStaticVars::AudioVolume'}
+IL_01A2: stloc          local(0x0012)
+IL_01A6: ldloc          local(0x0012)
+IL_01AA: conv.r4        None
+IL_01AB: ldc.r4         1.2000000476837158
+IL_01B0: conv.r4        None
+IL_01B1: mul            None
+IL_01B2: stloc          local(0x0007)
+IL_01B6: ldloc          local(0x0010)
+IL_01BA: ldloca         local(0x0014)
+IL_01BE: ldloc          local(0x0007)
+IL_01C2: ldc.r4         1.5
+IL_01C7: call           {'token': '0x0600013E', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_01CC: stloc          local(0x0008)
+IL_01D0: br             {'target': 469}
+IL_01D5: ret            None
+IL_01D6: ldarg.0        None
+IL_01D7: ldfld          {'token': '0x0400013E', 'identity': 'HoleTeleport::zombie'}
+IL_01DC: stloc          local(0x0001)
+IL_01E0: br             {'target': 5}

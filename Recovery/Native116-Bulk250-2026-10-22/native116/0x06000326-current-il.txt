@@ -1,0 +1,323 @@
+Device::GetDamage
+{"token": "0x06000326", "name": "Device::GetDamage", "signature": "20011280941281f4", "rva": 250392, "max_stack": 3, "code_size": 1233, "local_sig": 285213301, "locals_blob": "07241281f41281d41280940212600202020202020202125902020202020202126002020c1281d4121502020c0202020212151260", "eh_count": 0, "il_sha256": "bceff7cd0717720c76c34cf83f981aa98adc88da38457084e744d406208f604c"}
+IL_0000: br             {'target': 869}
+IL_0005: ldloc          local(0x0002)
+IL_0009: ldarg.0        None
+IL_000A: ldfld          {'token': '0x0400046E', 'identity': 'Device::camp'}
+IL_000F: stfld          {'token': '0x04000124', 'identity': 'Damage::camp'}
+IL_0014: br             {'target': 908}
+IL_0019: ldloc          local(0x0002)
+IL_001D: ldc.i4         4
+IL_0022: stfld          {'token': '0x04000125', 'identity': 'Damage::damageAttribute'}
+IL_0027: br             {'target': 942}
+IL_002C: ldarg.0        None
+IL_002D: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0032: ldc.i4         6
+IL_0037: ceq            None
+IL_0039: stloc          local(0x000F)
+IL_003D: ldloc          local(0x000F)
+IL_0041: brtrue         {'target': 947}
+IL_0046: br             {'target': 75}
+IL_004B: ldarg.0        None
+IL_004C: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0051: ldc.i4         14
+IL_0056: ceq            None
+IL_0058: ldc.i4.0       None
+IL_0059: ceq            None
+IL_005B: stloc          local(0x0010)
+IL_005F: ldloc          local(0x0010)
+IL_0063: brtrue         {'target': 942}
+IL_0068: br             {'target': 109}
+IL_006D: br             {'target': 114}
+IL_0072: ldarg          argument(0x0001)
+IL_0076: ldnull         None
+IL_0077: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_007C: stloc          local(0x0005)
+IL_0080: ldloc          local(0x0005)
+IL_0084: ldc.i4.0       None
+IL_0085: ceq            None
+IL_0087: stloc          local(0x0012)
+IL_008B: ldloc          local(0x0012)
+IL_008F: brtrue         {'target': 942}
+IL_0094: br             {'target': 153}
+IL_0099: ldarg          argument(0x0001)
+IL_009D: ldc.i4         0
+IL_00A2: ceq            None
+IL_00A4: stloc          local(0x0009)
+IL_00A8: ldloc          local(0x0009)
+IL_00AC: brtrue         {'target': 855}
+IL_00B1: br             {'target': 182}
+IL_00B6: ldarg          argument(0x0001)
+IL_00BA: ldfld          {'token': '0x0400054C', 'identity': 'Projectile::ID'}
+IL_00BF: ldc.i4         31
+IL_00C4: ceq            None
+IL_00C6: ldc.i4.0       None
+IL_00C7: ceq            None
+IL_00C9: stloc          local(0x001B)
+IL_00CD: ldloc          local(0x001B)
+IL_00D1: brtrue         {'target': 994}
+IL_00D6: br             {'target': 219}
+IL_00DB: ldloc          local(0x0002)
+IL_00DF: ldc.i4         3
+IL_00E4: stfld          {'token': '0x04000125', 'identity': 'Damage::damageAttribute'}
+IL_00E9: ldloc          local(0x0002)
+IL_00ED: ldc.i4         1
+IL_00F2: stfld          {'token': '0x04000129', 'identity': 'Damage::anti_air_able'}
+IL_00F7: ldloc          local(0x0002)
+IL_00FB: ldc.i4         1
+IL_0100: stfld          {'token': '0x0400012B', 'identity': 'Damage::anti_submarine_able'}
+IL_0105: ldloc          local(0x0002)
+IL_0109: ldc.i4         0
+IL_010E: stfld          {'token': '0x04000124', 'identity': 'Damage::camp'}
+IL_0113: br             {'target': 994}
+IL_0118: ldloc          local(0x0002)
+IL_011C: ldc.i4         0
+IL_0121: stfld          {'token': '0x04000124', 'identity': 'Damage::camp'}
+IL_0126: br             {'target': 947}
+IL_012B: ldarg.0        None
+IL_012C: ldfld          {'token': '0x04000494', 'identity': 'Device::attackRangeUIController'}
+IL_0131: ldc.i4         0
+IL_0136: ceq            None
+IL_0138: stloc          local(0x000A)
+IL_013C: ldloc          local(0x000A)
+IL_0140: brtrue         {'target': 855}
+IL_0145: br             {'target': 330}
+IL_014A: ldarg.0        None
+IL_014B: ldfld          {'token': '0x04000494', 'identity': 'Device::attackRangeUIController'}
+IL_0150: ldc.i4         0
+IL_0155: call           {'token': '0x060005BD', 'identity': 'AttackRangeUIController::GetAttackRange'}
+IL_015A: stloc          local(0x0015)
+IL_015E: br             {'target': 667}
+IL_0163: ldarg.0        None
+IL_0164: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0169: ldc.i4         6
+IL_016E: ceq            None
+IL_0170: ldc.i4.0       None
+IL_0171: ceq            None
+IL_0173: stloc          local(0x0013)
+IL_0177: ldloc          local(0x0013)
+IL_017B: brtrue         {'target': 419}
+IL_0180: br             {'target': 389}
+IL_0185: ldarg.0        None
+IL_0186: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_018B: stloc          local(0x001A)
+IL_018F: ldc.r4         225.0
+IL_0194: stloc          local(0x0018)
+IL_0198: nop            None
+IL_0199: ldarg.0        None
+IL_019A: stloc          local(0x0019)
+IL_019E: br             {'target': 1031}
+IL_01A3: ldarg.0        None
+IL_01A4: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_01A9: ldc.i4         14
+IL_01AE: ceq            None
+IL_01B0: ldc.i4.0       None
+IL_01B1: ceq            None
+IL_01B3: stloc          local(0x0014)
+IL_01B7: ldnull         None
+IL_01B8: stloc          local(0x0004)
+IL_01BC: ldloc          local(0x0014)
+IL_01C0: brtrue         {'target': 1057}
+IL_01C5: br             {'target': 458}
+IL_01CA: br             {'target': 463}
+IL_01CF: ldarg          argument(0x0001)
+IL_01D3: ldnull         None
+IL_01D4: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_01D9: stloc          local(0x0006)
+IL_01DD: ldloc          local(0x0006)
+IL_01E1: ldc.i4.0       None
+IL_01E2: ceq            None
+IL_01E4: stloc          local(0x0017)
+IL_01E8: ldnull         None
+IL_01E9: stloc          local(0x0004)
+IL_01ED: ldloc          local(0x0017)
+IL_01F1: brtrue         {'target': 1057}
+IL_01F6: br             {'target': 507}
+IL_01FB: ldarg          argument(0x0001)
+IL_01FF: ldc.i4         0
+IL_0204: ceq            None
+IL_0206: stloc          local(0x000B)
+IL_020A: ldloc          local(0x000B)
+IL_020E: brtrue         {'target': 855}
+IL_0213: br             {'target': 536}
+IL_0218: ldarg          argument(0x0001)
+IL_021C: ldfld          {'token': '0x0400054C', 'identity': 'Projectile::ID'}
+IL_0221: ldc.i4         31
+IL_0226: ceq            None
+IL_0228: ldc.i4.0       None
+IL_0229: ceq            None
+IL_022B: stloc          local(0x0021)
+IL_022F: ldnull         None
+IL_0230: stloc          local(0x0004)
+IL_0234: ldloc          local(0x0021)
+IL_0238: brtrue         {'target': 1075}
+IL_023D: br             {'target': 578}
+IL_0242: ldarg          argument(0x0001)
+IL_0246: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_024B: stloc          local(0x0022)
+IL_024F: ldarg          argument(0x0001)
+IL_0253: ldloc          local(0x0022)
+IL_0257: ldc.r4         350.0
+IL_025C: call           {'token': '0x2B000056', 'identity': '0x2b000056'}
+IL_0261: stloc          local(0x0023)
+IL_0265: br             {'target': 618}
+IL_026A: ldloc          local(0x0023)
+IL_026E: stloc          local(0x0004)
+IL_0272: br             {'target': 1075}
+IL_0277: ldarg          argument(0x0001)
+IL_027B: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0280: stloc          local(0x001A)
+IL_0284: ldc.r4         270.0
+IL_0289: stloc          local(0x0018)
+IL_028D: nop            None
+IL_028E: ldarg          argument(0x0001)
+IL_0292: stloc          local(0x0019)
+IL_0296: br             {'target': 1031}
+IL_029B: ldloc          local(0x0015)
+IL_029F: stloc          local(0x0004)
+IL_02A3: br             {'target': 1057}
+IL_02A8: br             {'target': 685}
+IL_02AD: ldarg          argument(0x0001)
+IL_02B1: ldnull         None
+IL_02B2: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_02B7: stloc          local(0x0007)
+IL_02BB: ldloc          local(0x0007)
+IL_02BF: ldc.i4.0       None
+IL_02C0: ceq            None
+IL_02C2: stloc          local(0x0020)
+IL_02C6: ldloc          local(0x0020)
+IL_02CA: brtrue         {'target': 1156}
+IL_02CF: br             {'target': 724}
+IL_02D4: ldarg          argument(0x0001)
+IL_02D8: ldc.i4         0
+IL_02DD: ceq            None
+IL_02DF: stloc          local(0x000C)
+IL_02E3: ldloc          local(0x000C)
+IL_02E7: brtrue         {'target': 855}
+IL_02EC: br             {'target': 753}
+IL_02F1: ldarg          argument(0x0001)
+IL_02F5: ldfld          {'token': '0x0400054C', 'identity': 'Projectile::ID'}
+IL_02FA: ldc.i4         31
+IL_02FF: ceq            None
+IL_0301: ldc.i4.0       None
+IL_0302: ceq            None
+IL_0304: stloc          local(0x001F)
+IL_0308: ldloc          local(0x001F)
+IL_030C: brtrue         {'target': 804}
+IL_0311: br             {'target': 790}
+IL_0316: ldc.r4         5000.0
+IL_031B: stloc          local(0x001D)
+IL_031F: br             {'target': 1156}
+IL_0324: ldarg          argument(0x0001)
+IL_0328: ldfld          {'token': '0x0400054C', 'identity': 'Projectile::ID'}
+IL_032D: ldc.i4         32
+IL_0332: ceq            None
+IL_0334: ldc.i4.0       None
+IL_0335: ceq            None
+IL_0337: stloc          local(0x001E)
+IL_033B: ldloc          local(0x001E)
+IL_033F: brtrue         {'target': 1156}
+IL_0344: br             {'target': 841}
+IL_0349: ldc.r4         1800.0
+IL_034E: stloc          local(0x001D)
+IL_0352: br             {'target': 1156}
+IL_0357: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_035C: stloc          local(0x000D)
+IL_0360: ldloc          local(0x000D)
+IL_0364: ret            None
+IL_0365: newobj         {'token': '0x06000112', 'identity': 'Damage::.ctor'}
+IL_036A: stloc          local(0x0002)
+IL_036E: nop            None
+IL_036F: ldloc          local(0x0002)
+IL_0373: ldc.i4         0
+IL_0378: ceq            None
+IL_037A: stloc          local(0x0003)
+IL_037E: ldloc          local(0x0003)
+IL_0382: brtrue         {'target': 855}
+IL_0387: br             {'target': 5}
+IL_038C: ldarg.0        None
+IL_038D: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0392: ldc.i4         2
+IL_0397: ceq            None
+IL_0399: ldc.i4.0       None
+IL_039A: ceq            None
+IL_039C: stloc          local(0x000E)
+IL_03A0: ldloc          local(0x000E)
+IL_03A4: brtrue         {'target': 44}
+IL_03A9: br             {'target': 25}
+IL_03AE: br             {'target': 1199}
+IL_03B3: ldloc          local(0x0002)
+IL_03B7: ldc.i4         1
+IL_03BC: stfld          {'token': '0x0400012B', 'identity': 'Damage::anti_submarine_able'}
+IL_03C1: ldloc          local(0x0002)
+IL_03C5: ldc.i4         1
+IL_03CA: stfld          {'token': '0x04000129', 'identity': 'Damage::anti_air_able'}
+IL_03CF: ldloc          local(0x0002)
+IL_03D3: ldc.i4         3
+IL_03D8: stfld          {'token': '0x04000125', 'identity': 'Damage::damageAttribute'}
+IL_03DD: br             {'target': 942}
+IL_03E2: ldarg          argument(0x0001)
+IL_03E6: ldfld          {'token': '0x0400054C', 'identity': 'Projectile::ID'}
+IL_03EB: ldc.i4         32
+IL_03F0: ceq            None
+IL_03F2: ldc.i4.0       None
+IL_03F3: ceq            None
+IL_03F5: stloc          local(0x0011)
+IL_03F9: ldloc          local(0x0011)
+IL_03FD: brtrue         {'target': 942}
+IL_0402: br             {'target': 280}
+IL_0407: ldloc          local(0x0019)
+IL_040B: ldloc          local(0x001A)
+IL_040F: ldloc          local(0x0018)
+IL_0413: call           {'token': '0x2B000056', 'identity': '0x2b000056'}
+IL_0418: stloc          local(0x0015)
+IL_041C: br             {'target': 667}
+IL_0421: ldloc          local(0x0002)
+IL_0425: ldloc          local(0x0004)
+IL_0429: stfld          {'token': '0x0400012E', 'identity': 'Damage::attackRange'}
+IL_042E: br             {'target': 1112}
+IL_0433: ldarg          argument(0x0001)
+IL_0437: ldfld          {'token': '0x0400054C', 'identity': 'Projectile::ID'}
+IL_043C: ldc.i4         32
+IL_0441: ceq            None
+IL_0443: ldc.i4.0       None
+IL_0444: ceq            None
+IL_0446: stloc          local(0x0016)
+IL_044A: ldloc          local(0x0016)
+IL_044E: brtrue         {'target': 1057}
+IL_0453: br             {'target': 631}
+IL_0458: ldarg.0        None
+IL_0459: ldfld          {'token': '0x04000477', 'identity': 'Device::attackPoint'}
+IL_045E: stloc          local(0x001D)
+IL_0462: ldarg.0        None
+IL_0463: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0468: ldc.i4         14
+IL_046D: ceq            None
+IL_046F: ldc.i4.0       None
+IL_0470: ceq            None
+IL_0472: stloc          local(0x001C)
+IL_0476: ldloc          local(0x001C)
+IL_047A: brtrue         {'target': 1156}
+IL_047F: br             {'target': 680}
+IL_0484: ldloc          local(0x0002)
+IL_0488: ldloc          local(0x001D)
+IL_048C: stfld          {'token': '0x04000123', 'identity': 'Damage::damagePoint'}
+IL_0491: ldloc          local(0x0002)
+IL_0495: ldarg.0        None
+IL_0496: stfld          {'token': '0x04000136', 'identity': 'Damage::sourceDevice'}
+IL_049B: ldloc          local(0x0002)
+IL_049F: ldarg.0        None
+IL_04A0: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_04A5: stfld          {'token': '0x04000137', 'identity': 'Damage::board'}
+IL_04AA: ldloc          local(0x0002)
+IL_04AE: ret            None
+IL_04AF: ldarg.0        None
+IL_04B0: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_04B5: ldc.i4         2
+IL_04BA: ceq            None
+IL_04BC: ldc.i4.0       None
+IL_04BD: ceq            None
+IL_04BF: stloc          local(0x0008)
+IL_04C3: ldloc          local(0x0008)
+IL_04C7: brtrue         {'target': 355}
+IL_04CC: br             {'target': 299}

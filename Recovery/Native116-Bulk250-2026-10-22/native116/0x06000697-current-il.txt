@@ -1,0 +1,129 @@
+PropChooseSystem::Unfold_PropList
+{"token": "0x06000697", "name": "PropChooseSystem::Unfold_PropList", "signature": "20010108", "rva": 564696, "max_stack": 2, "code_size": 501, "local_sig": 285213941, "locals_blob": "0715081280b9021280b51c122102020212831c020202021209120912831818151151011c151151011c15120d0112831c", "eh_count": 0, "il_sha256": "3509d401e94acc75b38d1be40f4d51c8db15f4cc43aa3288595d39e4addbbcec"}
+IL_0000: br             {'target': 430}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x0400089B', 'identity': 'PropChooseSystem::prop_ChooseList_GameObject'}
+IL_000B: ldc.i4         1
+IL_0010: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0015: br             {'target': 26}
+IL_001A: ldsfld         {'token': '0x040002F2', 'identity': 'ResourceManager::mouseClips'}
+IL_001F: ldc.i4         9
+IL_0024: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_0029: stloc          local(0x0003)
+IL_002D: br             {'target': 50}
+IL_0032: ldloc          local(0x0003)
+IL_0036: call           {'token': '0x0600013B', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_003B: stloc          local(0x0001)
+IL_003F: br             {'target': 68}
+IL_0044: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0049: pop            None
+IL_004A: nop            None
+IL_004B: br             {'target': 463}
+IL_0050: ldarg.0        None
+IL_0051: ldfld          {'token': '0x0400089D', 'identity': 'PropChooseSystem::prop_s'}
+IL_0056: ldc.i4         0
+IL_005B: ceq            None
+IL_005D: stloc          local(0x0008)
+IL_0061: ldloc          local(0x0008)
+IL_0065: brtrue         {'target': 408}
+IL_006A: br             {'target': 111}
+IL_006F: ldarg.0        None
+IL_0070: ldfld          {'token': '0x0400089D', 'identity': 'PropChooseSystem::prop_s'}
+IL_0075: ldarg.0        None
+IL_0076: ldfld          {'token': '0x0400089E', 'identity': 'PropChooseSystem::currentPropBankID'}
+IL_007B: call           {'token': '0x0A00029D', 'identity': 'TypeSpec:121::get_Item / sig 2001130008'}
+IL_0080: stloc          local(0x0009)
+IL_0084: ldloc          local(0x0009)
+IL_0088: ldc.i4         0
+IL_008D: ceq            None
+IL_008F: stloc          local(0x000A)
+IL_0093: ldloc          local(0x000A)
+IL_0097: brtrue         {'target': 397}
+IL_009C: br             {'target': 161}
+IL_00A1: br             {'target': 166}
+IL_00A6: ldloc          local(0x0005)
+IL_00AA: ldloc          local(0x0009)
+IL_00AE: ldfld          {'token': '0x040008A4', 'identity': 'Prop_::propChoose'}
+IL_00B3: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_00B8: stloc          local(0x000B)
+IL_00BC: ldloc          local(0x000B)
+IL_00C0: brtrue         {'target': 269}
+IL_00C5: br             {'target': 202}
+IL_00CA: ldloc          local(0x0005)
+IL_00CE: ldc.i4         0
+IL_00D3: ceq            None
+IL_00D5: stloc          local(0x000C)
+IL_00D9: ldloc          local(0x000C)
+IL_00DD: brtrue         {'target': 452}
+IL_00E2: br             {'target': 231}
+IL_00E7: ldloc          local(0x0005)
+IL_00EB: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_00F0: stloc          local(0x000E)
+IL_00F4: br             {'target': 249}
+IL_00F9: ldloc          local(0x000E)
+IL_00FD: ldc.i4         1
+IL_0102: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0107: nop            None
+IL_0108: br             {'target': 463}
+IL_010D: ldloc          local(0x0005)
+IL_0111: ldc.i4         0
+IL_0116: ceq            None
+IL_0118: stloc          local(0x000D)
+IL_011C: ldloc          local(0x000D)
+IL_0120: brtrue         {'target': 386}
+IL_0125: br             {'target': 298}
+IL_012A: ldloc          local(0x0005)
+IL_012E: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0133: stloc          local(0x000F)
+IL_0137: ldloc          local(0x000F)
+IL_013B: ldc.i4         0
+IL_0140: ceq            None
+IL_0142: stloc          local(0x0006)
+IL_0146: ldloc          local(0x0006)
+IL_014A: brtrue         {'target': 375}
+IL_014F: br             {'target': 340}
+IL_0154: ldloc          local(0x000F)
+IL_0158: ldc.i4         0
+IL_015D: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0162: nop            None
+IL_0163: br             {'target': 463}
+IL_0168: ldloca         local(0x0013)
+IL_016C: call           {'token': '0x0A00029E', 'identity': 'TypeSpec:122::Dispose / sig 200001'}
+IL_0171: br             {'target': 374}
+IL_0176: ret            None
+IL_0177: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_017C: throw          None
+IL_017D: br             {'target': 386}
+IL_0182: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0187: throw          None
+IL_0188: br             {'target': 397}
+IL_018D: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0192: throw          None
+IL_0193: br             {'target': 408}
+IL_0198: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_019D: throw          None
+IL_019E: ldloc          local(0x0014)
+IL_01A2: throw          None
+IL_01A3: br             {'target': 424}
+IL_01A8: nop            None
+IL_01A9: br             {'target': 445}
+IL_01AE: ldarg.0        None
+IL_01AF: ldarg          argument(0x0001)
+IL_01B3: stfld          {'token': '0x0400089E', 'identity': 'PropChooseSystem::currentPropBankID'}
+IL_01B8: br             {'target': 5}
+IL_01BD: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01C2: throw          None
+IL_01C3: ret            None
+IL_01C4: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01C9: throw          None
+IL_01CA: br             {'target': 375}
+IL_01CF: ldloca         local(0x0013)
+IL_01D3: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_01D8: stloc          local(0x0007)
+IL_01DC: ldloc          local(0x0007)
+IL_01E0: ldc.i4.0       None
+IL_01E1: ceq            None
+IL_01E3: stloc          local(0x0002)
+IL_01E7: ldloc          local(0x0002)
+IL_01EB: brtrue         {'target': 360}
+IL_01F0: br             {'target': 80}

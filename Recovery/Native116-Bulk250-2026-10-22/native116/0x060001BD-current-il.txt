@@ -1,0 +1,228 @@
+EnemyManager::SetPreZombie
+{"token": "0x060001BD", "name": "EnemyManager::SetPreZombie", "signature": "200001", "rva": 127128, "max_stack": 3, "code_size": 859, "local_sig": 285213029, "locals_blob": "07271c1c1c1c1c1c1281241281a41280e01c021281180202021281141c12821002020202021282dc02021281a4021281a40202114d114d114d1c151151011c151151011c151151011c18", "eh_count": 0, "il_sha256": "2e09da46b859421dab9ad835a67163ea5d04bef0dd380ed857719e184a6d975f"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0001)
+IL_0009: pop            None
+IL_000A: ldloc          local(0x0002)
+IL_000E: pop            None
+IL_000F: ldloc          local(0x0003)
+IL_0013: pop            None
+IL_0014: ldloc          local(0x0004)
+IL_0018: pop            None
+IL_0019: ldloc          local(0x0005)
+IL_001D: pop            None
+IL_001E: br             {'target': 782}
+IL_0023: ldloc          local(0x0007)
+IL_0027: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_002C: stloc          local(0x0008)
+IL_0030: br             {'target': 53}
+IL_0035: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_003A: pop            None
+IL_003B: nop            None
+IL_003C: br             {'target': 804}
+IL_0041: ldloc          local(0x000B)
+IL_0045: ldc.i4         0
+IL_004A: ceq            None
+IL_004C: stloc          local(0x0013)
+IL_0050: ldloca         local(0x0024)
+IL_0054: stloc          local(0x0025)
+IL_0058: ldloc          local(0x0013)
+IL_005C: brtrue         {'target': 760}
+IL_0061: br             {'target': 102}
+IL_0066: ldloc          local(0x000B)
+IL_006A: ldfld          {'token': '0x040001FE', 'identity': 'Enemy::entryKey'}
+IL_006F: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0074: call           {'token': '0x0A0000B0', 'identity': 'System.String::op_Inequality / sig 0002020e0e'}
+IL_0079: stloc          local(0x0014)
+IL_007D: ldloc          local(0x0014)
+IL_0081: ldc.i4.0       None
+IL_0082: ceq            None
+IL_0084: stloc          local(0x0015)
+IL_0088: ldloc          local(0x0015)
+IL_008C: brtrue         {'target': 225}
+IL_0091: br             {'target': 150}
+IL_0096: ldarg.0        None
+IL_0097: ldfld          {'token': '0x0400020F', 'identity': 'EnemyManager::boardEntries'}
+IL_009C: ldloc          local(0x000B)
+IL_00A0: ldfld          {'token': '0x040001FE', 'identity': 'Enemy::entryKey'}
+IL_00A5: call           {'token': '0x0600060A', 'identity': 'BoardEntry::FindKey'}
+IL_00AA: stloc          local(0x0017)
+IL_00AE: ldloc          local(0x0017)
+IL_00B2: ldc.i4         0
+IL_00B7: ceq            None
+IL_00B9: stloc          local(0x0018)
+IL_00BD: nop            None
+IL_00BE: ldloc          local(0x0018)
+IL_00C2: brtrue         {'target': 254}
+IL_00C7: br             {'target': 204}
+IL_00CC: br             {'target': 209}
+IL_00D1: ldstr          {'token': '0x700060A7', 'identity': '出怪因词条被禁用'}
+IL_00D6: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_00DB: nop            None
+IL_00DC: br             {'target': 804}
+IL_00E1: ldloc          local(0x000B)
+IL_00E5: ldc.i4         0
+IL_00EA: ceq            None
+IL_00EC: stloc          local(0x0016)
+IL_00F0: ldloc          local(0x0016)
+IL_00F4: brtrue         {'target': 749}
+IL_00F9: br             {'target': 254}
+IL_00FE: ldloc          local(0x000B)
+IL_0102: ldfld          {'token': '0x040001FB', 'identity': 'Enemy::wave'}
+IL_0107: ldc.i4         0
+IL_010C: ceq            None
+IL_010E: stloc          local(0x0019)
+IL_0112: ldloc          local(0x0019)
+IL_0116: brtrue         {'target': 530}
+IL_011B: br             {'target': 288}
+IL_0120: ldarg.0        None
+IL_0121: ldloc          local(0x000B)
+IL_0125: ldfld          {'token': '0x040001FB', 'identity': 'Enemy::wave'}
+IL_012A: call           {'token': '0x060001BB', 'identity': 'EnemyManager::GetWave'}
+IL_012F: stloc          local(0x000F)
+IL_0133: ldloc          local(0x000F)
+IL_0137: ldc.i4         0
+IL_013C: ceq            None
+IL_013E: stloc          local(0x000C)
+IL_0142: nop            None
+IL_0143: ldloc          local(0x000C)
+IL_0147: brtrue         {'target': 804}
+IL_014C: br             {'target': 337}
+IL_0151: ldarg.0        None
+IL_0152: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0157: stloc          local(0x001C)
+IL_015B: ldarg.0        None
+IL_015C: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0161: ldc.i4         0
+IL_0166: ceq            None
+IL_0168: stloc          local(0x001E)
+IL_016C: ldloc          local(0x001E)
+IL_0170: brtrue         {'target': 716}
+IL_0175: br             {'target': 378}
+IL_017A: ldloc          local(0x001C)
+IL_017E: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_0183: ldc.i4         0
+IL_0188: ceq            None
+IL_018A: stloc          local(0x001D)
+IL_018E: ldloc          local(0x001D)
+IL_0192: brtrue         {'target': 705}
+IL_0197: br             {'target': 412}
+IL_019C: nop            None
+IL_019D: ldloc          local(0x001C)
+IL_01A1: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_01A6: ldloc          local(0x000B)
+IL_01AA: ldfld          {'token': '0x040001F9', 'identity': 'Enemy::gridX'}
+IL_01AF: ldloc          local(0x000B)
+IL_01B3: ldfld          {'token': '0x040001F8', 'identity': 'Enemy::row'}
+IL_01B8: call           {'token': '0x0600015B', 'identity': 'BoardConfig::GetGridPosition'}
+IL_01BD: stloc          local(0x0021)
+IL_01C1: ldloc          local(0x000B)
+IL_01C5: ldloc          local(0x0020)
+IL_01C9: stfld          {'token': '0x040001FA', 'identity': 'Enemy::position'}
+IL_01CE: ldloc          local(0x0021)
+IL_01D2: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_01D7: pop            None
+IL_01D8: ldloc          local(0x000F)
+IL_01DC: ldfld          {'token': '0x040001F5', 'identity': 'Wave::enemies'}
+IL_01E1: ldc.i4         0
+IL_01E6: ceq            None
+IL_01E8: stloc          local(0x000D)
+IL_01EC: ldloc          local(0x000D)
+IL_01F0: brtrue         {'target': 842}
+IL_01F5: br             {'target': 506}
+IL_01FA: ldloc          local(0x000F)
+IL_01FE: ldfld          {'token': '0x040001F5', 'identity': 'Wave::enemies'}
+IL_0203: ldloc          local(0x000B)
+IL_0207: call           {'token': '0x0A000134', 'identity': 'TypeSpec:48::Add / sig 2001011300'}
+IL_020C: nop            None
+IL_020D: br             {'target': 804}
+IL_0212: ldarg.0        None
+IL_0213: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0218: stloc          local(0x001A)
+IL_021C: ldarg.0        None
+IL_021D: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0222: ldc.i4         0
+IL_0227: ceq            None
+IL_0229: stloc          local(0x001B)
+IL_022D: ldloc          local(0x001B)
+IL_0231: brtrue         {'target': 738}
+IL_0236: br             {'target': 571}
+IL_023B: ldloc          local(0x001A)
+IL_023F: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_0244: ldc.i4         0
+IL_0249: ceq            None
+IL_024B: stloc          local(0x000E)
+IL_024F: ldloc          local(0x000E)
+IL_0253: brtrue         {'target': 727}
+IL_0258: br             {'target': 605}
+IL_025D: nop            None
+IL_025E: ldloc          local(0x001A)
+IL_0262: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_0267: ldloc          local(0x000B)
+IL_026B: ldfld          {'token': '0x040001F9', 'identity': 'Enemy::gridX'}
+IL_0270: ldloc          local(0x000B)
+IL_0274: ldfld          {'token': '0x040001F8', 'identity': 'Enemy::row'}
+IL_0279: call           {'token': '0x0600015B', 'identity': 'BoardConfig::GetGridPosition'}
+IL_027E: stloc          local(0x001F)
+IL_0282: ldloc          local(0x000B)
+IL_0286: ldloc          local(0x0020)
+IL_028A: stfld          {'token': '0x040001FA', 'identity': 'Enemy::position'}
+IL_028F: ldloc          local(0x001F)
+IL_0293: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_0298: pop            None
+IL_0299: ldarg.0        None
+IL_029A: ldloc          local(0x000B)
+IL_029E: call           {'token': '0x060001B6', 'identity': 'EnemyManager::DispatcheZombie'}
+IL_02A3: stloc          local(0x0011)
+IL_02A7: br             {'target': 684}
+IL_02AC: nop            None
+IL_02AD: br             {'target': 804}
+IL_02B2: ldloca         local(0x0024)
+IL_02B6: call           {'token': '0x0A000035', 'identity': 'TypeSpec:8::Dispose / sig 200001'}
+IL_02BB: br             {'target': 704}
+IL_02C0: ret            None
+IL_02C1: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02C6: throw          None
+IL_02C7: br             {'target': 716}
+IL_02CC: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02D1: throw          None
+IL_02D2: br             {'target': 727}
+IL_02D7: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02DC: throw          None
+IL_02DD: br             {'target': 738}
+IL_02E2: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02E7: throw          None
+IL_02E8: br             {'target': 749}
+IL_02ED: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02F2: throw          None
+IL_02F3: br             {'target': 760}
+IL_02F8: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02FD: throw          None
+IL_02FE: ldloc          local(0x0025)
+IL_0302: throw          None
+IL_0303: br             {'target': 776}
+IL_0308: nop            None
+IL_0309: br             {'target': 797}
+IL_030E: ldarg.0        None
+IL_030F: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0314: stloc          local(0x0007)
+IL_0318: br             {'target': 35}
+IL_031D: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0322: throw          None
+IL_0323: ret            None
+IL_0324: ldloca         local(0x0024)
+IL_0328: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_032D: stloc          local(0x0012)
+IL_0331: ldloc          local(0x0012)
+IL_0335: ldc.i4.0       None
+IL_0336: ceq            None
+IL_0338: stloc          local(0x000A)
+IL_033C: ldloc          local(0x000A)
+IL_0340: brtrue         {'target': 690}
+IL_0345: br             {'target': 65}
+IL_034A: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_034F: throw          None
+IL_0350: br             {'target': 705}
+IL_0355: ldstr          {'token': '0x700060B9', 'identity': 'Warning: Method ends with non empty stack (-D0), the output could be wrong!'}
+IL_035A: pop            None

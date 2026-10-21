@@ -1,0 +1,141 @@
+FlagMeter::InitializeFlags
+{"token": "0x0600061A", "name": "FlagMeter::InitializeFlags", "signature": "20010108", "rva": 536772, "max_stack": 3, "code_size": 543, "local_sig": 285213852, "locals_blob": "0716080215120d011c02021c02081209120912151215120912151d1c08021282e81c180808", "eh_count": 0, "il_sha256": "4c50d5a07402f04fb7d7af54901fee8310eb7828fdd9ebd1baaecbfc57cf011d"}
+IL_0000: br             {'target': 476}
+IL_0005: ldsfld         {'token': '0x0400030E', 'identity': 'ResourceManager::prefab_FlagMeter_Flag'}
+IL_000A: call           {'token': '0x2B000028', 'identity': '0x2b000028'}
+IL_000F: stloc          local(0x0008)
+IL_0013: br             {'target': 24}
+IL_0018: ldloc          local(0x0002)
+IL_001C: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0021: ldc.i4         1
+IL_0026: add            None
+IL_0027: stloc          local(0x0015)
+IL_002B: ldloc          local(0x0002)
+IL_002F: ldloc          local(0x0015)
+IL_0033: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0038: ldloc          local(0x0002)
+IL_003C: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_0041: stloc          local(0x000E)
+IL_0045: br             {'target': 74}
+IL_004A: ldloc          local(0x0002)
+IL_004E: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0053: ldloc          local(0x000E)
+IL_0057: ldlen          None
+IL_0058: conv.i4        None
+IL_0059: clt            None
+IL_005B: stloc          local(0x0010)
+IL_005F: ldloc          local(0x0010)
+IL_0063: brtrue         {'target': 128}
+IL_0068: br             {'target': 109}
+IL_006D: ldloc          local(0x0002)
+IL_0071: ldloc          local(0x0008)
+IL_0075: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_007A: nop            None
+IL_007B: br             {'target': 187}
+IL_0080: ldloc          local(0x0002)
+IL_0084: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0089: ldc.i4         1
+IL_008E: add            None
+IL_008F: stloc          local(0x000F)
+IL_0093: ldloc          local(0x0002)
+IL_0097: ldloc          local(0x000F)
+IL_009B: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_00A0: br             {'target': 165}
+IL_00A5: ldloc          local(0x000E)
+IL_00A9: ldloc          local(0x0014)
+IL_00AD: ldloc          local(0x0008)
+IL_00B1: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_00B6: br             {'target': 187}
+IL_00BB: ldloc          local(0x0005)
+IL_00BF: ldc.i4         1
+IL_00C4: add            None
+IL_00C5: stloc          local(0x0005)
+IL_00C9: ldloc          local(0x0005)
+IL_00CD: ldarg          argument(0x0001)
+IL_00D1: clt            None
+IL_00D3: stloc          local(0x0003)
+IL_00D7: ldloc          local(0x0003)
+IL_00DB: brtrue         {'target': 522}
+IL_00E0: br             {'target': 229}
+IL_00E5: ldarg          argument(0x0001)
+IL_00E9: ldc.i4         1
+IL_00EE: sub            None
+IL_00EF: stloc          local(0x0007)
+IL_00F3: ldloc          local(0x0007)
+IL_00F7: ldc.i4         0
+IL_00FC: clt            None
+IL_00FE: stloc          local(0x0004)
+IL_0102: ldloc          local(0x0004)
+IL_0106: brtrue         {'target': 475}
+IL_010B: br             {'target': 272}
+IL_0110: nop            None
+IL_0111: nop            None
+IL_0112: ldc.i4         0
+IL_0117: stloc          local(0x0012)
+IL_011B: br             {'target': 288}
+IL_0120: ldarg.0        None
+IL_0121: ldfld          {'token': '0x04000815', 'identity': 'FlagMeter::flagMeter_FlagList'}
+IL_0126: ldloc          local(0x0007)
+IL_012A: call           {'token': '0x0A000006', 'identity': 'TypeSpec:1::get_Item / sig 2001130008'}
+IL_012F: stloc          local(0x0009)
+IL_0133: br             {'target': 312}
+IL_0138: ldloc          local(0x0009)
+IL_013C: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0141: stloc          local(0x000A)
+IL_0145: br             {'target': 330}
+IL_014A: ldarg.0        None
+IL_014B: ldfld          {'token': '0x04000814', 'identity': 'FlagMeter::flagMeter_Flags'}
+IL_0150: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0155: stloc          local(0x000B)
+IL_0159: br             {'target': 350}
+IL_015E: ldloc          local(0x000A)
+IL_0162: ldloc          local(0x000B)
+IL_0166: ldc.i4         0
+IL_016B: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_0170: br             {'target': 373}
+IL_0175: ldarg.0        None
+IL_0176: ldfld          {'token': '0x04000815', 'identity': 'FlagMeter::flagMeter_FlagList'}
+IL_017B: ldloc          local(0x0007)
+IL_017F: call           {'token': '0x0A000006', 'identity': 'TypeSpec:1::get_Item / sig 2001130008'}
+IL_0184: stloc          local(0x000C)
+IL_0188: br             {'target': 397}
+IL_018D: ldloc          local(0x000C)
+IL_0191: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0196: stloc          local(0x000D)
+IL_019A: br             {'target': 415}
+IL_019F: ldloc          local(0x000D)
+IL_01A3: ldloca         local(0x0012)
+IL_01A7: call           {'token': '0x0A000042', 'identity': 'UnityEngine.Transform::set_localPosition / sig 200101114d'}
+IL_01AC: nop            None
+IL_01AD: ldloc          local(0x0007)
+IL_01B1: ldc.i4         1
+IL_01B6: sub            None
+IL_01B7: stloc          local(0x0007)
+IL_01BB: ldloc          local(0x000D)
+IL_01BF: ldc.i4         0
+IL_01C4: clt            None
+IL_01C6: ldc.i4.0       None
+IL_01C7: ceq            None
+IL_01C9: stloc          local(0x0006)
+IL_01CD: ldloc          local(0x0006)
+IL_01D1: brtrue         {'target': 288}
+IL_01D6: br             {'target': 475}
+IL_01DB: ret            None
+IL_01DC: ldarg          argument(0x0001)
+IL_01E0: ldc.i4         0
+IL_01E5: cgt            None
+IL_01E7: ldc.i4.0       None
+IL_01E8: ceq            None
+IL_01EA: stloc          local(0x0001)
+IL_01EE: ldc.i4         0
+IL_01F3: stloc          local(0x0005)
+IL_01F7: ldloc          local(0x0001)
+IL_01FB: brtrue         {'target': 229}
+IL_0200: br             {'target': 522}
+IL_0205: br             {'target': 5}
+IL_020A: ldarg.0        None
+IL_020B: ldfld          {'token': '0x04000815', 'identity': 'FlagMeter::flagMeter_FlagList'}
+IL_0210: stloc          local(0x0002)
+IL_0214: br             {'target': 517}
+IL_0219: ldstr          {'token': '0x70002C39', 'identity': 'Warning: Method ends with non empty stack (-88), the output could be wrong!'}
+IL_021E: pop            None

@@ -1,0 +1,204 @@
+Almanac_TalentSystem::LoadData
+{"token": "0x06000597", "name": "Almanac_TalentSystem::LoadData", "signature": "200101128228", "rva": 490232, "max_stack": 3, "code_size": 818, "local_sig": 285213753, "locals_blob": "071812822812829c081c081271127112091271127112091280851271128085127112711d0e02020208021c128085", "eh_count": 0, "il_sha256": "dd2b3d24f6dd6132a79712cc0d6472c086dfe4a15bf23b8c6a97e67f96daa95e"}
+IL_0000: br             {'target': 742}
+IL_0005: ldarg          argument(0x0001)
+IL_0009: call           {'token': '0x060004D1', 'identity': 'PlantSave::GetTalentNum'}
+IL_000E: stloc          local(0x0002)
+IL_0012: ldarg          argument(0x0001)
+IL_0016: call           {'token': '0x060004CF', 'identity': 'PlantSave::GetTalentNum_Unlocked'}
+IL_001B: stloc          local(0x0014)
+IL_001F: br             {'target': 36}
+IL_0024: ldc.i4         0
+IL_0029: stloc          local(0x0004)
+IL_002D: br             {'target': 50}
+IL_0032: ldarg.0        None
+IL_0033: ldfld          {'token': '0x04000739', 'identity': 'Almanac_TalentSystem::select'}
+IL_0038: ldloc          local(0x0004)
+IL_003C: ldc.i4         0
+IL_0041: call           {'token': '0x0A000274', 'identity': 'TypeSpec:113::set_Item / sig 200201081300'}
+IL_0046: br             {'target': 75}
+IL_004B: ldarg.0        None
+IL_004C: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_0051: ldloc          local(0x0004)
+IL_0055: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_005A: stloc          local(0x0005)
+IL_005E: br             {'target': 99}
+IL_0063: ldloc          local(0x0005)
+IL_0067: ldc.i4         0
+IL_006C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0071: ldloc          local(0x0002)
+IL_0075: ldloc          local(0x0004)
+IL_0079: cgt            None
+IL_007B: stloc          local(0x0011)
+IL_007F: ldloc          local(0x0011)
+IL_0083: brtrue         {'target': 245}
+IL_0088: br             {'target': 141}
+IL_008D: ldarg.0        None
+IL_008E: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_0093: ldloc          local(0x0004)
+IL_0097: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_009C: stloc          local(0x0006)
+IL_00A0: br             {'target': 165}
+IL_00A5: ldloc          local(0x0006)
+IL_00A9: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_00AE: stloc          local(0x0007)
+IL_00B2: br             {'target': 183}
+IL_00B7: ldloc          local(0x0007)
+IL_00BB: ldc.i4         0
+IL_00C0: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_00C5: br             {'target': 202}
+IL_00CA: ldarg.0        None
+IL_00CB: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_00D0: ldloc          local(0x0004)
+IL_00D4: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_00D9: stloc          local(0x0008)
+IL_00DD: br             {'target': 226}
+IL_00E2: ldloc          local(0x0008)
+IL_00E6: ldc.i4         0
+IL_00EB: call           {'token': '0x0A000208', 'identity': 'UnityEngine.Behaviour::set_enabled / sig 20010102'}
+IL_00F0: br             {'target': 757}
+IL_00F5: ldarg.0        None
+IL_00F6: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_00FB: ldloc          local(0x0004)
+IL_00FF: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_0104: stloc          local(0x0009)
+IL_0108: br             {'target': 269}
+IL_010D: ldloc          local(0x0009)
+IL_0111: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0116: stloc          local(0x000A)
+IL_011A: br             {'target': 287}
+IL_011F: ldloc          local(0x000A)
+IL_0123: ldc.i4         1
+IL_0128: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_012D: ldloc          local(0x0014)
+IL_0131: ldloc          local(0x0004)
+IL_0135: cgt            None
+IL_0137: stloc          local(0x0012)
+IL_013B: ldloc          local(0x0012)
+IL_013F: brtrue         {'target': 461}
+IL_0144: br             {'target': 329}
+IL_0149: ldarg.0        None
+IL_014A: ldfld          {'token': '0x04000738', 'identity': 'Almanac_TalentSystem::talentNames'}
+IL_014F: ldloc          local(0x0004)
+IL_0153: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0158: stloc          local(0x000B)
+IL_015C: br             {'target': 353}
+IL_0161: ldloc          local(0x000B)
+IL_0165: ldstr          {'token': '0x700176D5', 'identity': '???'}
+IL_016A: ldc.i4         1
+IL_016F: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0174: br             {'target': 377}
+IL_0179: ldarg.0        None
+IL_017A: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_017F: ldloc          local(0x0004)
+IL_0183: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_0188: stloc          local(0x000C)
+IL_018C: br             {'target': 401}
+IL_0191: ldloc          local(0x000C)
+IL_0195: ldc.i4         0
+IL_019A: call           {'token': '0x0A000208', 'identity': 'UnityEngine.Behaviour::set_enabled / sig 20010102'}
+IL_019F: br             {'target': 420}
+IL_01A4: ldarg.0        None
+IL_01A5: ldfld          {'token': '0x04000738', 'identity': 'Almanac_TalentSystem::talentNames'}
+IL_01AA: ldloc          local(0x0004)
+IL_01AE: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_01B3: stloc          local(0x0017)
+IL_01B7: br             {'target': 444}
+IL_01BC: ldstr          {'token': '0x70019645', 'identity': 'Unmanaged memory load: [1815A7ED0]'}
+IL_01C1: pop            None
+IL_01C2: ldc.i4.0       None
+IL_01C3: conv.i         None
+IL_01C4: stloc          local(0x0003)
+IL_01C8: br             {'target': 800}
+IL_01CD: ldarg.0        None
+IL_01CE: ldfld          {'token': '0x04000738', 'identity': 'Almanac_TalentSystem::talentNames'}
+IL_01D3: ldloc          local(0x0004)
+IL_01D7: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_01DC: stloc          local(0x000D)
+IL_01E0: ldarg          argument(0x0001)
+IL_01E4: ldfld          {'token': '0x0400065A', 'identity': 'PlantSave::talentNames'}
+IL_01E9: stloc          local(0x0010)
+IL_01ED: br             {'target': 498}
+IL_01F2: ldloc          local(0x000D)
+IL_01F6: ldloc          local(0x0010)
+IL_01FA: ldloc          local(0x0004)
+IL_01FE: ldelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0203: ldc.i4         1
+IL_0208: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_020D: br             {'target': 530}
+IL_0212: ldarg.0        None
+IL_0213: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_0218: ldloc          local(0x0004)
+IL_021C: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_0221: stloc          local(0x000E)
+IL_0225: br             {'target': 554}
+IL_022A: ldloc          local(0x000E)
+IL_022E: ldc.i4         1
+IL_0233: call           {'token': '0x0A000208', 'identity': 'UnityEngine.Behaviour::set_enabled / sig 20010102'}
+IL_0238: br             {'target': 573}
+IL_023D: ldarg.0        None
+IL_023E: ldfld          {'token': '0x04000737', 'identity': 'Almanac_TalentSystem::buttons'}
+IL_0243: ldloc          local(0x0004)
+IL_0247: call           {'token': '0x0A000271', 'identity': 'TypeSpec:112::get_Item / sig 2001130008'}
+IL_024C: stloc          local(0x000F)
+IL_0250: br             {'target': 597}
+IL_0255: ldloc          local(0x000F)
+IL_0259: ldc.i4         1
+IL_025E: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0263: br             {'target': 616}
+IL_0268: ldarg.0        None
+IL_0269: ldfld          {'token': '0x04000738', 'identity': 'Almanac_TalentSystem::talentNames'}
+IL_026E: ldloc          local(0x0004)
+IL_0272: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0277: stloc          local(0x0017)
+IL_027B: br             {'target': 640}
+IL_0280: ldstr          {'token': '0x7000ED68', 'identity': 'Unmanaged memory load: [1815A7B70]'}
+IL_0285: pop            None
+IL_0286: ldc.i4.0       None
+IL_0287: conv.i         None
+IL_0288: stloc          local(0x0003)
+IL_028C: br             {'target': 800}
+IL_0291: ldstr          {'token': '0x7001968B', 'identity': 'Unmanaged memory load: [181CE4E5C]'}
+IL_0296: pop            None
+IL_0297: ldc.i4.0       None
+IL_0298: conv.i         None
+IL_0299: ldc.i4         0
+IL_029E: ceq            None
+IL_02A0: ldc.i4.0       None
+IL_02A1: ceq            None
+IL_02A3: stloc          local(0x0013)
+IL_02A7: ldloc          local(0x0013)
+IL_02AB: brtrue         {'target': 704}
+IL_02B0: br             {'target': 693}
+IL_02B5: ldc.i4         1
+IL_02BA: pop            None
+IL_02BB: br             {'target': 704}
+IL_02C0: ldarg.0        None
+IL_02C1: ldfld          {'token': '0x0400073A', 'identity': 'Almanac_TalentSystem::talentDescription'}
+IL_02C6: ldstr          {'token': '0x700196D1', 'identity': '神化一阶解锁'}
+IL_02CB: ldc.i4         1
+IL_02D0: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_02D5: ldarg.0        None
+IL_02D6: ldc.i4         0
+IL_02DB: call           {'token': '0x0600059A', 'identity': 'Almanac_TalentSystem::Select'}
+IL_02E0: br             {'target': 741}
+IL_02E5: ret            None
+IL_02E6: ldarg.0        None
+IL_02E7: ldarg          argument(0x0001)
+IL_02EB: stfld          {'token': '0x0400073B', 'identity': 'Almanac_TalentSystem::plantSave'}
+IL_02F0: br             {'target': 5}
+IL_02F5: ldloc          local(0x0004)
+IL_02F9: ldc.i4         1
+IL_02FE: add            None
+IL_02FF: stloc          local(0x0004)
+IL_0303: ldloc          local(0x0004)
+IL_0307: ldc.i4         3
+IL_030C: clt            None
+IL_030E: stloc          local(0x0015)
+IL_0312: ldloc          local(0x0015)
+IL_0316: brtrue         {'target': 50}
+IL_031B: br             {'target': 657}
+IL_0320: ldloc          local(0x0017)
+IL_0324: ldloca         local(0x0003)
+IL_0328: call           {'token': '0x0A0001DC', 'identity': 'TMPro.TMP_Text::set_color / sig 2001011180d1'}
+IL_032D: br             {'target': 757}

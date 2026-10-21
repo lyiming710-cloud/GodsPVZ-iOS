@@ -1,0 +1,177 @@
+PropChooseSystem::LoadTeam_Prop
+{"token": "0x06000693", "name": "PropChooseSystem::LoadTeam_Prop", "signature": "20020111821c128218", "rva": 563884, "max_stack": 3, "code_size": 630, "local_sig": 285213939, "locals_blob": "071f1282181283181c15120d01081812831c020202021c0802021c0208180202021c02151151011c151151011c11821c1511510108151151011c1511510108151151011c151151011c", "eh_count": 0, "il_sha256": "8868018d3b7ce2ffc2597d9df58925c066b0e854f17f2099c1a7187375b66630"}
+IL_0000: ldstr          {'token': '0x7001BDFB', 'identity': 'Unmanaged memory load: [181CE4EFA]'}
+IL_0005: pop            None
+IL_0006: ldc.i4.0       None
+IL_0007: conv.i         None
+IL_0008: ldc.i4         0
+IL_000D: ceq            None
+IL_000F: ldc.i4.0       None
+IL_0010: ceq            None
+IL_0012: stloc          local(0x0012)
+IL_0016: br             {'target': 27}
+IL_001B: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0020: pop            None
+IL_0021: ldc.i4.0       None
+IL_0022: conv.i         None
+IL_0023: stloc          local(0x0004)
+IL_0027: br             {'target': 480}
+IL_002C: ldloc          local(0x0005)
+IL_0030: ldc.i4         0
+IL_0035: ceq            None
+IL_0037: stloc          local(0x0006)
+IL_003B: ldloc          local(0x0006)
+IL_003F: brtrue         {'target': 426}
+IL_0044: br             {'target': 73}
+IL_0049: ldloc          local(0x0005)
+IL_004D: ldnull         None
+IL_004E: call           {'token': '0x0600069A', 'identity': 'Prop_::Select'}
+IL_0053: ldnull         None
+IL_0054: stloc          local(0x0004)
+IL_0058: br             {'target': 480}
+IL_005D: ldstr          {'token': '0x70000331', 'identity': 'Method not found @180302170'}
+IL_0062: pop            None
+IL_0063: br             {'target': 518}
+IL_0068: ldstr          {'token': '0x70004A5A', 'identity': 'Method not found @18082AC10'}
+IL_006D: pop            None
+IL_006E: nop            None
+IL_006F: ldc.i4         0
+IL_0074: stloc          local(0x000B)
+IL_0078: nop            None
+IL_0079: br             {'target': 585}
+IL_007E: ldarg.0        None
+IL_007F: ldfld          {'token': '0x0400089A', 'identity': 'PropChooseSystem::prop_ChooseList'}
+IL_0084: ldc.i4         0
+IL_0089: ceq            None
+IL_008B: stloc          local(0x0014)
+IL_008F: ldloca         local(0x001C)
+IL_0093: stloc          local(0x001B)
+IL_0097: ldloc          local(0x0014)
+IL_009B: brtrue         {'target': 458}
+IL_00A0: br             {'target': 165}
+IL_00A5: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00AA: pop            None
+IL_00AB: br             {'target': 547}
+IL_00B0: ldarg          argument(0x0002)
+IL_00B4: ldc.i4         0
+IL_00B9: ceq            None
+IL_00BB: stloc          local(0x000F)
+IL_00BF: ldloca         local(0x001E)
+IL_00C3: stloc          local(0x001B)
+IL_00C7: ldloc          local(0x000F)
+IL_00CB: brtrue         {'target': 442}
+IL_00D0: br             {'target': 213}
+IL_00D5: ldloc          local(0x000B)
+IL_00D9: ldarg          argument(0x0002)
+IL_00DD: ldfld          {'token': '0x0400062A', 'identity': 'Save::lenthOfPropBank'}
+IL_00E2: clt            None
+IL_00E4: ldc.i4.0       None
+IL_00E5: ceq            None
+IL_00E7: stloc          local(0x0012)
+IL_00EB: ldloc          local(0x000B)
+IL_00EF: stloc          local(0x0010)
+IL_00F3: nop            None
+IL_00F4: ldloc          local(0x0012)
+IL_00F8: brtrue         {'target': 375}
+IL_00FD: br             {'target': 258}
+IL_0102: ldarg          argument(0x0001)
+IL_0106: ldfld          {'token': '0x0400064A', 'identity': 'Team::ID'}
+IL_010B: ldc.i4         0
+IL_0110: ceq            None
+IL_0112: stloc          local(0x000D)
+IL_0116: ldloca         local(0x001E)
+IL_011A: stloc          local(0x001B)
+IL_011E: ldloc          local(0x000D)
+IL_0122: brtrue         {'target': 536}
+IL_0127: br             {'target': 300}
+IL_012C: ldloc          local(0x0005)
+IL_0130: ldloc          local(0x0003)
+IL_0134: ldfld          {'token': '0x0400058C', 'identity': 'Prop_Choose::ID'}
+IL_0139: ceq            None
+IL_013B: ldc.i4.0       None
+IL_013C: ceq            None
+IL_013E: stloc          local(0x0012)
+IL_0142: ldloc          local(0x0012)
+IL_0146: brtrue         {'target': 547}
+IL_014B: br             {'target': 336}
+IL_0150: ldarg.0        None
+IL_0151: ldarg          argument(0x0001)
+IL_0155: ldfld          {'token': '0x0400064A', 'identity': 'Team::ID'}
+IL_015A: ldloc          local(0x000B)
+IL_015E: call           {'token': '0x06000698', 'identity': 'PropChooseSystem::Select'}
+IL_0163: ldloc          local(0x000B)
+IL_0167: ldc.i4         1
+IL_016C: add            None
+IL_016D: stloc          local(0x0010)
+IL_0171: nop            None
+IL_0172: br             {'target': 375}
+IL_0177: ldloca         local(0x001E)
+IL_017B: call           {'token': '0x0A00029E', 'identity': 'TypeSpec:122::Dispose / sig 200001'}
+IL_0180: ldloc          local(0x0010)
+IL_0184: stloc          local(0x000B)
+IL_0188: br             {'target': 585}
+IL_018D: ldloc          local(0x000B)
+IL_0191: stloc          local(0x0010)
+IL_0195: nop            None
+IL_0196: br             {'target': 375}
+IL_019B: ldloca         local(0x001C)
+IL_019F: call           {'token': '0x0A000115', 'identity': 'TypeSpec:54::Dispose / sig 200001'}
+IL_01A4: br             {'target': 425}
+IL_01A9: ret            None
+IL_01AA: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01AF: throw          None
+IL_01B0: ldloc          local(0x0005)
+IL_01B4: throw          None
+IL_01B5: br             {'target': 536}
+IL_01BA: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01BF: throw          None
+IL_01C0: ldloc          local(0x001B)
+IL_01C4: throw          None
+IL_01C5: br             {'target': 458}
+IL_01CA: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01CF: throw          None
+IL_01D0: ldloc          local(0x001B)
+IL_01D4: throw          None
+IL_01D5: br             {'target': 474}
+IL_01DA: nop            None
+IL_01DB: br             {'target': 623}
+IL_01E0: ldloca         local(0x0018)
+IL_01E4: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_01E9: stloc          local(0x0007)
+IL_01ED: ldloc          local(0x0007)
+IL_01F1: ldc.i4.0       None
+IL_01F2: ceq            None
+IL_01F4: stloc          local(0x0009)
+IL_01F8: ldloc          local(0x0009)
+IL_01FC: brtrue         {'target': 93}
+IL_0201: br             {'target': 44}
+IL_0206: ldarg          argument(0x0001)
+IL_020A: ldfld          {'token': '0x0400064A', 'identity': 'Team::ID'}
+IL_020F: stloc          local(0x0003)
+IL_0213: br             {'target': 104}
+IL_0218: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_021D: throw          None
+IL_021E: br             {'target': 442}
+IL_0223: ldloca         local(0x001E)
+IL_0227: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_022C: stloc          local(0x000C)
+IL_0230: ldloc          local(0x000C)
+IL_0234: ldc.i4.0       None
+IL_0235: ceq            None
+IL_0237: stloc          local(0x0016)
+IL_023B: ldloc          local(0x0016)
+IL_023F: brtrue         {'target': 397}
+IL_0244: br             {'target': 176}
+IL_0249: ldloca         local(0x001C)
+IL_024D: call           {'token': '0x0A000117', 'identity': 'TypeSpec:54::MoveNext / sig 200002'}
+IL_0252: stloc          local(0x0013)
+IL_0256: ldloc          local(0x0013)
+IL_025A: ldc.i4.0       None
+IL_025B: ceq            None
+IL_025D: stloc          local(0x0008)
+IL_0261: ldloc          local(0x0008)
+IL_0265: brtrue         {'target': 411}
+IL_026A: br             {'target': 126}
+IL_026F: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0274: throw          None
+IL_0275: ret            None

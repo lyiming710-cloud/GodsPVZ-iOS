@@ -1,0 +1,240 @@
+ZombieManager::Start_BoardEntry
+{"token": "0x06000272", "name": "ZombieManager::Start_BoardEntry", "signature": "200001", "rva": 192616, "max_stack": 2, "code_size": 895, "local_sig": 285213168, "locals_blob": "0725021281a4021280e01c1282dc12817c12817c12817c151151011c151151011c151151011c02020202020202020202021c0212817c020c0c0c0c0c128178151151011c151151011c151151011c18", "eh_count": 0, "il_sha256": "f140c5fc751218e6b7e957a454e3ad2fc76e8cb4cbee5878e918436cd4490152"}
+IL_0000: br             {'target': 828}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x0400035F', 'identity': 'ZombieManager::board'}
+IL_000B: ldnull         None
+IL_000C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0011: stloc          local(0x0000)
+IL_0015: ldloc          local(0x0000)
+IL_0019: brtrue         {'target': 35}
+IL_001E: br             {'target': 761}
+IL_0023: ldarg.0        None
+IL_0024: ldfld          {'token': '0x0400035F', 'identity': 'ZombieManager::board'}
+IL_0029: stloc          local(0x0001)
+IL_002D: br             {'target': 50}
+IL_0032: ldloc          local(0x0001)
+IL_0036: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_003B: stloc          local(0x0003)
+IL_003F: br             {'target': 68}
+IL_0044: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0049: pop            None
+IL_004A: nop            None
+IL_004B: br             {'target': 840}
+IL_0050: ldloc          local(0x0005)
+IL_0054: ldc.i4         0
+IL_0059: ceq            None
+IL_005B: stloc          local(0x0015)
+IL_005F: ldloca         local(0x0022)
+IL_0063: stloc          local(0x0023)
+IL_0067: ldloc          local(0x0015)
+IL_006B: brtrue         {'target': 806}
+IL_0070: br             {'target': 117}
+IL_0075: ldloc          local(0x0005)
+IL_0079: ldfld          {'token': '0x040007FC', 'identity': 'BoardEntry::must'}
+IL_007E: ldc.i4         0
+IL_0083: ceq            None
+IL_0085: ldc.i4.0       None
+IL_0086: ceq            None
+IL_0088: stloc          local(0x000E)
+IL_008C: ldloc          local(0x000E)
+IL_0090: brtrue         {'target': 188}
+IL_0095: br             {'target': 154}
+IL_009A: ldloc          local(0x0005)
+IL_009E: ldfld          {'token': '0x040007FD', 'identity': 'BoardEntry::select'}
+IL_00A3: ldc.i4         0
+IL_00A8: ceq            None
+IL_00AA: stloc          local(0x0012)
+IL_00AE: ldloc          local(0x0012)
+IL_00B2: brtrue         {'target': 840}
+IL_00B7: br             {'target': 188}
+IL_00BC: ldarg.0        None
+IL_00BD: ldfld          {'token': '0x04000368', 'identity': 'ZombieManager::effectBoardEntries'}
+IL_00C2: ldc.i4         0
+IL_00C7: ceq            None
+IL_00C9: stloc          local(0x0016)
+IL_00CD: ldloc          local(0x0016)
+IL_00D1: brtrue         {'target': 795}
+IL_00D6: br             {'target': 219}
+IL_00DB: ldarg.0        None
+IL_00DC: ldfld          {'token': '0x04000368', 'identity': 'ZombieManager::effectBoardEntries'}
+IL_00E1: ldloc          local(0x0005)
+IL_00E5: call           {'token': '0x0A0000A6', 'identity': 'TypeSpec:32::Add / sig 2001011300'}
+IL_00EA: ldloc          local(0x0005)
+IL_00EE: ldc.i4         0
+IL_00F3: ceq            None
+IL_00F5: stloc          local(0x0018)
+IL_00F9: ldloc          local(0x0018)
+IL_00FD: brtrue         {'target': 784}
+IL_0102: br             {'target': 263}
+IL_0107: ldloc          local(0x0005)
+IL_010B: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_0110: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0115: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_011A: stloc          local(0x000D)
+IL_011E: nop            None
+IL_011F: ldloc          local(0x000D)
+IL_0123: brtrue         {'target': 301}
+IL_0128: br             {'target': 840}
+IL_012D: ldloc          local(0x0005)
+IL_0131: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_0136: ldc.i4         0
+IL_013B: ceq            None
+IL_013D: ldc.i4.0       None
+IL_013E: ceq            None
+IL_0140: stloc          local(0x000F)
+IL_0144: ldloc          local(0x000F)
+IL_0148: brtrue         {'target': 490}
+IL_014D: br             {'target': 338}
+IL_0152: ldarg.0        None
+IL_0153: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_0158: stloc          local(0x0019)
+IL_015C: ldarg.0        None
+IL_015D: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_0162: ldc.i4         0
+IL_0167: ceq            None
+IL_0169: stloc          local(0x001A)
+IL_016D: ldloc          local(0x001A)
+IL_0171: brtrue         {'target': 878}
+IL_0176: br             {'target': 379}
+IL_017B: ldloc          local(0x0005)
+IL_017F: call           {'token': '0x06000607', 'identity': 'BoardEntry::GetValue'}
+IL_0184: stloc          local(0x001B)
+IL_0188: ldloc          local(0x001B)
+IL_018C: conv.r4        None
+IL_018D: ldloc          local(0x0019)
+IL_0191: ldfld          {'token': '0x0400036A', 'identity': 'BoardEntryData::magnification_Atk'}
+IL_0196: conv.r4        None
+IL_0197: add            None
+IL_0198: stloc          local(0x001C)
+IL_019C: ldloc          local(0x0019)
+IL_01A0: ldloc          local(0x001C)
+IL_01A4: stfld          {'token': '0x0400036A', 'identity': 'BoardEntryData::magnification_Atk'}
+IL_01A9: ldarg.0        None
+IL_01AA: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_01AF: stloc          local(0x0006)
+IL_01B3: br             {'target': 440}
+IL_01B8: ldloc          local(0x0005)
+IL_01BC: call           {'token': '0x06000607', 'identity': 'BoardEntry::GetValue'}
+IL_01C1: stloc          local(0x001E)
+IL_01C5: ldloc          local(0x001E)
+IL_01C9: ldloc          local(0x0006)
+IL_01CD: ldfld          {'token': '0x0400036B', 'identity': 'BoardEntryData::magnification_Hp'}
+IL_01D2: add            None
+IL_01D3: stloc          local(0x0009)
+IL_01D7: ldloc          local(0x0006)
+IL_01DB: ldloc          local(0x0009)
+IL_01DF: stfld          {'token': '0x0400036B', 'identity': 'BoardEntryData::magnification_Hp'}
+IL_01E4: nop            None
+IL_01E5: br             {'target': 840}
+IL_01EA: ldloc          local(0x0005)
+IL_01EE: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_01F3: ldc.i4         6
+IL_01F8: ceq            None
+IL_01FA: ldc.i4.0       None
+IL_01FB: ceq            None
+IL_01FD: stloc          local(0x0010)
+IL_0201: ldloc          local(0x0010)
+IL_0205: brtrue         {'target': 618}
+IL_020A: br             {'target': 527}
+IL_020F: ldarg.0        None
+IL_0210: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_0215: stloc          local(0x0007)
+IL_0219: ldarg.0        None
+IL_021A: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_021F: ldc.i4         0
+IL_0224: ceq            None
+IL_0226: stloc          local(0x0013)
+IL_022A: ldloc          local(0x0013)
+IL_022E: brtrue         {'target': 762}
+IL_0233: br             {'target': 568}
+IL_0238: ldloc          local(0x0005)
+IL_023C: call           {'token': '0x06000607', 'identity': 'BoardEntry::GetValue'}
+IL_0241: stloc          local(0x001D)
+IL_0245: ldloc          local(0x001D)
+IL_0249: ldloc          local(0x0007)
+IL_024D: ldfld          {'token': '0x0400036D', 'identity': 'BoardEntryData::toughness'}
+IL_0252: add            None
+IL_0253: stloc          local(0x000A)
+IL_0257: ldloc          local(0x0007)
+IL_025B: ldloc          local(0x000A)
+IL_025F: stfld          {'token': '0x0400036D', 'identity': 'BoardEntryData::toughness'}
+IL_0264: nop            None
+IL_0265: br             {'target': 840}
+IL_026A: ldloc          local(0x0005)
+IL_026E: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_0273: ldc.i4         32
+IL_0278: ceq            None
+IL_027A: ldc.i4.0       None
+IL_027B: ceq            None
+IL_027D: stloc          local(0x0011)
+IL_0281: nop            None
+IL_0282: ldloc          local(0x0011)
+IL_0286: brtrue         {'target': 840}
+IL_028B: br             {'target': 656}
+IL_0290: ldarg.0        None
+IL_0291: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_0296: stloc          local(0x0008)
+IL_029A: ldarg.0        None
+IL_029B: ldfld          {'token': '0x04000369', 'identity': 'ZombieManager::boardEntryData'}
+IL_02A0: ldc.i4         0
+IL_02A5: ceq            None
+IL_02A7: stloc          local(0x0014)
+IL_02AB: ldloc          local(0x0014)
+IL_02AF: brtrue         {'target': 773}
+IL_02B4: br             {'target': 697}
+IL_02B9: ldloc          local(0x0005)
+IL_02BD: call           {'token': '0x06000607', 'identity': 'BoardEntry::GetValue'}
+IL_02C2: stloc          local(0x001F)
+IL_02C6: ldloc          local(0x001F)
+IL_02CA: ldloc          local(0x0008)
+IL_02CE: ldfld          {'token': '0x0400036E', 'identity': 'BoardEntryData::elementalResistance'}
+IL_02D3: add            None
+IL_02D4: stloc          local(0x000B)
+IL_02D8: ldloc          local(0x0008)
+IL_02DC: ldloc          local(0x000B)
+IL_02E0: stfld          {'token': '0x0400036E', 'identity': 'BoardEntryData::elementalResistance'}
+IL_02E5: nop            None
+IL_02E6: br             {'target': 840}
+IL_02EB: ldloca         local(0x0022)
+IL_02EF: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_02F4: br             {'target': 761}
+IL_02F9: ret            None
+IL_02FA: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02FF: throw          None
+IL_0300: br             {'target': 773}
+IL_0305: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_030A: throw          None
+IL_030B: br             {'target': 784}
+IL_0310: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0315: throw          None
+IL_0316: br             {'target': 795}
+IL_031B: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0320: throw          None
+IL_0321: br             {'target': 806}
+IL_0326: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_032B: throw          None
+IL_032C: ldloc          local(0x0023)
+IL_0330: throw          None
+IL_0331: br             {'target': 822}
+IL_0336: nop            None
+IL_0337: br             {'target': 833}
+IL_033C: br             {'target': 5}
+IL_0341: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0346: throw          None
+IL_0347: ret            None
+IL_0348: ldloca         local(0x0022)
+IL_034C: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0351: stloc          local(0x000C)
+IL_0355: ldloc          local(0x000C)
+IL_0359: ldc.i4.0       None
+IL_035A: ceq            None
+IL_035C: stloc          local(0x0002)
+IL_0360: ldloc          local(0x0002)
+IL_0364: brtrue         {'target': 747}
+IL_0369: br             {'target': 80}
+IL_036E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0373: throw          None
+IL_0374: br             {'target': 762}
+IL_0379: ldstr          {'token': '0x70001C14', 'identity': 'Warning: Method ends with non empty stack (-78), the output could be wrong!'}
+IL_037E: pop            None

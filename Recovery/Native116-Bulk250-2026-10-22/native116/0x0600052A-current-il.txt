@@ -1,0 +1,207 @@
+AdventureHardScreen::AddNewLevelItem
+{"token": "0x0600052A", "name": "AdventureHardScreen::AddNewLevelItem", "signature": "20010108", "rva": 442932, "max_stack": 3, "code_size": 816, "local_sig": 285213667, "locals_blob": "0720081282701280c40212814c02081d1c1282fc1215121515120d011c02020202020202020202021c1282fc0208181282fc151151011c151151011c08", "eh_count": 0, "il_sha256": "6c9e0538c564fb1a63b1f02f96cd8e4cf96f46658ff8caecb8f120aec1c7af7e"}
+IL_0000: br             {'target': 706}
+IL_0005: ldloc          local(0x0002)
+IL_0009: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_000E: stloc          local(0x0004)
+IL_0012: ldloc          local(0x0002)
+IL_0016: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_001B: ldc.i4         0
+IL_0020: ceq            None
+IL_0022: stloc          local(0x0005)
+IL_0026: ldloc          local(0x0005)
+IL_002A: brtrue         {'target': 689}
+IL_002F: br             {'target': 52}
+IL_0034: ldloc          local(0x0004)
+IL_0038: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_003D: ldc.i4         0
+IL_0042: ceq            None
+IL_0044: stloc          local(0x0012)
+IL_0048: ldloc          local(0x0012)
+IL_004C: brtrue         {'target': 633}
+IL_0051: br             {'target': 86}
+IL_0056: ldarg.0        None
+IL_0057: ldfld          {'token': '0x040006AF', 'identity': 'AdventureHardScreen::levelItems'}
+IL_005C: ldc.i4         0
+IL_0061: ceq            None
+IL_0063: stloc          local(0x000C)
+IL_0067: ldloc          local(0x000C)
+IL_006B: brtrue         {'target': 689}
+IL_0070: br             {'target': 117}
+IL_0075: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_007A: pop            None
+IL_007B: br             {'target': 727}
+IL_0080: ldloc          local(0x0018)
+IL_0084: ldc.i4         0
+IL_0089: ceq            None
+IL_008B: stloc          local(0x0014)
+IL_008F: ldloc          local(0x0014)
+IL_0093: brtrue         {'target': 711}
+IL_0098: br             {'target': 157}
+IL_009D: ldloc          local(0x0018)
+IL_00A1: ldfld          {'token': '0x04000842', 'identity': 'LevelItem_HA::level'}
+IL_00A6: ldarg          argument(0x0001)
+IL_00AA: ceq            None
+IL_00AC: ldc.i4.0       None
+IL_00AD: ceq            None
+IL_00AF: stloc          local(0x0016)
+IL_00B3: ldloc          local(0x0016)
+IL_00B7: brtrue         {'target': 727}
+IL_00BC: br             {'target': 193}
+IL_00C1: ldloc          local(0x0018)
+IL_00C5: ldloc          local(0x0004)
+IL_00C9: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_00CE: call           {'token': '0x06000633', 'identity': 'LevelItem_HA::SetState'}
+IL_00D3: ldloca         local(0x001E)
+IL_00D7: call           {'token': '0x0A000252', 'identity': 'TypeSpec:102::Dispose / sig 200001'}
+IL_00DC: br             {'target': 225}
+IL_00E1: br             {'target': 633}
+IL_00E6: ldloca         local(0x001E)
+IL_00EA: call           {'token': '0x0A000021', 'identity': 'System.ValueType::.ctor / sig 200001'}
+IL_00EF: br             {'target': 765}
+IL_00F4: ldarg.0        None
+IL_00F5: ldfld          {'token': '0x040006B0', 'identity': 'AdventureHardScreen::levelItemPrefab'}
+IL_00FA: call           {'token': '0x2B00007B', 'identity': '0x2b00007b'}
+IL_00FF: stloc          local(0x0008)
+IL_0103: ldloc          local(0x0008)
+IL_0107: ldc.i4         0
+IL_010C: ceq            None
+IL_010E: stloc          local(0x000D)
+IL_0112: ldloc          local(0x000D)
+IL_0116: brtrue         {'target': 689}
+IL_011B: br             {'target': 288}
+IL_0120: ldloc          local(0x0008)
+IL_0124: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0129: stloc          local(0x0009)
+IL_012D: ldarg.0        None
+IL_012E: ldfld          {'token': '0x040006B1', 'identity': 'AdventureHardScreen::content'}
+IL_0133: ldc.i4         0
+IL_0138: ceq            None
+IL_013A: stloc          local(0x000E)
+IL_013E: ldloc          local(0x000E)
+IL_0142: brtrue         {'target': 689}
+IL_0147: br             {'target': 332}
+IL_014C: ldarg.0        None
+IL_014D: ldfld          {'token': '0x040006B1', 'identity': 'AdventureHardScreen::content'}
+IL_0152: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0157: stloc          local(0x000A)
+IL_015B: ldloc          local(0x0009)
+IL_015F: ldc.i4         0
+IL_0164: ceq            None
+IL_0166: stloc          local(0x000F)
+IL_016A: ldloc          local(0x000F)
+IL_016E: brtrue         {'target': 689}
+IL_0173: br             {'target': 376}
+IL_0178: ldloc          local(0x0009)
+IL_017C: ldloc          local(0x000A)
+IL_0180: ldc.i4         0
+IL_0185: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_018A: ldloc          local(0x0008)
+IL_018E: ldarg.0        None
+IL_018F: stfld          {'token': '0x04000839', 'identity': 'LevelItem_HA::AdventureHardScreen'}
+IL_0194: br             {'target': 409}
+IL_0199: ldloc          local(0x0008)
+IL_019D: ldarg          argument(0x0001)
+IL_01A1: call           {'token': '0x06000631', 'identity': 'LevelItem_HA::Initialize'}
+IL_01A6: ldloc          local(0x0008)
+IL_01AA: ldloc          local(0x0004)
+IL_01AE: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_01B3: call           {'token': '0x06000633', 'identity': 'LevelItem_HA::SetState'}
+IL_01B8: br             {'target': 445}
+IL_01BD: ldarg.0        None
+IL_01BE: ldfld          {'token': '0x040006AF', 'identity': 'AdventureHardScreen::levelItems'}
+IL_01C3: stloc          local(0x000B)
+IL_01C7: ldarg.0        None
+IL_01C8: ldfld          {'token': '0x040006AF', 'identity': 'AdventureHardScreen::levelItems'}
+IL_01CD: ldc.i4         0
+IL_01D2: ceq            None
+IL_01D4: stloc          local(0x0010)
+IL_01D8: ldloc          local(0x0010)
+IL_01DC: brtrue         {'target': 689}
+IL_01E1: br             {'target': 486}
+IL_01E6: ldloc          local(0x000B)
+IL_01EA: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_01EF: ldc.i4         1
+IL_01F4: add            None
+IL_01F5: stloc          local(0x001F)
+IL_01F9: ldloc          local(0x000B)
+IL_01FD: ldloc          local(0x001F)
+IL_0201: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0206: ldloc          local(0x000B)
+IL_020A: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_020F: stloc          local(0x0007)
+IL_0213: ldloc          local(0x000B)
+IL_0217: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_021C: stloc          local(0x0006)
+IL_0220: ldloc          local(0x000B)
+IL_0224: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_0229: ldc.i4         0
+IL_022E: ceq            None
+IL_0230: stloc          local(0x0011)
+IL_0234: ldloc          local(0x0011)
+IL_0238: brtrue         {'target': 689}
+IL_023D: br             {'target': 578}
+IL_0242: ldloc          local(0x000B)
+IL_0246: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_024B: ldloc          local(0x0007)
+IL_024F: ldlen          None
+IL_0250: conv.i4        None
+IL_0251: clt            None
+IL_0253: stloc          local(0x0015)
+IL_0257: ldloc          local(0x0015)
+IL_025B: brtrue         {'target': 634}
+IL_0260: br             {'target': 613}
+IL_0265: ldarg.0        None
+IL_0266: ldfld          {'token': '0x040006AF', 'identity': 'AdventureHardScreen::levelItems'}
+IL_026B: ldloc          local(0x0008)
+IL_026F: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_0274: br             {'target': 633}
+IL_0279: ret            None
+IL_027A: ldloc          local(0x000B)
+IL_027E: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0283: ldc.i4         1
+IL_0288: add            None
+IL_0289: stloc          local(0x001A)
+IL_028D: ldloc          local(0x000B)
+IL_0291: ldloc          local(0x001A)
+IL_0295: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_029A: br             {'target': 671}
+IL_029F: ldloc          local(0x0007)
+IL_02A3: ldloc          local(0x0006)
+IL_02A7: ldloc          local(0x0008)
+IL_02AB: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_02B0: ret            None
+IL_02B1: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02B6: throw          None
+IL_02B7: br             {'target': 711}
+IL_02BC: nop            None
+IL_02BD: br             {'target': 770}
+IL_02C2: br             {'target': 777}
+IL_02C7: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02CC: throw          None
+IL_02CD: ldloc          local(0x001C)
+IL_02D1: throw          None
+IL_02D2: br             {'target': 700}
+IL_02D7: ldloca         local(0x001E)
+IL_02DB: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_02E0: stloc          local(0x0013)
+IL_02E4: ldloc          local(0x0013)
+IL_02E8: ldc.i4.0       None
+IL_02E9: ceq            None
+IL_02EB: stloc          local(0x0019)
+IL_02EF: ldloc          local(0x0019)
+IL_02F3: brtrue         {'target': 230}
+IL_02F8: br             {'target': 128}
+IL_02FD: br             {'target': 244}
+IL_0302: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0307: throw          None
+IL_0308: ret            None
+IL_0309: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_030E: stloc          local(0x0002)
+IL_0312: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_0317: ldc.i4         0
+IL_031C: ceq            None
+IL_031E: stloc          local(0x0003)
+IL_0322: ldloc          local(0x0003)
+IL_0326: brtrue         {'target': 689}
+IL_032B: br             {'target': 5}

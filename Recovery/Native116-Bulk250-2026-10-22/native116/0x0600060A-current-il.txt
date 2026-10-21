@@ -1,0 +1,266 @@
+BoardEntry::FindKey
+{"token": "0x0600060A", "name": "BoardEntry::FindKey", "signature": "00021282dc15120d011282dc0e", "rva": 533684, "max_stack": 2, "code_size": 1030, "local_sig": 285213841, "locals_blob": "07280e15120d011282dc1c1282dc02151151011c0202020202020202020202020202020202021282dc0202020202020e020e0e0e0e0e151151011c151151011c", "eh_count": 0, "il_sha256": "fbd315b3d529d2ccd6f100cf4c1f658f4765af254b69c7b1ea275cd6a1bc17df"}
+IL_0000: br             {'target': 5}
+IL_0005: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_000A: pop            None
+IL_000B: nop            None
+IL_000C: br             {'target': 992}
+IL_0011: ldloc          local(0x0003)
+IL_0015: ldc.i4         0
+IL_001A: ceq            None
+IL_001C: stloc          local(0x0006)
+IL_0020: ldloca         local(0x0027)
+IL_0024: stloc          local(0x0005)
+IL_0028: ldloc          local(0x0006)
+IL_002C: brtrue         {'target': 976}
+IL_0031: br             {'target': 54}
+IL_0036: ldloc          local(0x0003)
+IL_003A: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_003F: ldc.i4         24
+IL_0044: ceq            None
+IL_0046: stloc          local(0x001A)
+IL_004A: ldloc          local(0x001A)
+IL_004E: brtrue         {'target': 706}
+IL_0053: br             {'target': 88}
+IL_0058: ldloc          local(0x0003)
+IL_005C: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_0061: ldc.i4         25
+IL_0066: ceq            None
+IL_0068: stloc          local(0x001B)
+IL_006C: ldloc          local(0x001B)
+IL_0070: brtrue         {'target': 462}
+IL_0075: br             {'target': 122}
+IL_007A: ldloc          local(0x0003)
+IL_007E: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_0083: ldc.i4         36
+IL_0088: ceq            None
+IL_008A: stloc          local(0x001D)
+IL_008E: ldloc          local(0x001D)
+IL_0092: brtrue         {'target': 218}
+IL_0097: br             {'target': 156}
+IL_009C: ldloc          local(0x0003)
+IL_00A0: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_00A5: ldarg          argument(0x0001)
+IL_00A9: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_00AE: stloc          local(0x0007)
+IL_00B2: ldloc          local(0x0007)
+IL_00B6: ldc.i4.0       None
+IL_00B7: ceq            None
+IL_00B9: stloc          local(0x0011)
+IL_00BD: nop            None
+IL_00BE: ldloc          local(0x0011)
+IL_00C2: brtrue         {'target': 992}
+IL_00C7: br             {'target': 204}
+IL_00CC: ldloca         local(0x0027)
+IL_00D0: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_00D5: br             {'target': 950}
+IL_00DA: ldloc          local(0x0003)
+IL_00DE: ldfld          {'token': '0x040007FC', 'identity': 'BoardEntry::must'}
+IL_00E3: ldc.i4         0
+IL_00E8: ceq            None
+IL_00EA: ldc.i4.0       None
+IL_00EB: ceq            None
+IL_00ED: stloc          local(0x0020)
+IL_00F1: ldloc          local(0x0020)
+IL_00F5: brtrue         {'target': 377}
+IL_00FA: br             {'target': 255}
+IL_00FF: ldloc          local(0x0003)
+IL_0103: ldfld          {'token': '0x040007FD', 'identity': 'BoardEntry::select'}
+IL_0108: ldc.i4         0
+IL_010D: ceq            None
+IL_010F: ldc.i4.0       None
+IL_0110: ceq            None
+IL_0112: stloc          local(0x000E)
+IL_0116: ldloc          local(0x000E)
+IL_011A: brtrue         {'target': 377}
+IL_011F: br             {'target': 292}
+IL_0124: ldloc          local(0x0003)
+IL_0128: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_012D: ldstr          {'token': '0x7001B7B4', 'identity': '_CC'}
+IL_0132: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0137: stloc          local(0x0025)
+IL_013B: ldloc          local(0x0025)
+IL_013F: ldarg          argument(0x0001)
+IL_0143: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_0148: stloc          local(0x0008)
+IL_014C: br             {'target': 337}
+IL_0151: ldloc          local(0x0008)
+IL_0155: ldc.i4.0       None
+IL_0156: ceq            None
+IL_0158: stloc          local(0x0012)
+IL_015C: nop            None
+IL_015D: ldloc          local(0x0012)
+IL_0161: brtrue         {'target': 992}
+IL_0166: br             {'target': 363}
+IL_016B: ldloca         local(0x0027)
+IL_016F: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_0174: br             {'target': 950}
+IL_0179: ldloc          local(0x0003)
+IL_017D: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_0182: ldstr          {'token': '0x7001B7BC', 'identity': '_OC'}
+IL_0187: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_018C: stloc          local(0x0023)
+IL_0190: ldloc          local(0x0023)
+IL_0194: ldarg          argument(0x0001)
+IL_0198: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_019D: stloc          local(0x0009)
+IL_01A1: br             {'target': 422}
+IL_01A6: ldloc          local(0x0009)
+IL_01AA: ldc.i4.0       None
+IL_01AB: ceq            None
+IL_01AD: stloc          local(0x0013)
+IL_01B1: nop            None
+IL_01B2: ldloc          local(0x0013)
+IL_01B6: brtrue         {'target': 992}
+IL_01BB: br             {'target': 448}
+IL_01C0: ldloca         local(0x0027)
+IL_01C4: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_01C9: br             {'target': 950}
+IL_01CE: ldloc          local(0x0003)
+IL_01D2: ldfld          {'token': '0x040007FC', 'identity': 'BoardEntry::must'}
+IL_01D7: ldc.i4         0
+IL_01DC: ceq            None
+IL_01DE: ldc.i4.0       None
+IL_01DF: ceq            None
+IL_01E1: stloc          local(0x001E)
+IL_01E5: ldloc          local(0x001E)
+IL_01E9: brtrue         {'target': 621}
+IL_01EE: br             {'target': 499}
+IL_01F3: ldloc          local(0x0003)
+IL_01F7: ldfld          {'token': '0x040007FD', 'identity': 'BoardEntry::select'}
+IL_01FC: ldc.i4         0
+IL_0201: ceq            None
+IL_0203: ldc.i4.0       None
+IL_0204: ceq            None
+IL_0206: stloc          local(0x000F)
+IL_020A: ldloc          local(0x000F)
+IL_020E: brtrue         {'target': 621}
+IL_0213: br             {'target': 536}
+IL_0218: ldloc          local(0x0003)
+IL_021C: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_0221: ldstr          {'token': '0x7001B7C4', 'identity': '_CE'}
+IL_0226: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_022B: stloc          local(0x0024)
+IL_022F: ldloc          local(0x0024)
+IL_0233: ldarg          argument(0x0001)
+IL_0237: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_023C: stloc          local(0x000A)
+IL_0240: br             {'target': 581}
+IL_0245: ldloc          local(0x000A)
+IL_0249: ldc.i4.0       None
+IL_024A: ceq            None
+IL_024C: stloc          local(0x0014)
+IL_0250: nop            None
+IL_0251: ldloc          local(0x0014)
+IL_0255: brtrue         {'target': 992}
+IL_025A: br             {'target': 607}
+IL_025F: ldloca         local(0x0027)
+IL_0263: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_0268: br             {'target': 950}
+IL_026D: ldloc          local(0x0003)
+IL_0271: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_0276: ldstr          {'token': '0x7001B7CC', 'identity': '_OE'}
+IL_027B: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0280: stloc          local(0x0021)
+IL_0284: ldloc          local(0x0021)
+IL_0288: ldarg          argument(0x0001)
+IL_028C: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_0291: stloc          local(0x000B)
+IL_0295: br             {'target': 666}
+IL_029A: ldloc          local(0x000B)
+IL_029E: ldc.i4.0       None
+IL_029F: ceq            None
+IL_02A1: stloc          local(0x0015)
+IL_02A5: nop            None
+IL_02A6: ldloc          local(0x0015)
+IL_02AA: brtrue         {'target': 992}
+IL_02AF: br             {'target': 692}
+IL_02B4: ldloca         local(0x0027)
+IL_02B8: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_02BD: br             {'target': 950}
+IL_02C2: ldloc          local(0x0003)
+IL_02C6: ldfld          {'token': '0x040007FC', 'identity': 'BoardEntry::must'}
+IL_02CB: ldc.i4         0
+IL_02D0: ceq            None
+IL_02D2: ldc.i4.0       None
+IL_02D3: ceq            None
+IL_02D5: stloc          local(0x001C)
+IL_02D9: ldloc          local(0x001C)
+IL_02DD: brtrue         {'target': 865}
+IL_02E2: br             {'target': 743}
+IL_02E7: ldloc          local(0x0003)
+IL_02EB: ldfld          {'token': '0x040007FD', 'identity': 'BoardEntry::select'}
+IL_02F0: ldc.i4         0
+IL_02F5: ceq            None
+IL_02F7: ldc.i4.0       None
+IL_02F8: ceq            None
+IL_02FA: stloc          local(0x0010)
+IL_02FE: ldloc          local(0x0010)
+IL_0302: brtrue         {'target': 865}
+IL_0307: br             {'target': 780}
+IL_030C: ldloc          local(0x0003)
+IL_0310: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_0315: ldstr          {'token': '0x7001B7D4', 'identity': '_CD'}
+IL_031A: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_031F: stloc          local(0x0022)
+IL_0323: ldloc          local(0x0022)
+IL_0327: ldarg          argument(0x0001)
+IL_032B: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_0330: stloc          local(0x000C)
+IL_0334: br             {'target': 825}
+IL_0339: ldloc          local(0x000C)
+IL_033D: ldc.i4.0       None
+IL_033E: ceq            None
+IL_0340: stloc          local(0x0016)
+IL_0344: nop            None
+IL_0345: ldloc          local(0x0016)
+IL_0349: brtrue         {'target': 992}
+IL_034E: br             {'target': 851}
+IL_0353: ldloca         local(0x0027)
+IL_0357: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_035C: br             {'target': 950}
+IL_0361: ldloc          local(0x0003)
+IL_0365: ldfld          {'token': '0x040007FE', 'identity': 'BoardEntry::key'}
+IL_036A: ldstr          {'token': '0x7001B7DC', 'identity': '_OD'}
+IL_036F: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0374: stloc          local(0x001F)
+IL_0378: ldloc          local(0x001F)
+IL_037C: ldarg          argument(0x0001)
+IL_0380: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_0385: stloc          local(0x000D)
+IL_0389: br             {'target': 910}
+IL_038E: ldloc          local(0x000D)
+IL_0392: ldc.i4.0       None
+IL_0393: ceq            None
+IL_0395: stloc          local(0x0017)
+IL_0399: nop            None
+IL_039A: ldloc          local(0x0017)
+IL_039E: brtrue         {'target': 992}
+IL_03A3: br             {'target': 936}
+IL_03A8: ldloca         local(0x0027)
+IL_03AC: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_03B1: br             {'target': 950}
+IL_03B6: ldloc          local(0x0003)
+IL_03BA: ret            None
+IL_03BB: ldloca         local(0x0027)
+IL_03BF: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_03C4: br             {'target': 969}
+IL_03C9: ldnull         None
+IL_03CA: ret            None
+IL_03CB: ldloc          local(0x0018)
+IL_03CF: ret            None
+IL_03D0: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03D5: throw          None
+IL_03D6: ldloc          local(0x0005)
+IL_03DA: throw          None
+IL_03DB: br             {'target': 971}
+IL_03E0: ldloca         local(0x0027)
+IL_03E4: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_03E9: stloc          local(0x0004)
+IL_03ED: ldloc          local(0x0004)
+IL_03F1: ldc.i4.0       None
+IL_03F2: ceq            None
+IL_03F4: stloc          local(0x0019)
+IL_03F8: ldloc          local(0x0019)
+IL_03FC: brtrue         {'target': 955}
+IL_0401: br             {'target': 17}

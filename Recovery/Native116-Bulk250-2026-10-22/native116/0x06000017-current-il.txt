@@ -1,0 +1,145 @@
+Admin_system2_boardEdior::CreateDevicePreviews
+{"token": "0x06000017", "name": "Admin_system2_boardEdior::CreateDevicePreviews", "signature": "200001", "rva": 15024, "max_stack": 3, "code_size": 542, "local_sig": 285212691, "locals_blob": "0715120c1280e01c1280f8180215120d011c0202121c021215021215021d1c08151151011c151151011c121c08", "eh_count": 0, "il_sha256": "08c679c986b9b4003b1d9b781733ce8ae9cd52a35f684cd988cdfa0997e5d2d5"}
+IL_0000: br             {'target': 476}
+IL_0005: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_000A: pop            None
+IL_000B: ldc.i4.0       None
+IL_000C: conv.i         None
+IL_000D: stloc          local(0x0004)
+IL_0011: br             {'target': 498}
+IL_0016: br             {'target': 27}
+IL_001B: ldarg.0        None
+IL_001C: ldfld          {'token': '0x0400001C', 'identity': 'Admin_system2_boardEdior::device_BoardEditor_prefab'}
+IL_0021: call           {'token': '0x2B000006', 'identity': '0x2b000006'}
+IL_0026: stloc          local(0x0009)
+IL_002A: ldloc          local(0x0009)
+IL_002E: ldc.i4         0
+IL_0033: ceq            None
+IL_0035: stloc          local(0x000A)
+IL_0039: ldloc          local(0x000A)
+IL_003D: brtrue         {'target': 454}
+IL_0042: br             {'target': 71}
+IL_0047: ldloc          local(0x0009)
+IL_004B: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0050: stloc          local(0x000B)
+IL_0054: ldarg.0        None
+IL_0055: ldfld          {'token': '0x04000015', 'identity': 'Admin_system2_boardEdior::preDevices_Content'}
+IL_005A: ldc.i4         0
+IL_005F: ceq            None
+IL_0061: stloc          local(0x000C)
+IL_0065: ldloc          local(0x000C)
+IL_0069: brtrue         {'target': 443}
+IL_006E: br             {'target': 115}
+IL_0073: ldarg.0        None
+IL_0074: ldfld          {'token': '0x04000015', 'identity': 'Admin_system2_boardEdior::preDevices_Content'}
+IL_0079: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_007E: stloc          local(0x000D)
+IL_0082: ldloc          local(0x000B)
+IL_0086: ldc.i4         0
+IL_008B: ceq            None
+IL_008D: stloc          local(0x000E)
+IL_0091: ldloc          local(0x000E)
+IL_0095: brtrue         {'target': 432}
+IL_009A: br             {'target': 159}
+IL_009F: ldloc          local(0x000B)
+IL_00A3: ldloc          local(0x000D)
+IL_00A7: ldc.i4         0
+IL_00AC: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_00B1: ldloc          local(0x0009)
+IL_00B5: ldarg.0        None
+IL_00B6: stfld          {'token': '0x04000034', 'identity': 'Device_boardEditor::boardEdior'}
+IL_00BB: br             {'target': 192}
+IL_00C0: ldloc          local(0x0009)
+IL_00C4: ldloc          local(0x0003)
+IL_00C8: stfld          {'token': '0x04000035', 'identity': 'Device_boardEditor::preDevice'}
+IL_00CD: ldloc          local(0x0009)
+IL_00D1: call           {'token': '0x06000039', 'identity': 'Device_boardEditor::LoadData'}
+IL_00D6: br             {'target': 219}
+IL_00DB: ldarg.0        None
+IL_00DC: ldfld          {'token': '0x0400001A', 'identity': 'Admin_system2_boardEdior::device_BoardEditors'}
+IL_00E1: stloc          local(0x0006)
+IL_00E5: br             {'target': 234}
+IL_00EA: ldloc          local(0x0006)
+IL_00EE: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_00F3: ldc.i4         1
+IL_00F8: add            None
+IL_00F9: stloc          local(0x0014)
+IL_00FD: ldloc          local(0x0006)
+IL_0101: ldloc          local(0x0014)
+IL_0105: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_010A: ldloc          local(0x0006)
+IL_010E: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_0113: stloc          local(0x000F)
+IL_0117: ldloc          local(0x0006)
+IL_011B: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0120: stloc          local(0x0004)
+IL_0124: br             {'target': 297}
+IL_0129: ldloc          local(0x0006)
+IL_012D: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0132: ldloc          local(0x000F)
+IL_0136: ldlen          None
+IL_0137: conv.i4        None
+IL_0138: clt            None
+IL_013A: stloc          local(0x0007)
+IL_013E: ldloc          local(0x0007)
+IL_0142: brtrue         {'target': 357}
+IL_0147: br             {'target': 332}
+IL_014C: ldloc          local(0x0006)
+IL_0150: ldloc          local(0x0009)
+IL_0154: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_0159: nop            None
+IL_015A: ldc.i4.0       None
+IL_015B: conv.i         None
+IL_015C: stloc          local(0x0004)
+IL_0160: br             {'target': 498}
+IL_0165: ldloc          local(0x0006)
+IL_0169: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_016E: ldc.i4         1
+IL_0173: add            None
+IL_0174: stloc          local(0x0010)
+IL_0178: ldloc          local(0x0006)
+IL_017C: ldloc          local(0x0010)
+IL_0180: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0185: br             {'target': 394}
+IL_018A: ldloc          local(0x000F)
+IL_018E: ldloc          local(0x0004)
+IL_0192: ldloc          local(0x0009)
+IL_0196: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_019B: nop            None
+IL_019C: br             {'target': 498}
+IL_01A1: ldloca         local(0x0012)
+IL_01A5: call           {'token': '0x0A000034', 'identity': 'TypeSpec:7::Dispose / sig 200001'}
+IL_01AA: br             {'target': 431}
+IL_01AF: ret            None
+IL_01B0: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01B5: throw          None
+IL_01B6: br             {'target': 443}
+IL_01BB: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01C0: throw          None
+IL_01C1: br             {'target': 454}
+IL_01C6: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01CB: throw          None
+IL_01CC: ldloc          local(0x0013)
+IL_01D0: throw          None
+IL_01D1: br             {'target': 470}
+IL_01D6: nop            None
+IL_01D7: br             {'target': 491}
+IL_01DC: ldarg.0        None
+IL_01DD: ldfld          {'token': '0x0400000D', 'identity': 'Admin_system2_boardEdior::boardConfig'}
+IL_01E2: stloc          local(0x0001)
+IL_01E6: br             {'target': 5}
+IL_01EB: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_01F0: throw          None
+IL_01F1: ret            None
+IL_01F2: ldloca         local(0x0012)
+IL_01F6: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_01FB: stloc          local(0x0008)
+IL_01FF: ldloc          local(0x0008)
+IL_0203: ldc.i4.0       None
+IL_0204: ceq            None
+IL_0206: stloc          local(0x0005)
+IL_020A: ldloc          local(0x0005)
+IL_020E: brtrue         {'target': 417}
+IL_0213: br             {'target': 22}
+IL_0218: ldstr          {'token': '0x700005CF', 'identity': 'Warning: Method ends with non empty stack (-60), the output could be wrong!'}
+IL_021D: pop            None

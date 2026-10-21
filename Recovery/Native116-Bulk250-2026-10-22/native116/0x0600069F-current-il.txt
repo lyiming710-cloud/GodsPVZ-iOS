@@ -1,0 +1,183 @@
+RescueScreen::AddNewLevelItem
+{"token": "0x0600069F", "name": "RescueScreen::AddNewLevelItem", "signature": "20010108", "rva": 566220, "max_stack": 4, "code_size": 702, "local_sig": 285213948, "locals_blob": "071e081c021c1d1c081282f81215121515120d011c0202020202021282f8020202021c020e08128320151151011c151151011c1282f808", "eh_count": 0, "il_sha256": "49f550eee83dc316776498507f954884b27402bf8c605f70bf2bfbe59ec80412"}
+IL_0000: br             {'target': 605}
+IL_0005: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_000A: pop            None
+IL_000B: br             {'target': 652}
+IL_0010: ldloc          local(0x0010)
+IL_0014: ldc.i4         0
+IL_0019: ceq            None
+IL_001B: stloc          local(0x0012)
+IL_001F: ldloc          local(0x0012)
+IL_0023: brtrue         {'target': 636}
+IL_0028: br             {'target': 45}
+IL_002D: ldloc          local(0x0010)
+IL_0031: ldfld          {'token': '0x0400082F', 'identity': 'LevelItem::level'}
+IL_0036: ldarg          argument(0x0001)
+IL_003A: ceq            None
+IL_003C: ldc.i4.0       None
+IL_003D: ceq            None
+IL_003F: stloc          local(0x0013)
+IL_0043: ldloc          local(0x0013)
+IL_0047: brtrue         {'target': 652}
+IL_004C: br             {'target': 81}
+IL_0051: ldloc          local(0x0010)
+IL_0055: call           {'token': '0x0600062C', 'identity': 'LevelItem::SetState'}
+IL_005A: ldstr          {'token': '0x70000331', 'identity': 'Method not found @180302170'}
+IL_005F: pop            None
+IL_0060: br             {'target': 101}
+IL_0065: br             {'target': 532}
+IL_006A: ldstr          {'token': '0x70000331', 'identity': 'Method not found @180302170'}
+IL_006F: pop            None
+IL_0070: br             {'target': 690}
+IL_0075: ldarg.0        None
+IL_0076: ldfld          {'token': '0x040008A7', 'identity': 'RescueScreen::levelItem'}
+IL_007B: call           {'token': '0x2B00008E', 'identity': '0x2b00008e'}
+IL_0080: stloc          local(0x0006)
+IL_0084: ldloc          local(0x0006)
+IL_0088: ldc.i4         0
+IL_008D: ceq            None
+IL_008F: stloc          local(0x000A)
+IL_0093: ldloc          local(0x000A)
+IL_0097: brtrue         {'target': 588}
+IL_009C: br             {'target': 161}
+IL_00A1: ldloc          local(0x0006)
+IL_00A5: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_00AA: stloc          local(0x0007)
+IL_00AE: ldarg.0        None
+IL_00AF: ldfld          {'token': '0x040008A6', 'identity': 'RescueScreen::content'}
+IL_00B4: ldc.i4         0
+IL_00B9: ceq            None
+IL_00BB: stloc          local(0x000B)
+IL_00BF: ldloc          local(0x000B)
+IL_00C3: brtrue         {'target': 588}
+IL_00C8: br             {'target': 205}
+IL_00CD: ldarg.0        None
+IL_00CE: ldfld          {'token': '0x040008A6', 'identity': 'RescueScreen::content'}
+IL_00D3: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00D8: stloc          local(0x0008)
+IL_00DC: ldloc          local(0x0007)
+IL_00E0: ldc.i4         0
+IL_00E5: ceq            None
+IL_00E7: stloc          local(0x000C)
+IL_00EB: ldloc          local(0x000C)
+IL_00EF: brtrue         {'target': 588}
+IL_00F4: br             {'target': 249}
+IL_00F9: ldloc          local(0x0007)
+IL_00FD: ldloc          local(0x0008)
+IL_0101: ldc.i4         0
+IL_0106: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_010B: ldarg.0        None
+IL_010C: ldfld          {'token': '0x040008A9', 'identity': 'RescueScreen::levelNames'}
+IL_0111: ldc.i4         0
+IL_0116: ceq            None
+IL_0118: stloc          local(0x000D)
+IL_011C: ldloc          local(0x000D)
+IL_0120: brtrue         {'target': 588}
+IL_0125: br             {'target': 298}
+IL_012A: ldarg.0        None
+IL_012B: ldfld          {'token': '0x040008A9', 'identity': 'RescueScreen::levelNames'}
+IL_0130: ldarg          argument(0x0001)
+IL_0134: call           {'token': '0x0A000293', 'identity': 'TypeSpec:92::get_Item / sig 2001130008'}
+IL_0139: stloc          local(0x0017)
+IL_013D: ldloc          local(0x0006)
+IL_0141: ldarg          argument(0x0001)
+IL_0145: ldc.i4         1
+IL_014A: ldloc          local(0x0017)
+IL_014E: call           {'token': '0x0600062B', 'identity': 'LevelItem::Initialize'}
+IL_0153: br             {'target': 344}
+IL_0158: ldarg.0        None
+IL_0159: ldfld          {'token': '0x040008A8', 'identity': 'RescueScreen::levelItems'}
+IL_015E: stloc          local(0x0009)
+IL_0162: ldarg.0        None
+IL_0163: ldfld          {'token': '0x040008A8', 'identity': 'RescueScreen::levelItems'}
+IL_0168: ldc.i4         0
+IL_016D: ceq            None
+IL_016F: stloc          local(0x000E)
+IL_0173: ldloc          local(0x000E)
+IL_0177: brtrue         {'target': 588}
+IL_017C: br             {'target': 385}
+IL_0181: ldloc          local(0x0009)
+IL_0185: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_018A: ldc.i4         1
+IL_018F: add            None
+IL_0190: stloc          local(0x001D)
+IL_0194: ldloc          local(0x0009)
+IL_0198: ldloc          local(0x001D)
+IL_019C: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_01A1: ldloc          local(0x0009)
+IL_01A5: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_01AA: stloc          local(0x0004)
+IL_01AE: ldloc          local(0x0009)
+IL_01B2: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01B7: stloc          local(0x0005)
+IL_01BB: ldloc          local(0x0009)
+IL_01BF: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_01C4: ldc.i4         0
+IL_01C9: ceq            None
+IL_01CB: stloc          local(0x000F)
+IL_01CF: ldloc          local(0x000F)
+IL_01D3: brtrue         {'target': 588}
+IL_01D8: br             {'target': 477}
+IL_01DD: ldloc          local(0x0009)
+IL_01E1: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_01E6: ldloc          local(0x0004)
+IL_01EA: ldlen          None
+IL_01EB: conv.i4        None
+IL_01EC: clt            None
+IL_01EE: stloc          local(0x0016)
+IL_01F2: ldloc          local(0x0016)
+IL_01F6: brtrue         {'target': 533}
+IL_01FB: br             {'target': 512}
+IL_0200: ldarg.0        None
+IL_0201: ldfld          {'token': '0x040008A8', 'identity': 'RescueScreen::levelItems'}
+IL_0206: ldloc          local(0x0006)
+IL_020A: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_020F: br             {'target': 532}
+IL_0214: ret            None
+IL_0215: ldloc          local(0x0009)
+IL_0219: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_021E: ldc.i4         1
+IL_0223: add            None
+IL_0224: stloc          local(0x0018)
+IL_0228: ldloc          local(0x0009)
+IL_022C: ldloc          local(0x0018)
+IL_0230: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0235: br             {'target': 570}
+IL_023A: ldloc          local(0x0004)
+IL_023E: ldloc          local(0x0005)
+IL_0242: ldloc          local(0x0006)
+IL_0246: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_024B: ret            None
+IL_024C: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0251: throw          None
+IL_0252: br             {'target': 636}
+IL_0257: nop            None
+IL_0258: br             {'target': 695}
+IL_025D: ldarg.0        None
+IL_025E: ldfld          {'token': '0x040008A8', 'identity': 'RescueScreen::levelItems'}
+IL_0263: ldc.i4         0
+IL_0268: ceq            None
+IL_026A: stloc          local(0x0002)
+IL_026E: ldloc          local(0x0002)
+IL_0272: brtrue         {'target': 588}
+IL_0277: br             {'target': 5}
+IL_027C: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0281: throw          None
+IL_0282: ldloc          local(0x001C)
+IL_0286: throw          None
+IL_0287: br             {'target': 599}
+IL_028C: ldloca         local(0x001B)
+IL_0290: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0295: stloc          local(0x0011)
+IL_0299: ldloc          local(0x0011)
+IL_029D: ldc.i4.0       None
+IL_029E: ceq            None
+IL_02A0: stloc          local(0x0014)
+IL_02A4: ldloc          local(0x0014)
+IL_02A8: brtrue         {'target': 106}
+IL_02AD: br             {'target': 16}
+IL_02B2: br             {'target': 117}
+IL_02B7: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_02BC: throw          None
+IL_02BD: ret            None

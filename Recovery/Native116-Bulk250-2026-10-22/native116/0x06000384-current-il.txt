@@ -1,0 +1,216 @@
+Plant::PC_NutknightTaunt
+{"token": "0x06000384", "name": "Plant::PC_NutknightTaunt", "signature": "200001", "rva": 288740, "max_stack": 4, "code_size": 806, "local_sig": 285213379, "locals_blob": "07281c1c1c1c1c1281e01209081281a41215114d1281a4128178021280e01c1282101c180202020202021c021c020202020212819c1c180c151151011c151151011c151151011c", "eh_count": 0, "il_sha256": "fe0ca867b65901af93c2721fbf88fceccbcbb19e1f373a7ca397396dfe5deaf1"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0001)
+IL_0009: pop            None
+IL_000A: ldloc          local(0x0002)
+IL_000E: pop            None
+IL_000F: ldloc          local(0x0003)
+IL_0013: pop            None
+IL_0014: ldloc          local(0x0004)
+IL_0018: pop            None
+IL_0019: br             {'target': 710}
+IL_001E: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_0023: ldc.i4         16
+IL_0028: call           {'token': '0x060001EA', 'identity': 'ParticlesManager::CreatNewParticle'}
+IL_002D: stloc          local(0x0006)
+IL_0031: br             {'target': 54}
+IL_0036: ldloc          local(0x0006)
+IL_003A: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_003F: stloc          local(0x0009)
+IL_0043: ldarg.0        None
+IL_0044: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_0049: stloc          local(0x0008)
+IL_004D: br             {'target': 82}
+IL_0052: ldarg.0        None
+IL_0053: ldfld          {'token': '0x040004A0', 'identity': 'Plant::GridX'}
+IL_0058: ldc.i4         1
+IL_005D: add            None
+IL_005E: stloc          local(0x0007)
+IL_0062: ldloc          local(0x0008)
+IL_0066: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_006B: ldloc          local(0x0007)
+IL_006F: ldarg.0        None
+IL_0070: ldfld          {'token': '0x040004A1', 'identity': 'Plant::GridY'}
+IL_0075: call           {'token': '0x0600015C', 'identity': 'BoardConfig::GetGridCenterPosition'}
+IL_007A: stloc          local(0x000A)
+IL_007E: br             {'target': 131}
+IL_0083: nop            None
+IL_0084: ldloc          local(0x0009)
+IL_0088: ldloca         local(0x0024)
+IL_008C: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0091: ldarg.0        None
+IL_0092: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_0097: stloc          local(0x000B)
+IL_009B: br             {'target': 160}
+IL_00A0: ldloc          local(0x000B)
+IL_00A4: ldfld          {'token': '0x040003D5', 'identity': 'Board::zombieManager'}
+IL_00A9: stloc          local(0x000C)
+IL_00AD: br             {'target': 178}
+IL_00B2: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00B7: pop            None
+IL_00B8: nop            None
+IL_00B9: br             {'target': 722}
+IL_00BE: ldloc          local(0x0010)
+IL_00C2: ldc.i4         0
+IL_00C7: ceq            None
+IL_00C9: stloc          local(0x001D)
+IL_00CD: ldloca         local(0x0026)
+IL_00D1: stloc          local(0x0027)
+IL_00D5: ldloc          local(0x001D)
+IL_00D9: brtrue         {'target': 688}
+IL_00DE: br             {'target': 227}
+IL_00E3: ldloc          local(0x0010)
+IL_00E7: call           {'token': '0x06000431', 'identity': 'Zombie::CanAttacked'}
+IL_00EC: stloc          local(0x0017)
+IL_00F0: ldloc          local(0x0017)
+IL_00F4: ldc.i4.0       None
+IL_00F5: ceq            None
+IL_00F7: stloc          local(0x0016)
+IL_00FB: ldloc          local(0x0016)
+IL_00FF: brtrue         {'target': 722}
+IL_0104: br             {'target': 265}
+IL_0109: ldloc          local(0x0010)
+IL_010D: ldc.i4         0
+IL_0112: ceq            None
+IL_0114: stloc          local(0x001E)
+IL_0118: ldloc          local(0x001E)
+IL_011C: brtrue         {'target': 677}
+IL_0121: br             {'target': 294}
+IL_0126: ldloc          local(0x0010)
+IL_012A: call           {'token': '0x06000417', 'identity': 'Zombie::Immune_guidance'}
+IL_012F: stloc          local(0x0018)
+IL_0133: ldloc          local(0x0018)
+IL_0137: brtrue         {'target': 722}
+IL_013C: br             {'target': 321}
+IL_0141: ldloc          local(0x0010)
+IL_0145: ldfld          {'token': '0x040005AB', 'identity': 'Zombie::gridX'}
+IL_014A: ldarg.0        None
+IL_014B: ldfld          {'token': '0x040004A0', 'identity': 'Plant::GridX'}
+IL_0150: clt            None
+IL_0152: stloc          local(0x0013)
+IL_0156: ldloc          local(0x0013)
+IL_015A: brtrue         {'target': 722}
+IL_015F: br             {'target': 356}
+IL_0164: ldloc          local(0x0010)
+IL_0168: ldfld          {'token': '0x040005AB', 'identity': 'Zombie::gridX'}
+IL_016D: ldarg.0        None
+IL_016E: ldfld          {'token': '0x040004A0', 'identity': 'Plant::GridX'}
+IL_0173: sub            None
+IL_0174: stloc          local(0x0019)
+IL_0178: ldloc          local(0x0019)
+IL_017C: ldc.i4         2
+IL_0181: cgt            None
+IL_0183: stloc          local(0x0014)
+IL_0187: ldloc          local(0x0014)
+IL_018B: brtrue         {'target': 722}
+IL_0190: br             {'target': 405}
+IL_0195: ldtoken        {'token': '0x01000025', 'identity': 'System.Math'}
+IL_019A: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_019F: stloc          local(0x0012)
+IL_01A3: br             {'target': 424}
+IL_01A8: ldloc          local(0x0010)
+IL_01AC: ldfld          {'token': '0x040005AC', 'identity': 'Zombie::gridY'}
+IL_01B1: ldarg.0        None
+IL_01B2: ldfld          {'token': '0x040004A1', 'identity': 'Plant::GridY'}
+IL_01B7: sub            None
+IL_01B8: stloc          local(0x0011)
+IL_01BC: ldloc          local(0x0011)
+IL_01C0: neg            None
+IL_01C1: stloc          local(0x001B)
+IL_01C5: ldstr          {'token': '0x7000DC7C', 'identity': 'Unmanaged memory load: [v343 @ rcx_v18 (Il2CppClass<System.Math>)+E0]'}
+IL_01CA: pop            None
+IL_01CB: ldc.i4.0       None
+IL_01CC: conv.i         None
+IL_01CD: ldc.i4         0
+IL_01D2: clt            None
+IL_01D4: ldc.i4.0       None
+IL_01D5: ceq            None
+IL_01D7: stloc          local(0x001F)
+IL_01DB: ldloc          local(0x001F)
+IL_01DF: brtrue         {'target': 760}
+IL_01E4: br             {'target': 489}
+IL_01E9: ldloc          local(0x0011)
+IL_01ED: stloc          local(0x001B)
+IL_01F1: br             {'target': 760}
+IL_01F6: ldarg.0        None
+IL_01F7: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_01FC: ldc.i4         0
+IL_0201: ceq            None
+IL_0203: stloc          local(0x0020)
+IL_0207: ldtoken        {'token': '0x01000025', 'identity': 'System.Math'}
+IL_020C: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0211: stloc          local(0x0027)
+IL_0215: ldloc          local(0x0020)
+IL_0219: brtrue         {'target': 789}
+IL_021E: br             {'target': 547}
+IL_0223: ldarg.0        None
+IL_0224: ldfld          {'token': '0x040004A0', 'identity': 'Plant::GridX'}
+IL_0229: ldarg.0        None
+IL_022A: ldfld          {'token': '0x040004A1', 'identity': 'Plant::GridY'}
+IL_022F: ldloc          local(0x0010)
+IL_0233: ldfld          {'token': '0x040005F6', 'identity': 'Zombie::waitingTime'}
+IL_0238: ldloc          local(0x000E)
+IL_023C: newobj         {'token': '0x060002A4', 'identity': 'EnemyPath::.ctor'}
+IL_0241: stloc          local(0x0021)
+IL_0245: nop            None
+IL_0246: br             {'target': 587}
+IL_024B: ldloc          local(0x0021)
+IL_024F: ldc.i4         1
+IL_0254: stfld          {'token': '0x040003AB', 'identity': 'EnemyPath::original'}
+IL_0259: ldloc          local(0x0021)
+IL_025D: ldarg.0        None
+IL_025E: stfld          {'token': '0x040003AD', 'identity': 'EnemyPath::plant'}
+IL_0263: ldloc          local(0x0010)
+IL_0267: ldc.r4         0.009999999776482582
+IL_026C: stfld          {'token': '0x040005F6', 'identity': 'Zombie::waitingTime'}
+IL_0271: ldloc          local(0x0010)
+IL_0275: ldloc          local(0x0021)
+IL_0279: call           {'token': '0x06000463', 'identity': 'Zombie::InsertPassNode_front'}
+IL_027E: br             {'target': 643}
+IL_0283: ldloc          local(0x0010)
+IL_0287: call           {'token': '0x0600046A', 'identity': 'Zombie::Path_Finding'}
+IL_028C: stloc          local(0x001A)
+IL_0290: nop            None
+IL_0291: br             {'target': 722}
+IL_0296: ldloca         local(0x0026)
+IL_029A: call           {'token': '0x0A00015E', 'identity': 'TypeSpec:46::Dispose / sig 200001'}
+IL_029F: br             {'target': 676}
+IL_02A4: ret            None
+IL_02A5: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02AA: throw          None
+IL_02AB: br             {'target': 688}
+IL_02B0: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02B5: throw          None
+IL_02B6: ldloc          local(0x0027)
+IL_02BA: throw          None
+IL_02BB: br             {'target': 704}
+IL_02C0: nop            None
+IL_02C1: br             {'target': 715}
+IL_02C6: br             {'target': 30}
+IL_02CB: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02D0: throw          None
+IL_02D1: ret            None
+IL_02D2: ldloca         local(0x0026)
+IL_02D6: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_02DB: stloc          local(0x001C)
+IL_02DF: ldloc          local(0x001C)
+IL_02E3: ldc.i4.0       None
+IL_02E4: ceq            None
+IL_02E6: stloc          local(0x000D)
+IL_02EA: ldloc          local(0x000D)
+IL_02EE: brtrue         {'target': 662}
+IL_02F3: br             {'target': 190}
+IL_02F8: ldloc          local(0x001B)
+IL_02FC: ldc.i4         1
+IL_0301: cgt            None
+IL_0303: stloc          local(0x0015)
+IL_0307: ldloc          local(0x0015)
+IL_030B: brtrue         {'target': 722}
+IL_0310: br             {'target': 502}
+IL_0315: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_031A: throw          None
+IL_031B: br             {'target': 677}
+IL_0320: ldstr          {'token': '0x7000BB7B', 'identity': 'Warning: Method ends with non empty stack (-90), the output could be wrong!'}
+IL_0325: pop            None
