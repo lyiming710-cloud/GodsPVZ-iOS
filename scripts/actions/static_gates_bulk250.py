@@ -399,7 +399,7 @@ def audit_isolation_bulk250(parent_bytes: bytes, cand_bytes: bytes, body_targets
             for rid, exp_ts_hex, exp_meaning in [
                 (174, "1d1180dc", "ChallengeType[] (TypeDef 0x02000037)"),
                 (175, "151151011282e4", "System.Collections.Generic.List<EntrySelecter_Entry>/Enumerator (TypeDef 0x020000B9)"),
-                (176, "151151011281e8", "System.Collections.Generic.List<LevelItem>/Enumerator"),
+                (176, "151151011282f8", "System.Collections.Generic.List<LevelItem>/Enumerator"),
             ]:
                 roff_c = pos_c + (rid - 1) * rsize
                 rc = tc[roff_c:roff_c + rsize]
