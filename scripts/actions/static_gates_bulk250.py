@@ -495,6 +495,8 @@ def audit_isolation_bulk250(parent_bytes: bytes, cand_bytes: bytes, body_targets
                     if skind != 0x41 or c_flags != 2 or c_tok != 0:
                         return False, f"Finally target {tok:#x} invalid fat EH header/flags", {}
                     il_c = cand_bytes[off_c + sc[1]:off_c + sc[1] + sc[2]]
+                    if h_off + h_len > len(il_c) or h_off + h_len <= 0:
+                        return False, f"Finally target {tok:#x} handler bounds out of range", {}
                     if il_c[h_off + h_len - 1] != 0xDC:
                         return False, f"Finally target {tok:#x} handler does not end with endfinally (0xDC)", {}
             else:
