@@ -1,0 +1,289 @@
+{
+  "scope": "READ_ONLY_REFERENCE_METADATA_AND_CIL_NO_METHOD_EXECUTION",
+  "project_tests_executed": false,
+  "production_dependency_profile_qualified": false,
+  "references": [
+    {
+      "path": "audit/local-preflight/exact-editor-tools/resolver/UnityEngine.CoreModule.dll",
+      "bytes": 1532928,
+      "sha256": "83192116b34abac2bb1797ec0e3943362be33b028b1eefd2e561d5fdc1c3312f",
+      "methods": [
+        {
+          "owner": "UnityEngine.Renderer",
+          "name": "set_sharedMaterial",
+          "signature": "2001011285f8",
+          "public": true,
+          "rva": 94823,
+          "body_sha256": "6b386d775123b1248c99af7a3381aef10b6aa994229c2a3ac72f5978d0c42d43",
+          "instructions": [
+            {
+              "offset": 0,
+              "opcode": "nop",
+              "operand": null
+            },
+            {
+              "offset": 1,
+              "opcode": "ldarg.0",
+              "operand": null
+            },
+            {
+              "offset": 2,
+              "opcode": "ldarg.1",
+              "operand": null
+            },
+            {
+              "offset": 3,
+              "opcode": "call",
+              "operand": {
+                "token": "0x06000E74",
+                "method_name": "SetMaterial"
+              }
+            },
+            {
+              "offset": 8,
+              "opcode": "nop",
+              "operand": null
+            },
+            {
+              "offset": 9,
+              "opcode": "ret",
+              "operand": null
+            }
+          ]
+        },
+        {
+          "owner": "UnityEngine.Quaternion",
+          "name": "Euler",
+          "signature": "00031188200c0c0c",
+          "public": true,
+          "rva": 152444,
+          "body_sha256": "ffa879422bf47cd8648a76c69ef1c11fdc8bd7b69c2ea20596158b06b17f22d9",
+          "instructions": [
+            {
+              "offset": 0,
+              "opcode": "nop",
+              "operand": null
+            },
+            {
+              "offset": 1,
+              "opcode": "ldarg.0",
+              "operand": null
+            },
+            {
+              "offset": 2,
+              "opcode": "ldarg.1",
+              "operand": null
+            },
+            {
+              "offset": 3,
+              "opcode": "ldarg.2",
+              "operand": null
+            },
+            {
+              "offset": 4,
+              "opcode": "newobj",
+              "operand": {
+                "token": "0x06001757",
+                "method_name": ".ctor"
+              }
+            },
+            {
+              "offset": 9,
+              "opcode": "ldc.r4",
+              "operand": "0.01745329238474369"
+            },
+            {
+              "offset": 14,
+              "opcode": "call",
+              "operand": {
+                "token": "0x0600177E",
+                "method_name": "op_Multiply"
+              }
+            },
+            {
+              "offset": 19,
+              "opcode": "call",
+              "operand": {
+                "token": "0x06001793",
+                "method_name": "Internal_FromEulerRad"
+              }
+            },
+            {
+              "offset": 24,
+              "opcode": "stloc.0",
+              "operand": null
+            },
+            {
+              "offset": 25,
+              "opcode": "br.s",
+              "operand": "39"
+            },
+            {
+              "offset": 27,
+              "opcode": "ldloc.0",
+              "operand": null
+            },
+            {
+              "offset": 28,
+              "opcode": "ret",
+              "operand": null
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "path": "audit/offline-test-handoff-2026-10-14/payload/references/managed-support/Unity.TextMeshPro.dll",
+      "bytes": 377856,
+      "sha256": "e66a82eaf9e78098727fea380dc72d509ef9027499c552210f968bbec996797f",
+      "methods": [
+        {
+          "owner": "TMPro.TMP_Text",
+          "name": "get_textInfo",
+          "signature": "200012821c",
+          "public": true,
+          "rva": 82934,
+          "body_sha256": "2586129ff8d9b36543271afbb9d936042fdf6403fa746915b4dab5259e8d06dc",
+          "instructions": [
+            {
+              "offset": 0,
+              "opcode": "ldarg.0",
+              "operand": null
+            },
+            {
+              "offset": 1,
+              "opcode": "ldfld",
+              "operand": {
+                "token": "0x04000440",
+                "field_name": "m_textInfo"
+              }
+            },
+            {
+              "offset": 6,
+              "opcode": "ret",
+              "operand": null
+            }
+          ]
+        }
+      ],
+      "fields": [
+        {
+          "owner": "TMPro.TMP_MeshInfo",
+          "name": "vertices",
+          "signature": "061d115d",
+          "public": true
+        },
+        {
+          "owner": "TMPro.TMP_MeshInfo",
+          "name": "uvs0",
+          "signature": "061d1161",
+          "public": true
+        },
+        {
+          "owner": "TMPro.TMP_MeshInfo",
+          "name": "uvs2",
+          "signature": "061d1161",
+          "public": true
+        },
+        {
+          "owner": "TMPro.TMP_MeshInfo",
+          "name": "colors32",
+          "signature": "061d1165",
+          "public": true
+        }
+      ]
+    }
+  ],
+  "hash_helper": {
+    "token": "0x0600090C",
+    "name": "ComputeStringHash",
+    "signature": "0001090e",
+    "assembly_visibility": true,
+    "behavior_execution_or_acceptance": false
+  },
+  "native_tmp_fields": [
+    {
+      "type": "TMP_CharacterInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5445,
+      "name": "materialReferenceIndex",
+      "token": "0x400012c",
+      "offset": 72,
+      "type_index": 15454
+    },
+    {
+      "type": "TMP_CharacterInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5445,
+      "name": "vertexIndex",
+      "token": "0x4000131",
+      "offset": 92,
+      "type_index": 15454
+    },
+    {
+      "type": "TMP_MeshInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5518,
+      "name": "vertices",
+      "token": "0x40002f9",
+      "offset": 32,
+      "type_index": 11576
+    },
+    {
+      "type": "TMP_MeshInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5518,
+      "name": "uvs0",
+      "token": "0x40002fc",
+      "offset": 56,
+      "type_index": 11570
+    },
+    {
+      "type": "TMP_MeshInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5518,
+      "name": "uvs2",
+      "token": "0x40002fd",
+      "offset": 64,
+      "type_index": 11570
+    },
+    {
+      "type": "TMP_MeshInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5518,
+      "name": "colors32",
+      "token": "0x40002fe",
+      "offset": 72,
+      "type_index": 11190
+    },
+    {
+      "type": "TMP_TextInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5563,
+      "name": "characterCount",
+      "token": "0x40005cc",
+      "offset": 24,
+      "type_index": 15454
+    },
+    {
+      "type": "TMP_TextInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5563,
+      "name": "characterInfo",
+      "token": "0x40005d4",
+      "offset": 56,
+      "type_index": 11498
+    },
+    {
+      "type": "TMP_TextInfo",
+      "namespace": "TMPro",
+      "typeIndex": 5563,
+      "name": "meshInfo",
+      "token": "0x40005d9",
+      "offset": 96,
+      "type_index": 11505
+    }
+  ],
+  "value_type_offset_note": "Native field map includes the boxed 16-byte object header for these value types; actual struct/array element field offsets subtract16. Array data starts at32. No raw pointer offsets are emitted in the new CIL."
+}
