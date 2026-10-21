@@ -13,7 +13,7 @@ Ported directly from proven static_gates_bulk168.py & frozen_independent_isolati
   - True body comparison across RVAs (header bytes, IL, EH, padding) + InitLocals negative control.
   - CilExporter -> verify_types -> MemberAccess -> EagerVerifier static execution pipeline:
     * branch/EH boundary check across 188 methods
-    * frozen 7 unsupported retained, all 12 new targets PASS
+    * frozen 7 unsupported retained, all 8 new targets PASS
     * verified stack underflow negative control (clean InvalidIL underflow diagnosis, zero KeyError/Traceback)
     * extended ldtoken/ldftn type checker passes all 188 targets
     * MemberAccess check on 188 targets (isolating BLOCKED_DEPENDENCY_PROFILE on 0x060004B1)
@@ -913,15 +913,15 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
     assert failed_tokens == HISTORICAL_UNSUPPORTED_TYPE_TOKENS, f"Unexpected type flow failure set: {failed_tokens} != {HISTORICAL_UNSUPPORTED_TYPE_TOKENS}"
     new_tok_strs = {f"0x{t:08X}" for t in new_target_tokens}
     assert not (failed_tokens & new_tok_strs), f"New targets in Native113 failed type flow: {failed_tokens & new_tok_strs}"
-    print(f"Type flow check on 188 methods: PASS (exact 7 historical unsupported retained, all 12 new targets PASS).")
+    print(f"Type flow check on 188 methods: PASS (exact 7 historical unsupported retained, all 8 new targets PASS).")
 
     # 6. Supported subset (188 - 7 = 181 methods) full PASS check
     d_supp_obj = {**d180_obj, "methods": [m for m in d180_obj["methods"] if m["token"] not in HISTORICAL_UNSUPPORTED_TYPE_TOKENS]}
-    p_supp = res_dir / "actual-candidate-supported-173methods-dump.json"
+    p_supp = res_dir / "actual-candidate-supported-181methods-dump.json"
     p_supp.write_text(json.dumps(d_supp_obj, indent=2), encoding="utf-8")
     r_supp = static_run([sys.executable, str(vt_script), str(p_supp)], capture_output=True, text=True)
-    assert r_supp.returncode == 0, f"Supported 173 methods failed verify_types: {r_supp.stderr or r_supp.stdout}"
-    print("Type flow supported subset (173 methods): PASS (exitcode 0).")
+    assert r_supp.returncode == 0, f"Supported 181 methods failed verify_types: {r_supp.stderr or r_supp.stdout}"
+    print("Type flow supported subset (181 methods): PASS (exitcode 0).")
 
     # 7. Stack underflow negative control on verify_types (valid opcode:pop schema, clean InvalidIL diagnosis)
     bad_under = copy.deepcopy(d_supp_obj)
@@ -997,14 +997,14 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
     ], capture_output=True, text=True)
     assert r_neg_ma.returncode != 0, "MemberAccess negative control (private field access) was NOT rejected!"
     neg_ma_doc = json.loads(neg_ma_out.read_text(encoding="utf-8"))
-    assert neg_ma_doc.get("pass") is False and neg_ma_doc.get("target_methods") == 180
+    assert neg_ma_doc.get("pass") is False and neg_ma_doc.get("target_methods") == 188
     assert neg_ma_doc.get("rejected") == 1
     assert any(m.get("allowed") is False and "PrepareUIController::" in m.get("member", "") for m in neg_ma_doc["members"])
     neg_ma_dll.unlink()
     print("Negative control (rejecting private PrepareUI.instance in MemberAccess): PASS.")
 
     # 11. EagerVerifier Gate (1185 MemberRefs, 85 appended resolved, unresolved=0)
-    eager_out = res_dir / "EAGER-MEMBERREF-BULK180-AUTHENTIC.json"
+    eager_out = res_dir / "EAGER-MEMBERREF-BULK188-AUTHENTIC.json"
     r_eag = static_run([
         "dotnet", str(eager_dll), str(cand_dll), str(support_dir), str(eager_out)
     ], capture_output=True, text=True)
