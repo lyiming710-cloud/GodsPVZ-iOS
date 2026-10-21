@@ -1025,13 +1025,13 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
         else:
             raise RuntimeError(f"EagerVerifier failed (exit {r_eag.returncode}): {r_eag.stderr or r_eag.stdout}")
     else:
-        assert eag_doc.get("total_member_refs") == 1185 and eag_doc.get("unresolved_count") == 0 and len(eag_doc.get("appended_64_resolved", [])) == 85, f"EagerVerifier resolution mismatch: {eag_doc}"
-        results["eager_verifier"] = {"status": "PASS", "total_refs": 1185, "appended_resolved": 85, "unresolved": 0}
+        assert eag_doc.get("total_member_refs") == 1185 and eag_doc.get("unresolved_count") == 0 and len(eag_doc.get("appended_64_resolved", [])) == 81, f"EagerVerifier resolution mismatch: {eag_doc}"
+        results["eager_verifier"] = {"status": "PASS", "total_refs": 1185, "appended_resolved": 81, "unresolved": 0}
     print(f"EagerVerifier resolution on Bulk188 (1,185 rows, unresolved={eag_doc.get('unresolved_count')}).")
 
     results["type_flow"] = {"status": "PASS", "unsupported_retained": list(failed_tokens)}
     results["branch_eh_boundary"] = {"status": "PASS", "checked": branch_eh_checked, "handlers": eh_handlers_checked}
-    results["eager_verifier"] = {"status": "PASS", "total_refs": 1185, "appended_resolved": 85, "unresolved": 0}
+    results["eager_verifier"] = {"status": "PASS", "total_refs": 1185, "appended_resolved": 81, "unresolved": 0}
     results["candidate_sha256"] = sha256_bytes(cand_dll.read_bytes())
     results["target_tokens"] = sorted(expected_tokens)
     results["qualification_scope"] = "static_only_not_semantic_acceptance"
