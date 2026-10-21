@@ -1,0 +1,120 @@
+SavesUIController_PlayerSave::Start0
+{"token": "0x060006AC", "name": "SavesUIController_PlayerSave::Start0", "signature": "200001", "rva": 567352, "max_stack": 3, "code_size": 468, "local_sig": 285213954, "locals_blob": "070e020212814c12822012821812814c1c1c1c1c02021283281c", "eh_count": 0, "il_sha256": "d1ce1c0ba5d8ebea69c5f2cf079ebd471ad00656b1fbf5239dadb43462e369a7"}
+IL_0000: br             {'target': 437}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040008B2', 'identity': 'SavesUIController_PlayerSave::savesManager'}
+IL_000B: ldc.i4         0
+IL_0010: ceq            None
+IL_0012: stloc          local(0x0001)
+IL_0016: ldloc          local(0x0001)
+IL_001A: brtrue         {'target': 231}
+IL_001F: br             {'target': 36}
+IL_0024: ldarg.0        None
+IL_0025: ldfld          {'token': '0x040008B2', 'identity': 'SavesUIController_PlayerSave::savesManager'}
+IL_002A: stloc          local(0x0002)
+IL_002E: ldloc          local(0x0002)
+IL_0032: ldfld          {'token': '0x04000311', 'identity': 'SavesManager::saveList'}
+IL_0037: stloc          local(0x0003)
+IL_003B: br             {'target': 64}
+IL_0040: ldloc          local(0x0003)
+IL_0044: ldfld          {'token': '0x0400064E', 'identity': 'SaveList::saveList'}
+IL_0049: ldarg.0        None
+IL_004A: ldfld          {'token': '0x040008B4', 'identity': 'SavesUIController_PlayerSave::playerSaveID'}
+IL_004F: call           {'token': '0x0A000194', 'identity': 'TypeSpec:75::get_Item / sig 2001130008'}
+IL_0054: stloc          local(0x0004)
+IL_0058: ldloc          local(0x0004)
+IL_005C: ldc.i4         0
+IL_0061: ceq            None
+IL_0063: stloc          local(0x000A)
+IL_0067: ldloc          local(0x000A)
+IL_006B: brtrue         {'target': 269}
+IL_0070: br             {'target': 117}
+IL_0075: ldarg.0        None
+IL_0076: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_007B: ldloc          local(0x0004)
+IL_007F: ldfld          {'token': '0x04000627', 'identity': 'Save::playerName'}
+IL_0084: ldc.i4         1
+IL_0089: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_008E: ldarg.0        None
+IL_008F: ldfld          {'token': '0x040008B2', 'identity': 'SavesUIController_PlayerSave::savesManager'}
+IL_0094: stloc          local(0x0005)
+IL_0098: br             {'target': 157}
+IL_009D: ldloc          local(0x0005)
+IL_00A1: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_00A6: ldloc          local(0x0004)
+IL_00AA: ceq            None
+IL_00AC: stloc          local(0x000B)
+IL_00B0: ldloc          local(0x000B)
+IL_00B4: brtrue         {'target': 232}
+IL_00B9: br             {'target': 190}
+IL_00BE: ldarg.0        None
+IL_00BF: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_00C4: ldloca         local(0x000D)
+IL_00C8: call           {'token': '0x0A0001DC', 'identity': 'TMPro.TMP_Text::set_color / sig 2001011180d1'}
+IL_00CD: br             {'target': 210}
+IL_00D2: ldarg.0        None
+IL_00D3: ldfld          {'token': '0x040008B6', 'identity': 'SavesUIController_PlayerSave::button'}
+IL_00D8: ldc.i4         1
+IL_00DD: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_00E2: br             {'target': 231}
+IL_00E7: ret            None
+IL_00E8: ldarg.0        None
+IL_00E9: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_00EE: ldloca         local(0x000D)
+IL_00F2: call           {'token': '0x0A0001DC', 'identity': 'TMPro.TMP_Text::set_color / sig 2001011180d1'}
+IL_00F7: br             {'target': 252}
+IL_00FC: ldarg.0        None
+IL_00FD: ldfld          {'token': '0x040008B6', 'identity': 'SavesUIController_PlayerSave::button'}
+IL_0102: ldc.i4         0
+IL_0107: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_010C: ret            None
+IL_010D: ldarg.0        None
+IL_010E: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_0113: ldstr          {'token': '0x7001BE41', 'identity': 'NULL'}
+IL_0118: ldc.i4         1
+IL_011D: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0122: br             {'target': 295}
+IL_0127: ldarg.0        None
+IL_0128: ldfld          {'token': '0x040008B6', 'identity': 'SavesUIController_PlayerSave::button'}
+IL_012D: ldc.i4         0
+IL_0132: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0137: br             {'target': 316}
+IL_013C: ldarg.0        None
+IL_013D: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_0142: ldloca         local(0x000D)
+IL_0146: call           {'token': '0x0A0001DC', 'identity': 'TMPro.TMP_Text::set_color / sig 2001011180d1'}
+IL_014B: ret            None
+IL_014C: ldarg.0        None
+IL_014D: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_0152: ldstr          {'token': '0x7001BE4B', 'identity': '空'}
+IL_0157: ldc.i4         1
+IL_015C: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0161: br             {'target': 358}
+IL_0166: ldarg.0        None
+IL_0167: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_016C: ldc.r4         42.0
+IL_0171: call           {'token': '0x0A0002A3', 'identity': 'TMPro.TMP_Text::set_fontSize / sig 2001010c'}
+IL_0176: br             {'target': 379}
+IL_017B: ldarg.0        None
+IL_017C: ldfld          {'token': '0x040008B6', 'identity': 'SavesUIController_PlayerSave::button'}
+IL_0181: ldc.i4         1
+IL_0186: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_018B: br             {'target': 400}
+IL_0190: ldarg.0        None
+IL_0191: ldfld          {'token': '0x040008B5', 'identity': 'SavesUIController_PlayerSave::text_name'}
+IL_0196: ldloca         local(0x000D)
+IL_019A: call           {'token': '0x0A0001DC', 'identity': 'TMPro.TMP_Text::set_color / sig 2001011180d1'}
+IL_019F: br             {'target': 420}
+IL_01A4: ldarg.0        None
+IL_01A5: ldfld          {'token': '0x040008B7', 'identity': 'SavesUIController_PlayerSave::delete'}
+IL_01AA: ldc.i4         0
+IL_01AF: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_01B4: ret            None
+IL_01B5: ldarg.0        None
+IL_01B6: ldfld          {'token': '0x040008B4', 'identity': 'SavesUIController_PlayerSave::playerSaveID'}
+IL_01BB: ldc.i4         -1
+IL_01C0: ceq            None
+IL_01C2: stloc          local(0x0000)
+IL_01C6: ldloc          local(0x0000)
+IL_01CA: brtrue         {'target': 332}
+IL_01CF: br             {'target': 5}

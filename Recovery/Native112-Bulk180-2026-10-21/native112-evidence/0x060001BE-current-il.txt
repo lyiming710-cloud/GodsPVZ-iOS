@@ -1,0 +1,232 @@
+EnemyManager::SetTargetGrid
+{"token": "0x060001BE", "name": "EnemyManager::SetTargetGrid", "signature": "200101128118", "rva": 128000, "max_stack": 4, "code_size": 917, "local_sig": 285213030, "locals_blob": "07281281a408080808081281a412818c1281901281a41281881c0802080808080808128188020212819c08080808021280e00212818802181c021c02128124128118", "eh_count": 0, "il_sha256": "952b328326835d8eb04232a7686d86877324d366d23dce83b16a572e1d0b8d71"}
+IL_0000: br             {'target': 607}
+IL_0005: ldloc          local(0x0000)
+IL_0009: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_000E: call           {'token': '0x06000289', 'identity': 'Map::GetMapX'}
+IL_0013: stloc          local(0x0005)
+IL_0017: ldarg.0        None
+IL_0018: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_001D: stloc          local(0x0009)
+IL_0021: br             {'target': 38}
+IL_0026: ldloc          local(0x0009)
+IL_002A: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_002F: stloc          local(0x0014)
+IL_0033: br             {'target': 56}
+IL_0038: ldloc          local(0x0009)
+IL_003C: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_0041: call           {'token': '0x0600028A', 'identity': 'Map::GetMapY'}
+IL_0046: stloc          local(0x000C)
+IL_004A: ldloc          local(0x000C)
+IL_004E: ldc.i4         0
+IL_0053: cgt            None
+IL_0055: ldc.i4.0       None
+IL_0056: ceq            None
+IL_0058: stloc          local(0x000D)
+IL_005C: ldc.i8         4294967295
+IL_0065: stloc          local(0x0002)
+IL_0069: ldc.i8         4294967295
+IL_0072: stloc          local(0x0004)
+IL_0076: ldc.i4         2147483647
+IL_007B: stloc          local(0x000E)
+IL_007F: ldc.i8         4294967295
+IL_0088: stloc          local(0x000F)
+IL_008C: ldc.i8         4294967295
+IL_0095: stloc          local(0x0010)
+IL_0099: ldc.i4         0
+IL_009E: stloc          local(0x0003)
+IL_00A2: ldc.i8         4294967295
+IL_00AB: stloc          local(0x0011)
+IL_00AF: ldc.i4         0
+IL_00B4: stloc          local(0x0012)
+IL_00B8: ldloc          local(0x000C)
+IL_00BC: stloc          local(0x0013)
+IL_00C0: ldloc          local(0x000D)
+IL_00C4: brtrue         {'target': 537}
+IL_00C9: br             {'target': 785}
+IL_00CE: ldloc          local(0x0006)
+IL_00D2: ldfld          {'token': '0x040003B5', 'identity': 'Board::map'}
+IL_00D7: stloc          local(0x000A)
+IL_00DB: br             {'target': 224}
+IL_00E0: ldloc          local(0x000A)
+IL_00E4: ldfld          {'token': '0x0400037D', 'identity': 'Map::rows'}
+IL_00E9: ldloc          local(0x0003)
+IL_00ED: call           {'token': '0x0A000065', 'identity': 'TypeSpec:18::get_Item / sig 2001130008'}
+IL_00F2: stloc          local(0x0007)
+IL_00F6: br             {'target': 251}
+IL_00FB: ldloc          local(0x0007)
+IL_00FF: ldfld          {'token': '0x04000381', 'identity': 'Row::grids'}
+IL_0104: ldloc          local(0x0001)
+IL_0108: call           {'token': '0x0A000078', 'identity': 'TypeSpec:24::get_Item / sig 2001130008'}
+IL_010D: stloc          local(0x0008)
+IL_0111: br             {'target': 278}
+IL_0116: ldloc          local(0x0008)
+IL_011A: ldfld          {'token': '0x04000384', 'identity': 'Grid::isHome'}
+IL_011F: ldc.i4         0
+IL_0124: ceq            None
+IL_0126: stloc          local(0x001E)
+IL_012A: ldloc          local(0x0001)
+IL_012E: stloc          local(0x0012)
+IL_0132: ldloc          local(0x0007)
+IL_0136: ldfld          {'token': '0x04000381', 'identity': 'Row::grids'}
+IL_013B: stloc          local(0x0014)
+IL_013F: ldloc          local(0x001E)
+IL_0143: brtrue         {'target': 680}
+IL_0148: br             {'target': 333}
+IL_014D: ldtoken        {'token': '0x01000025', 'identity': 'System.Math'}
+IL_0152: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0157: stloc          local(0x0021)
+IL_015B: br             {'target': 352}
+IL_0160: ldloc          local(0x0003)
+IL_0164: ldarg          argument(0x0001)
+IL_0168: ldfld          {'token': '0x040001F8', 'identity': 'Enemy::row'}
+IL_016D: sub            None
+IL_016E: stloc          local(0x0022)
+IL_0172: ldloc          local(0x0022)
+IL_0176: neg            None
+IL_0177: stloc          local(0x0024)
+IL_017B: ldstr          {'token': '0x70006152', 'identity': 'Unmanaged memory load: [v493 @ rcx_v12 (Il2CppClass<System.Math>)+E0]'}
+IL_0180: pop            None
+IL_0181: ldc.i4.0       None
+IL_0182: conv.i         None
+IL_0183: ldc.i4         0
+IL_0188: clt            None
+IL_018A: ldc.i4.0       None
+IL_018B: ceq            None
+IL_018D: stloc          local(0x0023)
+IL_0191: ldloc          local(0x0023)
+IL_0195: brtrue         {'target': 722}
+IL_019A: br             {'target': 415}
+IL_019F: ldloc          local(0x0022)
+IL_01A3: stloc          local(0x0024)
+IL_01A7: br             {'target': 722}
+IL_01AC: ldloc          local(0x0014)
+IL_01B0: stloc          local(0x001F)
+IL_01B4: br             {'target': 873}
+IL_01B9: ldloc          local(0x0012)
+IL_01BD: stloc          local(0x0018)
+IL_01C1: ldloc          local(0x0003)
+IL_01C5: stloc          local(0x0019)
+IL_01C9: ldloc          local(0x0003)
+IL_01CD: stloc          local(0x001A)
+IL_01D1: ldloc          local(0x0001)
+IL_01D5: stloc          local(0x001B)
+IL_01D9: br             {'target': 680}
+IL_01DE: ldloc          local(0x001A)
+IL_01E2: stloc          local(0x0019)
+IL_01E6: br             {'target': 680}
+IL_01EB: nop            None
+IL_01EC: ldloc          local(0x0018)
+IL_01F0: stloc          local(0x000E)
+IL_01F4: ldloc          local(0x0019)
+IL_01F8: stloc          local(0x000F)
+IL_01FC: ldloc          local(0x001A)
+IL_0200: stloc          local(0x0010)
+IL_0204: ldloc          local(0x001B)
+IL_0208: stloc          local(0x0011)
+IL_020C: ldloc          local(0x000C)
+IL_0210: stloc          local(0x0013)
+IL_0214: br             {'target': 622}
+IL_0219: ldloc          local(0x0004)
+IL_021D: ldloc          local(0x0002)
+IL_0221: ldc.r4         0.0
+IL_0226: ldloc          local(0x001D)
+IL_022A: newobj         {'token': '0x060002A4', 'identity': 'EnemyPath::.ctor'}
+IL_022F: stloc          local(0x0017)
+IL_0233: nop            None
+IL_0234: br             {'target': 569}
+IL_0239: ldloc          local(0x0017)
+IL_023D: ldc.i4         1
+IL_0242: stfld          {'token': '0x040003AA', 'identity': 'EnemyPath::isEnd'}
+IL_0247: br             {'target': 588}
+IL_024C: ldarg          argument(0x0001)
+IL_0250: ldfld          {'token': '0x040001FD', 'identity': 'Enemy::myPath'}
+IL_0255: ldloc          local(0x0017)
+IL_0259: call           {'token': '0x0A000151', 'identity': 'TypeSpec:60::Add / sig 2001011300'}
+IL_025E: ret            None
+IL_025F: ldarg.0        None
+IL_0260: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0265: stloc          local(0x0000)
+IL_0269: br             {'target': 5}
+IL_026E: ldloc          local(0x0003)
+IL_0272: ldc.i4         1
+IL_0277: add            None
+IL_0278: stloc          local(0x0003)
+IL_027C: ldloc          local(0x0003)
+IL_0280: ldloc          local(0x0013)
+IL_0284: clt            None
+IL_0286: stloc          local(0x0015)
+IL_028A: ldloc          local(0x000F)
+IL_028E: stloc          local(0x0002)
+IL_0292: ldloc          local(0x0011)
+IL_0296: stloc          local(0x0004)
+IL_029A: ldloc          local(0x0015)
+IL_029E: brtrue         {'target': 785}
+IL_02A3: br             {'target': 537}
+IL_02A8: ldloc          local(0x0001)
+IL_02AC: ldc.i4         1
+IL_02B1: add            None
+IL_02B2: stloc          local(0x0001)
+IL_02B6: ldloc          local(0x0001)
+IL_02BA: ldloc          local(0x0005)
+IL_02BE: clt            None
+IL_02C0: stloc          local(0x001C)
+IL_02C4: ldloc          local(0x001C)
+IL_02C8: brtrue         {'target': 858}
+IL_02CD: br             {'target': 491}
+IL_02D2: ldloc          local(0x0001)
+IL_02D6: ldarg          argument(0x0001)
+IL_02DA: ldfld          {'token': '0x040001F9', 'identity': 'Enemy::gridX'}
+IL_02DF: sub            None
+IL_02E0: stloc          local(0x0014)
+IL_02E4: ldloc          local(0x0014)
+IL_02E8: neg            None
+IL_02E9: stloc          local(0x001F)
+IL_02ED: ldstr          {'token': '0x70006152', 'identity': 'Unmanaged memory load: [v493 @ rcx_v12 (Il2CppClass<System.Math>)+E0]'}
+IL_02F2: pop            None
+IL_02F3: ldc.i4.0       None
+IL_02F4: conv.i         None
+IL_02F5: ldc.i4         0
+IL_02FA: clt            None
+IL_02FC: ldc.i4.0       None
+IL_02FD: ceq            None
+IL_02FF: stloc          local(0x0025)
+IL_0303: ldloc          local(0x0025)
+IL_0307: brtrue         {'target': 873}
+IL_030C: br             {'target': 428}
+IL_0311: ldloc          local(0x0005)
+IL_0315: ldc.i4         0
+IL_031A: cgt            None
+IL_031C: ldc.i4.0       None
+IL_031D: ceq            None
+IL_031F: stloc          local(0x0016)
+IL_0323: ldc.i4         0
+IL_0328: stloc          local(0x0001)
+IL_032C: ldloc          local(0x000E)
+IL_0330: stloc          local(0x0018)
+IL_0334: ldloc          local(0x000F)
+IL_0338: stloc          local(0x0019)
+IL_033C: ldloc          local(0x0010)
+IL_0340: stloc          local(0x001A)
+IL_0344: ldloc          local(0x0011)
+IL_0348: stloc          local(0x001B)
+IL_034C: ldloc          local(0x0016)
+IL_0350: brtrue         {'target': 622}
+IL_0355: br             {'target': 858}
+IL_035A: ldarg.0        None
+IL_035B: ldfld          {'token': '0x0400021E', 'identity': 'EnemyManager::board'}
+IL_0360: stloc          local(0x0006)
+IL_0364: br             {'target': 206}
+IL_0369: ldloc          local(0x0024)
+IL_036D: ldloc          local(0x001F)
+IL_0371: add            None
+IL_0372: stloc          local(0x0012)
+IL_0376: ldloc          local(0x0012)
+IL_037A: ldloc          local(0x0018)
+IL_037E: clt            None
+IL_0380: ldc.i4.0       None
+IL_0381: ceq            None
+IL_0383: stloc          local(0x0020)
+IL_0387: ldloc          local(0x0020)
+IL_038B: brtrue         {'target': 478}
+IL_0390: br             {'target': 441}

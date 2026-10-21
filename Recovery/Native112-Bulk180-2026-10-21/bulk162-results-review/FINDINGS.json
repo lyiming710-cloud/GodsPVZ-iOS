@@ -1,0 +1,53 @@
+{
+  "review_scope": "Read existing artifacts and logs only; no project tests or compilation executed by primary agent.",
+  "review_date_local": "2026-10-21",
+  "run_id": 39443473339,
+  "run_conclusion": "failure",
+  "candidate_sha256": "089cddb15cc5f2d543576c4935e5c861a082a5853118c15f65a4d36e40116da8",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "status": "INVALID_CONTROL_TOOL_CRASH",
+      "finding": "The stack-underflow negative control crashes with KeyError opcode; exit 1 was incorrectly accepted as expected rejection.",
+      "candidate_defect_proven": false,
+      "preserve_positive_gates_separately": true,
+      "evidence": [
+        "original-false-accept-evidence/neg_control_bad_stack_dump.json",
+        "original-false-accept-evidence/static-invocation-06.stderr.log",
+        "original-false-accept-evidence/static_gates-at-b2f89eb.py"
+      ]
+    },
+    {
+      "id": "F2",
+      "severity": "high",
+      "status": "BEHAVIOR_UNPROVEN",
+      "finding": "The 768-case fixture covers only 0115, 011A, 01D3 with dependencies stubbed; no new10 semantic equivalence or real interaction-chain acceptance.",
+      "formal_promotion_allowed": false
+    },
+    {
+      "id": "F3",
+      "severity": "high",
+      "status": "COMPILATION_FAIL",
+      "finding": "All 18 generated game translation units have compilation receipts and all fail; 4477 diagnostics remain. Linux syntax-only compilation does not qualify Apple/Xcode/IPA."
+    },
+    {
+      "id": "F4",
+      "severity": "info",
+      "status": "COVERAGE_CONCERN_RESOLVED_IN_ARCHIVED_EVIDENCE",
+      "finding": "No missing mapped methods or pointer symbols; old last-TU 13 methods moved to the new preceding TU. All generated game TU bytes/hashes match receipts."
+    },
+    {
+      "id": "F5",
+      "severity": "info",
+      "status": "PROGRESS_SUPPORTED_WITH_HEURISTIC_LIMIT",
+      "finding": "The removed error-method set is exactly the new10 targets, with 25 total diagnostic reduction, no added errored methods, and unchanged diagnostic counts for other still-errored methods."
+    },
+    {
+      "id": "F6",
+      "severity": "medium",
+      "status": "REPORT_LABEL_CORRECTIONS_REQUIRED",
+      "finding": "Use 263 staged assemblies incl. game DLL, actual SDK 10.0.402, and current Bulk162 labels; retain frozen7 unsupported/model failures separately from extended162 PASS."
+    }
+  ]
+}
