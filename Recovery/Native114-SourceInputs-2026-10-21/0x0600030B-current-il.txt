@@ -1,0 +1,389 @@
+Device::Update_Characteristic
+{"token": "0x0600030B", "name": "Device::Update_Characteristic", "signature": "200001", "rva": 240408, "max_stack": 2, "code_size": 1381, "local_sig": 285213280, "locals_blob": "072d1281d402021281a4020d021215121502128210020c0c020202020202021282100202020c0c0c020202020c0c0202020d02020c0c020c1c", "eh_count": 0, "il_sha256": "3d40090d1f6d6ba67acdbc22585facb33f34242ba50001f4d3b380bebfa2a94a"}
+IL_0000: br             {'target': 1215}
+IL_0005: br             {'target': 10}
+IL_000A: ldarg.0        None
+IL_000B: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_0010: ldnull         None
+IL_0011: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0016: stloc          local(0x0002)
+IL_001A: ldloc          local(0x0002)
+IL_001E: brtrue         {'target': 40}
+IL_0023: br             {'target': 1374}
+IL_0028: ldarg.0        None
+IL_0029: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_002E: stloc          local(0x0003)
+IL_0032: br             {'target': 55}
+IL_0037: ldloc          local(0x0003)
+IL_003B: ldfld          {'token': '0x040003BA', 'identity': 'Board::gameStart'}
+IL_0040: ldc.i4         0
+IL_0045: ceq            None
+IL_0047: stloc          local(0x0004)
+IL_004B: ldloc          local(0x0004)
+IL_004F: brtrue         {'target': 1374}
+IL_0054: br             {'target': 89}
+IL_0059: ldarg.0        None
+IL_005A: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_005F: ldc.i4         2
+IL_0064: ceq            None
+IL_0066: ldc.i4.0       None
+IL_0067: ceq            None
+IL_0069: stloc          local(0x000B)
+IL_006D: ldloc          local(0x000B)
+IL_0071: brtrue         {'target': 187}
+IL_0076: br             {'target': 123}
+IL_007B: br             {'target': 1246}
+IL_0080: ldloc          local(0x0015)
+IL_0084: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0089: stloc          local(0x0006)
+IL_008D: ldloc          local(0x0006)
+IL_0091: ldc.i4.0       None
+IL_0092: ceq            None
+IL_0094: stloc          local(0x0013)
+IL_0098: ldloc          local(0x0013)
+IL_009C: brtrue         {'target': 187}
+IL_00A1: br             {'target': 166}
+IL_00A6: ldarg.0        None
+IL_00A7: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_00AC: ldstr          {'token': '0x7000C2E1', 'identity': 'AttackTrigger'}
+IL_00B1: call           {'token': '0x0A000087', 'identity': 'UnityEngine.Animator::SetTrigger / sig 2001010e'}
+IL_00B6: br             {'target': 187}
+IL_00BB: ldarg.0        None
+IL_00BC: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_00C1: ldc.i4         9
+IL_00C6: ceq            None
+IL_00C8: ldc.i4.0       None
+IL_00C9: ceq            None
+IL_00CB: stloc          local(0x0014)
+IL_00CF: ldloc          local(0x0014)
+IL_00D3: brtrue         {'target': 460}
+IL_00D8: br             {'target': 221}
+IL_00DD: br             {'target': 1261}
+IL_00E2: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_00E7: stloc          local(0x0019)
+IL_00EB: ldloc          local(0x0019)
+IL_00EF: conv.r4        None
+IL_00F0: ldc.r4         10.0
+IL_00F5: conv.r4        None
+IL_00F6: mul            None
+IL_00F7: stloc          local(0x0020)
+IL_00FB: ldarg.0        None
+IL_00FC: ldfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_0101: conv.r4        None
+IL_0102: ldloc          local(0x0020)
+IL_0106: conv.r4        None
+IL_0107: sub            None
+IL_0108: stloc          local(0x0021)
+IL_010C: ldarg.0        None
+IL_010D: ldloc          local(0x0021)
+IL_0111: stfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_0116: ldarg.0        None
+IL_0117: call           {'token': '0x0600031F', 'identity': 'Device::DC_BonfireWarm'}
+IL_011C: br             {'target': 289}
+IL_0121: ldc.i4         0
+IL_0126: ldarg.0        None
+IL_0127: ldfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_012C: clt            None
+IL_012E: stloc          local(0x0022)
+IL_0132: ldloc          local(0x0022)
+IL_0136: brtrue         {'target': 342}
+IL_013B: br             {'target': 320}
+IL_0140: ldarg.0        None
+IL_0141: ldc.r4         0.0
+IL_0146: stfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_014B: ldarg.0        None
+IL_014C: call           {'token': '0x0600030F', 'identity': 'Device::Broken'}
+IL_0151: br             {'target': 342}
+IL_0156: br             {'target': 347}
+IL_015B: ldarg.0        None
+IL_015C: ldfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_0161: conv.r8        None
+IL_0162: ldarg.0        None
+IL_0163: ldfld          {'token': '0x04000475', 'identity': 'Device::maxHealthPoint'}
+IL_0168: conv.r8        None
+IL_0169: div            None
+IL_016A: stloc          local(0x0025)
+IL_016E: ldloc          local(0x0025)
+IL_0172: ldc.r8         0.5
+IL_017B: call           {'token': '0x0A0001A9', 'identity': 'System.Math::Pow / sig 00020d0d0d'}
+IL_0180: stloc          local(0x0005)
+IL_0184: ldstr          {'token': '0x7000C2FD', 'identity': 'Not implemented instruction: "cvtsd2ss xmm6,xmm0"'}
+IL_0189: pop            None
+IL_018A: br             {'target': 399}
+IL_018F: ldarg.0        None
+IL_0190: ldfld          {'token': '0x04000485', 'identity': 'Device::animationGroup'}
+IL_0195: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_019A: stloc          local(0x0007)
+IL_019E: br             {'target': 419}
+IL_01A3: ldloc          local(0x0007)
+IL_01A7: ldc.i4         1
+IL_01AC: call           {'token': '0x0A000002', 'identity': 'UnityEngine.Transform::GetChild / sig 2001121508'}
+IL_01B1: stloc          local(0x0008)
+IL_01B5: br             {'target': 442}
+IL_01BA: ldloc          local(0x0008)
+IL_01BE: ldloca         local(0x002C)
+IL_01C2: call           {'token': '0x0A0000E5', 'identity': 'UnityEngine.Transform::set_localScale / sig 200101114d'}
+IL_01C7: br             {'target': 460}
+IL_01CC: ldarg.0        None
+IL_01CD: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_01D2: ldc.i4         10
+IL_01D7: ceq            None
+IL_01D9: ldc.i4.0       None
+IL_01DA: ceq            None
+IL_01DC: stloc          local(0x0017)
+IL_01E0: ldloc          local(0x0017)
+IL_01E4: brtrue         {'target': 505}
+IL_01E9: br             {'target': 494}
+IL_01EE: ldarg.0        None
+IL_01EF: call           {'token': '0x06000321', 'identity': 'Device::DC_StoveWarm'}
+IL_01F4: br             {'target': 505}
+IL_01F9: ldarg.0        None
+IL_01FA: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_01FF: ldc.i4         13
+IL_0204: ceq            None
+IL_0206: ldc.i4.0       None
+IL_0207: ceq            None
+IL_0209: stloc          local(0x0018)
+IL_020D: ldloc          local(0x0018)
+IL_0211: brtrue         {'target': 913}
+IL_0216: br             {'target': 539}
+IL_021B: br             {'target': 1295}
+IL_0220: br             {'target': 549}
+IL_0225: ldarg.0        None
+IL_0226: ldfld          {'token': '0x0400048A', 'identity': 'Device::targetZombie'}
+IL_022B: ldnull         None
+IL_022C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0231: stloc          local(0x0009)
+IL_0235: ldloc          local(0x0009)
+IL_0239: brtrue         {'target': 579}
+IL_023E: br             {'target': 1329}
+IL_0243: ldarg.0        None
+IL_0244: ldfld          {'token': '0x0400048A', 'identity': 'Device::targetZombie'}
+IL_0249: call           {'token': '0x06000464', 'identity': 'Zombie::IsDisabled'}
+IL_024E: stloc          local(0x0026)
+IL_0252: ldloc          local(0x0026)
+IL_0256: brtrue         {'target': 1329}
+IL_025B: br             {'target': 608}
+IL_0260: ldarg.0        None
+IL_0261: ldfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_0266: ldc.i4         0
+IL_026B: cgt            None
+IL_026D: ldc.i4.0       None
+IL_026E: ceq            None
+IL_0270: stloc          local(0x0027)
+IL_0274: ldloc          local(0x0027)
+IL_0278: brtrue         {'target': 730}
+IL_027D: br             {'target': 642}
+IL_0282: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0287: stloc          local(0x0028)
+IL_028B: ldarg.0        None
+IL_028C: ldfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_0291: conv.r4        None
+IL_0292: ldloc          local(0x0028)
+IL_0296: conv.r4        None
+IL_0297: sub            None
+IL_0298: stloc          local(0x0029)
+IL_029C: ldarg.0        None
+IL_029D: ldloc          local(0x0029)
+IL_02A1: stfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_02A6: ldc.i4         0
+IL_02AB: ldloc          local(0x0029)
+IL_02AF: clt            None
+IL_02B1: stloc          local(0x002A)
+IL_02B5: ldloc          local(0x002A)
+IL_02B9: brtrue         {'target': 730}
+IL_02BE: br             {'target': 707}
+IL_02C3: ldarg.0        None
+IL_02C4: ldarg.0        None
+IL_02C5: ldfld          {'token': '0x04000480', 'identity': 'Device::characteristicMaxTicking'}
+IL_02CA: stfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_02CF: ldarg.0        None
+IL_02D0: call           {'token': '0x0600031A', 'identity': 'Device::DC_PortalSummon'}
+IL_02D5: br             {'target': 730}
+IL_02DA: ldarg.0        None
+IL_02DB: ldfld          {'token': '0x0400048A', 'identity': 'Device::targetZombie'}
+IL_02E0: stloc          local(0x000A)
+IL_02E4: br             {'target': 745}
+IL_02E9: ldloc          local(0x000A)
+IL_02ED: ldfld          {'token': '0x040005C1', 'identity': 'Zombie::brokenLevel'}
+IL_02F2: ldc.i4         3
+IL_02F7: clt            None
+IL_02F9: ldc.i4.0       None
+IL_02FA: ceq            None
+IL_02FC: stloc          local(0x001C)
+IL_0300: ldloc          local(0x001C)
+IL_0304: brtrue         {'target': 913}
+IL_0309: br             {'target': 782}
+IL_030E: ldarg.0        None
+IL_030F: ldfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_0314: ldc.i4         0
+IL_0319: cgt            None
+IL_031B: ldc.i4.0       None
+IL_031C: ceq            None
+IL_031E: stloc          local(0x001D)
+IL_0322: ldloc          local(0x001D)
+IL_0326: brtrue         {'target': 913}
+IL_032B: br             {'target': 816}
+IL_0330: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0335: stloc          local(0x002B)
+IL_0339: ldloc          local(0x002B)
+IL_033D: conv.r4        None
+IL_033E: ldc.r4         80.0
+IL_0343: conv.r4        None
+IL_0344: mul            None
+IL_0345: stloc          local(0x001A)
+IL_0349: ldarg.0        None
+IL_034A: ldfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_034F: conv.r4        None
+IL_0350: ldloc          local(0x001A)
+IL_0354: conv.r4        None
+IL_0355: sub            None
+IL_0356: stloc          local(0x001B)
+IL_035A: ldarg.0        None
+IL_035B: ldloc          local(0x001B)
+IL_035F: stfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_0364: ldc.i4         0
+IL_0369: ldloc          local(0x001B)
+IL_036D: clt            None
+IL_036F: stloc          local(0x001E)
+IL_0373: ldloc          local(0x001E)
+IL_0377: brtrue         {'target': 913}
+IL_037C: br             {'target': 897}
+IL_0381: ldarg.0        None
+IL_0382: ldc.r4         0.0
+IL_0387: stfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_038C: br             {'target': 1329}
+IL_0391: ldarg.0        None
+IL_0392: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0397: ldc.i4         14
+IL_039C: ceq            None
+IL_039E: ldc.i4.0       None
+IL_039F: ceq            None
+IL_03A1: stloc          local(0x000F)
+IL_03A5: ldloc          local(0x000F)
+IL_03A9: brtrue         {'target': 1374}
+IL_03AE: br             {'target': 947}
+IL_03B3: ldarg.0        None
+IL_03B4: ldfld          {'token': '0x0400047E', 'identity': 'Device::livingTime'}
+IL_03B9: ldc.r4         3.0
+IL_03BE: cgt            None
+IL_03C0: stloc          local(0x0011)
+IL_03C4: ldloc          local(0x0011)
+IL_03C8: brtrue         {'target': 1204}
+IL_03CD: br             {'target': 978}
+IL_03D2: ldarg.0        None
+IL_03D3: ldfld          {'token': '0x04000481', 'identity': 'Device::ASGC_Main'}
+IL_03D8: ldc.i4         0
+IL_03DD: ceq            None
+IL_03DF: stloc          local(0x0023)
+IL_03E3: ldloc          local(0x0023)
+IL_03E7: brtrue         {'target': 1340}
+IL_03EC: br             {'target': 1009}
+IL_03F1: ldarg.0        None
+IL_03F2: ldfld          {'token': '0x0400047E', 'identity': 'Device::livingTime'}
+IL_03F7: ldc.r4         1.0
+IL_03FC: cgt            None
+IL_03FE: ldc.i4.0       None
+IL_03FF: ceq            None
+IL_0401: stloc          local(0x0024)
+IL_0405: ldloc          local(0x0024)
+IL_0409: brtrue         {'target': 1340}
+IL_040E: br             {'target': 1043}
+IL_0413: ldarg.0        None
+IL_0414: call           {'token': '0x06000316', 'identity': 'Device::DC_ASGC_MainGunShooting'}
+IL_0419: ldarg.0        None
+IL_041A: ldc.i4         0
+IL_041F: stfld          {'token': '0x04000481', 'identity': 'Device::ASGC_Main'}
+IL_0424: br             {'target': 1340}
+IL_0429: ldarg.0        None
+IL_042A: ldfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_042F: ldc.i4         0
+IL_0434: cgt            None
+IL_0436: ldc.i4.0       None
+IL_0437: ceq            None
+IL_0439: stloc          local(0x0010)
+IL_043D: ldloc          local(0x0010)
+IL_0441: brtrue         {'target': 1374}
+IL_0446: br             {'target': 1099}
+IL_044B: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0450: stloc          local(0x000C)
+IL_0454: ldarg.0        None
+IL_0455: ldfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_045A: conv.r4        None
+IL_045B: ldloc          local(0x000C)
+IL_045F: conv.r4        None
+IL_0460: sub            None
+IL_0461: stloc          local(0x000D)
+IL_0465: ldarg.0        None
+IL_0466: ldloc          local(0x000D)
+IL_046A: stfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_046F: ldc.i4         0
+IL_0474: ldloc          local(0x000D)
+IL_0478: clt            None
+IL_047A: stloc          local(0x000E)
+IL_047E: ldloc          local(0x000E)
+IL_0482: brtrue         {'target': 1374}
+IL_0487: br             {'target': 1164}
+IL_048C: ldarg.0        None
+IL_048D: call           {'token': '0x06000317', 'identity': 'Device::DC_ASGC_MainSecondaryGunShooting'}
+IL_0492: ldarg.0        None
+IL_0493: call           {'token': '0x06000317', 'identity': 'Device::DC_ASGC_MainSecondaryGunShooting'}
+IL_0498: br             {'target': 1181}
+IL_049D: ldarg.0        None
+IL_049E: call           {'token': '0x06000317', 'identity': 'Device::DC_ASGC_MainSecondaryGunShooting'}
+IL_04A3: ldarg.0        None
+IL_04A4: ldarg.0        None
+IL_04A5: ldfld          {'token': '0x04000480', 'identity': 'Device::characteristicMaxTicking'}
+IL_04AA: stfld          {'token': '0x0400047F', 'identity': 'Device::characteristicTicking'}
+IL_04AF: br             {'target': 1374}
+IL_04B4: ldarg.0        None
+IL_04B5: call           {'token': '0x0600030F', 'identity': 'Device::Broken'}
+IL_04BA: br             {'target': 1374}
+IL_04BF: ldarg.0        None
+IL_04C0: ldfld          {'token': '0x0400047C', 'identity': 'Device::isOnField'}
+IL_04C5: ldc.i4         0
+IL_04CA: ceq            None
+IL_04CC: stloc          local(0x0001)
+IL_04D0: ldloc          local(0x0001)
+IL_04D4: brtrue         {'target': 1374}
+IL_04D9: br             {'target': 5}
+IL_04DE: ldarg.0        None
+IL_04DF: call           {'token': '0x06000324', 'identity': 'Device::EnemySeeking_Zombie'}
+IL_04E4: stloc          local(0x0015)
+IL_04E8: br             {'target': 128}
+IL_04ED: ldarg.0        None
+IL_04EE: ldfld          {'token': '0x04000474', 'identity': 'Device::healthPoint'}
+IL_04F3: ldc.i4         0
+IL_04F8: cgt            None
+IL_04FA: ldc.i4.0       None
+IL_04FB: ceq            None
+IL_04FD: stloc          local(0x0016)
+IL_0501: ldloc          local(0x0016)
+IL_0505: brtrue         {'target': 460}
+IL_050A: br             {'target': 226}
+IL_050F: ldarg.0        None
+IL_0510: ldfld          {'token': '0x0400047D', 'identity': 'Device::broken'}
+IL_0515: ldc.i4         0
+IL_051A: ceq            None
+IL_051C: ldc.i4.0       None
+IL_051D: ceq            None
+IL_051F: stloc          local(0x001F)
+IL_0523: ldloc          local(0x001F)
+IL_0527: brtrue         {'target': 913}
+IL_052C: br             {'target': 544}
+IL_0531: ldarg.0        None
+IL_0532: call           {'token': '0x0600030F', 'identity': 'Device::Broken'}
+IL_0537: br             {'target': 913}
+IL_053C: ldarg.0        None
+IL_053D: ldfld          {'token': '0x0400047E', 'identity': 'Device::livingTime'}
+IL_0542: ldc.r4         1.0
+IL_0547: cgt            None
+IL_0549: ldc.i4.0       None
+IL_054A: ceq            None
+IL_054C: stloc          local(0x0012)
+IL_0550: ldloc          local(0x0012)
+IL_0554: brtrue         {'target': 1374}
+IL_0559: br             {'target': 1065}
+IL_055E: ret            None
+IL_055F: ldstr          {'token': '0x700061DF', 'identity': 'Warning: Method ends with non empty stack (-68), the output could be wrong!'}
+IL_0564: pop            None

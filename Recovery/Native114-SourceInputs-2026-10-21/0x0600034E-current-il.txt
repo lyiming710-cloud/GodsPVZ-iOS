@@ -1,0 +1,295 @@
+Plant::Update_Attack
+{"token": "0x0600034E", "name": "Plant::Update_Attack", "signature": "200001", "rva": 264692, "max_stack": 4, "code_size": 1073, "local_sig": 285213334, "locals_blob": "07271281e002021281a4020c0c1281a4114d1281ec1d1280b91d1280b91282441281a40202020c0c0202020202020202020c0c0c0c0c020c0c02021c", "eh_count": 0, "il_sha256": "9054fe98681b2c8ef770bb248e16255ae4d971021ff661abd5f77591434d5462"}
+IL_0000: br             {'target': 969}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040004C3', 'identity': 'Plant::attackable'}
+IL_000B: ldc.i4         0
+IL_0010: ceq            None
+IL_0012: stloc          local(0x0002)
+IL_0016: ldloc          local(0x0002)
+IL_001A: brtrue         {'target': 1003}
+IL_001F: br             {'target': 36}
+IL_0024: ldarg.0        None
+IL_0025: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_002A: stloc          local(0x0003)
+IL_002E: br             {'target': 51}
+IL_0033: ldloc          local(0x0003)
+IL_0037: ldfld          {'token': '0x040003B9', 'identity': 'Board::isFinished'}
+IL_003C: ldc.i4         0
+IL_0041: ceq            None
+IL_0043: stloc          local(0x0004)
+IL_0047: ldloc          local(0x0004)
+IL_004B: brtrue         {'target': 147}
+IL_0050: br             {'target': 85}
+IL_0055: ldarg.0        None
+IL_0056: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_005B: ldc.i4         1
+IL_0060: ceq            None
+IL_0062: stloc          local(0x000F)
+IL_0066: ldloc          local(0x000F)
+IL_006A: brtrue         {'target': 1003}
+IL_006F: br             {'target': 116}
+IL_0074: ldarg.0        None
+IL_0075: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_007A: ldc.i4         9
+IL_007F: ceq            None
+IL_0081: stloc          local(0x0010)
+IL_0085: ldloc          local(0x0010)
+IL_0089: brtrue         {'target': 1003}
+IL_008E: br             {'target': 147}
+IL_0093: ldarg.0        None
+IL_0094: ldfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_0099: ldc.i4         0
+IL_009E: cgt            None
+IL_00A0: ldc.i4.0       None
+IL_00A1: ceq            None
+IL_00A3: stloc          local(0x000E)
+IL_00A7: ldloc          local(0x000E)
+IL_00AB: brtrue         {'target': 1003}
+IL_00B0: br             {'target': 181}
+IL_00B5: ldarg.0        None
+IL_00B6: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_00BB: ldc.i4         1
+IL_00C0: ceq            None
+IL_00C2: stloc          local(0x001A)
+IL_00C6: ldloc          local(0x001A)
+IL_00CA: brtrue         {'target': 407}
+IL_00CF: br             {'target': 212}
+IL_00D4: ldarg.0        None
+IL_00D5: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_00DA: ldc.i4         9
+IL_00DF: ceq            None
+IL_00E1: stloc          local(0x001B)
+IL_00E5: ldloc          local(0x001B)
+IL_00E9: brtrue         {'target': 407}
+IL_00EE: br             {'target': 243}
+IL_00F3: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_00F8: stloc          local(0x001C)
+IL_00FC: ldarg.0        None
+IL_00FD: call           {'token': '0x06000366', 'identity': 'Plant::GetAS'}
+IL_0102: stloc          local(0x001D)
+IL_0106: br             {'target': 267}
+IL_010B: ldloc          local(0x001D)
+IL_010F: conv.r4        None
+IL_0110: ldloc          local(0x001C)
+IL_0114: conv.r4        None
+IL_0115: mul            None
+IL_0116: stloc          local(0x0012)
+IL_011A: ldarg.0        None
+IL_011B: ldfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_0120: conv.r4        None
+IL_0121: ldloc          local(0x0012)
+IL_0125: conv.r4        None
+IL_0126: sub            None
+IL_0127: stloc          local(0x0011)
+IL_012B: ldarg.0        None
+IL_012C: ldloc          local(0x0011)
+IL_0130: stfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_0135: ldc.i4         0
+IL_013A: ldloc          local(0x0011)
+IL_013E: clt            None
+IL_0140: stloc          local(0x0014)
+IL_0144: ldloc          local(0x0014)
+IL_0148: brtrue         {'target': 1003}
+IL_014D: br             {'target': 338}
+IL_0152: ldarg.0        None
+IL_0153: call           {'token': '0x06000396', 'identity': 'Plant::PlantAttackStartTry'}
+IL_0158: stloc          local(0x0013)
+IL_015C: ldloc          local(0x0013)
+IL_0160: ldc.i4.0       None
+IL_0161: ceq            None
+IL_0163: stloc          local(0x0018)
+IL_0167: ldloc          local(0x0018)
+IL_016B: brtrue         {'target': 390}
+IL_0170: br             {'target': 373}
+IL_0175: ldarg.0        None
+IL_0176: ldarg.0        None
+IL_0177: ldfld          {'token': '0x040004CA', 'identity': 'Plant::attackInterval'}
+IL_017C: stfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_0181: br             {'target': 1003}
+IL_0186: ldarg.0        None
+IL_0187: ldarg.0        None
+IL_0188: ldfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_018D: stfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_0192: br             {'target': 1003}
+IL_0197: ldarg.0        None
+IL_0198: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_019D: stloc          local(0x0007)
+IL_01A1: br             {'target': 422}
+IL_01A6: ldloc          local(0x0007)
+IL_01AA: ldfld          {'token': '0x040003B9', 'identity': 'Board::isFinished'}
+IL_01AF: ldc.i4         0
+IL_01B4: ceq            None
+IL_01B6: ldc.i4.0       None
+IL_01B7: ceq            None
+IL_01B9: stloc          local(0x0015)
+IL_01BD: ldloc          local(0x0015)
+IL_01C1: brtrue         {'target': 1003}
+IL_01C6: br             {'target': 459}
+IL_01CB: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_01D0: stloc          local(0x001E)
+IL_01D4: ldarg.0        None
+IL_01D5: call           {'token': '0x06000366', 'identity': 'Plant::GetAS'}
+IL_01DA: stloc          local(0x001F)
+IL_01DE: br             {'target': 483}
+IL_01E3: ldloc          local(0x001F)
+IL_01E7: conv.r4        None
+IL_01E8: ldloc          local(0x001E)
+IL_01EC: conv.r4        None
+IL_01ED: mul            None
+IL_01EE: stloc          local(0x0020)
+IL_01F2: ldarg.0        None
+IL_01F3: ldfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_01F8: conv.r4        None
+IL_01F9: ldloc          local(0x0020)
+IL_01FD: conv.r4        None
+IL_01FE: sub            None
+IL_01FF: stloc          local(0x0005)
+IL_0203: ldarg.0        None
+IL_0204: ldloc          local(0x0005)
+IL_0208: stfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_020D: ldc.r4         1.0
+IL_0212: ldloc          local(0x0005)
+IL_0216: clt            None
+IL_0218: stloc          local(0x0021)
+IL_021C: ldloc          local(0x0021)
+IL_0220: brtrue         {'target': 1004}
+IL_0225: br             {'target': 554}
+IL_022A: ldloc          local(0x0005)
+IL_022E: conv.r4        None
+IL_022F: ldloc          local(0x0005)
+IL_0233: conv.r4        None
+IL_0234: add            None
+IL_0235: stloc          local(0x0022)
+IL_0239: ldc.r4         3.0
+IL_023E: conv.r4        None
+IL_023F: ldloc          local(0x0022)
+IL_0243: conv.r4        None
+IL_0244: sub            None
+IL_0245: stloc          local(0x0023)
+IL_0249: ldarg.0        None
+IL_024A: ldloc          local(0x0023)
+IL_024E: stfld          {'token': '0x040004F5', 'identity': 'Plant::produce_Brightness'}
+IL_0253: br             {'target': 1004}
+IL_0258: br             {'target': 1033}
+IL_025D: br             {'target': 610}
+IL_0262: ldarg.0        None
+IL_0263: ldfld          {'token': '0x040004DF', 'identity': 'Plant::animationSprites'}
+IL_0268: ldstr          {'token': '0x7000CD94', 'identity': 'SunFlower_head1'}
+IL_026D: call           {'token': '0x06000141', 'identity': 'GlobalStaticVars::GetAnimationSpritePosition'}
+IL_0272: stloc          local(0x0008)
+IL_0276: ldarg.0        None
+IL_0277: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_027C: stloc          local(0x000D)
+IL_0280: br             {'target': 645}
+IL_0285: ldloc          local(0x000D)
+IL_0289: ldfld          {'token': '0x040003D7', 'identity': 'Board::projectManager'}
+IL_028E: ldc.i4         1
+IL_0293: ldc.i4         0
+IL_0298: ldloca         local(0x0026)
+IL_029C: call           {'token': '0x06000201', 'identity': 'ProjectManager::CreateProject'}
+IL_02A1: stloc          local(0x0009)
+IL_02A5: br             {'target': 682}
+IL_02AA: ldstr          {'token': '0x7000CDB4', 'identity': 'Not implemented instruction: "cvttss2si edx,dword ptr [rbx+9Ch]"'}
+IL_02AF: pop            None
+IL_02B0: ldloc          local(0x0009)
+IL_02B4: ldc.i4         1
+IL_02B9: call           {'token': '0x060003CE', 'identity': 'Project::SunSet'}
+IL_02BE: ldloc          local(0x0009)
+IL_02C2: ldarg.0        None
+IL_02C3: call           {'token': '0x2B000059', 'identity': '0x2b000059'}
+IL_02C8: br             {'target': 717}
+IL_02CD: ldloc          local(0x0009)
+IL_02D1: call           {'token': '0x060003CC', 'identity': 'Project::SpeedStart'}
+IL_02D6: ldarg.0        None
+IL_02D7: ldfld          {'token': '0x040004B4', 'identity': 'Plant::order'}
+IL_02DC: ldc.i4         1
+IL_02E1: clt            None
+IL_02E3: stloc          local(0x0025)
+IL_02E7: ldloc          local(0x0025)
+IL_02EB: brtrue         {'target': 768}
+IL_02F0: br             {'target': 757}
+IL_02F5: ldarg.0        None
+IL_02F6: call           {'token': '0x06000394', 'identity': 'Plant::PC_SunflowerHeal'}
+IL_02FB: br             {'target': 768}
+IL_0300: ldarg.0        None
+IL_0301: ldfld          {'token': '0x040004F1', 'identity': 'Plant::audioSource'}
+IL_0306: stloc          local(0x000A)
+IL_030A: br             {'target': 783}
+IL_030F: br             {'target': 788}
+IL_0314: call           {'token': '0x06000138', 'identity': 'GlobalStaticVars::AudioVolume'}
+IL_0319: stloc          local(0x0006)
+IL_031D: br             {'target': 802}
+IL_0322: ldloc          local(0x000A)
+IL_0326: ldc.i4         0
+IL_032B: ldelem         {'token': '0x0100002E', 'identity': 'UnityEngine.AudioSource'}
+IL_0330: ldloc          local(0x0006)
+IL_0334: call           {'token': '0x0A0000F5', 'identity': 'UnityEngine.AudioSource::set_volume / sig 2001010c'}
+IL_0339: ldarg.0        None
+IL_033A: ldfld          {'token': '0x040004F1', 'identity': 'Plant::audioSource'}
+IL_033F: stloc          local(0x000B)
+IL_0343: br             {'target': 840}
+IL_0348: ldloc          local(0x000B)
+IL_034C: ldc.i4         0
+IL_0351: ldelem         {'token': '0x0100002E', 'identity': 'UnityEngine.AudioSource'}
+IL_0356: call           {'token': '0x0A0000F8', 'identity': 'UnityEngine.AudioSource::Play / sig 200001'}
+IL_035B: ldarg.0        None
+IL_035C: ldfld          {'token': '0x040004D2', 'identity': 'Plant::skillOngoing'}
+IL_0361: ldc.i4         0
+IL_0366: ceq            None
+IL_0368: stloc          local(0x0019)
+IL_036C: ldarg.0        None
+IL_036D: ldarg.0        None
+IL_036E: ldfld          {'token': '0x040004CA', 'identity': 'Plant::attackInterval'}
+IL_0373: stfld          {'token': '0x040004CB', 'identity': 'Plant::attackIntervalCountdown'}
+IL_0378: ldloc          local(0x0019)
+IL_037C: brtrue         {'target': 1003}
+IL_0381: br             {'target': 902}
+IL_0386: ldarg.0        None
+IL_0387: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_038C: stloc          local(0x000C)
+IL_0390: br             {'target': 917}
+IL_0395: ldloc          local(0x000C)
+IL_0399: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_039E: ldc.i4         1
+IL_03A3: ceq            None
+IL_03A5: ldc.i4.0       None
+IL_03A6: ceq            None
+IL_03A8: stloc          local(0x0016)
+IL_03AC: ldloc          local(0x0016)
+IL_03B0: brtrue         {'target': 1003}
+IL_03B5: br             {'target': 954}
+IL_03BA: ldloc          local(0x000C)
+IL_03BE: ldarg.0        None
+IL_03BF: call           {'token': '0x060004E0', 'identity': 'Skill::Function'}
+IL_03C4: br             {'target': 1003}
+IL_03C9: ldarg.0        None
+IL_03CA: ldfld          {'token': '0x040004CA', 'identity': 'Plant::attackInterval'}
+IL_03CF: ldc.i4         0
+IL_03D4: cgt            None
+IL_03D6: ldc.i4.0       None
+IL_03D7: ceq            None
+IL_03D9: stloc          local(0x0001)
+IL_03DD: ldloc          local(0x0001)
+IL_03E1: brtrue         {'target': 1003}
+IL_03E6: br             {'target': 5}
+IL_03EB: ret            None
+IL_03EC: ldc.i4         0
+IL_03F1: ldloc          local(0x0005)
+IL_03F5: clt            None
+IL_03F7: stloc          local(0x0017)
+IL_03FB: ldloc          local(0x0017)
+IL_03FF: brtrue         {'target': 1003}
+IL_0404: br             {'target': 600}
+IL_0409: ldarg.0        None
+IL_040A: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_040F: ldc.i4         1
+IL_0414: ceq            None
+IL_0416: ldc.i4.0       None
+IL_0417: ceq            None
+IL_0419: stloc          local(0x0024)
+IL_041D: ldloc          local(0x0024)
+IL_0421: brtrue         {'target': 768}
+IL_0426: br             {'target': 605}
+IL_042B: ldstr          {'token': '0x70005917', 'identity': 'Warning: Method ends with non empty stack (-98), the output could be wrong!'}
+IL_0430: pop            None

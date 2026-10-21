@@ -1,0 +1,202 @@
+FTRuntime.SwfClip::UpdatePropBlock
+{"token": "0x06000846", "name": "FTRuntime.SwfClip::UpdatePropBlock", "signature": "200001", "rva": 692420, "max_stack": 3, "code_size": 809, "local_sig": 285214263, "locals_blob": "07220202020c12829912829912828d122112847012210802020212828d0202020212828d12828d0212828d0212828d0212846c181c1818181818", "eh_count": 0, "il_sha256": "6f04b5e39a11a2072c311976f90f4e8f56b16f4194023eaff542274ef0a3c167"}
+IL_0000: br             {'target': 696}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000A6F', 'identity': 'FTRuntime.SwfClip::_meshRenderer'}
+IL_000B: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0010: stloc          local(0x0000)
+IL_0014: ldloc          local(0x0000)
+IL_0018: ldc.i4.0       None
+IL_0019: ceq            None
+IL_001B: stloc          local(0x0001)
+IL_001F: ldloc          local(0x0001)
+IL_0023: brtrue         {'target': 701}
+IL_0028: br             {'target': 45}
+IL_002D: ldarg.0        None
+IL_002E: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_0033: ldc.i4         0
+IL_0038: ceq            None
+IL_003A: ldc.i4.0       None
+IL_003B: ceq            None
+IL_003D: stloc          local(0x0002)
+IL_0041: ldloc          local(0x0002)
+IL_0045: brtrue         {'target': 109}
+IL_004A: br             {'target': 79}
+IL_004F: newobj         {'token': '0x0A00039E', 'identity': 'UnityEngine.MaterialPropertyBlock::.ctor / sig 200001'}
+IL_0054: stloc          local(0x0005)
+IL_0058: nop            None
+IL_0059: br             {'target': 94}
+IL_005E: ldarg.0        None
+IL_005F: ldloc          local(0x0005)
+IL_0063: stfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_0068: br             {'target': 109}
+IL_006D: ldarg.0        None
+IL_006E: ldfld          {'token': '0x04000A6F', 'identity': 'FTRuntime.SwfClip::_meshRenderer'}
+IL_0073: ldarg.0        None
+IL_0074: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_0079: call           {'token': '0x0A00039F', 'identity': 'UnityEngine.Renderer::Internal_GetPropertyBlock / sig 200101128299'}
+IL_007E: br             {'target': 702}
+IL_0083: ldarg.0        None
+IL_0084: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_0089: ldsfld         {'token': '0x04000AD5', 'identity': 'ShaderPropsCache::TintShaderProp'}
+IL_008E: ldloca         local(0x001C)
+IL_0092: call           {'token': '0x0A0003A0', 'identity': 'UnityEngine.MaterialPropertyBlock::SetColor / sig 200201081180d1'}
+IL_0097: br             {'target': 156}
+IL_009C: ldarg.0        None
+IL_009D: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_00A2: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_00A7: stloc          local(0x000B)
+IL_00AB: ldloc          local(0x000B)
+IL_00AF: ldc.i4.0       None
+IL_00B0: ceq            None
+IL_00B2: stloc          local(0x000F)
+IL_00B6: ldloc          local(0x000F)
+IL_00BA: brtrue         {'target': 229}
+IL_00BF: br             {'target': 196}
+IL_00C4: ldarg.0        None
+IL_00C5: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_00CA: stloc          local(0x0008)
+IL_00CE: br             {'target': 211}
+IL_00D3: ldloc          local(0x0008)
+IL_00D7: ldfld          {'token': '0x04000A7E', 'identity': 'FTRuntime.SwfClipAsset::Sprite'}
+IL_00DC: stloc          local(0x0009)
+IL_00E0: br             {'target': 712}
+IL_00E5: ldnull         None
+IL_00E6: stloc          local(0x0009)
+IL_00EA: br             {'target': 712}
+IL_00EF: ldloc          local(0x0009)
+IL_00F3: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_00F8: stloc          local(0x000C)
+IL_00FC: ldloc          local(0x000C)
+IL_0100: ldc.i4.0       None
+IL_0101: ceq            None
+IL_0103: stloc          local(0x0010)
+IL_0107: ldloc          local(0x0010)
+IL_010B: brtrue         {'target': 351}
+IL_0110: br             {'target': 277}
+IL_0115: ldloc          local(0x0009)
+IL_0119: call           {'token': '0x0A0003A1', 'identity': 'UnityEngine.Sprite::get_texture / sig 200012828d'}
+IL_011E: stloc          local(0x0013)
+IL_0122: br             {'target': 295}
+IL_0127: ldloc          local(0x0013)
+IL_012B: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0130: stloc          local(0x0011)
+IL_0134: ldloc          local(0x0011)
+IL_0138: ldc.i4.0       None
+IL_0139: ceq            None
+IL_013B: stloc          local(0x0012)
+IL_013F: ldloc          local(0x0012)
+IL_0143: brtrue         {'target': 351}
+IL_0148: br             {'target': 333}
+IL_014D: ldloc          local(0x0009)
+IL_0151: call           {'token': '0x0A0003A1', 'identity': 'UnityEngine.Sprite::get_texture / sig 200012828d'}
+IL_0156: stloc          local(0x0014)
+IL_015A: br             {'target': 365}
+IL_015F: call           {'token': '0x0A0003A2', 'identity': 'UnityEngine.Texture2D::get_whiteTexture / sig 000012828d'}
+IL_0164: stloc          local(0x0014)
+IL_0168: br             {'target': 365}
+IL_016D: br             {'target': 370}
+IL_0172: ldloc          local(0x0009)
+IL_0176: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_017B: stloc          local(0x000D)
+IL_017F: ldloc          local(0x000D)
+IL_0183: ldc.i4.0       None
+IL_0184: ceq            None
+IL_0186: stloc          local(0x0015)
+IL_018A: ldnull         None
+IL_018B: stloc          local(0x0007)
+IL_018F: ldloc          local(0x0015)
+IL_0193: brtrue         {'target': 717}
+IL_0198: br             {'target': 413}
+IL_019D: ldloc          local(0x0009)
+IL_01A1: call           {'token': '0x0A0003A3', 'identity': 'UnityEngine.Sprite::get_associatedAlphaSplitTexture / sig 200012828d'}
+IL_01A6: stloc          local(0x0016)
+IL_01AA: ldloc          local(0x0016)
+IL_01AE: stloc          local(0x0007)
+IL_01B2: br             {'target': 717}
+IL_01B7: ldloc          local(0x0014)
+IL_01BB: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_01C0: stloc          local(0x0017)
+IL_01C4: ldloc          local(0x0014)
+IL_01C8: stloc          local(0x0006)
+IL_01CC: ldloc          local(0x0017)
+IL_01D0: brtrue         {'target': 496}
+IL_01D5: br             {'target': 474}
+IL_01DA: call           {'token': '0x0A0003A2', 'identity': 'UnityEngine.Texture2D::get_whiteTexture / sig 000012828d'}
+IL_01DF: stloc          local(0x0018)
+IL_01E3: ldloc          local(0x0018)
+IL_01E7: stloc          local(0x0006)
+IL_01EB: br             {'target': 496}
+IL_01F0: ldarg.0        None
+IL_01F1: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_01F6: ldsfld         {'token': '0x04000AD6', 'identity': 'ShaderPropsCache::MainTexShaderProp'}
+IL_01FB: ldloc          local(0x0006)
+IL_01FF: call           {'token': '0x0A0003A4', 'identity': 'UnityEngine.MaterialPropertyBlock::SetTextureImpl / sig 200201081282a1'}
+IL_0204: br             {'target': 521}
+IL_0209: ldloc          local(0x0007)
+IL_020D: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0212: stloc          local(0x0019)
+IL_0216: ldloc          local(0x0019)
+IL_021A: brtrue         {'target': 611}
+IL_021F: br             {'target': 548}
+IL_0224: br             {'target': 722}
+IL_0229: ldarg.0        None
+IL_022A: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_022F: ldsfld         {'token': '0x04000AD7', 'identity': 'ShaderPropsCache::AlphaTexShaderProp'}
+IL_0234: ldloc          local(0x000E)
+IL_0238: call           {'token': '0x0A0003A4', 'identity': 'UnityEngine.MaterialPropertyBlock::SetTextureImpl / sig 200201081282a1'}
+IL_023D: ldarg.0        None
+IL_023E: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_0243: stloc          local(0x0004)
+IL_0247: br             {'target': 741}
+IL_024C: ldsfld         {'token': '0x04000AD8', 'identity': 'ShaderPropsCache::ExternalAlphaShaderProp'}
+IL_0251: stloc          local(0x000A)
+IL_0255: ldc.i4         0
+IL_025A: stloc          local(0x0003)
+IL_025E: br             {'target': 751}
+IL_0263: br             {'target': 773}
+IL_0268: ldarg.0        None
+IL_0269: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_026E: ldsfld         {'token': '0x04000AD7', 'identity': 'ShaderPropsCache::AlphaTexShaderProp'}
+IL_0273: ldloc          local(0x0007)
+IL_0277: call           {'token': '0x0A0003A4', 'identity': 'UnityEngine.MaterialPropertyBlock::SetTextureImpl / sig 200201081282a1'}
+IL_027C: ldarg.0        None
+IL_027D: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_0282: stloc          local(0x0004)
+IL_0286: br             {'target': 783}
+IL_028B: ldsfld         {'token': '0x04000AD8', 'identity': 'ShaderPropsCache::ExternalAlphaShaderProp'}
+IL_0290: stloc          local(0x000A)
+IL_0294: ldc.r4         1.0
+IL_0299: stloc          local(0x0003)
+IL_029D: br             {'target': 751}
+IL_02A2: ldarg.0        None
+IL_02A3: ldfld          {'token': '0x04000A6F', 'identity': 'FTRuntime.SwfClip::_meshRenderer'}
+IL_02A8: ldarg.0        None
+IL_02A9: ldfld          {'token': '0x04000A73', 'identity': 'FTRuntime.SwfClip::_curPropBlock'}
+IL_02AE: call           {'token': '0x0A0003A5', 'identity': 'UnityEngine.Renderer::Internal_SetPropertyBlock / sig 200101128299'}
+IL_02B3: br             {'target': 701}
+IL_02B8: br             {'target': 5}
+IL_02BD: ret            None
+IL_02BE: call           {'token': '0x060008FA', 'identity': 'ShaderPropsCache::LazyInitialize'}
+IL_02C3: br             {'target': 131}
+IL_02C8: br             {'target': 239}
+IL_02CD: br             {'target': 793}
+IL_02D2: call           {'token': '0x060008FA', 'identity': 'ShaderPropsCache::LazyInitialize'}
+IL_02D7: call           {'token': '0x0A0003A2', 'identity': 'UnityEngine.Texture2D::get_whiteTexture / sig 000012828d'}
+IL_02DC: stloc          local(0x000E)
+IL_02E0: br             {'target': 553}
+IL_02E5: call           {'token': '0x060008FA', 'identity': 'ShaderPropsCache::LazyInitialize'}
+IL_02EA: br             {'target': 588}
+IL_02EF: ldloc          local(0x0004)
+IL_02F3: ldloc          local(0x000A)
+IL_02F7: ldloc          local(0x0003)
+IL_02FB: call           {'token': '0x0A0003A6', 'identity': 'UnityEngine.MaterialPropertyBlock::SetFloatImpl / sig 200201080c'}
+IL_0300: br             {'target': 674}
+IL_0305: call           {'token': '0x060008FA', 'identity': 'ShaderPropsCache::LazyInitialize'}
+IL_030A: br             {'target': 616}
+IL_030F: call           {'token': '0x060008FA', 'identity': 'ShaderPropsCache::LazyInitialize'}
+IL_0314: br             {'target': 651}
+IL_0319: call           {'token': '0x060008FA', 'identity': 'ShaderPropsCache::LazyInitialize'}
+IL_031E: br             {'target': 439}
+IL_0323: ldstr          {'token': '0x70000E97', 'identity': 'Warning: Method ends with non empty stack (-38), the output could be wrong!'}
+IL_0328: pop            None
