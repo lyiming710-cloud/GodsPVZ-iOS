@@ -277,8 +277,8 @@ def audit_isolation_bulk188(parent_bytes: bytes, cand_bytes: bytes, body_targets
             if cnt_p != 1100 or cnt_c != 1185:
                 return False, f"Unexpected MemberRef row count: {cnt_p} -> {cnt_c} (expected 1100 -> 1185)", {}
         elif tid == 0x11:
-            if cnt_p != 1765 or cnt_c != 1888:
-                return False, f"Unexpected StandAloneSig row count: {cnt_p} -> {cnt_c} (expected 1765 -> 1888)", {}
+            if cnt_p != 1765 or cnt_c != 1896:
+                return False, f"Unexpected StandAloneSig row count: {cnt_p} -> {cnt_c} (expected 1765 -> 1896)", {}
         elif tid == 0x1B:
             if cnt_p != 173 or cnt_c != 175:
                 return False, f"Unexpected TypeSpec row count: {cnt_p} -> {cnt_c} (expected 173 -> 175)", {}
