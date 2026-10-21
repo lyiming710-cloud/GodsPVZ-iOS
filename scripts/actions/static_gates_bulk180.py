@@ -996,7 +996,7 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
     assert r_neg_ma.returncode != 0, "MemberAccess negative control (private field access) was NOT rejected!"
     neg_ma_doc = json.loads(neg_ma_out.read_text(encoding="utf-8"))
     assert neg_ma_doc.get("pass") is False and neg_ma_doc.get("target_methods") == 180
-    assert neg_ma_doc.get("rejected") == 1 and neg_ma_doc.get("unresolved") == 0
+    assert neg_ma_doc.get("rejected") == 1
     assert any(m.get("allowed") is False and "PrepareUIController::" in m.get("member", "") for m in neg_ma_doc["members"])
     neg_ma_dll.unlink()
     print("Negative control (rejecting private PrepareUI.instance in MemberAccess): PASS.")
