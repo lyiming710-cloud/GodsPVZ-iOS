@@ -89,7 +89,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$GITHUB_WORKSPACE/.validation/bulk162-overlaid-run/verifier_output"
+          # verify_bulk152_portable creates verifier_output fresh to guarantee isolation
           # Run verify_bulk152_portable.py; note it returns exit code 1 due to remaining unrecovered game methods
           python3 scripts/actions/verify_bulk152_portable.py             --portable-root "$RUNNER_TEMP/bulk162-portable"             --candidate-dll "$RUNNER_TEMP/bulk162-downloads/candidate1.dll"             --output-dir "$GITHUB_WORKSPACE/.validation/bulk162-overlaid-run/verifier_output" || true
       - name: Upload Bulk162 overlaid baseline evidence
