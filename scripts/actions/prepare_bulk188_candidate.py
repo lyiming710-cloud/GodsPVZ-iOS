@@ -388,7 +388,7 @@ def main():
         manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
     print("\n=================================================================")
-    print(f"BULK180 CANDIDATE PREPARATION COMPLETE: SHA {c1_sha}")
+    print(f"BULK188 CANDIDATE PREPARATION COMPLETE: SHA {c1_sha}")
     print(f"Manifest written to: {manifest_path}")
     print(f"Verifier Exit Code: {verifier_exit}")
     print("=================================================================")

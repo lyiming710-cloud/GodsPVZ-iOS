@@ -750,7 +750,7 @@ def compare_against_baseline(baseline_bytes: bytes, cand_bytes: bytes, expected_
         "identical_body_methods_count": identical_body_methods,
         "body_diff_methods_count": len(body_diff_methods),
         "body_diff_tokens": sorted(m["token"] for m in body_diff_methods),
-        "all_other_2305_methods_identical": (identical_body_methods == 2305),
+        "all_other_2309_methods_identical": (identical_body_methods == 2309),
         "diff_methods": body_diff_methods
     }
 
