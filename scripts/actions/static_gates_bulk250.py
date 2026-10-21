@@ -424,8 +424,8 @@ def audit_isolation_bulk250(parent_bytes: bytes, cand_bytes: bytes, body_targets
                 (187, 969, "0a01128210"),
                 (188, 1312, "0a011281d4"),
                 (189, 2012, "0a011281e0"),
-                (190, 207, "0a011281d4"),
-                (191, 208, "0a011281e0"),
+                (190, 414, "0a011281d4"),
+                (191, 416, "0a011281e0"),
             ]:
                 roff_c = pos_c + (rid - 1) * rsize
                 rc = tc[roff_c:roff_c + rsize]
