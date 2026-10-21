@@ -1,0 +1,115 @@
+name: Bulk195 candidate and portable Linux verification
+# Trigger run 1: Bulk195 (Native114) candidate preparation, 16-negative-control static gates, official iOS PlaybackEngine dependency overlay, and downstream IL2CPP/Clang verification
+
+on:
+  push:
+    branches: [repair/native114-bulk195-actions-2026-10-22]
+    paths: ['.github/workflows/bulk195-candidate-verification.yml', 'scripts/actions/**', 'support/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: bulk195-candidate-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      NUGET_XMLDOC_MODE: skip
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.401'
+      - name: Record host and select Clang 18
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v clang++-18 >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y clang-18 g++
+          fi
+          mkdir -p "$RUNNER_TEMP/bulk195-bin"
+          ln -s "$(command -v clang++-18)" "$RUNNER_TEMP/bulk195-bin/clang++"
+          echo "$RUNNER_TEMP/bulk195-bin" >> "$GITHUB_PATH"
+          uname -a
+          dotnet --info
+          clang++-18 --version
+          g++ --version
+      - name: Download frozen inputs, tools capsule, baseline candidate and Bulk195 source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bulk195-downloads"
+          gh release download bulk152-actions-checkpoint-2026-10-20             --repo lyiming710-cloud/GodsPVZ-iOS             --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz             --pattern PORTABLE-MANIFEST.json             --dir "$RUNNER_TEMP/bulk195-downloads"
+          gh release download native110-bulk162-r1-source-2026-10-20             --repo lyiming710-cloud/GodsPVZ-iOS             --pattern NATIVE110-BULK162-R1-SOURCE-AND-TOOLS.zip             --dir "$RUNNER_TEMP/bulk195-downloads"
+          gh release download bulk188-candidate-2026-10-21             --repo lyiming710-cloud/GodsPVZ-iOS             --pattern candidate1.dll             --dir "$RUNNER_TEMP/bulk195-downloads"
+          gh release download native114-bulk195-source-2026-10-22             --repo lyiming710-cloud/GodsPVZ-iOS             --pattern NATIVE114-BULK195-SOURCE.zip             --dir "$RUNNER_TEMP/bulk195-downloads"
+      - name: Authenticate restored files and tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/restore_bulk152_checkpoint.py             --downloads "$RUNNER_TEMP/bulk195-downloads"             --destination "$RUNNER_TEMP/bulk195-portable"             --receipt .validation/bulk195-restore-receipt.json
+          python3 scripts/actions/restore_native110_source.py             --archive "$RUNNER_TEMP/bulk195-downloads/NATIVE110-BULK162-R1-SOURCE-AND-TOOLS.zip"             --destination "$RUNNER_TEMP/native110-capsule"
+          python3 scripts/actions/restore_native114_source.py             --archive "$RUNNER_TEMP/bulk195-downloads/NATIVE114-BULK195-SOURCE.zip"             --destination "$RUNNER_TEMP/native114-source"
+      - name: Apply authentic official iOS PlaybackEngine dependency profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          support_target="$RUNNER_TEMP/bulk195-portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped"
+          official_mod="$GITHUB_WORKSPACE/support/official-unity-2022.3.44f1-ios/UnityEngine.AnimationModule.dll"
+          if [ -f "$official_mod" ]; then
+            echo "Overlaying official iOS PlaybackEngine UnityEngine.AnimationModule.dll (153088 B)..."
+            cp "$official_mod" "$support_target/UnityEngine.AnimationModule.dll"
+            sha256sum "$support_target/UnityEngine.AnimationModule.dll"
+          else
+            echo "ERROR: Official iOS PlaybackEngine assembly missing at $official_mod"
+            exit 1
+          fi
+      - name: Construct twice, verify isolation and execute downstream gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONPATH="$RUNNER_TEMP/native110-capsule/deps"
+          python3 scripts/actions/prepare_bulk195_candidate.py             --source-dir "$RUNNER_TEMP/native114-source/native-bulk195-codex-2026-10-22"             --parent-dll "$RUNNER_TEMP/native110-capsule/inputs/parent_native93.dll"             --baseline-candidate-dll "$RUNNER_TEMP/bulk195-downloads/candidate1.dll"             --wrong-parent-dll "$RUNNER_TEMP/bulk195-downloads/candidate1.dll"             --deps-dir "$RUNNER_TEMP/native110-capsule/deps"             --tools-dir "$RUNNER_TEMP/native110-capsule/tools"             --support-dir "$RUNNER_TEMP/bulk195-portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped"             --portable-root "$RUNNER_TEMP/bulk195-portable"             --output-dir "$GITHUB_WORKSPACE/.validation/bulk195-run"             --verifier-runner "$GITHUB_WORKSPACE/scripts/actions/verify_bulk152_portable.py"             --allow-blocked-dependency-profile
+      - name: Preserve generated source on success or failure
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          stage=.validation/bulk195-run/verifier_output/il2cpp_stage
+          if [ -d "$stage/il2cppOutput" ]; then
+            tar -czf .validation/bulk195-generated-sources.tar.gz               -C "$stage" il2cppOutput
+          fi
+      - name: Upload candidate and complete diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bulk195-Linux-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: warn
+          path: |
+            .validation/bulk195-restore-receipt.json
+            .validation/bulk195-run/candidates/
+            .validation/bulk195-run/results/
+            .validation/bulk195-run/*.json
+            .validation/bulk195-run/tools_bin/
+            .validation/bulk195-run/verifier_output/results/
+            .validation/bulk195-run/verifier_output/oracle_run/
+            .validation/bulk195-run/verifier_output/fixture_run/*.json
+            .validation/bulk195-run/verifier_output/fixture_run/*.log
+            .validation/bulk195-run/verifier_output/fixture_run/*.txt
+            .validation/bulk195-run/verifier_output/*.json
+            .validation/bulk195-run/verifier_output/Archive-v1-*.zip
+            .validation/bulk195-generated-sources.tar.gz
