@@ -166,7 +166,7 @@ def main():
 
     lineage = json.loads((src_dir / "SOURCE-LINEAGE.json").read_text(encoding="utf-8"))
     new_target_tokens_hex = lineage["new_target_tokens"]
-    assert len(new_target_tokens_hex) == 7, f"Expected 12 new targets, got {len(new_target_tokens_hex)}"
+    assert len(new_target_tokens_hex) == 12, f"Expected 12 new targets, got {len(new_target_tokens_hex)}"
     new_target_tokens = {int(x, 16) for x in new_target_tokens_hex}
     print(f"Loaded new targets from lineage: {new_target_tokens_hex}")
 
