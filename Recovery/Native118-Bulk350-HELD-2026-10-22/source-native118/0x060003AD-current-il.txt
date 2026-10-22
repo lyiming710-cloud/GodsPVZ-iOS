@@ -1,0 +1,211 @@
+Plant::ST_Repearbalester
+{"token": "0x060003AD", "name": "Plant::ST_Repearbalester", "signature": "200001", "rva": 306528, "max_stack": 4, "code_size": 756, "local_sig": 285213410, "locals_blob": "07221c1281e002114d114d1281f4020218181281a41281a408114d1281f41280941c128094181c1c1c1c1c1c1c181c1c1c1282101281d4114d1c", "eh_count": 0, "il_sha256": "a1770fc0952357bbfc034f67f6cfd2cd9e776cb02317c2f5c4fe1983bab12a9f"}
+IL_0000: ldloca         local(0x0021)
+IL_0004: stloc          local(0x0000)
+IL_0008: br             {'target': 569}
+IL_000D: br             {'target': 18}
+IL_0012: ldarg.0        None
+IL_0013: ldfld          {'token': '0x040004DF', 'identity': 'Plant::animationSprites'}
+IL_0018: ldstr          {'token': '0x7000E6AA', 'identity': 'PeaCrossbow_nujian1'}
+IL_001D: call           {'token': '0x06000141', 'identity': 'GlobalStaticVars::GetAnimationSpritePosition'}
+IL_0022: stloc          local(0x0003)
+IL_0026: ldarg.0        None
+IL_0027: ldfld          {'token': '0x040004DF', 'identity': 'Plant::animationSprites'}
+IL_002C: ldstr          {'token': '0x7000E6D2', 'identity': 'PeaCrossbow_nujian2'}
+IL_0031: call           {'token': '0x06000141', 'identity': 'GlobalStaticVars::GetAnimationSpritePosition'}
+IL_0036: stloc          local(0x0004)
+IL_003A: br             {'target': 63}
+IL_003F: ldarg.0        None
+IL_0040: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_0045: stloc          local(0x000A)
+IL_0049: br             {'target': 78}
+IL_004E: ldloc          local(0x000A)
+IL_0052: ldfld          {'token': '0x040003D6', 'identity': 'Board::projectileManager'}
+IL_0057: ldc.i4         24
+IL_005C: call           {'token': '0x060001F6', 'identity': 'ProjectileManager::CrateNewProjectile'}
+IL_0061: stloc          local(0x0005)
+IL_0065: ldarg.0        None
+IL_0066: ldfld          {'token': '0x040004F3', 'identity': 'Plant::board'}
+IL_006B: stloc          local(0x000B)
+IL_006F: br             {'target': 116}
+IL_0074: ldloc          local(0x000B)
+IL_0078: ldfld          {'token': '0x040003D6', 'identity': 'Board::projectileManager'}
+IL_007D: ldc.i4         24
+IL_0082: call           {'token': '0x060001F6', 'identity': 'ProjectileManager::CrateNewProjectile'}
+IL_0087: stloc          local(0x000E)
+IL_008B: ldarg.0        None
+IL_008C: ldloc          local(0x0005)
+IL_0090: ldc.i4         24
+IL_0095: ldc.i4         0
+IL_009A: call           {'token': '0x0600036D', 'identity': 'Plant::GetDamage'}
+IL_009F: stloc          local(0x000F)
+IL_00A3: br             {'target': 168}
+IL_00A8: ldarg.0        None
+IL_00A9: ldloc          local(0x000E)
+IL_00AD: ldc.i4         24
+IL_00B2: ldc.i4         0
+IL_00B7: call           {'token': '0x0600036D', 'identity': 'Plant::GetDamage'}
+IL_00BC: stloc          local(0x0011)
+IL_00C0: br             {'target': 603}
+IL_00C5: ldloca         local(0x0021)
+IL_00C9: ldc.i4         57
+IL_00CE: sub            None
+IL_00CF: stloc          local(0x0013)
+IL_00D3: ldloca         local(0x0021)
+IL_00D7: ldc.i4         41
+IL_00DC: sub            None
+IL_00DD: stloc          local(0x0014)
+IL_00E1: ldsfld         {'token': '0x0A0000AC', 'identity': 'UnityEngine.Vector3::zeroVector / sig 06114d'}
+IL_00E6: pop            None
+IL_00E7: ldloca         local(0x0021)
+IL_00EB: ldc.i4         25
+IL_00F0: sub            None
+IL_00F1: stloc          local(0x0015)
+IL_00F5: ldstr          {'token': '0x7000E6FA', 'identity': 'Unmanaged memory load: [v186 @ rax_v16 (Il2CppStaticFields<UnityEngine.Vector3>)+8]'}
+IL_00FA: pop            None
+IL_00FB: ldc.i4.0       None
+IL_00FC: conv.i         None
+IL_00FD: pop            None
+IL_00FE: ldloc          local(0x0003)
+IL_0102: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_0107: pop            None
+IL_0108: ldloc          local(0x0003)
+IL_010C: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_0111: pop            None
+IL_0112: ldc.i4         0
+IL_0117: pop            None
+IL_0118: ldloc          local(0x0016)
+IL_011C: pop            None
+IL_011D: ldstr          {'token': '0x70001CAD', 'identity': 'Method not found @1804A25F0'}
+IL_0122: pop            None
+IL_0123: ldloc          local(0x0005)
+IL_0127: ldloc          local(0x000F)
+IL_012B: ldarg.0        None
+IL_012C: ldfld          {'token': '0x040004C8', 'identity': 'Plant::camp'}
+IL_0131: call           {'token': '0x060003F7', 'identity': 'Projectile::SetDamage'}
+IL_0136: br             {'target': 315}
+IL_013B: br             {'target': 634}
+IL_0140: ldloca         local(0x0021)
+IL_0144: ldc.i4         25
+IL_0149: sub            None
+IL_014A: stloc          local(0x001B)
+IL_014E: ldloca         local(0x0021)
+IL_0152: ldc.i4         41
+IL_0157: sub            None
+IL_0158: stloc          local(0x001C)
+IL_015C: ldsfld         {'token': '0x0A0000AC', 'identity': 'UnityEngine.Vector3::zeroVector / sig 06114d'}
+IL_0161: pop            None
+IL_0162: ldloca         local(0x0021)
+IL_0166: ldc.i4         57
+IL_016B: sub            None
+IL_016C: stloc          local(0x001D)
+IL_0170: ldstr          {'token': '0x7000E7A3', 'identity': 'Unmanaged memory load: [v187 @ rax_v23 (Il2CppStaticFields<UnityEngine.Vector3>)+8]'}
+IL_0175: pop            None
+IL_0176: ldc.i4.0       None
+IL_0177: conv.i         None
+IL_0178: pop            None
+IL_0179: ldc.i4         0
+IL_017E: pop            None
+IL_017F: ldloc          local(0x0016)
+IL_0183: pop            None
+IL_0184: ldloc          local(0x0004)
+IL_0188: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_018D: pop            None
+IL_018E: ldloc          local(0x0004)
+IL_0192: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_0197: pop            None
+IL_0198: ldstr          {'token': '0x70001CAD', 'identity': 'Method not found @1804A25F0'}
+IL_019D: pop            None
+IL_019E: ldloc          local(0x000E)
+IL_01A2: ldloc          local(0x0011)
+IL_01A6: ldarg.0        None
+IL_01A7: ldfld          {'token': '0x040004C8', 'identity': 'Plant::camp'}
+IL_01AC: call           {'token': '0x060003F7', 'identity': 'Projectile::SetDamage'}
+IL_01B1: br             {'target': 438}
+IL_01B6: ldarg.0        None
+IL_01B7: call           {'token': '0x06000360', 'identity': 'Plant::EnemySeeking'}
+IL_01BC: stloc          local(0x001E)
+IL_01C0: br             {'target': 453}
+IL_01C5: ldloc          local(0x001E)
+IL_01C9: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_01CE: stloc          local(0x0007)
+IL_01D2: ldloc          local(0x0007)
+IL_01D6: brtrue         {'target': 666}
+IL_01DB: br             {'target': 480}
+IL_01E0: ldarg.0        None
+IL_01E1: call           {'token': '0x06000363', 'identity': 'Plant::EnemySeeking_Device'}
+IL_01E6: stloc          local(0x001F)
+IL_01EA: br             {'target': 495}
+IL_01EF: ldloc          local(0x001F)
+IL_01F3: ldnull         None
+IL_01F4: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_01F9: stloc          local(0x0006)
+IL_01FD: ldloc          local(0x0006)
+IL_0201: brtrue         {'target': 523}
+IL_0206: br             {'target': 665}
+IL_020B: br             {'target': 666}
+IL_0210: ldarg.0        None
+IL_0211: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_0216: ldarg.0        None
+IL_0217: call           {'token': '0x060004E0', 'identity': 'Skill::Function'}
+IL_021C: ldc.i4         0
+IL_0221: stloc          local(0x000C)
+IL_0225: br             {'target': 554}
+IL_022A: ldarg.0        None
+IL_022B: ldloc          local(0x000C)
+IL_022F: stfld          {'token': '0x040004B6', 'identity': 'Plant::state'}
+IL_0234: br             {'target': 665}
+IL_0239: ldarg.0        None
+IL_023A: ldfld          {'token': '0x040004D2', 'identity': 'Plant::skillOngoing'}
+IL_023F: ldc.i4         0
+IL_0244: ceq            None
+IL_0246: ldc.i4.0       None
+IL_0247: ceq            None
+IL_0249: stloc          local(0x0002)
+IL_024D: ldloc          local(0x0002)
+IL_0251: brtrue         {'target': 528}
+IL_0256: br             {'target': 13}
+IL_025B: ldtoken        {'token': '0x01000013', 'identity': 'UnityEngine.Vector3'}
+IL_0260: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0265: stloc          local(0x0012)
+IL_0269: ldstr          {'token': '0x7000E84C', 'identity': 'Unmanaged memory load: [v475 @ rax_v15 (Il2CppClass<UnityEngine.Vector3>)+B8]'}
+IL_026E: pop            None
+IL_026F: ldc.i4.0       None
+IL_0270: conv.i         None
+IL_0271: stloc          local(0x0008)
+IL_0275: br             {'target': 197}
+IL_027A: ldtoken        {'token': '0x01000013', 'identity': 'UnityEngine.Vector3'}
+IL_027F: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0284: stloc          local(0x001A)
+IL_0288: ldstr          {'token': '0x7000E8E9', 'identity': 'Unmanaged memory load: [v507 @ rax_v22 (Il2CppClass<UnityEngine.Vector3>)+B8]'}
+IL_028D: pop            None
+IL_028E: ldc.i4.0       None
+IL_028F: conv.i         None
+IL_0290: stloc          local(0x0009)
+IL_0294: br             {'target': 320}
+IL_0299: ret            None
+IL_029A: ldc.i4         0
+IL_029F: pop            None
+IL_02A0: ldloca         local(0x0021)
+IL_02A4: ldc.i4         25
+IL_02A9: sub            None
+IL_02AA: stloc          local(0x0020)
+IL_02AE: ldloc          local(0x0016)
+IL_02B2: pop            None
+IL_02B3: ldloc          local(0x0005)
+IL_02B7: ldloc          local(0x0020)
+IL_02BB: call           {'token': '0x060003DC', 'identity': 'Projectile::Aim'}
+IL_02C0: ldc.i4         0
+IL_02C5: pop            None
+IL_02C6: ldloca         local(0x0021)
+IL_02CA: ldc.i4         25
+IL_02CF: sub            None
+IL_02D0: stloc          local(0x000D)
+IL_02D4: ldloc          local(0x0016)
+IL_02D8: pop            None
+IL_02D9: ldloc          local(0x000E)
+IL_02DD: ldloc          local(0x000D)
+IL_02E1: call           {'token': '0x060003DC', 'identity': 'Projectile::Aim'}
+IL_02E6: ldc.i4         0
+IL_02EB: stloc          local(0x000C)
+IL_02EF: br             {'target': 554}

@@ -1,0 +1,487 @@
+DeviceDataEditor::LoadData
+{"token": "0x06000030", "name": "DeviceDataEditor::LoadData", "signature": "200101121c", "rva": 20672, "max_stack": 2, "code_size": 1972, "local_sig": 285212709, "locals_blob": "0730121c02121c1280f81281cc1281c8021281d0080e0e0e0e0e0e080808081245080802021265021245020e02020202126d121818181808181818181818181818", "eh_count": 0, "il_sha256": "4cd409f04be98546d2f56cd3de797063f09715f28f85874d1d2882153cad6144"}
+IL_0000: br             {'target': 1925}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000023', 'identity': 'DeviceDataEditor::deviceOnCheck'}
+IL_000B: ldnull         None
+IL_000C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0011: stloc          local(0x0001)
+IL_0015: ldloc          local(0x0001)
+IL_0019: brtrue         {'target': 35}
+IL_001E: br             {'target': 1375}
+IL_0023: ldarg.0        None
+IL_0024: ldfld          {'token': '0x04000023', 'identity': 'DeviceDataEditor::deviceOnCheck'}
+IL_0029: stloc          local(0x0002)
+IL_002D: br             {'target': 50}
+IL_0032: ldloc          local(0x0002)
+IL_0036: ldfld          {'token': '0x04000035', 'identity': 'Device_boardEditor::preDevice'}
+IL_003B: stloc          local(0x0003)
+IL_003F: br             {'target': 68}
+IL_0044: ldloc          local(0x0003)
+IL_0048: ldfld          {'token': '0x040001D3', 'identity': 'PreDevice::data'}
+IL_004D: stloc          local(0x0005)
+IL_0051: br             {'target': 86}
+IL_0056: ldloc          local(0x0005)
+IL_005A: ldfld          {'token': '0x04000459', 'identity': 'DeviceData::content'}
+IL_005F: stloc          local(0x0004)
+IL_0063: ldloca         local(0x0026)
+IL_0067: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_006C: stloc          local(0x0009)
+IL_0070: br             {'target': 117}
+IL_0075: ldarg.0        None
+IL_0076: ldfld          {'token': '0x04000026', 'identity': 'DeviceDataEditor::ID_IF'}
+IL_007B: ldloc          local(0x0009)
+IL_007F: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0084: ldloc          local(0x0003)
+IL_0088: ldc.i4         16
+IL_008D: add            None
+IL_008E: stloc          local(0x000F)
+IL_0092: ldloc          local(0x000F)
+IL_0096: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_009B: stloc          local(0x000A)
+IL_009F: br             {'target': 164}
+IL_00A4: ldarg.0        None
+IL_00A5: ldfld          {'token': '0x04000024', 'identity': 'DeviceDataEditor::gridX_IF'}
+IL_00AA: ldloc          local(0x000A)
+IL_00AE: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00B3: ldloc          local(0x0003)
+IL_00B7: ldc.i4         20
+IL_00BC: add            None
+IL_00BD: stloc          local(0x0010)
+IL_00C1: ldloc          local(0x0010)
+IL_00C5: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_00CA: stloc          local(0x000B)
+IL_00CE: br             {'target': 211}
+IL_00D3: ldarg.0        None
+IL_00D4: ldfld          {'token': '0x04000025', 'identity': 'DeviceDataEditor::gridY_IF'}
+IL_00D9: ldloc          local(0x000B)
+IL_00DD: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00E2: br             {'target': 231}
+IL_00E7: ldarg.0        None
+IL_00E8: ldfld          {'token': '0x0400002B', 'identity': 'DeviceDataEditor::entryKey_IF'}
+IL_00ED: ldloc          local(0x0003)
+IL_00F1: ldfld          {'token': '0x040001D2', 'identity': 'PreDevice::entryKey'}
+IL_00F6: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00FB: br             {'target': 256}
+IL_0100: ldarg.0        None
+IL_0101: ldfld          {'token': '0x0400002E', 'identity': 'DeviceDataEditor::camp_DD'}
+IL_0106: ldloc          local(0x0005)
+IL_010A: ldfld          {'token': '0x04000455', 'identity': 'DeviceData::camp'}
+IL_010F: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0114: br             {'target': 281}
+IL_0119: ldarg.0        None
+IL_011A: ldfld          {'token': '0x04000026', 'identity': 'DeviceDataEditor::ID_IF'}
+IL_011F: ldc.i4         1
+IL_0124: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0129: br             {'target': 302}
+IL_012E: ldarg.0        None
+IL_012F: ldfld          {'token': '0x04000024', 'identity': 'DeviceDataEditor::gridX_IF'}
+IL_0134: ldc.i4         1
+IL_0139: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_013E: br             {'target': 323}
+IL_0143: ldarg.0        None
+IL_0144: ldfld          {'token': '0x04000025', 'identity': 'DeviceDataEditor::gridY_IF'}
+IL_0149: ldc.i4         1
+IL_014E: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0153: br             {'target': 344}
+IL_0158: ldarg.0        None
+IL_0159: ldfld          {'token': '0x0400002B', 'identity': 'DeviceDataEditor::entryKey_IF'}
+IL_015E: ldc.i4         1
+IL_0163: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0168: br             {'target': 365}
+IL_016D: ldarg.0        None
+IL_016E: ldfld          {'token': '0x0400002E', 'identity': 'DeviceDataEditor::camp_DD'}
+IL_0173: ldc.i4         1
+IL_0178: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_017D: br             {'target': 386}
+IL_0182: ldarg.0        None
+IL_0183: ldfld          {'token': '0x0400002E', 'identity': 'DeviceDataEditor::camp_DD'}
+IL_0188: ldc.i4         1
+IL_018D: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0192: ldloc          local(0x0005)
+IL_0196: ldfld          {'token': '0x04000456', 'identity': 'DeviceData::ID'}
+IL_019B: ldc.i4         8
+IL_01A0: ceq            None
+IL_01A2: stloc          local(0x001B)
+IL_01A6: ldloc          local(0x001B)
+IL_01AA: brtrue         {'target': 523}
+IL_01AF: br             {'target': 436}
+IL_01B4: ldarg.0        None
+IL_01B5: ldfld          {'token': '0x04000027', 'identity': 'DeviceDataEditor::associationGridX_IF'}
+IL_01BA: ldc.i4         0
+IL_01BF: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01C4: br             {'target': 457}
+IL_01C9: ldarg.0        None
+IL_01CA: ldfld          {'token': '0x04000028', 'identity': 'DeviceDataEditor::associationGridY_IF'}
+IL_01CF: ldc.i4         0
+IL_01D4: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01D9: br             {'target': 478}
+IL_01DE: ldarg.0        None
+IL_01DF: ldfld          {'token': '0x04000027', 'identity': 'DeviceDataEditor::associationGridX_IF'}
+IL_01E4: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_01E9: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_01EE: ldarg.0        None
+IL_01EF: ldfld          {'token': '0x04000028', 'identity': 'DeviceDataEditor::associationGridY_IF'}
+IL_01F4: stloc          local(0x0018)
+IL_01F8: br             {'target': 509}
+IL_01FD: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0202: stloc          local(0x001C)
+IL_0206: br             {'target': 649}
+IL_020B: ldarg.0        None
+IL_020C: ldfld          {'token': '0x04000027', 'identity': 'DeviceDataEditor::associationGridX_IF'}
+IL_0211: ldc.i4         1
+IL_0216: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_021B: br             {'target': 544}
+IL_0220: ldarg.0        None
+IL_0221: ldfld          {'token': '0x04000028', 'identity': 'DeviceDataEditor::associationGridY_IF'}
+IL_0226: ldc.i4         1
+IL_022B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0230: ldloc          local(0x0005)
+IL_0234: ldc.i4         32
+IL_0239: add            None
+IL_023A: stloc          local(0x0011)
+IL_023E: ldloc          local(0x0011)
+IL_0242: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0247: stloc          local(0x000C)
+IL_024B: br             {'target': 592}
+IL_0250: ldarg.0        None
+IL_0251: ldfld          {'token': '0x04000027', 'identity': 'DeviceDataEditor::associationGridX_IF'}
+IL_0256: ldloc          local(0x000C)
+IL_025A: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_025F: ldarg.0        None
+IL_0260: ldfld          {'token': '0x04000028', 'identity': 'DeviceDataEditor::associationGridY_IF'}
+IL_0265: stloc          local(0x0018)
+IL_0269: ldloc          local(0x0005)
+IL_026D: ldc.i4         36
+IL_0272: add            None
+IL_0273: stloc          local(0x0012)
+IL_0277: ldloc          local(0x0012)
+IL_027B: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0280: stloc          local(0x001C)
+IL_0284: br             {'target': 649}
+IL_0289: ldloc          local(0x0018)
+IL_028D: ldloc          local(0x001C)
+IL_0291: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0296: ldloc          local(0x0005)
+IL_029A: ldfld          {'token': '0x04000456', 'identity': 'DeviceData::ID'}
+IL_029F: ldc.i4         3
+IL_02A4: ceq            None
+IL_02A6: stloc          local(0x001D)
+IL_02AA: ldloc          local(0x001D)
+IL_02AE: brtrue         {'target': 917}
+IL_02B3: br             {'target': 696}
+IL_02B8: ldarg.0        None
+IL_02B9: ldfld          {'token': '0x0400002C', 'identity': 'DeviceDataEditor::ice'}
+IL_02BE: ldc.i4         0
+IL_02C3: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02C8: br             {'target': 717}
+IL_02CD: ldarg.0        None
+IL_02CE: ldfld          {'token': '0x0400002C', 'identity': 'DeviceDataEditor::ice'}
+IL_02D3: ldc.i4         0
+IL_02D8: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_02DD: br             {'target': 738}
+IL_02E2: ldarg.0        None
+IL_02E3: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_02E8: ldc.i4         0
+IL_02ED: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02F2: br             {'target': 759}
+IL_02F7: ldarg.0        None
+IL_02F8: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_02FD: ldc.i4         0
+IL_0302: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0307: br             {'target': 780}
+IL_030C: ldarg.0        None
+IL_030D: ldfld          {'token': '0x04000029', 'identity': 'DeviceDataEditor::contentID_IF'}
+IL_0312: ldc.i4         0
+IL_0317: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_031C: br             {'target': 801}
+IL_0321: ldarg.0        None
+IL_0322: ldfld          {'token': '0x04000029', 'identity': 'DeviceDataEditor::contentID_IF'}
+IL_0327: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_032C: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0331: ldarg.0        None
+IL_0332: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_0337: stloc          local(0x0013)
+IL_033B: br             {'target': 832}
+IL_0340: ldloc          local(0x0013)
+IL_0344: ldc.i4         0
+IL_0349: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_034E: br             {'target': 851}
+IL_0353: ldarg.0        None
+IL_0354: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_0359: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_035E: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0363: br             {'target': 872}
+IL_0368: ldarg.0        None
+IL_0369: ldfld          {'token': '0x0400002F', 'identity': 'DeviceDataEditor::deviceCardCamp_DD'}
+IL_036E: ldc.i4         0
+IL_0373: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0378: ldarg.0        None
+IL_0379: ldfld          {'token': '0x0400002F', 'identity': 'DeviceDataEditor::deviceCardCamp_DD'}
+IL_037E: stloc          local(0x0021)
+IL_0382: br             {'target': 903}
+IL_0387: ldc.i4         0
+IL_038C: stloc          local(0x0008)
+IL_0390: br             {'target': 1940}
+IL_0395: ldarg.0        None
+IL_0396: ldfld          {'token': '0x0400002C', 'identity': 'DeviceDataEditor::ice'}
+IL_039B: ldc.i4         1
+IL_03A0: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03A5: br             {'target': 938}
+IL_03AA: ldloc          local(0x0005)
+IL_03AE: ldfld          {'token': '0x0400045A', 'identity': 'DeviceData::icePoint'}
+IL_03B3: ldc.i4         0
+IL_03B8: clt            None
+IL_03BA: stloc          local(0x001E)
+IL_03BE: ldloc          local(0x0005)
+IL_03C2: ldfld          {'token': '0x0400045A', 'identity': 'DeviceData::icePoint'}
+IL_03C7: ldc.i4         0
+IL_03CC: ceq            None
+IL_03CE: stloc          local(0x001F)
+IL_03D2: ldloc          local(0x001E)
+IL_03D6: ldc.i4.0       None
+IL_03D7: ceq            None
+IL_03D9: stloc          local(0x0016)
+IL_03DD: ldloc          local(0x001F)
+IL_03E1: ldc.i4.0       None
+IL_03E2: ceq            None
+IL_03E4: stloc          local(0x0020)
+IL_03E8: ldloc          local(0x0020)
+IL_03EC: ldloc          local(0x0016)
+IL_03F0: and            None
+IL_03F1: stloc          local(0x0006)
+IL_03F5: ldarg.0        None
+IL_03F6: ldfld          {'token': '0x0400002C', 'identity': 'DeviceDataEditor::ice'}
+IL_03FB: ldloc          local(0x0006)
+IL_03FF: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_0404: br             {'target': 1033}
+IL_0409: ldarg.0        None
+IL_040A: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_040F: ldc.i4         1
+IL_0414: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0419: br             {'target': 1054}
+IL_041E: ldarg.0        None
+IL_041F: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_0424: ldloc          local(0x0004)
+IL_0428: ldfld          {'token': '0x0400045C', 'identity': 'DeviceContent::contentType'}
+IL_042D: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0432: br             {'target': 1079}
+IL_0437: ldarg.0        None
+IL_0438: ldfld          {'token': '0x04000029', 'identity': 'DeviceDataEditor::contentID_IF'}
+IL_043D: ldc.i4         1
+IL_0442: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0447: ldloc          local(0x0004)
+IL_044B: ldc.i4         20
+IL_0450: add            None
+IL_0451: stloc          local(0x0014)
+IL_0455: ldloc          local(0x0014)
+IL_0459: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_045E: stloc          local(0x000D)
+IL_0462: br             {'target': 1127}
+IL_0467: ldarg.0        None
+IL_0468: ldfld          {'token': '0x04000029', 'identity': 'DeviceDataEditor::contentID_IF'}
+IL_046D: ldloc          local(0x000D)
+IL_0471: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0476: ldarg.0        None
+IL_0477: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_047C: stloc          local(0x0013)
+IL_0480: ldloc          local(0x0004)
+IL_0484: ldfld          {'token': '0x0400045C', 'identity': 'DeviceContent::contentType'}
+IL_0489: ldc.i4         8
+IL_048E: ceq            None
+IL_0490: ldc.i4.0       None
+IL_0491: ceq            None
+IL_0493: stloc          local(0x0017)
+IL_0497: ldloc          local(0x0017)
+IL_049B: brtrue         {'target': 832}
+IL_04A0: br             {'target': 1189}
+IL_04A5: ldarg.0        None
+IL_04A6: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_04AB: ldc.i4         1
+IL_04B0: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04B5: br             {'target': 1210}
+IL_04BA: ldloc          local(0x0004)
+IL_04BE: ldfld          {'token': '0x0400045E', 'identity': 'DeviceContent::contentDeviceData'}
+IL_04C3: ldc.i4         28
+IL_04C8: add            None
+IL_04C9: stloc          local(0x0015)
+IL_04CD: ldloc          local(0x0015)
+IL_04D1: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_04D6: stloc          local(0x000E)
+IL_04DA: br             {'target': 1247}
+IL_04DF: ldarg.0        None
+IL_04E0: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_04E5: ldloc          local(0x000E)
+IL_04E9: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_04EE: br             {'target': 1267}
+IL_04F3: ldarg.0        None
+IL_04F4: ldfld          {'token': '0x0400002F', 'identity': 'DeviceDataEditor::deviceCardCamp_DD'}
+IL_04F9: ldc.i4         1
+IL_04FE: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0503: ldloc          local(0x0004)
+IL_0507: ldfld          {'token': '0x0400045E', 'identity': 'DeviceContent::contentDeviceData'}
+IL_050C: stloc          local(0x0007)
+IL_0510: ldarg.0        None
+IL_0511: ldfld          {'token': '0x0400002F', 'identity': 'DeviceDataEditor::deviceCardCamp_DD'}
+IL_0516: stloc          local(0x0021)
+IL_051A: br             {'target': 1311}
+IL_051F: ldloc          local(0x0007)
+IL_0523: ldfld          {'token': '0x04000460', 'identity': 'ContentDeviceData::camp'}
+IL_0528: stloc          local(0x0008)
+IL_052C: br             {'target': 1940}
+IL_0531: ldarg.0        None
+IL_0532: ldfld          {'token': '0x04000030', 'identity': 'DeviceDataEditor::delete'}
+IL_0537: ldc.i4         1
+IL_053C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0541: ldarg.0        None
+IL_0542: ldfld          {'token': '0x04000031', 'identity': 'DeviceDataEditor::copy'}
+IL_0547: stloc          local(0x001A)
+IL_054B: br             {'target': 1360}
+IL_0550: ldc.i4         1
+IL_0555: stloc          local(0x0019)
+IL_0559: nop            None
+IL_055A: br             {'target': 1958}
+IL_055F: ldarg.0        None
+IL_0560: ldfld          {'token': '0x04000026', 'identity': 'DeviceDataEditor::ID_IF'}
+IL_0565: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_056A: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_056F: br             {'target': 1396}
+IL_0574: ldarg.0        None
+IL_0575: ldfld          {'token': '0x04000024', 'identity': 'DeviceDataEditor::gridX_IF'}
+IL_057A: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_057F: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0584: br             {'target': 1417}
+IL_0589: ldarg.0        None
+IL_058A: ldfld          {'token': '0x04000025', 'identity': 'DeviceDataEditor::gridY_IF'}
+IL_058F: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0594: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0599: br             {'target': 1438}
+IL_059E: ldarg.0        None
+IL_059F: ldfld          {'token': '0x04000027', 'identity': 'DeviceDataEditor::associationGridX_IF'}
+IL_05A4: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05A9: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_05AE: br             {'target': 1459}
+IL_05B3: ldarg.0        None
+IL_05B4: ldfld          {'token': '0x04000028', 'identity': 'DeviceDataEditor::associationGridY_IF'}
+IL_05B9: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05BE: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_05C3: br             {'target': 1480}
+IL_05C8: ldarg.0        None
+IL_05C9: ldfld          {'token': '0x04000029', 'identity': 'DeviceDataEditor::contentID_IF'}
+IL_05CE: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05D3: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_05D8: br             {'target': 1501}
+IL_05DD: ldarg.0        None
+IL_05DE: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_05E3: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05E8: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_05ED: br             {'target': 1522}
+IL_05F2: ldarg.0        None
+IL_05F3: ldfld          {'token': '0x0400002B', 'identity': 'DeviceDataEditor::entryKey_IF'}
+IL_05F8: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05FD: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0602: br             {'target': 1543}
+IL_0607: ldarg.0        None
+IL_0608: ldfld          {'token': '0x0400002E', 'identity': 'DeviceDataEditor::camp_DD'}
+IL_060D: ldc.i4         0
+IL_0612: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0617: br             {'target': 1564}
+IL_061C: ldarg.0        None
+IL_061D: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_0622: ldc.i4         0
+IL_0627: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_062C: br             {'target': 1585}
+IL_0631: ldarg.0        None
+IL_0632: ldfld          {'token': '0x0400002C', 'identity': 'DeviceDataEditor::ice'}
+IL_0637: ldc.i4         0
+IL_063C: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_0641: br             {'target': 1606}
+IL_0646: ldarg.0        None
+IL_0647: ldfld          {'token': '0x04000026', 'identity': 'DeviceDataEditor::ID_IF'}
+IL_064C: ldc.i4         0
+IL_0651: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0656: br             {'target': 1627}
+IL_065B: ldarg.0        None
+IL_065C: ldfld          {'token': '0x04000024', 'identity': 'DeviceDataEditor::gridX_IF'}
+IL_0661: ldc.i4         0
+IL_0666: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_066B: br             {'target': 1648}
+IL_0670: ldarg.0        None
+IL_0671: ldfld          {'token': '0x04000025', 'identity': 'DeviceDataEditor::gridY_IF'}
+IL_0676: ldc.i4         0
+IL_067B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0680: br             {'target': 1669}
+IL_0685: ldarg.0        None
+IL_0686: ldfld          {'token': '0x0400002B', 'identity': 'DeviceDataEditor::entryKey_IF'}
+IL_068B: ldc.i4         0
+IL_0690: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0695: br             {'target': 1690}
+IL_069A: ldarg.0        None
+IL_069B: ldfld          {'token': '0x0400002E', 'identity': 'DeviceDataEditor::camp_DD'}
+IL_06A0: ldc.i4         0
+IL_06A5: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06AA: br             {'target': 1711}
+IL_06AF: ldarg.0        None
+IL_06B0: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_06B5: ldc.i4         0
+IL_06BA: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06BF: br             {'target': 1732}
+IL_06C4: ldarg.0        None
+IL_06C5: ldfld          {'token': '0x04000027', 'identity': 'DeviceDataEditor::associationGridX_IF'}
+IL_06CA: ldc.i4         0
+IL_06CF: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06D4: br             {'target': 1753}
+IL_06D9: ldarg.0        None
+IL_06DA: ldfld          {'token': '0x04000028', 'identity': 'DeviceDataEditor::associationGridY_IF'}
+IL_06DF: ldc.i4         0
+IL_06E4: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06E9: br             {'target': 1774}
+IL_06EE: ldarg.0        None
+IL_06EF: ldfld          {'token': '0x04000030', 'identity': 'DeviceDataEditor::delete'}
+IL_06F4: ldc.i4         0
+IL_06F9: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06FE: br             {'target': 1795}
+IL_0703: ldarg.0        None
+IL_0704: ldfld          {'token': '0x04000031', 'identity': 'DeviceDataEditor::copy'}
+IL_0709: ldc.i4         0
+IL_070E: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0713: br             {'target': 1816}
+IL_0718: ldarg.0        None
+IL_0719: ldfld          {'token': '0x0400002C', 'identity': 'DeviceDataEditor::ice'}
+IL_071E: ldc.i4         0
+IL_0723: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0728: br             {'target': 1837}
+IL_072D: ldarg.0        None
+IL_072E: ldfld          {'token': '0x0400002D', 'identity': 'DeviceDataEditor::contentType_DD'}
+IL_0733: ldc.i4         0
+IL_0738: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_073D: br             {'target': 1858}
+IL_0742: ldarg.0        None
+IL_0743: ldfld          {'token': '0x04000029', 'identity': 'DeviceDataEditor::contentID_IF'}
+IL_0748: ldc.i4         0
+IL_074D: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0752: br             {'target': 1879}
+IL_0757: ldarg.0        None
+IL_0758: ldfld          {'token': '0x0400002A', 'identity': 'DeviceDataEditor::deviceCardNum_IF'}
+IL_075D: ldc.i4         0
+IL_0762: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0767: ldarg.0        None
+IL_0768: ldfld          {'token': '0x0400002F', 'identity': 'DeviceDataEditor::deviceCardCamp_DD'}
+IL_076D: stloc          local(0x001A)
+IL_0771: br             {'target': 1910}
+IL_0776: ldc.i4         0
+IL_077B: stloc          local(0x0019)
+IL_077F: nop            None
+IL_0780: br             {'target': 1958}
+IL_0785: ldarg.0        None
+IL_0786: ldarg          argument(0x0001)
+IL_078A: stfld          {'token': '0x04000023', 'identity': 'DeviceDataEditor::deviceOnCheck'}
+IL_078F: br             {'target': 5}
+IL_0794: ldloc          local(0x0021)
+IL_0798: ldloc          local(0x0008)
+IL_079C: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_07A1: br             {'target': 1329}
+IL_07A6: ldloc          local(0x001A)
+IL_07AA: ldloc          local(0x0019)
+IL_07AE: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_07B3: ret            None

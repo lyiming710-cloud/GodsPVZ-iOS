@@ -1,0 +1,461 @@
+System0::LoadPlantData
+{"token": "0x06000073", "name": "System0::LoadPlantData", "signature": "20010108", "rva": 42264, "max_stack": 3, "code_size": 1772, "local_sig": 285212760, "locals_blob": "073112300802080e1281541281501281541d0c0e1281540e0e1281541d0c0e1281540e0e1281541d0c0e1281540e0e0c0c1281540c0c1281540c0c1281541281540c0e0c0e0c0e1818181818181818", "eh_count": 0, "il_sha256": "38bf7770b57fcf73e5d6f52101aaab1c4a0b62a5e6960eef8702b159cb43ed8c"}
+IL_0000: br             {'target': 1743}
+IL_0005: ldarg.0        None
+IL_0006: ldloc          local(0x0001)
+IL_000A: stfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_000F: ldloca         local(0x0003)
+IL_0013: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0018: stloc          local(0x0004)
+IL_001C: br             {'target': 33}
+IL_0021: ldarg.0        None
+IL_0022: ldfld          {'token': '0x04000077', 'identity': 'System0::plantID_IF'}
+IL_0027: ldloc          local(0x0004)
+IL_002B: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0030: ldarg.0        None
+IL_0031: ldfld          {'token': '0x0400006B', 'identity': 'System0::plantsInitialValue'}
+IL_0036: stloc          local(0x0006)
+IL_003A: br             {'target': 63}
+IL_003F: ldloc          local(0x0006)
+IL_0043: ldfld          {'token': '0x04000315', 'identity': 'PlantsInitialValue::plantsDatas'}
+IL_0048: ldloc          local(0x0003)
+IL_004C: call           {'token': '0x0A000059', 'identity': 'TypeSpec:16::get_Item / sig 2001130008'}
+IL_0051: stloc          local(0x0022)
+IL_0055: ldarg.0        None
+IL_0056: ldloc          local(0x0022)
+IL_005A: stfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_005F: br             {'target': 100}
+IL_0064: ldarg.0        None
+IL_0065: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_006A: stloc          local(0x0005)
+IL_006E: br             {'target': 115}
+IL_0073: ldarg.0        None
+IL_0074: ldloc          local(0x0005)
+IL_0078: ldfld          {'token': '0x04000319', 'identity': 'PlantData::name'}
+IL_007D: stfld          {'token': '0x04000070', 'identity': 'System0::plantName'}
+IL_0082: br             {'target': 135}
+IL_0087: ldarg.0        None
+IL_0088: ldfld          {'token': '0x04000078', 'identity': 'System0::plantName_IF'}
+IL_008D: ldarg.0        None
+IL_008E: ldfld          {'token': '0x04000070', 'identity': 'System0::plantName'}
+IL_0093: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0098: ldarg.0        None
+IL_0099: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_009E: stloc          local(0x0007)
+IL_00A2: br             {'target': 167}
+IL_00A7: ldloc          local(0x0007)
+IL_00AB: ldfld          {'token': '0x0400031F', 'identity': 'PlantData::maxHealthPoint'}
+IL_00B0: stloc          local(0x0008)
+IL_00B4: br             {'target': 185}
+IL_00B9: ldarg.0        None
+IL_00BA: conv.r4        None
+IL_00BB: ldc.i4         96
+IL_00C0: conv.r4        None
+IL_00C1: add            None
+IL_00C2: stloc          local(0x0019)
+IL_00C6: ldarg.0        None
+IL_00C7: ldloc          local(0x0008)
+IL_00CB: ldc.i4         0
+IL_00D0: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_00D5: stfld          {'token': '0x04000071', 'identity': 'System0::healthBase'}
+IL_00DA: ldloc          local(0x0019)
+IL_00DE: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_00E3: stloc          local(0x0009)
+IL_00E7: br             {'target': 236}
+IL_00EC: ldarg.0        None
+IL_00ED: ldfld          {'token': '0x04000079', 'identity': 'System0::healthBase_IF'}
+IL_00F2: ldloc          local(0x0009)
+IL_00F6: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00FB: ldarg.0        None
+IL_00FC: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0101: stloc          local(0x000A)
+IL_0105: br             {'target': 266}
+IL_010A: ldarg.0        None
+IL_010B: conv.r4        None
+IL_010C: ldc.i4         100
+IL_0111: conv.r4        None
+IL_0112: add            None
+IL_0113: stloc          local(0x001A)
+IL_0117: ldarg.0        None
+IL_0118: ldloc          local(0x000A)
+IL_011C: ldfld          {'token': '0x04000320', 'identity': 'PlantData::healthFactor'}
+IL_0121: stfld          {'token': '0x04000072', 'identity': 'System0::healthFactor'}
+IL_0126: ldloc          local(0x001A)
+IL_012A: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_012F: stloc          local(0x000B)
+IL_0133: br             {'target': 312}
+IL_0138: ldarg.0        None
+IL_0139: ldfld          {'token': '0x0400007A', 'identity': 'System0::healthFactor_IF'}
+IL_013E: ldloc          local(0x000B)
+IL_0142: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0147: ldarg.0        None
+IL_0148: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_014D: stloc          local(0x001B)
+IL_0151: br             {'target': 342}
+IL_0156: ldloc          local(0x001B)
+IL_015A: ldfld          {'token': '0x0400031F', 'identity': 'PlantData::maxHealthPoint'}
+IL_015F: conv.r4        None
+IL_0160: ldc.i4         828
+IL_0165: conv.r4        None
+IL_0166: add            None
+IL_0167: stloc          local(0x0023)
+IL_016B: ldloc          local(0x0023)
+IL_016F: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0174: stloc          local(0x0024)
+IL_0178: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_017D: ldloc          local(0x0024)
+IL_0181: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0186: stloc          local(0x000C)
+IL_018A: br             {'target': 399}
+IL_018F: ldarg.0        None
+IL_0190: ldfld          {'token': '0x0400007F', 'identity': 'System0::maxHp'}
+IL_0195: ldloc          local(0x000C)
+IL_0199: ldc.i4         1
+IL_019E: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_01A3: ldarg.0        None
+IL_01A4: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_01A9: stloc          local(0x000D)
+IL_01AD: br             {'target': 434}
+IL_01B2: ldloc          local(0x000D)
+IL_01B6: ldfld          {'token': '0x04000321', 'identity': 'PlantData::attackPoint'}
+IL_01BB: stloc          local(0x000E)
+IL_01BF: br             {'target': 452}
+IL_01C4: ldarg.0        None
+IL_01C5: conv.r4        None
+IL_01C6: ldc.i4         104
+IL_01CB: conv.r4        None
+IL_01CC: add            None
+IL_01CD: stloc          local(0x001C)
+IL_01D1: ldarg.0        None
+IL_01D2: ldloc          local(0x000E)
+IL_01D6: ldc.i4         0
+IL_01DB: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_01E0: stfld          {'token': '0x04000073', 'identity': 'System0::attackBase'}
+IL_01E5: ldloc          local(0x001C)
+IL_01E9: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_01EE: stloc          local(0x000F)
+IL_01F2: br             {'target': 503}
+IL_01F7: ldarg.0        None
+IL_01F8: ldfld          {'token': '0x0400007B', 'identity': 'System0::attackBase_IF'}
+IL_01FD: ldloc          local(0x000F)
+IL_0201: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0206: ldarg.0        None
+IL_0207: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_020C: stloc          local(0x0010)
+IL_0210: br             {'target': 533}
+IL_0215: ldarg.0        None
+IL_0216: conv.r4        None
+IL_0217: ldc.i4         108
+IL_021C: conv.r4        None
+IL_021D: add            None
+IL_021E: stloc          local(0x001D)
+IL_0222: ldarg.0        None
+IL_0223: ldloc          local(0x0010)
+IL_0227: ldfld          {'token': '0x04000322', 'identity': 'PlantData::attackFactor'}
+IL_022C: stfld          {'token': '0x04000074', 'identity': 'System0::attackFactor'}
+IL_0231: ldloc          local(0x001D)
+IL_0235: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_023A: stloc          local(0x0011)
+IL_023E: br             {'target': 579}
+IL_0243: ldarg.0        None
+IL_0244: ldfld          {'token': '0x0400007C', 'identity': 'System0::attackFactor_IF'}
+IL_0249: ldloc          local(0x0011)
+IL_024D: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0252: ldarg.0        None
+IL_0253: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0258: stloc          local(0x001E)
+IL_025C: br             {'target': 609}
+IL_0261: ldloc          local(0x001E)
+IL_0265: ldfld          {'token': '0x04000321', 'identity': 'PlantData::attackPoint'}
+IL_026A: conv.r4        None
+IL_026B: ldc.i4         828
+IL_0270: conv.r4        None
+IL_0271: add            None
+IL_0272: stloc          local(0x0025)
+IL_0276: ldloc          local(0x0025)
+IL_027A: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_027F: stloc          local(0x0026)
+IL_0283: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_0288: ldloc          local(0x0026)
+IL_028C: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0291: stloc          local(0x0012)
+IL_0295: br             {'target': 666}
+IL_029A: ldarg.0        None
+IL_029B: ldfld          {'token': '0x04000080', 'identity': 'System0::maxAtk'}
+IL_02A0: ldloc          local(0x0012)
+IL_02A4: ldc.i4         1
+IL_02A9: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_02AE: ldarg.0        None
+IL_02AF: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_02B4: stloc          local(0x0013)
+IL_02B8: br             {'target': 701}
+IL_02BD: ldloc          local(0x0013)
+IL_02C1: ldfld          {'token': '0x04000324', 'identity': 'PlantData::defensePoint'}
+IL_02C6: stloc          local(0x0014)
+IL_02CA: br             {'target': 719}
+IL_02CF: ldarg.0        None
+IL_02D0: conv.r4        None
+IL_02D1: ldc.i4         112
+IL_02D6: conv.r4        None
+IL_02D7: add            None
+IL_02D8: stloc          local(0x001F)
+IL_02DC: ldarg.0        None
+IL_02DD: ldloc          local(0x0014)
+IL_02E1: ldc.i4         0
+IL_02E6: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_02EB: stfld          {'token': '0x04000075', 'identity': 'System0::defenseBase'}
+IL_02F0: ldloc          local(0x001F)
+IL_02F4: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_02F9: stloc          local(0x0015)
+IL_02FD: br             {'target': 770}
+IL_0302: ldarg.0        None
+IL_0303: ldfld          {'token': '0x0400007D', 'identity': 'System0::defenseBase_IF'}
+IL_0308: ldloc          local(0x0015)
+IL_030C: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0311: ldarg.0        None
+IL_0312: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0317: stloc          local(0x0016)
+IL_031B: br             {'target': 800}
+IL_0320: ldarg.0        None
+IL_0321: conv.r4        None
+IL_0322: ldc.i4         116
+IL_0327: conv.r4        None
+IL_0328: add            None
+IL_0329: stloc          local(0x0020)
+IL_032D: ldarg.0        None
+IL_032E: ldloc          local(0x0016)
+IL_0332: ldfld          {'token': '0x04000325', 'identity': 'PlantData::defenseFactor'}
+IL_0337: stfld          {'token': '0x04000076', 'identity': 'System0::defenseFactor'}
+IL_033C: ldloc          local(0x0020)
+IL_0340: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0345: stloc          local(0x0017)
+IL_0349: br             {'target': 846}
+IL_034E: ldarg.0        None
+IL_034F: ldfld          {'token': '0x0400007E', 'identity': 'System0::defenseFactor_IF'}
+IL_0354: ldloc          local(0x0017)
+IL_0358: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_035D: ldarg.0        None
+IL_035E: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0363: stloc          local(0x0021)
+IL_0367: br             {'target': 876}
+IL_036C: ldloc          local(0x0021)
+IL_0370: ldfld          {'token': '0x04000324', 'identity': 'PlantData::defensePoint'}
+IL_0375: conv.r4        None
+IL_0376: ldc.i4         828
+IL_037B: conv.r4        None
+IL_037C: add            None
+IL_037D: stloc          local(0x0027)
+IL_0381: ldloc          local(0x0027)
+IL_0385: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_038A: stloc          local(0x0028)
+IL_038E: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_0393: ldloc          local(0x0028)
+IL_0397: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_039C: stloc          local(0x0018)
+IL_03A0: br             {'target': 933}
+IL_03A5: ldarg.0        None
+IL_03A6: ldfld          {'token': '0x04000081', 'identity': 'System0::maxDfs'}
+IL_03AB: ldloc          local(0x0018)
+IL_03AF: ldc.i4         1
+IL_03B4: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_03B9: br             {'target': 958}
+IL_03BE: ldarg.0        None
+IL_03BF: ldfld          {'token': '0x04000078', 'identity': 'System0::plantName_IF'}
+IL_03C4: ldc.i4         1
+IL_03C9: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03CE: br             {'target': 979}
+IL_03D3: ldarg.0        None
+IL_03D4: ldfld          {'token': '0x04000079', 'identity': 'System0::healthBase_IF'}
+IL_03D9: ldc.i4         1
+IL_03DE: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03E3: br             {'target': 1000}
+IL_03E8: ldarg.0        None
+IL_03E9: ldfld          {'token': '0x0400007A', 'identity': 'System0::healthFactor_IF'}
+IL_03EE: ldc.i4         1
+IL_03F3: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03F8: br             {'target': 1021}
+IL_03FD: ldarg.0        None
+IL_03FE: ldfld          {'token': '0x0400007B', 'identity': 'System0::attackBase_IF'}
+IL_0403: ldc.i4         1
+IL_0408: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_040D: br             {'target': 1042}
+IL_0412: ldarg.0        None
+IL_0413: ldfld          {'token': '0x0400007C', 'identity': 'System0::attackFactor_IF'}
+IL_0418: ldc.i4         1
+IL_041D: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0422: br             {'target': 1063}
+IL_0427: ldarg.0        None
+IL_0428: ldfld          {'token': '0x0400007D', 'identity': 'System0::defenseBase_IF'}
+IL_042D: ldc.i4         1
+IL_0432: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0437: br             {'target': 1084}
+IL_043C: ldarg.0        None
+IL_043D: ldfld          {'token': '0x0400007E', 'identity': 'System0::defenseFactor_IF'}
+IL_0442: ldc.i4         1
+IL_0447: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_044C: ldarg.0        None
+IL_044D: ldarg.0        None
+IL_044E: ldfld          {'token': '0x04000082', 'identity': 'System0::order_check'}
+IL_0453: call           {'token': '0x06000074', 'identity': 'System0::LoadOrderData'}
+IL_0458: br             {'target': 1117}
+IL_045D: ldarg.0        None
+IL_045E: ldarg.0        None
+IL_045F: ldfld          {'token': '0x04000088', 'identity': 'System0::skillID'}
+IL_0464: call           {'token': '0x06000075', 'identity': 'System0::LoadSkillData'}
+IL_0469: br             {'target': 1134}
+IL_046E: ldarg.0        None
+IL_046F: ldfld          {'token': '0x04000093', 'identity': 'System0::getPlant'}
+IL_0474: ldc.i4         1
+IL_0479: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_047E: br             {'target': 1155}
+IL_0483: ldarg.0        None
+IL_0484: ldfld          {'token': '0x04000094', 'identity': 'System0::getPlant_MaxLv'}
+IL_0489: ldc.i4         1
+IL_048E: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0493: ret            None
+IL_0494: ldarg.0        None
+IL_0495: ldc.i8         4294967295
+IL_049E: stfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_04A3: br             {'target': 1192}
+IL_04A8: ldarg.0        None
+IL_04A9: ldfld          {'token': '0x04000077', 'identity': 'System0::plantID_IF'}
+IL_04AE: ldstr          {'token': '0x70001669', 'identity': '-1'}
+IL_04B3: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_04B8: ldarg.0        None
+IL_04B9: ldnull         None
+IL_04BA: stfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_04BF: br             {'target': 1220}
+IL_04C4: ldarg.0        None
+IL_04C5: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_04CA: stfld          {'token': '0x04000070', 'identity': 'System0::plantName'}
+IL_04CF: br             {'target': 1236}
+IL_04D4: ldarg.0        None
+IL_04D5: ldfld          {'token': '0x04000078', 'identity': 'System0::plantName_IF'}
+IL_04DA: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_04DF: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_04E4: ldarg.0        None
+IL_04E5: ldc.r4         0.0
+IL_04EA: stfld          {'token': '0x04000071', 'identity': 'System0::healthBase'}
+IL_04EF: br             {'target': 1268}
+IL_04F4: ldarg.0        None
+IL_04F5: ldfld          {'token': '0x04000079', 'identity': 'System0::healthBase_IF'}
+IL_04FA: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_04FF: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0504: ldarg.0        None
+IL_0505: ldc.r4         0.0
+IL_050A: stfld          {'token': '0x04000072', 'identity': 'System0::healthFactor'}
+IL_050F: br             {'target': 1300}
+IL_0514: ldarg.0        None
+IL_0515: ldfld          {'token': '0x0400007A', 'identity': 'System0::healthFactor_IF'}
+IL_051A: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_051F: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0524: br             {'target': 1321}
+IL_0529: ldarg.0        None
+IL_052A: ldfld          {'token': '0x0400007F', 'identity': 'System0::maxHp'}
+IL_052F: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_0534: ldc.i4         1
+IL_0539: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_053E: ldarg.0        None
+IL_053F: ldc.r4         0.0
+IL_0544: stfld          {'token': '0x04000073', 'identity': 'System0::attackBase'}
+IL_0549: br             {'target': 1358}
+IL_054E: ldarg.0        None
+IL_054F: ldfld          {'token': '0x0400007B', 'identity': 'System0::attackBase_IF'}
+IL_0554: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0559: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_055E: ldarg.0        None
+IL_055F: ldc.r4         0.0
+IL_0564: stfld          {'token': '0x04000074', 'identity': 'System0::attackFactor'}
+IL_0569: br             {'target': 1390}
+IL_056E: ldarg.0        None
+IL_056F: ldfld          {'token': '0x0400007C', 'identity': 'System0::attackFactor_IF'}
+IL_0574: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0579: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_057E: br             {'target': 1411}
+IL_0583: ldarg.0        None
+IL_0584: ldfld          {'token': '0x04000080', 'identity': 'System0::maxAtk'}
+IL_0589: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_058E: ldc.i4         1
+IL_0593: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0598: ldarg.0        None
+IL_0599: ldc.r4         0.0
+IL_059E: stfld          {'token': '0x04000075', 'identity': 'System0::defenseBase'}
+IL_05A3: br             {'target': 1448}
+IL_05A8: ldarg.0        None
+IL_05A9: ldfld          {'token': '0x0400007D', 'identity': 'System0::defenseBase_IF'}
+IL_05AE: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05B3: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_05B8: ldarg.0        None
+IL_05B9: ldc.r4         0.0
+IL_05BE: stfld          {'token': '0x04000076', 'identity': 'System0::defenseFactor'}
+IL_05C3: br             {'target': 1480}
+IL_05C8: ldarg.0        None
+IL_05C9: ldfld          {'token': '0x0400007E', 'identity': 'System0::defenseFactor_IF'}
+IL_05CE: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_05D3: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_05D8: br             {'target': 1501}
+IL_05DD: ldarg.0        None
+IL_05DE: ldfld          {'token': '0x04000081', 'identity': 'System0::maxDfs'}
+IL_05E3: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_05E8: ldc.i4         1
+IL_05ED: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_05F2: br             {'target': 1527}
+IL_05F7: ldarg.0        None
+IL_05F8: ldfld          {'token': '0x04000078', 'identity': 'System0::plantName_IF'}
+IL_05FD: ldc.i4         0
+IL_0602: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0607: br             {'target': 1548}
+IL_060C: ldarg.0        None
+IL_060D: ldfld          {'token': '0x04000079', 'identity': 'System0::healthBase_IF'}
+IL_0612: ldc.i4         0
+IL_0617: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_061C: br             {'target': 1569}
+IL_0621: ldarg.0        None
+IL_0622: ldfld          {'token': '0x0400007A', 'identity': 'System0::healthFactor_IF'}
+IL_0627: ldc.i4         0
+IL_062C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0631: br             {'target': 1590}
+IL_0636: ldarg.0        None
+IL_0637: ldfld          {'token': '0x0400007B', 'identity': 'System0::attackBase_IF'}
+IL_063C: ldc.i4         0
+IL_0641: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0646: br             {'target': 1611}
+IL_064B: ldarg.0        None
+IL_064C: ldfld          {'token': '0x0400007C', 'identity': 'System0::attackFactor_IF'}
+IL_0651: ldc.i4         0
+IL_0656: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_065B: br             {'target': 1632}
+IL_0660: ldarg.0        None
+IL_0661: ldfld          {'token': '0x0400007D', 'identity': 'System0::defenseBase_IF'}
+IL_0666: ldc.i4         0
+IL_066B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0670: br             {'target': 1653}
+IL_0675: ldarg.0        None
+IL_0676: ldfld          {'token': '0x0400007E', 'identity': 'System0::defenseFactor_IF'}
+IL_067B: ldc.i4         0
+IL_0680: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0685: ldarg.0        None
+IL_0686: ldc.i8         4294967295
+IL_068F: call           {'token': '0x06000074', 'identity': 'System0::LoadOrderData'}
+IL_0694: br             {'target': 1689}
+IL_0699: ldarg.0        None
+IL_069A: ldc.i4         0
+IL_069F: call           {'token': '0x06000075', 'identity': 'System0::LoadSkillData'}
+IL_06A4: br             {'target': 1705}
+IL_06A9: ldarg.0        None
+IL_06AA: ldfld          {'token': '0x04000093', 'identity': 'System0::getPlant'}
+IL_06AF: ldc.i4         0
+IL_06B4: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06B9: br             {'target': 1726}
+IL_06BE: ldarg.0        None
+IL_06BF: ldfld          {'token': '0x04000094', 'identity': 'System0::getPlant_MaxLv'}
+IL_06C4: ldc.i4         0
+IL_06C9: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_06CE: ret            None
+IL_06CF: ldloc          local(0x0001)
+IL_06D3: ldc.i4         0
+IL_06D8: clt            None
+IL_06DA: stloc          local(0x0002)
+IL_06DE: ldloc          local(0x0002)
+IL_06E2: brtrue         {'target': 1172}
+IL_06E7: br             {'target': 5}

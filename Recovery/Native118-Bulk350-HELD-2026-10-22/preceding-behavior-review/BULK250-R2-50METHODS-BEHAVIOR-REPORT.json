@@ -1,0 +1,582 @@
+{
+  "candidate_sha256": "4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903",
+  "candidate_bytes": 16573440,
+  "getter_executions": {
+    "0x0600001C_and_0x06000158": {
+      "caller_token": "0x0600001C",
+      "caller_name": "Admin_system2_boardEdior.CreateNewEnemy",
+      "getter_token": "0x06000158",
+      "getter_name": "BoardConfig.get_Map",
+      "getter_cil": "027b980100042a",
+      "calls_to_getter_in_caller": 2,
+      "private_field_access_removed": true,
+      "cases": [
+        {
+          "id": "normal_path",
+          "input": "(120, 240)",
+          "output": "(120, 240)",
+          "status": "PASS"
+        },
+        {
+          "id": "null_receiver",
+          "exception": "NullReferenceException",
+          "status": "PASS"
+        },
+        {
+          "id": "null_map",
+          "exception": "NullReferenceException",
+          "status": "PASS"
+        },
+        {
+          "id": "callback_reentrancy_map_replacement",
+          "input": "(120, 240) -> (120, 999)",
+          "output": "(120, 999)",
+          "status": "PASS"
+        }
+      ],
+      "mutant": {
+        "id": "mut_cached_map",
+        "detected": true,
+        "status": "PASS"
+      },
+      "status": "PASS"
+    },
+    "0x06000183_and_0x06000303": {
+      "caller_token": "0x06000183",
+      "caller_name": "DeviceManager.DisplayBan_device",
+      "getter_token": "0x06000303",
+      "getter_name": "Device.get_AnimationSprites",
+      "getter_cil": "027b880400042a",
+      "private_field_access_removed": true,
+      "cases": [
+        {
+          "id": "normal_enumeration",
+          "sprites_colored": 2,
+          "disposed": true,
+          "status": "PASS"
+        },
+        {
+          "id": "exception_triggers_finally_dispose",
+          "disposed": true,
+          "status": "PASS"
+        }
+      ],
+      "mutant": {
+        "id": "mut_missing_finally_dispose",
+        "detected": true,
+        "status": "PASS"
+      },
+      "status": "PASS"
+    }
+  },
+  "fifty_methods_behavior": {
+    "0x06000017": {
+      "name": "CreateDevicePreviews",
+      "code_size": 123,
+      "rva": "0xfcce00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000018": {
+      "name": "CreateEnemyPreviews",
+      "code_size": 123,
+      "rva": "0xfcd000",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600001C": {
+      "name": "CreateNewEnemy",
+      "code_size": 160,
+      "rva": "0xfcd200",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600004B": {
+      "name": "Initialize",
+      "code_size": 143,
+      "rva": "0xfcd400",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000187": {
+      "name": "GetBoardEntryData",
+      "code_size": 291,
+      "rva": "0xfcd600",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600026F": {
+      "name": "GetBoardEntryData",
+      "code_size": 327,
+      "rva": "0xfcd800",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000272": {
+      "name": "Start_BoardEntry",
+      "code_size": 301,
+      "rva": "0xfcda00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060001A8": {
+      "name": "FillWave",
+      "code_size": 244,
+      "rva": "0xfcdc00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000697": {
+      "name": "Unfold_PropList",
+      "code_size": 134,
+      "rva": "0xfcde00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060006D2": {
+      "name": "GenerateLootPieceItemIcons",
+      "code_size": 128,
+      "rva": "0xfce000",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000287": {
+      "name": "GetMapGrids",
+      "code_size": 111,
+      "rva": "0xfce200",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600027B": {
+      "name": "KillAll",
+      "code_size": 173,
+      "rva": "0xfce400",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600035C": {
+      "name": "DestroyThis",
+      "code_size": 186,
+      "rva": "0xfce600",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600061A": {
+      "name": "InitializeFlags",
+      "code_size": 160,
+      "rva": "0xfce800",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600069F": {
+      "name": "AddNewLevelItem",
+      "code_size": 141,
+      "rva": "0xfcea00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600052A": {
+      "name": "AddNewLevelItem",
+      "code_size": 165,
+      "rva": "0xfcec00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060006BB": {
+      "name": "SetPrechooseList",
+      "code_size": 210,
+      "rva": "0xfcee00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060006B6": {
+      "name": "LoadTeam_Card",
+      "code_size": 218,
+      "rva": "0xfcf000",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600060A": {
+      "name": "FindKey",
+      "code_size": 326,
+      "rva": "0xfcf200",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060001AF": {
+      "name": "Start",
+      "code_size": 322,
+      "rva": "0xfcf400",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000283": {
+      "name": "AstarProcess",
+      "code_size": 187,
+      "rva": "0xfcf600",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060004BF": {
+      "name": "CompletenessTest",
+      "code_size": 208,
+      "rva": "0xfcf800",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600064B": {
+      "name": "WarehouseOnclick",
+      "code_size": 217,
+      "rva": "0xfcfa00",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060001BD": {
+      "name": "SetPreZombie",
+      "code_size": 263,
+      "rva": "0xfcfc00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000362": {
+      "name": "EnemySeeking_plural",
+      "code_size": 203,
+      "rva": "0xfcfe00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000364": {
+      "name": "EnemySeeking_Device_plural",
+      "code_size": 430,
+      "rva": "0xfd0000",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060004E3": {
+      "name": "Function",
+      "code_size": 136,
+      "rva": "0xfd0200",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000163": {
+      "name": "LoadReward",
+      "code_size": 118,
+      "rva": "0xfd0400",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000326": {
+      "name": "GetDamage",
+      "code_size": 452,
+      "rva": "0xfd0600",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000514": {
+      "name": "Awake148",
+      "code_size": 188,
+      "rva": "0xfd0800",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060004D9": {
+      "name": "CreatSuppliesItem",
+      "code_size": 303,
+      "rva": "0xfd0a00",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000118": {
+      "name": "Teleport",
+      "code_size": 256,
+      "rva": "0xfd0c00",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000226": {
+      "name": "Load_deviceInfo_all",
+      "code_size": 95,
+      "rva": "0xfd0e00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000231": {
+      "name": "Load_zombieInfo_all",
+      "code_size": 95,
+      "rva": "0xfd1000",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060000D3": {
+      "name": "ExpandView",
+      "code_size": 167,
+      "rva": "0xfd1200",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000183": {
+      "name": "DisplayBan_device",
+      "code_size": 180,
+      "rva": "0xfd1400",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000011": {
+      "name": "Update_Mouse",
+      "code_size": 201,
+      "rva": "0xfd1600",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060002F5": {
+      "name": "Choose_Reset",
+      "code_size": 274,
+      "rva": "0xfd1800",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060001A1": {
+      "name": ".ctor",
+      "code_size": 229,
+      "rva": "0xfd1a00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000384": {
+      "name": "PC_NutknightTaunt",
+      "code_size": 293,
+      "rva": "0xfd1c00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000297": {
+      "name": "CanPlacing",
+      "code_size": 431,
+      "rva": "0xfd1e00",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000710": {
+      "name": "ClickSelectButton",
+      "code_size": 378,
+      "rva": "0xfd2000",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x060006C5": {
+      "name": "SkillButton_OnClick",
+      "code_size": 243,
+      "rva": "0xfd2200",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000335": {
+      "name": "SetUIs",
+      "code_size": 277,
+      "rva": "0xfd2400",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000692": {
+      "name": "CreatPropList",
+      "code_size": 252,
+      "rva": "0xfd2600",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000693": {
+      "name": "LoadTeam_Prop",
+      "code_size": 204,
+      "rva": "0xfd2800",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600009D": {
+      "name": "InputString",
+      "code_size": 392,
+      "rva": "0xfd2a00",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600062C": {
+      "name": "SetState",
+      "code_size": 283,
+      "rva": "0xfd2c00",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x06000572": {
+      "name": "Button_LevelUp",
+      "code_size": 370,
+      "rva": "0xfd2e00",
+      "has_eh": true,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    },
+    "0x0600035B": {
+      "name": "CreateParticleAndSound",
+      "code_size": 213,
+      "rva": "0xfd3000",
+      "has_eh": false,
+      "cases_executed": 2,
+      "mutants_tested": 1,
+      "mutants_detected": 1,
+      "status": "PASS"
+    }
+  },
+  "summary": {
+    "total_50_methods": 50,
+    "methods_passed": 50,
+    "methods_failed": 0,
+    "total_cases_executed": 100,
+    "total_mutants_tested": 50,
+    "total_mutants_detected": 50
+  }
+}

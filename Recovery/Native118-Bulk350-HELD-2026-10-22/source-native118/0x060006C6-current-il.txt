@@ -1,0 +1,958 @@
+PlantDetail::LoadSkillData
+{"token": "0x060006C6", "name": "PlantDetail::LoadSkillData", "signature": "200101128244", "rva": 580484, "max_stack": 3, "code_size": 3545, "local_sig": 285213979, "locals_blob": "0780821c128244021280850e1280851d1c15120d011280851d0c1d0c1d0c1d0c1d0c1d0c1d0c1d0c0e0e0202020202020202020202020202020202020212824412808515120d01128085021280850812808515120d01128085021280851180d10812808515120d01128085021280850812808515120d01128085021280850812808515120d011280850212808502180812808515120d01128085021280850812808515120d01128085021280851c15120d0112808502180812808515120d01128085021280850812808515120d01128085021280851c15120d0112808502180812808515120d01128085021280851c15120d0112808502181c15120d0112808502181c15120d0112808502181c15120d0112808502181c15120d0112808502181c15120d01128085021802181280851c1c1c1c128330", "eh_count": 0, "il_sha256": "c674a60aaa756ad167826423b542ab7163218e1baba4f2320a2b51a5aa84860b"}
+IL_0000: br             {'target': 3055}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_000B: ldarg          argument(0x0001)
+IL_000F: call           {'token': '0x060002F9', 'identity': 'Card_Choose::Set_Skill'}
+IL_0014: ldarg.0        None
+IL_0015: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_001A: stloc          local(0x0027)
+IL_001E: ldarg.0        None
+IL_001F: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_0024: ldc.i4         0
+IL_0029: ceq            None
+IL_002B: stloc          local(0x0012)
+IL_002F: ldarg          argument(0x0001)
+IL_0033: stloc          local(0x0025)
+IL_0037: nop            None
+IL_0038: ldloc          local(0x0012)
+IL_003C: brtrue         {'target': 3043}
+IL_0041: br             {'target': 70}
+IL_0046: ldarg.0        None
+IL_0047: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_004C: ldc.i4         0
+IL_0051: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0056: stloc          local(0x0003)
+IL_005A: ldarg          argument(0x0001)
+IL_005E: ldc.i4         0
+IL_0063: ceq            None
+IL_0065: stloc          local(0x0013)
+IL_0069: ldnull         None
+IL_006A: stloc          local(0x0025)
+IL_006E: nop            None
+IL_006F: ldloc          local(0x0013)
+IL_0073: brtrue         {'target': 3043}
+IL_0078: br             {'target': 125}
+IL_007D: ldloc          local(0x0003)
+IL_0081: ldc.i4         0
+IL_0086: ceq            None
+IL_0088: stloc          local(0x0014)
+IL_008C: ldnull         None
+IL_008D: stloc          local(0x0025)
+IL_0091: nop            None
+IL_0092: ldloc          local(0x0014)
+IL_0096: brtrue         {'target': 3043}
+IL_009B: br             {'target': 160}
+IL_00A0: ldloc          local(0x0003)
+IL_00A4: ldarg          argument(0x0001)
+IL_00A8: ldfld          {'token': '0x0400068D', 'identity': 'Skill::name'}
+IL_00AD: ldc.i4         1
+IL_00B2: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_00B7: ldloc          local(0x0000)
+IL_00BB: ldc.i4         48
+IL_00C0: sub            None
+IL_00C1: stloc          local(0x002F)
+IL_00C5: ldstr          {'token': '0x70018E3F', 'identity': 'Unmanaged memory load: [1815A7F30]'}
+IL_00CA: pop            None
+IL_00CB: ldc.i4.0       None
+IL_00CC: conv.i         None
+IL_00CD: pop            None
+IL_00CE: ldloc          local(0x002F)
+IL_00D2: call           {'token': '0x0A00026C', 'identity': 'UnityEngine.ColorUtility::ToHtmlStringRGB / sig 00010e1180d1'}
+IL_00D7: stloc          local(0x0004)
+IL_00DB: br             {'target': 224}
+IL_00E0: ldarg.0        None
+IL_00E1: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_00E6: ldc.i4         0
+IL_00EB: ceq            None
+IL_00ED: stloc          local(0x0015)
+IL_00F1: ldnull         None
+IL_00F2: stloc          local(0x0025)
+IL_00F6: nop            None
+IL_00F7: ldarg.0        None
+IL_00F8: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_00FD: stloc          local(0x0027)
+IL_0101: ldloc          local(0x0015)
+IL_0105: brtrue         {'target': 3043}
+IL_010A: br             {'target': 271}
+IL_010F: ldarg.0        None
+IL_0110: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_0115: ldc.i4         1
+IL_011A: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_011F: stloc          local(0x0005)
+IL_0123: ldarg.0        None
+IL_0124: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_0129: stloc          local(0x0027)
+IL_012D: ldarg.0        None
+IL_012E: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_0133: ldc.i4         0
+IL_0138: ceq            None
+IL_013A: stloc          local(0x0016)
+IL_013E: ldc.i4         1
+IL_0143: stloc          local(0x0025)
+IL_0147: nop            None
+IL_0148: ldloc          local(0x0016)
+IL_014C: brtrue         {'target': 3043}
+IL_0151: br             {'target': 342}
+IL_0156: ldstr          {'token': '0x7001C2EC', 'identity': 'Unmanaged memory load: [v383 @ rcx_v21 (System.Collections.Generic.List`1<TMPro.TextMeshProUGUI>)+58]'}
+IL_015B: pop            None
+IL_015C: ldc.i4.0       None
+IL_015D: conv.i         None
+IL_015E: stloc          local(0x0027)
+IL_0162: ldstr          {'token': '0x7001C2EC', 'identity': 'Unmanaged memory load: [v383 @ rcx_v21 (System.Collections.Generic.List`1<TMPro.TextMeshProUGUI>)+58]'}
+IL_0167: pop            None
+IL_0168: ldc.i4.0       None
+IL_0169: conv.i         None
+IL_016A: ldc.i4         0
+IL_016F: ceq            None
+IL_0171: stloc          local(0x0017)
+IL_0175: ldc.i4         1
+IL_017A: stloc          local(0x0025)
+IL_017E: nop            None
+IL_017F: ldloc          local(0x0017)
+IL_0183: brtrue         {'target': 3043}
+IL_0188: br             {'target': 397}
+IL_018D: ldc.i4         10
+IL_0192: newarr         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0197: stloc          local(0x0006)
+IL_019B: ldarg          argument(0x0001)
+IL_019F: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_01A4: stloc          local(0x0027)
+IL_01A8: ldarg          argument(0x0001)
+IL_01AC: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_01B1: ldc.i4         0
+IL_01B6: ceq            None
+IL_01B8: stloc          local(0x0018)
+IL_01BC: ldc.i4         10
+IL_01C1: stloc          local(0x0025)
+IL_01C5: nop            None
+IL_01C6: ldloc          local(0x0018)
+IL_01CA: brtrue         {'target': 3043}
+IL_01CF: br             {'target': 468}
+IL_01D4: ldloc          local(0x0000)
+IL_01D8: ldc.i4         32
+IL_01DD: add            None
+IL_01DE: stloc          local(0x0025)
+IL_01E2: ldloc          local(0x0027)
+IL_01E6: ldfld          {'token': '0x0A0002B1', 'identity': 'TypeSpec:17::_syncRoot / sig 061c'}
+IL_01EB: pop            None
+IL_01EC: ldloc          local(0x0025)
+IL_01F0: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_01F5: stloc          local(0x0007)
+IL_01F9: ldloc          local(0x0006)
+IL_01FD: ldc.i4         0
+IL_0202: ceq            None
+IL_0204: stloc          local(0x0019)
+IL_0208: nop            None
+IL_0209: ldtoken        {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_020E: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0213: stloc          local(0x0027)
+IL_0217: ldloc          local(0x0019)
+IL_021B: brtrue         {'target': 3043}
+IL_0220: br             {'target': 549}
+IL_0225: ldloc          local(0x0007)
+IL_0229: ldc.i4         0
+IL_022E: ceq            None
+IL_0230: stloc          local(0x003F)
+IL_0234: ldloc          local(0x003F)
+IL_0238: brtrue         {'target': 657}
+IL_023D: br             {'target': 578}
+IL_0242: ldloc          local(0x0006)
+IL_0246: stloc          local(0x0040)
+IL_024A: ldloc          local(0x0007)
+IL_024E: ldstr          {'token': '0x7001C3B9', 'identity': 'Unmanaged memory load: [v894 @ rdx_v83 (Il2CppClass<System.Object[]>)+40]'}
+IL_0253: pop            None
+IL_0254: ldc.i4.0       None
+IL_0255: conv.i         None
+IL_0256: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_025B: stloc          local(0x0026)
+IL_025F: ldloc          local(0x0026)
+IL_0263: ldc.i4         0
+IL_0268: ceq            None
+IL_026A: stloc          local(0x0028)
+IL_026E: ldstr          {'token': '0x7001C3B9', 'identity': 'Unmanaged memory load: [v894 @ rdx_v83 (Il2CppClass<System.Object[]>)+40]'}
+IL_0273: pop            None
+IL_0274: ldc.i4.0       None
+IL_0275: conv.i         None
+IL_0276: stloc          local(0x0025)
+IL_027A: nop            None
+IL_027B: ldloc          local(0x0007)
+IL_027F: stloc          local(0x0027)
+IL_0283: ldloc          local(0x0028)
+IL_0287: brtrue         {'target': 3112}
+IL_028C: br             {'target': 657}
+IL_0291: ldloc          local(0x0006)
+IL_0295: ldc.i4         32
+IL_029A: add            None
+IL_029B: stloc          local(0x0027)
+IL_029F: ldloc          local(0x0006)
+IL_02A3: ldc.i4         0
+IL_02A8: ldloc          local(0x0007)
+IL_02AC: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_02B1: ldarg          argument(0x0001)
+IL_02B5: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_02BA: stloc          local(0x0008)
+IL_02BE: ldarg          argument(0x0001)
+IL_02C2: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_02C7: ldc.i4         0
+IL_02CC: ceq            None
+IL_02CE: stloc          local(0x001A)
+IL_02D2: ldloc          local(0x0007)
+IL_02D6: stloc          local(0x0025)
+IL_02DA: nop            None
+IL_02DB: ldloc          local(0x001A)
+IL_02DF: brtrue         {'target': 3043}
+IL_02E4: br             {'target': 745}
+IL_02E9: ldloc          local(0x0000)
+IL_02ED: ldc.i4         40
+IL_02F2: add            None
+IL_02F3: stloc          local(0x004B)
+IL_02F7: ldloc          local(0x0008)
+IL_02FB: ldc.i4         1
+IL_0300: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0305: pop            None
+IL_0306: ldloc          local(0x004B)
+IL_030A: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_030F: stloc          local(0x004C)
+IL_0313: ldloc          local(0x004C)
+IL_0317: ldc.i4         0
+IL_031C: ceq            None
+IL_031E: stloc          local(0x004D)
+IL_0322: ldloc          local(0x004D)
+IL_0326: brtrue         {'target': 895}
+IL_032B: br             {'target': 816}
+IL_0330: ldloc          local(0x0006)
+IL_0334: stloc          local(0x004E)
+IL_0338: ldstr          {'token': '0x7001C44E', 'identity': 'Unmanaged memory load: [v1000 @ rdx_v81 (Il2CppClass<System.Object[]>)+40]'}
+IL_033D: pop            None
+IL_033E: ldc.i4.0       None
+IL_033F: conv.i         None
+IL_0340: stloc          local(0x002A)
+IL_0344: ldloc          local(0x004C)
+IL_0348: ldstr          {'token': '0x7001C44E', 'identity': 'Unmanaged memory load: [v1000 @ rdx_v81 (Il2CppClass<System.Object[]>)+40]'}
+IL_034D: pop            None
+IL_034E: ldc.i4.0       None
+IL_034F: conv.i         None
+IL_0350: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0355: stloc          local(0x002B)
+IL_0359: ldloc          local(0x002B)
+IL_035D: ldc.i4         0
+IL_0362: ceq            None
+IL_0364: stloc          local(0x002D)
+IL_0368: nop            None
+IL_0369: ldloc          local(0x004C)
+IL_036D: stloc          local(0x002C)
+IL_0371: ldloc          local(0x002D)
+IL_0375: brtrue         {'target': 3157}
+IL_037A: br             {'target': 895}
+IL_037F: ldloc          local(0x0006)
+IL_0383: ldc.i4         40
+IL_0388: add            None
+IL_0389: stloc          local(0x0027)
+IL_038D: ldloc          local(0x0006)
+IL_0391: ldc.i4         1
+IL_0396: ldloc          local(0x004C)
+IL_039A: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_039F: ldarg          argument(0x0001)
+IL_03A3: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_03A8: stloc          local(0x0009)
+IL_03AC: ldarg          argument(0x0001)
+IL_03B0: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_03B5: ldc.i4         0
+IL_03BA: ceq            None
+IL_03BC: stloc          local(0x001B)
+IL_03C0: ldloc          local(0x004C)
+IL_03C4: stloc          local(0x0025)
+IL_03C8: nop            None
+IL_03C9: ldloc          local(0x001B)
+IL_03CD: brtrue         {'target': 3043}
+IL_03D2: br             {'target': 983}
+IL_03D7: ldloc          local(0x0000)
+IL_03DB: ldc.i4         56
+IL_03E0: add            None
+IL_03E1: stloc          local(0x0059)
+IL_03E5: ldloc          local(0x0009)
+IL_03E9: ldc.i4         2
+IL_03EE: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_03F3: pop            None
+IL_03F4: ldloc          local(0x0059)
+IL_03F8: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_03FD: stloc          local(0x005A)
+IL_0401: ldloc          local(0x005A)
+IL_0405: ldc.i4         0
+IL_040A: ceq            None
+IL_040C: stloc          local(0x005B)
+IL_0410: ldloc          local(0x005B)
+IL_0414: brtrue         {'target': 1133}
+IL_0419: br             {'target': 1054}
+IL_041E: ldloc          local(0x0006)
+IL_0422: stloc          local(0x005C)
+IL_0426: ldstr          {'token': '0x7001C4E5', 'identity': 'Unmanaged memory load: [v1106 @ rdx_v79 (Il2CppClass<System.Object[]>)+40]'}
+IL_042B: pop            None
+IL_042C: ldc.i4.0       None
+IL_042D: conv.i         None
+IL_042E: stloc          local(0x0030)
+IL_0432: ldloc          local(0x005A)
+IL_0436: ldstr          {'token': '0x7001C4E5', 'identity': 'Unmanaged memory load: [v1106 @ rdx_v79 (Il2CppClass<System.Object[]>)+40]'}
+IL_043B: pop            None
+IL_043C: ldc.i4.0       None
+IL_043D: conv.i         None
+IL_043E: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0443: stloc          local(0x0031)
+IL_0447: ldloc          local(0x0031)
+IL_044B: ldc.i4         0
+IL_0450: ceq            None
+IL_0452: stloc          local(0x0033)
+IL_0456: nop            None
+IL_0457: ldloc          local(0x005A)
+IL_045B: stloc          local(0x0032)
+IL_045F: ldloc          local(0x0033)
+IL_0463: brtrue         {'target': 3202}
+IL_0468: br             {'target': 1133}
+IL_046D: ldloc          local(0x0006)
+IL_0471: ldc.i4         48
+IL_0476: add            None
+IL_0477: stloc          local(0x0027)
+IL_047B: ldloc          local(0x0006)
+IL_047F: ldc.i4         2
+IL_0484: ldloc          local(0x005A)
+IL_0488: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_048D: ldarg          argument(0x0001)
+IL_0491: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_0496: stloc          local(0x000A)
+IL_049A: ldarg          argument(0x0001)
+IL_049E: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_04A3: ldc.i4         0
+IL_04A8: ceq            None
+IL_04AA: stloc          local(0x001C)
+IL_04AE: ldloc          local(0x005A)
+IL_04B2: stloc          local(0x0025)
+IL_04B6: nop            None
+IL_04B7: ldloc          local(0x001C)
+IL_04BB: brtrue         {'target': 3043}
+IL_04C0: br             {'target': 1221}
+IL_04C5: ldloc          local(0x0000)
+IL_04C9: ldc.i4         80
+IL_04CE: sub            None
+IL_04CF: stloc          local(0x0062)
+IL_04D3: ldloc          local(0x000A)
+IL_04D7: ldc.i4         3
+IL_04DC: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_04E1: pop            None
+IL_04E2: ldloc          local(0x0062)
+IL_04E6: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_04EB: stloc          local(0x0063)
+IL_04EF: ldloc          local(0x0063)
+IL_04F3: ldc.i4         0
+IL_04F8: ceq            None
+IL_04FA: stloc          local(0x0064)
+IL_04FE: ldloc          local(0x0064)
+IL_0502: brtrue         {'target': 1371}
+IL_0507: br             {'target': 1292}
+IL_050C: ldloc          local(0x0006)
+IL_0510: stloc          local(0x0065)
+IL_0514: ldstr          {'token': '0x7001C57C', 'identity': 'Unmanaged memory load: [v1151 @ rdx_v77 (Il2CppClass<System.Object[]>)+40]'}
+IL_0519: pop            None
+IL_051A: ldc.i4.0       None
+IL_051B: conv.i         None
+IL_051C: stloc          local(0x0035)
+IL_0520: ldloc          local(0x0063)
+IL_0524: ldstr          {'token': '0x7001C57C', 'identity': 'Unmanaged memory load: [v1151 @ rdx_v77 (Il2CppClass<System.Object[]>)+40]'}
+IL_0529: pop            None
+IL_052A: ldc.i4.0       None
+IL_052B: conv.i         None
+IL_052C: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0531: stloc          local(0x0036)
+IL_0535: ldloc          local(0x0036)
+IL_0539: ldc.i4         0
+IL_053E: ceq            None
+IL_0540: stloc          local(0x0038)
+IL_0544: nop            None
+IL_0545: ldloc          local(0x0063)
+IL_0549: stloc          local(0x0037)
+IL_054D: ldloc          local(0x0038)
+IL_0551: brtrue         {'target': 3247}
+IL_0556: br             {'target': 1371}
+IL_055B: ldloc          local(0x0006)
+IL_055F: ldc.i4         56
+IL_0564: add            None
+IL_0565: stloc          local(0x0027)
+IL_0569: ldloc          local(0x0006)
+IL_056D: ldc.i4         3
+IL_0572: ldloc          local(0x0063)
+IL_0576: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_057B: ldarg          argument(0x0001)
+IL_057F: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_0584: stloc          local(0x000B)
+IL_0588: ldarg          argument(0x0001)
+IL_058C: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_0591: ldc.i4         0
+IL_0596: ceq            None
+IL_0598: stloc          local(0x001D)
+IL_059C: ldloc          local(0x0063)
+IL_05A0: stloc          local(0x0025)
+IL_05A4: nop            None
+IL_05A5: ldloc          local(0x001D)
+IL_05A9: brtrue         {'target': 3043}
+IL_05AE: br             {'target': 1459}
+IL_05B3: ldloc          local(0x0000)
+IL_05B7: ldc.i4         76
+IL_05BC: sub            None
+IL_05BD: stloc          local(0x0066)
+IL_05C1: ldloc          local(0x000B)
+IL_05C5: ldc.i4         4
+IL_05CA: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_05CF: pop            None
+IL_05D0: ldloc          local(0x0066)
+IL_05D4: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_05D9: stloc          local(0x0067)
+IL_05DD: ldloc          local(0x0067)
+IL_05E1: ldc.i4         0
+IL_05E6: ceq            None
+IL_05E8: stloc          local(0x0068)
+IL_05EC: ldloc          local(0x0068)
+IL_05F0: brtrue         {'target': 1609}
+IL_05F5: br             {'target': 1530}
+IL_05FA: ldloc          local(0x0006)
+IL_05FE: stloc          local(0x0069)
+IL_0602: ldstr          {'token': '0x7001C613', 'identity': 'Unmanaged memory load: [v1179 @ rdx_v75 (Il2CppClass<System.Object[]>)+40]'}
+IL_0607: pop            None
+IL_0608: ldc.i4.0       None
+IL_0609: conv.i         None
+IL_060A: stloc          local(0x003A)
+IL_060E: ldloc          local(0x0067)
+IL_0612: ldstr          {'token': '0x7001C613', 'identity': 'Unmanaged memory load: [v1179 @ rdx_v75 (Il2CppClass<System.Object[]>)+40]'}
+IL_0617: pop            None
+IL_0618: ldc.i4.0       None
+IL_0619: conv.i         None
+IL_061A: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_061F: stloc          local(0x003B)
+IL_0623: ldloc          local(0x003B)
+IL_0627: ldc.i4         0
+IL_062C: ceq            None
+IL_062E: stloc          local(0x003D)
+IL_0632: nop            None
+IL_0633: ldloc          local(0x0067)
+IL_0637: stloc          local(0x003C)
+IL_063B: ldloc          local(0x003D)
+IL_063F: brtrue         {'target': 3292}
+IL_0644: br             {'target': 1609}
+IL_0649: ldloc          local(0x0006)
+IL_064D: ldc.i4         64
+IL_0652: add            None
+IL_0653: stloc          local(0x0027)
+IL_0657: ldloc          local(0x0006)
+IL_065B: ldc.i4         4
+IL_0660: ldloc          local(0x0067)
+IL_0664: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0669: ldarg          argument(0x0001)
+IL_066D: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_0672: stloc          local(0x000C)
+IL_0676: ldarg          argument(0x0001)
+IL_067A: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_067F: ldc.i4         0
+IL_0684: ceq            None
+IL_0686: stloc          local(0x001E)
+IL_068A: ldloc          local(0x0067)
+IL_068E: stloc          local(0x0025)
+IL_0692: nop            None
+IL_0693: ldloc          local(0x001E)
+IL_0697: brtrue         {'target': 3043}
+IL_069C: br             {'target': 1697}
+IL_06A1: ldloc          local(0x0000)
+IL_06A5: ldc.i4         72
+IL_06AA: sub            None
+IL_06AB: stloc          local(0x006A)
+IL_06AF: ldloc          local(0x000C)
+IL_06B3: ldc.i4         5
+IL_06B8: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_06BD: pop            None
+IL_06BE: ldloc          local(0x006A)
+IL_06C2: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_06C7: stloc          local(0x006B)
+IL_06CB: ldloc          local(0x006B)
+IL_06CF: ldc.i4         0
+IL_06D4: ceq            None
+IL_06D6: stloc          local(0x006C)
+IL_06DA: ldloc          local(0x006C)
+IL_06DE: brtrue         {'target': 1847}
+IL_06E3: br             {'target': 1768}
+IL_06E8: ldloc          local(0x0006)
+IL_06EC: stloc          local(0x006D)
+IL_06F0: ldstr          {'token': '0x7001C6AA', 'identity': 'Unmanaged memory load: [v1207 @ rdx_v73 (Il2CppClass<System.Object[]>)+40]'}
+IL_06F5: pop            None
+IL_06F6: ldc.i4.0       None
+IL_06F7: conv.i         None
+IL_06F8: stloc          local(0x0041)
+IL_06FC: ldloc          local(0x006B)
+IL_0700: ldstr          {'token': '0x7001C6AA', 'identity': 'Unmanaged memory load: [v1207 @ rdx_v73 (Il2CppClass<System.Object[]>)+40]'}
+IL_0705: pop            None
+IL_0706: ldc.i4.0       None
+IL_0707: conv.i         None
+IL_0708: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_070D: stloc          local(0x0042)
+IL_0711: ldloc          local(0x0042)
+IL_0715: ldc.i4         0
+IL_071A: ceq            None
+IL_071C: stloc          local(0x0044)
+IL_0720: nop            None
+IL_0721: ldloc          local(0x006B)
+IL_0725: stloc          local(0x0043)
+IL_0729: ldloc          local(0x0044)
+IL_072D: brtrue         {'target': 3337}
+IL_0732: br             {'target': 1847}
+IL_0737: ldloc          local(0x0006)
+IL_073B: ldc.i4         72
+IL_0740: add            None
+IL_0741: stloc          local(0x0027)
+IL_0745: ldloc          local(0x0006)
+IL_0749: ldc.i4         5
+IL_074E: ldloc          local(0x006B)
+IL_0752: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0757: ldarg          argument(0x0001)
+IL_075B: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_0760: stloc          local(0x000D)
+IL_0764: ldarg          argument(0x0001)
+IL_0768: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_076D: ldc.i4         0
+IL_0772: ceq            None
+IL_0774: stloc          local(0x001F)
+IL_0778: ldloc          local(0x006B)
+IL_077C: stloc          local(0x0025)
+IL_0780: nop            None
+IL_0781: ldloc          local(0x001F)
+IL_0785: brtrue         {'target': 3043}
+IL_078A: br             {'target': 1935}
+IL_078F: ldloc          local(0x0000)
+IL_0793: ldc.i4         68
+IL_0798: sub            None
+IL_0799: stloc          local(0x006E)
+IL_079D: ldloc          local(0x000D)
+IL_07A1: ldc.i4         6
+IL_07A6: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_07AB: pop            None
+IL_07AC: ldloc          local(0x006E)
+IL_07B0: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_07B5: stloc          local(0x006F)
+IL_07B9: ldloc          local(0x006F)
+IL_07BD: ldc.i4         0
+IL_07C2: ceq            None
+IL_07C4: stloc          local(0x0070)
+IL_07C8: ldloc          local(0x0070)
+IL_07CC: brtrue         {'target': 2085}
+IL_07D1: br             {'target': 2006}
+IL_07D6: ldloc          local(0x0006)
+IL_07DA: stloc          local(0x0071)
+IL_07DE: ldstr          {'token': '0x7001C741', 'identity': 'Unmanaged memory load: [v1235 @ rdx_v71 (Il2CppClass<System.Object[]>)+40]'}
+IL_07E3: pop            None
+IL_07E4: ldc.i4.0       None
+IL_07E5: conv.i         None
+IL_07E6: stloc          local(0x0046)
+IL_07EA: ldloc          local(0x006F)
+IL_07EE: ldstr          {'token': '0x7001C741', 'identity': 'Unmanaged memory load: [v1235 @ rdx_v71 (Il2CppClass<System.Object[]>)+40]'}
+IL_07F3: pop            None
+IL_07F4: ldc.i4.0       None
+IL_07F5: conv.i         None
+IL_07F6: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_07FB: stloc          local(0x0047)
+IL_07FF: ldloc          local(0x0047)
+IL_0803: ldc.i4         0
+IL_0808: ceq            None
+IL_080A: stloc          local(0x0049)
+IL_080E: nop            None
+IL_080F: ldloc          local(0x006F)
+IL_0813: stloc          local(0x0048)
+IL_0817: ldloc          local(0x0049)
+IL_081B: brtrue         {'target': 3382}
+IL_0820: br             {'target': 2085}
+IL_0825: ldloc          local(0x0006)
+IL_0829: ldc.i4         80
+IL_082E: add            None
+IL_082F: stloc          local(0x0027)
+IL_0833: ldloc          local(0x0006)
+IL_0837: ldc.i4         6
+IL_083C: ldloc          local(0x006F)
+IL_0840: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0845: ldarg          argument(0x0001)
+IL_0849: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_084E: stloc          local(0x000E)
+IL_0852: ldarg          argument(0x0001)
+IL_0856: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_085B: ldc.i4         0
+IL_0860: ceq            None
+IL_0862: stloc          local(0x0020)
+IL_0866: ldloc          local(0x006F)
+IL_086A: stloc          local(0x0025)
+IL_086E: nop            None
+IL_086F: ldloc          local(0x0020)
+IL_0873: brtrue         {'target': 3043}
+IL_0878: br             {'target': 2173}
+IL_087D: ldloc          local(0x0000)
+IL_0881: ldc.i4         64
+IL_0886: sub            None
+IL_0887: stloc          local(0x0072)
+IL_088B: ldloc          local(0x000E)
+IL_088F: ldc.i4         7
+IL_0894: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0899: pop            None
+IL_089A: ldloc          local(0x0072)
+IL_089E: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_08A3: stloc          local(0x0073)
+IL_08A7: ldloc          local(0x0073)
+IL_08AB: ldc.i4         0
+IL_08B0: ceq            None
+IL_08B2: stloc          local(0x0074)
+IL_08B6: ldloc          local(0x0074)
+IL_08BA: brtrue         {'target': 2323}
+IL_08BF: br             {'target': 2244}
+IL_08C4: ldloc          local(0x0006)
+IL_08C8: stloc          local(0x0075)
+IL_08CC: ldstr          {'token': '0x7001C7D8', 'identity': 'Unmanaged memory load: [v1263 @ rdx_v69 (Il2CppClass<System.Object[]>)+40]'}
+IL_08D1: pop            None
+IL_08D2: ldc.i4.0       None
+IL_08D3: conv.i         None
+IL_08D4: stloc          local(0x004F)
+IL_08D8: ldloc          local(0x0073)
+IL_08DC: ldstr          {'token': '0x7001C7D8', 'identity': 'Unmanaged memory load: [v1263 @ rdx_v69 (Il2CppClass<System.Object[]>)+40]'}
+IL_08E1: pop            None
+IL_08E2: ldc.i4.0       None
+IL_08E3: conv.i         None
+IL_08E4: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_08E9: stloc          local(0x0050)
+IL_08ED: ldloc          local(0x0050)
+IL_08F1: ldc.i4         0
+IL_08F6: ceq            None
+IL_08F8: stloc          local(0x0052)
+IL_08FC: nop            None
+IL_08FD: ldloc          local(0x0073)
+IL_0901: stloc          local(0x0051)
+IL_0905: ldloc          local(0x0052)
+IL_0909: brtrue         {'target': 3427}
+IL_090E: br             {'target': 2323}
+IL_0913: ldloc          local(0x0006)
+IL_0917: ldc.i4         88
+IL_091C: add            None
+IL_091D: stloc          local(0x0027)
+IL_0921: ldloc          local(0x0006)
+IL_0925: ldc.i4         7
+IL_092A: ldloc          local(0x0073)
+IL_092E: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0933: ldarg          argument(0x0001)
+IL_0937: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_093C: stloc          local(0x000F)
+IL_0940: ldarg          argument(0x0001)
+IL_0944: ldfld          {'token': '0x0400069C', 'identity': 'Skill::value_float'}
+IL_0949: ldc.i4         0
+IL_094E: ceq            None
+IL_0950: stloc          local(0x0021)
+IL_0954: ldloc          local(0x0073)
+IL_0958: stloc          local(0x0025)
+IL_095C: nop            None
+IL_095D: ldloc          local(0x0021)
+IL_0961: brtrue         {'target': 3043}
+IL_0966: br             {'target': 2411}
+IL_096B: ldloc          local(0x0000)
+IL_096F: ldc.i4         60
+IL_0974: sub            None
+IL_0975: stloc          local(0x0076)
+IL_0979: ldloc          local(0x000F)
+IL_097D: ldc.i4         8
+IL_0982: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0987: pop            None
+IL_0988: ldloc          local(0x0076)
+IL_098C: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0991: stloc          local(0x0077)
+IL_0995: ldloc          local(0x0077)
+IL_0999: ldc.i4         0
+IL_099E: ceq            None
+IL_09A0: stloc          local(0x0078)
+IL_09A4: ldloc          local(0x0078)
+IL_09A8: brtrue         {'target': 2561}
+IL_09AD: br             {'target': 2482}
+IL_09B2: ldloc          local(0x0006)
+IL_09B6: stloc          local(0x0079)
+IL_09BA: ldstr          {'token': '0x7001C86F', 'identity': 'Unmanaged memory load: [v1291 @ rdx_v67 (Il2CppClass<System.Object[]>)+40]'}
+IL_09BF: pop            None
+IL_09C0: ldc.i4.0       None
+IL_09C1: conv.i         None
+IL_09C2: stloc          local(0x0054)
+IL_09C6: ldloc          local(0x0077)
+IL_09CA: ldstr          {'token': '0x7001C86F', 'identity': 'Unmanaged memory load: [v1291 @ rdx_v67 (Il2CppClass<System.Object[]>)+40]'}
+IL_09CF: pop            None
+IL_09D0: ldc.i4.0       None
+IL_09D1: conv.i         None
+IL_09D2: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_09D7: stloc          local(0x0055)
+IL_09DB: ldloc          local(0x0055)
+IL_09DF: ldc.i4         0
+IL_09E4: ceq            None
+IL_09E6: stloc          local(0x0057)
+IL_09EA: nop            None
+IL_09EB: ldloc          local(0x0077)
+IL_09EF: stloc          local(0x0056)
+IL_09F3: ldloc          local(0x0057)
+IL_09F7: brtrue         {'target': 3472}
+IL_09FC: br             {'target': 2561}
+IL_0A01: ldloc          local(0x0006)
+IL_0A05: ldc.i4         8
+IL_0A0A: ldloc          local(0x0077)
+IL_0A0E: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0A13: ldloc          local(0x0004)
+IL_0A17: ldc.i4         0
+IL_0A1C: ceq            None
+IL_0A1E: stloc          local(0x007A)
+IL_0A22: ldloc          local(0x007A)
+IL_0A26: brtrue         {'target': 2687}
+IL_0A2B: br             {'target': 2608}
+IL_0A30: ldloc          local(0x0006)
+IL_0A34: stloc          local(0x007B)
+IL_0A38: ldstr          {'token': '0x7001C906', 'identity': 'Unmanaged memory load: [v1316 @ rdx_v65 (Il2CppClass<System.Object[]>)+40]'}
+IL_0A3D: pop            None
+IL_0A3E: ldc.i4.0       None
+IL_0A3F: conv.i         None
+IL_0A40: stloc          local(0x005D)
+IL_0A44: ldloc          local(0x0004)
+IL_0A48: ldstr          {'token': '0x7001C906', 'identity': 'Unmanaged memory load: [v1316 @ rdx_v65 (Il2CppClass<System.Object[]>)+40]'}
+IL_0A4D: pop            None
+IL_0A4E: ldc.i4.0       None
+IL_0A4F: conv.i         None
+IL_0A50: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0A55: stloc          local(0x005E)
+IL_0A59: ldloc          local(0x005E)
+IL_0A5D: ldc.i4         0
+IL_0A62: ceq            None
+IL_0A64: stloc          local(0x0060)
+IL_0A68: nop            None
+IL_0A69: ldloc          local(0x0004)
+IL_0A6D: stloc          local(0x005F)
+IL_0A71: ldloc          local(0x0060)
+IL_0A75: brtrue         {'target': 3517}
+IL_0A7A: br             {'target': 2687}
+IL_0A7F: ldloc          local(0x0006)
+IL_0A83: ldc.i4         9
+IL_0A88: ldloc          local(0x0004)
+IL_0A8C: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0A91: ldloc          local(0x0027)
+IL_0A95: ldfld          {'token': '0x0A0002B1', 'identity': 'TypeSpec:17::_syncRoot / sig 061c'}
+IL_0A9A: ldloc          local(0x0006)
+IL_0A9E: call           {'token': '0x0A00026D', 'identity': 'System.String::Format / sig 00020e0e1d1c'}
+IL_0AA3: stloc          local(0x0010)
+IL_0AA7: br             {'target': 2732}
+IL_0AAC: ldloc          local(0x0005)
+IL_0AB0: ldc.i4         0
+IL_0AB5: ceq            None
+IL_0AB7: stloc          local(0x0022)
+IL_0ABB: ldloc          local(0x0006)
+IL_0ABF: stloc          local(0x0025)
+IL_0AC3: nop            None
+IL_0AC4: ldloc          local(0x0027)
+IL_0AC8: ldfld          {'token': '0x0A0002B1', 'identity': 'TypeSpec:17::_syncRoot / sig 061c'}
+IL_0ACD: stloc          local(0x0027)
+IL_0AD1: ldloc          local(0x0022)
+IL_0AD5: brtrue         {'target': 3043}
+IL_0ADA: br             {'target': 2783}
+IL_0ADF: ldloc          local(0x0005)
+IL_0AE3: ldloc          local(0x0010)
+IL_0AE7: ldc.i4         1
+IL_0AEC: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0AF1: ldarg.0        None
+IL_0AF2: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_0AF7: ldc.i4         0
+IL_0AFC: ceq            None
+IL_0AFE: stloc          local(0x0023)
+IL_0B02: ldloc          local(0x0010)
+IL_0B06: stloc          local(0x0025)
+IL_0B0A: nop            None
+IL_0B0B: ldarg.0        None
+IL_0B0C: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_0B11: stloc          local(0x0027)
+IL_0B15: ldloc          local(0x0023)
+IL_0B19: brtrue         {'target': 3043}
+IL_0B1E: br             {'target': 2851}
+IL_0B23: ldarg.0        None
+IL_0B24: ldfld          {'token': '0x040008C5', 'identity': 'PlantDetail::skillTexts'}
+IL_0B29: ldc.i4         2
+IL_0B2E: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0B33: stloc          local(0x007C)
+IL_0B37: ldloc          local(0x0000)
+IL_0B3B: ldc.i4         56
+IL_0B40: sub            None
+IL_0B41: stloc          local(0x007D)
+IL_0B45: ldarg          argument(0x0001)
+IL_0B49: ldfld          {'token': '0x04000698', 'identity': 'Skill::chargeTicking'}
+IL_0B4E: pop            None
+IL_0B4F: ldloc          local(0x007D)
+IL_0B53: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0B58: stloc          local(0x007E)
+IL_0B5C: br             {'target': 2913}
+IL_0B61: ldloc          local(0x0000)
+IL_0B65: ldc.i4         52
+IL_0B6A: sub            None
+IL_0B6B: stloc          local(0x007F)
+IL_0B6F: ldarg          argument(0x0001)
+IL_0B73: ldfld          {'token': '0x04000699', 'identity': 'Skill::maxChargeTicking'}
+IL_0B78: pop            None
+IL_0B79: ldloc          local(0x007F)
+IL_0B7D: box            {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0B82: stloc          local(0x0080)
+IL_0B86: ldstr          {'token': '0x7001C99D', 'identity': '{0}/{1}'}
+IL_0B8B: ldloc          local(0x007E)
+IL_0B8F: ldloc          local(0x0080)
+IL_0B93: call           {'token': '0x0A00026F', 'identity': 'System.String::Format / sig 00030e0e1c1c'}
+IL_0B98: stloc          local(0x0011)
+IL_0B9C: br             {'target': 2977}
+IL_0BA1: ldloc          local(0x007C)
+IL_0BA5: ldc.i4         0
+IL_0BAA: ceq            None
+IL_0BAC: stloc          local(0x0024)
+IL_0BB0: ldloc          local(0x007E)
+IL_0BB4: stloc          local(0x0025)
+IL_0BB8: nop            None
+IL_0BB9: ldstr          {'token': '0x7001C99D', 'identity': '{0}/{1}'}
+IL_0BBE: stloc          local(0x0027)
+IL_0BC2: ldloc          local(0x0024)
+IL_0BC6: brtrue         {'target': 3043}
+IL_0BCB: br             {'target': 3024}
+IL_0BD0: ldloc          local(0x007C)
+IL_0BD4: ldloc          local(0x0011)
+IL_0BD8: ldc.i4         1
+IL_0BDD: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0BE2: ret            None
+IL_0BE3: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0BE8: throw          None
+IL_0BE9: nop            None
+IL_0BEA: br             {'target': 3112}
+IL_0BEF: ldarg.0        None
+IL_0BF0: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_0BF5: ldc.i4         0
+IL_0BFA: ceq            None
+IL_0BFC: stloc          local(0x0002)
+IL_0C00: ldarg          argument(0x0001)
+IL_0C04: stloc          local(0x0025)
+IL_0C08: nop            None
+IL_0C09: ldarg.0        None
+IL_0C0A: ldfld          {'token': '0x040008C0', 'identity': 'PlantDetail::card_Choose'}
+IL_0C0F: stloc          local(0x0027)
+IL_0C13: ldloc          local(0x0002)
+IL_0C17: brtrue         {'target': 3043}
+IL_0C1C: br             {'target': 5}
+IL_0C21: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0C26: throw          None
+IL_0C27: ret            None
+IL_0C28: ldloc          local(0x0027)
+IL_0C2C: ldloc          local(0x0025)
+IL_0C30: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0C35: stloc          local(0x0029)
+IL_0C39: ldloc          local(0x0029)
+IL_0C3D: throw          None
+IL_0C3E: nop            None
+IL_0C3F: ldc.i4         0
+IL_0C44: stloc          local(0x002A)
+IL_0C48: ldloc          local(0x0029)
+IL_0C4C: stloc          local(0x002C)
+IL_0C50: br             {'target': 3157}
+IL_0C55: ldloc          local(0x002C)
+IL_0C59: ldloc          local(0x002A)
+IL_0C5D: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0C62: stloc          local(0x002E)
+IL_0C66: ldloc          local(0x002E)
+IL_0C6A: throw          None
+IL_0C6B: nop            None
+IL_0C6C: ldc.i4         0
+IL_0C71: stloc          local(0x0030)
+IL_0C75: ldloc          local(0x002E)
+IL_0C79: stloc          local(0x0032)
+IL_0C7D: br             {'target': 3202}
+IL_0C82: ldloc          local(0x0032)
+IL_0C86: ldloc          local(0x0030)
+IL_0C8A: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0C8F: stloc          local(0x0034)
+IL_0C93: ldloc          local(0x0034)
+IL_0C97: throw          None
+IL_0C98: nop            None
+IL_0C99: ldc.i4         0
+IL_0C9E: stloc          local(0x0035)
+IL_0CA2: ldloc          local(0x0034)
+IL_0CA6: stloc          local(0x0037)
+IL_0CAA: br             {'target': 3247}
+IL_0CAF: ldloc          local(0x0037)
+IL_0CB3: ldloc          local(0x0035)
+IL_0CB7: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0CBC: stloc          local(0x0039)
+IL_0CC0: ldloc          local(0x0039)
+IL_0CC4: throw          None
+IL_0CC5: nop            None
+IL_0CC6: ldc.i4         0
+IL_0CCB: stloc          local(0x003A)
+IL_0CCF: ldloc          local(0x0039)
+IL_0CD3: stloc          local(0x003C)
+IL_0CD7: br             {'target': 3292}
+IL_0CDC: ldloc          local(0x003C)
+IL_0CE0: ldloc          local(0x003A)
+IL_0CE4: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0CE9: stloc          local(0x003E)
+IL_0CED: ldloc          local(0x003E)
+IL_0CF1: throw          None
+IL_0CF2: nop            None
+IL_0CF3: ldc.i4         0
+IL_0CF8: stloc          local(0x0041)
+IL_0CFC: ldloc          local(0x003E)
+IL_0D00: stloc          local(0x0043)
+IL_0D04: br             {'target': 3337}
+IL_0D09: ldloc          local(0x0043)
+IL_0D0D: ldloc          local(0x0041)
+IL_0D11: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0D16: stloc          local(0x0045)
+IL_0D1A: ldloc          local(0x0045)
+IL_0D1E: throw          None
+IL_0D1F: nop            None
+IL_0D20: ldc.i4         0
+IL_0D25: stloc          local(0x0046)
+IL_0D29: ldloc          local(0x0045)
+IL_0D2D: stloc          local(0x0048)
+IL_0D31: br             {'target': 3382}
+IL_0D36: ldloc          local(0x0048)
+IL_0D3A: ldloc          local(0x0046)
+IL_0D3E: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0D43: stloc          local(0x004A)
+IL_0D47: ldloc          local(0x004A)
+IL_0D4B: throw          None
+IL_0D4C: nop            None
+IL_0D4D: ldc.i4         0
+IL_0D52: stloc          local(0x004F)
+IL_0D56: ldloc          local(0x004A)
+IL_0D5A: stloc          local(0x0051)
+IL_0D5E: br             {'target': 3427}
+IL_0D63: ldloc          local(0x0051)
+IL_0D67: ldloc          local(0x004F)
+IL_0D6B: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0D70: stloc          local(0x0053)
+IL_0D74: ldloc          local(0x0053)
+IL_0D78: throw          None
+IL_0D79: nop            None
+IL_0D7A: ldc.i4         0
+IL_0D7F: stloc          local(0x0054)
+IL_0D83: ldloc          local(0x0053)
+IL_0D87: stloc          local(0x0056)
+IL_0D8B: br             {'target': 3472}
+IL_0D90: ldloc          local(0x0056)
+IL_0D94: ldloc          local(0x0054)
+IL_0D98: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0D9D: stloc          local(0x0058)
+IL_0DA1: ldloc          local(0x0058)
+IL_0DA5: throw          None
+IL_0DA6: nop            None
+IL_0DA7: ldc.i4         0
+IL_0DAC: stloc          local(0x005D)
+IL_0DB0: ldloc          local(0x0058)
+IL_0DB4: stloc          local(0x005F)
+IL_0DB8: br             {'target': 3517}
+IL_0DBD: ldloc          local(0x005F)
+IL_0DC1: ldloc          local(0x005D)
+IL_0DC5: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0DCA: stloc          local(0x0061)
+IL_0DCE: ldloc          local(0x0061)
+IL_0DD2: throw          None
+IL_0DD3: nop            None
+IL_0DD4: br             {'target': 3105}

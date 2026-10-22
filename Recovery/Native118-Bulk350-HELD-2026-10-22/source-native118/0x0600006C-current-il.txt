@@ -1,0 +1,350 @@
+System0::ComputingData
+{"token": "0x0600006C", "name": "System0::ComputingData", "signature": "2001010e", "rva": 36820, "max_stack": 3, "code_size": 1289, "local_sig": 285212753, "locals_blob": "07330e1c1c1c1d080202128154021281541c1c1c0c0d1280810c0c1c020e021c1281541281541d0c021281541281541c020c0c021c0d1c020c0e1c0202021c020c1c020c1230", "eh_count": 0, "il_sha256": "bb07ce90fe6c2d98e08f35774a7f352b1fd99a9e24d087ba2fd54e82fb0ec68e"}
+IL_0000: br             {'target': 1162}
+IL_0005: ldloc          local(0x0005)
+IL_0009: ldc.i4.0       None
+IL_000A: ceq            None
+IL_000C: stloc          local(0x0006)
+IL_0010: ldloc          local(0x0006)
+IL_0014: brtrue         {'target': 128}
+IL_0019: br             {'target': 30}
+IL_001E: ldarg.0        None
+IL_001F: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0024: stloc          local(0x0007)
+IL_0028: ldarg.0        None
+IL_0029: ldfld          {'token': '0x04000071', 'identity': 'System0::healthBase'}
+IL_002E: stloc          local(0x0011)
+IL_0032: ldarg.0        None
+IL_0033: ldfld          {'token': '0x04000072', 'identity': 'System0::healthFactor'}
+IL_0038: stloc          local(0x0010)
+IL_003C: br             {'target': 65}
+IL_0041: ldarg.0        None
+IL_0042: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0047: stloc          local(0x0009)
+IL_004B: ldloc          local(0x0007)
+IL_004F: ldfld          {'token': '0x0400031F', 'identity': 'PlantData::maxHealthPoint'}
+IL_0054: stloc          local(0x0019)
+IL_0058: ldloc          local(0x0009)
+IL_005C: ldarg.0        None
+IL_005D: ldfld          {'token': '0x04000072', 'identity': 'System0::healthFactor'}
+IL_0062: stfld          {'token': '0x04000320', 'identity': 'PlantData::healthFactor'}
+IL_0067: ldarg.0        None
+IL_0068: ldfld          {'token': '0x0400007F', 'identity': 'System0::maxHp'}
+IL_006D: stloc          local(0x000F)
+IL_0071: ldc.i4         0
+IL_0076: stloc          local(0x0012)
+IL_007A: nop            None
+IL_007B: br             {'target': 1213}
+IL_0080: ldarg          argument(0x0001)
+IL_0084: ldstr          {'token': '0x70000F30', 'identity': 'Atk'}
+IL_0089: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_008E: stloc          local(0x0008)
+IL_0092: ldloc          local(0x0008)
+IL_0096: ldc.i4.0       None
+IL_0097: ceq            None
+IL_0099: stloc          local(0x001A)
+IL_009D: ldloc          local(0x001A)
+IL_00A1: brtrue         {'target': 269}
+IL_00A6: br             {'target': 171}
+IL_00AB: ldarg.0        None
+IL_00AC: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_00B1: stloc          local(0x0017)
+IL_00B5: ldarg.0        None
+IL_00B6: ldfld          {'token': '0x04000073', 'identity': 'System0::attackBase'}
+IL_00BB: stloc          local(0x0011)
+IL_00BF: ldarg.0        None
+IL_00C0: ldfld          {'token': '0x04000074', 'identity': 'System0::attackFactor'}
+IL_00C5: stloc          local(0x0010)
+IL_00C9: br             {'target': 206}
+IL_00CE: ldarg.0        None
+IL_00CF: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_00D4: stloc          local(0x001C)
+IL_00D8: ldloc          local(0x0017)
+IL_00DC: ldfld          {'token': '0x04000321', 'identity': 'PlantData::attackPoint'}
+IL_00E1: stloc          local(0x0019)
+IL_00E5: ldloc          local(0x001C)
+IL_00E9: ldarg.0        None
+IL_00EA: ldfld          {'token': '0x04000074', 'identity': 'System0::attackFactor'}
+IL_00EF: stfld          {'token': '0x04000322', 'identity': 'PlantData::attackFactor'}
+IL_00F4: ldarg.0        None
+IL_00F5: ldfld          {'token': '0x04000080', 'identity': 'System0::maxAtk'}
+IL_00FA: stloc          local(0x000F)
+IL_00FE: ldc.i4         0
+IL_0103: stloc          local(0x0012)
+IL_0107: nop            None
+IL_0108: br             {'target': 1213}
+IL_010D: ldarg          argument(0x0001)
+IL_0111: ldstr          {'token': '0x70000F38', 'identity': 'Dfs'}
+IL_0116: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_011B: stloc          local(0x0013)
+IL_011F: ldloc          local(0x0013)
+IL_0123: ldc.i4.0       None
+IL_0124: ceq            None
+IL_0126: stloc          local(0x0021)
+IL_012A: ldloc          local(0x0021)
+IL_012E: brtrue         {'target': 1161}
+IL_0133: br             {'target': 312}
+IL_0138: ldarg.0        None
+IL_0139: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_013E: stloc          local(0x0018)
+IL_0142: ldarg.0        None
+IL_0143: ldfld          {'token': '0x04000075', 'identity': 'System0::defenseBase'}
+IL_0148: stloc          local(0x0011)
+IL_014C: ldarg.0        None
+IL_014D: ldfld          {'token': '0x04000076', 'identity': 'System0::defenseFactor'}
+IL_0152: stloc          local(0x0010)
+IL_0156: br             {'target': 347}
+IL_015B: ldarg.0        None
+IL_015C: ldfld          {'token': '0x0400006E', 'identity': 'System0::plantData'}
+IL_0161: stloc          local(0x001B)
+IL_0165: ldloc          local(0x0018)
+IL_0169: ldfld          {'token': '0x04000324', 'identity': 'PlantData::defensePoint'}
+IL_016E: stloc          local(0x0019)
+IL_0172: ldloc          local(0x001B)
+IL_0176: ldarg.0        None
+IL_0177: ldfld          {'token': '0x04000076', 'identity': 'System0::defenseFactor'}
+IL_017C: stfld          {'token': '0x04000325', 'identity': 'PlantData::defenseFactor'}
+IL_0181: ldarg.0        None
+IL_0182: ldfld          {'token': '0x04000081', 'identity': 'System0::maxDfs'}
+IL_0187: stloc          local(0x000F)
+IL_018B: ldc.i4         0
+IL_0190: stloc          local(0x0012)
+IL_0194: nop            None
+IL_0195: br             {'target': 1213}
+IL_019A: ldloc          local(0x000B)
+IL_019E: ldloc          local(0x0004)
+IL_01A2: ldloc          local(0x0016)
+IL_01A6: ldelem         {'token': '0x0100000E', 'identity': 'System.Int32'}
+IL_01AB: clt            None
+IL_01AD: ldc.i4.0       None
+IL_01AE: ceq            None
+IL_01B0: stloc          local(0x0015)
+IL_01B4: ldloc          local(0x0015)
+IL_01B8: brtrue         {'target': 564}
+IL_01BD: br             {'target': 450}
+IL_01C2: br             {'target': 455}
+IL_01C7: ldloc          local(0x000B)
+IL_01CB: conv.r8        None
+IL_01CC: ldloc          local(0x0010)
+IL_01D0: conv.r8        None
+IL_01D1: div            None
+IL_01D2: stloc          local(0x0023)
+IL_01D6: ldloc          local(0x0023)
+IL_01DA: call           {'token': '0x0A00004E', 'identity': 'System.Math::Exp / sig 00010d0d'}
+IL_01DF: stloc          local(0x000E)
+IL_01E3: ldstr          {'token': '0x70000F40', 'identity': 'Not implemented instruction: "cvtsd2ss xmm1,xmm0"'}
+IL_01E8: pop            None
+IL_01E9: ldloc          local(0x000C)
+IL_01ED: ldc.i4         1
+IL_01F2: add            None
+IL_01F3: stloc          local(0x0022)
+IL_01F7: ldloc          local(0x000B)
+IL_01FB: ldc.i4         1
+IL_0200: add            None
+IL_0201: stloc          local(0x000B)
+IL_0205: ldc.i4         0
+IL_020A: conv.r4        None
+IL_020B: ldloc          local(0x0011)
+IL_020F: conv.r4        None
+IL_0210: mul            None
+IL_0211: stloc          local(0x000D)
+IL_0215: ldloc          local(0x0019)
+IL_0219: ldloc          local(0x000C)
+IL_021D: ldloc          local(0x000D)
+IL_0221: stelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0226: ldloc          local(0x0022)
+IL_022A: stloc          local(0x000C)
+IL_022E: nop            None
+IL_022F: br             {'target': 410}
+IL_0234: ldloc          local(0x000C)
+IL_0238: ldc.i4         1
+IL_023D: sub            None
+IL_023E: stloc          local(0x001D)
+IL_0242: br             {'target': 583}
+IL_0247: ldloc          local(0x0019)
+IL_024B: ldloc          local(0x001D)
+IL_024F: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0254: stloc          local(0x0011)
+IL_0258: ldloc          local(0x0016)
+IL_025C: ldc.i4         1
+IL_0261: add            None
+IL_0262: stloc          local(0x0016)
+IL_0266: ldloc          local(0x0016)
+IL_026A: ldc.i4         5
+IL_026F: clt            None
+IL_0271: stloc          local(0x001E)
+IL_0275: ldloc          local(0x001E)
+IL_0279: brtrue         {'target': 1236}
+IL_027E: br             {'target': 643}
+IL_0283: ldc.i4         0
+IL_0288: stloc          local(0x000A)
+IL_028C: br             {'target': 1250}
+IL_0291: br             {'target': 662}
+IL_0296: ldstr          {'token': '0x70000FA4', 'identity': 'Method not found @1802CB1D8'}
+IL_029B: pop            None
+IL_029C: ldloc          local(0x0019)
+IL_02A0: ldloc          local(0x000A)
+IL_02A4: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_02A9: ldc.i4         0
+IL_02AE: clt            None
+IL_02B0: stloc          local(0x0029)
+IL_02B4: ldloc          local(0x0029)
+IL_02B8: brtrue         {'target': 874}
+IL_02BD: br             {'target': 706}
+IL_02C2: ldstr          {'token': '0x70000FDC', 'identity': 'Not implemented instruction: "ucomisd xmm0,xmm10"'}
+IL_02C7: pop            None
+IL_02C8: ldstr          {'token': '0x70001040', 'identity': 'Not implemented instruction: "jp short 00000001803079DCh"'}
+IL_02CD: pop            None
+IL_02CE: ldloc          local(0x0019)
+IL_02D2: ldloc          local(0x000A)
+IL_02D6: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_02DB: ldc.i4         0
+IL_02E0: ceq            None
+IL_02E2: ldc.i4.0       None
+IL_02E3: ceq            None
+IL_02E5: stloc          local(0x002A)
+IL_02E9: ldloc          local(0x002A)
+IL_02ED: brtrue         {'target': 831}
+IL_02F2: br             {'target': 759}
+IL_02F7: ldloc          local(0x001F)
+IL_02FB: ldc.i4         1
+IL_0300: and            None
+IL_0301: stloc          local(0x002C)
+IL_0305: ldloc          local(0x002C)
+IL_0309: ldc.i4         0
+IL_030E: ceq            None
+IL_0310: stloc          local(0x002D)
+IL_0314: ldloc          local(0x001F)
+IL_0318: stloc          local(0x0020)
+IL_031C: ldloc          local(0x002D)
+IL_0320: brtrue         {'target': 1042}
+IL_0325: br             {'target': 810}
+IL_032A: ldloc          local(0x001F)
+IL_032E: conv.r4        None
+IL_032F: ldc.r4         1.0
+IL_0334: conv.r4        None
+IL_0335: add            None
+IL_0336: stloc          local(0x0020)
+IL_033A: br             {'target': 1042}
+IL_033F: ldloc          local(0x0019)
+IL_0343: ldloc          local(0x000A)
+IL_0347: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_034C: conv.r4        None
+IL_034D: ldc.r4         0.5
+IL_0352: conv.r4        None
+IL_0353: add            None
+IL_0354: stloc          local(0x002E)
+IL_0358: ldloc          local(0x002E)
+IL_035C: call           {'token': '0x0A00004F', 'identity': 'System.MathF::Floor / sig 00010c0c'}
+IL_0361: stloc          local(0x0020)
+IL_0365: br             {'target': 1042}
+IL_036A: ldstr          {'token': '0x700010B4', 'identity': 'Not implemented instruction: "ucomisd xmm0,xmm11"'}
+IL_036F: pop            None
+IL_0370: ldstr          {'token': '0x70001118', 'identity': 'Not implemented instruction: "jp short 0000000180307A10h"'}
+IL_0375: pop            None
+IL_0376: ldloc          local(0x0019)
+IL_037A: ldloc          local(0x000A)
+IL_037E: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0383: ldc.i4         0
+IL_0388: ceq            None
+IL_038A: ldc.i4.0       None
+IL_038B: ceq            None
+IL_038D: stloc          local(0x002B)
+IL_0391: ldloc          local(0x002B)
+IL_0395: brtrue         {'target': 999}
+IL_039A: br             {'target': 927}
+IL_039F: ldloc          local(0x001F)
+IL_03A3: ldc.i4         1
+IL_03A8: and            None
+IL_03A9: stloc          local(0x002F)
+IL_03AD: ldloc          local(0x002F)
+IL_03B1: ldc.i4         0
+IL_03B6: ceq            None
+IL_03B8: stloc          local(0x0030)
+IL_03BC: ldloc          local(0x001F)
+IL_03C0: stloc          local(0x0020)
+IL_03C4: ldloc          local(0x0030)
+IL_03C8: brtrue         {'target': 1042}
+IL_03CD: br             {'target': 978}
+IL_03D2: ldloc          local(0x001F)
+IL_03D6: conv.r4        None
+IL_03D7: ldc.r4         1.0
+IL_03DC: conv.r4        None
+IL_03DD: sub            None
+IL_03DE: stloc          local(0x0020)
+IL_03E2: br             {'target': 1042}
+IL_03E7: ldloc          local(0x0019)
+IL_03EB: ldloc          local(0x000A)
+IL_03EF: ldelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_03F4: conv.r4        None
+IL_03F5: ldc.r4         0.5
+IL_03FA: conv.r4        None
+IL_03FB: sub            None
+IL_03FC: stloc          local(0x0031)
+IL_0400: ldloc          local(0x0031)
+IL_0404: call           {'token': '0x0A000050', 'identity': 'System.MathF::Ceiling / sig 00010c0c'}
+IL_0409: stloc          local(0x0020)
+IL_040D: br             {'target': 1042}
+IL_0412: ldloc          local(0x000A)
+IL_0416: ldc.i4         1
+IL_041B: add            None
+IL_041C: stloc          local(0x0024)
+IL_0420: ldloc          local(0x0019)
+IL_0424: ldloc          local(0x000A)
+IL_0428: ldloc          local(0x0020)
+IL_042C: stelem         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0431: ldloc          local(0x0024)
+IL_0435: stloc          local(0x000A)
+IL_0439: br             {'target': 1250}
+IL_043E: ldloc          local(0x0019)
+IL_0442: conv.r4        None
+IL_0443: ldc.i4         828
+IL_0448: conv.r4        None
+IL_0449: add            None
+IL_044A: stloc          local(0x0026)
+IL_044E: ldloc          local(0x0026)
+IL_0452: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0457: stloc          local(0x0027)
+IL_045B: ldstr          {'token': '0x7000118C', 'identity': '满级数值：'}
+IL_0460: ldloc          local(0x0027)
+IL_0464: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0469: stloc          local(0x0014)
+IL_046D: br             {'target': 1138}
+IL_0472: ldloc          local(0x000F)
+IL_0476: ldloc          local(0x0014)
+IL_047A: ldc.i4         1
+IL_047F: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0484: br             {'target': 1161}
+IL_0489: ret            None
+IL_048A: ldc.i4         5
+IL_048F: newarr         {'token': '0x0100000E', 'identity': 'System.Int32'}
+IL_0494: stloc          local(0x0004)
+IL_0498: ldloc          local(0x0004)
+IL_049C: ldtoken        {'token': '0x04000AEF', 'identity': '<PrivateImplementationDetails>::943A9B2BC9CDF297CF50D5C510E984B5FCE378F1A724B91BBA3741377BB7B5D7'}
+IL_04A1: call           {'token': '0x0A000052', 'identity': 'System.Runtime.CompilerServices.RuntimeHelpers::InitializeArray / sig 00020112611180a1'}
+IL_04A6: ldarg          argument(0x0001)
+IL_04AA: ldstr          {'token': '0x70001198', 'identity': 'Hp'}
+IL_04AF: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_04B4: stloc          local(0x0005)
+IL_04B8: br             {'target': 5}
+IL_04BD: ldc.i4         0
+IL_04C2: stloc          local(0x000C)
+IL_04C6: ldc.i4         0
+IL_04CB: stloc          local(0x0016)
+IL_04CF: br             {'target': 1236}
+IL_04D4: ldc.i4         0
+IL_04D9: stloc          local(0x000B)
+IL_04DD: br             {'target': 410}
+IL_04E2: ldloc          local(0x000A)
+IL_04E6: ldloc          local(0x0019)
+IL_04EA: ldlen          None
+IL_04EB: conv.i4        None
+IL_04EC: clt            None
+IL_04EE: ldc.i4.0       None
+IL_04EF: ceq            None
+IL_04F1: stloc          local(0x0025)
+IL_04F5: ldloc          local(0x0025)
+IL_04F9: brtrue         {'target': 1086}
+IL_04FE: br             {'target': 657}
+IL_0503: ldstr          {'token': '0x7000119E', 'identity': 'Warning: Method ends with non empty stack (-A8), the output could be wrong!'}
+IL_0508: pop            None

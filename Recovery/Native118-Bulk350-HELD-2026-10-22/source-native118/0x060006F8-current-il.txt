@@ -1,0 +1,261 @@
+Window_I::CreatNewSave
+{"token": "0x060006F8", "name": "Window_I::CreatNewSave", "signature": "200001", "rva": 596440, "max_stack": 3, "code_size": 1003, "local_sig": 285214020, "locals_blob": "072c1c1c1c12834c1280c40212814c021282201283241c0212830002020202020202020202021280b902020202151151011c1c128081021280b5021280b51280b91209181818151151011c1818", "eh_count": 0, "il_sha256": "9eaf906cd2fefd7f258d6a48de7db60782c21b26929e8f521686c0e1c7ad438e"}
+IL_0000: br             {'target': 770}
+IL_0005: ldloc          local(0x0004)
+IL_0009: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_000E: stloc          local(0x0006)
+IL_0012: ldloc          local(0x0004)
+IL_0016: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_001B: ldc.i4         0
+IL_0020: ceq            None
+IL_0022: stloc          local(0x0007)
+IL_0026: ldloc          local(0x0007)
+IL_002A: brtrue         {'target': 645}
+IL_002F: br             {'target': 52}
+IL_0034: ldarg.0        None
+IL_0035: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_003A: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_003F: call           {'token': '0x0A0000B0', 'identity': 'System.String::op_Inequality / sig 0002020e0e'}
+IL_0044: stloc          local(0x000B)
+IL_0048: ldloc          local(0x000B)
+IL_004C: brtrue         {'target': 86}
+IL_0051: br             {'target': 646}
+IL_0056: ldloc          local(0x0006)
+IL_005A: ldfld          {'token': '0x04000311', 'identity': 'SavesManager::saveList'}
+IL_005F: stloc          local(0x0008)
+IL_0063: ldloc          local(0x0006)
+IL_0067: ldfld          {'token': '0x04000311', 'identity': 'SavesManager::saveList'}
+IL_006C: ldc.i4         0
+IL_0071: ceq            None
+IL_0073: stloc          local(0x000E)
+IL_0077: nop            None
+IL_0078: ldloc          local(0x000E)
+IL_007C: brtrue         {'target': 742}
+IL_0081: br             {'target': 134}
+IL_0086: ldloc          local(0x0008)
+IL_008A: ldfld          {'token': '0x0400064E', 'identity': 'SaveList::saveList'}
+IL_008F: ldc.i4         0
+IL_0094: ceq            None
+IL_0096: stloc          local(0x000F)
+IL_009A: nop            None
+IL_009B: ldloc          local(0x000F)
+IL_009F: brtrue         {'target': 742}
+IL_00A4: br             {'target': 169}
+IL_00A9: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00AE: pop            None
+IL_00AF: nop            None
+IL_00B0: br             {'target': 776}
+IL_00B5: ldloc          local(0x001F)
+IL_00B9: ldc.i4         0
+IL_00BE: ceq            None
+IL_00C0: stloc          local(0x001C)
+IL_00C4: ldloc          local(0x001C)
+IL_00C8: brtrue         {'target': 753}
+IL_00CD: br             {'target': 210}
+IL_00D2: ldloc          local(0x001F)
+IL_00D6: ldfld          {'token': '0x0A0001E1', 'identity': 'UnityEngine.MonoBehaviour::m_CancellationTokenSource / sig 06128139'}
+IL_00DB: ldarg.0        None
+IL_00DC: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_00E1: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_00E6: stloc          local(0x0019)
+IL_00EA: ldloc          local(0x0019)
+IL_00EE: ldc.i4.0       None
+IL_00EF: ceq            None
+IL_00F1: stloc          local(0x0020)
+IL_00F5: nop            None
+IL_00F6: ldloc          local(0x0020)
+IL_00FA: brtrue         {'target': 776}
+IL_00FF: br             {'target': 260}
+IL_0104: ldarg.0        None
+IL_0105: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_010A: ldc.i4         0
+IL_010F: ceq            None
+IL_0111: stloc          local(0x001A)
+IL_0115: ldloc          local(0x001A)
+IL_0119: brtrue         {'target': 814}
+IL_011E: br             {'target': 291}
+IL_0123: ldarg.0        None
+IL_0124: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_0129: ldstr          {'token': '0x7001CE74', 'identity': '该昵称已存在！'}
+IL_012E: ldc.i4         1
+IL_0133: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0138: br             {'target': 825}
+IL_013D: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_0142: ldc.i4         2
+IL_0147: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_014C: stloc          local(0x0023)
+IL_0150: br             {'target': 341}
+IL_0155: ldloc          local(0x0023)
+IL_0159: call           {'token': '0x0600013B', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_015E: stloc          local(0x0024)
+IL_0162: ldloca         local(0x0029)
+IL_0166: call           {'token': '0x0A000021', 'identity': 'System.ValueType::.ctor / sig 200001'}
+IL_016B: br             {'target': 368}
+IL_0170: br             {'target': 645}
+IL_0175: ldloca         local(0x0029)
+IL_0179: call           {'token': '0x0A0002C5', 'identity': 'TypeSpec:129::Dispose / sig 200001'}
+IL_017E: br             {'target': 855}
+IL_0183: ldloc          local(0x000C)
+IL_0187: ldfld          {'token': '0x0400084B', 'identity': 'MainUIController::savesUIController'}
+IL_018C: stloc          local(0x0009)
+IL_0190: ldloc          local(0x000C)
+IL_0194: ldfld          {'token': '0x0400084B', 'identity': 'MainUIController::savesUIController'}
+IL_0199: ldc.i4         0
+IL_019E: ceq            None
+IL_01A0: stloc          local(0x0010)
+IL_01A4: nop            None
+IL_01A5: ldloc          local(0x0010)
+IL_01A9: brtrue         {'target': 742}
+IL_01AE: br             {'target': 435}
+IL_01B3: ldloc          local(0x0009)
+IL_01B7: ldfld          {'token': '0x040008AC', 'identity': 'SavesUIController::managerPage'}
+IL_01BC: ldc.i4         0
+IL_01C1: ceq            None
+IL_01C3: stloc          local(0x0011)
+IL_01C7: nop            None
+IL_01C8: ldloc          local(0x0011)
+IL_01CC: brtrue         {'target': 742}
+IL_01D1: br             {'target': 470}
+IL_01D6: ldloc          local(0x0009)
+IL_01DA: ldfld          {'token': '0x040008AC', 'identity': 'SavesUIController::managerPage'}
+IL_01DF: ldc.i4         0
+IL_01E4: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_01E9: ldarg.0        None
+IL_01EA: ldfld          {'token': '0x040008F5', 'identity': 'Window_I::I'}
+IL_01EF: ldc.i4         2
+IL_01F4: ceq            None
+IL_01F6: ldc.i4.0       None
+IL_01F7: ceq            None
+IL_01F9: stloc          local(0x000D)
+IL_01FD: ldloc          local(0x000D)
+IL_0201: brtrue         {'target': 616}
+IL_0206: br             {'target': 523}
+IL_020B: ldstr          {'token': '0x7001CE84', 'identity': 'Method not found @1802FB0C0'}
+IL_0210: pop            None
+IL_0211: ldloc          local(0x000A)
+IL_0215: ldc.i4         0
+IL_021A: ceq            None
+IL_021C: stloc          local(0x0012)
+IL_0220: nop            None
+IL_0221: ldloc          local(0x0012)
+IL_0225: brtrue         {'target': 742}
+IL_022A: br             {'target': 559}
+IL_022F: ldstr          {'token': '0x7001CEBC', 'identity': 'Unmanaged memory load: [v116 @ rax_v43+70]'}
+IL_0234: pop            None
+IL_0235: ldc.i4.0       None
+IL_0236: conv.i         None
+IL_0237: ldc.i4         0
+IL_023C: ceq            None
+IL_023E: stloc          local(0x0013)
+IL_0242: nop            None
+IL_0243: ldloc          local(0x0013)
+IL_0247: brtrue         {'target': 742}
+IL_024C: br             {'target': 593}
+IL_0251: ldstr          {'token': '0x7001CEBC', 'identity': 'Unmanaged memory load: [v116 @ rax_v43+70]'}
+IL_0256: pop            None
+IL_0257: ldc.i4.0       None
+IL_0258: conv.i         None
+IL_0259: ldc.r4         1.0
+IL_025E: call           {'token': '0x0A0001EA', 'identity': 'UnityEngine.Animator::set_speed / sig 2001010c'}
+IL_0263: br             {'target': 616}
+IL_0268: ldarg.0        None
+IL_0269: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_026E: stloc          local(0x0025)
+IL_0272: br             {'target': 631}
+IL_0277: ldloc          local(0x0025)
+IL_027B: call           {'token': '0x0A000025', 'identity': 'UnityEngine.Object::Destroy / sig 0001011221'}
+IL_0280: br             {'target': 645}
+IL_0285: ret            None
+IL_0286: ldarg.0        None
+IL_0287: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_028C: ldc.i4         0
+IL_0291: ceq            None
+IL_0293: stloc          local(0x0014)
+IL_0297: nop            None
+IL_0298: ldloc          local(0x0014)
+IL_029C: brtrue         {'target': 742}
+IL_02A1: br             {'target': 678}
+IL_02A6: ldarg.0        None
+IL_02A7: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_02AC: ldstr          {'token': '0x7001CF12', 'identity': '昵称不能为空！'}
+IL_02B1: ldc.i4         1
+IL_02B6: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_02BB: br             {'target': 922}
+IL_02C0: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_02C5: ldc.i4         2
+IL_02CA: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_02CF: stloc          local(0x0021)
+IL_02D3: br             {'target': 728}
+IL_02D8: ldloc          local(0x0021)
+IL_02DC: call           {'token': '0x0600013B', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_02E1: stloc          local(0x0018)
+IL_02E5: ret            None
+IL_02E6: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02EB: throw          None
+IL_02EC: br             {'target': 992}
+IL_02F1: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02F6: throw          None
+IL_02F7: ldloc          local(0x001F)
+IL_02FB: throw          None
+IL_02FC: br             {'target': 769}
+IL_0301: ret            None
+IL_0302: nop            None
+IL_0303: br             {'target': 953}
+IL_0308: ldloca         local(0x0029)
+IL_030C: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0311: stloc          local(0x001B)
+IL_0315: ldloc          local(0x001B)
+IL_0319: ldc.i4.0       None
+IL_031A: ceq            None
+IL_031C: stloc          local(0x0022)
+IL_0320: ldloc          local(0x0022)
+IL_0324: brtrue         {'target': 373}
+IL_0329: br             {'target': 181}
+IL_032E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0333: throw          None
+IL_0334: br             {'target': 753}
+IL_0339: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_033E: ldc.i4         0
+IL_0343: ceq            None
+IL_0345: stloc          local(0x0017)
+IL_0349: ldloc          local(0x0017)
+IL_034D: brtrue         {'target': 992}
+IL_0352: br             {'target': 317}
+IL_0357: ldloc          local(0x0004)
+IL_035B: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_0360: ldarg.0        None
+IL_0361: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_0366: call           {'token': '0x0600023A', 'identity': 'SavesManager::CreateNewPlayerSave'}
+IL_036B: br             {'target': 880}
+IL_0370: nop            None
+IL_0371: nop            None
+IL_0372: ldsfld         {'token': '0x04000843', 'identity': 'MainUIController::<instance>k__BackingField'}
+IL_0377: stloc          local(0x000C)
+IL_037B: ldsfld         {'token': '0x04000843', 'identity': 'MainUIController::<instance>k__BackingField'}
+IL_0380: ldc.i4         0
+IL_0385: ceq            None
+IL_0387: stloc          local(0x0015)
+IL_038B: nop            None
+IL_038C: ldloc          local(0x0015)
+IL_0390: brtrue         {'target': 742}
+IL_0395: br             {'target': 387}
+IL_039A: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_039F: ldc.i4         0
+IL_03A4: ceq            None
+IL_03A6: stloc          local(0x0016)
+IL_03AA: nop            None
+IL_03AB: ldloc          local(0x0016)
+IL_03AF: brtrue         {'target': 742}
+IL_03B4: br             {'target': 704}
+IL_03B9: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_03BE: stloc          local(0x0004)
+IL_03C2: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_03C7: ldc.i4         0
+IL_03CC: ceq            None
+IL_03CE: stloc          local(0x0005)
+IL_03D2: ldloc          local(0x0005)
+IL_03D6: brtrue         {'target': 742}
+IL_03DB: br             {'target': 5}
+IL_03E0: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03E5: throw          None
+IL_03E6: br             {'target': 814}

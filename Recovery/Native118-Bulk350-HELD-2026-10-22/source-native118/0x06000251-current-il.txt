@@ -1,0 +1,567 @@
+PlantsInitialValue::PlantsInitialValue_Updata
+{"token": "0x06000251", "name": "PlantsInitialValue::PlantsInitialValue_Updata", "signature": "200001", "rva": 182828, "max_stack": 3, "code_size": 2194, "local_sig": 285213142, "locals_blob": "07471815120d011c15120d011282280215120d011c1d1c081d1c1815120d0112815815120d011c15120d0112815415120d0112815815120d0112815c15120d011281601d1c1d1c1d1c02020202020202020202128228080808080812815415120d0112815815120d01128160021d0812815815120d0112815c1d0c15120d0112815c1d0c12815c021d0c15120d011282341281601d0c1d12816415120d011282341d0c1d0c15120d01128234021d0c15120d011282341d0c0202128150080808080808080808", "eh_count": 0, "il_sha256": "de65c95645052e2eef52d873c9bd7f615a66e057f482e3d29f9d8d46671036ee"}
+IL_0000: br             {'target': 1917}
+IL_0005: ldloc          local(0x0002)
+IL_0009: ldfld          {'token': '0x0A000055', 'identity': 'TypeSpec:14::_size / sig 0608'}
+IL_000E: ldc.i4         128
+IL_0013: clt            None
+IL_0015: ldc.i4.0       None
+IL_0016: ceq            None
+IL_0018: stloc          local(0x0003)
+IL_001C: ldloc          local(0x0003)
+IL_0020: brtrue         {'target': 274}
+IL_0025: br             {'target': 42}
+IL_002A: ldarg.0        None
+IL_002B: ldfld          {'token': '0x04000314', 'identity': 'PlantsInitialValue::plantsInitialValue'}
+IL_0030: stloc          local(0x0001)
+IL_0034: br             {'target': 57}
+IL_0039: ldloc          local(0x0001)
+IL_003D: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0042: newobj         {'token': '0x060004D5', 'identity': 'PlantSave::.ctor'}
+IL_0047: stloc          local(0x001C)
+IL_004B: nop            None
+IL_004C: br             {'target': 81}
+IL_0051: ldloc          local(0x0001)
+IL_0055: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_005A: ldc.i4         1
+IL_005F: add            None
+IL_0060: stloc          local(0x0042)
+IL_0064: ldloc          local(0x0001)
+IL_0068: ldloc          local(0x0042)
+IL_006C: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0071: ldloc          local(0x0001)
+IL_0075: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_007A: stloc          local(0x000F)
+IL_007E: br             {'target': 131}
+IL_0083: ldloc          local(0x0001)
+IL_0087: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_008C: ldloc          local(0x000F)
+IL_0090: ldlen          None
+IL_0091: conv.i4        None
+IL_0092: clt            None
+IL_0094: stloc          local(0x0025)
+IL_0098: ldloc          local(0x0025)
+IL_009C: brtrue         {'target': 190}
+IL_00A1: br             {'target': 166}
+IL_00A6: ldloc          local(0x0001)
+IL_00AA: ldloc          local(0x001C)
+IL_00AE: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_00B3: ldc.i4.0       None
+IL_00B4: conv.i         None
+IL_00B5: stloc          local(0x0000)
+IL_00B9: br             {'target': 254}
+IL_00BE: ldloc          local(0x0001)
+IL_00C2: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_00C7: ldc.i4         1
+IL_00CC: add            None
+IL_00CD: stloc          local(0x001D)
+IL_00D1: ldloc          local(0x0001)
+IL_00D5: ldloc          local(0x001D)
+IL_00D9: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_00DE: br             {'target': 227}
+IL_00E3: ldloc          local(0x000F)
+IL_00E7: ldloc          local(0x003E)
+IL_00EB: ldloc          local(0x001C)
+IL_00EF: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_00F4: ldnull         None
+IL_00F5: stloc          local(0x0000)
+IL_00F9: br             {'target': 254}
+IL_00FE: ldarg.0        None
+IL_00FF: ldfld          {'token': '0x04000314', 'identity': 'PlantsInitialValue::plantsInitialValue'}
+IL_0104: stloc          local(0x0002)
+IL_0108: br             {'target': 269}
+IL_010D: br             {'target': 5}
+IL_0112: ldarg.0        None
+IL_0113: ldfld          {'token': '0x04000315', 'identity': 'PlantsInitialValue::plantsDatas'}
+IL_0118: stloc          local(0x000B)
+IL_011C: ldloc          local(0x0000)
+IL_0120: stloc          local(0x0008)
+IL_0124: br             {'target': 1985}
+IL_0129: ldarg.0        None
+IL_012A: ldfld          {'token': '0x04000315', 'identity': 'PlantsInitialValue::plantsDatas'}
+IL_012F: stloc          local(0x000A)
+IL_0133: br             {'target': 312}
+IL_0138: ldc.i4         0
+IL_013D: newobj         {'token': '0x06000255', 'identity': 'PlantData::.ctor'}
+IL_0142: stloc          local(0x0022)
+IL_0146: br             {'target': 1939}
+IL_014B: ldloc          local(0x0022)
+IL_014F: ldloc          local(0x0029)
+IL_0153: stfld          {'token': '0x0400031E', 'identity': 'PlantData::replantCD'}
+IL_0158: ldc.i4         200
+IL_015D: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0162: stloc          local(0x002B)
+IL_0166: br             {'target': 363}
+IL_016B: ldloc          local(0x0022)
+IL_016F: ldloc          local(0x002B)
+IL_0173: stfld          {'token': '0x0400031F', 'identity': 'PlantData::maxHealthPoint'}
+IL_0178: ldc.i4         200
+IL_017D: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0182: stloc          local(0x002E)
+IL_0186: br             {'target': 395}
+IL_018B: ldloc          local(0x0022)
+IL_018F: ldloc          local(0x002E)
+IL_0193: stfld          {'token': '0x04000321', 'identity': 'PlantData::attackPoint'}
+IL_0198: ldc.i4         5
+IL_019D: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_01A2: stloc          local(0x0031)
+IL_01A6: br             {'target': 427}
+IL_01AB: ldloc          local(0x0022)
+IL_01AF: ldloc          local(0x0031)
+IL_01B3: stfld          {'token': '0x04000323', 'identity': 'PlantData::armorPoint'}
+IL_01B8: ldc.i4         200
+IL_01BD: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_01C2: stloc          local(0x0034)
+IL_01C6: br             {'target': 459}
+IL_01CB: ldloc          local(0x0022)
+IL_01CF: ldloc          local(0x0034)
+IL_01D3: stfld          {'token': '0x04000324', 'identity': 'PlantData::defensePoint'}
+IL_01D8: ldc.i4         5
+IL_01DD: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_01E2: stloc          local(0x0035)
+IL_01E6: br             {'target': 491}
+IL_01EB: ldloc          local(0x0022)
+IL_01EF: ldloc          local(0x0035)
+IL_01F3: stfld          {'token': '0x04000326', 'identity': 'PlantData::attackInterva'}
+IL_01F8: ldc.i4         5
+IL_01FD: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0202: stloc          local(0x0038)
+IL_0206: br             {'target': 523}
+IL_020B: ldloc          local(0x0022)
+IL_020F: ldloc          local(0x0038)
+IL_0213: stfld          {'token': '0x04000327', 'identity': 'PlantData::characteristicTicking'}
+IL_0218: ldc.i4         5
+IL_021D: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_0222: stloc          local(0x003A)
+IL_0226: br             {'target': 555}
+IL_022B: ldloc          local(0x0022)
+IL_022F: ldloc          local(0x003A)
+IL_0233: stfld          {'token': '0x04000328', 'identity': 'PlantData::characteristicMaxTicking'}
+IL_0238: nop            None
+IL_0239: br             {'target': 574}
+IL_023E: ldloc          local(0x0022)
+IL_0242: ldloc          local(0x000A)
+IL_0246: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_024B: stfld          {'token': '0x0400031C', 'identity': 'PlantData::ID'}
+IL_0250: ldloc          local(0x000A)
+IL_0254: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0259: ldc.i4         1
+IL_025E: add            None
+IL_025F: stloc          local(0x0043)
+IL_0263: ldloc          local(0x000A)
+IL_0267: ldloc          local(0x0043)
+IL_026B: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_0270: ldloc          local(0x000A)
+IL_0274: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_0279: stloc          local(0x0005)
+IL_027D: ldloc          local(0x000A)
+IL_0281: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0286: stloc          local(0x0008)
+IL_028A: br             {'target': 655}
+IL_028F: ldloc          local(0x000A)
+IL_0293: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0298: ldloc          local(0x0005)
+IL_029C: ldlen          None
+IL_029D: conv.i4        None
+IL_029E: clt            None
+IL_02A0: stloc          local(0x003B)
+IL_02A4: ldloc          local(0x003B)
+IL_02A8: brtrue         {'target': 714}
+IL_02AD: br             {'target': 690}
+IL_02B2: ldloc          local(0x000A)
+IL_02B6: ldloc          local(0x0022)
+IL_02BA: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_02BF: ldc.i4.0       None
+IL_02C0: conv.i         None
+IL_02C1: stloc          local(0x0008)
+IL_02C5: br             {'target': 773}
+IL_02CA: ldloc          local(0x000A)
+IL_02CE: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_02D3: ldc.i4         1
+IL_02D8: add            None
+IL_02D9: stloc          local(0x001E)
+IL_02DD: ldloc          local(0x000A)
+IL_02E1: ldloc          local(0x001E)
+IL_02E5: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_02EA: br             {'target': 751}
+IL_02EF: ldloc          local(0x0005)
+IL_02F3: ldloc          local(0x0008)
+IL_02F7: ldloc          local(0x0022)
+IL_02FB: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0300: br             {'target': 773}
+IL_0305: ldarg.0        None
+IL_0306: ldfld          {'token': '0x04000315', 'identity': 'PlantsInitialValue::plantsDatas'}
+IL_030B: stloc          local(0x000B)
+IL_030F: ldarg.0        None
+IL_0310: ldfld          {'token': '0x04000315', 'identity': 'PlantsInitialValue::plantsDatas'}
+IL_0315: ldc.i4         0
+IL_031A: ceq            None
+IL_031C: ldc.i4.0       None
+IL_031D: ceq            None
+IL_031F: stloc          local(0x0013)
+IL_0323: ldloc          local(0x0013)
+IL_0327: brtrue         {'target': 1985}
+IL_032C: br             {'target': 817}
+IL_0331: br             {'target': 1905}
+IL_0336: ldarg.0        None
+IL_0337: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_033C: ldc.i4         0
+IL_0341: ceq            None
+IL_0343: ldc.i4.0       None
+IL_0344: ceq            None
+IL_0346: stloc          local(0x0014)
+IL_034A: ldloc          local(0x0014)
+IL_034E: brtrue         {'target': 886}
+IL_0353: br             {'target': 856}
+IL_0358: newobj         {'token': '0x0A0001A0', 'identity': 'TypeSpec:78::.ctor / sig 200001'}
+IL_035D: stloc          local(0x0023)
+IL_0361: nop            None
+IL_0362: br             {'target': 871}
+IL_0367: ldarg.0        None
+IL_0368: ldloc          local(0x0023)
+IL_036C: stfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_0371: br             {'target': 886}
+IL_0376: ldarg.0        None
+IL_0377: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_037C: stloc          local(0x000C)
+IL_0380: nop            None
+IL_0381: br             {'target': 2022}
+IL_0386: ldarg.0        None
+IL_0387: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_038C: stloc          local(0x0009)
+IL_0390: br             {'target': 917}
+IL_0395: ldloc          local(0x0006)
+IL_0399: newobj         {'token': '0x06000257', 'identity': 'PlantLevelUpSupplies::.ctor'}
+IL_039E: stloc          local(0x0027)
+IL_03A2: ldloc          local(0x0009)
+IL_03A6: ldfld          {'token': '0x0A0001A3', 'identity': 'TypeSpec:78::_size / sig 0608'}
+IL_03AB: ldc.i4         1
+IL_03B0: add            None
+IL_03B1: stloc          local(0x0006)
+IL_03B5: nop            None
+IL_03B6: br             {'target': 955}
+IL_03BB: ldarg.0        None
+IL_03BC: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_03C1: stloc          local(0x0004)
+IL_03C5: br             {'target': 970}
+IL_03CA: ldloc          local(0x0004)
+IL_03CE: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_03D3: ldc.i4         1
+IL_03D8: add            None
+IL_03D9: stloc          local(0x0044)
+IL_03DD: ldloc          local(0x0004)
+IL_03E1: ldloc          local(0x0044)
+IL_03E5: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_03EA: ldloc          local(0x0004)
+IL_03EE: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_03F3: stloc          local(0x0010)
+IL_03F7: br             {'target': 1020}
+IL_03FC: ldloc          local(0x0004)
+IL_0400: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0405: ldloc          local(0x0010)
+IL_0409: ldlen          None
+IL_040A: conv.i4        None
+IL_040B: clt            None
+IL_040D: stloc          local(0x002D)
+IL_0411: ldloc          local(0x002D)
+IL_0415: brtrue         {'target': 1074}
+IL_041A: br             {'target': 1055}
+IL_041F: ldloc          local(0x0004)
+IL_0423: ldloc          local(0x0027)
+IL_0427: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_042C: nop            None
+IL_042D: br             {'target': 1134}
+IL_0432: ldloc          local(0x0004)
+IL_0436: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_043B: ldc.i4         1
+IL_0440: add            None
+IL_0441: stloc          local(0x001F)
+IL_0445: ldloc          local(0x0004)
+IL_0449: ldloc          local(0x001F)
+IL_044D: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0452: br             {'target': 1111}
+IL_0457: ldloc          local(0x0010)
+IL_045B: ldloc          local(0x003F)
+IL_045F: ldloc          local(0x0027)
+IL_0463: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0468: nop            None
+IL_0469: br             {'target': 1134}
+IL_046E: ldarg.0        None
+IL_046F: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_0474: stloc          local(0x000C)
+IL_0478: ldarg.0        None
+IL_0479: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_047E: ldc.i4         0
+IL_0483: ceq            None
+IL_0485: ldc.i4.0       None
+IL_0486: ceq            None
+IL_0488: stloc          local(0x0016)
+IL_048C: ldloc          local(0x0016)
+IL_0490: brtrue         {'target': 2022}
+IL_0495: br             {'target': 1178}
+IL_049A: br             {'target': 1905}
+IL_049F: ldarg.0        None
+IL_04A0: ldfld          {'token': '0x04000317', 'identity': 'PlantsInitialValue::plantOrderUpSupplies'}
+IL_04A5: ldc.i4         0
+IL_04AA: ceq            None
+IL_04AC: ldc.i4.0       None
+IL_04AD: ceq            None
+IL_04AF: stloc          local(0x0017)
+IL_04B3: ldloc          local(0x0017)
+IL_04B7: brtrue         {'target': 1247}
+IL_04BC: br             {'target': 1217}
+IL_04C1: newobj         {'token': '0x0A0001A1', 'identity': 'TypeSpec:79::.ctor / sig 200001'}
+IL_04C6: stloc          local(0x0028)
+IL_04CA: nop            None
+IL_04CB: br             {'target': 1232}
+IL_04D0: ldarg.0        None
+IL_04D1: ldloc          local(0x0028)
+IL_04D5: stfld          {'token': '0x04000317', 'identity': 'PlantsInitialValue::plantOrderUpSupplies'}
+IL_04DA: br             {'target': 1247}
+IL_04DF: ldarg.0        None
+IL_04E0: ldfld          {'token': '0x04000317', 'identity': 'PlantsInitialValue::plantOrderUpSupplies'}
+IL_04E5: stloc          local(0x002A)
+IL_04E9: nop            None
+IL_04EA: br             {'target': 2087}
+IL_04EF: ldarg.0        None
+IL_04F0: ldfld          {'token': '0x04000317', 'identity': 'PlantsInitialValue::plantOrderUpSupplies'}
+IL_04F5: stloc          local(0x000D)
+IL_04F9: br             {'target': 1278}
+IL_04FE: ldc.i4         0
+IL_0503: newobj         {'token': '0x06000258', 'identity': 'PlantOrderUpSupplies::.ctor'}
+IL_0508: stloc          local(0x002C)
+IL_050C: br             {'target': 2059}
+IL_0511: newobj         {'token': '0x0A00011E', 'identity': 'TypeSpec:56::.ctor / sig 200001'}
+IL_0516: stloc          local(0x0033)
+IL_051A: nop            None
+IL_051B: br             {'target': 1312}
+IL_0520: ldloc          local(0x002C)
+IL_0524: ldloc          local(0x0033)
+IL_0528: stfld          {'token': '0x0400032D', 'identity': 'PlantOrderUpSupplies::supplies2'}
+IL_052D: newobj         {'token': '0x0A00011E', 'identity': 'TypeSpec:56::.ctor / sig 200001'}
+IL_0532: stloc          local(0x0036)
+IL_0536: br             {'target': 1339}
+IL_053B: nop            None
+IL_053C: ldloc          local(0x002C)
+IL_0540: ldloc          local(0x0036)
+IL_0544: stfld          {'token': '0x0400032E', 'identity': 'PlantOrderUpSupplies::supplies3'}
+IL_0549: br             {'target': 1358}
+IL_054E: newobj         {'token': '0x0A00011E', 'identity': 'TypeSpec:56::.ctor / sig 200001'}
+IL_0553: stloc          local(0x0039)
+IL_0557: nop            None
+IL_0558: br             {'target': 1373}
+IL_055D: ldloc          local(0x002C)
+IL_0561: ldloc          local(0x0039)
+IL_0565: stfld          {'token': '0x0400032F', 'identity': 'PlantOrderUpSupplies::supplies4'}
+IL_056A: nop            None
+IL_056B: br             {'target': 1392}
+IL_0570: ldloc          local(0x002C)
+IL_0574: ldloc          local(0x000D)
+IL_0578: ldfld          {'token': '0x0A0001A4', 'identity': 'TypeSpec:79::_size / sig 0608'}
+IL_057D: stfld          {'token': '0x0400032B', 'identity': 'PlantOrderUpSupplies::id'}
+IL_0582: ldloc          local(0x000D)
+IL_0586: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_058B: ldc.i4         1
+IL_0590: add            None
+IL_0591: stloc          local(0x0045)
+IL_0595: ldloc          local(0x000D)
+IL_0599: ldloc          local(0x0045)
+IL_059D: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_05A2: ldloc          local(0x000D)
+IL_05A6: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_05AB: stloc          local(0x0007)
+IL_05AF: br             {'target': 1460}
+IL_05B4: ldloc          local(0x000D)
+IL_05B8: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_05BD: ldloc          local(0x0007)
+IL_05C1: ldlen          None
+IL_05C2: conv.i4        None
+IL_05C3: clt            None
+IL_05C5: stloc          local(0x003C)
+IL_05C9: ldloc          local(0x003C)
+IL_05CD: brtrue         {'target': 1514}
+IL_05D2: br             {'target': 1495}
+IL_05D7: ldloc          local(0x000D)
+IL_05DB: ldloc          local(0x002C)
+IL_05DF: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_05E4: nop            None
+IL_05E5: br             {'target': 1574}
+IL_05EA: ldloc          local(0x000D)
+IL_05EE: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_05F3: ldc.i4         1
+IL_05F8: add            None
+IL_05F9: stloc          local(0x0020)
+IL_05FD: ldloc          local(0x000D)
+IL_0601: ldloc          local(0x0020)
+IL_0605: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_060A: br             {'target': 1551}
+IL_060F: ldloc          local(0x0007)
+IL_0613: ldloc          local(0x0041)
+IL_0617: ldloc          local(0x002C)
+IL_061B: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0620: nop            None
+IL_0621: br             {'target': 1574}
+IL_0626: ldarg.0        None
+IL_0627: ldfld          {'token': '0x04000317', 'identity': 'PlantsInitialValue::plantOrderUpSupplies'}
+IL_062C: stloc          local(0x002A)
+IL_0630: ldarg.0        None
+IL_0631: ldfld          {'token': '0x04000317', 'identity': 'PlantsInitialValue::plantOrderUpSupplies'}
+IL_0636: ldc.i4         0
+IL_063B: ceq            None
+IL_063D: ldc.i4.0       None
+IL_063E: ceq            None
+IL_0640: stloc          local(0x0019)
+IL_0644: ldloc          local(0x0019)
+IL_0648: brtrue         {'target': 2087}
+IL_064D: br             {'target': 1618}
+IL_0652: br             {'target': 1905}
+IL_0657: ldarg.0        None
+IL_0658: ldfld          {'token': '0x04000318', 'identity': 'PlantsInitialValue::plantSkillUpSupplies'}
+IL_065D: stloc          local(0x0024)
+IL_0661: nop            None
+IL_0662: br             {'target': 2157}
+IL_0667: ldarg.0        None
+IL_0668: ldfld          {'token': '0x04000318', 'identity': 'PlantsInitialValue::plantSkillUpSupplies'}
+IL_066D: stloc          local(0x000E)
+IL_0671: br             {'target': 1654}
+IL_0676: ldc.i4         0
+IL_067B: newobj         {'token': '0x06000259', 'identity': 'PlantSkillUpSupplies::.ctor'}
+IL_0680: stloc          local(0x0030)
+IL_0684: br             {'target': 2124}
+IL_0689: ldloc          local(0x0030)
+IL_068D: ldloc          local(0x000E)
+IL_0691: ldfld          {'token': '0x0A0001A5', 'identity': 'TypeSpec:80::_size / sig 0608'}
+IL_0696: stfld          {'token': '0x04000330', 'identity': 'PlantSkillUpSupplies::id'}
+IL_069B: ldloc          local(0x000E)
+IL_069F: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_06A4: ldc.i4         1
+IL_06A9: add            None
+IL_06AA: stloc          local(0x0046)
+IL_06AE: ldloc          local(0x000E)
+IL_06B2: ldloc          local(0x0046)
+IL_06B6: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_06BB: ldloc          local(0x000E)
+IL_06BF: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_06C4: stloc          local(0x0011)
+IL_06C8: br             {'target': 1741}
+IL_06CD: ldloc          local(0x000E)
+IL_06D1: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_06D6: ldloc          local(0x0011)
+IL_06DA: ldlen          None
+IL_06DB: conv.i4        None
+IL_06DC: clt            None
+IL_06DE: stloc          local(0x0037)
+IL_06E2: ldloc          local(0x0037)
+IL_06E6: brtrue         {'target': 1795}
+IL_06EB: br             {'target': 1776}
+IL_06F0: ldloc          local(0x000E)
+IL_06F4: ldloc          local(0x0030)
+IL_06F8: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_06FD: nop            None
+IL_06FE: br             {'target': 1855}
+IL_0703: ldloc          local(0x000E)
+IL_0707: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_070C: ldc.i4         1
+IL_0711: add            None
+IL_0712: stloc          local(0x0021)
+IL_0716: ldloc          local(0x000E)
+IL_071A: ldloc          local(0x0021)
+IL_071E: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0723: br             {'target': 1832}
+IL_0728: ldloc          local(0x0011)
+IL_072C: ldloc          local(0x0040)
+IL_0730: ldloc          local(0x0030)
+IL_0734: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0739: nop            None
+IL_073A: br             {'target': 1855}
+IL_073F: ldarg.0        None
+IL_0740: ldfld          {'token': '0x04000318', 'identity': 'PlantsInitialValue::plantSkillUpSupplies'}
+IL_0745: stloc          local(0x0024)
+IL_0749: ldarg.0        None
+IL_074A: ldfld          {'token': '0x04000318', 'identity': 'PlantsInitialValue::plantSkillUpSupplies'}
+IL_074F: ldc.i4         0
+IL_0754: ceq            None
+IL_0756: ldc.i4.0       None
+IL_0757: ceq            None
+IL_0759: stloc          local(0x001B)
+IL_075D: ldloc          local(0x001B)
+IL_0761: brtrue         {'target': 2157}
+IL_0766: br             {'target': 1899}
+IL_076B: br             {'target': 1905}
+IL_0770: ret            None
+IL_0771: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0776: throw          None
+IL_0777: nop            None
+IL_0778: br             {'target': 1932}
+IL_077D: ldarg.0        None
+IL_077E: ldfld          {'token': '0x04000314', 'identity': 'PlantsInitialValue::plantsInitialValue'}
+IL_0783: stloc          local(0x0002)
+IL_0787: br             {'target': 5}
+IL_078C: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0791: throw          None
+IL_0792: ret            None
+IL_0793: ldc.i4         5
+IL_0798: newarr         {'token': '0x0100000E', 'identity': 'System.Int32'}
+IL_079D: stloc          local(0x0026)
+IL_07A1: ldloc          local(0x0022)
+IL_07A5: ldloc          local(0x0026)
+IL_07A9: stfld          {'token': '0x0400031D', 'identity': 'PlantData::sunPrice'}
+IL_07AE: ldc.i4         5
+IL_07B3: newarr         {'token': '0x0100001F', 'identity': 'System.Single'}
+IL_07B8: stloc          local(0x0029)
+IL_07BC: br             {'target': 331}
+IL_07C1: ldloc          local(0x000B)
+IL_07C5: ldfld          {'token': '0x0A0001A6', 'identity': 'TypeSpec:16::_size / sig 0608'}
+IL_07CA: ldc.i4         128
+IL_07CF: clt            None
+IL_07D1: ldc.i4.0       None
+IL_07D2: ceq            None
+IL_07D4: stloc          local(0x0012)
+IL_07D8: ldloc          local(0x0012)
+IL_07DC: brtrue         {'target': 822}
+IL_07E1: br             {'target': 297}
+IL_07E6: ldloc          local(0x000C)
+IL_07EA: ldfld          {'token': '0x0A0001A3', 'identity': 'TypeSpec:78::_size / sig 0608'}
+IL_07EF: ldc.i4         195
+IL_07F4: clt            None
+IL_07F6: ldc.i4.0       None
+IL_07F7: ceq            None
+IL_07F9: stloc          local(0x0015)
+IL_07FD: ldloc          local(0x0015)
+IL_0801: brtrue         {'target': 1183}
+IL_0806: br             {'target': 902}
+IL_080B: newobj         {'token': '0x0A00011E', 'identity': 'TypeSpec:56::.ctor / sig 200001'}
+IL_0810: stloc          local(0x002F)
+IL_0814: nop            None
+IL_0815: ldloc          local(0x002C)
+IL_0819: ldloc          local(0x002F)
+IL_081D: stfld          {'token': '0x0400032C', 'identity': 'PlantOrderUpSupplies::supplies1'}
+IL_0822: br             {'target': 1297}
+IL_0827: ldloc          local(0x002A)
+IL_082B: ldfld          {'token': '0x0A0001A4', 'identity': 'TypeSpec:79::_size / sig 0608'}
+IL_0830: ldc.i4         128
+IL_0835: clt            None
+IL_0837: ldc.i4.0       None
+IL_0838: ceq            None
+IL_083A: stloc          local(0x0018)
+IL_083E: ldloc          local(0x0018)
+IL_0842: brtrue         {'target': 1623}
+IL_0847: br             {'target': 1263}
+IL_084C: ldc.i4         8
+IL_0851: newarr         {'token': '0x02000059', 'identity': 'SuppliesList'}
+IL_0856: stloc          local(0x0032)
+IL_085A: ldloc          local(0x0030)
+IL_085E: ldloc          local(0x0032)
+IL_0862: stfld          {'token': '0x04000331', 'identity': 'PlantSkillUpSupplies::suppliesList'}
+IL_0867: nop            None
+IL_0868: br             {'target': 1673}
+IL_086D: ldloc          local(0x0024)
+IL_0871: ldfld          {'token': '0x0A0001A5', 'identity': 'TypeSpec:80::_size / sig 0608'}
+IL_0876: ldc.i4         128
+IL_087B: clt            None
+IL_087D: ldc.i4.0       None
+IL_087E: ceq            None
+IL_0880: stloc          local(0x001A)
+IL_0884: ldloc          local(0x001A)
+IL_0888: brtrue         {'target': 1904}
+IL_088D: br             {'target': 1639}

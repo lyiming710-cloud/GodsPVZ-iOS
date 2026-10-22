@@ -1,0 +1,327 @@
+Device::Placing
+{"token": "0x0600032E", "name": "Device::Placing", "signature": "2002010808", "rva": 253368, "max_stack": 3, "code_size": 1263, "local_sig": 285213308, "locals_blob": "073108081281d41280c412814c1281a408128190114d02121512151215114d1215121512151209021281a41281a41c1281a402021283101281d4020202114d114d114d0202128109021c1c021c020202080802180c", "eh_count": 0, "il_sha256": "56e16d51130a6d734a003a896858732c47e6485bb0cee3100c8233bcf369bd77"}
+IL_0000: br             {'target': 1208}
+IL_0005: ldloc          local(0x0003)
+IL_0009: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_000E: stloc          local(0x0004)
+IL_0012: br             {'target': 23}
+IL_0017: ldloc          local(0x0004)
+IL_001B: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_0020: ldarg.0        None
+IL_0021: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0026: call           {'token': '0x060004C6', 'identity': 'Save::RecordDevice'}
+IL_002B: stloc          local(0x0018)
+IL_002F: ldloc          local(0x0018)
+IL_0033: brtrue         {'target': 92}
+IL_0038: br             {'target': 61}
+IL_003D: ldc.i4         3
+IL_0042: ldarg.0        None
+IL_0043: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0048: ldarg.0        None
+IL_0049: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_004E: call           {'token': '0x06000672', 'identity': 'Popup::PopupPopup'}
+IL_0053: stloc          local(0x0019)
+IL_0057: br             {'target': 92}
+IL_005C: ldarg.0        None
+IL_005D: ldarg          argument(0x0001)
+IL_0061: stfld          {'token': '0x04000464', 'identity': 'Device::gridX'}
+IL_0066: ldarg.0        None
+IL_0067: ldarg          argument(0x0002)
+IL_006B: stfld          {'token': '0x04000465', 'identity': 'Device::gridY'}
+IL_0070: br             {'target': 117}
+IL_0075: ldarg.0        None
+IL_0076: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_007B: ldarg          argument(0x0001)
+IL_007F: ldarg          argument(0x0002)
+IL_0083: call           {'token': '0x060002C4', 'identity': 'Board::GetGrid'}
+IL_0088: stloc          local(0x0007)
+IL_008C: ldarg.0        None
+IL_008D: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_0092: stloc          local(0x0005)
+IL_0096: br             {'target': 155}
+IL_009B: ldloc          local(0x0005)
+IL_009F: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_00A4: ldarg          argument(0x0001)
+IL_00A8: ldarg          argument(0x0002)
+IL_00AC: call           {'token': '0x0600015D', 'identity': 'BoardConfig::GetDevicePosition'}
+IL_00B1: stloc          local(0x0008)
+IL_00B5: ldarg.0        None
+IL_00B6: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_00BB: ldc.i4         11
+IL_00C0: ceq            None
+IL_00C2: ldc.i4.0       None
+IL_00C3: ceq            None
+IL_00C5: stloc          local(0x0017)
+IL_00C9: ldloc          local(0x0017)
+IL_00CD: brtrue         {'target': 371}
+IL_00D2: br             {'target': 215}
+IL_00D7: ldloc          local(0x0007)
+IL_00DB: ldc.i4         2
+IL_00E0: call           {'token': '0x06000299', 'identity': 'Grid::FindDevice_Occupy'}
+IL_00E5: stloc          local(0x001A)
+IL_00E9: br             {'target': 238}
+IL_00EE: ldloc          local(0x001A)
+IL_00F2: ldnull         None
+IL_00F3: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_00F8: stloc          local(0x0009)
+IL_00FC: ldloc          local(0x0009)
+IL_0100: ldc.i4.0       None
+IL_0101: ceq            None
+IL_0103: stloc          local(0x001D)
+IL_0107: ldloc          local(0x001D)
+IL_010B: brtrue         {'target': 366}
+IL_0110: br             {'target': 277}
+IL_0115: ldloc          local(0x001A)
+IL_0119: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_011E: ldc.i4         6
+IL_0123: ceq            None
+IL_0125: ldc.i4.0       None
+IL_0126: ceq            None
+IL_0128: stloc          local(0x001B)
+IL_012C: ldloc          local(0x001B)
+IL_0130: brtrue         {'target': 319}
+IL_0135: br             {'target': 314}
+IL_013A: br             {'target': 371}
+IL_013F: ldloc          local(0x001A)
+IL_0143: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_0148: ldc.i4         10
+IL_014D: ceq            None
+IL_014F: ldc.i4.0       None
+IL_0150: ceq            None
+IL_0152: stloc          local(0x001C)
+IL_0156: ldloc          local(0x001C)
+IL_015A: brtrue         {'target': 361}
+IL_015F: br             {'target': 356}
+IL_0164: br             {'target': 371}
+IL_0169: br             {'target': 371}
+IL_016E: br             {'target': 371}
+IL_0173: ldarg.0        None
+IL_0174: ldfld          {'token': '0x04000487', 'identity': 'Device::shadow'}
+IL_0179: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_017E: stloc          local(0x000A)
+IL_0182: br             {'target': 391}
+IL_0187: ldloc          local(0x000A)
+IL_018B: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0190: stloc          local(0x001E)
+IL_0194: ldarg.0        None
+IL_0195: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_019A: stloc          local(0x000B)
+IL_019E: br             {'target': 419}
+IL_01A3: ldloc          local(0x000B)
+IL_01A7: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_01AC: stloc          local(0x001F)
+IL_01B0: nop            None
+IL_01B1: ldloc          local(0x000B)
+IL_01B5: ldloca         local(0x0030)
+IL_01B9: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_01BE: br             {'target': 451}
+IL_01C3: ldarg.0        None
+IL_01C4: ldfld          {'token': '0x04000487', 'identity': 'Device::shadow'}
+IL_01C9: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_01CE: stloc          local(0x000C)
+IL_01D2: br             {'target': 471}
+IL_01D7: ldloc          local(0x000C)
+IL_01DB: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_01E0: stloc          local(0x000D)
+IL_01E4: ldarg.0        None
+IL_01E5: ldloc          local(0x000D)
+IL_01E9: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_01EE: stfld          {'token': '0x04000466', 'identity': 'Device::fX'}
+IL_01F3: br             {'target': 504}
+IL_01F8: ldarg.0        None
+IL_01F9: ldfld          {'token': '0x04000487', 'identity': 'Device::shadow'}
+IL_01FE: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0203: stloc          local(0x000E)
+IL_0207: br             {'target': 524}
+IL_020C: ldloc          local(0x000E)
+IL_0210: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0215: stloc          local(0x0020)
+IL_0219: ldarg.0        None
+IL_021A: ldloc          local(0x0020)
+IL_021E: ldfld          {'token': '0x0A00008B', 'identity': 'UnityEngine.Vector3::y / sig 060c'}
+IL_0223: stfld          {'token': '0x04000467', 'identity': 'Device::fY'}
+IL_0228: ldarg.0        None
+IL_0229: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_022E: stloc          local(0x000F)
+IL_0232: br             {'target': 567}
+IL_0237: ldarg.0        None
+IL_0238: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_023D: stloc          local(0x0016)
+IL_0241: br             {'target': 582}
+IL_0246: ldloc          local(0x0016)
+IL_024A: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_024F: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0254: stloc          local(0x0010)
+IL_0258: br             {'target': 605}
+IL_025D: ldloc          local(0x000F)
+IL_0261: ldloc          local(0x0010)
+IL_0265: call           {'token': '0x0A00006E', 'identity': 'UnityEngine.Transform::set_parentInternal / sig 2001011215'}
+IL_026A: br             {'target': 1213}
+IL_026F: ldarg.0        None
+IL_0270: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_0275: ldnull         None
+IL_0276: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_027B: stloc          local(0x0021)
+IL_027F: ldloc          local(0x0021)
+IL_0283: ldc.i4.0       None
+IL_0284: ceq            None
+IL_0286: stloc          local(0x0022)
+IL_028A: ldloc          local(0x0022)
+IL_028E: brtrue         {'target': 707}
+IL_0293: br             {'target': 664}
+IL_0298: ldarg.0        None
+IL_0299: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_029E: stloc          local(0x0011)
+IL_02A2: br             {'target': 679}
+IL_02A7: ldloc          local(0x0011)
+IL_02AB: call           {'token': '0x2B000057', 'identity': '0x2b000057'}
+IL_02B0: stloc          local(0x0023)
+IL_02B4: ldarg.0        None
+IL_02B5: ldloc          local(0x0023)
+IL_02B9: stfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_02BE: br             {'target': 707}
+IL_02C3: ldarg.0        None
+IL_02C4: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_02C9: ldstr          {'token': '0x70001E24', 'identity': 'Entity'}
+IL_02CE: call           {'token': '0x0A00015A', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingLayerName / sig 2001010e'}
+IL_02D3: ldstr          {'token': '0x7000CA21', 'identity': 'Not implemented instruction: "cvttss2si edx,xmm0"'}
+IL_02D8: pop            None
+IL_02D9: ldarg.0        None
+IL_02DA: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_02DF: ldc.i4         0
+IL_02E4: ceq            None
+IL_02E6: stloc          local(0x0024)
+IL_02EA: ldloc          local(0x0024)
+IL_02EE: brtrue         {'target': 1218}
+IL_02F3: br             {'target': 760}
+IL_02F8: ldarg.0        None
+IL_02F9: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_02FE: ldc.i4         1
+IL_0303: sub            None
+IL_0304: stloc          local(0x0025)
+IL_0308: ldloc          local(0x0024)
+IL_030C: brtrue         {'target': 888}
+IL_0311: br             {'target': 790}
+IL_0316: ldloc          local(0x0025)
+IL_031A: ldc.i4         1
+IL_031F: sub            None
+IL_0320: stloc          local(0x0026)
+IL_0324: ldstr          {'token': '0x70001E24', 'identity': 'Entity'}
+IL_0329: stloc          local(0x0006)
+IL_032D: ldloc          local(0x0024)
+IL_0331: brtrue         {'target': 893}
+IL_0336: br             {'target': 827}
+IL_033B: ldloc          local(0x0026)
+IL_033F: ldc.i4         1
+IL_0344: ceq            None
+IL_0346: ldc.i4.0       None
+IL_0347: ceq            None
+IL_0349: stloc          local(0x0027)
+IL_034D: ldstr          {'token': '0x70001E24', 'identity': 'Entity'}
+IL_0352: stloc          local(0x0006)
+IL_0356: ldloc          local(0x0027)
+IL_035A: brtrue         {'target': 893}
+IL_035F: br             {'target': 868}
+IL_0364: ldstr          {'token': '0x70001E24', 'identity': 'Entity'}
+IL_0369: ldc.i4         10
+IL_036E: add            None
+IL_036F: stloc          local(0x0006)
+IL_0373: br             {'target': 893}
+IL_0378: br             {'target': 1218}
+IL_037D: ldarg.0        None
+IL_037E: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_0383: ldloc          local(0x0006)
+IL_0387: call           {'token': '0x0A00015B', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingOrder / sig 20010108'}
+IL_038C: ldarg.0        None
+IL_038D: call           {'token': '0x06000335', 'identity': 'Device::SetUIs'}
+IL_0392: br             {'target': 919}
+IL_0397: br             {'target': 924}
+IL_039C: ldarg.0        None
+IL_039D: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_03A2: ldc.i4         4
+IL_03A7: sub            None
+IL_03A8: stloc          local(0x0028)
+IL_03AC: ldloc          local(0x0028)
+IL_03B0: ldc.i4         0
+IL_03B5: ceq            None
+IL_03B7: stloc          local(0x0029)
+IL_03BB: ldloc          local(0x0029)
+IL_03BF: ldc.i4.0       None
+IL_03C0: ceq            None
+IL_03C2: stloc          local(0x002A)
+IL_03C6: ldarg.0        None
+IL_03C7: ldfld          {'token': '0x04000487', 'identity': 'Device::shadow'}
+IL_03CC: ldloc          local(0x002A)
+IL_03D0: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_03D5: br             {'target': 986}
+IL_03DA: ldarg.0        None
+IL_03DB: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_03E0: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_03E5: stloc          local(0x0012)
+IL_03E9: ldloc          local(0x0012)
+IL_03ED: ldc.i4.0       None
+IL_03EE: ceq            None
+IL_03F0: stloc          local(0x002B)
+IL_03F4: ldloc          local(0x002B)
+IL_03F8: brtrue         {'target': 1052}
+IL_03FD: br             {'target': 1026}
+IL_0402: ldarg.0        None
+IL_0403: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0408: ldstr          {'token': '0x7000CA85', 'identity': 'speed'}
+IL_040D: ldc.r4         1.0
+IL_0412: call           {'token': '0x0A0001E5', 'identity': 'UnityEngine.Animator::SetFloat / sig 2002010e0c'}
+IL_0417: br             {'target': 1052}
+IL_041C: ldarg.0        None
+IL_041D: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_0422: stloc          local(0x0013)
+IL_0426: ldarg.0        None
+IL_0427: ldc.i4         1
+IL_042C: stfld          {'token': '0x0400047C', 'identity': 'Device::isOnField'}
+IL_0431: br             {'target': 1078}
+IL_0436: ldloc          local(0x0013)
+IL_043A: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_043F: ldarg.0        None
+IL_0440: call           {'token': '0x06000181', 'identity': 'DeviceManager::AddDevice'}
+IL_0445: br             {'target': 1098}
+IL_044A: ldloc          local(0x0007)
+IL_044E: call           {'token': '0x06000295', 'identity': 'Grid::GetPassablePoint'}
+IL_0453: stloc          local(0x002C)
+IL_0457: ldloc          local(0x0007)
+IL_045B: ldarg.0        None
+IL_045C: call           {'token': '0x0600029D', 'identity': 'Grid::Placing'}
+IL_0461: br             {'target': 1126}
+IL_0466: ldloc          local(0x0007)
+IL_046A: call           {'token': '0x06000295', 'identity': 'Grid::GetPassablePoint'}
+IL_046F: stloc          local(0x002D)
+IL_0473: ldloc          local(0x002C)
+IL_0477: ldloc          local(0x002D)
+IL_047B: ceq            None
+IL_047D: stloc          local(0x002E)
+IL_0481: ldstr          {'token': '0x7000CA91', 'identity': 'Not implemented instruction: "jp short 0000000180349F99h"'}
+IL_0486: pop            None
+IL_0487: ldloc          local(0x002E)
+IL_048B: brtrue         {'target': 1207}
+IL_0490: br             {'target': 1173}
+IL_0495: ldarg.0        None
+IL_0496: ldfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_049B: stloc          local(0x0014)
+IL_049F: br             {'target': 1188}
+IL_04A4: ldloc          local(0x0014)
+IL_04A8: ldfld          {'token': '0x040003D5', 'identity': 'Board::zombieManager'}
+IL_04AD: call           {'token': '0x06000276', 'identity': 'ZombieManager::AllFindPath'}
+IL_04B2: br             {'target': 1207}
+IL_04B7: ret            None
+IL_04B8: br             {'target': 1243}
+IL_04BD: br             {'target': 623}
+IL_04C2: ldstr          {'token': '0x7000CB05', 'identity': 'Not implemented instruction: "cvttss2si eax,xmm0"'}
+IL_04C7: pop            None
+IL_04C8: ldstr          {'token': '0x70001E24', 'identity': 'Entity'}
+IL_04CD: ldloc          local(0x0015)
+IL_04D1: add            None
+IL_04D2: stloc          local(0x0006)
+IL_04D6: br             {'target': 893}
+IL_04DB: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_04E0: stloc          local(0x0003)
+IL_04E4: br             {'target': 5}
+IL_04E9: ldstr          {'token': '0x70000CA0', 'identity': 'Warning: Method ends with non empty stack (-80), the output could be wrong!'}
+IL_04EE: pop            None

@@ -1,0 +1,98 @@
+Zombie::Drop_Armor1
+{"token": "0x06000439", "name": "Zombie::Drop_Armor1", "signature": "20010102", "rva": 354408, "max_stack": 2, "code_size": 362, "local_sig": 285213506, "locals_blob": "0718021c021c1c1c15120d010e1c1c021c0e0202128210181c1c1c1c1c1c151151011c151151011c", "eh_count": 0, "il_sha256": "9112c36fe9c88990edb03c3e56f7d5d8c5d0a676f8c3521773c4ef5dd08efc2c"}
+IL_0000: br             {'target': 250}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040005C2', 'identity': 'Zombie::armor1Type'}
+IL_000B: ldc.i4         1
+IL_0010: sub            None
+IL_0011: stloc          local(0x0001)
+IL_0015: ldloc          local(0x0001)
+IL_0019: ldc.i4         5
+IL_001E: cgt            None
+IL_0020: stloc          local(0x0002)
+IL_0024: ldloc          local(0x0002)
+IL_0028: brtrue         {'target': 91}
+IL_002D: br             {'target': 50}
+IL_0032: ldc.i8         6442450944
+IL_003B: stloc          local(0x0004)
+IL_003F: ldstr          {'token': '0x7001004B', 'identity': 'Unmanaged memory load: [v83 @ rsi_v5+35F530+v53 @ rax_v18*4]'}
+IL_0044: pop            None
+IL_0045: ldc.i4.0       None
+IL_0046: conv.i         None
+IL_0047: ldc.i8         6442450944
+IL_0050: add            None
+IL_0051: stloc          local(0x0005)
+IL_0055: ldstr          {'token': '0x700100C5', 'identity': 'Indirect jump: v85 @ rax_v21 (should have been resolved before IL gen)'}
+IL_005A: pop            None
+IL_005B: ldc.i8         6442450944
+IL_0064: stloc          local(0x0003)
+IL_0068: br             {'target': 264}
+IL_006D: ldstr          {'token': '0x70010154', 'identity': 'Unmanaged memory load: [v79 @ rsi_v1+35F548+v131 @ rcx_v5*4]'}
+IL_0072: pop            None
+IL_0073: ldc.i4.0       None
+IL_0074: conv.i         None
+IL_0075: ldc.i8         6442450944
+IL_007E: add            None
+IL_007F: stloc          local(0x0007)
+IL_0083: ldstr          {'token': '0x700101CE', 'identity': 'Indirect jump: v119 @ rdx_v9 (should have been resolved before IL gen)'}
+IL_0088: pop            None
+IL_0089: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_008E: pop            None
+IL_008F: nop            None
+IL_0090: br             {'target': 319}
+IL_0095: br             {'target': 154}
+IL_009A: ldarg.0        None
+IL_009B: ldfld          {'token': '0x04000609', 'identity': 'Zombie::animationSprites'}
+IL_00A0: ldloc          local(0x000B)
+IL_00A4: call           {'token': '0x06000145', 'identity': 'GlobalStaticVars::HideSprite'}
+IL_00A9: nop            None
+IL_00AA: br             {'target': 319}
+IL_00AF: ldloca         local(0x0017)
+IL_00B3: call           {'token': '0x0A000223', 'identity': 'TypeSpec:93::Dispose / sig 200001'}
+IL_00B8: br             {'target': 357}
+IL_00BD: ldarg.0        None
+IL_00BE: ldfld          {'token': '0x04000609', 'identity': 'Zombie::animationSprites'}
+IL_00C3: ldstr          {'token': '0x7001025D', 'identity': 'Zombie_hair'}
+IL_00C8: call           {'token': '0x0600013F', 'identity': 'GlobalStaticVars::AppearSprite'}
+IL_00CD: ldarg.0        None
+IL_00CE: ldc.r4         0.0
+IL_00D3: stfld          {'token': '0x040005C3', 'identity': 'Zombie::armor1Point'}
+IL_00D8: ldarg.0        None
+IL_00D9: ldc.r4         0.0
+IL_00DE: stfld          {'token': '0x040005C5', 'identity': 'Zombie::armor1Toughness'}
+IL_00E3: ldarg.0        None
+IL_00E4: ldc.i4         0
+IL_00E9: stfld          {'token': '0x040005C2', 'identity': 'Zombie::armor1Type'}
+IL_00EE: ldarg.0        None
+IL_00EF: ldc.i4         0
+IL_00F4: stfld          {'token': '0x040005C7', 'identity': 'Zombie::armor1BrokenLevel'}
+IL_00F9: ret            None
+IL_00FA: ldarg          argument(0x0001)
+IL_00FE: brtrue         {'target': 91}
+IL_0103: br             {'target': 5}
+IL_0108: newobj         {'token': '0x0A00021E', 'identity': 'TypeSpec:92::.ctor / sig 200001'}
+IL_010D: stloc          local(0x0006)
+IL_0111: nop            None
+IL_0112: ldarg.0        None
+IL_0113: ldfld          {'token': '0x040005C2', 'identity': 'Zombie::armor1Type'}
+IL_0118: ldc.i4         1
+IL_011D: sub            None
+IL_011E: stloc          local(0x0008)
+IL_0122: ldloc          local(0x0008)
+IL_0126: ldc.i4         5
+IL_012B: cgt            None
+IL_012D: stloc          local(0x0009)
+IL_0131: ldloc          local(0x0009)
+IL_0135: brtrue         {'target': 137}
+IL_013A: br             {'target': 109}
+IL_013F: ldloca         local(0x0017)
+IL_0143: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0148: stloc          local(0x000C)
+IL_014C: ldloc          local(0x000C)
+IL_0150: ldc.i4.0       None
+IL_0151: ceq            None
+IL_0153: stloc          local(0x000D)
+IL_0157: ldloc          local(0x000D)
+IL_015B: brtrue         {'target': 175}
+IL_0160: br             {'target': 149}
+IL_0165: br             {'target': 189}

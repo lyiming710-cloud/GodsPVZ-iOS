@@ -1,0 +1,502 @@
+SkillManager::Function149
+{"token": "0x06000518", "name": "SkillManager::Function149", "signature": "0004011281e01282101281f4128094", "rva": 435072, "max_stack": 3, "code_size": 1971, "local_sig": 285213658, "locals_blob": "074b1c1c1c0215120d01128210081c02020202020215120d011281d4121d121502128094020212151c0202114d12821002020c02121502020c1280b9021209021c1280b502021281e002020202128094121502114d02114d020c021215020c0212090212091c1281e0151151011c151151011c18151151011c1281e0181c1c180c", "eh_count": 0, "il_sha256": "bf8e4d69fe609806bb9bd8692d55c218a66822575ab1c4a6db83efd239406176"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0001)
+IL_0009: pop            None
+IL_000A: ldloc          local(0x0040)
+IL_000E: pop            None
+IL_000F: ldloc          local(0x0002)
+IL_0013: pop            None
+IL_0014: br             {'target': 1643}
+IL_0019: ldloc          local(0x0040)
+IL_001D: ldc.i4         4
+IL_0022: call           {'token': '0x06000361', 'identity': 'Plant::EnemySeeking_plural'}
+IL_0027: stloc          local(0x0004)
+IL_002B: ldloc          local(0x0004)
+IL_002F: ldc.i4         0
+IL_0034: ceq            None
+IL_0036: stloc          local(0x0008)
+IL_003A: ldloc          local(0x0040)
+IL_003E: stloc          local(0x002A)
+IL_0042: ldloc          local(0x0008)
+IL_0046: brtrue         {'target': 1448}
+IL_004B: br             {'target': 80}
+IL_0050: ldloc          local(0x0004)
+IL_0054: ldfld          {'token': '0x0A00006A', 'identity': 'TypeSpec:20::_size / sig 0608'}
+IL_0059: ldc.i4         0
+IL_005E: cgt            None
+IL_0060: ldc.i4.0       None
+IL_0061: ceq            None
+IL_0063: stloc          local(0x0012)
+IL_0067: ldc.i4         0
+IL_006C: stloc          local(0x0006)
+IL_0070: ldloc          local(0x0012)
+IL_0074: brtrue         {'target': 1680}
+IL_0079: br             {'target': 126}
+IL_007E: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0083: pop            None
+IL_0084: nop            None
+IL_0085: br             {'target': 1786}
+IL_008A: ldloc          local(0x0040)
+IL_008E: ldnull         None
+IL_008F: ldc.i8         4294967295
+IL_0098: call           {'token': '0x0600036C', 'identity': 'Plant::GetDamage'}
+IL_009D: stloc          local(0x0011)
+IL_00A1: ldloc          local(0x0011)
+IL_00A5: ldc.i4         0
+IL_00AA: ceq            None
+IL_00AC: stloc          local(0x0029)
+IL_00B0: ldloc          local(0x0029)
+IL_00B4: brtrue         {'target': 1533}
+IL_00B9: br             {'target': 190}
+IL_00BE: ldloc          local(0x0040)
+IL_00C2: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_00C7: stloc          local(0x002A)
+IL_00CB: ldloc          local(0x0040)
+IL_00CF: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_00D4: ldc.i4         0
+IL_00D9: ceq            None
+IL_00DB: stloc          local(0x002B)
+IL_00DF: ldloc          local(0x002B)
+IL_00E3: brtrue         {'target': 1522}
+IL_00E8: br             {'target': 237}
+IL_00ED: ldloc          local(0x002A)
+IL_00F1: ldfld          {'token': '0x040004AB', 'identity': 'Plant::plantName'}
+IL_00F6: stloc          local(0x002A)
+IL_00FA: ldloc          local(0x002A)
+IL_00FE: ldfld          {'token': '0x040004AB', 'identity': 'Plant::plantName'}
+IL_0103: ldc.i4         0
+IL_0108: ceq            None
+IL_010A: stloc          local(0x0028)
+IL_010E: ldloc          local(0x0028)
+IL_0112: brtrue         {'target': 1511}
+IL_0117: br             {'target': 284}
+IL_011C: ldloc          local(0x002A)
+IL_0120: ldfld          {'token': '0x0A0001E1', 'identity': 'UnityEngine.MonoBehaviour::m_CancellationTokenSource / sig 06128139'}
+IL_0125: ldc.i4         0
+IL_012A: cgt            None
+IL_012C: ldc.i4.0       None
+IL_012D: ceq            None
+IL_012F: stloc          local(0x0010)
+IL_0133: ldloc          local(0x0010)
+IL_0137: brtrue         {'target': 1717}
+IL_013C: br             {'target': 321}
+IL_0141: ldloc          local(0x002A)
+IL_0145: ldfld          {'token': '0x040004A0', 'identity': 'Plant::GridX'}
+IL_014A: conv.r4        None
+IL_014B: ldloc          local(0x0011)
+IL_014F: ldfld          {'token': '0x04000123', 'identity': 'Damage::damagePoint'}
+IL_0154: conv.r4        None
+IL_0155: mul            None
+IL_0156: stloc          local(0x001C)
+IL_015A: ldloc          local(0x0011)
+IL_015E: ldloc          local(0x001C)
+IL_0162: stfld          {'token': '0x04000123', 'identity': 'Damage::damagePoint'}
+IL_0167: ldloc          local(0x0019)
+IL_016B: ldc.i4         0
+IL_0170: ceq            None
+IL_0172: stloc          local(0x0025)
+IL_0176: ldloc          local(0x002A)
+IL_017A: ldfld          {'token': '0x040004AB', 'identity': 'Plant::plantName'}
+IL_017F: stloc          local(0x0024)
+IL_0183: ldloc          local(0x0025)
+IL_0187: brtrue         {'target': 1492}
+IL_018C: br             {'target': 401}
+IL_0191: ldloc          local(0x0019)
+IL_0195: ldloc          local(0x0011)
+IL_0199: ldnull         None
+IL_019A: call           {'token': '0x0600047F', 'identity': 'Zombie::TakeDamage'}
+IL_019F: br             {'target': 1736}
+IL_01A4: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_01A9: ldc.i4         34
+IL_01AE: call           {'token': '0x060001EA', 'identity': 'ParticlesManager::CreatNewParticle'}
+IL_01B3: stloc          local(0x003C)
+IL_01B7: ldloc          local(0x0019)
+IL_01BB: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_01C0: stloc          local(0x001E)
+IL_01C4: br             {'target': 457}
+IL_01C9: ldloc          local(0x001E)
+IL_01CD: ldc.i4         0
+IL_01D2: ceq            None
+IL_01D4: stloc          local(0x001D)
+IL_01D8: ldloc          local(0x0019)
+IL_01DC: stloc          local(0x0024)
+IL_01E0: ldloc          local(0x001D)
+IL_01E4: brtrue         {'target': 1470}
+IL_01E9: br             {'target': 494}
+IL_01EE: ldloc          local(0x001E)
+IL_01F2: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_01F7: stloc          local(0x0018)
+IL_01FB: ldloc          local(0x003C)
+IL_01FF: ldc.i4         0
+IL_0204: ceq            None
+IL_0206: stloc          local(0x0017)
+IL_020A: ldloca         local(0x0048)
+IL_020E: stloc          local(0x0024)
+IL_0212: ldloc          local(0x0017)
+IL_0216: brtrue         {'target': 1459}
+IL_021B: br             {'target': 544}
+IL_0220: ldloc          local(0x003C)
+IL_0224: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0229: stloc          local(0x0014)
+IL_022D: ldloc          local(0x0014)
+IL_0231: ldc.i4         0
+IL_0236: ceq            None
+IL_0238: stloc          local(0x0013)
+IL_023C: ldloc          local(0x003C)
+IL_0240: stloc          local(0x0024)
+IL_0244: ldloc          local(0x0013)
+IL_0248: brtrue         {'target': 1775}
+IL_024D: br             {'target': 594}
+IL_0252: ldloc          local(0x0014)
+IL_0256: ldloca         local(0x0047)
+IL_025A: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_025F: nop            None
+IL_0260: nop            None
+IL_0261: br             {'target': 1786}
+IL_0266: ldloca         local(0x0042)
+IL_026A: call           {'token': '0x0A00015E', 'identity': 'TypeSpec:46::Dispose / sig 200001'}
+IL_026F: br             {'target': 1824}
+IL_0274: ldc.i4         4
+IL_0279: ldloc          local(0x0004)
+IL_027D: ldfld          {'token': '0x0A00006A', 'identity': 'TypeSpec:20::_size / sig 0608'}
+IL_0282: sub            None
+IL_0283: stloc          local(0x0005)
+IL_0287: ldloc          local(0x0040)
+IL_028B: ldloc          local(0x0005)
+IL_028F: call           {'token': '0x06000364', 'identity': 'Plant::EnemySeeking_Device_plural'}
+IL_0294: stloc          local(0x000D)
+IL_0298: ldloc          local(0x000D)
+IL_029C: ldc.i4         0
+IL_02A1: ceq            None
+IL_02A3: stloc          local(0x0009)
+IL_02A7: ldloc          local(0x0040)
+IL_02AB: stloc          local(0x002A)
+IL_02AF: ldloc          local(0x0009)
+IL_02B3: brtrue         {'target': 1448}
+IL_02B8: br             {'target': 701}
+IL_02BD: ldloc          local(0x000D)
+IL_02C1: ldfld          {'token': '0x0A000126', 'identity': 'TypeSpec:42::_size / sig 0608'}
+IL_02C6: ldc.i4         0
+IL_02CB: cgt            None
+IL_02CD: ldc.i4.0       None
+IL_02CE: ceq            None
+IL_02D0: stloc          local(0x001A)
+IL_02D4: ldloc          local(0x001A)
+IL_02D8: brtrue         {'target': 1228}
+IL_02DD: br             {'target': 738}
+IL_02E2: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_02E7: pop            None
+IL_02E8: nop            None
+IL_02E9: br             {'target': 1888}
+IL_02EE: ldloc          local(0x0040)
+IL_02F2: ldnull         None
+IL_02F3: ldc.i8         4294967295
+IL_02FC: call           {'token': '0x0600036C', 'identity': 'Plant::GetDamage'}
+IL_0301: stloc          local(0x002F)
+IL_0305: ldloc          local(0x002F)
+IL_0309: ldc.i4         0
+IL_030E: ceq            None
+IL_0310: stloc          local(0x0031)
+IL_0314: ldloc          local(0x0031)
+IL_0318: brtrue         {'target': 1626}
+IL_031D: br             {'target': 802}
+IL_0322: ldloc          local(0x0040)
+IL_0326: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_032B: stloc          local(0x0045)
+IL_032F: ldloc          local(0x0040)
+IL_0333: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_0338: ldc.i4         0
+IL_033D: ceq            None
+IL_033F: stloc          local(0x0035)
+IL_0343: ldloc          local(0x0035)
+IL_0347: brtrue         {'target': 1615}
+IL_034C: br             {'target': 849}
+IL_0351: ldloc          local(0x0045)
+IL_0355: ldfld          {'token': '0x040004AB', 'identity': 'Plant::plantName'}
+IL_035A: stloc          local(0x0045)
+IL_035E: ldloc          local(0x0045)
+IL_0362: ldfld          {'token': '0x040004AB', 'identity': 'Plant::plantName'}
+IL_0367: ldc.i4         0
+IL_036C: ceq            None
+IL_036E: stloc          local(0x0039)
+IL_0372: ldloc          local(0x0039)
+IL_0376: brtrue         {'target': 1604}
+IL_037B: br             {'target': 896}
+IL_0380: ldloc          local(0x0045)
+IL_0384: ldfld          {'token': '0x0A0001E1', 'identity': 'UnityEngine.MonoBehaviour::m_CancellationTokenSource / sig 06128139'}
+IL_0389: ldc.i4         0
+IL_038E: cgt            None
+IL_0390: ldc.i4.0       None
+IL_0391: ceq            None
+IL_0393: stloc          local(0x002E)
+IL_0397: ldloc          local(0x002E)
+IL_039B: brtrue         {'target': 1838}
+IL_03A0: br             {'target': 933}
+IL_03A5: ldloc          local(0x0045)
+IL_03A9: ldfld          {'token': '0x040004A0', 'identity': 'Plant::GridX'}
+IL_03AE: conv.r4        None
+IL_03AF: ldloc          local(0x002F)
+IL_03B3: ldfld          {'token': '0x04000123', 'identity': 'Damage::damagePoint'}
+IL_03B8: conv.r4        None
+IL_03B9: mul            None
+IL_03BA: stloc          local(0x0036)
+IL_03BE: ldloc          local(0x002F)
+IL_03C2: ldloc          local(0x0036)
+IL_03C6: stfld          {'token': '0x04000123', 'identity': 'Damage::damagePoint'}
+IL_03CB: ldloc          local(0x0019)
+IL_03CF: ldc.i4         0
+IL_03D4: ceq            None
+IL_03D6: stloc          local(0x003D)
+IL_03DA: ldloc          local(0x003D)
+IL_03DE: brtrue         {'target': 1593}
+IL_03E3: br             {'target': 1000}
+IL_03E8: ldloc          local(0x0019)
+IL_03EC: ldloc          local(0x002F)
+IL_03F0: ldnull         None
+IL_03F1: call           {'token': '0x06000336', 'identity': 'Device::TakeDamage'}
+IL_03F6: br             {'target': 1849}
+IL_03FB: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_0400: ldc.i4         34
+IL_0405: call           {'token': '0x060001EA', 'identity': 'ParticlesManager::CreatNewParticle'}
+IL_040A: stloc          local(0x003E)
+IL_040E: ldloc          local(0x0019)
+IL_0412: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0417: stloc          local(0x0038)
+IL_041B: br             {'target': 1056}
+IL_0420: ldloc          local(0x0038)
+IL_0424: ldc.i4         0
+IL_0429: ceq            None
+IL_042B: stloc          local(0x0037)
+IL_042F: ldloc          local(0x0019)
+IL_0433: stloc          local(0x0045)
+IL_0437: ldloc          local(0x0037)
+IL_043B: brtrue         {'target': 1571}
+IL_0440: br             {'target': 1093}
+IL_0445: ldloc          local(0x0038)
+IL_0449: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_044E: stloc          local(0x0034)
+IL_0452: nop            None
+IL_0453: ldloc          local(0x003E)
+IL_0457: ldc.i4         0
+IL_045C: ceq            None
+IL_045E: stloc          local(0x0033)
+IL_0462: ldloca         local(0x0048)
+IL_0466: stloc          local(0x0045)
+IL_046A: ldloc          local(0x0033)
+IL_046E: brtrue         {'target': 1560}
+IL_0473: br             {'target': 1144}
+IL_0478: ldloc          local(0x003E)
+IL_047C: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0481: stloc          local(0x0030)
+IL_0485: ldloc          local(0x0030)
+IL_0489: ldc.i4         0
+IL_048E: ceq            None
+IL_0490: stloc          local(0x002C)
+IL_0494: ldloc          local(0x003E)
+IL_0498: stloc          local(0x0045)
+IL_049C: ldloc          local(0x002C)
+IL_04A0: brtrue         {'target': 1549}
+IL_04A5: br             {'target': 1194}
+IL_04AA: ldloc          local(0x0030)
+IL_04AE: ldloca         local(0x004A)
+IL_04B2: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_04B7: nop            None
+IL_04B8: nop            None
+IL_04B9: br             {'target': 1888}
+IL_04BE: ldloca         local(0x0044)
+IL_04C2: call           {'token': '0x0A000129', 'identity': 'TypeSpec:43::Dispose / sig 200001'}
+IL_04C7: br             {'target': 1257}
+IL_04CC: ldloc          local(0x0006)
+IL_04D0: ldc.i4         0
+IL_04D5: ceq            None
+IL_04D7: stloc          local(0x001B)
+IL_04DB: ldloc          local(0x001B)
+IL_04DF: brtrue         {'target': 1447}
+IL_04E4: br             {'target': 1257}
+IL_04E9: br             {'target': 1926}
+IL_04EE: ldsfld         {'token': '0x040002F1', 'identity': 'ResourceManager::particleClips'}
+IL_04F3: ldc.i4         24
+IL_04F8: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_04FD: stloc          local(0x0027)
+IL_0501: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_0506: stloc          local(0x000E)
+IL_050A: br             {'target': 1295}
+IL_050F: ldloc          local(0x000E)
+IL_0513: ldc.i4         0
+IL_0518: ceq            None
+IL_051A: stloc          local(0x000A)
+IL_051E: ldnull         None
+IL_051F: stloc          local(0x002A)
+IL_0523: ldloc          local(0x000A)
+IL_0527: brtrue         {'target': 1448}
+IL_052C: br             {'target': 1329}
+IL_0531: ldloc          local(0x000E)
+IL_0535: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_053A: stloc          local(0x000F)
+IL_053E: ldloc          local(0x000F)
+IL_0542: ldc.i4         0
+IL_0547: ceq            None
+IL_0549: stloc          local(0x000B)
+IL_054D: ldloc          local(0x000E)
+IL_0551: stloc          local(0x002A)
+IL_0555: ldloc          local(0x000B)
+IL_0559: brtrue         {'target': 1448}
+IL_055E: br             {'target': 1379}
+IL_0563: ldloc          local(0x000F)
+IL_0567: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_056C: stloc          local(0x0032)
+IL_0570: br             {'target': 1397}
+IL_0575: call           {'token': '0x06000138', 'identity': 'GlobalStaticVars::AudioVolume'}
+IL_057A: stloc          local(0x003A)
+IL_057E: ldloc          local(0x003A)
+IL_0582: conv.r4        None
+IL_0583: ldloc          local(0x003A)
+IL_0587: conv.r4        None
+IL_0588: add            None
+IL_0589: stloc          local(0x0021)
+IL_058D: ldloc          local(0x0027)
+IL_0591: ldloca         local(0x0047)
+IL_0595: ldloc          local(0x0021)
+IL_0599: call           {'token': '0x0600013D', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_059E: stloc          local(0x0022)
+IL_05A2: br             {'target': 1447}
+IL_05A7: ret            None
+IL_05A8: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05AD: throw          None
+IL_05AE: br             {'target': 1717}
+IL_05B3: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05B8: throw          None
+IL_05B9: br             {'target': 1470}
+IL_05BE: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05C3: throw          None
+IL_05C4: br             {'target': 1481}
+IL_05C9: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05CE: throw          None
+IL_05CF: br             {'target': 1492}
+IL_05D4: ldloc          local(0x0024)
+IL_05D8: stloc          local(0x002A)
+IL_05DC: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05E1: throw          None
+IL_05E2: br             {'target': 1511}
+IL_05E7: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05EC: throw          None
+IL_05ED: br             {'target': 1522}
+IL_05F2: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05F7: throw          None
+IL_05F8: br             {'target': 1533}
+IL_05FD: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0602: throw          None
+IL_0603: ldloc          local(0x002A)
+IL_0607: throw          None
+IL_0608: br             {'target': 1838}
+IL_060D: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0612: throw          None
+IL_0613: br             {'target': 1560}
+IL_0618: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_061D: throw          None
+IL_061E: br             {'target': 1571}
+IL_0623: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0628: throw          None
+IL_0629: br             {'target': 1582}
+IL_062E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0633: throw          None
+IL_0634: br             {'target': 1593}
+IL_0639: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_063E: throw          None
+IL_063F: br             {'target': 1604}
+IL_0644: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0649: throw          None
+IL_064A: br             {'target': 1615}
+IL_064F: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0654: throw          None
+IL_0655: br             {'target': 1626}
+IL_065A: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_065F: throw          None
+IL_0660: ldloc          local(0x002A)
+IL_0664: throw          None
+IL_0665: br             {'target': 1642}
+IL_066A: ret            None
+IL_066B: ldloc          local(0x0040)
+IL_066F: ldc.i4         0
+IL_0674: ceq            None
+IL_0676: stloc          local(0x0003)
+IL_067A: ldloc          local(0x0040)
+IL_067E: stloc          local(0x002A)
+IL_0682: ldloc          local(0x0003)
+IL_0686: brtrue         {'target': 1448}
+IL_068B: br             {'target': 25}
+IL_0690: ldloc          local(0x0004)
+IL_0694: ldfld          {'token': '0x0A00006A', 'identity': 'TypeSpec:20::_size / sig 0608'}
+IL_0699: ldc.i4         4
+IL_069E: clt            None
+IL_06A0: ldc.i4.0       None
+IL_06A1: ceq            None
+IL_06A3: stloc          local(0x0007)
+IL_06A7: ldloc          local(0x0007)
+IL_06AB: brtrue         {'target': 1228}
+IL_06B0: br             {'target': 628}
+IL_06B5: ldloc          local(0x002A)
+IL_06B9: stloc          local(0x0024)
+IL_06BD: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_06C2: throw          None
+IL_06C3: br             {'target': 1775}
+IL_06C8: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_06CD: ldc.i4         0
+IL_06D2: ceq            None
+IL_06D4: stloc          local(0x0023)
+IL_06D8: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_06DD: stloc          local(0x0024)
+IL_06E1: ldloc          local(0x0023)
+IL_06E5: brtrue         {'target': 1481}
+IL_06EA: br             {'target': 420}
+IL_06EF: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_06F4: throw          None
+IL_06F5: br             {'target': 1459}
+IL_06FA: ldloca         local(0x0042)
+IL_06FE: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0703: stloc          local(0x001F)
+IL_0707: ldloc          local(0x001F)
+IL_070B: ldc.i4.0       None
+IL_070C: ceq            None
+IL_070E: stloc          local(0x0016)
+IL_0712: ldloc          local(0x0016)
+IL_0716: brtrue         {'target': 614}
+IL_071B: br             {'target': 138}
+IL_0720: ldc.i4         1
+IL_0725: stloc          local(0x0006)
+IL_0729: br             {'target': 1680}
+IL_072E: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0733: throw          None
+IL_0734: br             {'target': 1549}
+IL_0739: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_073E: ldc.i4         0
+IL_0743: ceq            None
+IL_0745: stloc          local(0x003B)
+IL_0749: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_074E: stloc          local(0x0045)
+IL_0752: ldloc          local(0x003B)
+IL_0756: brtrue         {'target': 1582}
+IL_075B: br             {'target': 1019}
+IL_0760: ldloca         local(0x0044)
+IL_0764: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0769: stloc          local(0x002D)
+IL_076D: ldloc          local(0x002D)
+IL_0771: ldc.i4.0       None
+IL_0772: ceq            None
+IL_0774: stloc          local(0x0020)
+IL_0778: ldloc          local(0x0020)
+IL_077C: brtrue         {'target': 1214}
+IL_0781: br             {'target': 750}
+IL_0786: ldsfld         {'token': '0x040002F1', 'identity': 'ResourceManager::particleClips'}
+IL_078B: ldc.i4         0
+IL_0790: ceq            None
+IL_0792: stloc          local(0x000C)
+IL_0796: ldsfld         {'token': '0x040002F1', 'identity': 'ResourceManager::particleClips'}
+IL_079B: stloc          local(0x002A)
+IL_079F: ldloc          local(0x000C)
+IL_07A3: brtrue         {'target': 1448}
+IL_07A8: br             {'target': 1262}
+IL_07AD: ldstr          {'token': '0x700060B9', 'identity': 'Warning: Method ends with non empty stack (-D0), the output could be wrong!'}
+IL_07B2: pop            None

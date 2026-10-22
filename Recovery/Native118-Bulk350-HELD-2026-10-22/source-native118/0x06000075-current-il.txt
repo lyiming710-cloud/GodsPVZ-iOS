@@ -1,0 +1,388 @@
+System0::LoadSkillData
+{"token": "0x06000075", "name": "System0::LoadSkillData", "signature": "20010108", "rva": 44800, "max_stack": 2, "code_size": 1530, "local_sig": 285212762, "locals_blob": "0721123008080e1282441282440812824408128244081282441282441281501282281281501282281281501282281282440e1c1c0c020202021c021282441818", "eh_count": 0, "il_sha256": "b5e1e2b96e465e0ff1e3472720d9254bcb448f42ebb77414be6306ffdabdc8b4"}
+IL_0000: br             {'target': 1487}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x0400008D', 'identity': 'System0::skillID_IF'}
+IL_000B: ldloc          local(0x0003)
+IL_000F: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0014: ldloc          local(0x0002)
+IL_0018: ldc.i4         1
+IL_001D: sub            None
+IL_001E: stloc          local(0x001C)
+IL_0022: ldloc          local(0x001C)
+IL_0026: ldc.i4         2
+IL_002B: cgt            None
+IL_002D: stloc          local(0x001B)
+IL_0031: ldloc          local(0x001B)
+IL_0035: brtrue         {'target': 1248}
+IL_003A: br             {'target': 63}
+IL_003F: ldarg.0        None
+IL_0040: ldfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_0045: ldc.i4         0
+IL_004A: ceq            None
+IL_004C: stloc          local(0x001D)
+IL_0050: ldarg.0        None
+IL_0051: ldfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_0056: ldc.i4         0
+IL_005B: clt            None
+IL_005D: stloc          local(0x0019)
+IL_0061: ldloc          local(0x0019)
+IL_0065: brtrue         {'target': 1236}
+IL_006A: br             {'target': 111}
+IL_006F: ldloc          local(0x0002)
+IL_0073: ldc.i4         1
+IL_0078: sub            None
+IL_0079: stloc          local(0x0016)
+IL_007D: ldloc          local(0x001D)
+IL_0081: brtrue         {'target': 323}
+IL_0086: br             {'target': 139}
+IL_008B: ldloc          local(0x0016)
+IL_008F: ldc.i4         1
+IL_0094: sub            None
+IL_0095: stloc          local(0x0015)
+IL_0099: ldloc          local(0x001D)
+IL_009D: brtrue         {'target': 261}
+IL_00A2: br             {'target': 167}
+IL_00A7: ldloc          local(0x0015)
+IL_00AB: ldc.i4         1
+IL_00B0: ceq            None
+IL_00B2: ldc.i4.0       None
+IL_00B3: ceq            None
+IL_00B5: stloc          local(0x0018)
+IL_00B9: ldloc          local(0x0018)
+IL_00BD: brtrue         {'target': 385}
+IL_00C2: br             {'target': 199}
+IL_00C7: ldarg.0        None
+IL_00C8: ldfld          {'token': '0x0400006B', 'identity': 'System0::plantsInitialValue'}
+IL_00CD: stloc          local(0x000D)
+IL_00D1: br             {'target': 214}
+IL_00D6: ldloc          local(0x000D)
+IL_00DA: ldfld          {'token': '0x04000314', 'identity': 'PlantsInitialValue::plantsInitialValue'}
+IL_00DF: ldarg.0        None
+IL_00E0: ldfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_00E5: call           {'token': '0x0A000058', 'identity': 'TypeSpec:14::get_Item / sig 2001130008'}
+IL_00EA: stloc          local(0x000E)
+IL_00EE: br             {'target': 243}
+IL_00F3: ldloc          local(0x000E)
+IL_00F7: ldfld          {'token': '0x04000670', 'identity': 'PlantSave::skill3'}
+IL_00FC: stloc          local(0x001E)
+IL_0100: br             {'target': 1515}
+IL_0105: ldarg.0        None
+IL_0106: ldfld          {'token': '0x0400006B', 'identity': 'System0::plantsInitialValue'}
+IL_010B: stloc          local(0x000F)
+IL_010F: br             {'target': 276}
+IL_0114: ldloc          local(0x000F)
+IL_0118: ldfld          {'token': '0x04000314', 'identity': 'PlantsInitialValue::plantsInitialValue'}
+IL_011D: ldarg.0        None
+IL_011E: ldfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_0123: call           {'token': '0x0A000058', 'identity': 'TypeSpec:14::get_Item / sig 2001130008'}
+IL_0128: stloc          local(0x0010)
+IL_012C: br             {'target': 305}
+IL_0131: ldloc          local(0x0010)
+IL_0135: ldfld          {'token': '0x0400066F', 'identity': 'PlantSave::skill2'}
+IL_013A: stloc          local(0x001E)
+IL_013E: br             {'target': 1515}
+IL_0143: ldarg.0        None
+IL_0144: ldfld          {'token': '0x0400006B', 'identity': 'System0::plantsInitialValue'}
+IL_0149: stloc          local(0x0011)
+IL_014D: br             {'target': 338}
+IL_0152: ldloc          local(0x0011)
+IL_0156: ldfld          {'token': '0x04000314', 'identity': 'PlantsInitialValue::plantsInitialValue'}
+IL_015B: ldarg.0        None
+IL_015C: ldfld          {'token': '0x0400006F', 'identity': 'System0::plantID'}
+IL_0161: call           {'token': '0x0A000058', 'identity': 'TypeSpec:14::get_Item / sig 2001130008'}
+IL_0166: stloc          local(0x0012)
+IL_016A: br             {'target': 367}
+IL_016F: ldloc          local(0x0012)
+IL_0173: ldfld          {'token': '0x0400066E', 'identity': 'PlantSave::skill1'}
+IL_0178: stloc          local(0x001E)
+IL_017C: br             {'target': 1515}
+IL_0181: ldarg.0        None
+IL_0182: ldfld          {'token': '0x0400008A', 'identity': 'System0::skillEnabled'}
+IL_0187: ldc.i4         1
+IL_018C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0191: ldarg.0        None
+IL_0192: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_0197: stloc          local(0x0013)
+IL_019B: br             {'target': 416}
+IL_01A0: ldloc          local(0x0013)
+IL_01A4: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_01A9: ldc.i4         0
+IL_01AE: ceq            None
+IL_01B0: ldc.i4.0       None
+IL_01B1: ceq            None
+IL_01B3: stloc          local(0x001A)
+IL_01B7: ldloc          local(0x001A)
+IL_01BB: brtrue         {'target': 764}
+IL_01C0: br             {'target': 453}
+IL_01C5: ldarg.0        None
+IL_01C6: ldfld          {'token': '0x0400008A', 'identity': 'System0::skillEnabled'}
+IL_01CB: ldc.i4         0
+IL_01D0: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_01D5: br             {'target': 474}
+IL_01DA: ldarg.0        None
+IL_01DB: ldfld          {'token': '0x0400008E', 'identity': 'System0::skillName_IF'}
+IL_01E0: ldc.i4         0
+IL_01E5: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01EA: br             {'target': 495}
+IL_01EF: ldarg.0        None
+IL_01F0: ldfld          {'token': '0x0400008E', 'identity': 'System0::skillName_IF'}
+IL_01F5: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_01FA: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_01FF: br             {'target': 516}
+IL_0204: ldarg.0        None
+IL_0205: ldfld          {'token': '0x0400008F', 'identity': 'System0::skillDuration_IF'}
+IL_020A: ldc.i4         0
+IL_020F: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0214: br             {'target': 537}
+IL_0219: ldarg.0        None
+IL_021A: ldfld          {'token': '0x0400008F', 'identity': 'System0::skillDuration_IF'}
+IL_021F: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0224: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0229: br             {'target': 558}
+IL_022E: ldarg.0        None
+IL_022F: ldfld          {'token': '0x04000090', 'identity': 'System0::skillType_DD'}
+IL_0234: ldc.i4         0
+IL_0239: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_023E: br             {'target': 579}
+IL_0243: ldarg.0        None
+IL_0244: ldfld          {'token': '0x04000090', 'identity': 'System0::skillType_DD'}
+IL_0249: ldc.i4         0
+IL_024E: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0253: br             {'target': 600}
+IL_0258: ldarg.0        None
+IL_0259: ldfld          {'token': '0x04000091', 'identity': 'System0::skillChargeType_DD'}
+IL_025E: ldc.i4         0
+IL_0263: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0268: br             {'target': 621}
+IL_026D: ldarg.0        None
+IL_026E: ldfld          {'token': '0x04000091', 'identity': 'System0::skillChargeType_DD'}
+IL_0273: ldc.i4         0
+IL_0278: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_027D: br             {'target': 642}
+IL_0282: ldarg.0        None
+IL_0283: ldfld          {'token': '0x04000092', 'identity': 'System0::skillTriggerType_DD'}
+IL_0288: ldc.i4         0
+IL_028D: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0292: br             {'target': 663}
+IL_0297: ldarg.0        None
+IL_0298: ldfld          {'token': '0x04000092', 'identity': 'System0::skillTriggerType_DD'}
+IL_029D: ldc.i4         0
+IL_02A2: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_02A7: br             {'target': 684}
+IL_02AC: ldarg.0        None
+IL_02AD: ldfld          {'token': '0x0400008B', 'identity': 'System0::skillIsPerpetual'}
+IL_02B2: ldc.i4         0
+IL_02B7: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02BC: br             {'target': 705}
+IL_02C1: ldarg.0        None
+IL_02C2: ldfld          {'token': '0x0400008B', 'identity': 'System0::skillIsPerpetual'}
+IL_02C7: ldc.i4         0
+IL_02CC: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_02D1: br             {'target': 726}
+IL_02D6: ldarg.0        None
+IL_02D7: ldfld          {'token': '0x0400008C', 'identity': 'System0::skillPreventCharge'}
+IL_02DC: ldc.i4         0
+IL_02E1: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02E6: br             {'target': 747}
+IL_02EB: ldarg.0        None
+IL_02EC: ldfld          {'token': '0x0400008C', 'identity': 'System0::skillPreventCharge'}
+IL_02F1: ldc.i4         0
+IL_02F6: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_02FB: ret            None
+IL_02FC: ldarg.0        None
+IL_02FD: ldfld          {'token': '0x0400008A', 'identity': 'System0::skillEnabled'}
+IL_0302: ldc.i4         1
+IL_0307: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_030C: br             {'target': 785}
+IL_0311: ldarg.0        None
+IL_0312: ldfld          {'token': '0x0400008E', 'identity': 'System0::skillName_IF'}
+IL_0317: ldc.i4         1
+IL_031C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0321: ldarg.0        None
+IL_0322: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_0327: stloc          local(0x0004)
+IL_032B: br             {'target': 816}
+IL_0330: ldarg.0        None
+IL_0331: ldfld          {'token': '0x0400008E', 'identity': 'System0::skillName_IF'}
+IL_0336: ldloc          local(0x0004)
+IL_033A: ldfld          {'token': '0x0400068D', 'identity': 'Skill::name'}
+IL_033F: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0344: br             {'target': 841}
+IL_0349: ldarg.0        None
+IL_034A: ldfld          {'token': '0x0400008F', 'identity': 'System0::skillDuration_IF'}
+IL_034F: ldc.i4         1
+IL_0354: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0359: br             {'target': 862}
+IL_035E: ldarg.0        None
+IL_035F: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_0364: conv.r4        None
+IL_0365: ldc.i4         56
+IL_036A: conv.r4        None
+IL_036B: add            None
+IL_036C: stloc          local(0x0017)
+IL_0370: ldloc          local(0x0017)
+IL_0374: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0379: stloc          local(0x0014)
+IL_037D: br             {'target': 898}
+IL_0382: ldarg.0        None
+IL_0383: ldfld          {'token': '0x0400008F', 'identity': 'System0::skillDuration_IF'}
+IL_0388: ldloc          local(0x0014)
+IL_038C: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0391: br             {'target': 918}
+IL_0396: ldarg.0        None
+IL_0397: ldfld          {'token': '0x04000090', 'identity': 'System0::skillType_DD'}
+IL_039C: ldc.i4         1
+IL_03A1: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03A6: ldarg.0        None
+IL_03A7: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_03AC: stloc          local(0x0005)
+IL_03B0: br             {'target': 949}
+IL_03B5: ldloc          local(0x0005)
+IL_03B9: ldfld          {'token': '0x04000691', 'identity': 'Skill::type'}
+IL_03BE: ldc.i4         1
+IL_03C3: add            None
+IL_03C4: stloc          local(0x0006)
+IL_03C8: ldarg.0        None
+IL_03C9: ldfld          {'token': '0x04000090', 'identity': 'System0::skillType_DD'}
+IL_03CE: ldloc          local(0x0006)
+IL_03D2: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_03D7: br             {'target': 988}
+IL_03DC: ldarg.0        None
+IL_03DD: ldfld          {'token': '0x04000091', 'identity': 'System0::skillChargeType_DD'}
+IL_03E2: ldc.i4         1
+IL_03E7: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03EC: ldarg.0        None
+IL_03ED: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_03F2: stloc          local(0x0007)
+IL_03F6: br             {'target': 1019}
+IL_03FB: ldloc          local(0x0007)
+IL_03FF: ldfld          {'token': '0x04000690', 'identity': 'Skill::ChargeType'}
+IL_0404: ldc.i4         1
+IL_0409: add            None
+IL_040A: stloc          local(0x0008)
+IL_040E: ldarg.0        None
+IL_040F: ldfld          {'token': '0x04000091', 'identity': 'System0::skillChargeType_DD'}
+IL_0414: ldloc          local(0x0008)
+IL_0418: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_041D: br             {'target': 1058}
+IL_0422: ldarg.0        None
+IL_0423: ldfld          {'token': '0x04000092', 'identity': 'System0::skillTriggerType_DD'}
+IL_0428: ldc.i4         1
+IL_042D: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0432: ldarg.0        None
+IL_0433: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_0438: stloc          local(0x0009)
+IL_043C: br             {'target': 1089}
+IL_0441: ldloc          local(0x0009)
+IL_0445: ldfld          {'token': '0x04000692', 'identity': 'Skill::skillTriggerType'}
+IL_044A: ldc.i4         1
+IL_044F: add            None
+IL_0450: stloc          local(0x000A)
+IL_0454: ldarg.0        None
+IL_0455: ldfld          {'token': '0x04000092', 'identity': 'System0::skillTriggerType_DD'}
+IL_045A: ldloc          local(0x000A)
+IL_045E: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0463: br             {'target': 1128}
+IL_0468: ldarg.0        None
+IL_0469: ldfld          {'token': '0x0400008B', 'identity': 'System0::skillIsPerpetual'}
+IL_046E: ldc.i4         1
+IL_0473: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0478: ldarg.0        None
+IL_0479: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_047E: stloc          local(0x000B)
+IL_0482: br             {'target': 1159}
+IL_0487: ldarg.0        None
+IL_0488: ldfld          {'token': '0x0400008B', 'identity': 'System0::skillIsPerpetual'}
+IL_048D: ldloc          local(0x000B)
+IL_0491: ldfld          {'token': '0x04000696', 'identity': 'Skill::isPerpetual'}
+IL_0496: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_049B: br             {'target': 1184}
+IL_04A0: ldarg.0        None
+IL_04A1: ldfld          {'token': '0x0400008C', 'identity': 'System0::skillPreventCharge'}
+IL_04A6: ldc.i4         1
+IL_04AB: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04B0: ldarg.0        None
+IL_04B1: ldfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_04B6: stloc          local(0x000C)
+IL_04BA: br             {'target': 1215}
+IL_04BF: ldarg.0        None
+IL_04C0: ldfld          {'token': '0x0400008C', 'identity': 'System0::skillPreventCharge'}
+IL_04C5: ldloc          local(0x000C)
+IL_04C9: ldfld          {'token': '0x04000697', 'identity': 'Skill::isPreventCharge'}
+IL_04CE: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_04D3: ret            None
+IL_04D4: ldarg.0        None
+IL_04D5: ldc.i4         0
+IL_04DA: call           {'token': '0x06000075', 'identity': 'System0::LoadSkillData'}
+IL_04DF: ret            None
+IL_04E0: ldarg.0        None
+IL_04E1: ldnull         None
+IL_04E2: stfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_04E7: br             {'target': 1260}
+IL_04EC: ldarg.0        None
+IL_04ED: ldfld          {'token': '0x0400008A', 'identity': 'System0::skillEnabled'}
+IL_04F2: ldc.i4         0
+IL_04F7: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04FC: br             {'target': 1281}
+IL_0501: ldarg.0        None
+IL_0502: ldfld          {'token': '0x0400008E', 'identity': 'System0::skillName_IF'}
+IL_0507: ldc.i4         0
+IL_050C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0511: br             {'target': 1302}
+IL_0516: ldarg.0        None
+IL_0517: ldfld          {'token': '0x0400008F', 'identity': 'System0::skillDuration_IF'}
+IL_051C: ldc.i4         0
+IL_0521: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0526: br             {'target': 1323}
+IL_052B: ldarg.0        None
+IL_052C: ldfld          {'token': '0x04000090', 'identity': 'System0::skillType_DD'}
+IL_0531: ldc.i4         0
+IL_0536: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_053B: br             {'target': 1344}
+IL_0540: ldarg.0        None
+IL_0541: ldfld          {'token': '0x04000090', 'identity': 'System0::skillType_DD'}
+IL_0546: ldc.i4         0
+IL_054B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0550: br             {'target': 1365}
+IL_0555: ldarg.0        None
+IL_0556: ldfld          {'token': '0x04000091', 'identity': 'System0::skillChargeType_DD'}
+IL_055B: ldc.i4         0
+IL_0560: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0565: br             {'target': 1386}
+IL_056A: ldarg.0        None
+IL_056B: ldfld          {'token': '0x04000091', 'identity': 'System0::skillChargeType_DD'}
+IL_0570: ldc.i4         0
+IL_0575: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_057A: br             {'target': 1407}
+IL_057F: ldarg.0        None
+IL_0580: ldfld          {'token': '0x04000092', 'identity': 'System0::skillTriggerType_DD'}
+IL_0585: ldc.i4         0
+IL_058A: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_058F: br             {'target': 1428}
+IL_0594: ldarg.0        None
+IL_0595: ldfld          {'token': '0x04000092', 'identity': 'System0::skillTriggerType_DD'}
+IL_059A: ldc.i4         0
+IL_059F: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_05A4: br             {'target': 1449}
+IL_05A9: ldarg.0        None
+IL_05AA: ldfld          {'token': '0x0400008B', 'identity': 'System0::skillIsPerpetual'}
+IL_05AF: ldc.i4         0
+IL_05B4: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_05B9: br             {'target': 1470}
+IL_05BE: ldarg.0        None
+IL_05BF: ldfld          {'token': '0x0400008C', 'identity': 'System0::skillPreventCharge'}
+IL_05C4: ldc.i4         0
+IL_05C9: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_05CE: ret            None
+IL_05CF: ldarg.0        None
+IL_05D0: ldloc          local(0x0001)
+IL_05D4: stfld          {'token': '0x04000088', 'identity': 'System0::skillID'}
+IL_05D9: ldloca         local(0x0002)
+IL_05DD: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_05E2: stloc          local(0x0003)
+IL_05E6: br             {'target': 5}
+IL_05EB: ldarg.0        None
+IL_05EC: ldloc          local(0x001E)
+IL_05F0: stfld          {'token': '0x04000089', 'identity': 'System0::skill'}
+IL_05F5: br             {'target': 385}

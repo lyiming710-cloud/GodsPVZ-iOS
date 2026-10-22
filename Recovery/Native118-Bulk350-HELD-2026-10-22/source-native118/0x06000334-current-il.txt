@@ -1,0 +1,293 @@
+Device::SetPrefabState_previewOnField
+{"token": "0x06000334", "name": "Device::SetPrefabState_previewOnField", "signature": "20010112812c", "rva": 256268, "max_stack": 4, "code_size": 1098, "local_sig": 285213314, "locals_blob": "07311c1c12812c1c1c1c1c1c1281d4020202020202020202020202121502020802123d02123d02021c1209021180d11c021281091215020211813d1c151151011c151151011c12090c151151011c08", "eh_count": 0, "il_sha256": "ea5c3a7e44be2c3305fe1fa0fd1c2576c950c8a82677f05495bd931edd77c427"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0001)
+IL_0009: pop            None
+IL_000A: ldarg          argument(0x0001)
+IL_000E: pop            None
+IL_000F: ldarg.0        None
+IL_0010: pop            None
+IL_0011: ldloc          local(0x0003)
+IL_0015: pop            None
+IL_0016: ldloc          local(0x0004)
+IL_001A: pop            None
+IL_001B: ldloc          local(0x0005)
+IL_001F: pop            None
+IL_0020: ldloc          local(0x0006)
+IL_0024: pop            None
+IL_0025: ldloc          local(0x0007)
+IL_0029: pop            None
+IL_002A: br             {'target': 987}
+IL_002F: ldarg.0        None
+IL_0030: ldarg          argument(0x0001)
+IL_0034: ldfld          {'token': '0x04000230', 'identity': 'MouseManager::board'}
+IL_0039: stfld          {'token': '0x04000463', 'identity': 'Device::board'}
+IL_003E: br             {'target': 67}
+IL_0043: ldstr          {'token': '0x7000CBAF', 'identity': '进行场上装置放置预览的设置'}
+IL_0048: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_004D: ldarg.0        None
+IL_004E: ldfld          {'token': '0x04000488', 'identity': 'Device::animationSprites'}
+IL_0053: ldc.i4         0
+IL_0058: ceq            None
+IL_005A: stloc          local(0x000A)
+IL_005E: nop            None
+IL_005F: ldloc          local(0x000A)
+IL_0063: brtrue         {'target': 959}
+IL_0068: br             {'target': 109}
+IL_006D: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0072: pop            None
+IL_0073: nop            None
+IL_0074: br             {'target': 1038}
+IL_0079: ldloc          local(0x0020)
+IL_007D: ldc.i4         0
+IL_0082: ceq            None
+IL_0084: stloc          local(0x001D)
+IL_0088: ldloca         local(0x002C)
+IL_008C: stloc          local(0x002D)
+IL_0090: ldloc          local(0x001D)
+IL_0094: brtrue         {'target': 970}
+IL_0099: br             {'target': 158}
+IL_009E: ldloc          local(0x0020)
+IL_00A2: call           {'token': '0x2B000011', 'identity': '0x2b000011'}
+IL_00A7: stloc          local(0x001C)
+IL_00AB: ldloc          local(0x001C)
+IL_00AF: ldc.i4         0
+IL_00B4: ceq            None
+IL_00B6: stloc          local(0x001B)
+IL_00BA: ldloc          local(0x001B)
+IL_00BE: brtrue         {'target': 1016}
+IL_00C3: br             {'target': 200}
+IL_00C8: ldloc          local(0x001C)
+IL_00CC: call           {'token': '0x0A0001E7', 'identity': 'UnityEngine.SpriteRenderer::get_color / sig 20001180d1'}
+IL_00D1: stloc          local(0x0022)
+IL_00D5: nop            None
+IL_00D6: ldloc          local(0x002E)
+IL_00DA: box            {'token': '0x01000034', 'identity': 'UnityEngine.Color'}
+IL_00DF: stloc          local(0x0023)
+IL_00E3: br             {'target': 232}
+IL_00E8: br             {'target': 237}
+IL_00ED: ldloc          local(0x0023)
+IL_00F1: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_00F6: ldloc          local(0x0020)
+IL_00FA: call           {'token': '0x2B000011', 'identity': '0x2b000011'}
+IL_00FF: stloc          local(0x001A)
+IL_0103: br             {'target': 264}
+IL_0108: ldloc          local(0x001A)
+IL_010C: ldc.i4         0
+IL_0111: ceq            None
+IL_0113: stloc          local(0x0019)
+IL_0117: ldloc          local(0x0019)
+IL_011B: brtrue         {'target': 1027}
+IL_0120: br             {'target': 293}
+IL_0125: ldloc          local(0x001A)
+IL_0129: ldloca         local(0x002F)
+IL_012D: call           {'token': '0x0A000097', 'identity': 'UnityEngine.SpriteRenderer::set_color / sig 2001011180d1'}
+IL_0132: nop            None
+IL_0133: br             {'target': 1038}
+IL_0138: ldloca         local(0x002C)
+IL_013C: call           {'token': '0x0A000128', 'identity': 'TypeSpec:49::Dispose / sig 200001'}
+IL_0141: br             {'target': 1076}
+IL_0146: ldarg.0        None
+IL_0147: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_014C: ldnull         None
+IL_014D: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_0152: stloc          local(0x0014)
+IL_0156: ldloc          local(0x0014)
+IL_015A: ldc.i4.0       None
+IL_015B: ceq            None
+IL_015D: stloc          local(0x0024)
+IL_0161: ldloc          local(0x0024)
+IL_0165: brtrue         {'target': 428}
+IL_016A: br             {'target': 367}
+IL_016F: ldarg.0        None
+IL_0170: ldfld          {'token': '0x04000485', 'identity': 'Device::animationGroup'}
+IL_0175: ldc.i4         0
+IL_017A: ceq            None
+IL_017C: stloc          local(0x000B)
+IL_0180: ldloc          local(0x000B)
+IL_0184: brtrue         {'target': 959}
+IL_0189: br             {'target': 398}
+IL_018E: ldarg.0        None
+IL_018F: ldfld          {'token': '0x04000485', 'identity': 'Device::animationGroup'}
+IL_0194: call           {'token': '0x2B000057', 'identity': '0x2b000057'}
+IL_0199: stloc          local(0x0025)
+IL_019D: ldarg.0        None
+IL_019E: ldloc          local(0x0025)
+IL_01A2: stfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_01A7: br             {'target': 428}
+IL_01AC: ldarg.0        None
+IL_01AD: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_01B2: ldc.i4         0
+IL_01B7: ceq            None
+IL_01B9: stloc          local(0x000C)
+IL_01BD: ldloc          local(0x000C)
+IL_01C1: brtrue         {'target': 959}
+IL_01C6: br             {'target': 459}
+IL_01CB: ldarg.0        None
+IL_01CC: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_01D1: ldstr          {'token': '0x700068A4', 'identity': 'UI'}
+IL_01D6: call           {'token': '0x0A00015A', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingLayerName / sig 2001010e'}
+IL_01DB: ldarg.0        None
+IL_01DC: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_01E1: ldc.i4         0
+IL_01E6: ceq            None
+IL_01E8: stloc          local(0x000D)
+IL_01EC: ldloc          local(0x000D)
+IL_01F0: brtrue         {'target': 959}
+IL_01F5: br             {'target': 506}
+IL_01FA: ldarg.0        None
+IL_01FB: ldfld          {'token': '0x04000489', 'identity': 'Device::animationSortingGroup'}
+IL_0200: ldc.i4         9000
+IL_0205: call           {'token': '0x0A00015B', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingOrder / sig 20010108'}
+IL_020A: ldarg.0        None
+IL_020B: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0210: stloc          local(0x0026)
+IL_0214: br             {'target': 537}
+IL_0219: ldarg          argument(0x0001)
+IL_021D: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0222: stloc          local(0x0015)
+IL_0226: ldloc          local(0x0026)
+IL_022A: ldc.i4         0
+IL_022F: ceq            None
+IL_0231: stloc          local(0x000E)
+IL_0235: ldloc          local(0x000E)
+IL_0239: brtrue         {'target': 959}
+IL_023E: br             {'target': 579}
+IL_0243: ldloc          local(0x0026)
+IL_0247: ldloc          local(0x0015)
+IL_024B: ldc.i4         0
+IL_0250: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_0255: ldarg.0        None
+IL_0256: ldfld          {'token': '0x04000487', 'identity': 'Device::shadow'}
+IL_025B: ldc.i4         0
+IL_0260: ceq            None
+IL_0262: stloc          local(0x000F)
+IL_0266: ldloc          local(0x000F)
+IL_026A: brtrue         {'target': 959}
+IL_026F: br             {'target': 628}
+IL_0274: ldarg.0        None
+IL_0275: ldfld          {'token': '0x04000487', 'identity': 'Device::shadow'}
+IL_027A: ldc.i4         0
+IL_027F: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0284: br             {'target': 649}
+IL_0289: ldarg.0        None
+IL_028A: ldfld          {'token': '0x04000491', 'identity': 'Device::UI_HP'}
+IL_028F: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0294: stloc          local(0x0016)
+IL_0298: ldloc          local(0x0016)
+IL_029C: ldc.i4.0       None
+IL_029D: ceq            None
+IL_029F: stloc          local(0x0027)
+IL_02A3: ldloc          local(0x0027)
+IL_02A7: brtrue         {'target': 741}
+IL_02AC: br             {'target': 689}
+IL_02B1: ldarg.0        None
+IL_02B2: ldfld          {'token': '0x04000491', 'identity': 'Device::UI_HP'}
+IL_02B7: ldc.i4         0
+IL_02BC: ceq            None
+IL_02BE: stloc          local(0x0010)
+IL_02C2: ldloc          local(0x0010)
+IL_02C6: brtrue         {'target': 959}
+IL_02CB: br             {'target': 720}
+IL_02D0: ldarg.0        None
+IL_02D1: ldfld          {'token': '0x04000491', 'identity': 'Device::UI_HP'}
+IL_02D6: ldc.i4         0
+IL_02DB: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_02E0: br             {'target': 741}
+IL_02E5: br             {'target': 746}
+IL_02EA: ldarg.0        None
+IL_02EB: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_02F0: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_02F5: stloc          local(0x0017)
+IL_02F9: ldloc          local(0x0017)
+IL_02FD: ldc.i4.0       None
+IL_02FE: ceq            None
+IL_0300: stloc          local(0x0028)
+IL_0304: ldloc          local(0x0028)
+IL_0308: brtrue         {'target': 958}
+IL_030D: br             {'target': 786}
+IL_0312: ldarg.0        None
+IL_0313: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0318: ldc.i4         0
+IL_031D: ceq            None
+IL_031F: stloc          local(0x0011)
+IL_0323: ldloc          local(0x0011)
+IL_0327: brtrue         {'target': 959}
+IL_032C: br             {'target': 817}
+IL_0331: ldarg.0        None
+IL_0332: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0337: ldc.i4         0
+IL_033C: call           {'token': '0x0A0001E8', 'identity': 'UnityEngine.Animator::GetCurrentAnimatorStateInfo / sig 200111813d08'}
+IL_0341: stloc          local(0x0029)
+IL_0345: nop            None
+IL_0346: ldstr          {'token': '0x7000CBCB', 'identity': 'Method not found @1808E3A80'}
+IL_034B: pop            None
+IL_034C: br             {'target': 849}
+IL_0351: ldarg.0        None
+IL_0352: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0357: ldc.i4         0
+IL_035C: ceq            None
+IL_035E: stloc          local(0x0012)
+IL_0362: nop            None
+IL_0363: ldloc          local(0x0012)
+IL_0367: brtrue         {'target': 959}
+IL_036C: br             {'target': 881}
+IL_0371: ldarg.0        None
+IL_0372: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0377: ldloc          local(0x0018)
+IL_037B: ldc.i4         0
+IL_0380: ldc.r4         0.01666666753590107
+IL_0385: call           {'token': '0x0A0001E9', 'identity': 'UnityEngine.Animator::Play / sig 20030108080c'}
+IL_038A: ldarg.0        None
+IL_038B: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_0390: ldc.i4         0
+IL_0395: ceq            None
+IL_0397: stloc          local(0x0013)
+IL_039B: ldloc          local(0x0013)
+IL_039F: brtrue         {'target': 959}
+IL_03A4: br             {'target': 937}
+IL_03A9: ldarg.0        None
+IL_03AA: ldfld          {'token': '0x04000486', 'identity': 'Device::animator'}
+IL_03AF: ldc.r4         0.0
+IL_03B4: call           {'token': '0x0A0001EA', 'identity': 'UnityEngine.Animator::set_speed / sig 2001010c'}
+IL_03B9: br             {'target': 958}
+IL_03BE: ret            None
+IL_03BF: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03C4: throw          None
+IL_03C5: br             {'target': 1027}
+IL_03CA: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03CF: throw          None
+IL_03D0: ldloc          local(0x002D)
+IL_03D4: throw          None
+IL_03D5: br             {'target': 986}
+IL_03DA: ret            None
+IL_03DB: ldarg          argument(0x0001)
+IL_03DF: ldc.i4         0
+IL_03E4: ceq            None
+IL_03E6: stloc          local(0x0009)
+IL_03EA: ldloc          local(0x0009)
+IL_03EE: brtrue         {'target': 959}
+IL_03F3: br             {'target': 47}
+IL_03F8: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03FD: throw          None
+IL_03FE: br             {'target': 970}
+IL_0403: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0408: throw          None
+IL_0409: br             {'target': 1016}
+IL_040E: ldloca         local(0x002C)
+IL_0412: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0417: stloc          local(0x001E)
+IL_041B: ldloc          local(0x001E)
+IL_041F: ldc.i4.0       None
+IL_0420: ceq            None
+IL_0422: stloc          local(0x0021)
+IL_0426: ldloc          local(0x0021)
+IL_042A: brtrue         {'target': 312}
+IL_042F: br             {'target': 121}
+IL_0434: ldarg.0        None
+IL_0435: ldc.i4         0
+IL_043A: stfld          {'token': '0x0400047C', 'identity': 'Device::isOnField'}
+IL_043F: br             {'target': 326}
+IL_0444: ldstr          {'token': '0x7000CC03', 'identity': 'Warning: Method ends with non empty stack (-130), the output could be wrong!'}
+IL_0449: pop            None

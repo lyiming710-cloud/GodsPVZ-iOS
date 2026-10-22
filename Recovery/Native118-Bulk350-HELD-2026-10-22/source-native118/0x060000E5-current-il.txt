@@ -1,0 +1,328 @@
+Banks::BoardEntriesEffect
+{"token": "0x060000E5", "name": "Banks::BoardEntriesEffect", "signature": "200001", "rva": 75300, "max_stack": 3, "code_size": 1186, "local_sig": 285212855, "locals_blob": "073c1c12641c1c1c1c1c15120d011282dc021c0c0c151151011c1281a41280e0181c02021c1282dc020202021c1c02021c0e0c020e02020e0e0e0e0e0e1c02021c020c0c1c18151151011c151151011c1c1c0c180c151151011c08", "eh_count": 0, "il_sha256": "cc8260f15f5da06db4f94e5cb0fea22d1face20db4865cee186b2787848eb548"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldarg.0        None
+IL_0006: pop            None
+IL_0007: ldloc          local(0x0002)
+IL_000B: pop            None
+IL_000C: ldloc          local(0x0003)
+IL_0010: pop            None
+IL_0011: ldloc          local(0x0004)
+IL_0015: pop            None
+IL_0016: ldloc          local(0x0005)
+IL_001A: pop            None
+IL_001B: ldloc          local(0x0006)
+IL_001F: pop            None
+IL_0020: br             {'target': 1020}
+IL_0025: ldloc          local(0x0007)
+IL_0029: ldfld          {'token': '0x0A0000A3', 'identity': 'TypeSpec:32::_version / sig 0608'}
+IL_002E: ldc.i4         1
+IL_0033: add            None
+IL_0034: stloc          local(0x003B)
+IL_0038: ldloc          local(0x0007)
+IL_003C: ldloc          local(0x003B)
+IL_0040: stfld          {'token': '0x0A0000A3', 'identity': 'TypeSpec:32::_version / sig 0608'}
+IL_0045: ldloc          local(0x0007)
+IL_0049: ldc.i4         0
+IL_004E: stfld          {'token': '0x0A0000A4', 'identity': 'TypeSpec:32::_size / sig 0608'}
+IL_0053: ldloc          local(0x0007)
+IL_0057: ldfld          {'token': '0x0A0000A4', 'identity': 'TypeSpec:32::_size / sig 0608'}
+IL_005C: ldc.i4         0
+IL_0061: cgt            None
+IL_0063: ldc.i4.0       None
+IL_0064: ceq            None
+IL_0066: stloc          local(0x0008)
+IL_006A: ldloc          local(0x0008)
+IL_006E: brtrue         {'target': 153}
+IL_0073: br             {'target': 120}
+IL_0078: ldloc          local(0x0007)
+IL_007C: ldfld          {'token': '0x0A0000A5', 'identity': 'TypeSpec:32::_items / sig 061d1300'}
+IL_0081: ldc.i4         0
+IL_0086: ldloc          local(0x0007)
+IL_008A: ldfld          {'token': '0x0A0000A4', 'identity': 'TypeSpec:32::_size / sig 0608'}
+IL_008F: call           {'token': '0x0A000027', 'identity': 'System.Array::Clear / sig 00030112610808'}
+IL_0094: br             {'target': 153}
+IL_0099: ldarg.0        None
+IL_009A: ldfld          {'token': '0x040000E7', 'identity': 'Banks::board'}
+IL_009F: stloc          local(0x000D)
+IL_00A3: br             {'target': 168}
+IL_00A8: ldloc          local(0x000D)
+IL_00AC: ldfld          {'token': '0x040003B4', 'identity': 'Board::boardConfig'}
+IL_00B1: stloc          local(0x000E)
+IL_00B5: br             {'target': 186}
+IL_00BA: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00BF: pop            None
+IL_00C0: ldc.i8         6442450944
+IL_00C9: stloc          local(0x0009)
+IL_00CD: ldc.i4.0       None
+IL_00CE: conv.i         None
+IL_00CF: stloc          local(0x000F)
+IL_00D3: br             {'target': 1049}
+IL_00D8: ldloc          local(0x0014)
+IL_00DC: ldc.i4         0
+IL_00E1: ceq            None
+IL_00E3: stloc          local(0x001C)
+IL_00E7: ldloca         local(0x0034)
+IL_00EB: stloc          local(0x000C)
+IL_00EF: ldloc          local(0x001C)
+IL_00F3: brtrue         {'target': 1033}
+IL_00F8: br             {'target': 253}
+IL_00FD: ldloc          local(0x0014)
+IL_0101: ldfld          {'token': '0x040007FC', 'identity': 'BoardEntry::must'}
+IL_0106: ldc.i4         0
+IL_010B: ceq            None
+IL_010D: ldc.i4.0       None
+IL_010E: ceq            None
+IL_0110: stloc          local(0x0015)
+IL_0114: ldloc          local(0x0015)
+IL_0118: brtrue         {'target': 324}
+IL_011D: br             {'target': 290}
+IL_0122: ldloc          local(0x0014)
+IL_0126: ldfld          {'token': '0x040007FD', 'identity': 'BoardEntry::select'}
+IL_012B: ldc.i4         0
+IL_0130: ceq            None
+IL_0132: stloc          local(0x0017)
+IL_0136: ldloc          local(0x0017)
+IL_013A: brtrue         {'target': 1049}
+IL_013F: br             {'target': 324}
+IL_0144: ldloc          local(0x0014)
+IL_0148: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_014D: ldc.i4         7
+IL_0152: sub            None
+IL_0153: stloc          local(0x0019)
+IL_0157: ldloc          local(0x0019)
+IL_015B: ldc.i4         9
+IL_0160: cgt            None
+IL_0162: stloc          local(0x0011)
+IL_0166: ldloc          local(0x0011)
+IL_016A: brtrue         {'target': 400}
+IL_016F: br             {'target': 372}
+IL_0174: ldstr          {'token': '0x700036DF', 'identity': 'Unmanaged memory load: [v99 @ r15_v2+300D58+v411 @ rax_v47*4]'}
+IL_0179: pop            None
+IL_017A: ldc.i4.0       None
+IL_017B: conv.i         None
+IL_017C: ldc.i8         6442450944
+IL_0185: add            None
+IL_0186: stloc          local(0x0010)
+IL_018A: ldstr          {'token': '0x7000375B', 'identity': 'Indirect jump: v306 @ rcx_v35 (should have been resolved before IL gen)'}
+IL_018F: pop            None
+IL_0190: ldloc          local(0x0014)
+IL_0194: ldfld          {'token': '0x040007FA', 'identity': 'BoardEntry::boardEntryType'}
+IL_0199: ldc.i4         26
+IL_019E: ceq            None
+IL_01A0: ldc.i4.0       None
+IL_01A1: ceq            None
+IL_01A3: stloc          local(0x0016)
+IL_01A7: ldloc          local(0x0016)
+IL_01AB: brtrue         {'target': 1049}
+IL_01B0: br             {'target': 437}
+IL_01B5: br             {'target': 442}
+IL_01BA: ldsfld         {'token': '0x04000151', 'identity': 'ElementManager::boardEntries'}
+IL_01BF: ldloc          local(0x0014)
+IL_01C3: call           {'token': '0x0A0000A6', 'identity': 'TypeSpec:32::Add / sig 2001011300'}
+IL_01C8: ldc.i4.0       None
+IL_01C9: conv.i         None
+IL_01CA: stloc          local(0x000F)
+IL_01CE: br             {'target': 1049}
+IL_01D3: ldloca         local(0x0034)
+IL_01D7: call           {'token': '0x0A0000A7', 'identity': 'TypeSpec:33::Dispose / sig 200001'}
+IL_01DC: br             {'target': 1087}
+IL_01E1: ldloc          local(0x0021)
+IL_01E5: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_01EA: ldloca         local(0x000A)
+IL_01EE: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_01F3: stloc          local(0x0024)
+IL_01F7: br             {'target': 508}
+IL_01FC: ldstr          {'token': '0x700037EC', 'identity': 'cd_increase_D'}
+IL_0201: ldloc          local(0x0024)
+IL_0205: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_020A: stloc          local(0x0025)
+IL_020E: ldloc          local(0x0025)
+IL_0212: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_0217: br             {'target': 540}
+IL_021C: ldloca         local(0x0037)
+IL_0220: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0225: stloc          local(0x0026)
+IL_0229: ldstr          {'token': '0x70003808', 'identity': 'price_magnification_D'}
+IL_022E: ldloc          local(0x0026)
+IL_0232: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0237: stloc          local(0x0027)
+IL_023B: br             {'target': 576}
+IL_0240: ldloc          local(0x0027)
+IL_0244: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_0249: ldloca         local(0x0039)
+IL_024D: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0252: stloc          local(0x0028)
+IL_0256: br             {'target': 603}
+IL_025B: ldstr          {'token': '0x70003834', 'identity': 'price_increase_D'}
+IL_0260: ldloc          local(0x0028)
+IL_0264: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0269: stloc          local(0x0029)
+IL_026D: ldloc          local(0x0029)
+IL_0271: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_0276: br             {'target': 635}
+IL_027B: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_0280: pop            None
+IL_0281: br             {'target': 1134}
+IL_0286: ldloc          local(0x0014)
+IL_028A: ldc.i4         0
+IL_028F: ceq            None
+IL_0291: stloc          local(0x0023)
+IL_0295: ldloca         local(0x003A)
+IL_0299: stloc          local(0x000C)
+IL_029D: ldloc          local(0x0023)
+IL_02A1: brtrue         {'target': 998}
+IL_02A6: br             {'target': 683}
+IL_02AB: ldloc          local(0x0014)
+IL_02AF: ldfld          {'token': '0x040007FF', 'identity': 'BoardEntry::descrption'}
+IL_02B4: ldc.i4         -1
+IL_02B9: ceq            None
+IL_02BB: stloc          local(0x002E)
+IL_02BF: ldloc          local(0x002E)
+IL_02C3: brtrue         {'target': 820}
+IL_02C8: br             {'target': 717}
+IL_02CD: ldstr          {'token': '0x70003856', 'identity': 'Unmanaged memory load: [v355 @ stack_-B0 (BoardEntry)+48]'}
+IL_02D2: pop            None
+IL_02D3: ldc.i4.0       None
+IL_02D4: conv.i         None
+IL_02D5: conv.r4        None
+IL_02D6: ldc.r4         1.0
+IL_02DB: conv.r4        None
+IL_02DC: mul            None
+IL_02DD: stloc          local(0x001F)
+IL_02E1: ldloc          local(0x001F)
+IL_02E5: pop            None
+IL_02E6: ldloc          local(0x0014)
+IL_02EA: ldc.i4         0
+IL_02EF: ceq            None
+IL_02F1: stloc          local(0x0020)
+IL_02F5: ldloca         local(0x003A)
+IL_02F9: stloc          local(0x000C)
+IL_02FD: ldloc          local(0x0020)
+IL_0301: brtrue         {'target': 1123}
+IL_0306: br             {'target': 779}
+IL_030B: ldloc          local(0x001F)
+IL_030F: pop            None
+IL_0310: nop            None
+IL_0311: ldstr          {'token': '0x700038CA', 'identity': 'Not implemented instruction: "cvttss2si ecx,xmm0"'}
+IL_0316: pop            None
+IL_0317: ldstr          {'token': '0x7000392E', 'identity': 'Not implemented instruction: "cvttss2si eax,xmm9"'}
+IL_031C: pop            None
+IL_031D: ldloc          local(0x002C)
+IL_0321: ldloca         local(0x003A)
+IL_0325: add            None
+IL_0326: stloc          local(0x002C)
+IL_032A: ldloc          local(0x002C)
+IL_032E: pop            None
+IL_032F: br             {'target': 857}
+IL_0334: ldloc          local(0x0014)
+IL_0338: ldc.i4         0
+IL_033D: ceq            None
+IL_033F: stloc          local(0x0022)
+IL_0343: ldloca         local(0x003A)
+IL_0347: stloc          local(0x000C)
+IL_034B: ldloc          local(0x0022)
+IL_034F: brtrue         {'target': 987}
+IL_0354: br             {'target': 857}
+IL_0359: ldstr          {'token': '0x70003992', 'identity': 'Unmanaged memory load: [v355 @ stack_-B0 (BoardEntry)+2C]'}
+IL_035E: pop            None
+IL_035F: ldc.i4.0       None
+IL_0360: conv.i         None
+IL_0361: ldc.i4         -1
+IL_0366: ceq            None
+IL_0368: stloc          local(0x002B)
+IL_036C: ldloc          local(0x002B)
+IL_0370: brtrue         {'target': 1134}
+IL_0375: br             {'target': 890}
+IL_037A: ldstr          {'token': '0x70003856', 'identity': 'Unmanaged memory load: [v355 @ stack_-B0 (BoardEntry)+48]'}
+IL_037F: pop            None
+IL_0380: ldc.i4.0       None
+IL_0381: conv.i         None
+IL_0382: conv.r4        None
+IL_0383: ldloc          local(0x000B)
+IL_0387: conv.r4        None
+IL_0388: mul            None
+IL_0389: stloc          local(0x002F)
+IL_038D: ldloc          local(0x002F)
+IL_0391: pop            None
+IL_0392: ldloc          local(0x002F)
+IL_0396: conv.r4        None
+IL_0397: ldloc          local(0x000A)
+IL_039B: conv.r4        None
+IL_039C: add            None
+IL_039D: stloc          local(0x0030)
+IL_03A1: ldloc          local(0x0030)
+IL_03A5: pop            None
+IL_03A6: nop            None
+IL_03A7: ldstr          {'token': '0x700038CA', 'identity': 'Not implemented instruction: "cvttss2si ecx,xmm0"'}
+IL_03AC: pop            None
+IL_03AD: ldloca         local(0x003A)
+IL_03B1: pop            None
+IL_03B2: ldstr          {'token': '0x70003A06', 'identity': 'Not implemented instruction: "cvttss2si eax,dword ptr [rsp+24h]"'}
+IL_03B7: pop            None
+IL_03B8: ldloc          local(0x002C)
+IL_03BC: ldloca         local(0x003A)
+IL_03C0: add            None
+IL_03C1: stloc          local(0x002D)
+IL_03C5: ldloc          local(0x002D)
+IL_03C9: pop            None
+IL_03CA: br             {'target': 1134}
+IL_03CF: ldstr          {'token': '0x70000331', 'identity': 'Method not found @180302170'}
+IL_03D4: pop            None
+IL_03D5: br             {'target': 986}
+IL_03DA: ret            None
+IL_03DB: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03E0: throw          None
+IL_03E1: br             {'target': 998}
+IL_03E6: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_03EB: throw          None
+IL_03EC: ldloc          local(0x000C)
+IL_03F0: throw          None
+IL_03F1: br             {'target': 1014}
+IL_03F6: nop            None
+IL_03F7: br             {'target': 1025}
+IL_03FC: br             {'target': 1172}
+IL_0401: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0406: throw          None
+IL_0407: nop            None
+IL_0408: ret            None
+IL_0409: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_040E: throw          None
+IL_040F: ldloc          local(0x000C)
+IL_0413: throw          None
+IL_0414: br             {'target': 1123}
+IL_0419: ldloca         local(0x0034)
+IL_041D: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0422: stloc          local(0x0018)
+IL_0426: ldloc          local(0x0018)
+IL_042A: ldc.i4.0       None
+IL_042B: ceq            None
+IL_042D: stloc          local(0x001B)
+IL_0431: ldloc          local(0x001B)
+IL_0435: brtrue         {'target': 467}
+IL_043A: br             {'target': 216}
+IL_043F: ldloca         local(0x000B)
+IL_0443: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0448: stloc          local(0x001E)
+IL_044C: ldstr          {'token': '0x70003A89', 'identity': 'cd_magnification_D'}
+IL_0451: ldloc          local(0x001E)
+IL_0455: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_045A: stloc          local(0x0021)
+IL_045E: br             {'target': 481}
+IL_0463: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0468: throw          None
+IL_0469: br             {'target': 987}
+IL_046E: ldloca         local(0x003A)
+IL_0472: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_0477: stloc          local(0x002C)
+IL_047B: ldloc          local(0x002C)
+IL_047F: ldc.i4.0       None
+IL_0480: ceq            None
+IL_0482: stloc          local(0x0012)
+IL_0486: ldloc          local(0x0012)
+IL_048A: brtrue         {'target': 975}
+IL_048F: br             {'target': 646}
+IL_0494: ldsfld         {'token': '0x04000151', 'identity': 'ElementManager::boardEntries'}
+IL_0499: stloc          local(0x0007)
+IL_049D: br             {'target': 37}

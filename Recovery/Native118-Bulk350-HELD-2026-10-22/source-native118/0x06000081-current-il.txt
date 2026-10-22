@@ -1,0 +1,380 @@
+System1::LoadZombieInfo
+{"token": "0x06000081", "name": "System1::LoadZombieInfo", "signature": "20010108", "rva": 48956, "max_stack": 2, "code_size": 1472, "local_sig": 285212772, "locals_blob": "07241234080215120d011280d4021280d41280d4081280d41280d40e0e0e0e0e0e0e0e080c080c0c0c0c081280d4181818181818181818", "eh_count": 0, "il_sha256": "776fb941829407e12cc4b564dab61081394c32c74c46ba356125d2334a64b90f"}
+IL_0000: br             {'target': 1443}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000095', 'identity': 'System1::zombieInfos'}
+IL_000B: stloc          local(0x0003)
+IL_000F: br             {'target': 20}
+IL_0014: ldloc          local(0x0001)
+IL_0018: ldloc          local(0x0003)
+IL_001C: ldfld          {'token': '0x0A00005E', 'identity': 'TypeSpec:2::_size / sig 0608'}
+IL_0021: clt            None
+IL_0023: ldc.i4.0       None
+IL_0024: ceq            None
+IL_0026: stloc          local(0x0004)
+IL_002A: ldloc          local(0x0004)
+IL_002E: brtrue         {'target': 929}
+IL_0033: br             {'target': 56}
+IL_0038: ldarg.0        None
+IL_0039: ldloc          local(0x0001)
+IL_003D: stfld          {'token': '0x04000098', 'identity': 'System1::zombieID'}
+IL_0042: ldloca         local(0x0019)
+IL_0046: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_004B: stloc          local(0x000A)
+IL_004F: br             {'target': 84}
+IL_0054: ldarg.0        None
+IL_0055: ldfld          {'token': '0x0400009A', 'identity': 'System1::zombieID_IF'}
+IL_005A: ldloc          local(0x000A)
+IL_005E: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0063: br             {'target': 104}
+IL_0068: ldarg.0        None
+IL_0069: ldfld          {'token': '0x04000095', 'identity': 'System1::zombieInfos'}
+IL_006E: ldloc          local(0x0019)
+IL_0072: call           {'token': '0x0A00005F', 'identity': 'TypeSpec:2::get_Item / sig 2001130008'}
+IL_0077: stloc          local(0x001A)
+IL_007B: ldarg.0        None
+IL_007C: ldloc          local(0x001A)
+IL_0080: stfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0085: br             {'target': 138}
+IL_008A: ldarg.0        None
+IL_008B: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0090: stloc          local(0x0005)
+IL_0094: br             {'target': 153}
+IL_0099: ldarg.0        None
+IL_009A: ldloc          local(0x0005)
+IL_009E: ldfld          {'token': '0x0400017C', 'identity': 'ZombieInfo::zombieName'}
+IL_00A3: stfld          {'token': '0x04000097', 'identity': 'System1::zombieName'}
+IL_00A8: br             {'target': 173}
+IL_00AD: ldarg.0        None
+IL_00AE: ldfld          {'token': '0x0400009B', 'identity': 'System1::zombieName_IF'}
+IL_00B3: ldarg.0        None
+IL_00B4: ldfld          {'token': '0x04000097', 'identity': 'System1::zombieName'}
+IL_00B9: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00BE: br             {'target': 195}
+IL_00C3: ldarg.0        None
+IL_00C4: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_00C9: ldc.i4         64
+IL_00CE: add            None
+IL_00CF: stloc          local(0x0012)
+IL_00D3: ldloc          local(0x0012)
+IL_00D7: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_00DC: stloc          local(0x000B)
+IL_00E0: br             {'target': 229}
+IL_00E5: ldarg.0        None
+IL_00E6: ldfld          {'token': '0x0400009C', 'identity': 'System1::enemyPoint_IF'}
+IL_00EB: ldloc          local(0x000B)
+IL_00EF: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00F4: br             {'target': 249}
+IL_00F9: ldarg.0        None
+IL_00FA: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_00FF: conv.r4        None
+IL_0100: ldc.i4         68
+IL_0105: conv.r4        None
+IL_0106: add            None
+IL_0107: stloc          local(0x0013)
+IL_010B: ldloc          local(0x0013)
+IL_010F: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0114: stloc          local(0x000C)
+IL_0118: br             {'target': 285}
+IL_011D: ldarg.0        None
+IL_011E: ldfld          {'token': '0x0400009D', 'identity': 'System1::enemyWeight_IF'}
+IL_0123: ldloc          local(0x000C)
+IL_0127: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_012C: br             {'target': 305}
+IL_0131: ldarg.0        None
+IL_0132: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0137: ldc.i4         76
+IL_013C: add            None
+IL_013D: stloc          local(0x0014)
+IL_0141: ldloc          local(0x0014)
+IL_0145: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_014A: stloc          local(0x000D)
+IL_014E: br             {'target': 339}
+IL_0153: ldarg.0        None
+IL_0154: ldfld          {'token': '0x0400009E', 'identity': 'System1::minWave_IF'}
+IL_0159: ldloc          local(0x000D)
+IL_015D: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0162: br             {'target': 359}
+IL_0167: ldarg.0        None
+IL_0168: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_016D: conv.r4        None
+IL_016E: ldc.i4         48
+IL_0173: conv.r4        None
+IL_0174: add            None
+IL_0175: stloc          local(0x0015)
+IL_0179: ldloc          local(0x0015)
+IL_017D: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0182: stloc          local(0x000E)
+IL_0186: br             {'target': 395}
+IL_018B: ldarg.0        None
+IL_018C: ldfld          {'token': '0x0400009F', 'identity': 'System1::attackPoint_IF'}
+IL_0191: ldloc          local(0x000E)
+IL_0195: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_019A: br             {'target': 415}
+IL_019F: ldarg.0        None
+IL_01A0: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_01A5: conv.r4        None
+IL_01A6: ldc.i4         36
+IL_01AB: conv.r4        None
+IL_01AC: add            None
+IL_01AD: stloc          local(0x0016)
+IL_01B1: ldloc          local(0x0016)
+IL_01B5: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_01BA: stloc          local(0x000F)
+IL_01BE: br             {'target': 451}
+IL_01C3: ldarg.0        None
+IL_01C4: ldfld          {'token': '0x040000A0', 'identity': 'System1::healthPoint_IF'}
+IL_01C9: ldloc          local(0x000F)
+IL_01CD: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_01D2: br             {'target': 471}
+IL_01D7: ldarg.0        None
+IL_01D8: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_01DD: conv.r4        None
+IL_01DE: ldc.i4         52
+IL_01E3: conv.r4        None
+IL_01E4: add            None
+IL_01E5: stloc          local(0x0017)
+IL_01E9: ldloc          local(0x0017)
+IL_01ED: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_01F2: stloc          local(0x0010)
+IL_01F6: br             {'target': 507}
+IL_01FB: ldarg.0        None
+IL_01FC: ldfld          {'token': '0x040000A1', 'identity': 'System1::defensePoint_IF'}
+IL_0201: ldloc          local(0x0010)
+IL_0205: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_020A: br             {'target': 527}
+IL_020F: ldarg.0        None
+IL_0210: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0215: conv.r4        None
+IL_0216: ldc.i4         56
+IL_021B: conv.r4        None
+IL_021C: add            None
+IL_021D: stloc          local(0x0018)
+IL_0221: ldloc          local(0x0018)
+IL_0225: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_022A: stloc          local(0x0011)
+IL_022E: br             {'target': 563}
+IL_0233: ldarg.0        None
+IL_0234: ldfld          {'token': '0x040000A2', 'identity': 'System1::elementalResistance_IF'}
+IL_0239: ldloc          local(0x0011)
+IL_023D: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0242: ldarg.0        None
+IL_0243: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0248: stloc          local(0x0006)
+IL_024C: br             {'target': 593}
+IL_0251: ldloc          local(0x0006)
+IL_0255: ldfld          {'token': '0x0400018D', 'identity': 'ZombieInfo::painterID'}
+IL_025A: ldc.i4         1
+IL_025F: add            None
+IL_0260: stloc          local(0x0007)
+IL_0264: ldarg.0        None
+IL_0265: ldfld          {'token': '0x040000A5', 'identity': 'System1::painter_DD'}
+IL_026A: ldloc          local(0x0007)
+IL_026E: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_0273: br             {'target': 632}
+IL_0278: ldarg.0        None
+IL_0279: ldfld          {'token': '0x0400009B', 'identity': 'System1::zombieName_IF'}
+IL_027E: ldc.i4         1
+IL_0283: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0288: br             {'target': 653}
+IL_028D: ldarg.0        None
+IL_028E: ldfld          {'token': '0x0400009C', 'identity': 'System1::enemyPoint_IF'}
+IL_0293: ldc.i4         1
+IL_0298: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_029D: br             {'target': 674}
+IL_02A2: ldarg.0        None
+IL_02A3: ldfld          {'token': '0x0400009D', 'identity': 'System1::enemyWeight_IF'}
+IL_02A8: ldc.i4         1
+IL_02AD: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02B2: br             {'target': 695}
+IL_02B7: ldarg.0        None
+IL_02B8: ldfld          {'token': '0x0400009E', 'identity': 'System1::minWave_IF'}
+IL_02BD: ldc.i4         1
+IL_02C2: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02C7: br             {'target': 716}
+IL_02CC: ldarg.0        None
+IL_02CD: ldfld          {'token': '0x0400009F', 'identity': 'System1::attackPoint_IF'}
+IL_02D2: ldc.i4         1
+IL_02D7: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02DC: br             {'target': 737}
+IL_02E1: ldarg.0        None
+IL_02E2: ldfld          {'token': '0x040000A0', 'identity': 'System1::healthPoint_IF'}
+IL_02E7: ldc.i4         1
+IL_02EC: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02F1: br             {'target': 758}
+IL_02F6: ldarg.0        None
+IL_02F7: ldfld          {'token': '0x040000A1', 'identity': 'System1::defensePoint_IF'}
+IL_02FC: ldc.i4         1
+IL_0301: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0306: br             {'target': 779}
+IL_030B: ldarg.0        None
+IL_030C: ldfld          {'token': '0x040000A2', 'identity': 'System1::elementalResistance_IF'}
+IL_0311: ldc.i4         1
+IL_0316: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_031B: ldarg.0        None
+IL_031C: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0321: stloc          local(0x0008)
+IL_0325: br             {'target': 810}
+IL_032A: ldarg.0        None
+IL_032B: ldfld          {'token': '0x040000A3', 'identity': 'System1::isElite_T'}
+IL_0330: ldloc          local(0x0008)
+IL_0334: ldfld          {'token': '0x0400017D', 'identity': 'ZombieInfo::isElite'}
+IL_0339: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_033E: ldarg.0        None
+IL_033F: ldfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_0344: stloc          local(0x0009)
+IL_0348: br             {'target': 845}
+IL_034D: ldarg.0        None
+IL_034E: ldfld          {'token': '0x040000A4', 'identity': 'System1::isBoss_T'}
+IL_0353: ldloc          local(0x0009)
+IL_0357: ldfld          {'token': '0x0400017E', 'identity': 'ZombieInfo::isBoss'}
+IL_035C: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_0361: br             {'target': 870}
+IL_0366: ldarg.0        None
+IL_0367: ldfld          {'token': '0x040000A3', 'identity': 'System1::isElite_T'}
+IL_036C: ldc.i4         1
+IL_0371: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0376: br             {'target': 891}
+IL_037B: ldarg.0        None
+IL_037C: ldfld          {'token': '0x040000A4', 'identity': 'System1::isBoss_T'}
+IL_0381: ldc.i4         1
+IL_0386: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_038B: br             {'target': 912}
+IL_0390: ldarg.0        None
+IL_0391: ldfld          {'token': '0x040000A5', 'identity': 'System1::painter_DD'}
+IL_0396: ldc.i4         1
+IL_039B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03A0: ret            None
+IL_03A1: ldarg.0        None
+IL_03A2: ldarg.0        None
+IL_03A3: ldfld          {'token': '0x04000098', 'identity': 'System1::zombieID'}
+IL_03A8: call           {'token': '0x06000081', 'identity': 'System1::LoadZombieInfo'}
+IL_03AD: ret            None
+IL_03AE: ldarg.0        None
+IL_03AF: ldc.i8         4294967295
+IL_03B8: stfld          {'token': '0x04000098', 'identity': 'System1::zombieID'}
+IL_03BD: br             {'target': 962}
+IL_03C2: ldarg.0        None
+IL_03C3: ldfld          {'token': '0x0400009A', 'identity': 'System1::zombieID_IF'}
+IL_03C8: ldstr          {'token': '0x70001669', 'identity': '-1'}
+IL_03CD: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_03D2: ldarg.0        None
+IL_03D3: ldnull         None
+IL_03D4: stfld          {'token': '0x04000096', 'identity': 'System1::zombieInfo'}
+IL_03D9: br             {'target': 990}
+IL_03DE: ldarg.0        None
+IL_03DF: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_03E4: stfld          {'token': '0x04000097', 'identity': 'System1::zombieName'}
+IL_03E9: br             {'target': 1006}
+IL_03EE: ldarg.0        None
+IL_03EF: ldfld          {'token': '0x0400009B', 'identity': 'System1::zombieName_IF'}
+IL_03F4: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_03F9: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_03FE: br             {'target': 1027}
+IL_0403: ldarg.0        None
+IL_0404: ldfld          {'token': '0x0400009C', 'identity': 'System1::enemyPoint_IF'}
+IL_0409: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_040E: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0413: br             {'target': 1048}
+IL_0418: ldarg.0        None
+IL_0419: ldfld          {'token': '0x0400009D', 'identity': 'System1::enemyWeight_IF'}
+IL_041E: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0423: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0428: br             {'target': 1069}
+IL_042D: ldarg.0        None
+IL_042E: ldfld          {'token': '0x0400009E', 'identity': 'System1::minWave_IF'}
+IL_0433: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0438: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_043D: br             {'target': 1090}
+IL_0442: ldarg.0        None
+IL_0443: ldfld          {'token': '0x0400009F', 'identity': 'System1::attackPoint_IF'}
+IL_0448: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_044D: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0452: br             {'target': 1111}
+IL_0457: ldarg.0        None
+IL_0458: ldfld          {'token': '0x040000A0', 'identity': 'System1::healthPoint_IF'}
+IL_045D: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0462: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0467: br             {'target': 1132}
+IL_046C: ldarg.0        None
+IL_046D: ldfld          {'token': '0x040000A1', 'identity': 'System1::defensePoint_IF'}
+IL_0472: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0477: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_047C: br             {'target': 1153}
+IL_0481: ldarg.0        None
+IL_0482: ldfld          {'token': '0x040000A2', 'identity': 'System1::elementalResistance_IF'}
+IL_0487: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_048C: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0491: br             {'target': 1174}
+IL_0496: ldarg.0        None
+IL_0497: ldfld          {'token': '0x0400009B', 'identity': 'System1::zombieName_IF'}
+IL_049C: ldc.i4         0
+IL_04A1: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04A6: br             {'target': 1195}
+IL_04AB: ldarg.0        None
+IL_04AC: ldfld          {'token': '0x0400009C', 'identity': 'System1::enemyPoint_IF'}
+IL_04B1: ldc.i4         0
+IL_04B6: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04BB: br             {'target': 1216}
+IL_04C0: ldarg.0        None
+IL_04C1: ldfld          {'token': '0x0400009D', 'identity': 'System1::enemyWeight_IF'}
+IL_04C6: ldc.i4         0
+IL_04CB: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04D0: br             {'target': 1237}
+IL_04D5: ldarg.0        None
+IL_04D6: ldfld          {'token': '0x0400009E', 'identity': 'System1::minWave_IF'}
+IL_04DB: ldc.i4         0
+IL_04E0: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04E5: br             {'target': 1258}
+IL_04EA: ldarg.0        None
+IL_04EB: ldfld          {'token': '0x0400009F', 'identity': 'System1::attackPoint_IF'}
+IL_04F0: ldc.i4         0
+IL_04F5: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04FA: br             {'target': 1279}
+IL_04FF: ldarg.0        None
+IL_0500: ldfld          {'token': '0x040000A0', 'identity': 'System1::healthPoint_IF'}
+IL_0505: ldc.i4         0
+IL_050A: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_050F: br             {'target': 1300}
+IL_0514: ldarg.0        None
+IL_0515: ldfld          {'token': '0x040000A1', 'identity': 'System1::defensePoint_IF'}
+IL_051A: ldc.i4         0
+IL_051F: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0524: br             {'target': 1321}
+IL_0529: ldarg.0        None
+IL_052A: ldfld          {'token': '0x040000A2', 'identity': 'System1::elementalResistance_IF'}
+IL_052F: ldc.i4         0
+IL_0534: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0539: br             {'target': 1342}
+IL_053E: ldarg.0        None
+IL_053F: ldfld          {'token': '0x040000A3', 'identity': 'System1::isElite_T'}
+IL_0544: ldc.i4         0
+IL_0549: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_054E: br             {'target': 1363}
+IL_0553: ldarg.0        None
+IL_0554: ldfld          {'token': '0x040000A4', 'identity': 'System1::isBoss_T'}
+IL_0559: ldc.i4         0
+IL_055E: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_0563: br             {'target': 1384}
+IL_0568: ldarg.0        None
+IL_0569: ldfld          {'token': '0x040000A3', 'identity': 'System1::isElite_T'}
+IL_056E: ldc.i4         0
+IL_0573: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0578: br             {'target': 1405}
+IL_057D: ldarg.0        None
+IL_057E: ldfld          {'token': '0x040000A4', 'identity': 'System1::isBoss_T'}
+IL_0583: ldc.i4         0
+IL_0588: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_058D: br             {'target': 1426}
+IL_0592: ldarg.0        None
+IL_0593: ldfld          {'token': '0x040000A5', 'identity': 'System1::painter_DD'}
+IL_0598: ldc.i4         0
+IL_059D: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_05A2: ret            None
+IL_05A3: ldloc          local(0x0001)
+IL_05A7: ldc.i4         0
+IL_05AC: clt            None
+IL_05AE: stloc          local(0x0002)
+IL_05B2: ldloc          local(0x0002)
+IL_05B6: brtrue         {'target': 942}
+IL_05BB: br             {'target': 5}

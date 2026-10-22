@@ -1,0 +1,350 @@
+Project::Update
+{"token": "0x060003C1", "name": "Project::Update", "signature": "200001", "rva": 313436, "max_stack": 4, "code_size": 1240, "local_sig": 285213424, "locals_blob": "07311281ec0c0c0212150c0c020c0c0c0c0c02020202020c0c080c1209123d15120d0112091209123d1281a41281440202020c0c0c0c020212150c0c1c0c020202021209114d", "eh_count": 0, "il_sha256": "3de67d806481fc4ffaad230eb5629860e70b84bb2f18a1d7cd4d90fcea366a5b"}
+IL_0000: br             {'target': 1043}
+IL_0005: ldarg.0        None
+IL_0006: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_000B: stloc          local(0x0004)
+IL_000F: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0014: stloc          local(0x0008)
+IL_0018: br             {'target': 29}
+IL_001D: ldloc          local(0x0008)
+IL_0021: conv.r4        None
+IL_0022: ldc.r4         -18.0
+IL_0027: conv.r4        None
+IL_0028: mul            None
+IL_0029: stloc          local(0x0006)
+IL_002D: ldloc          local(0x0004)
+IL_0031: ldloca         local(0x0005)
+IL_0035: ldloc          local(0x0006)
+IL_0039: ldc.i4         0
+IL_003E: call           {'token': '0x0A0001FC', 'identity': 'UnityEngine.Transform::Rotate / sig 200301114d0c118145'}
+IL_0043: ldloc          local(0x0012)
+IL_0047: stloc          local(0x0005)
+IL_004B: br             {'target': 80}
+IL_0050: ldarg.0        None
+IL_0051: ldfld          {'token': '0x04000520', 'identity': 'Project::movementTracks'}
+IL_0056: ldc.i4         5
+IL_005B: ceq            None
+IL_005D: ldc.i4.0       None
+IL_005E: ceq            None
+IL_0060: stloc          local(0x0007)
+IL_0064: ldloc          local(0x0007)
+IL_0068: brtrue         {'target': 393}
+IL_006D: br             {'target': 114}
+IL_0072: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0077: stloc          local(0x0009)
+IL_007B: ldarg.0        None
+IL_007C: ldfld          {'token': '0x04000516', 'identity': 'Project::ID'}
+IL_0081: ldc.i4         4
+IL_0086: ceq            None
+IL_0088: stloc          local(0x000F)
+IL_008C: ldloc          local(0x0009)
+IL_0090: conv.r4        None
+IL_0091: ldarg.0        None
+IL_0092: ldfld          {'token': '0x0400051B', 'identity': 'Project::stayedTime'}
+IL_0097: conv.r4        None
+IL_0098: add            None
+IL_0099: stloc          local(0x000C)
+IL_009D: ldarg.0        None
+IL_009E: ldloc          local(0x000C)
+IL_00A2: stfld          {'token': '0x0400051B', 'identity': 'Project::stayedTime'}
+IL_00A7: ldloc          local(0x000F)
+IL_00AB: brtrue         {'target': 215}
+IL_00B0: br             {'target': 181}
+IL_00B5: ldarg.0        None
+IL_00B6: ldfld          {'token': '0x04000516', 'identity': 'Project::ID'}
+IL_00BB: ldc.i4         5
+IL_00C0: ceq            None
+IL_00C2: ldc.i4.0       None
+IL_00C3: ceq            None
+IL_00C5: stloc          local(0x000D)
+IL_00C9: ldloc          local(0x000D)
+IL_00CD: brtrue         {'target': 393}
+IL_00D2: br             {'target': 215}
+IL_00D7: br             {'target': 1119}
+IL_00DC: ldarg.0        None
+IL_00DD: ldc.r4         0.0
+IL_00E2: stfld          {'token': '0x0400051D', 'identity': 'Project::flickeringTime'}
+IL_00E7: br             {'target': 1187}
+IL_00EC: ldarg.0        None
+IL_00ED: ldfld          {'token': '0x0400051D', 'identity': 'Project::flickeringTime'}
+IL_00F2: conv.r4        None
+IL_00F3: ldc.r4         0.3499999940395355
+IL_00F8: conv.r4        None
+IL_00F9: sub            None
+IL_00FA: stloc          local(0x0028)
+IL_00FE: ldloc          local(0x0028)
+IL_0102: ldstr          {'token': '0x7000A65C', 'identity': 'Unmanaged memory load: [1815A7B80]'}
+IL_0107: pop            None
+IL_0108: ldc.i4.0       None
+IL_0109: conv.i         None
+IL_010A: and            None
+IL_010B: stloc          local(0x0029)
+IL_010F: ldloc          local(0x0029)
+IL_0113: conv.r4        None
+IL_0114: ldc.r4         0.3499999940395355
+IL_0119: conv.r4        None
+IL_011A: div            None
+IL_011B: stloc          local(0x002A)
+IL_011F: ldloc          local(0x002A)
+IL_0123: conv.r4        None
+IL_0124: ldc.r4         0.6862999796867371
+IL_0129: conv.r4        None
+IL_012A: mul            None
+IL_012B: stloc          local(0x000B)
+IL_012F: ldc.r4         1.0
+IL_0134: conv.r4        None
+IL_0135: ldloc          local(0x000B)
+IL_0139: conv.r4        None
+IL_013A: sub            None
+IL_013B: stloc          local(0x000A)
+IL_013F: br             {'target': 324}
+IL_0144: ldarg.0        None
+IL_0145: ldfld          {'token': '0x04000526', 'identity': 'Project::animationSprites'}
+IL_014A: ldc.i4         0
+IL_014F: call           {'token': '0x0A000006', 'identity': 'TypeSpec:1::get_Item / sig 2001130008'}
+IL_0154: stloc          local(0x0016)
+IL_0158: br             {'target': 349}
+IL_015D: ldloc          local(0x0016)
+IL_0161: call           {'token': '0x2B000011', 'identity': '0x2b000011'}
+IL_0166: stloc          local(0x0017)
+IL_016A: br             {'target': 367}
+IL_016F: ldloc          local(0x0017)
+IL_0173: ldloca         local(0x0005)
+IL_0177: call           {'token': '0x0A000097', 'identity': 'UnityEngine.SpriteRenderer::set_color / sig 2001011180d1'}
+IL_017C: ldloc          local(0x000A)
+IL_0180: stloc          local(0x0005)
+IL_0184: br             {'target': 393}
+IL_0189: ldarg.0        None
+IL_018A: ldfld          {'token': '0x04000520', 'identity': 'Project::movementTracks'}
+IL_018F: ldc.i4         1
+IL_0194: ceq            None
+IL_0196: ldc.i4.0       None
+IL_0197: ceq            None
+IL_0199: stloc          local(0x000E)
+IL_019D: ldloc          local(0x000E)
+IL_01A1: brtrue         {'target': 548}
+IL_01A6: br             {'target': 427}
+IL_01AB: ldc.r4         0.5
+IL_01B0: ldarg.0        None
+IL_01B1: ldfld          {'token': '0x0400051A', 'identity': 'Project::livingTime'}
+IL_01B6: cgt            None
+IL_01B8: ldc.i4.0       None
+IL_01B9: ceq            None
+IL_01BB: stloc          local(0x0010)
+IL_01BF: ldloc          local(0x0010)
+IL_01C3: brtrue         {'target': 548}
+IL_01C8: br             {'target': 461}
+IL_01CD: br             {'target': 466}
+IL_01D2: ldarg.0        None
+IL_01D3: ldfld          {'token': '0x0400051A', 'identity': 'Project::livingTime'}
+IL_01D8: conv.r4        None
+IL_01D9: ldc.r4         0.5
+IL_01DE: conv.r4        None
+IL_01DF: add            None
+IL_01E0: stloc          local(0x0021)
+IL_01E4: ldloc          local(0x0021)
+IL_01E8: ldc.r4         1.0
+IL_01ED: call           {'token': '0x0A00011F', 'identity': 'System.Math::Min / sig 00020c0c0c'}
+IL_01F2: stloc          local(0x0022)
+IL_01F6: ldarg.0        None
+IL_01F7: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_01FC: stloc          local(0x0026)
+IL_0200: br             {'target': 517}
+IL_0205: br             {'target': 1192}
+IL_020A: ldloc          local(0x0026)
+IL_020E: ldloca         local(0x0030)
+IL_0212: call           {'token': '0x0A0000E5', 'identity': 'UnityEngine.Transform::set_localScale / sig 200101114d'}
+IL_0217: ldloc          local(0x0012)
+IL_021B: stloc          local(0x0005)
+IL_021F: br             {'target': 548}
+IL_0224: ldarg.0        None
+IL_0225: ldfld          {'token': '0x04000520', 'identity': 'Project::movementTracks'}
+IL_022A: ldc.i4         4
+IL_022F: ceq            None
+IL_0231: ldc.i4.0       None
+IL_0232: ceq            None
+IL_0234: stloc          local(0x0011)
+IL_0238: ldloc          local(0x0011)
+IL_023C: brtrue         {'target': 593}
+IL_0241: br             {'target': 582}
+IL_0246: ldarg.0        None
+IL_0247: call           {'token': '0x060003C4', 'identity': 'Project::CollectUpdate'}
+IL_024C: br             {'target': 593}
+IL_0251: ldarg.0        None
+IL_0252: ldfld          {'token': '0x0400051C', 'identity': 'Project::destroyTime'}
+IL_0257: ldc.i4         0
+IL_025C: cgt            None
+IL_025E: ldc.i4.0       None
+IL_025F: ceq            None
+IL_0261: stloc          local(0x001F)
+IL_0265: ldloc          local(0x001F)
+IL_0269: brtrue         {'target': 1024}
+IL_026E: br             {'target': 627}
+IL_0273: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0278: stloc          local(0x0023)
+IL_027C: ldarg.0        None
+IL_027D: ldfld          {'token': '0x0400051C', 'identity': 'Project::destroyTime'}
+IL_0282: conv.r4        None
+IL_0283: ldloc          local(0x0023)
+IL_0287: conv.r4        None
+IL_0288: sub            None
+IL_0289: stloc          local(0x0013)
+IL_028D: ldarg.0        None
+IL_028E: ldloc          local(0x0013)
+IL_0292: stfld          {'token': '0x0400051C', 'identity': 'Project::destroyTime'}
+IL_0297: ldc.r4         0.25
+IL_029C: ldloc          local(0x0013)
+IL_02A0: clt            None
+IL_02A2: stloc          local(0x001D)
+IL_02A6: ldloc          local(0x001D)
+IL_02AA: brtrue         {'target': 836}
+IL_02AF: br             {'target': 692}
+IL_02B4: ldarg.0        None
+IL_02B5: ldfld          {'token': '0x04000526', 'identity': 'Project::animationSprites'}
+IL_02BA: stloc          local(0x0018)
+IL_02BE: br             {'target': 707}
+IL_02C3: ldc.i4         0
+IL_02C8: stloc          local(0x0014)
+IL_02CC: ldc.i4         0
+IL_02D1: stloc          local(0x0027)
+IL_02D5: br             {'target': 1198}
+IL_02DA: ldarg.0        None
+IL_02DB: ldfld          {'token': '0x04000526', 'identity': 'Project::animationSprites'}
+IL_02E0: ldloc          local(0x0014)
+IL_02E4: call           {'token': '0x0A000006', 'identity': 'TypeSpec:1::get_Item / sig 2001130008'}
+IL_02E9: stloc          local(0x0019)
+IL_02ED: br             {'target': 754}
+IL_02F2: ldloc          local(0x0019)
+IL_02F6: call           {'token': '0x2B000011', 'identity': '0x2b000011'}
+IL_02FB: stloc          local(0x001A)
+IL_02FF: br             {'target': 772}
+IL_0304: ldloc          local(0x001A)
+IL_0308: ldloca         local(0x0005)
+IL_030C: call           {'token': '0x0A000097', 'identity': 'UnityEngine.SpriteRenderer::set_color / sig 2001011180d1'}
+IL_0311: ldarg.0        None
+IL_0312: ldfld          {'token': '0x04000526', 'identity': 'Project::animationSprites'}
+IL_0317: stloc          local(0x0018)
+IL_031B: ldloc          local(0x0014)
+IL_031F: ldc.i4         1
+IL_0324: add            None
+IL_0325: stloc          local(0x0014)
+IL_0329: br             {'target': 814}
+IL_032E: ldc.i4         1065353216
+IL_0333: stloc          local(0x0005)
+IL_0337: ldloc          local(0x0014)
+IL_033B: stloc          local(0x0027)
+IL_033F: br             {'target': 1198}
+IL_0344: ldc.i4         0
+IL_0349: ldarg.0        None
+IL_034A: ldfld          {'token': '0x0400051C', 'identity': 'Project::destroyTime'}
+IL_034F: clt            None
+IL_0351: stloc          local(0x0024)
+IL_0355: ldloc          local(0x0024)
+IL_0359: brtrue         {'target': 1024}
+IL_035E: br             {'target': 867}
+IL_0363: br             {'target': 872}
+IL_0368: ldarg.0        None
+IL_0369: ldfld          {'token': '0x0400051E', 'identity': 'Project::board'}
+IL_036E: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0373: stloc          local(0x002B)
+IL_0377: ldloc          local(0x002B)
+IL_037B: ldc.i4.0       None
+IL_037C: ceq            None
+IL_037E: stloc          local(0x002C)
+IL_0382: ldloc          local(0x002C)
+IL_0386: brtrue         {'target': 995}
+IL_038B: br             {'target': 912}
+IL_0390: ldarg.0        None
+IL_0391: ldfld          {'token': '0x04000515', 'identity': 'Project::projectType'}
+IL_0396: ldc.i4         0
+IL_039B: ceq            None
+IL_039D: stloc          local(0x002D)
+IL_03A1: ldarg.0        None
+IL_03A2: ldfld          {'token': '0x0400051E', 'identity': 'Project::board'}
+IL_03A7: stloc          local(0x001B)
+IL_03AB: ldloc          local(0x002D)
+IL_03AF: brtrue         {'target': 1025}
+IL_03B4: br             {'target': 953}
+IL_03B9: ldloc          local(0x001B)
+IL_03BD: ldfld          {'token': '0x040003D7', 'identity': 'Board::projectManager'}
+IL_03C2: stloc          local(0x001C)
+IL_03C6: br             {'target': 971}
+IL_03CB: ldloc          local(0x001C)
+IL_03CF: ldfld          {'token': '0x040002C2', 'identity': 'ProjectManager::projects'}
+IL_03D4: ldarg.0        None
+IL_03D5: call           {'token': '0x0A000036', 'identity': 'TypeSpec:6::Remove / sig 2001021300'}
+IL_03DA: stloc          local(0x002E)
+IL_03DE: br             {'target': 995}
+IL_03E3: ldarg.0        None
+IL_03E4: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_03E9: stloc          local(0x002F)
+IL_03ED: br             {'target': 1010}
+IL_03F2: ldloc          local(0x002F)
+IL_03F6: call           {'token': '0x0A000025', 'identity': 'UnityEngine.Object::Destroy / sig 0001011221'}
+IL_03FB: br             {'target': 1024}
+IL_0400: ret            None
+IL_0401: ldloc          local(0x001B)
+IL_0405: ldfld          {'token': '0x040003DB', 'identity': 'Board::sunManager'}
+IL_040A: stloc          local(0x001C)
+IL_040E: br             {'target': 971}
+IL_0413: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0418: stloc          local(0x0001)
+IL_041C: ldloc          local(0x0001)
+IL_0420: conv.r4        None
+IL_0421: ldarg.0        None
+IL_0422: ldfld          {'token': '0x0400051A', 'identity': 'Project::livingTime'}
+IL_0427: conv.r4        None
+IL_0428: add            None
+IL_0429: stloc          local(0x0002)
+IL_042D: ldarg.0        None
+IL_042E: ldloc          local(0x0002)
+IL_0432: stfld          {'token': '0x0400051A', 'identity': 'Project::livingTime'}
+IL_0437: ldarg.0        None
+IL_0438: call           {'token': '0x060003C8', 'identity': 'Project::Move'}
+IL_043D: ldarg.0        None
+IL_043E: ldfld          {'token': '0x04000515', 'identity': 'Project::projectType'}
+IL_0443: ldc.i4         0
+IL_0448: ceq            None
+IL_044A: ldc.i4.0       None
+IL_044B: ceq            None
+IL_044D: stloc          local(0x0003)
+IL_0451: ldloc          local(0x0003)
+IL_0455: brtrue         {'target': 80}
+IL_045A: br             {'target': 5}
+IL_045F: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0464: stloc          local(0x0020)
+IL_0468: ldloc          local(0x0020)
+IL_046C: conv.r4        None
+IL_046D: ldarg.0        None
+IL_046E: ldfld          {'token': '0x0400051D', 'identity': 'Project::flickeringTime'}
+IL_0473: conv.r4        None
+IL_0474: add            None
+IL_0475: stloc          local(0x0015)
+IL_0479: ldarg.0        None
+IL_047A: ldloc          local(0x0015)
+IL_047E: stfld          {'token': '0x0400051D', 'identity': 'Project::flickeringTime'}
+IL_0483: ldloc          local(0x0015)
+IL_0487: ldc.r4         0.699999988079071
+IL_048C: cgt            None
+IL_048E: ldc.i4.0       None
+IL_048F: ceq            None
+IL_0491: stloc          local(0x0025)
+IL_0495: ldloc          local(0x0025)
+IL_0499: brtrue         {'target': 1187}
+IL_049E: br             {'target': 220}
+IL_04A3: br             {'target': 236}
+IL_04A8: nop            None
+IL_04A9: br             {'target': 522}
+IL_04AE: ldloc          local(0x0027)
+IL_04B2: ldloc          local(0x0018)
+IL_04B6: ldfld          {'token': '0x0A00008F', 'identity': 'TypeSpec:1::_size / sig 0608'}
+IL_04BB: clt            None
+IL_04BD: ldc.i4.0       None
+IL_04BE: ceq            None
+IL_04C0: stloc          local(0x001E)
+IL_04C4: ldloc          local(0x001E)
+IL_04C8: brtrue         {'target': 836}
+IL_04CD: br             {'target': 730}
+IL_04D2: ldstr          {'token': '0x70002C39', 'identity': 'Warning: Method ends with non empty stack (-88), the output could be wrong!'}
+IL_04D7: pop            None

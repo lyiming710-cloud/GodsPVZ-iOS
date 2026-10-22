@@ -1,0 +1,213 @@
+TMPro.Examples.TextMeshProFloatingText::Start
+{"token": "0x06000798", "name": "TMPro.Examples.TextMeshProFloatingText::Start", "signature": "200001", "rva": 632576, "max_stack": 2, "code_size": 845, "local_sig": 285214139, "locals_blob": "071e1283f002021280c912823d128179114d1281f51280c51281f51279128159114d1c1c121511812d12151281fd0808080808081283f81280c90c0c18", "eh_count": 0, "il_sha256": "4826bf0bf780ba99309db33c0585ede6db6542ced1e99a486e4bb49d253f7a00"}
+IL_0000: br             {'target': 751}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040009C5', 'identity': 'TMPro.Examples.TextMeshProFloatingText::SpawnType'}
+IL_000B: ldc.i4         1
+IL_0010: ceq            None
+IL_0012: ldc.i4.0       None
+IL_0013: ceq            None
+IL_0015: stloc          local(0x0002)
+IL_0019: ldloc          local(0x0002)
+IL_001D: brtrue         {'target': 408}
+IL_0022: br             {'target': 39}
+IL_0027: ldarg.0        None
+IL_0028: ldfld          {'token': '0x040009BD', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText'}
+IL_002D: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0032: stloc          local(0x000F)
+IL_0036: ldarg.0        None
+IL_0037: ldloc          local(0x000F)
+IL_003B: stfld          {'token': '0x040009C1', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText_Transform'}
+IL_0040: br             {'target': 69}
+IL_0045: ldarg.0        None
+IL_0046: ldfld          {'token': '0x040009C0', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_transform'}
+IL_004B: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0050: stloc          local(0x0006)
+IL_0054: br             {'target': 89}
+IL_0059: ldarg.0        None
+IL_005A: ldfld          {'token': '0x040009C1', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText_Transform'}
+IL_005F: ldloca         local(0x001B)
+IL_0063: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0068: br             {'target': 109}
+IL_006D: ldarg.0        None
+IL_006E: ldfld          {'token': '0x040009BD', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText'}
+IL_0073: call           {'token': '0x2B000099', 'identity': '0x2b000099'}
+IL_0078: stloc          local(0x0012)
+IL_007C: ldarg.0        None
+IL_007D: ldloc          local(0x0012)
+IL_0081: stfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_0086: br             {'target': 139}
+IL_008B: ldstr          {'token': '0x7001E504', 'identity': 'Fonts/ARIAL'}
+IL_0090: call           {'token': '0x2B0000A0', 'identity': '0x2b0000a0'}
+IL_0095: stloc          local(0x0007)
+IL_0099: br             {'target': 158}
+IL_009E: ldarg.0        None
+IL_009F: ldfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_00A4: ldloc          local(0x0007)
+IL_00A8: call           {'token': '0x0A0002FF', 'identity': 'UnityEngine.TextMesh::set_font / sig 2001011281f5'}
+IL_00AD: br             {'target': 178}
+IL_00B2: ldarg.0        None
+IL_00B3: ldfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_00B8: call           {'token': '0x2B00001F', 'identity': '0x2b00001f'}
+IL_00BD: stloc          local(0x0008)
+IL_00C1: br             {'target': 198}
+IL_00C6: ldarg.0        None
+IL_00C7: ldfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_00CC: call           {'token': '0x0A0002F4', 'identity': 'UnityEngine.TextMesh::get_font / sig 20001281f5'}
+IL_00D1: stloc          local(0x0009)
+IL_00D5: br             {'target': 218}
+IL_00DA: ldloc          local(0x0009)
+IL_00DE: call           {'token': '0x0A0002F5', 'identity': 'UnityEngine.Font::get_material / sig 20001279'}
+IL_00E3: stloc          local(0x000A)
+IL_00E7: br             {'target': 236}
+IL_00EC: ldloc          local(0x0008)
+IL_00F0: ldloc          local(0x000A)
+IL_00F4: call           {'token': '0x0A0002F6', 'identity': 'UnityEngine.Renderer::SetMaterial / sig 2001011279'}
+IL_00F9: ldc.i4         0
+IL_00FE: ldc.i4         255
+IL_0103: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_0108: stloc          local(0x0016)
+IL_010C: br             {'target': 273}
+IL_0111: ldc.i4         0
+IL_0116: ldc.i4         255
+IL_011B: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_0120: stloc          local(0x0017)
+IL_0124: ldc.i4         0
+IL_0129: ldc.i4         255
+IL_012E: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_0133: stloc          local(0x0018)
+IL_0137: br             {'target': 316}
+IL_013C: nop            None
+IL_013D: br             {'target': 322}
+IL_0142: ldarg.0        None
+IL_0143: ldfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_0148: ldloca         local(0x001C)
+IL_014C: call           {'token': '0x0A000303', 'identity': 'UnityEngine.TextMesh::set_color / sig 2001011180d1'}
+IL_0151: br             {'target': 342}
+IL_0156: ldarg.0        None
+IL_0157: ldfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_015C: ldc.i4         7
+IL_0161: call           {'token': '0x0A0002F8', 'identity': 'UnityEngine.TextMesh::set_anchor / sig 200101118201'}
+IL_0166: br             {'target': 363}
+IL_016B: ldarg.0        None
+IL_016C: ldfld          {'token': '0x040009BF', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMesh'}
+IL_0171: ldc.i4         24
+IL_0176: call           {'token': '0x0A0002F7', 'identity': 'UnityEngine.TextMesh::set_fontSize / sig 20010108'}
+IL_017B: ldarg.0        None
+IL_017C: call           {'token': '0x0600079A', 'identity': 'TMPro.Examples.TextMeshProFloatingText::DisplayTextMeshFloatingText'}
+IL_0181: stloc          local(0x001A)
+IL_0185: br             {'target': 394}
+IL_018A: nop            None
+IL_018B: ldloc          local(0x001A)
+IL_018F: stloc          local(0x0003)
+IL_0193: br             {'target': 826}
+IL_0198: ret            None
+IL_0199: ldarg.0        None
+IL_019A: ldfld          {'token': '0x040009BD', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText'}
+IL_019F: call           {'token': '0x2B00009A', 'identity': '0x2b00009a'}
+IL_01A4: stloc          local(0x0005)
+IL_01A8: ldarg.0        None
+IL_01A9: ldloc          local(0x0005)
+IL_01AD: stfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_01B2: br             {'target': 439}
+IL_01B7: ldarg.0        None
+IL_01B8: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_01BD: call           {'token': '0x0A0002E3', 'identity': 'TMPro.TMP_Text::get_rectTransform / sig 2000128159'}
+IL_01C2: stloc          local(0x000B)
+IL_01C6: br             {'target': 459}
+IL_01CB: ldloc          local(0x000B)
+IL_01CF: ldloc          local(0x0010)
+IL_01D3: call           {'token': '0x0A00028E', 'identity': 'UnityEngine.RectTransform::set_sizeDelta / sig 20010111812d'}
+IL_01D8: br             {'target': 477}
+IL_01DD: ldarg.0        None
+IL_01DE: ldfld          {'token': '0x040009BD', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText'}
+IL_01E3: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_01E8: stloc          local(0x0011)
+IL_01EC: ldarg.0        None
+IL_01ED: ldloc          local(0x0011)
+IL_01F1: stfld          {'token': '0x040009C1', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText_Transform'}
+IL_01F6: br             {'target': 507}
+IL_01FB: ldarg.0        None
+IL_01FC: ldfld          {'token': '0x040009C0', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_transform'}
+IL_0201: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0206: stloc          local(0x000C)
+IL_020A: nop            None
+IL_020B: br             {'target': 528}
+IL_0210: ldarg.0        None
+IL_0211: ldfld          {'token': '0x040009C1', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_floatingText_Transform'}
+IL_0216: ldloca         local(0x001B)
+IL_021A: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_021F: br             {'target': 548}
+IL_0224: ldarg.0        None
+IL_0225: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_022A: ldc.i4         514
+IL_022F: call           {'token': '0x0A0002FA', 'identity': 'TMPro.TMP_Text::set_alignment / sig 200101118205'}
+IL_0234: ldc.i4         0
+IL_0239: ldc.i4         255
+IL_023E: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_0243: stloc          local(0x0013)
+IL_0247: br             {'target': 588}
+IL_024C: ldc.i4         0
+IL_0251: ldc.i4         255
+IL_0256: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_025B: stloc          local(0x0014)
+IL_025F: ldc.i4         0
+IL_0264: ldc.i4         255
+IL_0269: call           {'token': '0x0A00012B', 'identity': 'UnityEngine.Random::Range / sig 0002080808'}
+IL_026E: stloc          local(0x0015)
+IL_0272: br             {'target': 631}
+IL_0277: ldarg.0        None
+IL_0278: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_027D: ldloca         local(0x001C)
+IL_0281: call           {'token': '0x0A0001DC', 'identity': 'TMPro.TMP_Text::set_color / sig 2001011180d1'}
+IL_0286: br             {'target': 651}
+IL_028B: ldarg.0        None
+IL_028C: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_0291: ldc.r4         24.0
+IL_0296: call           {'token': '0x0A0002A3', 'identity': 'TMPro.TMP_Text::set_fontSize / sig 2001010c'}
+IL_029B: br             {'target': 672}
+IL_02A0: ldarg.0        None
+IL_02A1: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_02A6: ldc.i4         0
+IL_02AB: call           {'token': '0x0A000306', 'identity': 'TMPro.TMP_Text::set_enableKerning / sig 20010102'}
+IL_02B0: nop            None
+IL_02B1: br             {'target': 694}
+IL_02B6: ldarg.0        None
+IL_02B7: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_02BC: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_02C1: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_02C6: br             {'target': 715}
+IL_02CB: ldarg.0        None
+IL_02CC: ldfld          {'token': '0x040009BE', 'identity': 'TMPro.Examples.TextMeshProFloatingText::m_textMeshPro'}
+IL_02D1: ldarg.0        None
+IL_02D2: ldfld          {'token': '0x040009C6', 'identity': 'TMPro.Examples.TextMeshProFloatingText::IsTextObjectScaleStatic'}
+IL_02D7: call           {'token': '0x0A000307', 'identity': 'TMPro.TMP_Text::set_isTextObjectScaleStatic / sig 20010102'}
+IL_02DC: br             {'target': 782}
+IL_02E1: nop            None
+IL_02E2: ldloc          local(0x0019)
+IL_02E6: stloc          local(0x0003)
+IL_02EA: br             {'target': 826}
+IL_02EF: ldarg.0        None
+IL_02F0: ldfld          {'token': '0x040009C5', 'identity': 'TMPro.Examples.TextMeshProFloatingText::SpawnType'}
+IL_02F5: ldc.i4         0
+IL_02FA: ceq            None
+IL_02FC: stloc          local(0x0001)
+IL_0300: ldloc          local(0x0001)
+IL_0304: brtrue         {'target': 409}
+IL_0309: br             {'target': 5}
+IL_030E: ldc.i4         0
+IL_0313: newobj         {'token': '0x060007A3', 'identity': '<DisplayTextMeshProFloatingText>d__15::.ctor'}
+IL_0318: stloc          local(0x0019)
+IL_031C: nop            None
+IL_031D: ldloc          local(0x0019)
+IL_0321: ldc.i4         0
+IL_0326: stfld          {'token': '0x040009D3', 'identity': '<DisplayTextMeshProFloatingText>d__15::<>1__state'}
+IL_032B: ldloc          local(0x0019)
+IL_032F: ldarg.0        None
+IL_0330: stfld          {'token': '0x040009D5', 'identity': '<DisplayTextMeshProFloatingText>d__15::<>4__this'}
+IL_0335: br             {'target': 737}
+IL_033A: ldarg.0        None
+IL_033B: ldloc          local(0x0003)
+IL_033F: call           {'token': '0x0A00032B', 'identity': 'UnityEngine.MonoBehaviour::StartCoroutine / sig 200112823d1280c9'}
+IL_0344: stloc          local(0x0004)
+IL_0348: br             {'target': 408}

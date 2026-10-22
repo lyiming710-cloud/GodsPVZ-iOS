@@ -1,0 +1,311 @@
+EnemyDataEditor::LoadData
+{"token": "0x06000042", "name": "EnemyDataEditor::LoadData", "signature": "2001011224", "rva": 26744, "max_stack": 2, "code_size": 1260, "local_sig": 285212721, "locals_blob": "071d122402021224128118020e0e0e0e0e120912090808080c12281228021245122018180818181818", "eh_count": 0, "il_sha256": "0e3d3f670647b5a54349dba389102dba8c81e5d0d8627439b85018756968b600"}
+IL_0000: br             {'target': 1241}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x0400003B', 'identity': 'EnemyDataEditor::enemyOnCheck'}
+IL_000B: ldnull         None
+IL_000C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0011: stloc          local(0x0001)
+IL_0015: ldloc          local(0x0001)
+IL_0019: ldc.i4.0       None
+IL_001A: ceq            None
+IL_001C: stloc          local(0x0002)
+IL_0020: ldloc          local(0x0002)
+IL_0024: brtrue         {'target': 62}
+IL_0029: br             {'target': 46}
+IL_002E: ldarg.0        None
+IL_002F: ldfld          {'token': '0x0400003B', 'identity': 'EnemyDataEditor::enemyOnCheck'}
+IL_0034: call           {'token': '0x0600004F', 'identity': 'Enemy_boardEditor::HidePath'}
+IL_0039: br             {'target': 62}
+IL_003E: ldarg.0        None
+IL_003F: ldarg          argument(0x0001)
+IL_0043: stfld          {'token': '0x0400003B', 'identity': 'EnemyDataEditor::enemyOnCheck'}
+IL_0048: br             {'target': 77}
+IL_004D: ldarg.0        None
+IL_004E: ldfld          {'token': '0x0400003B', 'identity': 'EnemyDataEditor::enemyOnCheck'}
+IL_0053: ldnull         None
+IL_0054: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0059: stloc          local(0x0005)
+IL_005D: ldloc          local(0x0005)
+IL_0061: brtrue         {'target': 107}
+IL_0066: br             {'target': 770}
+IL_006B: ldarg          argument(0x0001)
+IL_006F: call           {'token': '0x0600004E', 'identity': 'Enemy_boardEditor::DisplayPath'}
+IL_0074: ldarg.0        None
+IL_0075: ldfld          {'token': '0x0400003B', 'identity': 'EnemyDataEditor::enemyOnCheck'}
+IL_007A: stloc          local(0x0003)
+IL_007E: br             {'target': 131}
+IL_0083: ldloc          local(0x0003)
+IL_0087: ldfld          {'token': '0x04000051', 'identity': 'Enemy_boardEditor::preEnemy'}
+IL_008C: stloc          local(0x0004)
+IL_0090: br             {'target': 149}
+IL_0095: ldloca         local(0x0018)
+IL_0099: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_009E: stloc          local(0x0006)
+IL_00A2: br             {'target': 167}
+IL_00A7: ldarg.0        None
+IL_00A8: ldfld          {'token': '0x0400003E', 'identity': 'EnemyDataEditor::ID_IF'}
+IL_00AD: ldloc          local(0x0006)
+IL_00B1: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00B6: ldloc          local(0x0003)
+IL_00BA: ldfld          {'token': '0x04000051', 'identity': 'Enemy_boardEditor::preEnemy'}
+IL_00BF: ldc.i4         24
+IL_00C4: add            None
+IL_00C5: stloc          local(0x000D)
+IL_00C9: ldloc          local(0x000D)
+IL_00CD: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_00D2: stloc          local(0x0007)
+IL_00D6: br             {'target': 219}
+IL_00DB: ldarg.0        None
+IL_00DC: ldfld          {'token': '0x0400003C', 'identity': 'EnemyDataEditor::gridX_IF'}
+IL_00E1: ldloc          local(0x0007)
+IL_00E5: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_00EA: ldloc          local(0x0003)
+IL_00EE: ldfld          {'token': '0x04000051', 'identity': 'Enemy_boardEditor::preEnemy'}
+IL_00F3: ldc.i4         20
+IL_00F8: add            None
+IL_00F9: stloc          local(0x000E)
+IL_00FD: ldloc          local(0x000E)
+IL_0101: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0106: stloc          local(0x0008)
+IL_010A: br             {'target': 271}
+IL_010F: ldarg.0        None
+IL_0110: ldfld          {'token': '0x0400003D', 'identity': 'EnemyDataEditor::gridY_IF'}
+IL_0115: ldloc          local(0x0008)
+IL_0119: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_011E: ldloc          local(0x0003)
+IL_0122: ldfld          {'token': '0x04000051', 'identity': 'Enemy_boardEditor::preEnemy'}
+IL_0127: ldc.i4         40
+IL_012C: add            None
+IL_012D: stloc          local(0x000F)
+IL_0131: ldloc          local(0x000F)
+IL_0135: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_013A: stloc          local(0x0009)
+IL_013E: br             {'target': 323}
+IL_0143: ldarg.0        None
+IL_0144: ldfld          {'token': '0x04000040', 'identity': 'EnemyDataEditor::zombieWave_IF'}
+IL_0149: ldloc          local(0x0009)
+IL_014D: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0152: ldloc          local(0x0003)
+IL_0156: ldfld          {'token': '0x04000051', 'identity': 'Enemy_boardEditor::preEnemy'}
+IL_015B: conv.r4        None
+IL_015C: ldc.i4         44
+IL_0161: conv.r4        None
+IL_0162: add            None
+IL_0163: stloc          local(0x0010)
+IL_0167: ldloc          local(0x0010)
+IL_016B: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0170: stloc          local(0x000A)
+IL_0174: br             {'target': 377}
+IL_0179: ldarg.0        None
+IL_017A: ldfld          {'token': '0x04000041', 'identity': 'EnemyDataEditor::waitingTime_IF'}
+IL_017F: ldloc          local(0x000A)
+IL_0183: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0188: br             {'target': 397}
+IL_018D: ldarg.0        None
+IL_018E: ldfld          {'token': '0x04000042', 'identity': 'EnemyDataEditor::entryKey_IF'}
+IL_0193: ldloc          local(0x0004)
+IL_0197: ldfld          {'token': '0x040001FE', 'identity': 'Enemy::entryKey'}
+IL_019C: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_01A1: br             {'target': 422}
+IL_01A6: ldarg.0        None
+IL_01A7: ldfld          {'token': '0x0400003E', 'identity': 'EnemyDataEditor::ID_IF'}
+IL_01AC: ldc.i4         1
+IL_01B1: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01B6: br             {'target': 443}
+IL_01BB: ldarg.0        None
+IL_01BC: ldfld          {'token': '0x0400003C', 'identity': 'EnemyDataEditor::gridX_IF'}
+IL_01C1: ldc.i4         1
+IL_01C6: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01CB: br             {'target': 464}
+IL_01D0: ldarg.0        None
+IL_01D1: ldfld          {'token': '0x0400003D', 'identity': 'EnemyDataEditor::gridY_IF'}
+IL_01D6: ldc.i4         1
+IL_01DB: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01E0: br             {'target': 485}
+IL_01E5: ldarg.0        None
+IL_01E6: ldfld          {'token': '0x04000040', 'identity': 'EnemyDataEditor::zombieWave_IF'}
+IL_01EB: ldc.i4         1
+IL_01F0: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_01F5: br             {'target': 506}
+IL_01FA: ldarg.0        None
+IL_01FB: ldfld          {'token': '0x04000041', 'identity': 'EnemyDataEditor::waitingTime_IF'}
+IL_0200: ldc.i4         1
+IL_0205: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_020A: br             {'target': 527}
+IL_020F: ldarg.0        None
+IL_0210: ldfld          {'token': '0x04000042', 'identity': 'EnemyDataEditor::entryKey_IF'}
+IL_0215: ldc.i4         1
+IL_021A: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_021F: br             {'target': 548}
+IL_0224: ldarg.0        None
+IL_0225: ldfld          {'token': '0x04000045', 'identity': 'EnemyDataEditor::delete'}
+IL_022A: ldc.i4         1
+IL_022F: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0234: br             {'target': 569}
+IL_0239: ldarg.0        None
+IL_023A: ldfld          {'token': '0x04000046', 'identity': 'EnemyDataEditor::copy'}
+IL_023F: ldc.i4         1
+IL_0244: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0249: br             {'target': 590}
+IL_024E: ldarg.0        None
+IL_024F: ldfld          {'token': '0x0400003A', 'identity': 'EnemyDataEditor::pathDataEditor'}
+IL_0254: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0259: stloc          local(0x000B)
+IL_025D: br             {'target': 610}
+IL_0262: ldloc          local(0x000B)
+IL_0266: ldc.i4         1
+IL_026B: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0270: ldarg.0        None
+IL_0271: ldfld          {'token': '0x0400003A', 'identity': 'EnemyDataEditor::pathDataEditor'}
+IL_0276: stloc          local(0x0011)
+IL_027A: br             {'target': 639}
+IL_027F: ldloc          local(0x0011)
+IL_0283: ldarg          argument(0x0001)
+IL_0287: stfld          {'token': '0x04000055', 'identity': 'PathDataEditor::enemy_BoardEditor'}
+IL_028C: br             {'target': 657}
+IL_0291: ldarg.0        None
+IL_0292: ldfld          {'token': '0x0400003A', 'identity': 'EnemyDataEditor::pathDataEditor'}
+IL_0297: ldc.i8         4294967295
+IL_02A0: call           {'token': '0x06000058', 'identity': 'PathDataEditor::LoadData'}
+IL_02A5: br             {'target': 682}
+IL_02AA: ldarg.0        None
+IL_02AB: ldfld          {'token': '0x04000047', 'identity': 'EnemyDataEditor::move0'}
+IL_02B0: ldc.i4         1
+IL_02B5: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02BA: br             {'target': 703}
+IL_02BF: ldarg.0        None
+IL_02C0: ldfld          {'token': '0x04000048', 'identity': 'EnemyDataEditor::move1'}
+IL_02C5: ldc.i4         1
+IL_02CA: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02CF: br             {'target': 724}
+IL_02D4: ldarg.0        None
+IL_02D5: ldfld          {'token': '0x04000049', 'identity': 'EnemyDataEditor::move2'}
+IL_02DA: ldc.i4         1
+IL_02DF: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_02E4: ldarg.0        None
+IL_02E5: ldfld          {'token': '0x0400004A', 'identity': 'EnemyDataEditor::move3'}
+IL_02EA: stloc          local(0x0014)
+IL_02EE: br             {'target': 755}
+IL_02F3: ldc.i4         1
+IL_02F8: stloc          local(0x0013)
+IL_02FC: nop            None
+IL_02FD: br             {'target': 1246}
+IL_0302: ldarg.0        None
+IL_0303: ldfld          {'token': '0x0400003E', 'identity': 'EnemyDataEditor::ID_IF'}
+IL_0308: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_030D: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0312: br             {'target': 791}
+IL_0317: ldarg.0        None
+IL_0318: ldfld          {'token': '0x0400003C', 'identity': 'EnemyDataEditor::gridX_IF'}
+IL_031D: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0322: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0327: br             {'target': 812}
+IL_032C: ldarg.0        None
+IL_032D: ldfld          {'token': '0x0400003D', 'identity': 'EnemyDataEditor::gridY_IF'}
+IL_0332: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0337: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_033C: br             {'target': 833}
+IL_0341: ldarg.0        None
+IL_0342: ldfld          {'token': '0x04000040', 'identity': 'EnemyDataEditor::zombieWave_IF'}
+IL_0347: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_034C: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0351: br             {'target': 854}
+IL_0356: ldarg.0        None
+IL_0357: ldfld          {'token': '0x04000041', 'identity': 'EnemyDataEditor::waitingTime_IF'}
+IL_035C: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0361: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_0366: br             {'target': 875}
+IL_036B: ldarg.0        None
+IL_036C: ldfld          {'token': '0x04000042', 'identity': 'EnemyDataEditor::entryKey_IF'}
+IL_0371: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_0376: call           {'token': '0x0A00002B', 'identity': 'TMPro.TMP_InputField::SetTextWithoutNotify / sig 2001010e'}
+IL_037B: br             {'target': 896}
+IL_0380: ldarg.0        None
+IL_0381: ldfld          {'token': '0x0400003E', 'identity': 'EnemyDataEditor::ID_IF'}
+IL_0386: ldc.i4         0
+IL_038B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0390: br             {'target': 917}
+IL_0395: ldarg.0        None
+IL_0396: ldfld          {'token': '0x0400003C', 'identity': 'EnemyDataEditor::gridX_IF'}
+IL_039B: ldc.i4         0
+IL_03A0: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03A5: br             {'target': 938}
+IL_03AA: ldarg.0        None
+IL_03AB: ldfld          {'token': '0x0400003D', 'identity': 'EnemyDataEditor::gridY_IF'}
+IL_03B0: ldc.i4         0
+IL_03B5: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03BA: br             {'target': 959}
+IL_03BF: ldarg.0        None
+IL_03C0: ldfld          {'token': '0x04000040', 'identity': 'EnemyDataEditor::zombieWave_IF'}
+IL_03C5: ldc.i4         0
+IL_03CA: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03CF: br             {'target': 980}
+IL_03D4: ldarg.0        None
+IL_03D5: ldfld          {'token': '0x04000041', 'identity': 'EnemyDataEditor::waitingTime_IF'}
+IL_03DA: ldc.i4         0
+IL_03DF: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03E4: br             {'target': 1001}
+IL_03E9: ldarg.0        None
+IL_03EA: ldfld          {'token': '0x04000042', 'identity': 'EnemyDataEditor::entryKey_IF'}
+IL_03EF: ldc.i4         0
+IL_03F4: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_03F9: br             {'target': 1022}
+IL_03FE: ldarg.0        None
+IL_03FF: ldfld          {'token': '0x04000045', 'identity': 'EnemyDataEditor::delete'}
+IL_0404: ldc.i4         0
+IL_0409: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_040E: br             {'target': 1043}
+IL_0413: ldarg.0        None
+IL_0414: ldfld          {'token': '0x04000046', 'identity': 'EnemyDataEditor::copy'}
+IL_0419: ldc.i4         0
+IL_041E: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0423: br             {'target': 1064}
+IL_0428: ldarg.0        None
+IL_0429: ldfld          {'token': '0x0400003A', 'identity': 'EnemyDataEditor::pathDataEditor'}
+IL_042E: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0433: stloc          local(0x000C)
+IL_0437: br             {'target': 1084}
+IL_043C: ldloc          local(0x000C)
+IL_0440: ldc.i4         0
+IL_0445: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_044A: ldarg.0        None
+IL_044B: ldfld          {'token': '0x0400003A', 'identity': 'EnemyDataEditor::pathDataEditor'}
+IL_0450: stloc          local(0x0012)
+IL_0454: br             {'target': 1113}
+IL_0459: ldloc          local(0x0012)
+IL_045D: ldnull         None
+IL_045E: stfld          {'token': '0x04000055', 'identity': 'PathDataEditor::enemy_BoardEditor'}
+IL_0463: br             {'target': 1128}
+IL_0468: ldarg.0        None
+IL_0469: ldfld          {'token': '0x0400003A', 'identity': 'EnemyDataEditor::pathDataEditor'}
+IL_046E: ldc.i8         4294967295
+IL_0477: call           {'token': '0x06000058', 'identity': 'PathDataEditor::LoadData'}
+IL_047C: br             {'target': 1153}
+IL_0481: ldarg.0        None
+IL_0482: ldfld          {'token': '0x04000047', 'identity': 'EnemyDataEditor::move0'}
+IL_0487: ldc.i4         0
+IL_048C: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0491: br             {'target': 1174}
+IL_0496: ldarg.0        None
+IL_0497: ldfld          {'token': '0x04000048', 'identity': 'EnemyDataEditor::move1'}
+IL_049C: ldc.i4         0
+IL_04A1: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04A6: br             {'target': 1195}
+IL_04AB: ldarg.0        None
+IL_04AC: ldfld          {'token': '0x04000049', 'identity': 'EnemyDataEditor::move2'}
+IL_04B1: ldc.i4         0
+IL_04B6: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04BB: ldarg.0        None
+IL_04BC: ldfld          {'token': '0x0400004A', 'identity': 'EnemyDataEditor::move3'}
+IL_04C1: stloc          local(0x0014)
+IL_04C5: br             {'target': 1226}
+IL_04CA: ldc.i4         0
+IL_04CF: stloc          local(0x0013)
+IL_04D3: nop            None
+IL_04D4: br             {'target': 1246}
+IL_04D9: br             {'target': 5}
+IL_04DE: ldloc          local(0x0014)
+IL_04E2: ldloc          local(0x0013)
+IL_04E6: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_04EB: ret            None
