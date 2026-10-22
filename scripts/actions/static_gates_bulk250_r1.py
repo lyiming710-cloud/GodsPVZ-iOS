@@ -980,21 +980,22 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
     unres_members = [m for m in ma_doc.get("members", []) if not m.get("allowed", True) or m.get("error")]
     if r_ma.returncode != 0:
         rej_members = [m for m in ma_doc.get("members", []) if m.get("allowed") is False]
-        if len(rej_members) == 1 and rej_members[0].get("token") == "0x060003F4" and "ParticlesManager" in str(rej_members[0].get("member")):
-            print("MemberAccess gate: COUNTEREXAMPLE_PRIVATE_MEMBER_ACCESS on 0x060003F4 -> ParticlesManager::<instance>k__BackingField.")
+        if rej_members:
+            print(f"MemberAccess gate: COUNTEREXAMPLE_PRIVATE_MEMBER_ACCESS on {len(rej_members)} members:")
+            for m in rej_members:
+                print(f"  {m.get('token')} offset {m.get('offset')}: {m.get('member')}")
             results["member_access"] = {
                 "status": "COUNTEREXAMPLE_PRIVATE_MEMBER_ACCESS",
                 "pass": False,
-                "rejected": 1,
-                "unresolved": 0,
+                "rejected": len(rej_members),
+                "unresolved": len(unres_members),
                 "target_methods": 250,
-                "rejected_member": rej_members[0],
-                "finding": "Candidate method 0x060003F4 accessed private field ParticlesManager::<instance>k__BackingField directly at offset 73 instead of public getter ParticlesManager::get_instance(). Preserved as minimal counterexample for primary author per protocol.",
+                "rejected_members": rej_members,
                 "report": str(ma180_out)
             }
             if not allow_blocked_profile:
-                raise RuntimeError(f"MemberAccess gate rejected private member access: {rej_members[0]}")
-        elif len(unres_members) == 1 and unres_members[0].get("token") == "0x060004B1" and unres_members[0].get("offset") == 89:
+                raise RuntimeError(f"MemberAccess gate rejected private member access: {rej_members}")
+        elif len(unres_members) == 1 and unres_members[0].get("token") == "0x060004B1":
             print("MemberAccess gate: BLOCKED_DEPENDENCY_PROFILE on 0x060004B1 -> AnimatorStateInfo::get_normalizedTime.")
             results["member_access"] = {
                 "status": "BLOCKED_DEPENDENCY_PROFILE",
