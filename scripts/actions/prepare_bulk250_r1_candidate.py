@@ -343,7 +343,7 @@ def main():
         "parent": {"name": parent_dll.name, "bytes": len(p_bytes), "sha256": p_sha},
         "baseline": {"name": baseline_dll.name, "bytes": len(baseline_dll.read_bytes()), "sha256": b_sha},
         "candidate": {"name": c1.name, "bytes": len(c_bytes), "sha256": c1_sha},
-        "new_target_tokens": list(new_target_tokens_hex),
+        "new_target_tokens": list(delta_tokens_hex),
         "total_targets_count": 250,
         "inherited_targets_count": 200,
         "non_target_methods_count": 2067,

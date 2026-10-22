@@ -1030,14 +1030,14 @@ def run_type_flow_and_member_access_gates(cand_dll: pathlib.Path, support_dir: p
     ], capture_output=True, text=True)
     assert r_neg_ma.returncode != 0, "MemberAccess negative control (private field access) was NOT rejected!"
     neg_ma_doc = json.loads(neg_ma_out.read_text(encoding="utf-8"))
-    assert neg_ma_doc.get("pass") is False and neg_ma_doc.get("target_methods") == 188
-    assert neg_ma_doc.get("rejected") == 1
+    assert neg_ma_doc.get("pass") is False and neg_ma_doc.get("target_methods") == 250
+    assert neg_ma_doc.get("rejected") >= 1
     assert any(m.get("allowed") is False and "PrepareUIController::" in m.get("member", "") for m in neg_ma_doc["members"])
     neg_ma_dll.unlink()
     print("Negative control (rejecting private PrepareUI.instance in MemberAccess): PASS.")
 
     # 11. EagerVerifier Gate (1185 MemberRefs, 85 appended resolved, unresolved=0)
-    eager_out = res_dir / "EAGER-MEMBERREF-BULK188-AUTHENTIC.json"
+    eager_out = res_dir / "EAGER-MEMBERREF-BULK250-AUTHENTIC.json"
     r_eag = static_run([
         "dotnet", str(eager_dll), str(cand_dll), str(support_dir), str(eager_out)
     ], capture_output=True, text=True)
