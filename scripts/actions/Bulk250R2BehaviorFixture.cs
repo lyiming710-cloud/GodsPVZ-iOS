@@ -563,28 +563,32 @@ namespace GodsPVZ.Actions.Verification
             var createdA1 = adminA1.enemyDataEditor.list.FirstOrDefault();
             bool passA1 = (createdA1 != null && createdA1.gridX == 120 && createdA1.row == 120 && createdA1.wave == 5);
             casesExecuted++;
-            if (!passA1) failedAssertions.Add("0x0600001C Normal execution mismatch");
+            if (!passA1) Console.WriteLine("ASSERTION_FAIL: " + "0x0600001C Normal execution mismatch");
+            failedAssertions.Add("0x0600001C Normal execution mismatch"));
 
             // Case A.2: Null receiver admin -> NRE
             bool passA2 = false;
             try { fn01c(null); }
             catch (NullReferenceException) { passA2 = true; }
             casesExecuted++;
-            if (!passA2) failedAssertions.Add("0x0600001C Null receiver did not throw NRE");
+            if (!passA2) Console.WriteLine("ASSERTION_FAIL: " + "0x0600001C Null receiver did not throw NRE");
+            failedAssertions.Add("0x0600001C Null receiver did not throw NRE"));
 
             // Case A.3: Null boardConfig -> NRE in getter
             bool passA3 = false;
             try { fn01c(new MockAdminSystem2 { boardConfig = null }); }
             catch (NullReferenceException) { passA3 = true; }
             casesExecuted++;
-            if (!passA3) failedAssertions.Add("0x0600001C Null boardConfig did not throw NRE");
+            if (!passA3) Console.WriteLine("ASSERTION_FAIL: " + "0x0600001C Null boardConfig did not throw NRE");
+            failedAssertions.Add("0x0600001C Null boardConfig did not throw NRE"));
 
             // Case A.4: Null map -> NRE in GetMapX
             bool passA4 = false;
             try { fn01c(new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = null } }); }
             catch (NullReferenceException) { passA4 = true; }
             casesExecuted++;
-            if (!passA4) failedAssertions.Add("0x0600001C Null map did not throw NRE");
+            if (!passA4) Console.WriteLine("ASSERTION_FAIL: " + "0x0600001C Null map did not throw NRE");
+            failedAssertions.Add("0x0600001C Null map did not throw NRE"));
 
             // Case A.5: Field replacement reentrancy (Map replaced during GetMapX callback)
             var adminReentrant = new MockAdminSystem2 { waveOnCheck = 9 };
@@ -599,7 +603,8 @@ namespace GodsPVZ.Actions.Verification
             // x from map1 (100), y from map2 (600 / 2 = 300) proves separate getter call and no local caching
             bool passA5 = (createdReentrant != null && createdReentrant.gridX == 100 && createdReentrant.row == 300);
             casesExecuted++;
-            if (!passA5) failedAssertions.Add("0x0600001C Reentrancy map swap failed to observe updated map");
+            if (!passA5) Console.WriteLine("ASSERTION_FAIL: " + "0x0600001C Reentrancy map swap failed to observe updated map");
+            failedAssertions.Add("0x0600001C Reentrancy map swap failed to observe updated map"));
 
             // =================================================================
             // CHAIN B: CIL Mutants on 0x06000158 & 0x0600001C
@@ -617,7 +622,8 @@ namespace GodsPVZ.Actions.Verification
             bool mutDiv3_detected = (resMutDiv3.row == 80 && resMutDiv3.row != 120);
             mutantsTested++;
             if (mutDiv3_detected) mutantsDetected++;
-            else failedAssertions.Add("Mutant B.1 (div3) was not detected");
+            else Console.WriteLine("ASSERTION_FAIL: " + "Mutant B.1 (div3) was not detected");
+            failedAssertions.Add("Mutant B.1 (div3) was not detected"));
 
             // Mutant B.2: Mutate 0x06000158 CIL to return null
             var m158_mutNull = CloneMethod(m158, "m158_mutNull");
@@ -632,7 +638,8 @@ namespace GodsPVZ.Actions.Verification
             catch (NullReferenceException) { mutGetterNull_detected = true; }
             mutantsTested++;
             if (mutGetterNull_detected) mutantsDetected++;
-            else failedAssertions.Add("Mutant B.2 (getter null) was not detected");
+            else Console.WriteLine("ASSERTION_FAIL: " + "Mutant B.2 (getter null) was not detected");
+            failedAssertions.Add("Mutant B.2 (getter null) was not detected"));
 
             // =================================================================
             // CHAIN C: 0x06000303 (Device.get_AnimationSprites) & 0x06000183 (DisplayBan_device)
@@ -651,19 +658,21 @@ namespace GodsPVZ.Actions.Verification
             var dev2 = new MockDevice { ID = 2, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var mgrC1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { dev1, dev12, dev2 } };
             fn183(mgrC1);
-            bool passC1 = (dev1.animationSprites[0].a == 0.5f && dev12.animationSprites[0].a == 0.0f && dev2.animationSprites[0].a == 0.5f
+            bool passC1 = (dev12.animationSprites[0].a == 0.5f && dev1.animationSprites[0].a == 0.0f && dev2.animationSprites[0].a == 0.0f
                            && MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Contains("MockDevice_Disposed")
                            && MockTrackedEnumerator<MockSpriteRenderer>.TraceDisposeLog.Contains("MockSpriteRenderer_Disposed"));
             casesExecuted++;
-            if (!passC1) failedAssertions.Add("0x06000183 Case C.1 normal isBan=false failed");
+            if (!passC1) Console.WriteLine("ASSERTION_FAIL: " + "0x06000183 Case C.1 normal isBan=false failed");
+            failedAssertions.Add("0x06000183 Case C.1 normal isBan=false failed"));
 
             // Case C.2: Normal execution (display_Ban_device = true)
-            var devBan = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devBan = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var mgrC2 = new MockDeviceManager { display_Ban_device = true, deviceList = new List<MockDevice> { devBan } };
             fn183(mgrC2);
             bool passC2 = (devBan.animationSprites[0].a == 1.0f);
             casesExecuted++;
-            if (!passC2) failedAssertions.Add("0x06000183 Case C.2 normal isBan=true failed");
+            if (!passC2) Console.WriteLine("ASSERTION_FAIL: " + "0x06000183 Case C.2 normal isBan=true failed");
+            failedAssertions.Add("0x06000183 Case C.2 normal isBan=true failed"));
 
             // Case C.3: Null device in list (fat finally outer dispose executed)
             MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
@@ -675,11 +684,12 @@ namespace GodsPVZ.Actions.Verification
                 passC3 = MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Contains("MockDevice_Disposed");
             }
             casesExecuted++;
-            if (!passC3) failedAssertions.Add("0x06000183 Case C.3 null device outer dispose failed");
+            if (!passC3) Console.WriteLine("ASSERTION_FAIL: " + "0x06000183 Case C.3 null device outer dispose failed");
+            failedAssertions.Add("0x06000183 Case C.3 null device outer dispose failed"));
 
             // Case C.4: Inner rendering exception triggers both nested finally blocks in sequence
             MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
-            var devFault = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer { throwOnSet = true } } };
+            var devFault = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer { throwOnSet = true } } };
             var mgrC4 = new MockDeviceManager { deviceList = new List<MockDevice> { devFault } };
             bool passC4 = false;
             try { fn183(mgrC4); }
@@ -689,7 +699,8 @@ namespace GodsPVZ.Actions.Verification
                 passC4 = log.Contains("MockSpriteRenderer_Disposed") && log.Contains("MockDevice_Disposed");
             }
             casesExecuted++;
-            if (!passC4) failedAssertions.Add("0x06000183 Case C.4 inner fault nested dispose failed");
+            if (!passC4) Console.WriteLine("ASSERTION_FAIL: " + "0x06000183 Case C.4 inner fault nested dispose failed");
+            failedAssertions.Add("0x06000183 Case C.4 inner fault nested dispose failed"));
 
             // =================================================================
             // CHAIN C Mutants on 0x06000183
@@ -706,23 +717,25 @@ namespace GodsPVZ.Actions.Verification
             var mgrMut1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMut1, devMut12 } };
             fn183_mutBeq(mgrMut1);
             // Inverted filter: devMut1 skipped (a=0), devMut12 colored (a=0.5)
-            bool mutBeq_detected = (devMut1.animationSprites[0].a == 0.0f && devMut12.animationSprites[0].a == 0.5f);
+            bool mutBeq_detected = (devMut12.animationSprites[0].a == 0.0f && devMut1.animationSprites[0].a == 0.5f);
             mutantsTested++;
             if (mutBeq_detected) mutantsDetected++;
-            else failedAssertions.Add("Mutant C.1 (inverted type12 filter) was not detected");
+            else Console.WriteLine("ASSERTION_FAIL: " + "Mutant C.1 (inverted type12 filter) was not detected");
+            failedAssertions.Add("Mutant C.1 (inverted type12 filter) was not detected"));
 
             // Mutant C.2: Mutate alpha constant (0.5f -> 0.75f)
             var m183_mutAlpha = CloneMethod(m183, "m183_mutAlpha");
             var insAlpha = m183_mutAlpha.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ldc_R4 && (float)i.Operand == 0.5f);
             insAlpha.Operand = 0.75f;
             var fn183_mutAlpha = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutAlpha, fn303.Method);
-            var devMutAlpha = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devMutAlpha = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var mgrMutAlpha = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMutAlpha } };
             fn183_mutAlpha(mgrMutAlpha);
             bool mutAlpha_detected = (devMutAlpha.animationSprites[0].a == 0.75f);
             mutantsTested++;
             if (mutAlpha_detected) mutantsDetected++;
-            else failedAssertions.Add("Mutant C.2 (alpha constant) was not detected");
+            else Console.WriteLine("ASSERTION_FAIL: " + "Mutant C.2 (alpha constant) was not detected");
+            failedAssertions.Add("Mutant C.2 (alpha constant) was not detected"));
 
             // =================================================================
             // CHAIN D: Negative Control on Verification Gate Integrity
@@ -735,7 +748,8 @@ namespace GodsPVZ.Actions.Verification
                 int simulatedExit = testFailures.Count > 0 ? 101 : 0;
                 gateNegativeControlPassed = (simulatedExit == 101);
             }
-            if (!gateNegativeControlPassed) failedAssertions.Add("Gate negative control failed");
+            if (!gateNegativeControlPassed) Console.WriteLine("ASSERTION_FAIL: " + "Gate negative control failed");
+            failedAssertions.Add("Gate negative control failed"));
 
             // =================================================================
             // Evaluation Status and Detailed Accounting for Native116 (50 methods)
