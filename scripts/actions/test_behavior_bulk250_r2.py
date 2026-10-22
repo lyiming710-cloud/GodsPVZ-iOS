@@ -35,12 +35,12 @@ def main():
         print(f"ERROR: Fixture project not found at: {csproj_path}")
         sys.exit(3)
 
-    print("=================================================================")
+    print("-----------------------------------------------------------------")
     print("Launching C# Real Cecil / CLR DynamicMethod Behavioral Fixture...")
     print(f"Project: {csproj_path}")
     print(f"Candidate: {cand_path}")
     print(f"Output: {out_json}")
-    print("=================================================================")
+    print("-----------------------------------------------------------------")
 
     cmd = ["dotnet", "run", "--project", str(csproj_path), "--", str(cand_path), str(out_json)]
     p = subprocess.run(cmd, capture_output=False)
@@ -54,9 +54,22 @@ def main():
 
     report = json.loads(out_json.read_text(encoding="utf-8"))
     summary = report.get("summary", {})
-    print("\nBehavioral Qualification Summary:")
+    print("Behavioral Qualification Summary:")
     print(json.dumps(summary, indent=2))
 
+    if summary.get("methods_failed", 0) > 0:
+        print(f"GATE REJECTION: {summary['methods_failed']} methods failed assertions!")
+        sys.exit(10)
+
+    if summary.get("methods_genuinely_passed", 0) == 0:
+        print("GATE REJECTION: Zero methods genuinely passed!")
+        sys.exit(11)
+
+    if summary.get("total_mutants_detected", 0) < summary.get("total_mutants_tested", 0):
+        print("GATE REJECTION: One or more mutants escaped detection!")
+        sys.exit(12)
+
+    print("Gate Validation Passed: Real CIL execution chain and mutant detections verified.")
     sys.exit(0)
 
 if __name__ == "__main__":

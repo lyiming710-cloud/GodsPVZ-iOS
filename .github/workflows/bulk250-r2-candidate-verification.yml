@@ -109,7 +109,7 @@ jobs:
         run: |
           set -euo pipefail
           cand_dll="$GITHUB_WORKSPACE/.validation/bulk250-r2-run/candidates/candidate1.dll"
-          report_json="$GITHUB_WORKSPACE/.validation/bulk250-r2-run/BULK250-R2-50METHODS-BEHAVIOR-REPORT.json"
+          report_json="$GITHUB_WORKSPACE/.validation/bulk250-r2-run/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v2.json"
           if [ -f "$cand_dll" ]; then
             echo "Executing C# Bulk250R2BehaviorFixture against candidate1.dll..."
             python3 scripts/actions/test_behavior_bulk250_r2.py --candidate-dll "$cand_dll" --output-json "$report_json"
