@@ -1,0 +1,297 @@
+Grid::CanPlacing
+{"token": "0x06000297", "name": "Grid::CanPlacing", "signature": "2001021281d4", "rva": 212332, "max_stack": 3, "code_size": 1145, "local_sig": 285213199, "locals_blob": "07261281d4020202021281e0020202020202125912210202020202021c020202021c021c122102021c1c1c020202128190", "eh_count": 0, "il_sha256": "04bbe8e34ce63fab0d379f313537d6725f467894203ae23392d54f74ecdcfa70"}
+IL_0000: br             {'target': 1072}
+IL_0005: ldarg          argument(0x0001)
+IL_0009: ldc.i4         0
+IL_000E: ceq            None
+IL_0010: stloc          local(0x0002)
+IL_0014: ldloc          local(0x0002)
+IL_0018: brtrue         {'target': 1058}
+IL_001D: br             {'target': 34}
+IL_0022: ldarg          argument(0x0001)
+IL_0026: call           {'token': '0x06000312', 'identity': 'Device::CanPlaceOnWater'}
+IL_002B: stloc          local(0x0004)
+IL_002F: ldloc          local(0x0004)
+IL_0033: brtrue         {'target': 220}
+IL_0038: br             {'target': 61}
+IL_003D: br             {'target': 66}
+IL_0042: ldarg.0        None
+IL_0043: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_0048: ldnull         None
+IL_0049: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_004E: stloc          local(0x001A)
+IL_0052: ldloc          local(0x001A)
+IL_0056: brtrue         {'target': 137}
+IL_005B: br             {'target': 96}
+IL_0060: br             {'target': 101}
+IL_0065: ldarg.0        None
+IL_0066: ldfld          {'token': '0x0400038C', 'identity': 'Grid::device_bottom'}
+IL_006B: ldnull         None
+IL_006C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0071: stloc          local(0x000E)
+IL_0075: ldloc          local(0x000E)
+IL_0079: brtrue         {'target': 355}
+IL_007E: br             {'target': 131}
+IL_0083: ldc.i4         0
+IL_0088: ret            None
+IL_0089: ldarg.0        None
+IL_008A: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_008F: stloc          local(0x0005)
+IL_0093: ldarg.0        None
+IL_0094: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_0099: ldc.i4         0
+IL_009E: ceq            None
+IL_00A0: stloc          local(0x0008)
+IL_00A4: ldloc          local(0x0008)
+IL_00A8: brtrue         {'target': 1058}
+IL_00AD: br             {'target': 178}
+IL_00B2: ldloc          local(0x0005)
+IL_00B6: ldfld          {'token': '0x040004B0', 'identity': 'Plant::plantType'}
+IL_00BB: ldc.i4         16
+IL_00C0: ceq            None
+IL_00C2: ldc.i4.0       None
+IL_00C3: ceq            None
+IL_00C5: stloc          local(0x0015)
+IL_00C9: ldloc          local(0x0015)
+IL_00CD: brtrue         {'target': 131}
+IL_00D2: br             {'target': 215}
+IL_00D7: br             {'target': 355}
+IL_00DC: br             {'target': 225}
+IL_00E1: ldarg.0        None
+IL_00E2: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_00E7: ldnull         None
+IL_00E8: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_00ED: stloc          local(0x000F)
+IL_00F1: ldloc          local(0x000F)
+IL_00F5: brtrue         {'target': 255}
+IL_00FA: br             {'target': 131}
+IL_00FF: br             {'target': 260}
+IL_0104: ldarg.0        None
+IL_0105: ldfld          {'token': '0x0400038C', 'identity': 'Grid::device_bottom'}
+IL_010A: ldnull         None
+IL_010B: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_0110: stloc          local(0x0010)
+IL_0114: ldloc          local(0x0010)
+IL_0118: brtrue         {'target': 290}
+IL_011D: br             {'target': 131}
+IL_0122: br             {'target': 355}
+IL_0127: ldarg.0        None
+IL_0128: ldfld          {'token': '0x04000383', 'identity': 'Grid::gridState'}
+IL_012D: ldc.i4         5
+IL_0132: ceq            None
+IL_0134: stloc          local(0x0003)
+IL_0138: ldloc          local(0x0003)
+IL_013C: brtrue         {'target': 131}
+IL_0141: br             {'target': 326}
+IL_0146: ldarg          argument(0x0001)
+IL_014A: ldc.i4         0
+IL_014F: ceq            None
+IL_0151: stloc          local(0x0009)
+IL_0155: ldloc          local(0x0009)
+IL_0159: brtrue         {'target': 1058}
+IL_015E: br             {'target': 355}
+IL_0163: ldarg          argument(0x0001)
+IL_0167: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_016C: ldc.i4         0
+IL_0171: ceq            None
+IL_0173: stloc          local(0x0018)
+IL_0177: ldloc          local(0x0018)
+IL_017B: brtrue         {'target': 534}
+IL_0180: br             {'target': 389}
+IL_0185: ldarg          argument(0x0001)
+IL_0189: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_018E: ldc.i4         1
+IL_0193: sub            None
+IL_0194: stloc          local(0x0019)
+IL_0198: ldloc          local(0x0018)
+IL_019C: brtrue         {'target': 519}
+IL_01A1: br             {'target': 422}
+IL_01A6: ldloc          local(0x0019)
+IL_01AA: ldc.i4         1
+IL_01AF: sub            None
+IL_01B0: stloc          local(0x001B)
+IL_01B4: ldloc          local(0x0018)
+IL_01B8: brtrue         {'target': 504}
+IL_01BD: br             {'target': 450}
+IL_01C2: ldloc          local(0x001B)
+IL_01C6: ldc.i4         1
+IL_01CB: ceq            None
+IL_01CD: stloc          local(0x001D)
+IL_01D1: ldloc          local(0x001D)
+IL_01D5: brtrue         {'target': 489}
+IL_01DA: br             {'target': 479}
+IL_01DF: ldnull         None
+IL_01E0: stloc          local(0x001C)
+IL_01E4: br             {'target': 1106}
+IL_01E9: ldarg.0        None
+IL_01EA: ldfld          {'token': '0x0400038B', 'identity': 'Grid::plant_top'}
+IL_01EF: stloc          local(0x001C)
+IL_01F3: br             {'target': 1106}
+IL_01F8: ldarg.0        None
+IL_01F9: ldfld          {'token': '0x04000389', 'identity': 'Grid::plant_common'}
+IL_01FE: stloc          local(0x001C)
+IL_0202: br             {'target': 1106}
+IL_0207: ldarg.0        None
+IL_0208: ldfld          {'token': '0x0400038A', 'identity': 'Grid::plant_sheath'}
+IL_020D: stloc          local(0x001C)
+IL_0211: br             {'target': 1106}
+IL_0216: ldarg.0        None
+IL_0217: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_021C: stloc          local(0x001C)
+IL_0220: br             {'target': 1106}
+IL_0225: ldarg          argument(0x0001)
+IL_0229: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_022E: ldc.i4         1
+IL_0233: sub            None
+IL_0234: stloc          local(0x001F)
+IL_0238: ldloc          local(0x001E)
+IL_023C: brtrue         {'target': 720}
+IL_0241: br             {'target': 582}
+IL_0246: ldloc          local(0x001F)
+IL_024A: ldc.i4         1
+IL_024F: sub            None
+IL_0250: stloc          local(0x0020)
+IL_0254: ldloc          local(0x001E)
+IL_0258: brtrue         {'target': 705}
+IL_025D: br             {'target': 610}
+IL_0262: ldloc          local(0x0020)
+IL_0266: ldc.i4         1
+IL_026B: sub            None
+IL_026C: stloc          local(0x0021)
+IL_0270: ldloc          local(0x001E)
+IL_0274: brtrue         {'target': 690}
+IL_0279: br             {'target': 638}
+IL_027E: ldloc          local(0x0021)
+IL_0282: ldc.i4         1
+IL_0287: ceq            None
+IL_0289: ldc.i4.0       None
+IL_028A: ceq            None
+IL_028C: stloc          local(0x0022)
+IL_0290: ldnull         None
+IL_0291: stloc          local(0x000D)
+IL_0295: ldloc          local(0x0022)
+IL_0299: brtrue         {'target': 1140}
+IL_029E: br             {'target': 675}
+IL_02A3: ldarg.0        None
+IL_02A4: ldfld          {'token': '0x0400038E', 'identity': 'Grid::device_ladder'}
+IL_02A9: stloc          local(0x000D)
+IL_02AD: br             {'target': 1140}
+IL_02B2: ldarg.0        None
+IL_02B3: ldfld          {'token': '0x04000390', 'identity': 'Grid::device_top'}
+IL_02B8: stloc          local(0x000D)
+IL_02BC: br             {'target': 1140}
+IL_02C1: ldarg.0        None
+IL_02C2: ldfld          {'token': '0x0400038D', 'identity': 'Grid::device_common'}
+IL_02C7: stloc          local(0x000D)
+IL_02CB: br             {'target': 1140}
+IL_02D0: ldarg.0        None
+IL_02D1: ldfld          {'token': '0x0400038F', 'identity': 'Grid::device_sheath'}
+IL_02D6: stloc          local(0x000D)
+IL_02DA: br             {'target': 1140}
+IL_02DF: ldarg.0        None
+IL_02E0: ldfld          {'token': '0x0400038C', 'identity': 'Grid::device_bottom'}
+IL_02E5: stloc          local(0x000D)
+IL_02E9: br             {'target': 1140}
+IL_02EE: ldloc          local(0x001C)
+IL_02F2: ldnull         None
+IL_02F3: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_02F8: stloc          local(0x0011)
+IL_02FC: ldloc          local(0x0011)
+IL_0300: brtrue         {'target': 778}
+IL_0305: br             {'target': 131}
+IL_030A: br             {'target': 783}
+IL_030F: ldloc          local(0x000D)
+IL_0313: ldnull         None
+IL_0314: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_0319: stloc          local(0x0012)
+IL_031D: ldloc          local(0x0012)
+IL_0321: brtrue         {'target': 811}
+IL_0326: br             {'target': 131}
+IL_032B: br             {'target': 816}
+IL_0330: ldarg.0        None
+IL_0331: ldfld          {'token': '0x0400038C', 'identity': 'Grid::device_bottom'}
+IL_0336: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_033B: stloc          local(0x0006)
+IL_033F: ldloc          local(0x0006)
+IL_0343: ldc.i4.0       None
+IL_0344: ceq            None
+IL_0346: stloc          local(0x0023)
+IL_034A: ldloc          local(0x0023)
+IL_034E: brtrue         {'target': 941}
+IL_0353: br             {'target': 856}
+IL_0358: ldarg.0        None
+IL_0359: ldfld          {'token': '0x0400038C', 'identity': 'Grid::device_bottom'}
+IL_035E: ldc.i4         0
+IL_0363: ceq            None
+IL_0365: stloc          local(0x000A)
+IL_0369: ldloc          local(0x000A)
+IL_036D: brtrue         {'target': 1058}
+IL_0372: br             {'target': 887}
+IL_0377: ldarg.0        None
+IL_0378: ldfld          {'token': '0x0400038C', 'identity': 'Grid::device_bottom'}
+IL_037D: ldarg          argument(0x0001)
+IL_0381: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_0386: ldstr          {'token': '0x7000AE84', 'identity': 'device'}
+IL_038B: call           {'token': '0x06000311', 'identity': 'Device::CanBear'}
+IL_0390: stloc          local(0x0013)
+IL_0394: ldloc          local(0x0013)
+IL_0398: ldc.i4.0       None
+IL_0399: ceq            None
+IL_039B: stloc          local(0x0016)
+IL_039F: ldloc          local(0x0016)
+IL_03A3: brtrue         {'target': 131}
+IL_03A8: br             {'target': 941}
+IL_03AD: br             {'target': 946}
+IL_03B2: ldarg.0        None
+IL_03B3: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_03B8: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_03BD: stloc          local(0x0007)
+IL_03C1: ldloc          local(0x0007)
+IL_03C5: ldc.i4.0       None
+IL_03C6: ceq            None
+IL_03C8: stloc          local(0x0024)
+IL_03CC: ldloc          local(0x0024)
+IL_03D0: brtrue         {'target': 1052}
+IL_03D5: br             {'target': 986}
+IL_03DA: ldarg.0        None
+IL_03DB: ldfld          {'token': '0x04000388', 'identity': 'Grid::plant_bottom'}
+IL_03E0: ldc.i4         0
+IL_03E5: ceq            None
+IL_03E7: stloc          local(0x000B)
+IL_03EB: ldloc          local(0x000B)
+IL_03EF: brtrue         {'target': 1058}
+IL_03F4: br             {'target': 1017}
+IL_03F9: ldstr          {'token': '0x7000AE92', 'identity': 'Method not found @18034E180'}
+IL_03FE: pop            None
+IL_03FF: ldloc          local(0x0014)
+IL_0403: ldc.i4         0
+IL_0408: ceq            None
+IL_040A: stloc          local(0x0017)
+IL_040E: ldloc          local(0x0017)
+IL_0412: brtrue         {'target': 131}
+IL_0417: br             {'target': 1052}
+IL_041C: ldc.i4         1
+IL_0421: ret            None
+IL_0422: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0427: stloc          local(0x000C)
+IL_042B: ldloc          local(0x000C)
+IL_042F: ret            None
+IL_0430: ldarg.0        None
+IL_0431: ldfld          {'token': '0x04000383', 'identity': 'Grid::gridState'}
+IL_0436: ldc.i4         3
+IL_043B: ceq            None
+IL_043D: ldc.i4.0       None
+IL_043E: ceq            None
+IL_0440: stloc          local(0x0001)
+IL_0444: ldloc          local(0x0001)
+IL_0448: brtrue         {'target': 295}
+IL_044D: br             {'target': 5}
+IL_0452: ldarg          argument(0x0001)
+IL_0456: ldfld          {'token': '0x04000473', 'identity': 'Device::occupyState'}
+IL_045B: ldc.i4         0
+IL_0460: ceq            None
+IL_0462: stloc          local(0x001E)
+IL_0466: ldloc          local(0x001E)
+IL_046A: brtrue         {'target': 735}
+IL_046F: br             {'target': 549}
+IL_0474: br             {'target': 750}

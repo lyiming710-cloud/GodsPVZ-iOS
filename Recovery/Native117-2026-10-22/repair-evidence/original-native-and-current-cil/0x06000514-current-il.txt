@@ -1,0 +1,101 @@
+SkillManager::Awake148
+{"token": "0x06000514", "name": "SkillManager::Awake148", "signature": "0004011281e01282101281f4128094", "rva": 433976, "max_stack": 3, "code_size": 398, "local_sig": 285213655, "locals_blob": "07141281e0021215124c121515120d01128210021209021c1215114d12601c1282100218114d151151011c151151011c", "eh_count": 0, "il_sha256": "f51101c16084906969e2ab712ae49a49e8af1092c18daeb20c8f2f62e020cb8e"}
+IL_0000: br             {'target': 5}
+IL_0005: ldarg          argument(0x0000)
+IL_0009: ldc.i4         1
+IL_000E: stfld          {'token': '0x040004C4', 'identity': 'Plant::blockable'}
+IL_0013: ldarg          argument(0x0000)
+IL_0017: ldc.i4         1
+IL_001C: stfld          {'token': '0x040004D5', 'identity': 'Plant::supperHit'}
+IL_0021: ldarg          argument(0x0000)
+IL_0025: call           {'token': '0x06000395', 'identity': 'Plant::PlantAttackStart'}
+IL_002A: br             {'target': 47}
+IL_002F: ldsfld         {'token': '0x04000278', 'identity': 'ParticlesManager::<instance>k__BackingField'}
+IL_0034: ldc.i4         36
+IL_0039: call           {'token': '0x060001EA', 'identity': 'ParticlesManager::CreatNewParticle'}
+IL_003E: stloc          local(0x0007)
+IL_0042: br             {'target': 71}
+IL_0047: ldloc          local(0x0007)
+IL_004B: ldnull         None
+IL_004C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0051: stloc          local(0x0001)
+IL_0055: ldloc          local(0x0001)
+IL_0059: brtrue         {'target': 99}
+IL_005E: br             {'target': 324}
+IL_0063: ldloc          local(0x0007)
+IL_0067: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_006C: stloc          local(0x0002)
+IL_0070: br             {'target': 117}
+IL_0075: nop            None
+IL_0076: ldloc          local(0x0002)
+IL_007A: ldloca         local(0x0011)
+IL_007E: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0083: ldloc          local(0x0007)
+IL_0087: call           {'token': '0x2B00000F', 'identity': '0x2b00000f'}
+IL_008C: stloc          local(0x0003)
+IL_0090: br             {'target': 149}
+IL_0095: ldloc          local(0x0003)
+IL_0099: ldarg          argument(0x0000)
+IL_009D: stfld          {'token': '0x040000CD', 'identity': 'PlantAnimationEvent::plant'}
+IL_00A2: ldarg          argument(0x0000)
+IL_00A6: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_00AB: stloc          local(0x000A)
+IL_00AF: br             {'target': 180}
+IL_00B4: ldarg          argument(0x0000)
+IL_00B8: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_00BD: stloc          local(0x0004)
+IL_00C1: br             {'target': 198}
+IL_00C6: ldloc          local(0x0004)
+IL_00CA: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_00CF: stloc          local(0x000B)
+IL_00D3: ldstr          {'token': '0x70016EE7', 'identity': 'Method not found @180426070'}
+IL_00D8: pop            None
+IL_00D9: br             {'target': 222}
+IL_00DE: ldarg          argument(0x0000)
+IL_00E2: ldc.i4         999
+IL_00E7: ldloc          local(0x000C)
+IL_00EB: call           {'token': '0x06000362', 'identity': 'Plant::EnemySeeking_plural'}
+IL_00F0: stloc          local(0x0005)
+IL_00F4: br             {'target': 249}
+IL_00F9: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00FE: pop            None
+IL_00FF: nop            None
+IL_0100: br             {'target': 354}
+IL_0105: ldloc          local(0x000E)
+IL_0109: ldc.i4         0
+IL_010E: ceq            None
+IL_0110: stloc          local(0x0006)
+IL_0114: ldloc          local(0x0006)
+IL_0118: brtrue         {'target': 325}
+IL_011D: br             {'target': 290}
+IL_0122: ldloc          local(0x000E)
+IL_0126: ldc.r4         3.0
+IL_012B: call           {'token': '0x0600047E', 'identity': 'Zombie::Stiffen'}
+IL_0130: nop            None
+IL_0131: br             {'target': 354}
+IL_0136: ldloca         local(0x0013)
+IL_013A: call           {'token': '0x0A00015E', 'identity': 'TypeSpec:46::Dispose / sig 200001'}
+IL_013F: br             {'target': 324}
+IL_0144: ret            None
+IL_0145: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_014A: throw          None
+IL_014B: ldloc          local(0x000E)
+IL_014F: throw          None
+IL_0150: br             {'target': 341}
+IL_0155: nop            None
+IL_0156: br             {'target': 347}
+IL_015B: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0160: throw          None
+IL_0161: ret            None
+IL_0162: ldloca         local(0x0013)
+IL_0166: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_016B: stloc          local(0x000F)
+IL_016F: ldloc          local(0x000F)
+IL_0173: ldc.i4.0       None
+IL_0174: ceq            None
+IL_0176: stloc          local(0x0008)
+IL_017A: ldloc          local(0x0008)
+IL_017E: brtrue         {'target': 310}
+IL_0183: br             {'target': 261}
+IL_0188: ldstr          {'token': '0x70003B41', 'identity': 'Warning: Method ends with non empty stack (-A0), the output could be wrong!'}
+IL_018D: pop            None

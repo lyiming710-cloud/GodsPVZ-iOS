@@ -1,0 +1,226 @@
+MouseManager::MouseDown_PlantSkillCrosshairs
+{"token": "0x060001D9", "name": "MouseManager::MouseDown_PlantSkillCrosshairs", "signature": "200001", "rva": 139140, "max_stack": 3, "code_size": 864, "local_sig": 285213055, "locals_blob": "071e12812c021281e01281e01282441281e0081282101281d402021260114d1281e01281e01281e01281e01281e01281e00202020202128094020202021c", "eh_count": 0, "il_sha256": "384d537c475d8f06d98962b8dd7ad3895ee9b976500fe30c7a7f37811be5f5a3"}
+IL_0000: br             {'target': 840}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_000B: ldnull         None
+IL_000C: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0011: stloc          local(0x0001)
+IL_0015: ldloc          local(0x0001)
+IL_0019: brtrue         {'target': 35}
+IL_001E: br             {'target': 68}
+IL_0023: ldarg.0        None
+IL_0024: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_0029: stloc          local(0x0002)
+IL_002D: br             {'target': 50}
+IL_0032: ldloc          local(0x0002)
+IL_0036: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_003B: stloc          local(0x0006)
+IL_003F: br             {'target': 845}
+IL_0044: ldc.i8         4294967295
+IL_004D: stloc          local(0x0006)
+IL_0051: br             {'target': 845}
+IL_0056: ldarg.0        None
+IL_0057: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_005C: ldnull         None
+IL_005D: ldc.i8         4294967295
+IL_0066: call           {'token': '0x0600036C', 'identity': 'Plant::GetDamage'}
+IL_006B: stloc          local(0x0018)
+IL_006F: ldarg.0        None
+IL_0070: ldc.i4         1
+IL_0075: ldloc          local(0x0018)
+IL_0079: call           {'token': '0x060001DC', 'identity': 'MouseManager::GetDeviceUnderMouse'}
+IL_007E: stloc          local(0x0008)
+IL_0082: br             {'target': 135}
+IL_0087: ldarg.0        None
+IL_0088: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_008D: stloc          local(0x0003)
+IL_0091: br             {'target': 150}
+IL_0096: ldarg.0        None
+IL_0097: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_009C: stloc          local(0x000E)
+IL_00A0: ldloc          local(0x0003)
+IL_00A4: ldfld          {'token': '0x040004D1', 'identity': 'Plant::skill'}
+IL_00A9: stloc          local(0x0004)
+IL_00AD: ldloc          local(0x000E)
+IL_00B1: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_00B6: ldc.i4         0
+IL_00BB: ceq            None
+IL_00BD: ldc.i4.0       None
+IL_00BE: ceq            None
+IL_00C0: stloc          local(0x0013)
+IL_00C4: ldloc          local(0x0013)
+IL_00C8: brtrue         {'target': 486}
+IL_00CD: br             {'target': 210}
+IL_00D2: ldloc          local(0x0004)
+IL_00D6: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_00DB: ldc.i4         1
+IL_00E0: ceq            None
+IL_00E2: ldc.i4.0       None
+IL_00E3: ceq            None
+IL_00E5: stloc          local(0x0019)
+IL_00E9: ldloc          local(0x0019)
+IL_00ED: brtrue         {'target': 772}
+IL_00F2: br             {'target': 247}
+IL_00F7: br             {'target': 252}
+IL_00FC: ldloc          local(0x0007)
+IL_0100: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0105: stloc          local(0x0009)
+IL_0109: ldloc          local(0x0009)
+IL_010D: ldc.i4.0       None
+IL_010E: ceq            None
+IL_0110: stloc          local(0x001C)
+IL_0114: ldloc          local(0x001C)
+IL_0118: brtrue         {'target': 348}
+IL_011D: br             {'target': 290}
+IL_0122: ldarg.0        None
+IL_0123: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_0128: stloc          local(0x000F)
+IL_012C: br             {'target': 305}
+IL_0131: ldloc          local(0x000F)
+IL_0135: ldloc          local(0x0007)
+IL_0139: stfld          {'token': '0x040004DB', 'identity': 'Plant::targetZombie'}
+IL_013E: ldarg.0        None
+IL_013F: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_0144: stloc          local(0x0010)
+IL_0148: br             {'target': 333}
+IL_014D: ldloc          local(0x0010)
+IL_0151: ldnull         None
+IL_0152: stfld          {'token': '0x040004DC', 'identity': 'Plant::targetDevice'}
+IL_0157: br             {'target': 756}
+IL_015C: ldloc          local(0x0004)
+IL_0160: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_0165: ldc.i4         1
+IL_016A: ceq            None
+IL_016C: ldc.i4.0       None
+IL_016D: ceq            None
+IL_016F: stloc          local(0x001A)
+IL_0173: ldloc          local(0x001A)
+IL_0177: brtrue         {'target': 772}
+IL_017C: br             {'target': 385}
+IL_0181: br             {'target': 390}
+IL_0186: ldloc          local(0x0008)
+IL_018A: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_018F: stloc          local(0x000A)
+IL_0193: ldloc          local(0x000A)
+IL_0197: ldc.i4.0       None
+IL_0198: ceq            None
+IL_019A: stloc          local(0x001B)
+IL_019E: ldloc          local(0x001B)
+IL_01A2: brtrue         {'target': 772}
+IL_01A7: br             {'target': 428}
+IL_01AC: ldarg.0        None
+IL_01AD: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_01B2: stloc          local(0x0011)
+IL_01B6: br             {'target': 443}
+IL_01BB: ldloc          local(0x0011)
+IL_01BF: ldnull         None
+IL_01C0: stfld          {'token': '0x040004DB', 'identity': 'Plant::targetZombie'}
+IL_01C5: ldarg.0        None
+IL_01C6: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_01CB: stloc          local(0x0012)
+IL_01CF: br             {'target': 468}
+IL_01D4: ldloc          local(0x0012)
+IL_01D8: ldloc          local(0x0008)
+IL_01DC: stfld          {'token': '0x040004DC', 'identity': 'Plant::targetDevice'}
+IL_01E1: br             {'target': 756}
+IL_01E6: ldloc          local(0x000E)
+IL_01EA: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_01EF: ldc.i4         4
+IL_01F4: ceq            None
+IL_01F6: ldc.i4.0       None
+IL_01F7: ceq            None
+IL_01F9: stloc          local(0x0014)
+IL_01FD: ldloc          local(0x0014)
+IL_0201: brtrue         {'target': 653}
+IL_0206: br             {'target': 523}
+IL_020B: ldloc          local(0x0004)
+IL_020F: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_0214: ldc.i4         1
+IL_0219: ceq            None
+IL_021B: ldc.i4.0       None
+IL_021C: ceq            None
+IL_021E: stloc          local(0x0015)
+IL_0222: ldloc          local(0x0015)
+IL_0226: brtrue         {'target': 772}
+IL_022B: br             {'target': 560}
+IL_0230: ldloc          local(0x000E)
+IL_0234: ldfld          {'token': '0x040004AF', 'identity': 'Plant::attackRangeUIController'}
+IL_0239: ldc.i4         1
+IL_023E: call           {'token': '0x060005BD', 'identity': 'AttackRangeUIController::GetAttackRange'}
+IL_0243: stloc          local(0x000B)
+IL_0247: ldarg.0        None
+IL_0248: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_024D: stloc          local(0x0005)
+IL_0251: br             {'target': 598}
+IL_0256: ldloc          local(0x000B)
+IL_025A: ldloca         local(0x001D)
+IL_025E: call           {'token': '0x060000DD', 'identity': 'AttackRange::RestraintTargetPosition'}
+IL_0263: stloc          local(0x000C)
+IL_0267: br             {'target': 620}
+IL_026C: ldloc          local(0x0005)
+IL_0270: ldloc          local(0x000C)
+IL_0274: ldfld          {'token': '0x0A00001D', 'identity': 'UnityEngine.Vector3::x / sig 060c'}
+IL_0279: stfld          {'token': '0x040004DE', 'identity': 'Plant::targetPosition'}
+IL_027E: ldloc          local(0x000C)
+IL_0282: ldfld          {'token': '0x0A00009D', 'identity': 'UnityEngine.Vector3::z / sig 060c'}
+IL_0287: pop            None
+IL_0288: br             {'target': 756}
+IL_028D: ldloc          local(0x000E)
+IL_0291: ldfld          {'token': '0x040004B1', 'identity': 'Plant::ID'}
+IL_0296: ldc.i4         49
+IL_029B: ceq            None
+IL_029D: ldc.i4.0       None
+IL_029E: ceq            None
+IL_02A0: stloc          local(0x0016)
+IL_02A4: ldloc          local(0x0016)
+IL_02A8: brtrue         {'target': 772}
+IL_02AD: br             {'target': 690}
+IL_02B2: ldloc          local(0x0004)
+IL_02B6: ldfld          {'token': '0x0400068E', 'identity': 'Skill::ID'}
+IL_02BB: ldc.i4         1
+IL_02C0: ceq            None
+IL_02C2: ldc.i4.0       None
+IL_02C3: ceq            None
+IL_02C5: stloc          local(0x0017)
+IL_02C9: ldloc          local(0x0017)
+IL_02CD: brtrue         {'target': 772}
+IL_02D2: br             {'target': 727}
+IL_02D7: ldloc          local(0x000E)
+IL_02DB: ldarg.0        None
+IL_02DC: ldfld          {'token': '0x0400023A', 'identity': 'MouseManager::mouseWorldPosition'}
+IL_02E1: stfld          {'token': '0x040004DE', 'identity': 'Plant::targetPosition'}
+IL_02E6: ldstr          {'token': '0x70006826', 'identity': 'Unmanaged memory load: [this @ rcx (MouseManager)+64]'}
+IL_02EB: pop            None
+IL_02EC: ldc.i4.0       None
+IL_02ED: conv.i         None
+IL_02EE: pop            None
+IL_02EF: br             {'target': 756}
+IL_02F4: ldarg.0        None
+IL_02F5: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_02FA: call           {'token': '0x060003B8', 'identity': 'Plant::Trigger_Skill'}
+IL_02FF: br             {'target': 772}
+IL_0304: ldarg.0        None
+IL_0305: ldfld          {'token': '0x04000244', 'identity': 'MouseManager::skillOnHandOwnerPlant'}
+IL_030A: stloc          local(0x000D)
+IL_030E: br             {'target': 787}
+IL_0313: ldloc          local(0x000D)
+IL_0317: ldfld          {'token': '0x040004AF', 'identity': 'Plant::attackRangeUIController'}
+IL_031C: call           {'token': '0x060005BE', 'identity': 'AttackRangeUIController::CollapseView'}
+IL_0321: br             {'target': 806}
+IL_0326: ldarg.0        None
+IL_0327: ldfld          {'token': '0x04000240', 'identity': 'MouseManager::plantSkillCrosshairs'}
+IL_032C: call           {'token': '0x0A000025', 'identity': 'UnityEngine.Object::Destroy / sig 0001011221'}
+IL_0331: ldarg.0        None
+IL_0332: call           {'token': '0x060001E1', 'identity': 'MouseManager::ResetMouseState'}
+IL_0337: br             {'target': 828}
+IL_033C: ldarg.0        None
+IL_033D: ldfld          {'token': '0x04000230', 'identity': 'MouseManager::board'}
+IL_0342: call           {'token': '0x060002B8', 'identity': 'Board::DisplayButtons'}
+IL_0347: ret            None
+IL_0348: br             {'target': 5}
+IL_034D: ldarg.0        None
+IL_034E: ldloc          local(0x0006)
+IL_0352: call           {'token': '0x060001E0', 'identity': 'MouseManager::GetZombieUnderMouse'}
+IL_0357: stloc          local(0x0007)
+IL_035B: br             {'target': 86}

@@ -1,0 +1,200 @@
+ChallengeScreen::Awake
+{"token": "0x060005FF", "name": "ChallengeScreen::Awake", "signature": "200001", "rva": 531940, "max_stack": 3, "code_size": 779, "local_sig": 285213832, "locals_blob": "07281c1c1c12150811812d1c1c1c15120d0112808c1c12091c127512808c12808512808c12150e0e081280881280880202021280881c1c1c1c1215121511812d11812d0e181c1282d008", "eh_count": 0, "il_sha256": "0bb381f28204830ea5d0d78e5ef9b1d16c9704a51831e3d2db5fd5da254f14a2"}
+IL_0000: br             {'target': 710}
+IL_0005: ldc.i4         0
+IL_000A: stloc          local(0x0004)
+IL_000E: ldc.i4         0
+IL_0013: stloc          local(0x0014)
+IL_0017: br             {'target': 732}
+IL_001C: ldloc          local(0x0014)
+IL_0020: ldloc          local(0x0009)
+IL_0024: ldfld          {'token': '0x0A000288', 'identity': 'TypeSpec:117::_size / sig 0608'}
+IL_0029: clt            None
+IL_002B: ldc.i4.0       None
+IL_002C: ceq            None
+IL_002E: stloc          local(0x0018)
+IL_0032: ldloc          local(0x0018)
+IL_0036: brtrue         {'target': 494}
+IL_003B: br             {'target': 64}
+IL_0040: ldstr          {'token': '0x7001B334', 'identity': 'Not implemented instruction: "imul ebx"'}
+IL_0045: pop            None
+IL_0046: ldloc          local(0x0010)
+IL_004A: ldfld          {'token': '0x0400011B', 'identity': 'ChallengeDefItem::Name'}
+IL_004F: ldc.i4         1
+IL_0054: shr            None
+IL_0055: stloc          local(0x001C)
+IL_0059: ldloc          local(0x001C)
+IL_005D: ldc.i4         31
+IL_0062: shr            None
+IL_0063: stloc          local(0x001D)
+IL_0067: ldloc          local(0x001C)
+IL_006B: ldloc          local(0x001D)
+IL_006F: add            None
+IL_0070: stloc          local(0x0007)
+IL_0074: ldstr          {'token': '0x7001B334', 'identity': 'Not implemented instruction: "imul ebx"'}
+IL_0079: pop            None
+IL_007A: ldloc          local(0x0007)
+IL_007E: ldc.i4         1
+IL_0083: shr            None
+IL_0084: stloc          local(0x001E)
+IL_0088: ldloc          local(0x001E)
+IL_008C: ldc.i4         31
+IL_0091: shr            None
+IL_0092: stloc          local(0x000A)
+IL_0096: ldloc          local(0x001E)
+IL_009A: ldloc          local(0x000A)
+IL_009E: add            None
+IL_009F: stloc          local(0x0006)
+IL_00A3: br             {'target': 168}
+IL_00A8: ldarg.0        None
+IL_00A9: ldfld          {'token': '0x040007CE', 'identity': 'ChallengeScreen::ViewContent'}
+IL_00AE: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00B3: stloc          local(0x001F)
+IL_00B7: br             {'target': 188}
+IL_00BC: ldarg.0        None
+IL_00BD: ldfld          {'token': '0x040007CF', 'identity': 'ChallengeScreen::ChallengeItem'}
+IL_00C2: ldloc          local(0x001F)
+IL_00C6: call           {'token': '0x2B000085', 'identity': '0x2b000085'}
+IL_00CB: stloc          local(0x000B)
+IL_00CF: br             {'target': 212}
+IL_00D4: ldloc          local(0x000B)
+IL_00D8: ldc.i4         1
+IL_00DD: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_00E2: ldloc          local(0x000B)
+IL_00E6: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_00EB: stloc          local(0x0020)
+IL_00EF: br             {'target': 244}
+IL_00F4: ldloc          local(0x0006)
+IL_00F8: ldc.i8         4294967156
+IL_0101: mul            None
+IL_0102: stloc          local(0x000C)
+IL_0106: br             {'target': 267}
+IL_010B: ldloc          local(0x0020)
+IL_010F: ldloca         local(0x0005)
+IL_0113: call           {'token': '0x0A000042', 'identity': 'UnityEngine.Transform::set_localPosition / sig 200101114d'}
+IL_0118: ldloc          local(0x000B)
+IL_011C: call           {'token': '0x2B000086', 'identity': '0x2b000086'}
+IL_0121: stloc          local(0x000D)
+IL_0125: br             {'target': 298}
+IL_012A: ldarg.0        None
+IL_012B: ldfld          {'token': '0x040007CD', 'identity': 'ChallengeScreen::Challenges'}
+IL_0130: stloc          local(0x0015)
+IL_0134: br             {'target': 313}
+IL_0139: ldloc          local(0x0015)
+IL_013D: ldfld          {'token': '0x0400011A', 'identity': 'ChallengeDef::Challenges'}
+IL_0142: ldloc          local(0x0004)
+IL_0146: call           {'token': '0x0A00028B', 'identity': 'TypeSpec:117::get_Item / sig 2001130008'}
+IL_014B: stloc          local(0x000E)
+IL_014F: br             {'target': 340}
+IL_0154: ldloc          local(0x000D)
+IL_0158: ldloc          local(0x000E)
+IL_015C: ldfld          {'token': '0x0400011C', 'identity': 'ChallengeDefItem::Icon'}
+IL_0161: call           {'token': '0x0A000041', 'identity': 'UnityEngine.UI.Image::set_sprite / sig 200101125d'}
+IL_0166: ldloc          local(0x000B)
+IL_016A: call           {'token': '0x2B000087', 'identity': '0x2b000087'}
+IL_016F: stloc          local(0x000F)
+IL_0173: br             {'target': 376}
+IL_0178: ldarg.0        None
+IL_0179: ldfld          {'token': '0x040007CD', 'identity': 'ChallengeScreen::Challenges'}
+IL_017E: stloc          local(0x0016)
+IL_0182: br             {'target': 391}
+IL_0187: ldloc          local(0x0016)
+IL_018B: ldfld          {'token': '0x0400011A', 'identity': 'ChallengeDef::Challenges'}
+IL_0190: ldloc          local(0x0004)
+IL_0194: call           {'token': '0x0A00028B', 'identity': 'TypeSpec:117::get_Item / sig 2001130008'}
+IL_0199: stloc          local(0x0010)
+IL_019D: br             {'target': 418}
+IL_01A2: ldloc          local(0x000F)
+IL_01A6: stloc          local(0x0024)
+IL_01AA: ldloc          local(0x000F)
+IL_01AE: ldloc          local(0x0010)
+IL_01B2: ldfld          {'token': '0x0400011B', 'identity': 'ChallengeDefItem::Name'}
+IL_01B7: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_01BC: ldarg.0        None
+IL_01BD: ldfld          {'token': '0x040007CD', 'identity': 'ChallengeScreen::Challenges'}
+IL_01C2: stloc          local(0x001A)
+IL_01C6: ldloc          local(0x0004)
+IL_01CA: ldc.i4         1
+IL_01CF: add            None
+IL_01D0: stloc          local(0x0004)
+IL_01D4: br             {'target': 473}
+IL_01D9: ldloc          local(0x0022)
+IL_01DD: stloc          local(0x0005)
+IL_01E1: ldloc          local(0x0004)
+IL_01E5: stloc          local(0x0014)
+IL_01E9: br             {'target': 732}
+IL_01EE: ldstr          {'token': '0x700059B0', 'identity': 'Not implemented instruction: "imul ecx"'}
+IL_01F3: pop            None
+IL_01F4: br             {'target': 505}
+IL_01F9: ldarg.0        None
+IL_01FA: ldfld          {'token': '0x040007CE', 'identity': 'ChallengeScreen::ViewContent'}
+IL_01FF: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0204: stloc          local(0x0011)
+IL_0208: br             {'target': 525}
+IL_020D: ldloc          local(0x0011)
+IL_0211: callvirt       {'token': '0x0A00028C', 'identity': 'System.Object::GetType / sig 2000128089'}
+IL_0216: ldtoken        {'token': '0x01000056', 'identity': 'UnityEngine.RectTransform'}
+IL_021B: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0220: ceq            None
+IL_0222: ldc.i4.0       None
+IL_0223: ceq            None
+IL_0225: stloc          local(0x0017)
+IL_0229: ldnull         None
+IL_022A: stloc          local(0x0003)
+IL_022E: ldloc          local(0x0017)
+IL_0232: brtrue         {'target': 750}
+IL_0237: br             {'target': 572}
+IL_023C: ldloc          local(0x0011)
+IL_0240: stloc          local(0x0003)
+IL_0244: br             {'target': 750}
+IL_0249: ldloc          local(0x0003)
+IL_024D: call           {'token': '0x0A00028D', 'identity': 'UnityEngine.RectTransform::get_sizeDelta / sig 200011812d'}
+IL_0252: stloc          local(0x0021)
+IL_0256: ldloc          local(0x0003)
+IL_025A: ldloc          local(0x0022)
+IL_025E: call           {'token': '0x0A00028E', 'identity': 'UnityEngine.RectTransform::set_sizeDelta / sig 20010111812d'}
+IL_0263: br             {'target': 616}
+IL_0268: ldloca         local(0x0027)
+IL_026C: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0271: stloc          local(0x0012)
+IL_0275: nop            None
+IL_0276: br             {'target': 635}
+IL_027B: nop            None
+IL_027C: br             {'target': 641}
+IL_0281: nop            None
+IL_0282: ldloca         local(0x0027)
+IL_0286: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_028B: stloc          local(0x0023)
+IL_028F: ldloc          local(0x0012)
+IL_0293: ldstr          {'token': '0x7001A557', 'identity': '/'}
+IL_0298: ldloc          local(0x0023)
+IL_029C: call           {'token': '0x0A00010B', 'identity': 'System.String::Concat / sig 00030e0e0e0e'}
+IL_02A1: stloc          local(0x0013)
+IL_02A5: br             {'target': 682}
+IL_02AA: ldarg.0        None
+IL_02AB: ldfld          {'token': '0x040007D0', 'identity': 'ChallengeScreen::TrophyProgress'}
+IL_02B0: ldloc          local(0x0013)
+IL_02B4: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_02B9: ret            None
+IL_02BA: ldstr          {'token': '0x700019F6', 'identity': 'Method not found @18024F3A0'}
+IL_02BF: pop            None
+IL_02C0: nop            None
+IL_02C1: br             {'target': 725}
+IL_02C6: ldarg.0        None
+IL_02C7: ldfld          {'token': '0x040007CD', 'identity': 'ChallengeScreen::Challenges'}
+IL_02CC: stloc          local(0x001A)
+IL_02D0: br             {'target': 5}
+IL_02D5: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02DA: throw          None
+IL_02DB: ret            None
+IL_02DC: ldloc          local(0x001A)
+IL_02E0: ldfld          {'token': '0x0400011A', 'identity': 'ChallengeDef::Challenges'}
+IL_02E5: stloc          local(0x0009)
+IL_02E9: br             {'target': 28}
+IL_02EE: ldloc          local(0x0003)
+IL_02F2: ldc.i4         0
+IL_02F7: ceq            None
+IL_02F9: stloc          local(0x0019)
+IL_02FD: ldloc          local(0x0019)
+IL_0301: brtrue         {'target': 698}
+IL_0306: br             {'target': 585}

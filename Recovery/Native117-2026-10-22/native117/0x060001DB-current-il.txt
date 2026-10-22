@@ -1,0 +1,473 @@
+MouseManager::GetDeviceFromCardbank
+{"token": "0x060001DB", "name": "MouseManager::GetDeviceFromCardbank", "signature": "2001021281b4", "rva": 140420, "max_stack": 3, "code_size": 1730, "local_sig": 285213057, "locals_blob": "07421281b41c1c1c12812c021281a402181c1281bc12151281d40212812c0202020202020202021c1818021c181c1c1802021c1281d41c020202021281d41280c902021c18021c021c021c1c1c021c1c1c1c1c1c0e1281d418", "eh_count": 0, "il_sha256": "79e56d00a797397ae4a21defdd386dd373beb2597c66f135118a3db07e0d3b06"}
+IL_0000: br             {'target': 1444}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000230', 'identity': 'MouseManager::board'}
+IL_000B: stloc          local(0x0006)
+IL_000F: ldarg.0        None
+IL_0010: ldfld          {'token': '0x04000230', 'identity': 'MouseManager::board'}
+IL_0015: ldc.i4         0
+IL_001A: ceq            None
+IL_001C: stloc          local(0x0007)
+IL_0020: ldarg.0        None
+IL_0021: stloc          local(0x000E)
+IL_0025: ldloc          local(0x0007)
+IL_0029: brtrue         {'target': 1393}
+IL_002E: br             {'target': 51}
+IL_0033: ldarg          argument(0x0001)
+IL_0037: ldfld          {'token': '0x04000400', 'identity': 'Card::deviceData'}
+IL_003C: stloc          local(0x000A)
+IL_0040: ldarg          argument(0x0001)
+IL_0044: ldfld          {'token': '0x04000400', 'identity': 'Card::deviceData'}
+IL_0049: ldc.i4         0
+IL_004E: ceq            None
+IL_0050: stloc          local(0x000F)
+IL_0054: ldloc          local(0x0006)
+IL_0058: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_005D: stloc          local(0x000E)
+IL_0061: ldloc          local(0x000F)
+IL_0065: brtrue         {'target': 1393}
+IL_006A: br             {'target': 111}
+IL_006F: ldloc          local(0x0006)
+IL_0073: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_0078: ldc.i4         0
+IL_007D: ceq            None
+IL_007F: stloc          local(0x0010)
+IL_0083: ldloc          local(0x0006)
+IL_0087: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_008C: stloc          local(0x000E)
+IL_0090: ldloc          local(0x0010)
+IL_0094: brtrue         {'target': 1393}
+IL_0099: br             {'target': 158}
+IL_009E: ldloc          local(0x0006)
+IL_00A2: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_00A7: ldloc          local(0x000A)
+IL_00AB: ldfld          {'token': '0x04000423', 'identity': 'CardDeviceData::deviceID'}
+IL_00B0: call           {'token': '0x06000189', 'identity': 'DeviceManager::GetDevicePrefab'}
+IL_00B5: stloc          local(0x0024)
+IL_00B9: br             {'target': 190}
+IL_00BE: ldloc          local(0x0024)
+IL_00C2: ldnull         None
+IL_00C3: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_00C8: stloc          local(0x0028)
+IL_00CC: ldloc          local(0x0028)
+IL_00D0: brtrue         {'target': 218}
+IL_00D5: br             {'target': 1377}
+IL_00DA: br             {'target': 223}
+IL_00DF: ldloc          local(0x0024)
+IL_00E3: call           {'token': '0x2B000027', 'identity': '0x2b000027'}
+IL_00E8: stloc          local(0x002A)
+IL_00EC: ldarg.0        None
+IL_00ED: ldloc          local(0x002A)
+IL_00F1: stfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_00F6: br             {'target': 251}
+IL_00FB: ldarg.0        None
+IL_00FC: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0101: ldc.i4         0
+IL_0106: ceq            None
+IL_0108: stloc          local(0x0011)
+IL_010C: ldnull         None
+IL_010D: stloc          local(0x001D)
+IL_0111: ldarg.0        None
+IL_0112: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0117: stloc          local(0x000E)
+IL_011B: ldloc          local(0x0011)
+IL_011F: brtrue         {'target': 1393}
+IL_0124: br             {'target': 297}
+IL_0129: ldarg.0        None
+IL_012A: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_012F: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0134: stloc          local(0x000B)
+IL_0138: ldloc          local(0x000B)
+IL_013C: ldc.i4         0
+IL_0141: ceq            None
+IL_0143: stloc          local(0x0012)
+IL_0147: ldnull         None
+IL_0148: stloc          local(0x001D)
+IL_014C: ldarg.0        None
+IL_014D: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0152: stloc          local(0x000E)
+IL_0156: ldloc          local(0x0012)
+IL_015A: brtrue         {'target': 1393}
+IL_015F: br             {'target': 356}
+IL_0164: ldloc          local(0x000B)
+IL_0168: call           {'token': '0x0A000090', 'identity': 'UnityEngine.Transform::GetEnumerator / sig 20001280c9'}
+IL_016D: stloc          local(0x002B)
+IL_0171: br             {'target': 1644}
+IL_0176: ldstr          {'token': '0x70001E3E', 'identity': 'Method not found @180002CD0'}
+IL_017B: pop            None
+IL_017C: ldloc          local(0x0025)
+IL_0180: ldc.i4         0
+IL_0185: ceq            None
+IL_0187: stloc          local(0x002D)
+IL_018B: ldloc          local(0x002D)
+IL_018F: brtrue         {'target': 879}
+IL_0194: br             {'target': 409}
+IL_0199: ldloc          local(0x0009)
+IL_019D: ldc.i4         0
+IL_01A2: ceq            None
+IL_01A4: stloc          local(0x0026)
+IL_01A8: ldnull         None
+IL_01A9: stloc          local(0x0041)
+IL_01AD: ldloc          local(0x0026)
+IL_01B1: brtrue         {'target': 1412}
+IL_01B6: br             {'target': 443}
+IL_01BB: ldloc          local(0x0009)
+IL_01BF: stloc          local(0x0018)
+IL_01C3: ldc.i4         0
+IL_01C8: ldstr          {'token': '0x7000694B', 'identity': 'Unmanaged memory load: [v232 @ r10_v7+12E]'}
+IL_01CD: pop            None
+IL_01CE: ldc.i4.0       None
+IL_01CF: conv.i         None
+IL_01D0: clt            None
+IL_01D2: ldc.i4.0       None
+IL_01D3: ceq            None
+IL_01D5: stloc          local(0x0030)
+IL_01D9: ldloc          local(0x0030)
+IL_01DD: brtrue         {'target': 559}
+IL_01E2: br             {'target': 487}
+IL_01E7: ldstr          {'token': '0x700069A1', 'identity': 'Unmanaged memory load: [v232 @ r10_v7+B0]'}
+IL_01EC: pop            None
+IL_01ED: ldc.i4.0       None
+IL_01EE: conv.i         None
+IL_01EF: stloc          local(0x003E)
+IL_01F3: ldc.i4         0
+IL_01F8: stloc          local(0x0037)
+IL_01FC: br             {'target': 1478}
+IL_0201: ldloc          local(0x0037)
+IL_0205: ldc.i4         1
+IL_020A: add            None
+IL_020B: stloc          local(0x0037)
+IL_020F: ldloc          local(0x0037)
+IL_0213: ldstr          {'token': '0x7000694B', 'identity': 'Unmanaged memory load: [v232 @ r10_v7+12E]'}
+IL_0218: pop            None
+IL_0219: ldc.i4.0       None
+IL_021A: conv.i         None
+IL_021B: clt            None
+IL_021D: stloc          local(0x0034)
+IL_0221: ldloc          local(0x0034)
+IL_0225: brtrue         {'target': 1478}
+IL_022A: br             {'target': 559}
+IL_022F: ldstr          {'token': '0x70001F20', 'identity': 'Method not found @180258380'}
+IL_0234: pop            None
+IL_0235: ldloc          local(0x0035)
+IL_0239: stloc          local(0x003D)
+IL_023D: ldc.i4         1
+IL_0242: stloc          local(0x003E)
+IL_0246: br             {'target': 1540}
+IL_024B: br             {'target': 669}
+IL_0250: ldloc          local(0x0037)
+IL_0254: ldloc          local(0x0037)
+IL_0258: add            None
+IL_0259: stloc          local(0x0039)
+IL_025D: ldstr          {'token': '0x700069F5', 'identity': 'Unmanaged memory load: [v664 @ r8_v14+8+v656 @ rcx_v43*8]'}
+IL_0262: pop            None
+IL_0263: ldc.i4.0       None
+IL_0264: conv.i         None
+IL_0265: ldc.i4         1
+IL_026A: add            None
+IL_026B: stloc          local(0x003A)
+IL_026F: ldloc          local(0x003A)
+IL_0273: ldc.i4         4
+IL_0278: shl            None
+IL_0279: stloc          local(0x003B)
+IL_027D: ldloc          local(0x003B)
+IL_0281: ldc.i4         312
+IL_0286: add            None
+IL_0287: stloc          local(0x003C)
+IL_028B: ldloc          local(0x003C)
+IL_028F: ldloc          local(0x0018)
+IL_0293: add            None
+IL_0294: stloc          local(0x003D)
+IL_0298: br             {'target': 1540}
+IL_029D: ldloc          local(0x0019)
+IL_02A1: stloc          local(0x0008)
+IL_02A5: ldstr          {'token': '0x70006A69', 'identity': 'Unmanaged memory load: [v253 @ rcx_v36 (Il2CppClass<UnityEngine.Transform>)+130]'}
+IL_02AA: pop            None
+IL_02AB: ldc.i4.0       None
+IL_02AC: conv.i         None
+IL_02AD: stloc          local(0x001E)
+IL_02B1: ldstr          {'token': '0x70006B0C', 'identity': 'Unmanaged memory load: [v69 @ r9_v6 (Il2CppClass<System.Collections.IEnumerator>)+130]'}
+IL_02B6: pop            None
+IL_02B7: ldc.i4.0       None
+IL_02B8: conv.i         None
+IL_02B9: ldstr          {'token': '0x70006A69', 'identity': 'Unmanaged memory load: [v253 @ rcx_v36 (Il2CppClass<UnityEngine.Transform>)+130]'}
+IL_02BE: pop            None
+IL_02BF: ldc.i4.0       None
+IL_02C0: conv.i         None
+IL_02C1: clt            None
+IL_02C3: stloc          local(0x0021)
+IL_02C7: ldloca         local(0x0009)
+IL_02CB: stloc          local(0x001C)
+IL_02CF: ldloc          local(0x0019)
+IL_02D3: stloc          local(0x001D)
+IL_02D7: ldtoken        {'token': '0x01000005', 'identity': 'UnityEngine.Transform'}
+IL_02DC: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_02E1: stloc          local(0x0020)
+IL_02E5: ldloc          local(0x0021)
+IL_02E9: brtrue         {'target': 1633}
+IL_02EE: br             {'target': 755}
+IL_02F3: ldstr          {'token': '0x70006BBB', 'identity': 'Unmanaged memory load: [v69 @ r9_v6 (Il2CppClass<System.Collections.IEnumerator>)+C8]'}
+IL_02F8: pop            None
+IL_02F9: ldc.i4.0       None
+IL_02FA: conv.i         None
+IL_02FB: stloc          local(0x001F)
+IL_02FF: ldstr          {'token': '0x70006C68', 'identity': 'Unmanaged memory load: [v296 @ rax_v53+FFFFFFF8+v295 @ rax_v52*8]'}
+IL_0304: pop            None
+IL_0305: ldc.i4.0       None
+IL_0306: conv.i         None
+IL_0307: ldtoken        {'token': '0x01000005', 'identity': 'UnityEngine.Transform'}
+IL_030C: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0311: ceq            None
+IL_0313: ldc.i4.0       None
+IL_0314: ceq            None
+IL_0316: stloc          local(0x0022)
+IL_031A: ldloca         local(0x0009)
+IL_031E: stloc          local(0x001C)
+IL_0322: ldloc          local(0x0019)
+IL_0326: stloc          local(0x001D)
+IL_032A: ldtoken        {'token': '0x01000005', 'identity': 'UnityEngine.Transform'}
+IL_032F: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0334: stloc          local(0x0020)
+IL_0338: ldloc          local(0x0022)
+IL_033C: brtrue         {'target': 1633}
+IL_0341: br             {'target': 838}
+IL_0346: ldloc          local(0x0019)
+IL_034A: call           {'token': '0x0A00003C', 'identity': 'UnityEngine.Object::get_name / sig 20000e'}
+IL_034F: stloc          local(0x003F)
+IL_0353: ldloc          local(0x003F)
+IL_0357: ldstr          {'token': '0x70006CED', 'identity': 'Shadow'}
+IL_035C: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_0361: stloc          local(0x002C)
+IL_0365: br             {'target': 874}
+IL_036A: br             {'target': 1644}
+IL_036F: ldloca         local(0x0009)
+IL_0373: stloc          local(0x002E)
+IL_0377: ldstr          {'token': '0x7000191D', 'identity': 'Method not found @18024F380'}
+IL_037C: pop            None
+IL_037D: ldstr          {'token': '0x7000228A', 'identity': 'Not implemented instruction: "psrldq xmm0,8"'}
+IL_0382: pop            None
+IL_0383: ldloca         local(0x0009)
+IL_0387: stloc          local(0x0031)
+IL_038B: ldloc          local(0x002F)
+IL_038F: stloc          local(0x0031)
+IL_0393: ldloc          local(0x002F)
+IL_0397: ldc.i4         0
+IL_039C: ceq            None
+IL_039E: stloc          local(0x0032)
+IL_03A2: ldloc          local(0x0032)
+IL_03A6: brtrue         {'target': 955}
+IL_03AB: br             {'target': 944}
+IL_03B0: ldstr          {'token': '0x700022E4', 'identity': 'Method not found @180002D90'}
+IL_03B5: pop            None
+IL_03B6: br             {'target': 955}
+IL_03BB: br             {'target': 1673}
+IL_03C0: ldloc          local(0x000E)
+IL_03C4: ldarg.0        None
+IL_03C5: ldfld          {'token': '0x04000230', 'identity': 'MouseManager::board'}
+IL_03CA: stfld          {'token': '0x04000230', 'identity': 'MouseManager::board'}
+IL_03CF: ldarg.0        None
+IL_03D0: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_03D5: ldc.i4         0
+IL_03DA: ceq            None
+IL_03DC: stloc          local(0x0013)
+IL_03E0: ldloca         local(0x0009)
+IL_03E4: stloc          local(0x001C)
+IL_03E8: ldloc          local(0x002F)
+IL_03EC: stloc          local(0x001D)
+IL_03F0: ldarg.0        None
+IL_03F1: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_03F6: stloc          local(0x000E)
+IL_03FA: ldloc          local(0x0013)
+IL_03FE: brtrue         {'target': 1393}
+IL_0403: br             {'target': 1032}
+IL_0408: ldarg.0        None
+IL_0409: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_040E: ldarg          argument(0x0001)
+IL_0412: ldarg.0        None
+IL_0413: call           {'token': '0x06000333', 'identity': 'Device::SetPrefabState_onHand'}
+IL_0418: ldarg.0        None
+IL_0419: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_041E: ldc.i4         0
+IL_0423: ceq            None
+IL_0425: stloc          local(0x0014)
+IL_0429: ldnull         None
+IL_042A: stloc          local(0x0008)
+IL_042E: ldloca         local(0x0009)
+IL_0432: stloc          local(0x001C)
+IL_0436: ldarg.0        None
+IL_0437: stloc          local(0x001D)
+IL_043B: ldarg.0        None
+IL_043C: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0441: stloc          local(0x000E)
+IL_0445: ldloc          local(0x0014)
+IL_0449: brtrue         {'target': 1393}
+IL_044E: br             {'target': 1107}
+IL_0453: ldarg.0        None
+IL_0454: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0459: call           {'token': '0x0600032D', 'identity': 'Device::NumericalInitialize_FromCard'}
+IL_045E: ldarg.0        None
+IL_045F: ldc.i4         1
+IL_0464: stfld          {'token': '0x04000233', 'identity': 'MouseManager::handItemType'}
+IL_0469: ldarg.0        None
+IL_046A: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_046F: stloc          local(0x000C)
+IL_0473: ldarg.0        None
+IL_0474: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0479: ldc.i4         0
+IL_047E: ceq            None
+IL_0480: stloc          local(0x0015)
+IL_0484: ldnull         None
+IL_0485: stloc          local(0x0008)
+IL_0489: ldloca         local(0x0009)
+IL_048D: stloc          local(0x001C)
+IL_0491: ldarg.0        None
+IL_0492: stloc          local(0x001D)
+IL_0496: ldarg.0        None
+IL_0497: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_049C: stloc          local(0x000E)
+IL_04A0: ldloc          local(0x0015)
+IL_04A4: brtrue         {'target': 1393}
+IL_04A9: br             {'target': 1198}
+IL_04AE: ldarg.0        None
+IL_04AF: ldloc          local(0x000C)
+IL_04B3: ldfld          {'token': '0x0400046D', 'identity': 'Device::deviceType'}
+IL_04B8: stfld          {'token': '0x04000242', 'identity': 'MouseManager::deviceTypeOnHand'}
+IL_04BD: ldarg.0        None
+IL_04BE: ldarg          argument(0x0001)
+IL_04C2: stfld          {'token': '0x0400023B', 'identity': 'MouseManager::cardOfBankOnHand'}
+IL_04C7: br             {'target': 1228}
+IL_04CC: ldloc          local(0x0024)
+IL_04D0: call           {'token': '0x2B000027', 'identity': '0x2b000027'}
+IL_04D5: stloc          local(0x0040)
+IL_04D9: ldarg.0        None
+IL_04DA: ldloc          local(0x0040)
+IL_04DE: stfld          {'token': '0x0400023F', 'identity': 'MouseManager::devicePrefabPreview'}
+IL_04E3: br             {'target': 1256}
+IL_04E8: ldloc          local(0x0040)
+IL_04EC: ldnull         None
+IL_04ED: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_04F2: stloc          local(0x000D)
+IL_04F6: ldloc          local(0x000D)
+IL_04FA: brtrue         {'target': 1284}
+IL_04FF: br             {'target': 1361}
+IL_0504: ldarg.0        None
+IL_0505: ldfld          {'token': '0x0400023F', 'identity': 'MouseManager::devicePrefabPreview'}
+IL_050A: ldc.i4         0
+IL_050F: ceq            None
+IL_0511: stloc          local(0x0016)
+IL_0515: ldnull         None
+IL_0516: stloc          local(0x0008)
+IL_051A: ldloca         local(0x0009)
+IL_051E: stloc          local(0x001C)
+IL_0522: ldnull         None
+IL_0523: stloc          local(0x001D)
+IL_0527: ldarg.0        None
+IL_0528: ldfld          {'token': '0x0400023F', 'identity': 'MouseManager::devicePrefabPreview'}
+IL_052D: stloc          local(0x000E)
+IL_0531: ldloc          local(0x0016)
+IL_0535: brtrue         {'target': 1393}
+IL_053A: br             {'target': 1343}
+IL_053F: ldarg.0        None
+IL_0540: ldfld          {'token': '0x0400023F', 'identity': 'MouseManager::devicePrefabPreview'}
+IL_0545: ldarg.0        None
+IL_0546: call           {'token': '0x06000334', 'identity': 'Device::SetPrefabState_previewOnField'}
+IL_054B: ldc.i4         1
+IL_0550: ret            None
+IL_0551: ldstr          {'token': '0x70006CFB', 'identity': '该装置预览不存在'}
+IL_0556: call           {'token': '0x0A000158', 'identity': 'UnityEngine.MonoBehaviour::print / sig 0001011c'}
+IL_055B: ldc.i4         1
+IL_0560: ret            None
+IL_0561: ldstr          {'token': '0x70006D0D', 'identity': '该装置不存在'}
+IL_0566: call           {'token': '0x0A000158', 'identity': 'UnityEngine.MonoBehaviour::print / sig 0001011c'}
+IL_056B: ldc.i4         0
+IL_0570: ret            None
+IL_0571: ldloc          local(0x000E)
+IL_0575: stloc          local(0x0020)
+IL_0579: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_057E: throw          None
+IL_057F: br             {'target': 1529}
+IL_0584: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0589: throw          None
+IL_058A: br             {'target': 1423}
+IL_058F: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0594: throw          None
+IL_0595: ldloc          local(0x0041)
+IL_0599: throw          None
+IL_059A: br             {'target': 1439}
+IL_059F: ldloc          local(0x0029)
+IL_05A3: ret            None
+IL_05A4: ldarg          argument(0x0001)
+IL_05A8: ldc.i4         0
+IL_05AD: ceq            None
+IL_05AF: stloc          local(0x0005)
+IL_05B3: ldarg.0        None
+IL_05B4: stloc          local(0x000E)
+IL_05B8: ldloc          local(0x0005)
+IL_05BC: brtrue         {'target': 1393}
+IL_05C1: br             {'target': 5}
+IL_05C6: ldloc          local(0x0037)
+IL_05CA: ldloc          local(0x0037)
+IL_05CE: add            None
+IL_05CF: stloc          local(0x0033)
+IL_05D3: ldstr          {'token': '0x70006D1B', 'identity': 'Unmanaged memory load: [v664 @ r8_v14+v595 @ rax_v60*8]'}
+IL_05D8: pop            None
+IL_05D9: ldc.i4.0       None
+IL_05DA: conv.i         None
+IL_05DB: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_05E0: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_05E5: ceq            None
+IL_05E7: stloc          local(0x0038)
+IL_05EB: ldloc          local(0x0038)
+IL_05EF: brtrue         {'target': 592}
+IL_05F4: br             {'target': 513}
+IL_05F9: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_05FE: throw          None
+IL_05FF: br             {'target': 1633}
+IL_0604: ldstr          {'token': '0x70006D8B', 'identity': 'Indirect call: [v663 @ rdx_v29] (should have been resolved before IL gen)'}
+IL_0609: pop            None
+IL_060A: ldtoken        {'token': '0x01000005', 'identity': 'UnityEngine.Transform'}
+IL_060F: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0614: stloc          local(0x001A)
+IL_0618: ldloc          local(0x0019)
+IL_061C: ldc.i4         0
+IL_0621: ceq            None
+IL_0623: stloc          local(0x001B)
+IL_0627: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_062C: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0631: stloc          local(0x0008)
+IL_0635: ldloca         local(0x0009)
+IL_0639: stloc          local(0x001C)
+IL_063D: ldloc          local(0x0019)
+IL_0641: stloc          local(0x001D)
+IL_0645: ldtoken        {'token': '0x01000005', 'identity': 'UnityEngine.Transform'}
+IL_064A: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_064F: stloc          local(0x0020)
+IL_0653: ldloc          local(0x001B)
+IL_0657: brtrue         {'target': 1529}
+IL_065C: br             {'target': 587}
+IL_0661: ldstr          {'token': '0x700019F6', 'identity': 'Method not found @18024F3A0'}
+IL_0666: pop            None
+IL_0667: br             {'target': 1412}
+IL_066C: ldloc          local(0x0009)
+IL_0670: ldc.i4         0
+IL_0675: ceq            None
+IL_0677: stloc          local(0x0027)
+IL_067B: ldloc          local(0x0027)
+IL_067F: brtrue         {'target': 1423}
+IL_0684: br             {'target': 374}
+IL_0689: ldarg.0        None
+IL_068A: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_068F: stloc          local(0x000E)
+IL_0693: ldarg.0        None
+IL_0694: ldfld          {'token': '0x0400023E', 'identity': 'MouseManager::devicePrefabOnHand'}
+IL_0699: ldc.i4         0
+IL_069E: ceq            None
+IL_06A0: stloc          local(0x0017)
+IL_06A4: ldloca         local(0x0009)
+IL_06A8: stloc          local(0x001C)
+IL_06AC: ldloc          local(0x002F)
+IL_06B0: stloc          local(0x001D)
+IL_06B4: ldloc          local(0x0017)
+IL_06B8: brtrue         {'target': 1393}
+IL_06BD: br             {'target': 960}

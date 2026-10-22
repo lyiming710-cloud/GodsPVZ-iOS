@@ -1,0 +1,342 @@
+FTRuntime.SwfClip::ChangeSequence
+{"token": "0x06000843", "name": "FTRuntime.SwfClip::ChangeSequence", "signature": "200001", "rva": 690512, "max_stack": 3, "code_size": 1293, "local_sig": 285214260, "locals_blob": "072d12846c02021284700812848012847002020202020215120d0112848015120d01128480081284701284701d1c12847002021284800215120d0112847c08020208020202128480020215120d0112847c081284800202181284800202128480", "eh_count": 0, "il_sha256": "7f9e854b29dc5b945ea65637b150fa4abcaa98787d3c3f5af340af39dd14f674"}
+IL_0000: br             {'target': 1110}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_000B: call           {'token': '0x0A00000B', 'identity': 'UnityEngine.Object::op_Implicit / sig 0001021221'}
+IL_0010: stloc          local(0x0001)
+IL_0014: ldloc          local(0x0001)
+IL_0018: ldc.i4.0       None
+IL_0019: ceq            None
+IL_001B: stloc          local(0x0002)
+IL_001F: ldloc          local(0x0002)
+IL_0023: brtrue         {'target': 764}
+IL_0028: br             {'target': 45}
+IL_002D: ldarg.0        None
+IL_002E: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_0033: stloc          local(0x0003)
+IL_0037: br             {'target': 60}
+IL_003C: ldloc          local(0x0003)
+IL_0040: ldfld          {'token': '0x04000A81', 'identity': 'FTRuntime.SwfClipAsset::Sequences'}
+IL_0045: ldc.i4         0
+IL_004A: ceq            None
+IL_004C: stloc          local(0x000C)
+IL_0050: ldloc          local(0x000C)
+IL_0054: brtrue         {'target': 764}
+IL_0059: br             {'target': 94}
+IL_005E: ldarg.0        None
+IL_005F: ldfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_0064: call           {'token': '0x0A00000F', 'identity': 'System.String::IsNullOrEmpty / sig 0001020e'}
+IL_0069: stloc          local(0x0015)
+IL_006D: ldloc          local(0x0015)
+IL_0071: brtrue         {'target': 550}
+IL_0076: br             {'target': 123}
+IL_007B: ldarg.0        None
+IL_007C: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_0081: stloc          local(0x0010)
+IL_0085: br             {'target': 138}
+IL_008A: ldloc          local(0x0010)
+IL_008E: ldfld          {'token': '0x04000A81', 'identity': 'FTRuntime.SwfClipAsset::Sequences'}
+IL_0093: stloc          local(0x000D)
+IL_0097: br             {'target': 156}
+IL_009C: ldloc          local(0x000D)
+IL_00A0: ldfld          {'token': '0x0A00039B', 'identity': 'TypeSpec:145::_size / sig 0608'}
+IL_00A5: ldc.i4         0
+IL_00AA: cgt            None
+IL_00AC: ldc.i4.0       None
+IL_00AD: ceq            None
+IL_00AF: stloc          local(0x001F)
+IL_00B3: ldc.i4         0
+IL_00B8: stloc          local(0x000F)
+IL_00BC: ldloc          local(0x001F)
+IL_00C0: brtrue         {'target': 361}
+IL_00C5: br             {'target': 1129}
+IL_00CA: ldloc          local(0x0011)
+IL_00CE: ldfld          {'token': '0x04000A81', 'identity': 'FTRuntime.SwfClipAsset::Sequences'}
+IL_00D3: ldloc          local(0x000F)
+IL_00D7: call           {'token': '0x0A00039C', 'identity': 'TypeSpec:145::get_Item / sig 2001130008'}
+IL_00DC: stloc          local(0x0025)
+IL_00E0: ldloc          local(0x0025)
+IL_00E4: ldc.i4         0
+IL_00E9: ceq            None
+IL_00EB: stloc          local(0x0027)
+IL_00EF: nop            None
+IL_00F0: ldloc          local(0x0027)
+IL_00F4: brtrue         {'target': 293}
+IL_00F9: br             {'target': 254}
+IL_00FE: ldloc          local(0x0025)
+IL_0102: ldfld          {'token': '0x04000A8D', 'identity': 'Sequence::Name'}
+IL_0107: ldarg.0        None
+IL_0108: ldfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_010D: call           {'token': '0x0A0000B0', 'identity': 'System.String::op_Inequality / sig 0002020e0e'}
+IL_0112: stloc          local(0x002B)
+IL_0116: nop            None
+IL_0117: ldloc          local(0x002B)
+IL_011B: brtrue         {'target': 293}
+IL_0120: br             {'target': 345}
+IL_0125: ldloc          local(0x000F)
+IL_0129: ldc.i4         1
+IL_012E: add            None
+IL_012F: stloc          local(0x000F)
+IL_0133: ldloc          local(0x000F)
+IL_0137: ldloc          local(0x000D)
+IL_013B: ldfld          {'token': '0x0A00039B', 'identity': 'TypeSpec:145::_size / sig 0608'}
+IL_0140: clt            None
+IL_0142: stloc          local(0x0022)
+IL_0146: ldloc          local(0x0022)
+IL_014A: brtrue         {'target': 1129}
+IL_014F: br             {'target': 340}
+IL_0154: br             {'target': 361}
+IL_0159: ldarg.0        None
+IL_015A: ldloc          local(0x0025)
+IL_015E: stfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_0163: nop            None
+IL_0164: br             {'target': 361}
+IL_0169: ldarg.0        None
+IL_016A: ldfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_016F: ldc.i4         0
+IL_0174: ceq            None
+IL_0176: ldc.i4.0       None
+IL_0177: ceq            None
+IL_0179: stloc          local(0x0008)
+IL_017D: ldloc          local(0x0008)
+IL_0181: brtrue         {'target': 764}
+IL_0186: br             {'target': 395}
+IL_018B: ldc.i4         1
+IL_0190: newarr         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_0195: stloc          local(0x0012)
+IL_0199: br             {'target': 414}
+IL_019E: ldarg.0        None
+IL_019F: ldfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_01A4: ldc.i4         0
+IL_01A9: ceq            None
+IL_01AB: stloc          local(0x0026)
+IL_01AF: ldloc          local(0x0026)
+IL_01B3: brtrue         {'target': 505}
+IL_01B8: br             {'target': 445}
+IL_01BD: ldloc          local(0x0012)
+IL_01C1: stloc          local(0x0028)
+IL_01C5: ldarg.0        None
+IL_01C6: ldfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_01CB: ldstr          {'token': '0x7002B800', 'identity': 'Unmanaged memory load: [v683 @ rdx_v25 (Il2CppClass<System.Object[]>)+40]'}
+IL_01D0: pop            None
+IL_01D1: ldc.i4.0       None
+IL_01D2: conv.i         None
+IL_01D3: call           {'token': '0x0A00039C', 'identity': 'TypeSpec:145::get_Item / sig 2001130008'}
+IL_01D8: stloc          local(0x0029)
+IL_01DC: ldloc          local(0x0029)
+IL_01E0: ldc.i4         0
+IL_01E5: ceq            None
+IL_01E7: stloc          local(0x002A)
+IL_01EB: ldloc          local(0x002A)
+IL_01EF: brtrue         {'target': 1071}
+IL_01F4: br             {'target': 505}
+IL_01F9: ldloc          local(0x0012)
+IL_01FD: ldc.i4         0
+IL_0202: ldarg.0        None
+IL_0203: ldfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_0208: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_020D: br             {'target': 530}
+IL_0212: ldarg.0        None
+IL_0213: ldstr          {'token': '0x7002B895', 'identity': "<b>[FlashTools]</b> Sequence '{0}' not found"}
+IL_0218: ldloc          local(0x0012)
+IL_021C: call           {'token': '0x0A00039D', 'identity': 'UnityEngine.Debug::LogWarningFormat / sig 00030112210e1d1c'}
+IL_0221: br             {'target': 550}
+IL_0226: ldarg.0        None
+IL_0227: ldfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_022C: ldc.i4         0
+IL_0231: ceq            None
+IL_0233: ldc.i4.0       None
+IL_0234: ceq            None
+IL_0236: stloc          local(0x0009)
+IL_023A: ldloc          local(0x0009)
+IL_023E: brtrue         {'target': 764}
+IL_0243: br             {'target': 584}
+IL_0248: ldarg.0        None
+IL_0249: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_024E: stloc          local(0x0006)
+IL_0252: br             {'target': 599}
+IL_0257: ldloc          local(0x0006)
+IL_025B: ldfld          {'token': '0x04000A81', 'identity': 'FTRuntime.SwfClipAsset::Sequences'}
+IL_0260: stloc          local(0x000E)
+IL_0264: br             {'target': 617}
+IL_0269: ldloc          local(0x000E)
+IL_026D: ldfld          {'token': '0x0A00039B', 'identity': 'TypeSpec:145::_size / sig 0608'}
+IL_0272: ldc.i4         0
+IL_0277: cgt            None
+IL_0279: ldc.i4.0       None
+IL_027A: ceq            None
+IL_027C: stloc          local(0x000A)
+IL_0280: ldc.i4         0
+IL_0285: stloc          local(0x0004)
+IL_0289: ldloc          local(0x000A)
+IL_028D: brtrue         {'target': 764}
+IL_0292: br             {'target': 1156}
+IL_0297: ldloc          local(0x0013)
+IL_029B: ldfld          {'token': '0x04000A81', 'identity': 'FTRuntime.SwfClipAsset::Sequences'}
+IL_02A0: ldloc          local(0x0004)
+IL_02A4: call           {'token': '0x0A00039C', 'identity': 'TypeSpec:145::get_Item / sig 2001130008'}
+IL_02A9: stloc          local(0x0005)
+IL_02AD: ldloc          local(0x0005)
+IL_02B1: ldc.i4         0
+IL_02B6: ceq            None
+IL_02B8: ldc.i4.0       None
+IL_02B9: ceq            None
+IL_02BB: stloc          local(0x000B)
+IL_02BF: ldloc          local(0x000B)
+IL_02C3: brtrue         {'target': 964}
+IL_02C8: br             {'target': 717}
+IL_02CD: ldloc          local(0x0004)
+IL_02D1: ldc.i4         1
+IL_02D6: add            None
+IL_02D7: stloc          local(0x0004)
+IL_02DB: ldloc          local(0x0004)
+IL_02DF: ldloc          local(0x000E)
+IL_02E3: ldfld          {'token': '0x0A00039B', 'identity': 'TypeSpec:145::_size / sig 0608'}
+IL_02E8: clt            None
+IL_02EA: stloc          local(0x0007)
+IL_02EE: ldloc          local(0x0007)
+IL_02F2: brtrue         {'target': 1156}
+IL_02F7: br             {'target': 764}
+IL_02FC: ldarg.0        None
+IL_02FD: ldc.i4         1
+IL_0302: stfld          {'token': '0x04000A71', 'identity': 'FTRuntime.SwfClip::_dirtyMesh'}
+IL_0307: br             {'target': 1171}
+IL_030C: ldarg.0        None
+IL_030D: ldfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_0312: stloc          local(0x0016)
+IL_0316: ldloc          local(0x0016)
+IL_031A: ldfld          {'token': '0x04000A8E', 'identity': 'Sequence::Frames'}
+IL_031F: ldc.i4         0
+IL_0324: ceq            None
+IL_0326: stloc          local(0x0017)
+IL_032A: ldloc          local(0x0017)
+IL_032E: brtrue         {'target': 1057}
+IL_0333: br             {'target': 824}
+IL_0338: ldloc          local(0x0016)
+IL_033C: ldfld          {'token': '0x04000A8E', 'identity': 'Sequence::Frames'}
+IL_0341: stloc          local(0x0018)
+IL_0345: ldloc          local(0x0018)
+IL_0349: ldfld          {'token': '0x0A000395', 'identity': 'TypeSpec:144::_size / sig 0608'}
+IL_034E: ldc.i4         0
+IL_0353: cgt            None
+IL_0355: ldc.i4.0       None
+IL_0356: ceq            None
+IL_0358: stloc          local(0x001A)
+IL_035C: ldloc          local(0x001A)
+IL_0360: brtrue         {'target': 1057}
+IL_0365: br             {'target': 874}
+IL_036A: ldarg.0        None
+IL_036B: ldfld          {'token': '0x04000A7C', 'identity': 'FTRuntime.SwfClip::_currentFrame'}
+IL_0370: stloc          local(0x001C)
+IL_0374: br             {'target': 1202}
+IL_0379: ldarg.0        None
+IL_037A: ldfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_037F: stloc          local(0x0020)
+IL_0383: ldloc          local(0x0020)
+IL_0387: ldfld          {'token': '0x04000A8E', 'identity': 'Sequence::Frames'}
+IL_038C: ldc.i4         0
+IL_0391: ceq            None
+IL_0393: stloc          local(0x0021)
+IL_0397: ldloc          local(0x0021)
+IL_039B: brtrue         {'target': 999}
+IL_03A0: br             {'target': 933}
+IL_03A5: ldloc          local(0x0020)
+IL_03A9: ldfld          {'token': '0x04000A8E', 'identity': 'Sequence::Frames'}
+IL_03AE: stloc          local(0x0023)
+IL_03B2: ldloc          local(0x0023)
+IL_03B6: ldfld          {'token': '0x0A000395', 'identity': 'TypeSpec:144::_size / sig 0608'}
+IL_03BB: stloc          local(0x0024)
+IL_03BF: br             {'target': 1233}
+IL_03C4: ldarg.0        None
+IL_03C5: ldloc          local(0x0005)
+IL_03C9: ldfld          {'token': '0x04000A8D', 'identity': 'Sequence::Name'}
+IL_03CE: stfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_03D3: ldarg.0        None
+IL_03D4: ldloc          local(0x0005)
+IL_03D8: stfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_03DD: br             {'target': 994}
+IL_03E2: br             {'target': 764}
+IL_03E7: ldc.i4         0
+IL_03EC: stloc          local(0x0024)
+IL_03F0: br             {'target': 1233}
+IL_03F5: ldloc          local(0x001C)
+IL_03F9: ldloc          local(0x0019)
+IL_03FD: cgt            None
+IL_03FF: ldc.i4.0       None
+IL_0400: ceq            None
+IL_0402: stloc          local(0x001D)
+IL_0406: ldloc          local(0x001D)
+IL_040A: brtrue         {'target': 1276}
+IL_040F: br             {'target': 1044}
+IL_0414: ldloc          local(0x0019)
+IL_0418: stloc          local(0x001C)
+IL_041C: br             {'target': 1276}
+IL_0421: ldc.i4         0
+IL_0426: stloc          local(0x001C)
+IL_042A: br             {'target': 1276}
+IL_042F: ldarg.0        None
+IL_0430: ldfld          {'token': '0x04000A7B', 'identity': 'FTRuntime.SwfClip::_sequence'}
+IL_0435: ldstr          {'token': '0x7002B800', 'identity': 'Unmanaged memory load: [v683 @ rdx_v25 (Il2CppClass<System.Object[]>)+40]'}
+IL_043A: pop            None
+IL_043B: ldc.i4.0       None
+IL_043C: conv.i         None
+IL_043D: call           {'token': '0x0A00039C', 'identity': 'TypeSpec:145::get_Item / sig 2001130008'}
+IL_0442: stloc          local(0x002C)
+IL_0446: ldloc          local(0x002C)
+IL_044A: throw          None
+IL_044B: br             {'target': 1104}
+IL_0450: nop            None
+IL_0451: br             {'target': 1144}
+IL_0456: ldarg.0        None
+IL_0457: ldnull         None
+IL_0458: stfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_045D: br             {'target': 5}
+IL_0462: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0467: throw          None
+IL_0468: ret            None
+IL_0469: ldarg.0        None
+IL_046A: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_046F: stloc          local(0x0011)
+IL_0473: br             {'target': 202}
+IL_0478: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_047D: throw          None
+IL_047E: nop            None
+IL_047F: br             {'target': 1122}
+IL_0484: ldarg.0        None
+IL_0485: ldfld          {'token': '0x04000A7A', 'identity': 'FTRuntime.SwfClip::_clip'}
+IL_048A: stloc          local(0x0013)
+IL_048E: br             {'target': 663}
+IL_0493: ldarg.0        None
+IL_0494: ldfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_0499: ldc.i4         0
+IL_049E: ceq            None
+IL_04A0: stloc          local(0x0014)
+IL_04A4: ldloc          local(0x0014)
+IL_04A8: brtrue         {'target': 1057}
+IL_04AD: br             {'target': 780}
+IL_04B2: ldarg.0        None
+IL_04B3: ldfld          {'token': '0x04000A72', 'identity': 'FTRuntime.SwfClip::_curSequence'}
+IL_04B8: ldc.i4         0
+IL_04BD: ceq            None
+IL_04BF: stloc          local(0x001E)
+IL_04C3: ldloc          local(0x001E)
+IL_04C7: brtrue         {'target': 999}
+IL_04CC: br             {'target': 889}
+IL_04D1: ldloc          local(0x0024)
+IL_04D5: ldc.i4         1
+IL_04DA: sub            None
+IL_04DB: stloc          local(0x0019)
+IL_04DF: ldloc          local(0x001C)
+IL_04E3: ldc.i4         0
+IL_04E8: clt            None
+IL_04EA: stloc          local(0x001B)
+IL_04EE: ldloc          local(0x001B)
+IL_04F2: brtrue         {'target': 1057}
+IL_04F7: br             {'target': 1013}
+IL_04FC: ldarg.0        None
+IL_04FD: ldloc          local(0x001C)
+IL_0501: stfld          {'token': '0x04000A7C', 'identity': 'FTRuntime.SwfClip::_currentFrame'}
+IL_0506: ret            None
+IL_0507: ldstr          {'token': '0x70000536', 'identity': 'Warning: Method ends with non empty stack (-28), the output could be wrong!'}
+IL_050C: pop            None

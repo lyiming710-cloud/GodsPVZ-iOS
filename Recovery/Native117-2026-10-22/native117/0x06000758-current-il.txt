@@ -1,0 +1,207 @@
+TMPro.Examples.Benchmark04::Start
+{"token": "0x06000758", "name": "TMPro.Examples.Benchmark04::Start", "signature": "200001", "rva": 617856, "max_stack": 3, "code_size": 738, "local_sig": 285214092, "locals_blob": "07291c1283b41c1c1c1215121d081c0c11812d080c021215114d1281791281590808020c0c180c1c0802020e080e120911812d0e0e1c181c1c0c", "eh_count": 0, "il_sha256": "b0282dbc62516f4c22186244aac022a89f703aa3867ea2762785706ef9e085f6"}
+IL_0000: ldloc          local(0x0000)
+IL_0004: pop            None
+IL_0005: ldloc          local(0x0002)
+IL_0009: pop            None
+IL_000A: ldloc          local(0x0003)
+IL_000E: pop            None
+IL_000F: ldloc          local(0x0004)
+IL_0013: pop            None
+IL_0014: br             {'target': 616}
+IL_0019: call           {'token': '0x0A00030C', 'identity': 'UnityEngine.Screen::get_height / sig 000008'}
+IL_001E: stloc          local(0x0007)
+IL_0022: ldloc          local(0x0007)
+IL_0026: ldc.i4         31
+IL_002B: shr            None
+IL_002C: stloc          local(0x001A)
+IL_0030: ldloc          local(0x0007)
+IL_0034: ldloc          local(0x001A)
+IL_0038: sub            None
+IL_0039: stloc          local(0x0008)
+IL_003D: ldloc          local(0x0008)
+IL_0041: ldc.i4         1
+IL_0046: shr            None
+IL_0047: stloc          local(0x0009)
+IL_004B: br             {'target': 80}
+IL_0050: ldloc          local(0x0006)
+IL_0054: ldloc          local(0x0009)
+IL_0058: call           {'token': '0x0A00000A', 'identity': 'UnityEngine.Camera::set_orthographicSize / sig 2001010c'}
+IL_005D: call           {'token': '0x0A00030D', 'identity': 'UnityEngine.Screen::get_width / sig 000008'}
+IL_0062: stloc          local(0x0012)
+IL_0066: br             {'target': 107}
+IL_006B: call           {'token': '0x0A00030C', 'identity': 'UnityEngine.Screen::get_height / sig 000008'}
+IL_0070: stloc          local(0x0013)
+IL_0074: ldarg.0        None
+IL_0075: ldfld          {'token': '0x04000961', 'identity': 'TMPro.Examples.Benchmark04::MinPointSize'}
+IL_007A: stloc          local(0x001E)
+IL_007E: nop            None
+IL_007F: ldarg.0        None
+IL_0080: ldfld          {'token': '0x04000961', 'identity': 'TMPro.Examples.Benchmark04::MinPointSize'}
+IL_0085: ldarg.0        None
+IL_0086: ldfld          {'token': '0x04000962', 'identity': 'TMPro.Examples.Benchmark04::MaxPointSize'}
+IL_008B: cgt            None
+IL_008D: stloc          local(0x0014)
+IL_0091: ldloc          local(0x0014)
+IL_0095: brtrue         {'target': 615}
+IL_009A: br             {'target': 159}
+IL_009F: ldloc          local(0x0009)
+IL_00A3: stloc          local(0x0018)
+IL_00A7: nop            None
+IL_00A8: ldc.i4         0
+IL_00AD: stloc          local(0x0019)
+IL_00B1: nop            None
+IL_00B2: br             {'target': 698}
+IL_00B7: ldloca         local(0x000B)
+IL_00BB: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_00C0: stloc          local(0x001D)
+IL_00C4: ldstr          {'token': '0x7001FAE7', 'identity': 'Text - '}
+IL_00C9: ldloc          local(0x001D)
+IL_00CD: ldstr          {'token': '0x7001FAF7', 'identity': ' Pts'}
+IL_00D2: call           {'token': '0x0A00010B', 'identity': 'System.String::Concat / sig 00030e0e0e0e'}
+IL_00D7: stloc          local(0x001F)
+IL_00DB: br             {'target': 224}
+IL_00E0: ldloc          local(0x001F)
+IL_00E4: newobj         {'token': '0x0A0000F3', 'identity': 'UnityEngine.GameObject::.ctor / sig 2001010e'}
+IL_00E9: stloc          local(0x0020)
+IL_00ED: nop            None
+IL_00EE: br             {'target': 243}
+IL_00F3: ldloc          local(0x0009)
+IL_00F7: conv.r4        None
+IL_00F8: ldloc          local(0x0009)
+IL_00FC: conv.r4        None
+IL_00FD: add            None
+IL_00FE: stloc          local(0x000C)
+IL_0102: ldloc          local(0x0019)
+IL_0106: ldloc          local(0x000C)
+IL_010A: cgt            None
+IL_010C: stloc          local(0x000D)
+IL_0110: ldloc          local(0x000D)
+IL_0114: brtrue         {'target': 615}
+IL_0119: br             {'target': 286}
+IL_011E: ldloc          local(0x0020)
+IL_0122: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_0127: stloc          local(0x000E)
+IL_012B: br             {'target': 304}
+IL_0130: nop            None
+IL_0131: nop            None
+IL_0132: nop            None
+IL_0133: nop            None
+IL_0134: nop            None
+IL_0135: ldarg.0        None
+IL_0136: ldfld          {'token': '0x04000964', 'identity': 'TMPro.Examples.Benchmark04::m_Transform'}
+IL_013B: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_0140: stloc          local(0x000F)
+IL_0144: nop            None
+IL_0145: br             {'target': 330}
+IL_014A: ldloc          local(0x000E)
+IL_014E: ldloca         local(0x000A)
+IL_0152: call           {'token': '0x0A000038', 'identity': 'UnityEngine.Transform::set_position / sig 200101114d'}
+IL_0157: ldloc          local(0x0020)
+IL_015B: call           {'token': '0x2B00009A', 'identity': '0x2b00009a'}
+IL_0160: stloc          local(0x0010)
+IL_0164: br             {'target': 361}
+IL_0169: ldloc          local(0x0010)
+IL_016D: call           {'token': '0x0A0002E3', 'identity': 'TMPro.TMP_Text::get_rectTransform / sig 2000128159'}
+IL_0172: stloc          local(0x0011)
+IL_0176: br             {'target': 379}
+IL_017B: ldloc          local(0x0011)
+IL_017F: ldloc          local(0x0021)
+IL_0183: call           {'token': '0x0A000305', 'identity': 'UnityEngine.RectTransform::set_pivot / sig 20010111812d'}
+IL_0188: ldloc          local(0x0010)
+IL_018C: ldc.i4         0
+IL_0191: call           {'token': '0x0A0002FC', 'identity': 'TMPro.TMP_Text::set_enableWordWrapping / sig 20010102'}
+IL_0196: br             {'target': 411}
+IL_019B: ldloc          local(0x0010)
+IL_019F: ldc.i4         1
+IL_01A4: call           {'token': '0x0A0002FB', 'identity': 'TMPro.TMP_Text::set_extraPadding / sig 20010102'}
+IL_01A9: ldloc          local(0x0010)
+IL_01AD: ldc.i4         1
+IL_01B2: call           {'token': '0x0A00030E', 'identity': 'TMPro.TMP_Text::set_isOrthographic / sig 20010102'}
+IL_01B7: br             {'target': 444}
+IL_01BC: ldloc          local(0x0010)
+IL_01C0: ldloc          local(0x000B)
+IL_01C4: call           {'token': '0x0A0002A3', 'identity': 'TMPro.TMP_Text::set_fontSize / sig 2001010c'}
+IL_01C9: ldloca         local(0x000B)
+IL_01CD: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_01D2: stloc          local(0x0022)
+IL_01D6: br             {'target': 475}
+IL_01DB: ldloc          local(0x0022)
+IL_01DF: ldstr          {'token': '0x7001FB01', 'identity': ' pts - Lorem ipsum dolor sit...'}
+IL_01E4: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_01E9: stloc          local(0x0023)
+IL_01ED: ldloc          local(0x0010)
+IL_01F1: stloc          local(0x0017)
+IL_01F5: ldstr          {'token': '0x7001FB41', 'identity': 'Indirect call: [v381 @ r9_v4 (Il2CppClass<UnityEngine.Camera>)+558] (should have been resolved before IL gen)'}
+IL_01FA: pop            None
+IL_01FB: ldc.i4         65535
+IL_0200: conv.r4        None
+IL_0201: ldc.r4         255.0
+IL_0206: conv.r4        None
+IL_0207: div            None
+IL_0208: stloc          local(0x0018)
+IL_020C: ldc.i4         255
+IL_0211: conv.r4        None
+IL_0212: ldc.r4         255.0
+IL_0217: conv.r4        None
+IL_0218: div            None
+IL_0219: stloc          local(0x0015)
+IL_021D: ldc.i4         16777215
+IL_0222: conv.r4        None
+IL_0223: ldc.r4         255.0
+IL_0228: conv.r4        None
+IL_0229: div            None
+IL_022A: stloc          local(0x0016)
+IL_022E: ldloc          local(0x0010)
+IL_0232: stloc          local(0x0025)
+IL_0236: ldstr          {'token': '0x7001FC1E', 'identity': 'Indirect call: [v564 @ rax_v38 (Il2CppClass<UnityEngine.Camera>)+2A8] (should have been resolved before IL gen)'}
+IL_023B: pop            None
+IL_023C: ldloc          local(0x0019)
+IL_0240: ldloc          local(0x000B)
+IL_0244: add            None
+IL_0245: stloc          local(0x0019)
+IL_0249: nop            None
+IL_024A: ldloc          local(0x0021)
+IL_024E: stloc          local(0x000A)
+IL_0252: ldloca         local(0x0028)
+IL_0256: stloc          local(0x001A)
+IL_025A: ldloc          local(0x000B)
+IL_025E: stloc          local(0x001E)
+IL_0262: br             {'target': 650}
+IL_0267: ret            None
+IL_0268: ldarg.0        None
+IL_0269: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_026E: stloc          local(0x0005)
+IL_0272: ldarg.0        None
+IL_0273: ldloc          local(0x0005)
+IL_0277: stfld          {'token': '0x04000964', 'identity': 'TMPro.Examples.Benchmark04::m_Transform'}
+IL_027C: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_0281: stloc          local(0x0006)
+IL_0285: br             {'target': 25}
+IL_028A: ldloc          local(0x001E)
+IL_028E: ldarg.0        None
+IL_028F: ldfld          {'token': '0x04000963', 'identity': 'TMPro.Examples.Benchmark04::Steps'}
+IL_0294: add            None
+IL_0295: stloc          local(0x001E)
+IL_0299: ldloc          local(0x001E)
+IL_029D: ldarg.0        None
+IL_029E: ldfld          {'token': '0x04000962', 'identity': 'TMPro.Examples.Benchmark04::MaxPointSize'}
+IL_02A3: cgt            None
+IL_02A5: ldc.i4.0       None
+IL_02A6: ceq            None
+IL_02A8: stloc          local(0x001B)
+IL_02AC: ldloc          local(0x001B)
+IL_02B0: brtrue         {'target': 698}
+IL_02B5: br             {'target': 615}
+IL_02BA: ldarg.0        None
+IL_02BB: ldfld          {'token': '0x04000960', 'identity': 'TMPro.Examples.Benchmark04::SpawnType'}
+IL_02C0: ldc.i4         0
+IL_02C5: ceq            None
+IL_02C7: ldc.i4.0       None
+IL_02C8: ceq            None
+IL_02CA: stloc          local(0x001C)
+IL_02CE: ldloc          local(0x001C)
+IL_02D2: brtrue         {'target': 650}
+IL_02D7: br             {'target': 183}
+IL_02DC: ldstr          {'token': '0x7000E9A4', 'identity': 'Warning: Method ends with non empty stack (-100), the output could be wrong!'}
+IL_02E1: pop            None

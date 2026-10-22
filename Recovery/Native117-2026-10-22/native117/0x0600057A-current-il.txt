@@ -1,0 +1,369 @@
+Almanac_PlantDetail::Creat_LevelUpSupplies
+{"token": "0x0600057A", "name": "Almanac_PlantDetail::Creat_LevelUpSupplies", "signature": "200001", "rva": 461284, "max_stack": 3, "code_size": 1509, "local_sig": 285213727, "locals_blob": "073e1282280802080815120d011c15120d011282040808080808081280c412814c1281581280c412814c12815815120d01128204128204128234128204128204120912151215128204120912151282041281501d081281501d0815120d0112820412814c1d1c1280c4020202081c1c021c1c021209081c0802128294181818081c0808", "eh_count": 0, "il_sha256": "f36fb77b8ed6d457daaa42e9bebba31739d98b8425b1e955de3d77c242c6c712"}
+IL_0000: br             {'target': 1368}
+IL_0005: ldloc          local(0x0000)
+IL_0009: ldfld          {'token': '0x0400065D', 'identity': 'PlantSave::stars'}
+IL_000E: stloc          local(0x0001)
+IL_0012: ldarg.0        None
+IL_0013: ldfld          {'token': '0x040006FE', 'identity': 'Almanac_PlantDetail::targetLevel'}
+IL_0018: ldloc          local(0x0000)
+IL_001C: ldfld          {'token': '0x04000662', 'identity': 'PlantSave::level'}
+IL_0021: cgt            None
+IL_0023: ldc.i4.0       None
+IL_0024: ceq            None
+IL_0026: stloc          local(0x0002)
+IL_002A: ldc.i4         0
+IL_002F: stloc          local(0x000A)
+IL_0033: ldc.i4         0
+IL_0038: stloc          local(0x000C)
+IL_003C: ldloc          local(0x0002)
+IL_0040: brtrue         {'target': 569}
+IL_0045: br             {'target': 74}
+IL_004A: ldloc          local(0x0000)
+IL_004E: ldfld          {'token': '0x04000662', 'identity': 'PlantSave::level'}
+IL_0053: stloc          local(0x0009)
+IL_0057: ldc.i4         0
+IL_005C: stloc          local(0x000B)
+IL_0060: br             {'target': 1401}
+IL_0065: ldloc          local(0x0000)
+IL_0069: ldfld          {'token': '0x04000661', 'identity': 'PlantSave::order'}
+IL_006E: ldc.i4         1
+IL_0073: sub            None
+IL_0074: stloc          local(0x002B)
+IL_0078: ldloc          local(0x0029)
+IL_007C: brtrue         {'target': 264}
+IL_0081: br             {'target': 134}
+IL_0086: ldloc          local(0x002B)
+IL_008A: ldc.i4         1
+IL_008F: sub            None
+IL_0090: stloc          local(0x002E)
+IL_0094: ldloc          local(0x0029)
+IL_0098: brtrue         {'target': 250}
+IL_009D: br             {'target': 162}
+IL_00A2: ldloc          local(0x002E)
+IL_00A6: ldc.i4         1
+IL_00AB: sub            None
+IL_00AC: stloc          local(0x002C)
+IL_00B0: ldloc          local(0x0029)
+IL_00B4: brtrue         {'target': 236}
+IL_00B9: br             {'target': 190}
+IL_00BE: ldloc          local(0x002C)
+IL_00C2: ldc.i4         1
+IL_00C7: ceq            None
+IL_00C9: ldc.i4.0       None
+IL_00CA: ceq            None
+IL_00CC: stloc          local(0x002D)
+IL_00D0: ldloc          local(0x002D)
+IL_00D4: brtrue         {'target': 278}
+IL_00D9: br             {'target': 222}
+IL_00DE: ldc.i4         135
+IL_00E3: stloc          local(0x002F)
+IL_00E7: br             {'target': 1383}
+IL_00EC: ldc.i4         86
+IL_00F1: stloc          local(0x002F)
+IL_00F5: br             {'target': 1383}
+IL_00FA: ldc.i4         47
+IL_00FF: stloc          local(0x002F)
+IL_0103: br             {'target': 1383}
+IL_0108: ldc.i4         18
+IL_010D: stloc          local(0x002F)
+IL_0111: br             {'target': 1383}
+IL_0116: ldc.i8         4294967295
+IL_011F: stloc          local(0x002F)
+IL_0123: br             {'target': 1383}
+IL_0128: ldloc          local(0x000D)
+IL_012C: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_0131: stloc          local(0x000E)
+IL_0135: br             {'target': 314}
+IL_013A: ldloc          local(0x000E)
+IL_013E: ldfld          {'token': '0x04000312', 'identity': 'SavesManager::plantsInitialValue'}
+IL_0143: stloc          local(0x001F)
+IL_0147: br             {'target': 332}
+IL_014C: ldloc          local(0x001F)
+IL_0150: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_0155: ldloc          local(0x0003)
+IL_0159: call           {'token': '0x0A000263', 'identity': 'TypeSpec:78::get_Item / sig 2001130008'}
+IL_015E: stloc          local(0x000F)
+IL_0162: br             {'target': 359}
+IL_0167: ldloc          local(0x000F)
+IL_016B: ldfld          {'token': '0x04000329', 'identity': 'PlantLevelUpSupplies::coins'}
+IL_0170: stloc          local(0x0020)
+IL_0174: br             {'target': 377}
+IL_0179: ldloc          local(0x000B)
+IL_017D: ldloc          local(0x0020)
+IL_0181: ldloc          local(0x0001)
+IL_0185: ldelem         {'token': '0x0100000E', 'identity': 'System.Int32'}
+IL_018A: add            None
+IL_018B: stloc          local(0x000C)
+IL_018F: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_0194: stloc          local(0x0010)
+IL_0198: br             {'target': 413}
+IL_019D: ldloc          local(0x0010)
+IL_01A1: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_01A6: stloc          local(0x0011)
+IL_01AA: br             {'target': 431}
+IL_01AF: ldloc          local(0x0011)
+IL_01B3: ldfld          {'token': '0x04000312', 'identity': 'SavesManager::plantsInitialValue'}
+IL_01B8: stloc          local(0x0021)
+IL_01BC: br             {'target': 449}
+IL_01C1: ldloc          local(0x0021)
+IL_01C5: ldfld          {'token': '0x04000316', 'identity': 'PlantsInitialValue::plantLevelUpSupplies'}
+IL_01CA: ldloc          local(0x0003)
+IL_01CE: call           {'token': '0x0A000263', 'identity': 'TypeSpec:78::get_Item / sig 2001130008'}
+IL_01D3: stloc          local(0x0012)
+IL_01D7: br             {'target': 476}
+IL_01DC: ldloc          local(0x0012)
+IL_01E0: ldfld          {'token': '0x0400032A', 'identity': 'PlantLevelUpSupplies::supplies'}
+IL_01E5: stloc          local(0x0022)
+IL_01E9: br             {'target': 494}
+IL_01EE: ldc.i4         0
+IL_01F3: ldloc          local(0x0022)
+IL_01F7: ldloc          local(0x0001)
+IL_01FB: ldelem         {'token': '0x0100000E', 'identity': 'System.Int32'}
+IL_0200: add            None
+IL_0201: stloc          local(0x000A)
+IL_0205: ldloc          local(0x0009)
+IL_0209: ldc.i4         1
+IL_020E: add            None
+IL_020F: stloc          local(0x0009)
+IL_0213: ldloc          local(0x0009)
+IL_0217: ldarg.0        None
+IL_0218: ldfld          {'token': '0x040006FE', 'identity': 'Almanac_PlantDetail::targetLevel'}
+IL_021D: clt            None
+IL_021F: stloc          local(0x0028)
+IL_0223: ldloc          local(0x000C)
+IL_0227: stloc          local(0x000B)
+IL_022B: ldloc          local(0x0028)
+IL_022F: brtrue         {'target': 1401}
+IL_0234: br             {'target': 569}
+IL_0239: ldarg.0        None
+IL_023A: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_023F: stloc          local(0x0013)
+IL_0243: ldc.i4         0
+IL_0248: stloc          local(0x0004)
+IL_024C: ldc.i4         0
+IL_0251: stloc          local(0x0008)
+IL_0255: br             {'target': 1435}
+IL_025A: ldloc          local(0x0023)
+IL_025E: ldloc          local(0x0004)
+IL_0262: call           {'token': '0x0A000260', 'identity': 'TypeSpec:108::get_Item / sig 2001130008'}
+IL_0267: stloc          local(0x0014)
+IL_026B: br             {'target': 624}
+IL_0270: ldloc          local(0x0014)
+IL_0274: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0279: stloc          local(0x0031)
+IL_027D: br             {'target': 642}
+IL_0282: ldloc          local(0x0031)
+IL_0286: call           {'token': '0x0A000025', 'identity': 'UnityEngine.Object::Destroy / sig 0001011221'}
+IL_028B: ldarg.0        None
+IL_028C: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_0291: stloc          local(0x0013)
+IL_0295: ldloc          local(0x0004)
+IL_0299: ldc.i4         1
+IL_029E: add            None
+IL_029F: stloc          local(0x0004)
+IL_02A3: br             {'target': 680}
+IL_02A8: ldloc          local(0x0004)
+IL_02AC: stloc          local(0x0008)
+IL_02B0: br             {'target': 1435}
+IL_02B5: ldloc          local(0x0023)
+IL_02B9: ldfld          {'token': '0x0A000261', 'identity': 'TypeSpec:108::_version / sig 0608'}
+IL_02BE: ldc.i4         1
+IL_02C3: add            None
+IL_02C4: stloc          local(0x003C)
+IL_02C8: ldloc          local(0x0023)
+IL_02CC: ldloc          local(0x003C)
+IL_02D0: stfld          {'token': '0x0A000261', 'identity': 'TypeSpec:108::_version / sig 0608'}
+IL_02D5: ldloc          local(0x0023)
+IL_02D9: ldc.i4         0
+IL_02DE: stfld          {'token': '0x0A00025F', 'identity': 'TypeSpec:108::_size / sig 0608'}
+IL_02E3: ldloc          local(0x0023)
+IL_02E7: ldfld          {'token': '0x0A00025F', 'identity': 'TypeSpec:108::_size / sig 0608'}
+IL_02EC: ldc.i4         0
+IL_02F1: cgt            None
+IL_02F3: ldc.i4.0       None
+IL_02F4: ceq            None
+IL_02F6: stloc          local(0x0030)
+IL_02FA: ldloc          local(0x0030)
+IL_02FE: brtrue         {'target': 809}
+IL_0303: br             {'target': 776}
+IL_0308: ldloc          local(0x0023)
+IL_030C: ldfld          {'token': '0x0A000262', 'identity': 'TypeSpec:108::_items / sig 061d1300'}
+IL_0311: ldc.i4         0
+IL_0316: ldloc          local(0x0023)
+IL_031A: ldfld          {'token': '0x0A00025F', 'identity': 'TypeSpec:108::_size / sig 0608'}
+IL_031F: call           {'token': '0x0A000027', 'identity': 'System.Array::Clear / sig 00030112610808'}
+IL_0324: br             {'target': 809}
+IL_0329: br             {'target': 1481}
+IL_032E: ldloc          local(0x0026)
+IL_0332: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_0337: stloc          local(0x0024)
+IL_033B: br             {'target': 832}
+IL_0340: ldloc          local(0x0000)
+IL_0344: ldfld          {'token': '0x04000661', 'identity': 'PlantSave::order'}
+IL_0349: ldc.i4         31
+IL_034E: shr            None
+IL_034F: stloc          local(0x0032)
+IL_0353: ldloc          local(0x0000)
+IL_0357: ldfld          {'token': '0x04000661', 'identity': 'PlantSave::order'}
+IL_035C: ldloc          local(0x0032)
+IL_0360: sub            None
+IL_0361: stloc          local(0x0033)
+IL_0365: ldloc          local(0x0033)
+IL_0369: ldc.i4         1
+IL_036E: shr            None
+IL_036F: stloc          local(0x0034)
+IL_0373: ldloc          local(0x0024)
+IL_0377: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_037C: ldloc          local(0x0034)
+IL_0380: call           {'token': '0x060004C4', 'identity': 'Save::GetSupplies'}
+IL_0385: stloc          local(0x0015)
+IL_0389: ldarg.0        None
+IL_038A: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_038F: stloc          local(0x0005)
+IL_0393: br             {'target': 920}
+IL_0398: ldloc          local(0x0015)
+IL_039C: ldc.i4         1
+IL_03A1: call           {'token': '0x060004D9', 'identity': 'Supplies::CreatSuppliesItem'}
+IL_03A6: stloc          local(0x0016)
+IL_03AA: br             {'target': 943}
+IL_03AF: ldloc          local(0x0005)
+IL_03B3: ldfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_03B8: ldc.i4         1
+IL_03BD: add            None
+IL_03BE: stloc          local(0x003D)
+IL_03C2: ldloc          local(0x0005)
+IL_03C6: ldloc          local(0x003D)
+IL_03CA: stfld          {'token': '0x0A000030', 'identity': 'TypeSpec:6::_version / sig 0608'}
+IL_03CF: ldloc          local(0x0005)
+IL_03D3: ldfld          {'token': '0x0A000031', 'identity': 'TypeSpec:6::_items / sig 061d1300'}
+IL_03D8: stloc          local(0x0025)
+IL_03DC: br             {'target': 993}
+IL_03E1: ldloc          local(0x0005)
+IL_03E5: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_03EA: ldloc          local(0x0025)
+IL_03EE: ldlen          None
+IL_03EF: conv.i4        None
+IL_03F0: clt            None
+IL_03F2: stloc          local(0x0035)
+IL_03F6: ldloc          local(0x0035)
+IL_03FA: brtrue         {'target': 1046}
+IL_03FF: br             {'target': 1028}
+IL_0404: ldloc          local(0x0005)
+IL_0408: ldloc          local(0x0016)
+IL_040C: call           {'token': '0x0A000033', 'identity': 'TypeSpec:6::AddWithResize / sig 2001011300'}
+IL_0411: br             {'target': 1105}
+IL_0416: ldloc          local(0x0005)
+IL_041A: ldfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_041F: ldc.i4         1
+IL_0424: add            None
+IL_0425: stloc          local(0x002A)
+IL_0429: ldloc          local(0x0005)
+IL_042D: ldloc          local(0x002A)
+IL_0431: stfld          {'token': '0x0A000032', 'identity': 'TypeSpec:6::_size / sig 0608'}
+IL_0436: br             {'target': 1083}
+IL_043B: ldloc          local(0x0025)
+IL_043F: ldloc          local(0x003A)
+IL_0443: ldloc          local(0x0016)
+IL_0447: stelem         {'token': '0x0100001A', 'identity': 'System.Object'}
+IL_044C: br             {'target': 1105}
+IL_0451: ldarg.0        None
+IL_0452: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_0457: stloc          local(0x0006)
+IL_045B: br             {'target': 1120}
+IL_0460: ldloc          local(0x0006)
+IL_0464: ldfld          {'token': '0x0A00025F', 'identity': 'TypeSpec:108::_size / sig 0608'}
+IL_0469: ldc.i4         1
+IL_046E: sub            None
+IL_046F: stloc          local(0x0007)
+IL_0473: ldarg.0        None
+IL_0474: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_0479: ldloc          local(0x0007)
+IL_047D: call           {'token': '0x0A000260', 'identity': 'TypeSpec:108::get_Item / sig 2001130008'}
+IL_0482: stloc          local(0x0017)
+IL_0486: br             {'target': 1163}
+IL_048B: ldloc          local(0x0017)
+IL_048F: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0494: stloc          local(0x0018)
+IL_0498: br             {'target': 1181}
+IL_049D: ldloc          local(0x0018)
+IL_04A1: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_04A6: stloc          local(0x0019)
+IL_04AA: br             {'target': 1199}
+IL_04AF: ldarg.0        None
+IL_04B0: ldfld          {'token': '0x04000716', 'identity': 'Almanac_PlantDetail::suppliesList_Gameobject'}
+IL_04B5: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_04BA: stloc          local(0x001A)
+IL_04BE: br             {'target': 1219}
+IL_04C3: ldloc          local(0x0019)
+IL_04C7: ldloc          local(0x001A)
+IL_04CB: ldc.i4         0
+IL_04D0: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_04D5: br             {'target': 1242}
+IL_04DA: ldarg.0        None
+IL_04DB: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_04E0: ldloc          local(0x0007)
+IL_04E4: call           {'token': '0x0A000260', 'identity': 'TypeSpec:108::get_Item / sig 2001130008'}
+IL_04E9: stloc          local(0x001B)
+IL_04ED: br             {'target': 1266}
+IL_04F2: ldloc          local(0x001B)
+IL_04F6: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_04FB: stloc          local(0x001C)
+IL_04FF: br             {'target': 1284}
+IL_0504: ldloc          local(0x001C)
+IL_0508: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_050D: stloc          local(0x001D)
+IL_0511: br             {'target': 1302}
+IL_0516: ldloc          local(0x001D)
+IL_051A: ldloca         local(0x003B)
+IL_051E: call           {'token': '0x0A000042', 'identity': 'UnityEngine.Transform::set_localPosition / sig 200101114d'}
+IL_0523: br             {'target': 1320}
+IL_0528: ldarg.0        None
+IL_0529: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_052E: ldloc          local(0x0007)
+IL_0532: call           {'token': '0x0A000260', 'identity': 'TypeSpec:108::get_Item / sig 2001130008'}
+IL_0537: stloc          local(0x001E)
+IL_053B: br             {'target': 1344}
+IL_0540: ldloc          local(0x001E)
+IL_0544: ldloc          local(0x000A)
+IL_0548: stfld          {'token': '0x04000591', 'identity': 'SuppliesItem::demand'}
+IL_054D: ldarg.0        None
+IL_054E: ldloc          local(0x000C)
+IL_0552: stfld          {'token': '0x0400071B', 'identity': 'Almanac_PlantDetail::levelUpPrice'}
+IL_0557: ret            None
+IL_0558: ldarg.0        None
+IL_0559: ldfld          {'token': '0x040006F5', 'identity': 'Almanac_PlantDetail::plantSave'}
+IL_055E: stloc          local(0x0000)
+IL_0562: br             {'target': 5}
+IL_0567: ldloc          local(0x0009)
+IL_056B: ldloc          local(0x002F)
+IL_056F: add            None
+IL_0570: stloc          local(0x0003)
+IL_0574: br             {'target': 1495}
+IL_0579: ldloc          local(0x0000)
+IL_057D: ldfld          {'token': '0x04000661', 'identity': 'PlantSave::order'}
+IL_0582: ldc.i4         0
+IL_0587: ceq            None
+IL_0589: stloc          local(0x0029)
+IL_058D: ldloc          local(0x0029)
+IL_0591: brtrue         {'target': 278}
+IL_0596: br             {'target': 101}
+IL_059B: ldarg.0        None
+IL_059C: ldfld          {'token': '0x04000717', 'identity': 'Almanac_PlantDetail::suppliesItemList'}
+IL_05A1: stloc          local(0x0023)
+IL_05A5: ldloc          local(0x0008)
+IL_05A9: ldloc          local(0x0013)
+IL_05AD: ldfld          {'token': '0x0A00025F', 'identity': 'TypeSpec:108::_size / sig 0608'}
+IL_05B2: clt            None
+IL_05B4: ldc.i4.0       None
+IL_05B5: ceq            None
+IL_05B7: stloc          local(0x0027)
+IL_05BB: ldloc          local(0x0027)
+IL_05BF: brtrue         {'target': 693}
+IL_05C4: br             {'target': 602}
+IL_05C9: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_05CE: stloc          local(0x0026)
+IL_05D2: br             {'target': 814}
+IL_05D7: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_05DC: stloc          local(0x000D)
+IL_05E0: br             {'target': 296}

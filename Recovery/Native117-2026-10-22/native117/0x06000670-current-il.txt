@@ -1,0 +1,93 @@
+Popup::GetDescriptionText
+{"token": "0x06000670", "name": "Popup::GetDescriptionText", "signature": "20000e", "rva": 557356, "max_stack": 3, "code_size": 357, "local_sig": 285213917, "locals_blob": "071102020e021c08020e021c1c181283101c1c1c1c", "eh_count": 0, "il_sha256": "0eb01d0040b4087cb77d028e13abc5ac81e691f219b5d4db728a758750422d41"}
+IL_0000: br             {'target': 281}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000884', 'identity': 'Popup::info0_int'}
+IL_000B: ldc.i4         0
+IL_0010: ceq            None
+IL_0012: stloc          local(0x0001)
+IL_0016: ldloc          local(0x0001)
+IL_001A: brtrue         {'target': 137}
+IL_001F: br             {'target': 36}
+IL_0024: ldarg.0        None
+IL_0025: ldfld          {'token': '0x04000884', 'identity': 'Popup::info0_int'}
+IL_002A: ldc.i4         1
+IL_002F: sub            None
+IL_0030: stloc          local(0x0004)
+IL_0034: ldloc          local(0x0001)
+IL_0038: brtrue         {'target': 123}
+IL_003D: br             {'target': 66}
+IL_0042: ldloc          local(0x0004)
+IL_0046: ldc.i4         1
+IL_004B: ceq            None
+IL_004D: stloc          local(0x0008)
+IL_0051: ldloc          local(0x0008)
+IL_0055: brtrue         {'target': 109}
+IL_005A: br             {'target': 95}
+IL_005F: ldstr          {'token': '0x70004533', 'identity': ''}
+IL_0064: stloc          local(0x0002)
+IL_0068: br             {'target': 324}
+IL_006D: ldstr          {'token': '0x7001BABD', 'identity': '高难演练'}
+IL_0072: stloc          local(0x0002)
+IL_0076: br             {'target': 324}
+IL_007B: ldstr          {'token': '0x7001BAC7', 'identity': '救援行动'}
+IL_0080: stloc          local(0x0002)
+IL_0084: br             {'target': 324}
+IL_0089: ldstr          {'token': '0x7001BAD1', 'identity': '冒险模式'}
+IL_008E: stloc          local(0x0002)
+IL_0092: br             {'target': 324}
+IL_0097: ldarg.0        None
+IL_0098: ldfld          {'token': '0x0400087C', 'identity': 'Popup::P'}
+IL_009D: ldc.i4         3
+IL_00A2: ceq            None
+IL_00A4: ldc.i4.0       None
+IL_00A5: ceq            None
+IL_00A7: stloc          local(0x0003)
+IL_00AB: ldloc          local(0x0003)
+IL_00AF: brtrue         {'target': 352}
+IL_00B4: br             {'target': 185}
+IL_00B9: ldarg.0        None
+IL_00BA: ldfld          {'token': '0x04000884', 'identity': 'Popup::info0_int'}
+IL_00BF: stloc          local(0x0005)
+IL_00C3: ldarg.0        None
+IL_00C4: ldfld          {'token': '0x04000884', 'identity': 'Popup::info0_int'}
+IL_00C9: ldc.i4         14
+IL_00CE: cgt            None
+IL_00D0: stloc          local(0x0006)
+IL_00D4: ldloc          local(0x0006)
+IL_00D8: brtrue         {'target': 267}
+IL_00DD: br             {'target': 226}
+IL_00E2: ldc.i8         6442450944
+IL_00EB: stloc          local(0x0009)
+IL_00EF: ldstr          {'token': '0x7001BADB', 'identity': 'Unmanaged memory load: [v145 @ rdx_v2+3A5CA0+v101 @ rax_v6 (System.Int32)*4]'}
+IL_00F4: pop            None
+IL_00F5: ldc.i4.0       None
+IL_00F6: conv.i         None
+IL_00F7: ldc.i8         6442450944
+IL_0100: add            None
+IL_0101: stloc          local(0x000A)
+IL_0105: ldstr          {'token': '0x7001BB76', 'identity': 'Indirect jump: v147 @ rcx_v5 (should have been resolved before IL gen)'}
+IL_010A: pop            None
+IL_010B: ldstr          {'token': '0x70004533', 'identity': ''}
+IL_0110: stloc          local(0x0007)
+IL_0114: br             {'target': 352}
+IL_0119: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_011E: stloc          local(0x0007)
+IL_0122: ldarg.0        None
+IL_0123: ldfld          {'token': '0x0400087C', 'identity': 'Popup::P'}
+IL_0128: ldc.i4         1
+IL_012D: ceq            None
+IL_012F: ldc.i4.0       None
+IL_0130: ceq            None
+IL_0132: stloc          local(0x0000)
+IL_0136: ldloc          local(0x0000)
+IL_013A: brtrue         {'target': 151}
+IL_013F: br             {'target': 5}
+IL_0144: ldstr          {'token': '0x7001BC05', 'identity': '现在可以游玩'}
+IL_0149: ldloc          local(0x0002)
+IL_014D: ldstr          {'token': '0x7001BC13', 'identity': '了'}
+IL_0152: call           {'token': '0x0A00010B', 'identity': 'System.String::Concat / sig 00030e0e0e0e'}
+IL_0157: stloc          local(0x0007)
+IL_015B: br             {'target': 151}
+IL_0160: ldloc          local(0x0007)
+IL_0164: ret            None

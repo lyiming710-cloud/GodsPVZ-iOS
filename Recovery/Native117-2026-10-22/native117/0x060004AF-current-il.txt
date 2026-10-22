@@ -1,0 +1,185 @@
+Zombie::ZC_SPHShooting
+{"token": "0x060004AF", "name": "Zombie::ZC_SPHShooting", "signature": "200001", "rva": 404992, "max_stack": 4, "code_size": 701, "local_sig": 285213600, "locals_blob": "07221282101281a41281e01281e01281d41281d412821012821008121d1215021281f40c1280b9114d1280941c1c1c1c0202020202021280b5114d0c0c1c1c18", "eh_count": 0, "il_sha256": "8852b783d91a9e01e8ea22d373ffaeabae3ad16514dd6c7d3d69d11d1d3628fd"}
+IL_0000: br             {'target': 586}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x040003D6', 'identity': 'Board::projectileManager'}
+IL_000E: ldc.i4         26
+IL_0013: call           {'token': '0x060001F6', 'identity': 'ProjectileManager::CrateNewProjectile'}
+IL_0018: stloc          local(0x000C)
+IL_001C: br             {'target': 33}
+IL_0021: ldarg.0        None
+IL_0022: ldfld          {'token': '0x04000609', 'identity': 'Zombie::animationSprites'}
+IL_0027: ldstr          {'token': '0x70014912', 'identity': 'IMA_SPH_1_light'}
+IL_002C: call           {'token': '0x06000141', 'identity': 'GlobalStaticVars::GetAnimationSpritePosition'}
+IL_0031: stloc          local(0x000F)
+IL_0035: ldarg.0        None
+IL_0036: ldc.i4         26
+IL_003B: ldloc          local(0x000C)
+IL_003F: ldc.i4         0
+IL_0044: call           {'token': '0x06000443', 'identity': 'Zombie::GetDamage'}
+IL_0049: stloc          local(0x0010)
+IL_004D: br             {'target': 82}
+IL_0052: br             {'target': 87}
+IL_0057: ldstr          {'token': '0x7000C53B', 'identity': 'Method not found @1804A2700'}
+IL_005C: pop            None
+IL_005D: br             {'target': 98}
+IL_0062: ldarg.0        None
+IL_0063: ldfld          {'token': '0x04000601', 'identity': 'Zombie::targetPlant'}
+IL_0068: ldnull         None
+IL_0069: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_006E: stloc          local(0x0015)
+IL_0072: ldloc          local(0x0015)
+IL_0076: ldc.i4.0       None
+IL_0077: ceq            None
+IL_0079: stloc          local(0x0016)
+IL_007D: ldloc          local(0x0016)
+IL_0081: brtrue         {'target': 601}
+IL_0086: br             {'target': 139}
+IL_008B: ldarg.0        None
+IL_008C: ldfld          {'token': '0x04000601', 'identity': 'Zombie::targetPlant'}
+IL_0091: stloc          local(0x0002)
+IL_0095: br             {'target': 154}
+IL_009A: ldloc          local(0x000C)
+IL_009E: ldloc          local(0x0002)
+IL_00A2: ldfld          {'token': '0x040004A4', 'identity': 'Plant::fX'}
+IL_00A7: stfld          {'token': '0x04000569', 'identity': 'Projectile::targetPosition'}
+IL_00AC: ldarg.0        None
+IL_00AD: ldfld          {'token': '0x04000601', 'identity': 'Zombie::targetPlant'}
+IL_00B2: stloc          local(0x0003)
+IL_00B6: br             {'target': 187}
+IL_00BB: ldloc          local(0x0003)
+IL_00BF: ldfld          {'token': '0x040004A5', 'identity': 'Plant::fY'}
+IL_00C4: pop            None
+IL_00C5: ldc.i4         0
+IL_00CA: pop            None
+IL_00CB: br             {'target': 601}
+IL_00D0: ldarg.0        None
+IL_00D1: ldfld          {'token': '0x04000603', 'identity': 'Zombie::targetDevice'}
+IL_00D6: ldnull         None
+IL_00D7: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_00DC: stloc          local(0x0017)
+IL_00E0: ldloc          local(0x0017)
+IL_00E4: ldc.i4.0       None
+IL_00E5: ceq            None
+IL_00E7: stloc          local(0x0018)
+IL_00EB: ldloc          local(0x0018)
+IL_00EF: brtrue         {'target': 606}
+IL_00F4: br             {'target': 249}
+IL_00F9: ldarg.0        None
+IL_00FA: ldfld          {'token': '0x04000603', 'identity': 'Zombie::targetDevice'}
+IL_00FF: stloc          local(0x0004)
+IL_0103: br             {'target': 264}
+IL_0108: ldloc          local(0x000C)
+IL_010C: ldloc          local(0x0004)
+IL_0110: ldfld          {'token': '0x04000466', 'identity': 'Device::fX'}
+IL_0115: stfld          {'token': '0x04000569', 'identity': 'Projectile::targetPosition'}
+IL_011A: ldarg.0        None
+IL_011B: ldfld          {'token': '0x04000603', 'identity': 'Zombie::targetDevice'}
+IL_0120: stloc          local(0x0005)
+IL_0124: br             {'target': 297}
+IL_0129: ldloc          local(0x0005)
+IL_012D: ldfld          {'token': '0x04000467', 'identity': 'Device::fY'}
+IL_0132: pop            None
+IL_0133: ldc.i4         0
+IL_0138: pop            None
+IL_0139: br             {'target': 606}
+IL_013E: ldarg.0        None
+IL_013F: ldfld          {'token': '0x04000602', 'identity': 'Zombie::targetZombie'}
+IL_0144: ldnull         None
+IL_0145: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_014A: stloc          local(0x0019)
+IL_014E: ldloc          local(0x0019)
+IL_0152: ldc.i4.0       None
+IL_0153: ceq            None
+IL_0155: stloc          local(0x001A)
+IL_0159: ldloc          local(0x001A)
+IL_015D: brtrue         {'target': 611}
+IL_0162: br             {'target': 359}
+IL_0167: ldarg.0        None
+IL_0168: ldfld          {'token': '0x04000602', 'identity': 'Zombie::targetZombie'}
+IL_016D: stloc          local(0x0006)
+IL_0171: br             {'target': 374}
+IL_0176: ldloc          local(0x000C)
+IL_017A: ldloc          local(0x0006)
+IL_017E: ldfld          {'token': '0x040005AD', 'identity': 'Zombie::fX'}
+IL_0183: stfld          {'token': '0x04000569', 'identity': 'Projectile::targetPosition'}
+IL_0188: ldarg.0        None
+IL_0189: ldfld          {'token': '0x04000602', 'identity': 'Zombie::targetZombie'}
+IL_018E: stloc          local(0x0007)
+IL_0192: br             {'target': 407}
+IL_0197: ldloc          local(0x0007)
+IL_019B: ldfld          {'token': '0x040005AE', 'identity': 'Zombie::fY'}
+IL_01A0: pop            None
+IL_01A1: ldc.i4         0
+IL_01A6: pop            None
+IL_01A7: br             {'target': 611}
+IL_01AC: ldarg.0        None
+IL_01AD: ldfld          {'token': '0x040005FE', 'identity': 'Zombie::animator'}
+IL_01B2: ldstr          {'token': '0x7000FD4F', 'identity': 'Ready'}
+IL_01B7: ldc.i4         0
+IL_01BC: call           {'token': '0x0A0001F3', 'identity': 'UnityEngine.Animator::SetBool / sig 2002010e02'}
+IL_01C1: ldarg.0        None
+IL_01C2: ldc.i4         0
+IL_01C7: stfld          {'token': '0x040005E1', 'identity': 'Zombie::SPH_shootReady'}
+IL_01CC: br             {'target': 696}
+IL_01D1: ldsfld         {'token': '0x040002EF', 'identity': 'ResourceManager::zombieClips'}
+IL_01D6: ldc.i4         8
+IL_01DB: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_01E0: stloc          local(0x001B)
+IL_01E4: call           {'token': '0x0A000004', 'identity': 'UnityEngine.Camera::get_main / sig 0000121d'}
+IL_01E9: stloc          local(0x0009)
+IL_01ED: br             {'target': 498}
+IL_01F2: ldloc          local(0x0009)
+IL_01F6: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_01FB: stloc          local(0x000A)
+IL_01FF: br             {'target': 516}
+IL_0204: ldloc          local(0x000A)
+IL_0208: call           {'token': '0x0A000037', 'identity': 'UnityEngine.Transform::get_position / sig 2000114d'}
+IL_020D: stloc          local(0x001C)
+IL_0211: nop            None
+IL_0212: br             {'target': 535}
+IL_0217: call           {'token': '0x06000138', 'identity': 'GlobalStaticVars::AudioVolume'}
+IL_021C: stloc          local(0x001D)
+IL_0220: ldloc          local(0x001D)
+IL_0224: conv.r4        None
+IL_0225: ldloc          local(0x001D)
+IL_0229: conv.r4        None
+IL_022A: add            None
+IL_022B: stloc          local(0x000D)
+IL_022F: ldloc          local(0x001B)
+IL_0233: ldloca         local(0x001E)
+IL_0237: ldloc          local(0x000D)
+IL_023B: call           {'token': '0x0600013D', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_0240: stloc          local(0x000E)
+IL_0244: br             {'target': 585}
+IL_0249: ret            None
+IL_024A: ldarg.0        None
+IL_024B: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_0250: stloc          local(0x0001)
+IL_0254: br             {'target': 5}
+IL_0259: br             {'target': 208}
+IL_025E: br             {'target': 318}
+IL_0263: ldloc          local(0x000C)
+IL_0267: ldloc          local(0x0010)
+IL_026B: ldarg.0        None
+IL_026C: ldfld          {'token': '0x040005F1', 'identity': 'Zombie::camp'}
+IL_0271: call           {'token': '0x060003F7', 'identity': 'Projectile::SetDamage'}
+IL_0276: ldarg.0        None
+IL_0277: ldfld          {'token': '0x040005E3', 'identity': 'Zombie::SPH_ammunitionCount'}
+IL_027C: ldc.i4         1
+IL_0281: sub            None
+IL_0282: stloc          local(0x0008)
+IL_0286: ldarg.0        None
+IL_0287: ldc.i4         0
+IL_028C: stfld          {'token': '0x040005E2', 'identity': 'Zombie::SPH_shooting'}
+IL_0291: ldarg.0        None
+IL_0292: ldloc          local(0x0008)
+IL_0296: stfld          {'token': '0x040005E3', 'identity': 'Zombie::SPH_ammunitionCount'}
+IL_029B: ldloc          local(0x0008)
+IL_029F: ldc.i4         0
+IL_02A4: cgt            None
+IL_02A6: stloc          local(0x000B)
+IL_02AA: ldloc          local(0x000B)
+IL_02AE: brtrue         {'target': 696}
+IL_02B3: br             {'target': 428}
+IL_02B8: br             {'target': 465}

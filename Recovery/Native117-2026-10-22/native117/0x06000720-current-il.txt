@@ -1,0 +1,114 @@
+<Start>d__4::MoveNext
+{"token": "0x06000720", "name": "<Start>d__4::MoveNext", "signature": "200002", "rva": 606136, "max_stack": 4, "code_size": 418, "local_sig": 285214053, "locals_blob": "071112836c0212836802020c125902020c0c11814d1181c91c1c1c1c", "eh_count": 0, "il_sha256": "9bc6a1295e1164347b0486cb0668b9b12e953aef4dfc5482288550da447ce9a4"}
+IL_0000: ldstr          {'token': '0x7001D89A', 'identity': 'Unmanaged memory load: [181CE4F49]'}
+IL_0005: pop            None
+IL_0006: ldc.i4.0       None
+IL_0007: conv.i         None
+IL_0008: ldc.i4         0
+IL_000D: ceq            None
+IL_000F: ldc.i4.0       None
+IL_0010: ceq            None
+IL_0012: stloc          local(0x0001)
+IL_0016: ldloc          local(0x0001)
+IL_001A: brtrue         {'target': 263}
+IL_001F: br             {'target': 36}
+IL_0024: ldc.i4         1
+IL_0029: pop            None
+IL_002A: br             {'target': 263}
+IL_002F: ldarg.0        None
+IL_0030: ldc.i8         4294967295
+IL_0039: stfld          {'token': '0x04000922', 'identity': '<Start>d__4::<>1__state'}
+IL_003E: ldarg.0        None
+IL_003F: ldc.i4         0
+IL_0044: stfld          {'token': '0x04000925', 'identity': '<Start>d__4::<matrix>5__2'}
+IL_0049: ldc.i4         0
+IL_004E: pop            None
+IL_004F: ldc.i4         0
+IL_0054: pop            None
+IL_0055: ldc.i4         0
+IL_005A: pop            None
+IL_005B: br             {'target': 307}
+IL_0060: ldarg.0        None
+IL_0061: ldfld          {'token': '0x04000922', 'identity': '<Start>d__4::<>1__state'}
+IL_0066: ldc.i4         1
+IL_006B: ceq            None
+IL_006D: ldc.i4.0       None
+IL_006E: ceq            None
+IL_0070: stloc          local(0x0004)
+IL_0074: ldloc          local(0x0004)
+IL_0078: brtrue         {'target': 243}
+IL_007D: br             {'target': 130}
+IL_0082: ldarg.0        None
+IL_0083: ldc.i8         4294967295
+IL_008C: stfld          {'token': '0x04000922', 'identity': '<Start>d__4::<>1__state'}
+IL_0091: br             {'target': 307}
+IL_0096: call           {'token': '0x0A0002D8', 'identity': 'UnityEngine.Time::get_time / sig 00000c'}
+IL_009B: stloc          local(0x0009)
+IL_009F: call           {'token': '0x0A0002D8', 'identity': 'UnityEngine.Time::get_time / sig 00000c'}
+IL_00A4: stloc          local(0x000A)
+IL_00A8: br             {'target': 173}
+IL_00AD: ldloca         local(0x000D)
+IL_00B1: call           {'token': '0x0A00024E', 'identity': 'UnityEngine.Quaternion::Internal_FromEulerRad / sig 000111814d114d'}
+IL_00B6: stloc          local(0x000B)
+IL_00BA: br             {'target': 312}
+IL_00BF: ldloc          local(0x0002)
+IL_00C3: ldfld          {'token': '0x04000921', 'identity': 'EnvMapAnimator::m_material'}
+IL_00C8: ldstr          {'token': '0x7001D8E0', 'identity': '_EnvMatrix'}
+IL_00CD: ldloca         local(0x0010)
+IL_00D1: call           {'token': '0x0A0002D9', 'identity': 'UnityEngine.Material::SetMatrix / sig 2002010e1181c9'}
+IL_00D6: ldarg.0        None
+IL_00D7: ldnull         None
+IL_00D8: stfld          {'token': '0x04000923', 'identity': '<Start>d__4::<>2__current'}
+IL_00DD: br             {'target': 226}
+IL_00E2: ldarg.0        None
+IL_00E3: ldc.i4         1
+IL_00E8: stfld          {'token': '0x04000922', 'identity': '<Start>d__4::<>1__state'}
+IL_00ED: ldc.i4         1
+IL_00F2: ret            None
+IL_00F3: ldc.i4         0
+IL_00F8: ret            None
+IL_00F9: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_00FE: stloc          local(0x0006)
+IL_0102: ldloc          local(0x0006)
+IL_0106: ret            None
+IL_0107: ldarg.0        None
+IL_0108: ldfld          {'token': '0x04000924', 'identity': '<Start>d__4::<>4__this'}
+IL_010D: stloc          local(0x0002)
+IL_0111: ldarg.0        None
+IL_0112: ldfld          {'token': '0x04000922', 'identity': '<Start>d__4::<>1__state'}
+IL_0117: ldc.i4         0
+IL_011C: ceq            None
+IL_011E: ldc.i4.0       None
+IL_011F: ceq            None
+IL_0121: stloc          local(0x0003)
+IL_0125: ldloc          local(0x0003)
+IL_0129: brtrue         {'target': 96}
+IL_012E: br             {'target': 47}
+IL_0133: br             {'target': 378}
+IL_0138: ldarg.0        None
+IL_0139: ldc.i4         40
+IL_013E: add            None
+IL_013F: stloc          local(0x000C)
+IL_0143: ldloc          local(0x000C)
+IL_0147: ldloca         local(0x000E)
+IL_014B: ldloca         local(0x000F)
+IL_014F: ldloca         local(0x000D)
+IL_0153: call           {'token': '0x0A0002DA', 'identity': 'UnityEngine.Matrix4x4::SetTRS / sig 200301114d11814d114d'}
+IL_0158: ldloc          local(0x0002)
+IL_015C: ldfld          {'token': '0x04000921', 'identity': 'EnvMapAnimator::m_material'}
+IL_0161: ldc.i4         0
+IL_0166: ceq            None
+IL_0168: stloc          local(0x0007)
+IL_016C: ldloc          local(0x0007)
+IL_0170: brtrue         {'target': 249}
+IL_0175: br             {'target': 191}
+IL_017A: call           {'token': '0x0A0002D8', 'identity': 'UnityEngine.Time::get_time / sig 00000c'}
+IL_017F: stloc          local(0x0005)
+IL_0183: ldarg.0        None
+IL_0184: ldfld          {'token': '0x04000924', 'identity': '<Start>d__4::<>4__this'}
+IL_0189: ldc.i4         0
+IL_018E: ceq            None
+IL_0190: stloc          local(0x0008)
+IL_0194: ldloc          local(0x0008)
+IL_0198: brtrue         {'target': 249}
+IL_019D: br             {'target': 150}

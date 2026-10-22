@@ -1,0 +1,85 @@
+{
+  "schema": "bulk250-r1-source-repairs-v1",
+  "state": "SOURCE_ONLY_NOT_TESTED",
+  "original_reported_defective_methods": 6,
+  "additional_same_mechanism_existing_methods": 2,
+  "changed_method_sources": 8,
+  "changes": [
+    {
+      "token": "0x060003F4",
+      "source_file": "N114.MethodBodies.cs",
+      "emitter": "N114_LightSaberExplosionBody",
+      "reason": "Use the existing public getter with proven static-field-return native body; no private cross-type field access.",
+      "old_source_body_sha256": "d0e305be564e81578a5f54053d38170fcdf126d10cc592e13267f13549727d12",
+      "new_source_body_sha256": "0f17264bf2be5aeaad0d70bed130a1868473e06707f3df5c4283eeaadf714e50",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x06000753",
+      "source_file": "N115.MethodBodies.cs",
+      "emitter": "N115_BenchmarkBody",
+      "reason": "Cast the TMP_Text local to the actual TextMeshPro created in this branch before its derived-only setter. Other branches retain the base local type.",
+      "old_source_body_sha256": "335c61d8bedc19b83f06186b833c293d5a46ecdaabc3f4b15cd4f1909ab24c0a",
+      "new_source_body_sha256": "a23e0ea78b2c65769f3515084a85f5d766a17382f6aaac48eeb2165b5cd74169",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x060004BF",
+      "source_file": "N116.MethodBodies.cs",
+      "emitter": "N116_SaveCompleteness",
+      "reason": "Use existing List<Supplies> Count/Item references for the Supplies field; preserve sorting and callback order.",
+      "old_source_body_sha256": "97d7f16c592909938f9d1a8b9d9a82a6a51adc8e161171be2883d70d2e24bba0",
+      "new_source_body_sha256": "820105c17d424ae85d1b2b17e351a79aaead2437d923094c3ce4590044e34903",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x06000163",
+      "source_file": "N116.MethodBodies.cs",
+      "emitter": "N116_LoadReward",
+      "reason": "Both Add receivers are List<Supplies>; use its existing canonical !0 member, not List<Buff>.Add.",
+      "old_source_body_sha256": "792246763c9c7f032b49f0b723d0beed3991b2524777b11c64738869f03dfeb0",
+      "new_source_body_sha256": "8016f8b498f03080ea4021e719c55c0529f7fe919fd1cd1bf120a0d25d0f0e0d",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x06000297",
+      "source_file": "N116.MethodBodies.cs",
+      "emitter": "N116_GridCanPlace",
+      "reason": "Supply the original device literal, independently mapped from native r8 metadata cell and the immutable original managed string token.",
+      "old_source_body_sha256": "0e05739495037e5697a4b3174108e4373ff29a6ac5fdb39fbe6db180c8e7744e",
+      "new_source_body_sha256": "a866eea286799a9ae282a728b542de031c40d9cc6521bd937ae7433347ab7a58",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x06000384",
+      "source_file": "N116.MethodBodies.cs",
+      "emitter": "N116_NutTaunt",
+      "reason": "Discard Path_Finding bool return before the loop merge; use the public particle getter. Preserve the native path and abs/Int32.MinValue behavior.",
+      "old_source_body_sha256": "eef691c58f06f61e97d6ce79ba6821004aa29fe3f1ce725a5e13cae806490ae1",
+      "new_source_body_sha256": "6cfab0f065450c980a3c8ce70ff7b7196a972571b215c22491512046f7e95c6a",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x06000514",
+      "source_file": "N116.MethodBodies.cs",
+      "emitter": "N116_Awake148",
+      "reason": "Same observed private particle-field mechanism, corrected in this existing target using the proven getter.",
+      "old_source_body_sha256": "29fa089003551d9bc095a22708c9aa3783d3bede291d9dd7cf7c83acc47bae4b",
+      "new_source_body_sha256": "7bb8551ded20e6b082d2c3b0fb21e3ddf8b7b9a73e838a5fd08aca73f777db2a",
+      "expected_candidate_body_change": true
+    },
+    {
+      "token": "0x0600035B",
+      "source_file": "N116.MethodBodies.cs",
+      "emitter": "N116_PlantParticleAudio",
+      "reason": "Same private particle field at two existing target sites; preserve both separate reads and original side-effect order.",
+      "old_source_body_sha256": "ad20e5e377b84d352a58dc892b63017fb0909de4e5f8dacf3757dc8c5929393a",
+      "new_source_body_sha256": "6503c9994a0da0f9c55c0f350c76f88fa5f660c9c955422af786d74b44e87fcf",
+      "expected_candidate_body_change": true
+    }
+  ],
+  "metadata_changes": 0,
+  "candidate_constructed": false,
+  "project_tests_executed": false,
+  "formal_acceptance": false
+}

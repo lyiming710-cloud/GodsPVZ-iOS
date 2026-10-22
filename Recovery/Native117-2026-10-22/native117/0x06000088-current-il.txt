@@ -1,0 +1,219 @@
+System2::Start2
+{"token": "0x06000088", "name": "System2::Start2", "signature": "200001", "rva": 51004, "max_stack": 2, "code_size": 832, "local_sig": 285212778, "locals_blob": "072512381280e01281880e1c0e1c0e0e0e0e0e0e0e1280e01280e00c0808080802080802020202021280850e128085080e081808", "eh_count": 0, "il_sha256": "4b54574889ffff6c1a653dc9a71745b1776de1e466148ed320f8fcad9a4ab065"}
+IL_0000: br             {'target': 5}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x040000B5', 'identity': 'System2::nextLevel'}
+IL_000B: ldc.i4         1
+IL_0010: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_0015: br             {'target': 26}
+IL_001A: ldarg.0        None
+IL_001B: ldfld          {'token': '0x040000A8', 'identity': 'System2::level'}
+IL_0020: ldarg.0        None
+IL_0021: ldfld          {'token': '0x040000A8', 'identity': 'System2::level'}
+IL_0026: xor            None
+IL_0027: stloc          local(0x0016)
+IL_002B: ldarg.0        None
+IL_002C: ldfld          {'token': '0x040000A8', 'identity': 'System2::level'}
+IL_0031: ldloc          local(0x0016)
+IL_0035: and            None
+IL_0036: stloc          local(0x0017)
+IL_003A: ldloc          local(0x0017)
+IL_003E: ldc.i4         0
+IL_0043: clt            None
+IL_0045: stloc          local(0x0018)
+IL_0049: ldarg.0        None
+IL_004A: ldfld          {'token': '0x040000A8', 'identity': 'System2::level'}
+IL_004F: ldc.i4         0
+IL_0054: clt            None
+IL_0056: stloc          local(0x0019)
+IL_005A: ldarg.0        None
+IL_005B: ldfld          {'token': '0x040000A8', 'identity': 'System2::level'}
+IL_0060: ldc.i4         0
+IL_0065: ceq            None
+IL_0067: stloc          local(0x001A)
+IL_006B: ldloc          local(0x0019)
+IL_006F: ldloc          local(0x0018)
+IL_0073: ceq            None
+IL_0075: stloc          local(0x0015)
+IL_0079: ldloc          local(0x001A)
+IL_007D: ldc.i4.0       None
+IL_007E: ceq            None
+IL_0080: stloc          local(0x001B)
+IL_0084: ldloc          local(0x001B)
+IL_0088: ldloc          local(0x0015)
+IL_008C: and            None
+IL_008D: stloc          local(0x001C)
+IL_0091: ldarg.0        None
+IL_0092: ldfld          {'token': '0x040000B4', 'identity': 'System2::lastLevel'}
+IL_0097: ldloc          local(0x001C)
+IL_009B: call           {'token': '0x0A000018', 'identity': 'UnityEngine.UI.Selectable::set_interactable / sig 20010102'}
+IL_00A0: ldarg.0        None
+IL_00A1: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_00A6: stloc          local(0x0001)
+IL_00AA: br             {'target': 175}
+IL_00AF: ldloc          local(0x0001)
+IL_00B3: ldfld          {'token': '0x04000198', 'identity': 'BoardConfig::map'}
+IL_00B8: stloc          local(0x0002)
+IL_00BC: br             {'target': 193}
+IL_00C1: ldarg.0        None
+IL_00C2: ldfld          {'token': '0x040000AA', 'identity': 'System2::senarioState'}
+IL_00C7: ldloc          local(0x0002)
+IL_00CB: ldfld          {'token': '0x0400037E', 'identity': 'Map::senarioState'}
+IL_00D0: call           {'token': '0x0A000039', 'identity': 'TMPro.TMP_Dropdown::set_value / sig 20010108'}
+IL_00D5: br             {'target': 218}
+IL_00DA: ldarg.0        None
+IL_00DB: ldfld          {'token': '0x040000A9', 'identity': 'System2::textMeshProUGUIs'}
+IL_00E0: ldc.i4         0
+IL_00E5: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_00EA: stloc          local(0x001D)
+IL_00EE: ldloca         local(0x0023)
+IL_00F2: call           {'token': '0x0A000061', 'identity': 'System.Enum::ToString / sig 20000e'}
+IL_00F7: stloc          local(0x001E)
+IL_00FB: br             {'target': 256}
+IL_0100: ldstr          {'token': '0x7000177D', 'identity': '关卡模式：'}
+IL_0105: ldloc          local(0x001E)
+IL_0109: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_010E: stloc          local(0x0003)
+IL_0112: br             {'target': 279}
+IL_0117: ldloc          local(0x001D)
+IL_011B: ldloc          local(0x0003)
+IL_011F: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_0124: br             {'target': 297}
+IL_0129: ldarg.0        None
+IL_012A: ldfld          {'token': '0x040000A9', 'identity': 'System2::textMeshProUGUIs'}
+IL_012F: ldc.i4         1
+IL_0134: call           {'token': '0x0A000060', 'identity': 'TypeSpec:17::get_Item / sig 2001130008'}
+IL_0139: stloc          local(0x001F)
+IL_013D: ldarg.0        None
+IL_013E: ldc.i4         44
+IL_0143: add            None
+IL_0144: stloc          local(0x0020)
+IL_0148: ldloc          local(0x0020)
+IL_014C: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0151: stloc          local(0x0021)
+IL_0155: br             {'target': 346}
+IL_015A: ldstr          {'token': '0x70001789', 'identity': '关卡序号：'}
+IL_015F: ldloc          local(0x0021)
+IL_0163: call           {'token': '0x0A000051', 'identity': 'System.String::Concat / sig 00020e0e0e'}
+IL_0168: stloc          local(0x0005)
+IL_016C: br             {'target': 369}
+IL_0171: ldloc          local(0x001F)
+IL_0175: ldloc          local(0x0005)
+IL_0179: call           {'token': '0x0A000062', 'identity': 'TMPro.TMP_Text::set_text / sig 2001010e'}
+IL_017E: ldarg.0        None
+IL_017F: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_0184: stloc          local(0x000E)
+IL_0188: br             {'target': 397}
+IL_018D: ldloc          local(0x000E)
+IL_0191: ldfld          {'token': '0x04000198', 'identity': 'BoardConfig::map'}
+IL_0196: call           {'token': '0x06000289', 'identity': 'Map::GetMapX'}
+IL_019B: stloc          local(0x0022)
+IL_019F: ldloca         local(0x0024)
+IL_01A3: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_01A8: stloc          local(0x0007)
+IL_01AC: br             {'target': 433}
+IL_01B1: ldarg.0        None
+IL_01B2: ldfld          {'token': '0x040000AD', 'identity': 'System2::mapX'}
+IL_01B7: ldloc          local(0x0007)
+IL_01BB: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_01C0: br             {'target': 453}
+IL_01C5: ldloca         local(0x0024)
+IL_01C9: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_01CE: stloc          local(0x0008)
+IL_01D2: br             {'target': 471}
+IL_01D7: ldarg.0        None
+IL_01D8: ldfld          {'token': '0x040000AE', 'identity': 'System2::mapY'}
+IL_01DD: ldloc          local(0x0008)
+IL_01E1: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_01E6: ldarg.0        None
+IL_01E7: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_01EC: stloc          local(0x000F)
+IL_01F0: br             {'target': 501}
+IL_01F5: ldloc          local(0x000F)
+IL_01F9: ldfld          {'token': '0x04000198', 'identity': 'BoardConfig::map'}
+IL_01FE: conv.r4        None
+IL_01FF: ldc.i4         28
+IL_0204: conv.r4        None
+IL_0205: add            None
+IL_0206: stloc          local(0x0010)
+IL_020A: ldloc          local(0x0010)
+IL_020E: call           {'token': '0x0A000043', 'identity': 'System.Single::ToString / sig 20000e'}
+IL_0213: stloc          local(0x0009)
+IL_0217: br             {'target': 540}
+IL_021C: ldarg.0        None
+IL_021D: ldfld          {'token': '0x040000AF', 'identity': 'System2::cameraSize'}
+IL_0222: ldloc          local(0x0009)
+IL_0226: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_022B: br             {'target': 560}
+IL_0230: ldarg.0        None
+IL_0231: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_0236: ldc.i4         56
+IL_023B: add            None
+IL_023C: stloc          local(0x0011)
+IL_0240: ldloc          local(0x0011)
+IL_0244: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0249: stloc          local(0x000A)
+IL_024D: br             {'target': 594}
+IL_0252: ldarg.0        None
+IL_0253: ldfld          {'token': '0x040000B0', 'identity': 'System2::flagsNum'}
+IL_0258: ldloc          local(0x000A)
+IL_025C: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_0261: br             {'target': 614}
+IL_0266: ldarg.0        None
+IL_0267: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_026C: ldc.i4         60
+IL_0271: add            None
+IL_0272: stloc          local(0x0012)
+IL_0276: ldloc          local(0x0012)
+IL_027A: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_027F: stloc          local(0x000B)
+IL_0283: br             {'target': 648}
+IL_0288: ldarg.0        None
+IL_0289: ldfld          {'token': '0x040000B1', 'identity': 'System2::wavesNum'}
+IL_028E: ldloc          local(0x000B)
+IL_0292: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_0297: br             {'target': 668}
+IL_029C: ldarg.0        None
+IL_029D: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_02A2: ldc.i4         40
+IL_02A7: add            None
+IL_02A8: stloc          local(0x0013)
+IL_02AC: ldloc          local(0x0013)
+IL_02B0: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_02B5: stloc          local(0x000C)
+IL_02B9: br             {'target': 702}
+IL_02BE: ldarg.0        None
+IL_02BF: ldfld          {'token': '0x040000B2', 'identity': 'System2::enemyPoint'}
+IL_02C4: ldloc          local(0x000C)
+IL_02C8: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_02CD: br             {'target': 722}
+IL_02D2: ldarg.0        None
+IL_02D3: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_02D8: ldc.i4         64
+IL_02DD: add            None
+IL_02DE: stloc          local(0x0014)
+IL_02E2: ldloc          local(0x0014)
+IL_02E6: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_02EB: stloc          local(0x000D)
+IL_02EF: br             {'target': 756}
+IL_02F4: ldarg.0        None
+IL_02F5: ldfld          {'token': '0x040000B3', 'identity': 'System2::baseSunPoint'}
+IL_02FA: ldloc          local(0x000D)
+IL_02FE: call           {'token': '0x0A000063', 'identity': 'TMPro.TMP_InputField::set_text / sig 2001010e'}
+IL_0303: ldarg.0        None
+IL_0304: call           {'token': '0x0600008B', 'identity': 'System2::CreatMapGridConfig'}
+IL_0309: br             {'target': 782}
+IL_030E: ldarg.0        None
+IL_030F: call           {'token': '0x0600008A', 'identity': 'System2::CreatEnemyConfig'}
+IL_0314: br             {'target': 793}
+IL_0319: ldarg.0        None
+IL_031A: ldfld          {'token': '0x040000B6', 'identity': 'System2::enemyConfig'}
+IL_031F: ldc.i4         0
+IL_0324: call           {'token': '0x0A000007', 'identity': 'UnityEngine.GameObject::SetActive / sig 20010102'}
+IL_0329: br             {'target': 814}
+IL_032E: ldarg.0        None
+IL_032F: ldfld          {'token': '0x040000BA', 'identity': 'System2::boardEdior'}
+IL_0334: ldarg.0        None
+IL_0335: ldfld          {'token': '0x040000A6', 'identity': 'System2::boardConfig'}
+IL_033A: call           {'token': '0x06000012', 'identity': 'Admin_system2_boardEdior::Initialize'}
+IL_033F: ret            None

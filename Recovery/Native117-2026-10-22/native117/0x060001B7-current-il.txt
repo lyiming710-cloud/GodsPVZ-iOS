@@ -1,0 +1,283 @@
+EnemyManager::ExtendFlagList
+{"token": "0x060001B7", "name": "EnemyManager::ExtendFlagList", "signature": "200001", "rva": 124492, "max_stack": 2, "code_size": 1066, "local_sig": 285213023, "locals_blob": "072c1c15120d01128110020215120d011281180815120d0112811415120d011281140812811015120d0112811415120d0112811415120d011281141c15120d01128110020202021281100215120d0112811815120d011281140215120d011281140215120d01128114021c1c1c08081c1c1c1c1c1c12811412811415120d0112811815120d01128118128124", "eh_count": 0, "il_sha256": "30d00b80e255290ac16ddc9c784acca22ca022b2d7065bdca9e53b70c387d8bd"}
+IL_0000: br             {'target': 1015}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x0A00014C', 'identity': 'TypeSpec:63::_size / sig 0608'}
+IL_000E: ldarg.0        None
+IL_000F: ldfld          {'token': '0x04000210', 'identity': 'EnemyManager::flagsNum'}
+IL_0014: clt            None
+IL_0016: ldc.i4.0       None
+IL_0017: ceq            None
+IL_0019: stloc          local(0x0003)
+IL_001D: ldloc          local(0x0003)
+IL_0021: brtrue         {'target': 215}
+IL_0026: br             {'target': 43}
+IL_002B: newobj         {'token': '0x0600019E', 'identity': 'Flag::.ctor'}
+IL_0030: stloc          local(0x0013)
+IL_0034: nop            None
+IL_0035: br             {'target': 58}
+IL_003A: newobj         {'token': '0x0A00014D', 'identity': 'TypeSpec:64::.ctor / sig 200001'}
+IL_003F: stloc          local(0x0018)
+IL_0043: nop            None
+IL_0044: br             {'target': 73}
+IL_0049: ldloc          local(0x0013)
+IL_004D: ldloc          local(0x0018)
+IL_0051: stfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_0056: ldarg.0        None
+IL_0057: ldfld          {'token': '0x0400020B', 'identity': 'EnemyManager::flags'}
+IL_005C: stloc          local(0x000E)
+IL_0060: br             {'target': 101}
+IL_0065: ldarg.0        None
+IL_0066: ldfld          {'token': '0x04000210', 'identity': 'EnemyManager::flagsNum'}
+IL_006B: ldc.i4         1
+IL_0070: sub            None
+IL_0071: stloc          local(0x000D)
+IL_0075: ldloc          local(0x000E)
+IL_0079: ldfld          {'token': '0x0A00014C', 'identity': 'TypeSpec:63::_size / sig 0608'}
+IL_007E: ldloc          local(0x000D)
+IL_0082: ceq            None
+IL_0084: ldc.i4.0       None
+IL_0085: ceq            None
+IL_0087: stloc          local(0x0002)
+IL_008B: ldloc          local(0x0002)
+IL_008F: brtrue         {'target': 172}
+IL_0094: br             {'target': 153}
+IL_0099: ldloc          local(0x0013)
+IL_009D: ldc.i4         1
+IL_00A2: stfld          {'token': '0x040001F4', 'identity': 'Flag::isLastFlag'}
+IL_00A7: br             {'target': 172}
+IL_00AC: ldarg.0        None
+IL_00AD: ldfld          {'token': '0x0400020B', 'identity': 'EnemyManager::flags'}
+IL_00B2: ldloc          local(0x0013)
+IL_00B6: call           {'token': '0x0A00014E', 'identity': 'TypeSpec:63::Add / sig 2001011300'}
+IL_00BB: ldarg.0        None
+IL_00BC: ldfld          {'token': '0x0400020B', 'identity': 'EnemyManager::flags'}
+IL_00C1: stloc          local(0x0001)
+IL_00C5: br             {'target': 202}
+IL_00CA: ldloc          local(0x0018)
+IL_00CE: stloc          local(0x0016)
+IL_00D2: br             {'target': 5}
+IL_00D7: ldarg.0        None
+IL_00D8: ldfld          {'token': '0x04000210', 'identity': 'EnemyManager::flagsNum'}
+IL_00DD: ldc.i4         0
+IL_00E2: cgt            None
+IL_00E4: ldc.i4.0       None
+IL_00E5: ceq            None
+IL_00E7: stloc          local(0x0014)
+IL_00EB: ldc.i4         0
+IL_00F0: stloc          local(0x0005)
+IL_00F4: ldloc          local(0x0014)
+IL_00F8: brtrue         {'target': 1014}
+IL_00FD: br             {'target': 258}
+IL_0102: ldarg.0        None
+IL_0103: ldfld          {'token': '0x0400020B', 'identity': 'EnemyManager::flags'}
+IL_0108: ldloc          local(0x0005)
+IL_010C: call           {'token': '0x0A00013D', 'identity': 'TypeSpec:63::get_Item / sig 2001130008'}
+IL_0111: stloc          local(0x0009)
+IL_0115: br             {'target': 282}
+IL_011A: ldloc          local(0x0009)
+IL_011E: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_0123: ldc.i4         0
+IL_0128: ceq            None
+IL_012A: ldc.i4.0       None
+IL_012B: ceq            None
+IL_012D: stloc          local(0x0019)
+IL_0131: ldloc          local(0x0005)
+IL_0135: stloc          local(0x0008)
+IL_0139: ldloc          local(0x0019)
+IL_013D: brtrue         {'target': 376}
+IL_0142: br             {'target': 327}
+IL_0147: newobj         {'token': '0x0A00014D', 'identity': 'TypeSpec:64::.ctor / sig 200001'}
+IL_014C: stloc          local(0x001A)
+IL_0150: nop            None
+IL_0151: br             {'target': 342}
+IL_0156: ldloc          local(0x0009)
+IL_015A: ldloc          local(0x001A)
+IL_015E: stfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_0163: ldloc          local(0x001A)
+IL_0167: stloc          local(0x0016)
+IL_016B: ldloc          local(0x001A)
+IL_016F: stloc          local(0x0008)
+IL_0173: br             {'target': 376}
+IL_0178: ldloc          local(0x0009)
+IL_017C: ldfld          {'token': '0x040001F4', 'identity': 'Flag::isLastFlag'}
+IL_0181: ldc.i4         0
+IL_0186: ceq            None
+IL_0188: ldc.i4.0       None
+IL_0189: ceq            None
+IL_018B: stloc          local(0x001B)
+IL_018F: ldloc          local(0x0015)
+IL_0193: stloc          local(0x0004)
+IL_0197: nop            None
+IL_0198: ldloc          local(0x0016)
+IL_019C: stloc          local(0x0007)
+IL_01A0: ldloc          local(0x001B)
+IL_01A4: brtrue         {'target': 1030}
+IL_01A9: br             {'target': 1048}
+IL_01AE: ldloc          local(0x000A)
+IL_01B2: ldfld          {'token': '0x0A00013E', 'identity': 'TypeSpec:64::_size / sig 0608'}
+IL_01B7: ldc.i4         10
+IL_01BC: clt            None
+IL_01BE: ldc.i4.0       None
+IL_01BF: ceq            None
+IL_01C1: stloc          local(0x000F)
+IL_01C5: ldloc          local(0x0004)
+IL_01C9: stloc          local(0x0015)
+IL_01CD: ldloc          local(0x0007)
+IL_01D1: stloc          local(0x0016)
+IL_01D5: ldloc          local(0x000F)
+IL_01D9: brtrue         {'target': 970}
+IL_01DE: br             {'target': 483}
+IL_01E3: newobj         {'token': '0x0600019F', 'identity': 'Wave::.ctor'}
+IL_01E8: stloc          local(0x0028)
+IL_01EC: nop            None
+IL_01ED: br             {'target': 498}
+IL_01F2: newobj         {'token': '0x0A0000F1', 'identity': 'TypeSpec:48::.ctor / sig 200001'}
+IL_01F7: stloc          local(0x002A)
+IL_01FB: nop            None
+IL_01FC: br             {'target': 513}
+IL_0201: ldloc          local(0x0028)
+IL_0205: ldloc          local(0x002A)
+IL_0209: stfld          {'token': '0x0A00014F', 'identity': 'TypeSpec:64::_items / sig 061d1300'}
+IL_020E: ldloc          local(0x0009)
+IL_0212: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_0217: stloc          local(0x000B)
+IL_021B: br             {'target': 544}
+IL_0220: ldloc          local(0x000B)
+IL_0224: ldfld          {'token': '0x0A00013E', 'identity': 'TypeSpec:64::_size / sig 0608'}
+IL_0229: ldc.i4         9
+IL_022E: ceq            None
+IL_0230: ldc.i4.0       None
+IL_0231: ceq            None
+IL_0233: stloc          local(0x0011)
+IL_0237: ldloc          local(0x0011)
+IL_023B: brtrue         {'target': 600}
+IL_0240: br             {'target': 581}
+IL_0245: ldloc          local(0x0028)
+IL_0249: ldc.i4         1
+IL_024E: stfld          {'token': '0x0A00013E', 'identity': 'TypeSpec:64::_size / sig 0608'}
+IL_0253: br             {'target': 600}
+IL_0258: ldloc          local(0x0009)
+IL_025C: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_0261: ldloc          local(0x0028)
+IL_0265: call           {'token': '0x0A000150', 'identity': 'TypeSpec:64::Add / sig 2001011300'}
+IL_026A: ldloc          local(0x002A)
+IL_026E: stloc          local(0x0004)
+IL_0272: nop            None
+IL_0273: ldloc          local(0x0028)
+IL_0277: stloc          local(0x0007)
+IL_027B: br             {'target': 1048}
+IL_0280: ldarg.0        None
+IL_0281: ldfld          {'token': '0x04000211', 'identity': 'EnemyManager::wavesNum'}
+IL_0286: ldc.i4         1
+IL_028B: sub            None
+IL_028C: stloc          local(0x001E)
+IL_0290: ldstr          {'token': '0x700059B0', 'identity': 'Not implemented instruction: "imul ecx"'}
+IL_0295: pop            None
+IL_0296: ldloc          local(0x0008)
+IL_029A: ldc.i4         2
+IL_029F: shr            None
+IL_02A0: stloc          local(0x001F)
+IL_02A4: ldloc          local(0x001F)
+IL_02A8: ldc.i4         31
+IL_02AD: shr            None
+IL_02AE: stloc          local(0x0020)
+IL_02B2: ldloc          local(0x001F)
+IL_02B6: ldloc          local(0x0020)
+IL_02BA: add            None
+IL_02BB: stloc          local(0x0021)
+IL_02BF: ldloc          local(0x0021)
+IL_02C3: ldc.i4         4
+IL_02C8: mul            None
+IL_02C9: stloc          local(0x0022)
+IL_02CD: ldloc          local(0x0021)
+IL_02D1: ldloc          local(0x0022)
+IL_02D5: add            None
+IL_02D6: stloc          local(0x0023)
+IL_02DA: ldloc          local(0x0023)
+IL_02DE: ldloc          local(0x0023)
+IL_02E2: add            None
+IL_02E3: stloc          local(0x0024)
+IL_02E7: ldloc          local(0x001E)
+IL_02EB: ldloc          local(0x0024)
+IL_02EF: sub            None
+IL_02F0: stloc          local(0x0025)
+IL_02F4: ldloc          local(0x0025)
+IL_02F8: ldc.i4         1
+IL_02FD: add            None
+IL_02FE: stloc          local(0x0026)
+IL_0302: ldloc          local(0x0006)
+IL_0306: ldfld          {'token': '0x0A00013E', 'identity': 'TypeSpec:64::_size / sig 0608'}
+IL_030B: ldloc          local(0x0026)
+IL_030F: clt            None
+IL_0311: ldc.i4.0       None
+IL_0312: ceq            None
+IL_0314: stloc          local(0x0010)
+IL_0318: ldloc          local(0x0010)
+IL_031C: brtrue         {'target': 970}
+IL_0321: br             {'target': 806}
+IL_0326: newobj         {'token': '0x0600019F', 'identity': 'Wave::.ctor'}
+IL_032B: stloc          local(0x0027)
+IL_032F: nop            None
+IL_0330: br             {'target': 821}
+IL_0335: newobj         {'token': '0x0A0000F1', 'identity': 'TypeSpec:48::.ctor / sig 200001'}
+IL_033A: stloc          local(0x0029)
+IL_033E: nop            None
+IL_033F: br             {'target': 836}
+IL_0344: ldloc          local(0x0027)
+IL_0348: ldloc          local(0x0029)
+IL_034C: stfld          {'token': '0x0A00014F', 'identity': 'TypeSpec:64::_items / sig 061d1300'}
+IL_0351: ldloc          local(0x0009)
+IL_0355: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_035A: stloc          local(0x000C)
+IL_035E: br             {'target': 867}
+IL_0363: ldloc          local(0x000C)
+IL_0367: ldfld          {'token': '0x0A00013E', 'identity': 'TypeSpec:64::_size / sig 0608'}
+IL_036C: ldc.i4         9
+IL_0371: ceq            None
+IL_0373: ldc.i4.0       None
+IL_0374: ceq            None
+IL_0376: stloc          local(0x0012)
+IL_037A: ldloc          local(0x0012)
+IL_037E: brtrue         {'target': 923}
+IL_0383: br             {'target': 904}
+IL_0388: ldloc          local(0x0027)
+IL_038C: ldc.i4         1
+IL_0391: stfld          {'token': '0x0A00013E', 'identity': 'TypeSpec:64::_size / sig 0608'}
+IL_0396: br             {'target': 923}
+IL_039B: ldloc          local(0x0009)
+IL_039F: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_03A4: ldloc          local(0x0027)
+IL_03A8: call           {'token': '0x0A000150', 'identity': 'TypeSpec:64::Add / sig 2001011300'}
+IL_03AD: ldloc          local(0x0029)
+IL_03B1: stloc          local(0x0015)
+IL_03B5: ldloc          local(0x0027)
+IL_03B9: stloc          local(0x0016)
+IL_03BD: ldloc          local(0x0027)
+IL_03C1: stloc          local(0x0008)
+IL_03C5: br             {'target': 1030}
+IL_03CA: ldloc          local(0x0005)
+IL_03CE: ldc.i4         1
+IL_03D3: add            None
+IL_03D4: stloc          local(0x0005)
+IL_03D8: ldloc          local(0x0005)
+IL_03DC: ldarg.0        None
+IL_03DD: ldfld          {'token': '0x04000210', 'identity': 'EnemyManager::flagsNum'}
+IL_03E2: clt            None
+IL_03E4: stloc          local(0x0017)
+IL_03E8: ldloc          local(0x0017)
+IL_03EC: brtrue         {'target': 258}
+IL_03F1: br             {'target': 1014}
+IL_03F6: ret            None
+IL_03F7: ldarg.0        None
+IL_03F8: ldfld          {'token': '0x0400020B', 'identity': 'EnemyManager::flags'}
+IL_03FD: stloc          local(0x0001)
+IL_0401: br             {'target': 5}
+IL_0406: ldloc          local(0x0009)
+IL_040A: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_040F: stloc          local(0x0006)
+IL_0413: br             {'target': 640}
+IL_0418: ldloc          local(0x0009)
+IL_041C: ldfld          {'token': '0x040001F3', 'identity': 'Flag::waves'}
+IL_0421: stloc          local(0x000A)
+IL_0425: br             {'target': 430}

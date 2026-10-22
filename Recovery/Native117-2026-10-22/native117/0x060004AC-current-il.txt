@@ -1,0 +1,358 @@
+Zombie::ZC_SnowbeastSeekBait
+{"token": "0x060004AC", "name": "Zombie::ZC_SnowbeastSeekBait", "signature": "20001281d4", "rva": 403596, "max_stack": 4, "code_size": 1325, "local_sig": 285213599, "locals_blob": "072a1282101281a40202128210021d0e021c0e021281d4021281d408080202020e020202021280e00e0202021281d40212819c02020208020e151151011c151151011c151151011c08", "eh_count": 0, "il_sha256": "6b31800aca87ef26836c0ddd90d451b7e2a1a902d0d6abb483e83568858a0a8b"}
+IL_0000: br             {'target': 1188}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_000E: stloc          local(0x0004)
+IL_0012: ldloc          local(0x0001)
+IL_0016: ldfld          {'token': '0x040003D8', 'identity': 'Board::deviceManager'}
+IL_001B: ldc.i4         0
+IL_0020: ceq            None
+IL_0022: stloc          local(0x0003)
+IL_0026: ldloc          local(0x0003)
+IL_002A: brtrue         {'target': 1056}
+IL_002F: br             {'target': 52}
+IL_0034: ldloc          local(0x0004)
+IL_0038: ldfld          {'token': '0x040005AD', 'identity': 'Zombie::fX'}
+IL_003D: ldc.i4         0
+IL_0042: ceq            None
+IL_0044: stloc          local(0x0005)
+IL_0048: ldloc          local(0x0005)
+IL_004C: brtrue         {'target': 1056}
+IL_0051: br             {'target': 86}
+IL_0056: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_005B: pop            None
+IL_005C: ldnull         None
+IL_005D: stloc          local(0x000D)
+IL_0061: ldc.i4         2147483647
+IL_0066: stloc          local(0x000E)
+IL_006A: ldc.i4         0
+IL_006F: stloc          local(0x000F)
+IL_0073: nop            None
+IL_0074: br             {'target': 1234}
+IL_0079: ldloc          local(0x000B)
+IL_007D: ldc.i4         0
+IL_0082: ceq            None
+IL_0084: stloc          local(0x0017)
+IL_0088: ldloca         local(0x0027)
+IL_008C: stloc          local(0x0028)
+IL_0090: ldloc          local(0x0017)
+IL_0094: brtrue         {'target': 1167}
+IL_0099: br             {'target': 158}
+IL_009E: ldloc          local(0x000B)
+IL_00A2: ldfld          {'token': '0x0400046F', 'identity': 'Device::ID'}
+IL_00A7: ldc.i4         5
+IL_00AC: ceq            None
+IL_00AE: ldc.i4.0       None
+IL_00AF: ceq            None
+IL_00B1: stloc          local(0x0011)
+IL_00B5: ldloc          local(0x0011)
+IL_00B9: brtrue         {'target': 1234}
+IL_00BE: br             {'target': 195}
+IL_00C3: ldarg.0        None
+IL_00C4: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_00C9: ldc.i4         0
+IL_00CE: ceq            None
+IL_00D0: stloc          local(0x001C)
+IL_00D4: ldloca         local(0x0027)
+IL_00D8: stloc          local(0x0028)
+IL_00DC: ldloc          local(0x001C)
+IL_00E0: brtrue         {'target': 1156}
+IL_00E5: br             {'target': 234}
+IL_00EA: ldloc          local(0x000B)
+IL_00EE: ldfld          {'token': '0x04000464', 'identity': 'Device::gridX'}
+IL_00F3: ldloc          local(0x000B)
+IL_00F7: ldfld          {'token': '0x04000465', 'identity': 'Device::gridY'}
+IL_00FC: ldc.r4         9999.0
+IL_0101: ldloc          local(0x0018)
+IL_0105: newobj         {'token': '0x060002A4', 'identity': 'EnemyPath::.ctor'}
+IL_010A: stloc          local(0x001F)
+IL_010E: nop            None
+IL_010F: br             {'target': 276}
+IL_0114: ldarg.0        None
+IL_0115: ldfld          {'token': '0x040005F9', 'identity': 'Zombie::prePath'}
+IL_011A: ldc.i4         0
+IL_011F: ceq            None
+IL_0121: stloc          local(0x0020)
+IL_0125: ldloc          local(0x0020)
+IL_0129: brtrue         {'target': 1145}
+IL_012E: br             {'target': 307}
+IL_0133: ldarg.0        None
+IL_0134: ldfld          {'token': '0x040005F9', 'identity': 'Zombie::prePath'}
+IL_0139: ldc.i4         0
+IL_013E: ldloc          local(0x001F)
+IL_0142: call           {'token': '0x0A000049', 'identity': 'TypeSpec:6::Insert / sig 200201081300'}
+IL_0147: ldarg.0        None
+IL_0148: call           {'token': '0x0600046A', 'identity': 'Zombie::Path_Finding'}
+IL_014D: stloc          local(0x0021)
+IL_0151: br             {'target': 342}
+IL_0156: ldloc          local(0x0021)
+IL_015A: ldc.i4.0       None
+IL_015B: ceq            None
+IL_015D: stloc          local(0x0022)
+IL_0161: nop            None
+IL_0162: ldloc          local(0x0022)
+IL_0166: brtrue         {'target': 1272}
+IL_016B: br             {'target': 368}
+IL_0170: ldarg.0        None
+IL_0171: ldfld          {'token': '0x040005FA', 'identity': 'Zombie::path'}
+IL_0176: ldarg.0        None
+IL_0177: ldfld          {'token': '0x040005AB', 'identity': 'Zombie::gridX'}
+IL_017C: ldarg.0        None
+IL_017D: ldfld          {'token': '0x040005AC', 'identity': 'Zombie::gridY'}
+IL_0182: call           {'token': '0x060002A5', 'identity': 'EnemyPath::DistanceStatistics'}
+IL_0187: stloc          local(0x0023)
+IL_018B: ldc.i4         6
+IL_0190: newarr         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0195: stloc          local(0x0006)
+IL_0199: br             {'target': 414}
+IL_019E: ldloc          local(0x0006)
+IL_01A2: ldc.i4         0
+IL_01A7: ceq            None
+IL_01A9: stloc          local(0x001E)
+IL_01AD: ldtoken        {'token': '0x1B00005E', 'identity': '0x1b00005e'}
+IL_01B2: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_01B7: stloc          local(0x0029)
+IL_01BB: ldloc          local(0x001E)
+IL_01BF: brtrue         {'target': 1123}
+IL_01C4: br             {'target': 457}
+IL_01C9: ldloc          local(0x0006)
+IL_01CD: ldlen          None
+IL_01CE: conv.i4        None
+IL_01CF: ldc.i4         0
+IL_01D4: cgt            None
+IL_01D6: ldc.i4.0       None
+IL_01D7: ceq            None
+IL_01D9: stloc          local(0x0007)
+IL_01DD: nop            None
+IL_01DE: ldloc          local(0x0007)
+IL_01E2: brtrue         {'target': 1303}
+IL_01E7: br             {'target': 492}
+IL_01EC: ldloc          local(0x0006)
+IL_01F0: ldc.i4         0
+IL_01F5: ldstr          {'token': '0x70014900', 'identity': '与诱饵('}
+IL_01FA: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_01FF: ldloc          local(0x0006)
+IL_0203: ldc.i4         32
+IL_0208: add            None
+IL_0209: stloc          local(0x0029)
+IL_020D: ldloc          local(0x000B)
+IL_0211: ldc.i4         0
+IL_0216: ceq            None
+IL_0218: stloc          local(0x001B)
+IL_021C: ldloc          local(0x001B)
+IL_0220: brtrue         {'target': 1112}
+IL_0225: br             {'target': 554}
+IL_022A: ldloc          local(0x000B)
+IL_022E: ldc.i4         48
+IL_0233: add            None
+IL_0234: stloc          local(0x0029)
+IL_0238: ldloc          local(0x0029)
+IL_023C: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_0241: stloc          local(0x0009)
+IL_0245: ldloc          local(0x0006)
+IL_0249: ldlen          None
+IL_024A: conv.i4        None
+IL_024B: ldc.i4         1
+IL_0250: cgt            None
+IL_0252: ldc.i4.0       None
+IL_0253: ceq            None
+IL_0255: stloc          local(0x000A)
+IL_0259: ldloc          local(0x000A)
+IL_025D: brtrue         {'target': 1314}
+IL_0262: br             {'target': 615}
+IL_0267: ldloc          local(0x0006)
+IL_026B: ldc.i4         1
+IL_0270: ldloc          local(0x0009)
+IL_0274: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0279: ldloc          local(0x0006)
+IL_027D: ldc.i4         40
+IL_0282: add            None
+IL_0283: stloc          local(0x0029)
+IL_0287: ldloc          local(0x0006)
+IL_028B: ldlen          None
+IL_028C: conv.i4        None
+IL_028D: ldc.i4         2
+IL_0292: cgt            None
+IL_0294: ldc.i4.0       None
+IL_0295: ceq            None
+IL_0297: stloc          local(0x000C)
+IL_029B: ldloc          local(0x000C)
+IL_029F: brtrue         {'target': 1068}
+IL_02A4: br             {'target': 681}
+IL_02A9: ldloc          local(0x0006)
+IL_02AD: ldc.i4         2
+IL_02B2: ldstr          {'token': '0x700044CD', 'identity': ','}
+IL_02B7: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_02BC: ldloc          local(0x000B)
+IL_02C0: ldc.i4         52
+IL_02C5: add            None
+IL_02C6: stloc          local(0x0029)
+IL_02CA: ldloc          local(0x0029)
+IL_02CE: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_02D3: stloc          local(0x0013)
+IL_02D7: br             {'target': 732}
+IL_02DC: ldloc          local(0x0006)
+IL_02E0: ldlen          None
+IL_02E1: conv.i4        None
+IL_02E2: ldc.i4         3
+IL_02E7: cgt            None
+IL_02E9: ldc.i4.0       None
+IL_02EA: ceq            None
+IL_02EC: stloc          local(0x0014)
+IL_02F0: ldloc          local(0x0014)
+IL_02F4: brtrue         {'target': 1079}
+IL_02F9: br             {'target': 766}
+IL_02FE: ldloc          local(0x0006)
+IL_0302: ldc.i4         3
+IL_0307: ldloc          local(0x0013)
+IL_030B: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0310: ldloc          local(0x0006)
+IL_0314: ldc.i4         56
+IL_0319: add            None
+IL_031A: stloc          local(0x0029)
+IL_031E: ldloc          local(0x0006)
+IL_0322: ldlen          None
+IL_0323: conv.i4        None
+IL_0324: ldc.i4         4
+IL_0329: cgt            None
+IL_032B: ldc.i4.0       None
+IL_032C: ceq            None
+IL_032E: stloc          local(0x0016)
+IL_0332: ldloc          local(0x0016)
+IL_0336: brtrue         {'target': 1090}
+IL_033B: br             {'target': 832}
+IL_0340: ldloc          local(0x0006)
+IL_0344: ldc.i4         4
+IL_0349: ldstr          {'token': '0x7001490A', 'identity': ')距离'}
+IL_034E: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_0353: ldloca         local(0x000F)
+IL_0357: call           {'token': '0x0A00002A', 'identity': 'System.Int32::ToString / sig 20000e'}
+IL_035C: stloc          local(0x0019)
+IL_0360: br             {'target': 869}
+IL_0365: ldloc          local(0x0006)
+IL_0369: ldlen          None
+IL_036A: conv.i4        None
+IL_036B: ldc.i4         5
+IL_0370: cgt            None
+IL_0372: ldc.i4.0       None
+IL_0373: ceq            None
+IL_0375: stloc          local(0x001A)
+IL_0379: ldloca         local(0x000F)
+IL_037D: stloc          local(0x0029)
+IL_0381: ldloc          local(0x001A)
+IL_0385: brtrue         {'target': 1101}
+IL_038A: br             {'target': 911}
+IL_038F: ldloc          local(0x0006)
+IL_0393: ldc.i4         5
+IL_0398: ldloc          local(0x0019)
+IL_039C: stelem         {'token': '0x0100000B', 'identity': 'System.String'}
+IL_03A1: ldloc          local(0x0006)
+IL_03A5: call           {'token': '0x0A000230', 'identity': 'System.String::Concat / sig 00010e1d0e'}
+IL_03AA: stloc          local(0x0025)
+IL_03AE: br             {'target': 947}
+IL_03B3: br             {'target': 952}
+IL_03B8: ldloc          local(0x0025)
+IL_03BC: call           {'token': '0x0A000010', 'identity': 'UnityEngine.Debug::Log / sig 0001011c'}
+IL_03C1: ldloc          local(0x000F)
+IL_03C5: ldloc          local(0x000E)
+IL_03C9: clt            None
+IL_03CB: ldc.i4.0       None
+IL_03CC: ceq            None
+IL_03CE: stloc          local(0x0024)
+IL_03D2: nop            None
+IL_03D3: ldloc          local(0x0024)
+IL_03D7: brtrue         {'target': 1272}
+IL_03DC: br             {'target': 993}
+IL_03E1: ldloc          local(0x000B)
+IL_03E5: stloc          local(0x000D)
+IL_03E9: ldloc          local(0x000F)
+IL_03ED: stloc          local(0x000E)
+IL_03F1: nop            None
+IL_03F2: br             {'target': 1272}
+IL_03F7: ldarg.0        None
+IL_03F8: ldfld          {'token': '0x040005F9', 'identity': 'Zombie::prePath'}
+IL_03FD: ldc.i4         0
+IL_0402: call           {'token': '0x0A000072', 'identity': 'TypeSpec:6::RemoveAt / sig 20010108'}
+IL_0407: nop            None
+IL_0408: br             {'target': 1234}
+IL_040D: ldloca         local(0x0027)
+IL_0411: call           {'token': '0x0A000129', 'identity': 'TypeSpec:43::Dispose / sig 200001'}
+IL_0416: br             {'target': 1051}
+IL_041B: ldloc          local(0x000D)
+IL_041F: ret            None
+IL_0420: nop            None
+IL_0421: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0426: throw          None
+IL_0427: br             {'target': 1303}
+IL_042C: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0431: throw          None
+IL_0432: br             {'target': 1079}
+IL_0437: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_043C: throw          None
+IL_043D: br             {'target': 1090}
+IL_0442: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0447: throw          None
+IL_0448: br             {'target': 1101}
+IL_044D: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0452: throw          None
+IL_0453: br             {'target': 1112}
+IL_0458: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_045D: throw          None
+IL_045E: br             {'target': 1123}
+IL_0463: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0468: throw          None
+IL_0469: br             {'target': 1134}
+IL_046E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0473: throw          None
+IL_0474: br             {'target': 1145}
+IL_0479: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_047E: throw          None
+IL_047F: br             {'target': 1156}
+IL_0484: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0489: throw          None
+IL_048A: br             {'target': 1167}
+IL_048F: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0494: throw          None
+IL_0495: ldloc          local(0x0028)
+IL_0499: throw          None
+IL_049A: br             {'target': 1183}
+IL_049F: ldloc          local(0x001D)
+IL_04A3: ret            None
+IL_04A4: ldarg.0        None
+IL_04A5: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_04AA: stloc          local(0x0001)
+IL_04AE: ldarg.0        None
+IL_04AF: ldfld          {'token': '0x040005AA', 'identity': 'Zombie::board'}
+IL_04B4: ldc.i4         0
+IL_04B9: ceq            None
+IL_04BB: stloc          local(0x0002)
+IL_04BF: ldarg.0        None
+IL_04C0: stloc          local(0x0004)
+IL_04C4: ldloc          local(0x0002)
+IL_04C8: brtrue         {'target': 1056}
+IL_04CD: br             {'target': 5}
+IL_04D2: ldloca         local(0x0027)
+IL_04D6: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_04DB: stloc          local(0x0010)
+IL_04DF: ldloc          local(0x0010)
+IL_04E3: ldc.i4.0       None
+IL_04E4: ceq            None
+IL_04E6: stloc          local(0x0015)
+IL_04EA: ldloc          local(0x0015)
+IL_04EE: brtrue         {'target': 1037}
+IL_04F3: br             {'target': 121}
+IL_04F8: ldarg.0        None
+IL_04F9: ldfld          {'token': '0x040005F9', 'identity': 'Zombie::prePath'}
+IL_04FE: ldc.i4         0
+IL_0503: ceq            None
+IL_0505: stloc          local(0x0012)
+IL_0509: ldloc          local(0x0012)
+IL_050D: brtrue         {'target': 1134}
+IL_0512: br             {'target': 1015}
+IL_0517: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_051C: throw          None
+IL_051D: br             {'target': 1314}
+IL_0522: newobj         {'token': '0x0A00007B', 'identity': 'System.IndexOutOfRangeException::.ctor / sig 200001'}
+IL_0527: throw          None
+IL_0528: br             {'target': 1068}

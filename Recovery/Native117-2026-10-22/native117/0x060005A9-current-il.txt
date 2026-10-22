@@ -1,0 +1,547 @@
+Almanac_ZombieHome::Awake
+{"token": "0x060005A9", "name": "Almanac_ZombieHome::Awake", "signature": "200001", "rva": 497308, "max_stack": 3, "code_size": 2081, "local_sig": 285213765, "locals_blob": "07491282a41c1c1c1280c40212814c02181c12611802020202021c18125d15120d01125d0202021815120d01125d0215120d01125d1282a8021812150212150202021c1818021c1280891282a8021c021261021280c91c021c18021c021c021c125d1c021c1c1c1c1c1c1c1282a81818", "eh_count": 0, "il_sha256": "0c24d21801574b3bf058ddfa421a2c5793ea58a3d5bd700b76881a70f8d47866"}
+IL_0000: br             {'target': 1772}
+IL_0005: ldloc          local(0x0004)
+IL_0009: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_000E: stloc          local(0x0006)
+IL_0012: ldloc          local(0x0004)
+IL_0016: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_001B: ldc.i4         0
+IL_0020: ceq            None
+IL_0022: stloc          local(0x0007)
+IL_0026: ldloc          local(0x0007)
+IL_002A: brtrue         {'target': 1648}
+IL_002F: br             {'target': 52}
+IL_0034: ldloc          local(0x0006)
+IL_0038: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_003D: ldc.i4         0
+IL_0042: ceq            None
+IL_0044: stloc          local(0x0010)
+IL_0048: ldloc          local(0x0010)
+IL_004C: brtrue         {'target': 1647}
+IL_0051: br             {'target': 86}
+IL_0056: br             {'target': 91}
+IL_005B: call           {'token': '0x06000232', 'identity': 'ResourceManager::Load_zombiePortraits_Window'}
+IL_0060: stloc          local(0x001B)
+IL_0064: ldarg.0        None
+IL_0065: ldloc          local(0x001B)
+IL_0069: stfld          {'token': '0x0400075E', 'identity': 'Almanac_ZombieHome::zombiePortraits_Window'}
+IL_006E: br             {'target': 115}
+IL_0073: br             {'target': 120}
+IL_0078: ldsfld         {'token': '0x04000308', 'identity': 'ResourceManager::prefab_Almanac_ZombieWindow'}
+IL_007D: ldnull         None
+IL_007E: call           {'token': '0x0A00000C', 'identity': 'UnityEngine.Object::op_Inequality / sig 00020212211221'}
+IL_0083: stloc          local(0x0017)
+IL_0087: ldloc          local(0x0017)
+IL_008B: brtrue         {'target': 149}
+IL_0090: br             {'target': 1647}
+IL_0095: br             {'target': 154}
+IL_009A: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_009F: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_00A4: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_00A9: stloc          local(0x002A)
+IL_00AD: br             {'target': 178}
+IL_00B2: ldloc          local(0x002A)
+IL_00B6: call           {'token': '0x0A00007D', 'identity': 'System.Enum::GetValues / sig 00011261128089'}
+IL_00BB: stloc          local(0x000A)
+IL_00BF: ldloc          local(0x000A)
+IL_00C3: ldc.i4         0
+IL_00C8: ceq            None
+IL_00CA: stloc          local(0x000C)
+IL_00CE: ldnull         None
+IL_00CF: stloc          local(0x0012)
+IL_00D3: ldloc          local(0x002A)
+IL_00D7: stloc          local(0x000B)
+IL_00DB: ldloc          local(0x000C)
+IL_00DF: brtrue         {'target': 1648}
+IL_00E4: br             {'target': 233}
+IL_00E9: ldloc          local(0x000A)
+IL_00ED: call           {'token': '0x0A0000EB', 'identity': 'System.Array::GetEnumerator / sig 20001280c9'}
+IL_00F2: stloc          local(0x0031)
+IL_00F6: ldloc          local(0x000A)
+IL_00FA: stloc          local(0x002F)
+IL_00FE: br             {'target': 1976}
+IL_0103: ldstr          {'token': '0x70001E3E', 'identity': 'Method not found @180002CD0'}
+IL_0108: pop            None
+IL_0109: ldloc          local(0x002D)
+IL_010D: ldc.i4         0
+IL_0112: ceq            None
+IL_0114: stloc          local(0x0033)
+IL_0118: ldloc          local(0x0033)
+IL_011C: brtrue         {'target': 1388}
+IL_0121: br             {'target': 294}
+IL_0126: ldloc          local(0x0009)
+IL_012A: ldc.i4         0
+IL_012F: ceq            None
+IL_0131: stloc          local(0x002E)
+IL_0135: ldnull         None
+IL_0136: stloc          local(0x001C)
+IL_013A: ldloc          local(0x002E)
+IL_013E: brtrue         {'target': 1744}
+IL_0143: br             {'target': 328}
+IL_0148: ldloc          local(0x0009)
+IL_014C: stloc          local(0x0011)
+IL_0150: ldc.i4         0
+IL_0155: ldstr          {'token': '0x70019BD6', 'identity': 'Unmanaged memory load: [v231 @ r10_v15+12E]'}
+IL_015A: pop            None
+IL_015B: ldc.i4.0       None
+IL_015C: conv.i         None
+IL_015D: clt            None
+IL_015F: ldc.i4.0       None
+IL_0160: ceq            None
+IL_0162: stloc          local(0x0036)
+IL_0166: ldloc          local(0x0036)
+IL_016A: brtrue         {'target': 444}
+IL_016F: br             {'target': 372}
+IL_0174: ldstr          {'token': '0x70019C2E', 'identity': 'Unmanaged memory load: [v231 @ r10_v15+B0]'}
+IL_0179: pop            None
+IL_017A: ldc.i4.0       None
+IL_017B: conv.i         None
+IL_017C: stloc          local(0x0043)
+IL_0180: ldc.i4         0
+IL_0185: stloc          local(0x003D)
+IL_0189: br             {'target': 1830}
+IL_018E: ldloc          local(0x003D)
+IL_0192: ldc.i4         1
+IL_0197: add            None
+IL_0198: stloc          local(0x003D)
+IL_019C: ldloc          local(0x003D)
+IL_01A0: ldstr          {'token': '0x70019BD6', 'identity': 'Unmanaged memory load: [v231 @ r10_v15+12E]'}
+IL_01A5: pop            None
+IL_01A6: ldc.i4.0       None
+IL_01A7: conv.i         None
+IL_01A8: clt            None
+IL_01AA: stloc          local(0x003A)
+IL_01AE: ldloc          local(0x003A)
+IL_01B2: brtrue         {'target': 1830}
+IL_01B7: br             {'target': 444}
+IL_01BC: ldstr          {'token': '0x70001F20', 'identity': 'Method not found @180258380'}
+IL_01C1: pop            None
+IL_01C2: ldc.i4         1
+IL_01C7: stloc          local(0x0043)
+IL_01CB: ldloc          local(0x003B)
+IL_01CF: stloc          local(0x0044)
+IL_01D3: br             {'target': 1919}
+IL_01D8: ldloc          local(0x002B)
+IL_01DC: stloc          local(0x0027)
+IL_01E0: ldstr          {'token': '0x70019C84', 'identity': 'Unmanaged memory load: [v700 @ rdx_v32 (Il2CppClass<Almanac_ZombieWindow>)+40]'}
+IL_01E5: pop            None
+IL_01E6: ldc.i4.0       None
+IL_01E7: conv.i         None
+IL_01E8: ldstr          {'token': '0x70019D23', 'identity': 'Unmanaged memory load: [v350 @ r8_v22 (Il2CppClass<ZombieType>)+40]'}
+IL_01ED: pop            None
+IL_01EE: ldc.i4.0       None
+IL_01EF: conv.i         None
+IL_01F0: ceq            None
+IL_01F2: ldc.i4.0       None
+IL_01F3: ceq            None
+IL_01F5: stloc          local(0x0028)
+IL_01F9: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_01FE: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0203: stloc          local(0x0008)
+IL_0207: ldloca         local(0x0009)
+IL_020B: stloc          local(0x0025)
+IL_020F: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_0214: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0219: stloc          local(0x0026)
+IL_021D: ldloc          local(0x002B)
+IL_0221: stloc          local(0x001C)
+IL_0225: ldloc          local(0x0028)
+IL_0229: brtrue         {'target': 1722}
+IL_022E: br             {'target': 563}
+IL_0233: ldstr          {'token': '0x70008A50', 'identity': 'Unknown call target operand: "il2cpp_object_unbox"'}
+IL_0238: pop            None
+IL_0239: br             {'target': 574}
+IL_023E: ldsfld         {'token': '0x04000308', 'identity': 'ResourceManager::prefab_Almanac_ZombieWindow'}
+IL_0243: call           {'token': '0x2B000083', 'identity': '0x2b000083'}
+IL_0248: stloc          local(0x0046)
+IL_024C: ldarg.0        None
+IL_024D: ldfld          {'token': '0x0400075E', 'identity': 'Almanac_ZombieHome::zombiePortraits_Window'}
+IL_0252: stloc          local(0x0019)
+IL_0256: ldarg.0        None
+IL_0257: ldfld          {'token': '0x0400075E', 'identity': 'Almanac_ZombieHome::zombiePortraits_Window'}
+IL_025C: ldc.i4         0
+IL_0261: ceq            None
+IL_0263: stloc          local(0x0024)
+IL_0267: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_026C: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0271: stloc          local(0x0008)
+IL_0275: ldloca         local(0x0009)
+IL_0279: stloc          local(0x0025)
+IL_027D: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_0282: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0287: stloc          local(0x0026)
+IL_028B: ldsfld         {'token': '0x04000308', 'identity': 'ResourceManager::prefab_Almanac_ZombieWindow'}
+IL_0290: stloc          local(0x001C)
+IL_0294: ldloc          local(0x0024)
+IL_0298: brtrue         {'target': 1711}
+IL_029D: br             {'target': 674}
+IL_02A2: ldloc          local(0x0019)
+IL_02A6: ldfld          {'token': '0x0A00003F', 'identity': 'TypeSpec:9::_size / sig 0608'}
+IL_02AB: ldloc          local(0x0045)
+IL_02AF: cgt            None
+IL_02B1: ldc.i4.0       None
+IL_02B2: ceq            None
+IL_02B4: stloc          local(0x0015)
+IL_02B8: ldloc          local(0x0015)
+IL_02BC: brtrue         {'target': 980}
+IL_02C1: br             {'target': 710}
+IL_02C6: ldloc          local(0x0046)
+IL_02CA: ldc.i4         0
+IL_02CF: ceq            None
+IL_02D1: stloc          local(0x001A)
+IL_02D5: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_02DA: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_02DF: stloc          local(0x0008)
+IL_02E3: ldloca         local(0x0009)
+IL_02E7: stloc          local(0x0025)
+IL_02EB: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_02F0: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_02F5: stloc          local(0x0026)
+IL_02F9: ldsfld         {'token': '0x04000308', 'identity': 'ResourceManager::prefab_Almanac_ZombieWindow'}
+IL_02FE: stloc          local(0x001C)
+IL_0302: ldloc          local(0x001A)
+IL_0306: brtrue         {'target': 1881}
+IL_030B: br             {'target': 784}
+IL_0310: ldarg.0        None
+IL_0311: ldfld          {'token': '0x0400075E', 'identity': 'Almanac_ZombieHome::zombiePortraits_Window'}
+IL_0316: ldloc          local(0x0045)
+IL_031A: call           {'token': '0x0A000040', 'identity': 'TypeSpec:9::get_Item / sig 2001130008'}
+IL_031F: stloc          local(0x0013)
+IL_0323: ldloc          local(0x0046)
+IL_0327: ldfld          {'token': '0x0400076A', 'identity': 'Almanac_ZombieWindow::zombiePortrait'}
+IL_032C: ldc.i4         0
+IL_0331: ceq            None
+IL_0333: stloc          local(0x0016)
+IL_0337: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_033C: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0341: stloc          local(0x0008)
+IL_0345: ldloca         local(0x0009)
+IL_0349: stloc          local(0x0025)
+IL_034D: ldc.i4.0       None
+IL_034E: conv.i         None
+IL_034F: stloc          local(0x0012)
+IL_0353: ldarg.0        None
+IL_0354: ldfld          {'token': '0x0400075E', 'identity': 'Almanac_ZombieHome::zombiePortraits_Window'}
+IL_0359: stloc          local(0x0014)
+IL_035D: ldloc          local(0x0016)
+IL_0361: brtrue         {'target': 1892}
+IL_0366: br             {'target': 875}
+IL_036B: ldloc          local(0x0046)
+IL_036F: ldfld          {'token': '0x0400076A', 'identity': 'Almanac_ZombieWindow::zombiePortrait'}
+IL_0374: ldloc          local(0x0013)
+IL_0378: call           {'token': '0x0A000041', 'identity': 'UnityEngine.UI.Image::set_sprite / sig 200101125d'}
+IL_037D: ldnull         None
+IL_037E: stloc          local(0x001E)
+IL_0382: br             {'target': 1068}
+IL_0387: ldloc          local(0x003D)
+IL_038B: ldloc          local(0x003D)
+IL_038F: add            None
+IL_0390: stloc          local(0x003F)
+IL_0394: ldstr          {'token': '0x70019DAC', 'identity': 'Unmanaged memory load: [v977 @ r8_v21+8+v970 @ rcx_v55*8]'}
+IL_0399: pop            None
+IL_039A: ldc.i4.0       None
+IL_039B: conv.i         None
+IL_039C: ldc.i4         1
+IL_03A1: add            None
+IL_03A2: stloc          local(0x0040)
+IL_03A6: ldloc          local(0x0040)
+IL_03AA: ldc.i4         4
+IL_03AF: shl            None
+IL_03B0: stloc          local(0x0041)
+IL_03B4: ldloc          local(0x0041)
+IL_03B8: ldc.i4         312
+IL_03BD: add            None
+IL_03BE: stloc          local(0x0042)
+IL_03C2: ldloc          local(0x0042)
+IL_03C6: ldloc          local(0x0011)
+IL_03CA: add            None
+IL_03CB: stloc          local(0x0044)
+IL_03CF: br             {'target': 1919}
+IL_03D4: ldloc          local(0x0046)
+IL_03D8: ldc.i4         0
+IL_03DD: ceq            None
+IL_03DF: stloc          local(0x0023)
+IL_03E3: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_03E8: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_03ED: stloc          local(0x001E)
+IL_03F1: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_03F6: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_03FB: stloc          local(0x0008)
+IL_03FF: ldloca         local(0x0009)
+IL_0403: stloc          local(0x0025)
+IL_0407: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_040C: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0411: stloc          local(0x0026)
+IL_0415: ldsfld         {'token': '0x04000308', 'identity': 'ResourceManager::prefab_Almanac_ZombieWindow'}
+IL_041A: stloc          local(0x001C)
+IL_041E: ldloc          local(0x0023)
+IL_0422: brtrue         {'target': 1700}
+IL_0427: br             {'target': 1068}
+IL_042C: ldloc          local(0x0046)
+IL_0430: call           {'token': '0x0A000001', 'identity': 'UnityEngine.Component::get_transform / sig 20001215'}
+IL_0435: stloc          local(0x0021)
+IL_0439: ldarg.0        None
+IL_043A: ldfld          {'token': '0x0400075F', 'identity': 'Almanac_ZombieHome::zombieWindowListContent'}
+IL_043F: ldc.i4         0
+IL_0444: ceq            None
+IL_0446: stloc          local(0x0022)
+IL_044A: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_044F: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0454: stloc          local(0x0008)
+IL_0458: ldloca         local(0x0009)
+IL_045C: stloc          local(0x0025)
+IL_0460: ldloc          local(0x001E)
+IL_0464: stloc          local(0x0026)
+IL_0468: ldarg.0        None
+IL_0469: ldfld          {'token': '0x0400075F', 'identity': 'Almanac_ZombieHome::zombieWindowListContent'}
+IL_046E: stloc          local(0x001C)
+IL_0472: ldloc          local(0x0022)
+IL_0476: brtrue         {'target': 1689}
+IL_047B: br             {'target': 1152}
+IL_0480: ldarg.0        None
+IL_0481: ldfld          {'token': '0x0400075F', 'identity': 'Almanac_ZombieHome::zombieWindowListContent'}
+IL_0486: call           {'token': '0x0A00002E', 'identity': 'UnityEngine.GameObject::get_transform / sig 20001215'}
+IL_048B: stloc          local(0x001F)
+IL_048F: ldloc          local(0x0021)
+IL_0493: ldc.i4         0
+IL_0498: ceq            None
+IL_049A: stloc          local(0x0020)
+IL_049E: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_04A3: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_04A8: stloc          local(0x0008)
+IL_04AC: ldloca         local(0x0009)
+IL_04B0: stloc          local(0x0025)
+IL_04B4: ldloc          local(0x001E)
+IL_04B8: stloc          local(0x0026)
+IL_04BC: ldarg.0        None
+IL_04BD: ldfld          {'token': '0x0400075F', 'identity': 'Almanac_ZombieHome::zombieWindowListContent'}
+IL_04C2: stloc          local(0x001C)
+IL_04C6: ldloc          local(0x0020)
+IL_04CA: brtrue         {'target': 1678}
+IL_04CF: br             {'target': 1236}
+IL_04D4: ldloc          local(0x0021)
+IL_04D8: ldloc          local(0x001F)
+IL_04DC: ldc.i4         0
+IL_04E1: call           {'token': '0x0A00002F', 'identity': 'UnityEngine.Transform::SetParent / sig 200201121502'}
+IL_04E6: ldloc          local(0x0046)
+IL_04EA: ldarg.0        None
+IL_04EB: stfld          {'token': '0x04000767', 'identity': 'Almanac_ZombieWindow::zombieHome'}
+IL_04F0: br             {'target': 1269}
+IL_04F5: ldloc          local(0x0046)
+IL_04F9: ldloc          local(0x0006)
+IL_04FD: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_0502: ldloc          local(0x0045)
+IL_0506: call           {'token': '0x060005B9', 'identity': 'Almanac_ZombieWindow::SetWindowData'}
+IL_050B: ldarg.0        None
+IL_050C: ldfld          {'token': '0x0400075D', 'identity': 'Almanac_ZombieHome::zombieWindowList'}
+IL_0511: ldc.i4         0
+IL_0516: ceq            None
+IL_0518: stloc          local(0x001D)
+IL_051C: ldnull         None
+IL_051D: stloc          local(0x0008)
+IL_0521: ldloca         local(0x0009)
+IL_0525: stloc          local(0x0025)
+IL_0529: ldloc          local(0x0045)
+IL_052D: stloc          local(0x0026)
+IL_0531: ldarg.0        None
+IL_0532: ldfld          {'token': '0x0400075D', 'identity': 'Almanac_ZombieHome::zombieWindowList'}
+IL_0537: stloc          local(0x001C)
+IL_053B: ldloc          local(0x001D)
+IL_053F: brtrue         {'target': 1667}
+IL_0544: br             {'target': 1353}
+IL_0549: ldarg.0        None
+IL_054A: ldfld          {'token': '0x0400075D', 'identity': 'Almanac_ZombieHome::zombieWindowList'}
+IL_054F: ldloc          local(0x0046)
+IL_0553: call           {'token': '0x0A000278', 'identity': 'TypeSpec:114::Add / sig 2001011300'}
+IL_0558: ldnull         None
+IL_0559: stloc          local(0x0008)
+IL_055D: ldarg.0        None
+IL_055E: ldfld          {'token': '0x0400075D', 'identity': 'Almanac_ZombieHome::zombieWindowList'}
+IL_0563: stloc          local(0x002F)
+IL_0567: br             {'target': 1976}
+IL_056C: ldloca         local(0x0009)
+IL_0570: stloc          local(0x0034)
+IL_0574: ldstr          {'token': '0x7000191D', 'identity': 'Method not found @18024F380'}
+IL_0579: pop            None
+IL_057A: ldstr          {'token': '0x7000228A', 'identity': 'Not implemented instruction: "psrldq xmm0,8"'}
+IL_057F: pop            None
+IL_0580: ldloca         local(0x0009)
+IL_0584: stloc          local(0x0037)
+IL_0588: ldloc          local(0x0035)
+IL_058C: stloc          local(0x0037)
+IL_0590: ldloc          local(0x0035)
+IL_0594: ldc.i4         0
+IL_0599: ceq            None
+IL_059B: stloc          local(0x0038)
+IL_059F: ldloc          local(0x0038)
+IL_05A3: brtrue         {'target': 1478}
+IL_05A8: br             {'target': 1453}
+IL_05AD: ldnull         None
+IL_05AE: ldtoken        {'token': '0x01000036', 'identity': 'System.IDisposable'}
+IL_05B3: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_05B8: call           {'token': '0x0A000040', 'identity': 'TypeSpec:9::get_Item / sig 2001130008'}
+IL_05BD: stloc          local(0x003C)
+IL_05C1: br             {'target': 1478}
+IL_05C6: br             {'target': 2013}
+IL_05CB: ldarg.0        None
+IL_05CC: ldfld          {'token': '0x04000761', 'identity': 'Almanac_ZombieHome::mooksToggle'}
+IL_05D1: ldarg.0        None
+IL_05D2: ldfld          {'token': '0x04000764', 'identity': 'Almanac_ZombieHome::mooksCheck'}
+IL_05D7: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_05DC: ldarg.0        None
+IL_05DD: ldfld          {'token': '0x04000762', 'identity': 'Almanac_ZombieHome::eliteToggle'}
+IL_05E2: ldc.i4         0
+IL_05E7: ceq            None
+IL_05E9: stloc          local(0x000E)
+IL_05ED: ldloca         local(0x0009)
+IL_05F1: stloc          local(0x0025)
+IL_05F5: ldnull         None
+IL_05F6: stloc          local(0x0012)
+IL_05FA: ldarg.0        None
+IL_05FB: ldfld          {'token': '0x04000762', 'identity': 'Almanac_ZombieHome::eliteToggle'}
+IL_0600: stloc          local(0x000B)
+IL_0604: ldloc          local(0x000E)
+IL_0608: brtrue         {'target': 1648}
+IL_060D: br             {'target': 1554}
+IL_0612: ldarg.0        None
+IL_0613: ldfld          {'token': '0x04000762', 'identity': 'Almanac_ZombieHome::eliteToggle'}
+IL_0618: ldarg.0        None
+IL_0619: ldfld          {'token': '0x04000765', 'identity': 'Almanac_ZombieHome::eliteCheck'}
+IL_061E: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_0623: ldarg.0        None
+IL_0624: ldfld          {'token': '0x04000763', 'identity': 'Almanac_ZombieHome::bossToggle'}
+IL_0629: ldc.i4         0
+IL_062E: ceq            None
+IL_0630: stloc          local(0x000F)
+IL_0634: ldloca         local(0x0009)
+IL_0638: stloc          local(0x0025)
+IL_063C: ldnull         None
+IL_063D: stloc          local(0x0012)
+IL_0641: ldarg.0        None
+IL_0642: ldfld          {'token': '0x04000763', 'identity': 'Almanac_ZombieHome::bossToggle'}
+IL_0647: stloc          local(0x000B)
+IL_064B: ldloc          local(0x000F)
+IL_064F: brtrue         {'target': 1648}
+IL_0654: br             {'target': 1625}
+IL_0659: ldarg.0        None
+IL_065A: ldfld          {'token': '0x04000763', 'identity': 'Almanac_ZombieHome::bossToggle'}
+IL_065F: ldarg.0        None
+IL_0660: ldfld          {'token': '0x04000766', 'identity': 'Almanac_ZombieHome::bossCheck'}
+IL_0665: call           {'token': '0x0A000017', 'identity': 'UnityEngine.UI.Toggle::set_isOn / sig 20010102'}
+IL_066A: br             {'target': 1647}
+IL_066F: ret            None
+IL_0670: ldloc          local(0x000B)
+IL_0674: stloc          local(0x0014)
+IL_0678: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_067D: throw          None
+IL_067E: br             {'target': 1892}
+IL_0683: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0688: throw          None
+IL_0689: br             {'target': 1678}
+IL_068E: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0693: throw          None
+IL_0694: br             {'target': 1689}
+IL_0699: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_069E: throw          None
+IL_069F: br             {'target': 1700}
+IL_06A4: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_06A9: throw          None
+IL_06AA: br             {'target': 1711}
+IL_06AF: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_06B4: throw          None
+IL_06B5: br             {'target': 1722}
+IL_06BA: ldstr          {'token': '0x700019F6', 'identity': 'Method not found @18024F3A0'}
+IL_06BF: pop            None
+IL_06C0: br             {'target': 1733}
+IL_06C5: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_06CA: throw          None
+IL_06CB: br             {'target': 1744}
+IL_06D0: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_06D5: throw          None
+IL_06D6: br             {'target': 1755}
+IL_06DB: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_06E0: throw          None
+IL_06E1: ldloc          local(0x001C)
+IL_06E5: throw          None
+IL_06E6: br             {'target': 1771}
+IL_06EB: ret            None
+IL_06EC: ldtoken        {'token': '0x02000052', 'identity': 'ResourceManager'}
+IL_06F1: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_06F6: stloc          local(0x000B)
+IL_06FA: br             {'target': 2076}
+IL_06FF: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_0704: stloc          local(0x0004)
+IL_0708: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_070D: ldc.i4         0
+IL_0712: ceq            None
+IL_0714: stloc          local(0x0005)
+IL_0718: ldloc          local(0x0005)
+IL_071C: brtrue         {'target': 1648}
+IL_0721: br             {'target': 5}
+IL_0726: ldloc          local(0x003D)
+IL_072A: ldloc          local(0x003D)
+IL_072E: add            None
+IL_072F: stloc          local(0x0039)
+IL_0733: ldstr          {'token': '0x70019E20', 'identity': 'Unmanaged memory load: [v977 @ r8_v21+v907 @ rax_v80*8]'}
+IL_0738: pop            None
+IL_0739: ldc.i4.0       None
+IL_073A: conv.i         None
+IL_073B: ldtoken        {'token': '0x01000032', 'identity': 'System.Collections.IEnumerator'}
+IL_0740: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_0745: ceq            None
+IL_0747: stloc          local(0x003E)
+IL_074B: ldloc          local(0x003E)
+IL_074F: brtrue         {'target': 903}
+IL_0754: br             {'target': 398}
+IL_0759: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_075E: throw          None
+IL_075F: br             {'target': 1667}
+IL_0764: ldloc          local(0x0012)
+IL_0768: stloc          local(0x0026)
+IL_076C: ldloc          local(0x0014)
+IL_0770: stloc          local(0x001C)
+IL_0774: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_0779: throw          None
+IL_077A: br             {'target': 1881}
+IL_077F: ldstr          {'token': '0x70019E90', 'identity': 'Indirect call: [v978 @ rdx_v30] (should have been resolved before IL gen)'}
+IL_0784: pop            None
+IL_0785: ldtoken        {'token': '0x0200005D', 'identity': 'ZombieType'}
+IL_078A: call           {'token': '0x0A00004C', 'identity': 'System.Type::GetTypeFromHandle / sig 000112808911808d'}
+IL_078F: stloc          local(0x0018)
+IL_0793: ldloc          local(0x002B)
+IL_0797: ldc.i4         0
+IL_079C: ceq            None
+IL_079E: stloc          local(0x002C)
+IL_07A2: ldloc          local(0x002B)
+IL_07A6: stloc          local(0x001C)
+IL_07AA: ldloc          local(0x002C)
+IL_07AE: brtrue         {'target': 1733}
+IL_07B3: br             {'target': 472}
+IL_07B8: ldloc          local(0x0009)
+IL_07BC: ldc.i4         0
+IL_07C1: ceq            None
+IL_07C3: stloc          local(0x0030)
+IL_07C7: ldloc          local(0x002F)
+IL_07CB: stloc          local(0x001C)
+IL_07CF: ldloc          local(0x0030)
+IL_07D3: brtrue         {'target': 1755}
+IL_07D8: br             {'target': 259}
+IL_07DD: ldarg.0        None
+IL_07DE: call           {'token': '0x060005AC', 'identity': 'Almanac_ZombieHome::CheckFirstZombie'}
+IL_07E3: ldarg.0        None
+IL_07E4: ldfld          {'token': '0x04000761', 'identity': 'Almanac_ZombieHome::mooksToggle'}
+IL_07E9: ldc.i4         0
+IL_07EE: ceq            None
+IL_07F0: stloc          local(0x000D)
+IL_07F4: ldloca         local(0x0009)
+IL_07F8: stloc          local(0x0025)
+IL_07FC: ldloc          local(0x0035)
+IL_0800: stloc          local(0x0012)
+IL_0804: ldarg.0        None
+IL_0805: ldfld          {'token': '0x04000761', 'identity': 'Almanac_ZombieHome::mooksToggle'}
+IL_080A: stloc          local(0x000B)
+IL_080E: ldloc          local(0x000D)
+IL_0812: brtrue         {'target': 1648}
+IL_0817: br             {'target': 1483}
+IL_081C: br             {'target': 1791}

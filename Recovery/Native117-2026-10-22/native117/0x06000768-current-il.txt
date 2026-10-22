@@ -1,0 +1,132 @@
+<AnimateProperties>d__6::MoveNext
+{"token": "0x06000768", "name": "<AnimateProperties>d__6::MoveNext", "signature": "200002", "rva": 624916, "max_stack": 3, "code_size": 510, "local_sig": 285214107, "locals_blob": "07121283c8020c0202020c020212590c020c0c0c1282411283cc18", "eh_count": 0, "il_sha256": "611837b8e5b1c79569ba8c66d748a8efdda7ed8b9860e86d0699c2ebe35475b7"}
+IL_0000: br             {'target': 421}
+IL_0005: ldarg.0        None
+IL_0006: ldc.i8         4294967295
+IL_000F: stfld          {'token': '0x04000994', 'identity': '<AnimateProperties>d__6::<>1__state'}
+IL_0014: ldc.r4         0.0
+IL_0019: ldc.r4         1.0
+IL_001E: call           {'token': '0x0A000083', 'identity': 'UnityEngine.Random::Range / sig 00020c0c0c'}
+IL_0023: stloc          local(0x0002)
+IL_0027: ldarg.0        None
+IL_0028: ldfld          {'token': '0x04000996', 'identity': '<AnimateProperties>d__6::<>4__this'}
+IL_002D: ldc.i4         0
+IL_0032: ceq            None
+IL_0034: stloc          local(0x0004)
+IL_0038: ldloc          local(0x0004)
+IL_003C: brtrue         {'target': 407}
+IL_0041: br             {'target': 70}
+IL_0046: ldloc          local(0x0000)
+IL_004A: ldloc          local(0x0002)
+IL_004E: stfld          {'token': '0x04000993', 'identity': 'TMPro.Examples.ShaderPropAnimator::m_frame'}
+IL_0053: br             {'target': 168}
+IL_0058: ldarg.0        None
+IL_0059: ldfld          {'token': '0x04000994', 'identity': '<AnimateProperties>d__6::<>1__state'}
+IL_005E: ldc.i4         1
+IL_0063: ceq            None
+IL_0065: ldc.i4.0       None
+IL_0066: ceq            None
+IL_0068: stloc          local(0x0003)
+IL_006C: ldloc          local(0x0003)
+IL_0070: brtrue         {'target': 393}
+IL_0075: br             {'target': 122}
+IL_007A: ldarg.0        None
+IL_007B: ldc.i8         4294967295
+IL_0084: stfld          {'token': '0x04000994', 'identity': '<AnimateProperties>d__6::<>1__state'}
+IL_0089: ldarg.0        None
+IL_008A: ldfld          {'token': '0x04000996', 'identity': '<AnimateProperties>d__6::<>4__this'}
+IL_008F: ldc.i4         0
+IL_0094: ceq            None
+IL_0096: stloc          local(0x0005)
+IL_009A: ldloc          local(0x0005)
+IL_009E: brtrue         {'target': 407}
+IL_00A3: br             {'target': 168}
+IL_00A8: ldloc          local(0x0000)
+IL_00AC: ldfld          {'token': '0x04000992', 'identity': 'TMPro.Examples.ShaderPropAnimator::GlowCurve'}
+IL_00B1: ldc.i4         0
+IL_00B6: ceq            None
+IL_00B8: stloc          local(0x0007)
+IL_00BC: ldloc          local(0x0007)
+IL_00C0: brtrue         {'target': 407}
+IL_00C5: br             {'target': 202}
+IL_00CA: ldloc          local(0x0000)
+IL_00CE: ldfld          {'token': '0x04000992', 'identity': 'TMPro.Examples.ShaderPropAnimator::GlowCurve'}
+IL_00D3: ldloc          local(0x0000)
+IL_00D7: ldfld          {'token': '0x04000993', 'identity': 'TMPro.Examples.ShaderPropAnimator::m_frame'}
+IL_00DC: call           {'token': '0x0A0001ED', 'identity': 'UnityEngine.AnimationCurve::Evaluate / sig 20010c0c'}
+IL_00E1: stloc          local(0x0006)
+IL_00E5: br             {'target': 465}
+IL_00EA: ldloc          local(0x0000)
+IL_00EE: ldfld          {'token': '0x04000991', 'identity': 'TMPro.Examples.ShaderPropAnimator::m_Material'}
+IL_00F3: ldsfld         {'token': '0x0A00032C', 'identity': 'TMPro.ShaderUtilities::ID_GlowPower / sig 0608'}
+IL_00F8: ldloc          local(0x0006)
+IL_00FC: call           {'token': '0x0A00032D', 'identity': 'UnityEngine.Material::SetFloatImpl / sig 200201080c'}
+IL_0101: call           {'token': '0x0A00001A', 'identity': 'UnityEngine.Time::get_deltaTime / sig 00000c'}
+IL_0106: stloc          local(0x000C)
+IL_010A: br             {'target': 271}
+IL_010F: ldc.r4         0.20000000298023224
+IL_0114: ldc.r4         0.30000001192092896
+IL_0119: call           {'token': '0x0A000083', 'identity': 'UnityEngine.Random::Range / sig 00020c0c0c'}
+IL_011E: stloc          local(0x000D)
+IL_0122: ldloc          local(0x000D)
+IL_0126: conv.r4        None
+IL_0127: ldloc          local(0x000C)
+IL_012B: conv.r4        None
+IL_012C: mul            None
+IL_012D: stloc          local(0x000E)
+IL_0131: ldloc          local(0x000E)
+IL_0135: conv.r4        None
+IL_0136: ldloc          local(0x0000)
+IL_013A: ldfld          {'token': '0x04000993', 'identity': 'TMPro.Examples.ShaderPropAnimator::m_frame'}
+IL_013F: conv.r4        None
+IL_0140: add            None
+IL_0141: stloc          local(0x000A)
+IL_0145: ldloc          local(0x0000)
+IL_0149: ldloc          local(0x000A)
+IL_014D: stfld          {'token': '0x04000993', 'identity': 'TMPro.Examples.ShaderPropAnimator::m_frame'}
+IL_0152: newobj         {'token': '0x0A00032E', 'identity': 'UnityEngine.WaitForEndOfFrame::.ctor / sig 200001'}
+IL_0157: stloc          local(0x000F)
+IL_015B: br             {'target': 352}
+IL_0160: nop            None
+IL_0161: ldarg.0        None
+IL_0162: ldloc          local(0x000F)
+IL_0166: stfld          {'token': '0x04000995', 'identity': '<AnimateProperties>d__6::<>2__current'}
+IL_016B: br             {'target': 368}
+IL_0170: ldarg.0        None
+IL_0171: ldc.i4         1
+IL_0176: stfld          {'token': '0x04000994', 'identity': '<AnimateProperties>d__6::<>1__state'}
+IL_017B: ldc.i4         1
+IL_0180: stloc          local(0x000B)
+IL_0184: br             {'target': 499}
+IL_0189: ldc.i4         0
+IL_018E: stloc          local(0x000B)
+IL_0192: br             {'target': 499}
+IL_0197: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_019C: stloc          local(0x0009)
+IL_01A0: ldloc          local(0x0009)
+IL_01A4: ret            None
+IL_01A5: ldarg.0        None
+IL_01A6: ldfld          {'token': '0x04000996', 'identity': '<AnimateProperties>d__6::<>4__this'}
+IL_01AB: stloc          local(0x0000)
+IL_01AF: ldarg.0        None
+IL_01B0: ldfld          {'token': '0x04000994', 'identity': '<AnimateProperties>d__6::<>1__state'}
+IL_01B5: ldc.i4         0
+IL_01BA: ceq            None
+IL_01BC: ldc.i4.0       None
+IL_01BD: ceq            None
+IL_01BF: stloc          local(0x0001)
+IL_01C3: ldloc          local(0x0001)
+IL_01C7: brtrue         {'target': 88}
+IL_01CC: br             {'target': 5}
+IL_01D1: ldloc          local(0x0000)
+IL_01D5: ldfld          {'token': '0x04000991', 'identity': 'TMPro.Examples.ShaderPropAnimator::m_Material'}
+IL_01DA: ldc.i4         0
+IL_01DF: ceq            None
+IL_01E1: stloc          local(0x0008)
+IL_01E5: ldloc          local(0x0008)
+IL_01E9: brtrue         {'target': 407}
+IL_01EE: br             {'target': 234}
+IL_01F3: ldloc          local(0x000B)
+IL_01F7: ret            None
+IL_01F8: ldstr          {'token': '0x70001D73', 'identity': 'Warning: Method ends with non empty stack (-48), the output could be wrong!'}
+IL_01FD: pop            None

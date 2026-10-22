@@ -1,0 +1,235 @@
+Window_I::RenamePlayer
+{"token": "0x060006F9", "name": "Window_I::RenamePlayer", "signature": "200001", "rva": 597456, "max_stack": 3, "code_size": 928, "local_sig": 285214021, "locals_blob": "072612834c1280c40212814c021282180e1282200202020202020202021280b9020202021c1280811280810202021280b512091280b51280b91818151151011c151151011c1818", "eh_count": 0, "il_sha256": "0064b3ccffd0cbddce68f606bcea26dd56bce499b528a0637b2a361c923d35d2"}
+IL_0000: br             {'target': 704}
+IL_0005: ldloc          local(0x0001)
+IL_0009: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_000E: stloc          local(0x0003)
+IL_0012: ldloc          local(0x0001)
+IL_0016: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_001B: ldc.i4         0
+IL_0020: ceq            None
+IL_0022: stloc          local(0x0004)
+IL_0026: ldloc          local(0x0004)
+IL_002A: brtrue         {'target': 525}
+IL_002F: br             {'target': 52}
+IL_0034: ldarg.0        None
+IL_0035: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_003A: ldsfld         {'token': '0x0A000013', 'identity': 'System.String::Empty / sig 060e'}
+IL_003F: call           {'token': '0x0A0000B0', 'identity': 'System.String::op_Inequality / sig 0002020e0e'}
+IL_0044: stloc          local(0x0009)
+IL_0048: ldloc          local(0x0009)
+IL_004C: brtrue         {'target': 86}
+IL_0051: br             {'target': 582}
+IL_0056: ldloc          local(0x0003)
+IL_005A: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_005F: stloc          local(0x0005)
+IL_0063: ldloc          local(0x0003)
+IL_0067: ldfld          {'token': '0x04000311', 'identity': 'SavesManager::saveList'}
+IL_006C: stloc          local(0x0007)
+IL_0070: ldloc          local(0x0003)
+IL_0074: ldfld          {'token': '0x04000311', 'identity': 'SavesManager::saveList'}
+IL_0079: ldc.i4         0
+IL_007E: ceq            None
+IL_0080: stloc          local(0x000A)
+IL_0084: nop            None
+IL_0085: ldloc          local(0x000A)
+IL_0089: brtrue         {'target': 676}
+IL_008E: br             {'target': 147}
+IL_0093: ldloc          local(0x0007)
+IL_0097: ldfld          {'token': '0x0400064E', 'identity': 'SaveList::saveList'}
+IL_009C: ldc.i4         0
+IL_00A1: ceq            None
+IL_00A3: stloc          local(0x000B)
+IL_00A7: nop            None
+IL_00A8: ldloc          local(0x000B)
+IL_00AC: brtrue         {'target': 676}
+IL_00B1: br             {'target': 182}
+IL_00B6: ldstr          {'token': '0x70000260', 'identity': 'Method not found @1808197F0'}
+IL_00BB: pop            None
+IL_00BC: nop            None
+IL_00BD: br             {'target': 710}
+IL_00C2: ldloc          local(0x0018)
+IL_00C6: ldloc          local(0x0003)
+IL_00CA: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_00CF: ceq            None
+IL_00D1: stloc          local(0x0019)
+IL_00D5: ldloc          local(0x0019)
+IL_00D9: brtrue         {'target': 710}
+IL_00DE: br             {'target': 227}
+IL_00E3: ldloc          local(0x0018)
+IL_00E7: ldc.i4         0
+IL_00EC: ceq            None
+IL_00EE: stloc          local(0x0015)
+IL_00F2: ldloc          local(0x0015)
+IL_00F6: brtrue         {'target': 687}
+IL_00FB: br             {'target': 256}
+IL_0100: ldloc          local(0x0018)
+IL_0104: ldfld          {'token': '0x0A0001E1', 'identity': 'UnityEngine.MonoBehaviour::m_CancellationTokenSource / sig 06128139'}
+IL_0109: ldarg.0        None
+IL_010A: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_010F: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_0114: stloc          local(0x0012)
+IL_0118: ldloc          local(0x0012)
+IL_011C: ldc.i4.0       None
+IL_011D: ceq            None
+IL_011F: stloc          local(0x001A)
+IL_0123: nop            None
+IL_0124: ldloc          local(0x001A)
+IL_0128: brtrue         {'target': 710}
+IL_012D: br             {'target': 306}
+IL_0132: ldarg.0        None
+IL_0133: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_0138: ldc.i4         0
+IL_013D: ceq            None
+IL_013F: stloc          local(0x0013)
+IL_0143: ldloc          local(0x0013)
+IL_0147: brtrue         {'target': 748}
+IL_014C: br             {'target': 337}
+IL_0151: ldarg.0        None
+IL_0152: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_0157: ldstr          {'token': '0x7001CE74', 'identity': '该昵称已存在！'}
+IL_015C: ldc.i4         1
+IL_0161: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_0166: br             {'target': 759}
+IL_016B: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_0170: ldc.i4         2
+IL_0175: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_017A: stloc          local(0x001E)
+IL_017E: br             {'target': 387}
+IL_0183: ldloc          local(0x001E)
+IL_0187: call           {'token': '0x0600013B', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_018C: stloc          local(0x001F)
+IL_0190: ldloca         local(0x0023)
+IL_0194: call           {'token': '0x0A000021', 'identity': 'System.ValueType::.ctor / sig 200001'}
+IL_0199: br             {'target': 414}
+IL_019E: br             {'target': 525}
+IL_01A3: ldloca         local(0x0023)
+IL_01A7: call           {'token': '0x0A0002C5', 'identity': 'TypeSpec:129::Dispose / sig 200001'}
+IL_01AC: br             {'target': 789}
+IL_01B1: ldarg.0        None
+IL_01B2: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_01B7: ldloc          local(0x0005)
+IL_01BB: ldfld          {'token': '0x04000627', 'identity': 'Save::playerName'}
+IL_01C0: call           {'token': '0x0A00003A', 'identity': 'System.String::op_Equality / sig 0002020e0e'}
+IL_01C5: stloc          local(0x0008)
+IL_01C9: ldloc          local(0x0008)
+IL_01CD: brtrue         {'target': 526}
+IL_01D2: br             {'target': 471}
+IL_01D7: ldloc          local(0x0001)
+IL_01DB: ldfld          {'token': '0x04000166', 'identity': 'LawnApp::savesManager'}
+IL_01E0: ldarg.0        None
+IL_01E1: ldfld          {'token': '0x040008FE', 'identity': 'Window_I::info_string'}
+IL_01E6: call           {'token': '0x0600024A', 'identity': 'SavesManager::RenamePlayer'}
+IL_01EB: ldarg.0        None
+IL_01EC: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_01F1: stloc          local(0x001D)
+IL_01F5: br             {'target': 506}
+IL_01FA: br             {'target': 511}
+IL_01FF: ldloc          local(0x001D)
+IL_0203: call           {'token': '0x0A000025', 'identity': 'UnityEngine.Object::Destroy / sig 0001011221'}
+IL_0208: br             {'target': 525}
+IL_020D: ret            None
+IL_020E: nop            None
+IL_020F: ldarg.0        None
+IL_0210: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_0215: ldc.i4         0
+IL_021A: ceq            None
+IL_021C: stloc          local(0x000C)
+IL_0220: ldloc          local(0x000C)
+IL_0224: brtrue         {'target': 676}
+IL_0229: br             {'target': 558}
+IL_022E: ldstr          {'token': '0x7001CF22', 'identity': '未修改昵称？'}
+IL_0233: stloc          local(0x0006)
+IL_0237: ldarg.0        None
+IL_0238: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_023D: stloc          local(0x0017)
+IL_0241: br             {'target': 824}
+IL_0246: nop            None
+IL_0247: ldarg.0        None
+IL_0248: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_024D: ldc.i4         0
+IL_0252: ceq            None
+IL_0254: stloc          local(0x000D)
+IL_0258: ldloc          local(0x000D)
+IL_025C: brtrue         {'target': 676}
+IL_0261: br             {'target': 614}
+IL_0266: ldstr          {'token': '0x7001CF12', 'identity': '昵称不能为空！'}
+IL_026B: stloc          local(0x0006)
+IL_026F: ldarg.0        None
+IL_0270: ldfld          {'token': '0x040008FA', 'identity': 'Window_I::tip'}
+IL_0275: stloc          local(0x0017)
+IL_0279: br             {'target': 824}
+IL_027E: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_0283: ldc.i4         2
+IL_0288: call           {'token': '0x0A000084', 'identity': 'TypeSpec:26::get_Item / sig 2001130008'}
+IL_028D: stloc          local(0x001C)
+IL_0291: br             {'target': 662}
+IL_0296: ldloc          local(0x001C)
+IL_029A: call           {'token': '0x0600013B', 'identity': 'GlobalStaticVars::CreateAudioAtPoint'}
+IL_029F: stloc          local(0x0011)
+IL_02A3: ret            None
+IL_02A4: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02A9: throw          None
+IL_02AA: br             {'target': 917}
+IL_02AF: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02B4: throw          None
+IL_02B5: ldloc          local(0x0018)
+IL_02B9: throw          None
+IL_02BA: br             {'target': 703}
+IL_02BF: ret            None
+IL_02C0: nop            None
+IL_02C1: br             {'target': 878}
+IL_02C6: ldloca         local(0x0023)
+IL_02CA: call           {'token': '0x0A000024', 'identity': 'TypeSpec:4::MoveNext / sig 200002'}
+IL_02CF: stloc          local(0x0014)
+IL_02D3: ldloc          local(0x0014)
+IL_02D7: ldc.i4.0       None
+IL_02D8: ceq            None
+IL_02DA: stloc          local(0x001B)
+IL_02DE: ldloc          local(0x001B)
+IL_02E2: brtrue         {'target': 419}
+IL_02E7: br             {'target': 194}
+IL_02EC: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_02F1: throw          None
+IL_02F2: br             {'target': 687}
+IL_02F7: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_02FC: ldc.i4         0
+IL_0301: ceq            None
+IL_0303: stloc          local(0x0010)
+IL_0307: ldloc          local(0x0010)
+IL_030B: brtrue         {'target': 917}
+IL_0310: br             {'target': 363}
+IL_0315: ldloc          local(0x0003)
+IL_0319: ldfld          {'token': '0x04000310', 'identity': 'SavesManager::playerSave'}
+IL_031E: ldc.i4         0
+IL_0323: ceq            None
+IL_0325: stloc          local(0x000E)
+IL_0329: nop            None
+IL_032A: ldloc          local(0x000E)
+IL_032E: brtrue         {'target': 676}
+IL_0333: br             {'target': 433}
+IL_0338: ldloc          local(0x0017)
+IL_033C: ldloc          local(0x0006)
+IL_0340: ldc.i4         1
+IL_0345: call           {'token': '0x0A00004B', 'identity': 'TMPro.TMP_Text::SetText / sig 2002010e02'}
+IL_034A: br             {'target': 847}
+IL_034F: ldsfld         {'token': '0x040002EC', 'identity': 'ResourceManager::buttonClips'}
+IL_0354: ldc.i4         0
+IL_0359: ceq            None
+IL_035B: stloc          local(0x000F)
+IL_035F: nop            None
+IL_0360: ldloc          local(0x000F)
+IL_0364: brtrue         {'target': 676}
+IL_0369: br             {'target': 638}
+IL_036E: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_0373: stloc          local(0x0001)
+IL_0377: ldsfld         {'token': '0x0400015E', 'identity': 'GlobalStaticVars::gLawnApp'}
+IL_037C: ldc.i4         0
+IL_0381: ceq            None
+IL_0383: stloc          local(0x0002)
+IL_0387: ldloc          local(0x0002)
+IL_038B: brtrue         {'target': 676}
+IL_0390: br             {'target': 5}
+IL_0395: newobj         {'token': '0x0A000022', 'identity': 'System.NullReferenceException::.ctor / sig 200001'}
+IL_039A: throw          None
+IL_039B: br             {'target': 748}
