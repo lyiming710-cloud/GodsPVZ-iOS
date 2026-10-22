@@ -90,6 +90,7 @@ namespace GodsPVZ.Actions.Verification
     {
         public List<MockEnemy> list = new();
         public void Add(MockEnemy e) => list.Add(e);
+        public void LoadData(MockEnemyEditor ed) => list.Add(ed?.preEnemy);
     }
 
     public class MockAdminSystem2
@@ -98,7 +99,7 @@ namespace GodsPVZ.Actions.Verification
         public int waveOnCheck; // 0x04000021
         public object enemy_BoardEditor_prefab = new(); // 0x0400001D
         public MockTransform preEnemy_Content = new(); // 0x04000016
-        public MockEnemyEditorList enemy_BoardEditors = new(); // 0x0400001B
+        public List<MockEnemyEditor> enemy_BoardEditors = new(); // 0x0400001B
         public MockEnemyManager enemyDataEditor = new(); // 0x04000018
     }
 
@@ -278,21 +279,21 @@ namespace GodsPVZ.Actions.Verification
                 else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
                 {
                     var mr = (MethodReference)ins.Operand;
-                    if (mr.Name == "Map" || (mr is MethodDefinition md && md.MetadataToken.ToInt32() == 0x06000158))
+                    int tok = mr.MetadataToken.ToInt32();
+                    if (tok == 0x06000158 || mr.Name == "Map")
                     {
                         il.Emit(OpCodes.Call, getter158Method);
                     }
-                    else if (mr.Name == "GetMapX") il.Emit(OpCodes.Callvirt, typeof(MockMap).GetMethod("GetMapX"));
-                    else if (mr.Name == "GetMapY") il.Emit(OpCodes.Callvirt, typeof(MockMap).GetMethod("GetMapY"));
-                    else if (mr.Name == "Instantiate") il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("InstantiateMockEditor"));
-                    else if (mr.Name == "get_transform") il.Emit(OpCodes.Callvirt, typeof(MockGameObject).GetMethod("get_transform"));
-                    else if (mr.Name == "SetParent") il.Emit(OpCodes.Callvirt, typeof(MockTransform).GetMethod("SetParent"));
-                    else if (mr.Name == "set_localScale") il.Emit(OpCodes.Callvirt, typeof(MockTransform).GetMethod("set_localScale"));
-                    else if (mr.Name == "Initialize") il.Emit(OpCodes.Callvirt, typeof(MockEnemyEditor).GetMethod("Initialize"));
-                    else if (mr.Name == "Add" && mr.DeclaringType.Name.Contains("Enemy_boardEditor")) il.Emit(OpCodes.Callvirt, typeof(MockEnemyEditorList).GetMethod("Add"));
-                    else if ((mr.Name == "LoadData" || mr.Name == "Add") && (mr.DeclaringType.Name == "EnemyManager" || mr.DeclaringType.Name == "EnemyDataEditor")) il.Emit(OpCodes.Callvirt, typeof(MockEnemyManager).GetMethod("Add"));
-                    else if (mr.Name == "Add" && mr.DeclaringType.Name.Contains("Enemy")) il.Emit(OpCodes.Callvirt, typeof(List<MockEnemy>).GetMethod("Add"));
-                    else throw new NotSupportedException($"Unmapped call in 0x0600001C: {mr.FullName}");
+                    else if (tok == 0x06000289 || mr.Name == "GetMapX") il.Emit(OpCodes.Callvirt, typeof(MockMap).GetMethod("GetMapX"));
+                    else if (tok == 0x0600028A || mr.Name == "GetMapY") il.Emit(OpCodes.Callvirt, typeof(MockMap).GetMethod("GetMapY"));
+                    else if (tok == 0x2B000007 || mr.Name == "Instantiate") il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("InstantiateMockEditor"));
+                    else if (tok == 0x0A000001 || tok == 0x0A00002E || mr.Name == "get_transform") il.Emit(OpCodes.Callvirt, typeof(MockGameObject).GetMethod("get_transform"));
+                    else if (tok == 0x0A00002F || mr.Name == "SetParent") il.Emit(OpCodes.Callvirt, typeof(MockTransform).GetMethod("SetParent"));
+                    else if (tok == 0x0600004B || mr.Name == "Initialize") il.Emit(OpCodes.Callvirt, typeof(MockEnemyEditor).GetMethod("Initialize"));
+                    else if (tok == 0x0A00044F || (mr.Name == "Add" && mr.FullName.Contains("Enemy_boardEditor"))) il.Emit(OpCodes.Callvirt, typeof(List<MockEnemyEditor>).GetMethod("Add"));
+                    else if (tok == 0x06000042 || mr.Name == "LoadData") il.Emit(OpCodes.Callvirt, typeof(MockEnemyManager).GetMethod("LoadData"));
+                    else if (tok == 0x0A000134 || (mr.Name == "Add" && mr.FullName.Contains("Enemy"))) il.Emit(OpCodes.Callvirt, typeof(List<MockEnemy>).GetMethod("Add"));
+                    else throw new NotSupportedException($"Unmapped call in 0x0600001C: tok=0x{tok:X8} {mr.FullName}");
                 }
                 else
                 {
@@ -407,53 +408,54 @@ namespace GodsPVZ.Actions.Verification
                 else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
                 {
                     var mr = (MethodReference)ins.Operand;
-                    if (mr.Name == "AnimationSprites" || (mr is MethodDefinition md && md.MetadataToken.ToInt32() == 0x06000303))
+                    int tok = mr.MetadataToken.ToInt32();
+                    if (tok == 0x06000303 || mr.Name == "AnimationSprites")
                     {
                         il.Emit(OpCodes.Call, getter303Method);
                     }
-                    else if (mr.Name == "GetEnumerator" && mr.DeclaringType.Name.Contains("Device"))
+                    else if (tok == 0x0A0000CC || (mr.Name == "GetEnumerator" && mr.DeclaringType.FullName.Contains("Device")))
                     {
                         il.Emit(OpCodes.Newobj, typeof(MockTrackedEnumerator<MockDevice>).GetConstructor(new[] { typeof(List<MockDevice>) }));
                     }
-                    else if (mr.Name == "GetEnumerator" && mr.DeclaringType.Name.Contains("SpriteRenderer"))
+                    else if (tok == 0x0A0000FD || (mr.Name == "GetEnumerator" && mr.DeclaringType.FullName.Contains("SpriteRenderer")))
                     {
                         il.Emit(OpCodes.Newobj, typeof(MockTrackedEnumerator<MockSpriteRenderer>).GetConstructor(new[] { typeof(List<MockSpriteRenderer>) }));
                     }
-                    else if (mr.Name == "get_Current" && mr.DeclaringType.Name.Contains("Device"))
+                    else if (tok == 0x0A0000CD || (mr.Name == "get_Current" && mr.DeclaringType.FullName.Contains("Device")))
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockTrackedEnumerator<MockDevice>).GetMethod("get_Current"));
                     }
-                    else if (mr.Name == "get_Current" && mr.DeclaringType.Name.Contains("SpriteRenderer"))
+                    else if (tok == 0x0A0000FE || (mr.Name == "get_Current" && mr.DeclaringType.FullName.Contains("SpriteRenderer")))
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockTrackedEnumerator<MockSpriteRenderer>).GetMethod("get_Current"));
                     }
-                    else if (mr.Name == "MoveNext" && mr.DeclaringType.Name.Contains("Device"))
+                    else if (tok == 0x0A0000CF || (mr.Name == "MoveNext" && mr.DeclaringType.FullName.Contains("Device")))
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockTrackedEnumerator<MockDevice>).GetMethod("MoveNext"));
                     }
-                    else if (mr.Name == "MoveNext" && mr.DeclaringType.Name.Contains("SpriteRenderer"))
+                    else if (tok == 0x0A0000FF || (mr.Name == "MoveNext" && mr.DeclaringType.FullName.Contains("SpriteRenderer")))
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockTrackedEnumerator<MockSpriteRenderer>).GetMethod("MoveNext"));
                     }
-                    else if (mr.Name == "Dispose" && mr.DeclaringType.Name.Contains("Device"))
+                    else if (tok == 0x0A000129 || (mr.Name == "Dispose" && mr.DeclaringType.FullName.Contains("Device")))
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockTrackedEnumerator<MockDevice>).GetMethod("Dispose"));
                     }
-                    else if (mr.Name == "Dispose" && mr.DeclaringType.Name.Contains("SpriteRenderer"))
+                    else if (tok == 0x0A000128 || (mr.Name == "Dispose" && mr.DeclaringType.FullName.Contains("SpriteRenderer")))
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockTrackedEnumerator<MockSpriteRenderer>).GetMethod("Dispose"));
                     }
-                    else if (mr.Name == "get_gameObject")
+                    else if (tok == 0x2B000011 || mr.Name == "get_gameObject")
                     {
                         il.Emit(OpCodes.Callvirt, typeof(MockSpriteRenderer).GetMethod("get_gameObject"));
                     }
-                    else if (mr.Name == "set_color")
+                    else if (tok == 0x0A000097 || mr.Name == "set_color")
                     {
                         il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("ApplySpriteColor"));
                     }
                     else
                     {
-                        throw new NotSupportedException($"Unmapped call in 0x06000183: {mr.FullName}");
+                        throw new NotSupportedException($"Unmapped call in 0x06000183: tok=0x{tok:X8} {mr.FullName}");
                     }
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Newobj)
