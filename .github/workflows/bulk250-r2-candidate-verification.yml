@@ -103,6 +103,17 @@ jobs:
           if [ -d "$stage/il2cppOutput" ]; then
             tar -czf .validation/bulk250-r2-generated-sources.tar.gz               -C "$stage" il2cppOutput
           fi
+      - name: Execute real Cecil / CLR DynamicMethod behavioral fixture (Bulk250-R2)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cand_dll="$GITHUB_WORKSPACE/.validation/bulk250-r2-run/candidates/candidate1.dll"
+          report_json="$GITHUB_WORKSPACE/.validation/bulk250-r2-run/BULK250-R2-50METHODS-BEHAVIOR-REPORT.json"
+          if [ -f "$cand_dll" ]; then
+            echo "Executing C# Bulk250R2BehaviorFixture against candidate1.dll..."
+            python3 scripts/actions/test_behavior_bulk250_r2.py --candidate-dll "$cand_dll" --output-json "$report_json"
+          fi
       - name: Upload candidate and complete diagnostics
         if: always()
         uses: actions/upload-artifact@v4
