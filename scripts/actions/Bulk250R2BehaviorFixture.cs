@@ -334,22 +334,22 @@ namespace GodsPVZ.Actions.Verification
             var locRenderer = il.DeclareLocal(typeof(MockSpriteRenderer)); // loc 3
             var locAlpha = il.DeclareLocal(typeof(float)); // loc 4
 
-            var labels = new Dictionary<int, Label>();
+            var labels = new Dictionary<Instruction, Label>();
             foreach (var ins in m183.Body.Instructions)
-                labels[ins.Offset] = il.DefineLabel();
+                labels[ins] = il.DefineLabel();
 
             var ehList = m183.Body.ExceptionHandlers;
-            var outerEH = ehList.FirstOrDefault(e => e.TryStart.Offset == 0x0C);
-            var innerEH = ehList.FirstOrDefault(e => e.TryStart.Offset == 0x35);
+            var outerEH = ehList.FirstOrDefault(e => e.TryStart != null && (e.TryStart.Offset == 0x0C || ehList.IndexOf(e) == 1));
+            var innerEH = ehList.FirstOrDefault(e => e.TryStart != null && (e.TryStart.Offset == 0x35 || ehList.IndexOf(e) == 0));
 
             foreach (var ins in m183.Body.Instructions)
             {
-                if (outerEH != null && ins.Offset == outerEH.TryStart.Offset) il.BeginExceptionBlock();
-                if (innerEH != null && ins.Offset == innerEH.TryStart.Offset) il.BeginExceptionBlock();
-                if (innerEH != null && ins.Offset == innerEH.HandlerStart.Offset) il.BeginFinallyBlock();
-                if (outerEH != null && ins.Offset == outerEH.HandlerStart.Offset) il.BeginFinallyBlock();
+                if (outerEH != null && ins == outerEH.TryStart) il.BeginExceptionBlock();
+                if (innerEH != null && ins == innerEH.TryStart) il.BeginExceptionBlock();
+                if (innerEH != null && ins == innerEH.HandlerStart) il.BeginFinallyBlock();
+                if (outerEH != null && ins == outerEH.HandlerStart) il.BeginFinallyBlock();
 
-                il.MarkLabel(labels[ins.Offset]);
+                il.MarkLabel(labels[ins]);
                 var code = ins.OpCode;
 
                 if (code == Mono.Cecil.Cil.OpCodes.Ldarg_0) il.Emit(OpCodes.Ldarg_0);
@@ -381,28 +381,28 @@ namespace GodsPVZ.Actions.Verification
                 else if (code == Mono.Cecil.Cil.OpCodes.Beq || code == Mono.Cecil.Cil.OpCodes.Beq_S)
                 {
                     var target = (Instruction)ins.Operand;
-                    il.Emit(OpCodes.Beq, labels[target.Offset]);
+                    il.Emit(OpCodes.Beq, labels[target]);
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Bne_Un || code == Mono.Cecil.Cil.OpCodes.Bne_Un_S)
                 {
                     var target = (Instruction)ins.Operand;
-                    il.Emit(OpCodes.Bne_Un, labels[target.Offset]);
+                    il.Emit(OpCodes.Bne_Un, labels[target]);
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Br || code == Mono.Cecil.Cil.OpCodes.Br_S)
                 {
                     var target = (Instruction)ins.Operand;
-                    il.Emit(OpCodes.Br, labels[target.Offset]);
+                    il.Emit(OpCodes.Br, labels[target]);
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Brtrue || code == Mono.Cecil.Cil.OpCodes.Brtrue_S)
                 {
                     var target = (Instruction)ins.Operand;
-                    il.Emit(OpCodes.Brtrue, labels[target.Offset]);
+                    il.Emit(OpCodes.Brtrue, labels[target]);
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
                 else if (code == Mono.Cecil.Cil.OpCodes.Leave || code == Mono.Cecil.Cil.OpCodes.Leave_S)
                 {
                     var target = (Instruction)ins.Operand;
-                    il.Emit(OpCodes.Leave, labels[target.Offset]);
+                    il.Emit(OpCodes.Leave, labels[target]);
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Endfinally)
                 {
@@ -944,22 +944,25 @@ namespace GodsPVZ.Actions.Verification
         private static Instruction CloneInstruction(Instruction ins)
         {
             var op = OpCodes_Mono(ins.OpCode.Code);
-            if (ins.Operand == null) return Instruction.Create(op);
-            if (ins.Operand is TypeReference tr) return Instruction.Create(op, tr);
-            if (ins.Operand is MethodReference mr) return Instruction.Create(op, mr);
-            if (ins.Operand is FieldReference fr) return Instruction.Create(op, fr);
-            if (ins.Operand is Instruction target) return Instruction.Create(op, target);
-            if (ins.Operand is Instruction[] targets) return Instruction.Create(op, targets);
-            if (ins.Operand is VariableDefinition vd) return Instruction.Create(op, vd);
-            if (ins.Operand is ParameterDefinition pd) return Instruction.Create(op, pd);
-            if (ins.Operand is string s) return Instruction.Create(op, s);
-            if (ins.Operand is sbyte sb) return Instruction.Create(op, sb);
-            if (ins.Operand is byte b) return Instruction.Create(op, b);
-            if (ins.Operand is int i) return Instruction.Create(op, i);
-            if (ins.Operand is long l) return Instruction.Create(op, l);
-            if (ins.Operand is float f) return Instruction.Create(op, f);
-            if (ins.Operand is double d) return Instruction.Create(op, d);
-            return Instruction.Create(op);
+            Instruction res;
+            if (ins.Operand == null) res = Instruction.Create(op);
+            else if (ins.Operand is TypeReference tr) res = Instruction.Create(op, tr);
+            else if (ins.Operand is MethodReference mr) res = Instruction.Create(op, mr);
+            else if (ins.Operand is FieldReference fr) res = Instruction.Create(op, fr);
+            else if (ins.Operand is Instruction target) res = Instruction.Create(op, target);
+            else if (ins.Operand is Instruction[] targets) res = Instruction.Create(op, targets);
+            else if (ins.Operand is VariableDefinition vd) res = Instruction.Create(op, vd);
+            else if (ins.Operand is ParameterDefinition pd) res = Instruction.Create(op, pd);
+            else if (ins.Operand is string s) res = Instruction.Create(op, s);
+            else if (ins.Operand is sbyte sb) res = Instruction.Create(op, sb);
+            else if (ins.Operand is byte b) res = Instruction.Create(op, b);
+            else if (ins.Operand is int i) res = Instruction.Create(op, i);
+            else if (ins.Operand is long l) res = Instruction.Create(op, l);
+            else if (ins.Operand is float f) res = Instruction.Create(op, f);
+            else if (ins.Operand is double d) res = Instruction.Create(op, d);
+            else res = Instruction.Create(op);
+            res.Offset = ins.Offset;
+            return res;
         }
         private static Mono.Cecil.Cil.OpCode OpCodes_Mono(Mono.Cecil.Cil.Code code)
         {
