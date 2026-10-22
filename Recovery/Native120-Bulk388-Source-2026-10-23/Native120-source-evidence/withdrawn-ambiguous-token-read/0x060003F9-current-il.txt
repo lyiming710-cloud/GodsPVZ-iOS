@@ -1,0 +1,43 @@
+Projectile::SetSortingGroup
+{"token": "0x060003F9", "name": "Projectile::SetSortingGroup", "signature": "200001", "rva": 332836, "max_stack": 2, "code_size": 155, "local_sig": 285213463, "locals_blob": "07071281f4020212091c12810908", "eh_count": 0, "il_sha256": "f9a68ec4e940fb9a7f098131dab76b4fe09bba83fcedc7e76326a0f8b264fda8"}
+IL_0000: br             {'target': 150}
+IL_0005: ldarg.0        None
+IL_0006: ldfld          {'token': '0x04000570', 'identity': 'Projectile::sortingGroup'}
+IL_000B: ldnull         None
+IL_000C: call           {'token': '0x0A000012', 'identity': 'UnityEngine.Object::op_Equality / sig 00020212211221'}
+IL_0011: stloc          local(0x0001)
+IL_0015: ldloc          local(0x0001)
+IL_0019: ldc.i4.0       None
+IL_001A: ceq            None
+IL_001C: stloc          local(0x0002)
+IL_0020: ldloc          local(0x0002)
+IL_0024: brtrue         {'target': 89}
+IL_0029: br             {'target': 46}
+IL_002E: ldarg.0        None
+IL_002F: call           {'token': '0x0A000009', 'identity': 'UnityEngine.Component::get_gameObject / sig 20001209'}
+IL_0034: stloc          local(0x0003)
+IL_0038: br             {'target': 61}
+IL_003D: ldloc          local(0x0003)
+IL_0041: call           {'token': '0x2B000057', 'identity': '0x2b000057'}
+IL_0046: stloc          local(0x0005)
+IL_004A: ldarg.0        None
+IL_004B: ldloc          local(0x0005)
+IL_004F: stfld          {'token': '0x04000570', 'identity': 'Projectile::sortingGroup'}
+IL_0054: br             {'target': 89}
+IL_0059: ldarg.0        None
+IL_005A: ldfld          {'token': '0x04000570', 'identity': 'Projectile::sortingGroup'}
+IL_005F: ldstr          {'token': '0x70001E24', 'identity': 'Entity'}
+IL_0064: call           {'token': '0x0A00015A', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingLayerName / sig 2001010e'}
+IL_0069: br             {'target': 110}
+IL_006E: ldstr          {'token': '0x7000CB05', 'identity': 'Not implemented instruction: "cvttss2si eax,xmm0"'}
+IL_0073: pop            None
+IL_0074: ldc.i8         4294967286
+IL_007D: ldloc          local(0x0004)
+IL_0081: sub            None
+IL_0082: stloc          local(0x0006)
+IL_0086: ldarg.0        None
+IL_0087: ldfld          {'token': '0x04000570', 'identity': 'Projectile::sortingGroup'}
+IL_008C: ldloc          local(0x0006)
+IL_0090: call           {'token': '0x0A00015B', 'identity': 'UnityEngine.Rendering.SortingGroup::set_sortingOrder / sig 20010108'}
+IL_0095: ret            None
+IL_0096: br             {'target': 5}
