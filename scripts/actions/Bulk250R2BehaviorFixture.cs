@@ -14,9 +14,9 @@ using OpCodes = System.Reflection.Emit.OpCodes;
 
 namespace GodsPVZ.Actions.Verification
 {
-    // =========================================================================
+    // --------------------------------------------------------------------------------------------------
     // Domain Mocks for DynamicMethod CLR Execution
-    // =========================================================================
+    // --------------------------------------------------------------------------------------------------
     public class MockBoardConfig
     {
         public MockMap map; // 0x04000198 (private in game, accessed via 0x06000158 getter)
@@ -124,9 +124,9 @@ namespace GodsPVZ.Actions.Verification
     {
         public static int Main(string[] args)
         {
-            Console.WriteLine("=================================================================");
+            Console.WriteLine("-----------------------------------------------------------------");
             Console.WriteLine("GodsPVZ Bulk250-R2 Real Cecil / DynamicMethod Behavioral Fixture");
-            Console.WriteLine("=================================================================");
+            Console.WriteLine("-----------------------------------------------------------------");
 
             if (args.Length < 2)
             {
@@ -166,11 +166,10 @@ namespace GodsPVZ.Actions.Verification
             int totalMutantsTested = 0;
             int totalMutantsDetected = 0;
 
-            // =================================================================
+            // -----------------------------------------------------------------
             // PART 1: Real Getter Execution Tests (0x0600001C & 0x06000183)
-            // =================================================================
-            Console.WriteLine("
-[PART 1] Executing Real Getter CLR Tests...");
+            // -----------------------------------------------------------------
+            Console.WriteLine("[PART 1] Executing Real Getter CLR Tests...");
 
             // Method 0x06000158 (BoardConfig.get_Map)
             var m158 = module.LookupToken(0x06000158) as MethodDefinition;
@@ -506,11 +505,10 @@ namespace GodsPVZ.Actions.Verification
             };
             report["getter_executions"] = gettersReport;
 
-            // =================================================================
+            // -----------------------------------------------------------------
             // PART 2: Candidate-Bound Behavioral Tests for Native116 (50 methods)
-            // =================================================================
-            Console.WriteLine("
-[PART 2] Evaluating Native116 Fifty Methods Behavioral Coverage...");
+            // -----------------------------------------------------------------
+            Console.WriteLine("[PART 2] Evaluating Native116 Fifty Methods Behavioral Coverage...");
 
             var n116Tokens = new (uint Token, string Name, string DeclaringType, bool RequiresEngineContext, string BlockedDependency)[]
             {
@@ -633,12 +631,11 @@ namespace GodsPVZ.Actions.Verification
             string jsonOutput = JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(outJson, jsonOutput);
 
-            Console.WriteLine("
-=================================================================");
+            Console.WriteLine("-----------------------------------------------------------------");
             Console.WriteLine($"EVALUATION COMPLETE: {methodsPassed}/{n116Tokens.Length} methods passed, {methodsUnsupportedEngine} unsupported engine context");
             Console.WriteLine($"Total cases executed: {totalCasesExecuted}, Mutants tested: {totalMutantsTested}, Detected: {totalMutantsDetected}");
             Console.WriteLine($"Report written to: {outJson}");
-            Console.WriteLine("=================================================================");
+            Console.WriteLine("-----------------------------------------------------------------");
 
             return 0;
         }
