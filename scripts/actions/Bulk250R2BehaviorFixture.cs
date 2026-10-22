@@ -698,8 +698,8 @@ namespace GodsPVZ.Actions.Verification
 
             // Mutant C.1: Invert type 12 filter (beq -> bne.un)
             var m183_mutBeq = CloneMethod(m183, "m183_mutBeq");
-            var insBeq = m183_mutBeq.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Beq || i.OpCode == Mono.Cecil.Cil.OpCodes.Beq_S);
-            insBeq.OpCode = Mono.Cecil.Cil.OpCodes.Bne_Un_S;
+            var insBranch = m183_mutBeq.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Bne_Un || i.OpCode == Mono.Cecil.Cil.OpCodes.Bne_Un_S);
+            insBranch.OpCode = Mono.Cecil.Cil.OpCodes.Beq;
             var fn183_mutBeq = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutBeq, fn303.Method);
             var devMut1 = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var devMut12 = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
