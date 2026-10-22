@@ -4,9 +4,9 @@ here=pathlib.Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('portable',here/'verify_bulk152_portable.py')
 p=importlib.util.module_from_spec(spec);spec.loader.exec_module(p)
 args=p.parse_args();out=pathlib.Path(args.output_dir);candidate=pathlib.Path(args.candidate_dll)
-assert hashlib.sha256(candidate.read_bytes()).hexdigest()=='5a8f96cb2dc54a273a5e276a4dc24e138dce15c93873f1eeed75ec961df259a4'
+assert hashlib.sha256(candidate.read_bytes()).hexdigest()=='ef95567ce714146b2f7aed1a92e98798023090bb47757f6c5b377f9ce6d9c0f4'
 cfg=p.PathConfig(pathlib.Path(args.portable_root).resolve(),out.resolve(),args)
-report=dict(scope='BULK350_R5_LINUX_IL2CPP_AND_CPP_COMPILER_DIAGNOSTICS_ONLY',candidate_sha256=hashlib.sha256(candidate.read_bytes()).hexdigest(),behavior='NOT_RUN_NOT_QUALIFIED',unity='NOT_RUN',xcode='NOT_RUN',ipa=None)
+report=dict(scope='BULK350_R6_LINUX_IL2CPP_AND_CPP_COMPILER_DIAGNOSTICS_ONLY',candidate_sha256=hashlib.sha256(candidate.read_bytes()).hexdigest(),behavior='NOT_RUN_NOT_QUALIFIED',unity='NOT_RUN',xcode='NOT_RUN',ipa=None)
 try:
     report['toolchain']=p.record_toolchain_identities(cfg)
     cpp,conversion=p.execute_phase3_il2cpp(cfg);report['il2cpp']=conversion

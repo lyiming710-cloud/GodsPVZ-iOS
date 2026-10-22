@@ -105,6 +105,7 @@ def verify(d,types):
    if op in ('ldfld','ldflda','stfld'):receiver(a['owner'],write=op in ('stfld','ldflda'))
    if op.startswith('ld'):push(a['type']+('&' if op.endswith('a') else ''))
   elif op in ('call','callvirt','newobj'):
+   if op=='callvirt' and not a['hasThis']:fail(i,'callvirt cannot target a static method')
    for t in reversed(a['args']):pop(t)
    if op!='newobj' and a['hasThis']:
     if op=='callvirt' and i>0 and ins[i-1]['opcode']=='constrained.':pop(ins[i-1]['operand']['type']+'&')

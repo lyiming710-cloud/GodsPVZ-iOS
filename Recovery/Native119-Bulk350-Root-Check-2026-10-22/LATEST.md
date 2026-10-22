@@ -1,0 +1,3 @@
+# Latest state: R6 after real IL2CPP rejection of R5
+
+Native11937 source proposals and their source compilation are complete. R5 static reports are historical scoped results, not full IL correctness: real IL2CPP Run39789146252 rejected a static call made with callvirt at0x0600057E. The previous checker falsely accepted it; its executable/source and full failure are preserved. R6 fixes exactly that single opcode and the reviewed checker now rejects the actual R5 input. R6 hash: ef95567ce714146b2f7aed1a92e98798023090bb47757f6c5b377f9ce6d9c0f4. Additional Linux conversion/Clang retest pending. No new behavior qualification or IPA.

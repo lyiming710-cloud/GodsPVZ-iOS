@@ -1,3 +1,5 @@
+**Latest update: read [LATEST.md](LATEST.md) first. R5 was rejected by real IL2CPP; R6 fixes the confirmed false-accept opcode and is being retested. The R5 scoped static report below is preserved as historical evidence.**
+
 # Native119 final37 source completion / Bulk350 root verification
 
 2026-10-22. Latest user instruction: finish the remaining37 sources, then root checks Bulk350. This checkpoint follows that order. All37 Native119 emitter sources now compile against inherited sources, without constructing a Native119 candidate. Historical source coverage is381 direct worklist entries plus6 companions. These are387 source proposals, not387 accepted repairs or a current compiler-error count.
