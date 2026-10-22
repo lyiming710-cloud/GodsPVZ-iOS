@@ -186,6 +186,9 @@ namespace GodsPVZ.Actions.Verification
                     else
                         throw new NotSupportedException($"Unexpected field in 0x06000158: {fr.FullName}");
                 }
+                else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Ldnull) il.Emit(OpCodes.Ldnull);
+                else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
+                else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Pop) il.Emit(OpCodes.Pop);
                 else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Ret)
                 {
                     il.Emit(OpCodes.Ret);
@@ -218,6 +221,9 @@ namespace GodsPVZ.Actions.Verification
                     else
                         throw new NotSupportedException($"Unexpected field in 0x06000303: {fr.FullName}");
                 }
+                else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Ldnull) il.Emit(OpCodes.Ldnull);
+                else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
+                else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Pop) il.Emit(OpCodes.Pop);
                 else if (ins.OpCode == Mono.Cecil.Cil.OpCodes.Ret)
                 {
                     il.Emit(OpCodes.Ret);
@@ -258,6 +264,7 @@ namespace GodsPVZ.Actions.Verification
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldc_I4_0) il.Emit(OpCodes.Ldc_I4_0);
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldc_I4_2) il.Emit(OpCodes.Ldc_I4_2);
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldc_I4_3) il.Emit(OpCodes.Ldc_I4_3);
+                else if (code == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
                 else if (code == Mono.Cecil.Cil.OpCodes.Div) il.Emit(OpCodes.Div);
                 else if (code == Mono.Cecil.Cil.OpCodes.Ret) il.Emit(OpCodes.Ret);
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldfld)
@@ -391,6 +398,7 @@ namespace GodsPVZ.Actions.Verification
                     var target = (Instruction)ins.Operand;
                     il.Emit(OpCodes.Brtrue, labels[target.Offset]);
                 }
+                else if (code == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
                 else if (code == Mono.Cecil.Cil.OpCodes.Leave || code == Mono.Cecil.Cil.OpCodes.Leave_S)
                 {
                     var target = (Instruction)ins.Operand;
@@ -613,7 +621,10 @@ namespace GodsPVZ.Actions.Verification
 
             // Mutant B.2: Mutate 0x06000158 CIL to return null
             var m158_mutNull = CloneMethod(m158, "m158_mutNull");
-            m158_mutNull.Body.Instructions[1].OpCode = Mono.Cecil.Cil.OpCodes.Ldnull;
+            m158_mutNull.Body.Instructions[0].OpCode = Mono.Cecil.Cil.OpCodes.Ldnull;
+            m158_mutNull.Body.Instructions[0].Operand = null;
+            m158_mutNull.Body.Instructions[1].OpCode = Mono.Cecil.Cil.OpCodes.Nop;
+            m158_mutNull.Body.Instructions[1].Operand = null;
             var fn158_mutNull = CandidateCilTranslator.CompileGetter158(m158_mutNull);
             var fn01c_withMutGetter = CandidateCilTranslator.CompileCreateNewEnemy01C(m01c, fn158_mutNull.Method);
             bool mutGetterNull_detected = false;
