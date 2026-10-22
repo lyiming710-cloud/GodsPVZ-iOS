@@ -643,8 +643,7 @@ namespace GodsPVZ.Actions.Verification
             // =================================================================
             // CHAIN A: 0x06000158 (BoardConfig.get_Map) & 0x0600001C (CreateNewEnemy)
             // =================================================================
-            Console.WriteLine("
-[CHAIN A] Translating and Executing 0x06000158 & 0x0600001C from Candidate CIL...");
+            Console.WriteLine("[CHAIN A] Translating and Executing 0x06000158 & 0x0600001C from Candidate CIL...");
             var m158 = module.LookupToken(0x06000158) as MethodDefinition;
             var m01c = module.LookupToken(0x0600001C) as MethodDefinition;
 
@@ -736,8 +735,7 @@ namespace GodsPVZ.Actions.Verification
             // =================================================================
             // CHAIN B: CIL Mutants on 0x06000158 & 0x0600001C
             // =================================================================
-            Console.WriteLine("
-[CHAIN B] Executing Physical CIL Mutants on 0x06000158 & 0x0600001C...");
+            Console.WriteLine("[CHAIN B] Executing Physical CIL Mutants on 0x06000158 & 0x0600001C...");
 
             // Mutant B.1: Mutate 0x0600001C CIL to div 3 instead of div 2
             var m01c_mutDiv3 = CloneMethod(m01c, "m01c_mutDiv3");
@@ -850,8 +848,7 @@ namespace GodsPVZ.Actions.Verification
             // =================================================================
             // CHAIN C: 0x06000303 (Device.get_AnimationSprites) & 0x06000183 (DisplayBan_device)
             // =================================================================
-            Console.WriteLine("
-[CHAIN C] Translating and Executing 0x06000303 & 0x06000183 with Nested Candidate EH...");
+            Console.WriteLine("[CHAIN C] Translating and Executing 0x06000303 & 0x06000183 with Nested Candidate EH...");
             var m303 = module.LookupToken(0x06000303) as MethodDefinition;
             var m183 = module.LookupToken(0x06000183) as MethodDefinition;
 
@@ -974,8 +971,7 @@ namespace GodsPVZ.Actions.Verification
             // =================================================================
             // CHAIN C Mutants on 0x06000183
             // =================================================================
-            Console.WriteLine("
-[CHAIN C Mutants] Executing Physical CIL Mutants on 0x06000183...");
+            Console.WriteLine("[CHAIN C Mutants] Executing Physical CIL Mutants on 0x06000183...");
 
             // Mutant C.1: Invert type 12 filter (bne.un -> beq)
             var m183_mutBeq = CloneMethod(m183, "m183_mutBeq");
@@ -1069,8 +1065,7 @@ namespace GodsPVZ.Actions.Verification
             // =================================================================
             // CHAIN D: Negative Control on Verification Gate Integrity
             // =================================================================
-            Console.WriteLine("
-[CHAIN D] Executing Gate Rejection Negative Control...");
+            Console.WriteLine("[CHAIN D] Executing Gate Rejection Negative Control...");
             bool gateNegativeControlPassed = false;
             {
                 var testFailures = new List<string> { "INJECTED_ASSERTION_FAILURE" };
