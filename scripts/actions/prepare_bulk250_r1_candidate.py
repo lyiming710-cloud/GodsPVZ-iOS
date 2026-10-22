@@ -101,7 +101,7 @@ def main():
     # Import static_gates_bulk250_r1_r1 module
     script_dir = pathlib.Path(__file__).resolve().parent
     sys.path.insert(0, str(script_dir))
-    import static_gates_bulk250_r1_r1 as static_gates
+    import static_gates_bulk250_r1 as static_gates
 
     # Verify dnfile availability
     try:
