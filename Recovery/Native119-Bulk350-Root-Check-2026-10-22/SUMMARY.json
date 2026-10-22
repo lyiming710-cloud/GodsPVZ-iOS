@@ -1,88 +1,299 @@
 {
+  "schema": "native119-bulk350-root-latest-r6-v1",
   "date": "2026-10-22",
   "native119": {
-    "source_methods_completed": 37,
-    "source_methods_remaining": 0,
+    "source_methods": 37,
     "source_compile": "PASS",
-    "candidate": null,
-    "semantic_acceptance": false
+    "candidate": "NOT_INTEGRATED",
+    "native_semantic_acceptance": false
   },
   "bulk350": {
-    "revision": "R5",
-    "parent_sha256": "b074224112d46a959de074d3090ab6d0614b036959c66c63b4f49954472e2162",
-    "candidate_sha256": "5a8f96cb2dc54a273a5e276a4dc24e138dce15c93873f1eeed75ec961df259a4",
-    "candidate_bytes": 16645632,
-    "corrected_method_bodies_and_headers": 15,
-    "source_isolation": "PASS_SCOPED_REOPENED_BYTE_AND_METADATA_ISOLATION",
-    "typed_frozen": {
-      "passed": 334,
-      "failed_or_unsupported": 16
-    },
-    "typed_historical_extension": {
-      "passed": 348,
-      "failed_or_unsupported": 2
-    },
-    "typed_reviewed": {
-      "passed": 350,
-      "total": 350,
-      "sensitivity_controls_rejected": 8
-    },
-    "member_access": {
-      "target_methods": 350,
-      "rejected": 0,
-      "unresolved": 0
-    },
-    "eager_memberrefs": {
-      "total": 1280,
-      "unresolved": 0
-    },
-    "non_target_methods_identical": 1967,
-    "non_target_executable_bodies_identical": 1947,
-    "non_target_without_rva": 20,
-    "finally_regions": 158,
-    "isolation_negative_controls_rejected": 10,
-    "repeat_candidate_hash_identical": true,
-    "changed_vs_bulk250_r2": 100,
-    "identical_vs_bulk250_r2": 2217,
-    "new_semantic_qualified_methods": 0,
-    "actual_candidate_behavior": "NOT_EXECUTED_THIS_ROOT_CHECK",
-    "il2cpp": "NOT_EXECUTED_THIS_ROOT_CHECK",
-    "clang_all_tus": "NOT_EXECUTED_THIS_ROOT_CHECK",
-    "unity": "NOT_EXECUTED_THIS_ROOT_CHECK",
-    "xcode": "NOT_EXECUTED_THIS_ROOT_CHECK",
-    "ipa": null
-  },
-  "runtime": {
-    "os": "Windows x64",
-    "dotnet_sdk": "10.0.402",
-    "dotnet_runtime": "10.0.13",
-    "tests_are_not_old_dotnet10_0_12_results": true
-  },
-  "tool_changes": {
-    "frozen_tools_modified": false,
-    "separate_reviewed_copy": true,
-    "changes": [
-      "Actual interface graph exported from resolved metadata",
-      "Only enum constrained ToString shape added, malformed variants rejected",
-      "Nested-to-enclosing private access permitted, unrelated private field still rejected"
-    ],
-    "whole_ecma_verifier_claim": false
-  },
-  "remaining": [
-    "Candidate-bound native-oracle/CLR semantic comparisons for Bulk350",
-    "Common-profile IL2CPP + Clang then Unity/Xcode platform gates",
-    "Native119 additional37 candidate generation and validation",
-    "Explicit metadata writer design for full387; short #Blob headroom461 bytes; do not relax guard"
-  ],
-  "latest_update": {
     "revision": "R6",
     "candidate_sha256": "ef95567ce714146b2f7aed1a92e98798023090bb47757f6c5b377f9ce6d9c0f4",
-    "r5_real_il2cpp_status": "FAILED_EXIT_255_STATIC_CALLVIRT_INVALID_IL",
-    "r6_static_type_flow": 350,
-    "r6_member_rejected": 0,
-    "r6_member_unresolved": 0,
-    "r6_isolation": "PASS_SCOPED_350_TARGET_1967_UNCHANGED",
-    "r6_real_il2cpp": "PENDING_RETEST",
-    "prior_full_IL_validity_not_established": true
-  }
+    "candidate_bytes": 16645632,
+    "parent_sha256": "b074224112d46a959de074d3090ab6d0614b036959c66c63b4f49954472e2162",
+    "methods_corrected_after_initial_construction": 16,
+    "typed_scope": "350_OF350_PASS_LIMITED_CHECKER",
+    "non_target_methods_unchanged": 1967,
+    "non_target_executable_bodies_unchanged": 1947,
+    "zero_rva_methods_unchanged": 20,
+    "finally_regions": 158,
+    "member_visibility_rejected": 0,
+    "member_visibility_unresolved": 0,
+    "blob_bytes": 65075,
+    "blob_gap_to_65536": 461,
+    "source37_additional_local_blob_payload": 1200,
+    "compiler": {
+      "candidate_sha256": "ef95567ce714146b2f7aed1a92e98798023090bb47757f6c5b377f9ce6d9c0f4",
+      "ci_run": 39790796339,
+      "il2cpp_exit": 0,
+      "il2cpp_generated_cpp_files": 758,
+      "game_cpp_translation_units": 16,
+      "failed_game_cpp_translation_units": 14,
+      "total_clang_errors": 1616,
+      "direct_errors": 1592,
+      "included_header_errors": 24,
+      "direct_error_methods": 37,
+      "header_error_methods": 12,
+      "combined_error_methods": 38,
+      "native11937_exact_direct_error_match": true,
+      "bulk350_all350_generated_mapped": true,
+      "bulk350_direct_diagnostics": 0,
+      "bulk350_header_instantiation_diagnostics": 0,
+      "new_header_only_method": {
+        "token": "0x060003F9",
+        "name": "Projectile.SetSortingGroup",
+        "diagnostic": "invalid operands to binary expression ('long' and 'Il2CppObject *')",
+        "state": "NEWLY_IDENTIFIED_SOURCE_RECONSTRUCTION_PENDING"
+      },
+      "overall_game_cpp_gate": "FAIL",
+      "semantic_acceptance": false,
+      "qualification_note": "No full translation-unit or runtime qualification from zero attributed diagnostics in350 targets",
+      "artifact_name_note": "The Actions artifact retains legacy label Bulk350-R5-compiler-39790796339-1; actual input hash binds R6",
+      "method_roster": [
+        {
+          "token": "0x06000072",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000156",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000251",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000282",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x06000284",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x0600028C",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060002AC",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060002FD",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x0600030F",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060003A9",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060003C3",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060003F9",
+          "scope": "NEW_HEADER_ONLY_UNWRITTEN",
+          "has_direct_errors": false,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x06000460",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000492",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060004AA",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060004B2",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060004C0",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000507",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000513",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x0600051B",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x0600057F",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000582",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x06000583",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000591",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x0600059F",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060005C8",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060005E2",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060006B4",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x06000735",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x06000747",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x0600074F",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x0600075D",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x0600079F",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060007A5",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x060007E8",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x060007F5",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        },
+        {
+          "token": "0x06000802",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": false
+        },
+        {
+          "token": "0x06000811",
+          "scope": "NATIVE11937_SOURCE_WRITTEN_NOT_YET_IN_CANDIDATE",
+          "has_direct_errors": true,
+          "has_header_errors": true
+        }
+      ]
+    }
+  },
+  "new_semantic_qualified_methods": 0,
+  "ipa": null,
+  "historical_false_accept_evidence": {
+    "r5_static_summary": "SUMMARY-R5-PRE-CI-STATIC.json",
+    "real_il2cpp_failure": 39789146252,
+    "invalid_static_callvirt": "results/43-STATIC-CALLVIRT-FALSE-ACCEPTS.json",
+    "actual_bad_candidate_control": "results/48-R5-ACTUAL-STATIC-CALLVIRT-REGRESSION.json"
+  },
+  "next_work": [
+    "Integrate37 already-authored sources using explicit metadata-width/reuse design",
+    "Reconstruct newly discovered0x060003F9 in a separate source batch",
+    "Candidate-bound native/CLR behavior tests",
+    "Common-profile whole-game C++ pass, licensed Unity/Xcode build and unsigned IPA"
+  ]
 }

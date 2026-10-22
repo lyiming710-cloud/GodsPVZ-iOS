@@ -1,3 +1,3 @@
-# Current root-check status
+# R6 current verification order
 
-The old testing hold was superseded by the latest user authorization to finish37 sources then check Bulk350. Those source and static checks are complete. Read README.md and SUMMARY.json at the verification root. Full candidate-bound behavior and platform qualification remain pending; preserve failed/unsupported original tool outputs. The former VERIFY-NEXT.md remains available in the frozen-source checkpoint for per-family native expectations.
+R5 failed real IL2CPP because0x0600057E called static AddComponent with callvirt. Keep the false-accept example. R6 fixes one opcode, retains all other DLL bytes, and the updated static checker rejects actual R5. R6 type flow350/350, visibility350/350 and reopened isolation350/1967 pass in their declared scope. Linux compiler retest Run39790796339 is pending. No semantic or platform promotion. Full native-backed behavior tests, remaining37 integration, metadata-width design and real Unity/Xcode gates remain.
