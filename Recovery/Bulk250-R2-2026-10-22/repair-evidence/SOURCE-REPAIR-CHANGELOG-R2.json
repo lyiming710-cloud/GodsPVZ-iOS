@@ -1,0 +1,34 @@
+{
+  "schema": "bulk250-r2-source-repairs-v1",
+  "state": "SOURCE_ONLY_NOT_TESTED",
+  "changed_existing_method_sources": 2,
+  "replaced_sites": 3,
+  "changes": [
+    {
+      "token": "0x0600001C",
+      "emitter": "N116_CreateEnemy",
+      "source_file": "N116.MethodBodies.cs",
+      "sites": 2,
+      "old_source_sha256": "f879ad16af58f722c9f5d2ee3b7105f8c83dcd2287abec74b5491e4dbd8ef506",
+      "new_source_sha256": "9824b79a9b43736779299413e93858b988d02d658527c8a4605948cdfa55c2a5",
+      "old_instruction": ".Field(0x04000198)",
+      "new_instruction": ".Virtual(0x06000158)",
+      "reason": "Use existing public accessor whose immutable CIL/native body returns the same field; preserve read count, receiver evaluation, null failure and callback order."
+    },
+    {
+      "token": "0x06000183",
+      "emitter": "N116_DisplayBannedDevice",
+      "source_file": "N116.MethodBodies.cs",
+      "sites": 1,
+      "old_source_sha256": "5a779f6d5b46e79f71d4318246aacfdf9eda7ec265ce30c9beef728c75b94ee0",
+      "new_source_sha256": "4a25164e1f6d04effd2526a6b53fa5c8b970f42cd4b57799f96831c070c17a6b",
+      "old_instruction": ".Field(0x04000488)",
+      "new_instruction": ".Virtual(0x06000303)",
+      "reason": "Use existing public accessor whose immutable CIL/native body returns the same field; preserve read count, receiver evaluation, null failure and callback order."
+    }
+  ],
+  "metadata_changes": 0,
+  "candidate_constructed": false,
+  "project_tests_executed": false,
+  "new_formal_acceptance": 0
+}

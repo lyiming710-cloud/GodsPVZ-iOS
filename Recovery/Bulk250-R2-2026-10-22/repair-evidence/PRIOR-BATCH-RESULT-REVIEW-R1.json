@@ -1,0 +1,103 @@
+{
+  "schema": "bulk250-r1-result-review-v1",
+  "scope": "EXISTING_REPORT_READ_ONLY_NOT_REEXECUTION",
+  "run_id": 39703773021,
+  "reported_candidate_sha256": "dceb44b834889ec6ebcd36baaadbf0b2062fc41982f3d3b64144461a99338996",
+  "previous_batch_acceptance": "FAIL_MEMBER_ACCESS",
+  "member_access_report": {
+    "pass": false,
+    "target_methods": 250,
+    "rejected": 3,
+    "unresolved": 0
+  },
+  "rejected_members": [
+    {
+      "method": "System.Void Admin_system2_boardEdior::CreateNewEnemy()",
+      "token": "0x0600001C",
+      "offset": 13,
+      "kind": "field",
+      "member": "Map BoardConfig::map",
+      "owner_assembly": "GodsPVZRuntime1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "attributes": "Private",
+      "allowed": false
+    },
+    {
+      "method": "System.Void Admin_system2_boardEdior::CreateNewEnemy()",
+      "token": "0x0600001C",
+      "offset": 35,
+      "kind": "field",
+      "member": "Map BoardConfig::map",
+      "owner_assembly": "GodsPVZRuntime1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "attributes": "Private",
+      "allowed": false
+    },
+    {
+      "method": "System.Void DeviceManager::DisplayBan_device()",
+      "token": "0x06000183",
+      "offset": 42,
+      "kind": "field",
+      "member": "System.Collections.Generic.List`1<UnityEngine.GameObject> Device::animationSprites",
+      "owner_assembly": "GodsPVZRuntime1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "attributes": "Private",
+      "allowed": false
+    }
+  ],
+  "reported_type_flow_fixed": true,
+  "reported_clang": {
+    "game_tus": 18,
+    "errors": 3463,
+    "error_methods": 137,
+    "clean_methods": 2130,
+    "included_file_errors": 44,
+    "not_independently_reexecuted": true
+  },
+  "report_claim_corrections": [
+    "v18 source registry has294 direct sources and87 remaining, not137;137 belongs to the tested250-source scope",
+    "Equality of error-method count and unwritten-source count does not establish token-set equality or250-target cleanliness",
+    "2130+137=2267 is a different denominator from2317 managed MethodDefs; explain unmapped/nonemitted methods and included-file attribution",
+    "Native/CIL behavior remains separate; no new formal semantic acceptance in this review"
+  ],
+  "required_next_reports": [
+    "Candidate-bound250-target vs failing-method token intersection and explicit unmapped/ambiguous cases",
+    "Observable normal/exception/native-vs-CIL cases for the preceding50 with genuine negative controls",
+    "Full baseline-pass/member-access-mutant-fail control forR2"
+  ],
+  "bulk300_testing": "HOLD",
+  "files": [
+    {
+      "path": "construction1.json",
+      "bytes": 101569,
+      "sha256": "9d54687bcd32b89e87bff89e3c0d20b9b00413fc2dd51eae58f2c5cca1ef9c93"
+    },
+    {
+      "path": "construction2.json",
+      "bytes": 101569,
+      "sha256": "9d54687bcd32b89e87bff89e3c0d20b9b00413fc2dd51eae58f2c5cca1ef9c93"
+    },
+    {
+      "path": "BASELINE-CANDIDATE-COMPARISON.json",
+      "bytes": 2746,
+      "sha256": "f0422e045c5154b72efcc43cac1d59153b70a4c08c594aa88810093942c750ff"
+    },
+    {
+      "path": "INDEPENDENT-ISOLATION-REPORT.json",
+      "bytes": 87443,
+      "sha256": "cddf9146a82bd1537b445b2f9e611a41be82a4add1e08edfe6536dec809f88bb"
+    },
+    {
+      "path": "MEMBER-ACCESS-180METHODS-AUTHENTIC.json",
+      "bytes": 2224756,
+      "sha256": "e8c88b2c6ded895abae69c30b10030d3c7b33cb9e6e3fe7db7827d5c7b0e8a25"
+    },
+    {
+      "path": "CONTROL-MEMBER-ACCESS-REJECT-PRIVATE-PREPAREUI-INSTANCE.json",
+      "bytes": 2224754,
+      "sha256": "be559ae285abc4cdfc82bcdf3b0f5b05cdbd48f2155a743005162ae91a70683b"
+    },
+    {
+      "path": "EAGER-MEMBERREF-BULK250-AUTHENTIC.json",
+      "bytes": 47918,
+      "sha256": "6320e0fe25f73bb60847da0e9ba3b7e4c6719758cdf4ff8af10e5afd1a7041de"
+    }
+  ]
+}
