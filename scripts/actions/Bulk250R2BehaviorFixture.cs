@@ -64,13 +64,19 @@ namespace GodsPVZ.Actions.Verification
         public void set_localScale(float s) => localScale = s;
     }
 
+    public class MockComponent
+    {
+        public MockTransform transform = new();
+        public MockTransform get_transform() => transform;
+    }
+
     public class MockGameObject
     {
         public MockTransform transform = new();
         public MockTransform get_transform() => transform;
     }
 
-    public class MockEnemyEditor
+    public class MockEnemyEditor : MockComponent
     {
         public MockAdminSystem2 boardEdior; // 0x04000050
         public MockEnemy preEnemy; // 0x04000051
@@ -98,7 +104,7 @@ namespace GodsPVZ.Actions.Verification
         public MockBoardConfig boardConfig; // 0x0400000D
         public int waveOnCheck; // 0x04000021
         public object enemy_BoardEditor_prefab = new(); // 0x0400001D
-        public MockTransform preEnemy_Content = new(); // 0x04000016
+        public MockGameObject preEnemy_Content = new(); // 0x04000016
         public List<MockEnemyEditor> enemy_BoardEditors = new(); // 0x0400001B
         public MockEnemyManager enemyDataEditor = new(); // 0x04000018
     }
@@ -287,7 +293,8 @@ namespace GodsPVZ.Actions.Verification
                     else if (tok == 0x06000289 || mr.Name == "GetMapX") il.Emit(OpCodes.Callvirt, typeof(MockMap).GetMethod("GetMapX"));
                     else if (tok == 0x0600028A || mr.Name == "GetMapY") il.Emit(OpCodes.Callvirt, typeof(MockMap).GetMethod("GetMapY"));
                     else if (tok == 0x2B000007 || mr.Name == "Instantiate") il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("InstantiateMockEditor"));
-                    else if (tok == 0x0A000001 || tok == 0x0A00002E || mr.Name == "get_transform") il.Emit(OpCodes.Callvirt, typeof(MockGameObject).GetMethod("get_transform"));
+                    else if (tok == 0x0A000001) il.Emit(OpCodes.Callvirt, typeof(MockComponent).GetMethod("get_transform"));
+                    else if (tok == 0x0A00002E) il.Emit(OpCodes.Callvirt, typeof(MockGameObject).GetMethod("get_transform"));
                     else if (tok == 0x0A00002F || mr.Name == "SetParent") il.Emit(OpCodes.Callvirt, typeof(MockTransform).GetMethod("SetParent", new[] { typeof(MockTransform), typeof(bool) }));
                     else if (tok == 0x0600004B || mr.Name == "Initialize") il.Emit(OpCodes.Callvirt, typeof(MockEnemyEditor).GetMethod("Initialize"));
                     else if (tok == 0x0A00044F || (mr.Name == "Add" && mr.FullName.Contains("Enemy_boardEditor"))) il.Emit(OpCodes.Callvirt, typeof(List<MockEnemyEditor>).GetMethod("Add"));
