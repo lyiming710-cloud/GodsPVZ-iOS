@@ -894,7 +894,7 @@ namespace GodsPVZ.Actions.Verification
             var insMap = new Dictionary<Instruction, Instruction>();
             foreach (var ins in original.Body.Instructions)
             {
-                var newIns = Instruction.Create(OpCodes_Mono(ins.OpCode.Code), ins.Operand);
+                var newIns = CloneInstruction(ins);
                 insMap[ins] = newIns;
                 clone.Body.Instructions.Add(newIns);
             }
@@ -921,6 +921,26 @@ namespace GodsPVZ.Actions.Verification
             return clone;
         }
 
+        private static Instruction CloneInstruction(Instruction ins)
+        {
+            var op = OpCodes_Mono(ins.OpCode.Code);
+            if (ins.Operand == null) return Instruction.Create(op);
+            if (ins.Operand is TypeReference tr) return Instruction.Create(op, tr);
+            if (ins.Operand is MethodReference mr) return Instruction.Create(op, mr);
+            if (ins.Operand is FieldReference fr) return Instruction.Create(op, fr);
+            if (ins.Operand is Instruction target) return Instruction.Create(op, target);
+            if (ins.Operand is Instruction[] targets) return Instruction.Create(op, targets);
+            if (ins.Operand is VariableDefinition vd) return Instruction.Create(op, vd);
+            if (ins.Operand is ParameterDefinition pd) return Instruction.Create(op, pd);
+            if (ins.Operand is string s) return Instruction.Create(op, s);
+            if (ins.Operand is sbyte sb) return Instruction.Create(op, sb);
+            if (ins.Operand is byte b) return Instruction.Create(op, b);
+            if (ins.Operand is int i) return Instruction.Create(op, i);
+            if (ins.Operand is long l) return Instruction.Create(op, l);
+            if (ins.Operand is float f) return Instruction.Create(op, f);
+            if (ins.Operand is double d) return Instruction.Create(op, d);
+            return Instruction.Create(op);
+        }
         private static Mono.Cecil.Cil.OpCode OpCodes_Mono(Mono.Cecil.Cil.Code code)
         {
             var field = typeof(Mono.Cecil.Cil.OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static)
