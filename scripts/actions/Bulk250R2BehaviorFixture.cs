@@ -20,7 +20,7 @@ namespace GodsPVZ.Actions.Verification
     public class MockBoardConfig
     {
         public MockMap map; // 0x04000198
-        public List<MockEnemy> enemyList = new(); // 0x0400019D
+        public List<MockEnemy> preEnemies = new(); // 0x0400019D
     }
 
     public class MockMap
@@ -50,9 +50,9 @@ namespace GodsPVZ.Actions.Verification
 
     public class MockEnemy
     {
-        public int x; // 0x040001F9
-        public int y; // 0x040001F8
-        public int enemyType; // 0x040001FB
+        public int gridX; // 0x040001F9
+        public int row; // 0x040001F8
+        public int wave; // 0x040001FB
     }
 
     public class MockTransform
@@ -72,12 +72,12 @@ namespace GodsPVZ.Actions.Verification
 
     public class MockEnemyEditor
     {
-        public MockAdminSystem2 admin; // 0x04000050
-        public MockEnemy enemy; // 0x04000051
+        public MockAdminSystem2 boardEdior; // 0x04000050
+        public MockEnemy preEnemy; // 0x04000051
         public MockGameObject gameObject = new();
 
         public MockGameObject get_gameObject() => gameObject;
-        public void Initialize(MockEnemy e) => enemy = e;
+        public void Initialize(MockEnemy e) => preEnemy = e;
     }
 
     public class MockEnemyEditorList
@@ -95,11 +95,11 @@ namespace GodsPVZ.Actions.Verification
     public class MockAdminSystem2
     {
         public MockBoardConfig boardConfig; // 0x0400000D
-        public int enemyType; // 0x04000021
-        public object enemyPrefab = new(); // 0x0400001D
-        public MockTransform enemyParentTransform = new(); // 0x04000016
-        public MockEnemyEditorList enemyEditorList = new(); // 0x0400001B
-        public MockEnemyManager enemyManager = new(); // 0x04000018
+        public int waveOnCheck; // 0x04000021
+        public object enemy_BoardEditor_prefab = new(); // 0x0400001D
+        public MockTransform preEnemy_Content = new(); // 0x04000016
+        public MockEnemyEditorList enemy_BoardEditors = new(); // 0x0400001B
+        public MockEnemyManager enemyDataEditor = new(); // 0x04000018
     }
 
     public class MockSpriteRenderer
@@ -118,14 +118,14 @@ namespace GodsPVZ.Actions.Verification
 
     public class MockDevice
     {
-        public int deviceType; // 0x0400046F
+        public int ID; // 0x0400046F
         public List<MockSpriteRenderer> animationSprites; // 0x04000488
     }
 
     public class MockDeviceManager
     {
-        public List<MockDevice> devices; // 0x040001D6
-        public bool isBan; // 0x040001D8
+        public List<MockDevice> deviceList; // 0x040001D6
+        public bool display_Ban_device; // 0x040001D8
     }
 
     public class MockTrackedEnumerator<T>
@@ -257,22 +257,22 @@ namespace GodsPVZ.Actions.Verification
                 {
                     var fr = (FieldReference)ins.Operand;
                     if (fr.Name == "boardConfig") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("boardConfig"));
-                    else if (fr.Name == "enemyType") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemyType"));
-                    else if (fr.Name == "enemyPrefab") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemyPrefab"));
-                    else if (fr.Name == "enemyParentTransform") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemyParentTransform"));
-                    else if (fr.Name == "enemyEditorList") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemyEditorList"));
-                    else if (fr.Name == "enemyManager") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemyManager"));
-                    else if (fr.Name == "enemyList") il.Emit(OpCodes.Ldfld, typeof(MockBoardConfig).GetField("enemyList"));
-                    else if (fr.Name == "enemy") il.Emit(OpCodes.Ldfld, typeof(MockEnemyEditor).GetField("enemy"));
+                    else if (fr.Name == "waveOnCheck" || fr.Name == "enemyType") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("waveOnCheck"));
+                    else if (fr.Name == "enemy_BoardEditor_prefab" || fr.Name == "enemyPrefab") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemy_BoardEditor_prefab"));
+                    else if (fr.Name == "preEnemy_Content" || fr.Name == "enemyParentTransform") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("preEnemy_Content"));
+                    else if (fr.Name == "enemy_BoardEditors" || fr.Name == "enemyEditorList") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemy_BoardEditors"));
+                    else if (fr.Name == "enemyDataEditor" || fr.Name == "enemyManager") il.Emit(OpCodes.Ldfld, typeof(MockAdminSystem2).GetField("enemyDataEditor"));
+                    else if (fr.Name == "preEnemies" || fr.Name == "enemyList") il.Emit(OpCodes.Ldfld, typeof(MockBoardConfig).GetField("preEnemies"));
+                    else if (fr.Name == "preEnemy" || fr.Name == "enemy") il.Emit(OpCodes.Ldfld, typeof(MockEnemyEditor).GetField("preEnemy"));
                     else throw new NotSupportedException($"Unmapped ldfld in 0x0600001C: {fr.Name}");
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Stfld)
                 {
                     var fr = (FieldReference)ins.Operand;
-                    if (fr.Name == "x") il.Emit(OpCodes.Stfld, typeof(MockEnemy).GetField("x"));
-                    else if (fr.Name == "y") il.Emit(OpCodes.Stfld, typeof(MockEnemy).GetField("y"));
-                    else if (fr.Name == "enemyType") il.Emit(OpCodes.Stfld, typeof(MockEnemy).GetField("enemyType"));
-                    else if (fr.Name == "admin") il.Emit(OpCodes.Stfld, typeof(MockEnemyEditor).GetField("admin"));
+                    if (fr.Name == "gridX" || fr.Name == "x") il.Emit(OpCodes.Stfld, typeof(MockEnemy).GetField("gridX"));
+                    else if (fr.Name == "row" || fr.Name == "y") il.Emit(OpCodes.Stfld, typeof(MockEnemy).GetField("row"));
+                    else if (fr.Name == "wave" || fr.Name == "enemyType") il.Emit(OpCodes.Stfld, typeof(MockEnemy).GetField("wave"));
+                    else if (fr.Name == "boardEdior" || fr.Name == "admin") il.Emit(OpCodes.Stfld, typeof(MockEnemyEditor).GetField("boardEdior"));
                     else throw new NotSupportedException($"Unmapped stfld in 0x0600001C: {fr.Name}");
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
@@ -290,7 +290,7 @@ namespace GodsPVZ.Actions.Verification
                     else if (mr.Name == "set_localScale") il.Emit(OpCodes.Callvirt, typeof(MockTransform).GetMethod("set_localScale"));
                     else if (mr.Name == "Initialize") il.Emit(OpCodes.Callvirt, typeof(MockEnemyEditor).GetMethod("Initialize"));
                     else if (mr.Name == "Add" && mr.DeclaringType.Name.Contains("Enemy_boardEditor")) il.Emit(OpCodes.Callvirt, typeof(MockEnemyEditorList).GetMethod("Add"));
-                    else if (mr.Name == "Add" && mr.DeclaringType.Name == "EnemyManager") il.Emit(OpCodes.Callvirt, typeof(MockEnemyManager).GetMethod("Add"));
+                    else if ((mr.Name == "LoadData" || mr.Name == "Add") && (mr.DeclaringType.Name == "EnemyManager" || mr.DeclaringType.Name == "EnemyDataEditor")) il.Emit(OpCodes.Callvirt, typeof(MockEnemyManager).GetMethod("Add"));
                     else if (mr.Name == "Add" && mr.DeclaringType.Name.Contains("Enemy")) il.Emit(OpCodes.Callvirt, typeof(List<MockEnemy>).GetMethod("Add"));
                     else throw new NotSupportedException($"Unmapped call in 0x0600001C: {mr.FullName}");
                 }
@@ -399,9 +399,9 @@ namespace GodsPVZ.Actions.Verification
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldfld)
                 {
                     var fr = (FieldReference)ins.Operand;
-                    if (fr.Name == "devices") il.Emit(OpCodes.Ldfld, typeof(MockDeviceManager).GetField("devices"));
-                    else if (fr.Name == "deviceType") il.Emit(OpCodes.Ldfld, typeof(MockDevice).GetField("deviceType"));
-                    else if (fr.Name == "isBan") il.Emit(OpCodes.Ldfld, typeof(MockDeviceManager).GetField("isBan"));
+                    if (fr.Name == "deviceList" || fr.Name == "devices") il.Emit(OpCodes.Ldfld, typeof(MockDeviceManager).GetField("deviceList"));
+                    else if (fr.Name == "ID" || fr.Name == "deviceType") il.Emit(OpCodes.Ldfld, typeof(MockDevice).GetField("ID"));
+                    else if (fr.Name == "display_Ban_device" || fr.Name == "isBan") il.Emit(OpCodes.Ldfld, typeof(MockDeviceManager).GetField("display_Ban_device"));
                     else throw new NotSupportedException($"Unmapped ldfld in 0x06000183: {fr.Name}");
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
@@ -541,10 +541,10 @@ namespace GodsPVZ.Actions.Verification
             var fn01c = CandidateCilTranslator.CompileCreateNewEnemy01C(m01c, fn158.Method);
 
             // Case A.1: Normal execution
-            var adminA1 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, enemyType = 5 };
+            var adminA1 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, waveOnCheck = 5 };
             fn01c(adminA1);
-            var createdA1 = adminA1.enemyManager.list.FirstOrDefault();
-            bool passA1 = (createdA1 != null && createdA1.x == 120 && createdA1.y == 120 && createdA1.enemyType == 5);
+            var createdA1 = adminA1.enemyDataEditor.list.FirstOrDefault();
+            bool passA1 = (createdA1 != null && createdA1.gridX == 120 && createdA1.row == 120 && createdA1.wave == 5);
             casesExecuted++;
             if (!passA1) failedAssertions.Add("0x0600001C Normal execution mismatch");
 
@@ -570,7 +570,7 @@ namespace GodsPVZ.Actions.Verification
             if (!passA4) failedAssertions.Add("0x0600001C Null map did not throw NRE");
 
             // Case A.5: Field replacement reentrancy (Map replaced during GetMapX callback)
-            var adminReentrant = new MockAdminSystem2 { enemyType = 9 };
+            var adminReentrant = new MockAdminSystem2 { waveOnCheck = 9 };
             var mapInit = new MockMap(100, 200, () =>
             {
                 // Callback swaps map instance before second call to get_Map
@@ -578,9 +578,9 @@ namespace GodsPVZ.Actions.Verification
             });
             adminReentrant.boardConfig = new MockBoardConfig { map = mapInit };
             fn01c(adminReentrant);
-            var createdReentrant = adminReentrant.enemyManager.list.FirstOrDefault();
+            var createdReentrant = adminReentrant.enemyDataEditor.list.FirstOrDefault();
             // x from map1 (100), y from map2 (600 / 2 = 300) proves separate getter call and no local caching
-            bool passA5 = (createdReentrant != null && createdReentrant.x == 100 && createdReentrant.y == 300);
+            bool passA5 = (createdReentrant != null && createdReentrant.gridX == 100 && createdReentrant.row == 300);
             casesExecuted++;
             if (!passA5) failedAssertions.Add("0x0600001C Reentrancy map swap failed to observe updated map");
 
@@ -594,10 +594,10 @@ namespace GodsPVZ.Actions.Verification
             var insDiv = m01c_mutDiv3.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ldc_I4_2);
             insDiv.OpCode = Mono.Cecil.Cil.OpCodes.Ldc_I4_3;
             var fn01c_mutDiv3 = CandidateCilTranslator.CompileCreateNewEnemy01C(m01c_mutDiv3, fn158.Method);
-            var adminMutDiv3 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, enemyType = 5 };
+            var adminMutDiv3 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, waveOnCheck = 5 };
             fn01c_mutDiv3(adminMutDiv3);
-            var resMutDiv3 = adminMutDiv3.enemyManager.list.FirstOrDefault();
-            bool mutDiv3_detected = (resMutDiv3.y == 80 && resMutDiv3.y != 120);
+            var resMutDiv3 = adminMutDiv3.enemyDataEditor.list.FirstOrDefault();
+            bool mutDiv3_detected = (resMutDiv3.row == 80 && resMutDiv3.row != 120);
             mutantsTested++;
             if (mutDiv3_detected) mutantsDetected++;
             else failedAssertions.Add("Mutant B.1 (div3) was not detected");
@@ -624,12 +624,12 @@ namespace GodsPVZ.Actions.Verification
             var fn303 = CandidateCilTranslator.CompileGetter303(m303);
             var fn183 = CandidateCilTranslator.CompileDisplayBanDevice183(m183, fn303.Method);
 
-            // Case C.1: Normal execution (isBan = false)
+            // Case C.1: Normal execution (display_Ban_device = false)
             MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
-            var dev1 = new MockDevice { deviceType = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var dev12 = new MockDevice { deviceType = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var dev2 = new MockDevice { deviceType = 2, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var mgrC1 = new MockDeviceManager { isBan = false, devices = new List<MockDevice> { dev1, dev12, dev2 } };
+            var dev1 = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var dev12 = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var dev2 = new MockDevice { ID = 2, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var mgrC1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { dev1, dev12, dev2 } };
             fn183(mgrC1);
             bool passC1 = (dev1.animationSprites[0].a == 0.5f && dev12.animationSprites[0].a == 0.0f && dev2.animationSprites[0].a == 0.5f
                            && MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Contains("MockDevice_Disposed")
@@ -637,9 +637,9 @@ namespace GodsPVZ.Actions.Verification
             casesExecuted++;
             if (!passC1) failedAssertions.Add("0x06000183 Case C.1 normal isBan=false failed");
 
-            // Case C.2: Normal execution (isBan = true)
-            var devBan = new MockDevice { deviceType = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var mgrC2 = new MockDeviceManager { isBan = true, devices = new List<MockDevice> { devBan } };
+            // Case C.2: Normal execution (display_Ban_device = true)
+            var devBan = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var mgrC2 = new MockDeviceManager { display_Ban_device = true, deviceList = new List<MockDevice> { devBan } };
             fn183(mgrC2);
             bool passC2 = (devBan.animationSprites[0].a == 1.0f);
             casesExecuted++;
@@ -647,7 +647,7 @@ namespace GodsPVZ.Actions.Verification
 
             // Case C.3: Null device in list (fat finally outer dispose executed)
             MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
-            var mgrC3 = new MockDeviceManager { devices = new List<MockDevice> { null } };
+            var mgrC3 = new MockDeviceManager { deviceList = new List<MockDevice> { null } };
             bool passC3 = false;
             try { fn183(mgrC3); }
             catch (NullReferenceException)
@@ -659,8 +659,8 @@ namespace GodsPVZ.Actions.Verification
 
             // Case C.4: Inner rendering exception triggers both nested finally blocks in sequence
             MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
-            var devFault = new MockDevice { deviceType = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer { throwOnSet = true } } };
-            var mgrC4 = new MockDeviceManager { devices = new List<MockDevice> { devFault } };
+            var devFault = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer { throwOnSet = true } } };
+            var mgrC4 = new MockDeviceManager { deviceList = new List<MockDevice> { devFault } };
             bool passC4 = false;
             try { fn183(mgrC4); }
             catch (InvalidOperationException)
@@ -681,9 +681,9 @@ namespace GodsPVZ.Actions.Verification
             var insBeq = m183_mutBeq.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Beq || i.OpCode == Mono.Cecil.Cil.OpCodes.Beq_S);
             insBeq.OpCode = Mono.Cecil.Cil.OpCodes.Bne_Un_S;
             var fn183_mutBeq = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutBeq, fn303.Method);
-            var devMut1 = new MockDevice { deviceType = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var devMut12 = new MockDevice { deviceType = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var mgrMut1 = new MockDeviceManager { isBan = false, devices = new List<MockDevice> { devMut1, devMut12 } };
+            var devMut1 = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devMut12 = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var mgrMut1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMut1, devMut12 } };
             fn183_mutBeq(mgrMut1);
             // Inverted filter: devMut1 skipped (a=0), devMut12 colored (a=0.5)
             bool mutBeq_detected = (devMut1.animationSprites[0].a == 0.0f && devMut12.animationSprites[0].a == 0.5f);
@@ -696,8 +696,8 @@ namespace GodsPVZ.Actions.Verification
             var insAlpha = m183_mutAlpha.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ldc_R4 && (float)i.Operand == 0.5f);
             insAlpha.Operand = 0.75f;
             var fn183_mutAlpha = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutAlpha, fn303.Method);
-            var devMutAlpha = new MockDevice { deviceType = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var mgrMutAlpha = new MockDeviceManager { isBan = false, devices = new List<MockDevice> { devMutAlpha } };
+            var devMutAlpha = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var mgrMutAlpha = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMutAlpha } };
             fn183_mutAlpha(mgrMutAlpha);
             bool mutAlpha_detected = (devMutAlpha.animationSprites[0].a == 0.75f);
             mutantsTested++;
