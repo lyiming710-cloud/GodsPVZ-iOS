@@ -1,0 +1,61 @@
+name: Bulk250-R2 Isolated Behavioral Qualification (CIL / CLR)
+
+on:
+  push:
+    branches: [repair/bulk250-r2-actions-2026-10-22]
+    paths:
+      - 'scripts/actions/Bulk250R2BehaviorFixture.**'
+      - 'scripts/actions/test_behavior_bulk250_r2.py'
+      - '.github/workflows/bulk250-r2-behavior-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify-behavior:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      NUGET_XMLDOC_MODE: skip
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.401'
+      - name: Download fixed Bulk250-R2 candidate from release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cand_dl"
+          gh release download bulk250-r2-candidate-2026-10-22 \
+            --repo lyiming710-cloud/GodsPVZ-iOS \
+            --pattern candidate1.dll \
+            --dir "$RUNNER_TEMP/cand_dl"
+          cand="$RUNNER_TEMP/cand_dl/candidate1.dll"
+          expected="4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903"
+          actual=$(sha256sum "$cand" | awk '{print $1}')
+          echo "Candidate SHA-256: $actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "ERROR: Candidate SHA mismatch! Expected $expected, got $actual"
+            exit 3
+          fi
+      - name: Run isolated behavioral qualification suite (Bulk250-R2)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cand="$RUNNER_TEMP/cand_dl/candidate1.dll"
+          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v3.json"
+          python3 scripts/actions/test_behavior_bulk250_r2.py --candidate-dll "$cand" --output-json "$report"
+      - name: Upload v3 behavioral qualification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bulk250-R2-Behavior-v3-${{ github.run_id }}
+          path: BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v3.json
