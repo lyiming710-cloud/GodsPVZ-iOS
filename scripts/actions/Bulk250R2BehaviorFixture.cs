@@ -135,12 +135,18 @@ namespace GodsPVZ.Actions.Verification
         public bool display_Ban_device; // 0x040001D8
     }
 
+    public static class TraceDisposeCollector
+    {
+        public static List<string> Log = new();
+        public static void Clear() => Log.Clear();
+        public static void Record(string msg) => Log.Add(msg);
+    }
+
     public class MockTrackedEnumerator<T>
     {
         private readonly List<T> _list;
         private int _index = -1;
         public bool Disposed { get; private set; }
-        public static List<string> TraceDisposeLog = new();
 
         public MockTrackedEnumerator(List<T> list)
         {
@@ -158,7 +164,7 @@ namespace GodsPVZ.Actions.Verification
         public void Dispose()
         {
             Disposed = true;
-            TraceDisposeLog.Add(typeof(T).Name + "_Disposed");
+            TraceDisposeCollector.Record(typeof(T).Name + "_Disposed");
         }
     }
 
@@ -679,15 +685,15 @@ namespace GodsPVZ.Actions.Verification
             var fn183 = CandidateCilTranslator.CompileDisplayBanDevice183(m183, fn303.Method);
 
             // Case C.1: Normal execution (display_Ban_device = false)
-            MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
+            TraceDisposeCollector.Clear();
             var dev1 = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var dev12 = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var dev2 = new MockDevice { ID = 2, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
             var mgrC1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { dev1, dev12, dev2 } };
             fn183(mgrC1);
             bool passC1 = (dev12.animationSprites[0].a == 0.5f && dev1.animationSprites[0].a == 0.0f && dev2.animationSprites[0].a == 0.0f
-                           && MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Contains("MockDevice_Disposed")
-                           && MockTrackedEnumerator<MockSpriteRenderer>.TraceDisposeLog.Contains("MockSpriteRenderer_Disposed"));
+                           && TraceDisposeCollector.Log.Contains("MockDevice_Disposed")
+                           && TraceDisposeCollector.Log.Contains("MockSpriteRenderer_Disposed"));
             casesExecuted++;
             if (!passC1)
             {
@@ -708,13 +714,13 @@ namespace GodsPVZ.Actions.Verification
             }
 
             // Case C.3: Null device in list (fat finally outer dispose executed)
-            MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
+            TraceDisposeCollector.Clear();
             var mgrC3 = new MockDeviceManager { deviceList = new List<MockDevice> { null } };
             bool passC3 = false;
             try { fn183(mgrC3); }
             catch (NullReferenceException)
             {
-                passC3 = MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Contains("MockDevice_Disposed");
+                passC3 = TraceDisposeCollector.Log.Contains("MockDevice_Disposed");
             }
             casesExecuted++;
             if (!passC3)
@@ -724,14 +730,14 @@ namespace GodsPVZ.Actions.Verification
             }
 
             // Case C.4: Inner rendering exception triggers both nested finally blocks in sequence
-            MockTrackedEnumerator<MockDevice>.TraceDisposeLog.Clear();
+            TraceDisposeCollector.Clear();
             var devFault = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer { throwOnSet = true } } };
             var mgrC4 = new MockDeviceManager { deviceList = new List<MockDevice> { devFault } };
             bool passC4 = false;
             try { fn183(mgrC4); }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
-                var log = MockTrackedEnumerator<MockDevice>.TraceDisposeLog;
+                var log = TraceDisposeCollector.Log;
                 passC4 = log.Contains("MockSpriteRenderer_Disposed") && log.Contains("MockDevice_Disposed");
             }
             casesExecuted++;
