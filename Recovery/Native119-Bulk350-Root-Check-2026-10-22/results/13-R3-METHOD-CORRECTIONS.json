@@ -1,0 +1,107 @@
+{
+  "state": "SOURCE_CORRECTIONS_PENDING_RERUN",
+  "changes": [
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_BoardEnemyPreviews",
+      "old": ".Call(0x06000234);",
+      "new": ".Call(0x06000234).Op(0x26);",
+      "reason": "Preserve call and discard unused returned resource list"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_SetPreCards",
+      "old": ".Call(0x06000229);",
+      "new": ".Call(0x06000229).Op(0x26);",
+      "reason": "Preserve call and discard unused returned resource list"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_PlaceDevice",
+      "old": ".Call(0x06000672);",
+      "new": ".Call(0x06000672).Op(0x26);",
+      "reason": "Native ignores popup return value"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_DropArmor2",
+      "old": ".Call(0x0600046A).Branch",
+      "new": ".Call(0x0600046A).Op(0x26).Branch",
+      "reason": "Native ignores path-finding boolean in ladder branch"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_SphShot",
+      "old": ".Call(0x0600013D)",
+      "new": ".Call(0x0600013D).Op(0x26)",
+      "reason": "Native ignores returned AudioSource"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_Skill149",
+      "old": ".Call(0x0600013D)",
+      "new": ".Call(0x0600013D).Op(0x26)",
+      "reason": "Native ignores returned AudioSource"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_SaveNameAudio",
+      "old": ".Call(0x0600013B);",
+      "new": ".Call(0x0600013B).Op(0x26);",
+      "reason": "Discard unused audio before leave/ret"
+    },
+    {
+      "file": "N117.MethodBodies.cs",
+      "emitter": "N117_WindowTip",
+      "old": ".Call(0x0600013B);",
+      "new": ".Call(0x0600013B).Op(0x26);",
+      "reason": "Discard unused audio in RenamePlayer helper"
+    },
+    {
+      "file": "N117.MethodBodies.cs",
+      "emitter": "N117_MousePlant",
+      "old": ".Virtual(0x0600019C).Branch",
+      "new": ".Virtual(0x0600019C).Op(0x26).Branch",
+      "reason": "Discard TriggerCheck boolean ignored in original mouse route"
+    },
+    {
+      "file": "N117.MethodBodies.cs",
+      "emitter": "N117_DevicePreviews",
+      "old": "b.Label(\"afterEntries\").Arg(1).Field(0x0400019E)",
+      "new": "b.Label(\"afterEntries\").Arg(0).Field(0x04000781).Field(0x0400019E)",
+      "reason": "Native loads BoardPreview.boardConfig at +0x20"
+    },
+    {
+      "file": "N117.MethodBodies.cs",
+      "emitter": "N117_DevicePreviews",
+      "old": "b.Label(\"appendPre\").Arg(0).Field(0x040001D7).Load(4).Virtual(N117_PreDeviceAdd);",
+      "new": "b.Label(\"appendPre\").Arg(0).Load(4).Call(0x060005D2);",
+      "reason": "Original 0x180396A51/A7E calls CreateDevicePreview_Device"
+    },
+    {
+      "file": "N118.MethodBodies.cs",
+      "emitter": "N118_FlowerWait",
+      "old": "b.New(0x060008C6).Store(5);b.Load(5).Load(1).Call(0x060008C9);",
+      "new": "b.Load(1).New(0x060008C6).Store(5);",
+      "reason": "Original ctor 0x1803CBC80 itself tail-calls Subscribe exactly once"
+    }
+  ],
+  "max_stack": [
+    {
+      "token": "0x06000058",
+      "previous_declared": 3,
+      "actual_computed_peak": 4
+    },
+    {
+      "token": "0x060003C1",
+      "previous_declared": 5,
+      "actual_computed_peak": 6
+    },
+    {
+      "token": "0x06000585",
+      "previous_declared": 4,
+      "actual_computed_peak": 5
+    }
+  ],
+  "partial_revision_r2": "NOT_FINAL; earlier edit script aborted and is retained only as construction evidence"
+}
