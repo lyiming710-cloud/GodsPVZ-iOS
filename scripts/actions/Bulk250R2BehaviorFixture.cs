@@ -22,6 +22,9 @@ namespace GodsPVZ.Actions.Verification
 
     public class MockGrid
     {
+        public int gridState;
+        public MockPlant plant_bottom,plant_common,plant_sheath,plant_top;
+        public MockDevice device_bottom,device_common,device_sheath,device_top,device_ladder;
         public int id;
         public int col;
         public int row;
@@ -135,10 +138,16 @@ namespace GodsPVZ.Actions.Verification
         }
     }
 
-    public class MockDevice
+    public class MockDevice : MockUnityObject
     {
         public int ID; // 0x0400046F
         public List<MockGameObject> animationSprites; // 0x04000488
+        public int occupyState;
+        public bool onWater;
+        public Func<bool> waterCallback;
+        public Func<int,string,bool> bearCallback;
+        public bool CanPlaceOnWater(){TraceDisposeCollector.Record("device.water");return waterCallback?.Invoke()??onWater;}
+        public bool CanBear(int slot,string key){TraceDisposeCollector.Record("device.bear:"+slot+":"+key);return bearCallback?.Invoke(slot,key)??true;}
     }
 
     public class MockDeviceManager
@@ -171,6 +180,8 @@ namespace GodsPVZ.Actions.Verification
     public class MockPlantSave
     {
         public int plantId;
+        public Func<int,MockSkill> getSkill;
+        public MockSkill GetSkill_ID(int id){TraceDisposeCollector.Record("skill.get:"+plantId+":"+id);return getSkill==null?new(){id=id}:getSkill(id);}
         public MockPlantSave(int id = 0) { plantId = id; }
     }
 
@@ -861,7 +872,8 @@ namespace GodsPVZ.Actions.Verification
             var supportedModes = new[] { "normal","neg_wrong_sha","neg_assertion_failure","neg_escaped_mutant",
                 "neg_unsupported_opcode","neg_unexpected_exception","neg_additional_opcode","neg_additional_member",
                 "neg_additional_local","neg_additional_eh","neg_v6_crossing_eh",
-                "neg_v6_unknown_field","neg_v6_ctor_signature","neg_v6_branch_target" };
+                "neg_v6_unknown_field","neg_v6_ctor_signature","neg_v6_branch_target",
+                "neg_v7_generic_return","neg_v7_team_byref","neg_v7_zeroeh" };
             if(!supportedModes.Contains(runMode)){Console.Error.WriteLine("Unknown fixture mode: "+runMode);return 4;}
 
             string expectedSha = "4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903";
@@ -890,6 +902,24 @@ namespace GodsPVZ.Actions.Verification
 
             using var asm = AssemblyDefinition.ReadAssembly(candPath, new ReaderParameters { ReadSymbols = false });
             var module = asm.MainModule;
+            if(runMode.StartsWith("neg_v7_"))
+            {
+                int token=runMode=="neg_v7_generic_return"?0x060002F5:runMode=="neg_v7_team_byref"?0x060006B6:0x06000297;
+                var bad=CloneMethod((MethodDefinition)module.LookupToken(token),runMode);
+                if(runMode=="neg_v7_generic_return")
+                {
+                    var i=bad.Body.Instructions.Single(i=>i.Offset==0xD);
+                    var original=(GenericInstanceMethod)i.Operand;
+                    var wrong=new GenericInstanceMethod(original.ElementMethod){MetadataToken=original.MetadataToken};
+                    wrong.GenericArguments.Add(module.TypeSystem.Int32);i.Operand=wrong;
+                    CandidateCilTranslator.CompileReset2F5(bad);
+                }
+                else if(runMode=="neg_v7_team_byref")
+                {bad.Parameters[0].ParameterType=new ByReferenceType(bad.Parameters[0].ParameterType);CandidateCilTranslator.CompileLoadTeam6B6(bad);}
+                else
+                {bad.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Finally));CandidateCilTranslator.CompileCanPlacing297(bad);}
+                return 0;
+            }
             if(runMode.StartsWith("neg_v6_"))
             {
                 int token=runMode=="neg_v6_unknown_field"?0x0600027B:runMode=="neg_v6_ctor_signature"?0x060001A1:0x060006BB;
@@ -975,12 +1005,16 @@ namespace GodsPVZ.Actions.Verification
                     "EnemySelecter::AddEnemy","SavesManager::ReloadPlantSaveData",
                     "Damage::.ctor", "Zombie::TakeDamage", "EnemyPath::.ctor",
                     "Card_Choose::Choose_Reset", "Card_Choose::Choose_Being", "SeedChooserScreen/PlantDetail::Awake",
+                    "PlantSave::GetSkill_ID", "Card_Choose::Set_Skill", "Device::CanPlaceOnWater / CanBear", "Plant::CanBear",
+                    "Unity Image/Graphic/GetComponent/Transform/GameObject/TMP_Text adapters",
                     "existing MockTransform/MockSpriteRenderer/MockEnemyManager adapters"
                 },
                 enumerator_adapter="Tracked wrapper of real BCL List<T>.Enumerator; not Unity's original runtime library",
                 promotion_status="NOT_FORMALLY_PROMOTED"
             };
             report["constructor_execution_boundary"] = "Enemy::.ctor runs its candidate body on a fresh RuntimeHelpers.GetUninitializedObject host instance; BCL Object::.ctor is called, EnemyPath::.ctor is controlled.";
+            report["actual_reset_chain_cases"] = new[]{"L.chain.real.candidate.reset","R.chain.prechoose.real.candidate.reset"};
+            report["reset_chain_scope"] = "Choose_Reset candidate CIL is executed in these two caller chains; other historical reset calls still use controlled adapters; Unity UI/native semantics remain UNPROVEN.";
             var failedAssertions = new List<string>();
             var methodPassStatus = new Dictionary<string, bool>();
 
@@ -1786,6 +1820,7 @@ namespace GodsPVZ.Actions.Verification
             var mutantInputs = new List<MethodDefinition>{ m01c_mutDiv3,m158_mutNull,m01c_mutCache,m183_mutBeq,m183_mutAlpha,m183_mutNoInnerDispose,m287_mutOmitAdd,m287_mutInnerDisp,m60A_mutEq,m4BF_mutSort };
             RunAdditionalTargets(module,casesEvaluatedList,mutantsEvaluatedList,failedAssertions,methodPassStatus,executedInputs,mutantInputs);
             RunV6Targets(module,casesEvaluatedList,mutantsEvaluatedList,failedAssertions,methodPassStatus,executedInputs,mutantInputs);
+            RunV7Targets(module,casesEvaluatedList,mutantsEvaluatedList,failedAssertions,methodPassStatus,executedInputs,mutantInputs);
             report["execution_input_identities"] = executedInputs.Select(CilIdentity).ToArray();
             report["mutant_execution_input_identities"] = mutantInputs.Select(CilIdentity).ToArray();
             report["runtime_identity"] = RuntimeIdentity();
@@ -1938,7 +1973,9 @@ namespace GodsPVZ.Actions.Verification
                 ["pending_before"] = 26,
                 ["v6_pending_before"] = 20,
                 ["v6_new_targets"] = new[] { "0x0600027B", "0x060001A1", "0x060006BB" },
-                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF", "0x06000187", "0x0600026F", "0x060001A8", "0x0600027B", "0x060001A1", "0x060006BB" },
+                ["v7_pending_before"] = 17,
+                ["v7_new_targets"] = new[] { "0x060006B6", "0x060002F5", "0x06000297" },
+                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF", "0x06000187", "0x0600026F", "0x060001A8", "0x0600027B", "0x060001A1", "0x060006BB", "0x060006B6", "0x060002F5", "0x06000297" },
                 ["newly_executed_target_tokens"] = executedInputs.Select(m=>$"0x{m.MetadataToken.ToInt32():X8}").Where(t=>t!="0x06000158"&&t!="0x06000303"&&t!="0x0600001C"&&t!="0x06000183").ToArray(),
                 ["pending_after"] = notYetExecutedMethods,
                 ["methods_not_yet_executed"] = notYetExecutedMethods,

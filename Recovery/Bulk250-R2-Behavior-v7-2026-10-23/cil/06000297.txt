@@ -1,0 +1,148 @@
+0x06000297 CanPlacing locals=token(0x1100079D)
+0000 ldarg.0 None
+0001 ldfld token(0x04000383) gridState
+0006 ldc.i4.3 None
+0007 bne.un 139
+000C ldarg.1 None
+000D callvirt token(0x06000312) CanPlaceOnWater
+0012 brtrue 100
+0017 ldarg.0 None
+0018 ldfld token(0x04000388) plant_bottom
+001D ldnull None
+001E call token(0x0A00000C) op_Inequality
+0023 brtrue 74
+0028 ldarg.0 None
+0029 ldfld token(0x0400038C) device_bottom
+002E ldnull None
+002F call token(0x0A00000C) op_Inequality
+0034 brfalse 441
+0039 br 151
+003E ldarg.0 None
+003F ldfld token(0x04000388) plant_bottom
+0044 ldfld token(0x040004B0) plantType
+0049 ldc.i4 16
+004E bne.un 441
+0053 br 151
+0058 ldarg.0 None
+0059 ldfld token(0x04000388) plant_bottom
+005E ldnull None
+005F call token(0x0A00000C) op_Inequality
+0064 brtrue 441
+0069 ldarg.0 None
+006A ldfld token(0x0400038C) device_bottom
+006F ldnull None
+0070 call token(0x0A00000C) op_Inequality
+0075 brtrue 441
+007A br 151
+007F ldarg.0 None
+0080 ldfld token(0x04000383) gridState
+0085 ldc.i4.5 None
+0086 beq 441
+008B ldnull None
+008C stloc.0 None
+008D ldnull None
+008E stloc.1 None
+008F ldarg.1 None
+0090 ldfld token(0x04000473) occupyState
+0095 stloc.2 None
+0096 ldloc.2 None
+0097 ldc.i4.0 None
+0098 bne.un 181
+009D ldarg.0 None
+009E ldfld token(0x04000388) plant_bottom
+00A3 stloc.0 None
+00A4 br 238
+00A9 ldloc.2 None
+00AA ldc.i4.1 None
+00AB bne.un 200
+00B0 ldarg.0 None
+00B1 ldfld token(0x04000389) plant_common
+00B6 stloc.0 None
+00B7 br 238
+00BC ldloc.2 None
+00BD ldc.i4.2 None
+00BE bne.un 219
+00C3 ldarg.0 None
+00C4 ldfld token(0x0400038A) plant_sheath
+00C9 stloc.0 None
+00CA br 238
+00CF ldloc.2 None
+00D0 ldc.i4.3 None
+00D1 bne.un 238
+00D6 ldarg.0 None
+00D7 ldfld token(0x0400038B) plant_top
+00DC stloc.0 None
+00DD br 238
+00E2 ldarg.1 None
+00E3 ldfld token(0x04000473) occupyState
+00E8 stloc.2 None
+00E9 ldloc.2 None
+00EA ldc.i4.0 None
+00EB bne.un 264
+00F0 ldarg.0 None
+00F1 ldfld token(0x0400038C) device_bottom
+00F6 stloc.1 None
+00F7 br 340
+00FC ldloc.2 None
+00FD ldc.i4.1 None
+00FE bne.un 283
+0103 ldarg.0 None
+0104 ldfld token(0x0400038D) device_common
+0109 stloc.1 None
+010A br 340
+010F ldloc.2 None
+0110 ldc.i4.2 None
+0111 bne.un 302
+0116 ldarg.0 None
+0117 ldfld token(0x0400038F) device_sheath
+011C stloc.1 None
+011D br 340
+0122 ldloc.2 None
+0123 ldc.i4.3 None
+0124 bne.un 321
+0129 ldarg.0 None
+012A ldfld token(0x04000390) device_top
+012F stloc.1 None
+0130 br 340
+0135 ldloc.2 None
+0136 ldc.i4.4 None
+0137 bne.un 340
+013C ldarg.0 None
+013D ldfld token(0x0400038E) device_ladder
+0142 stloc.1 None
+0143 br 340
+0148 ldloc.0 None
+0149 ldnull None
+014A call token(0x0A00000C) op_Inequality
+014F brtrue 441
+0154 ldloc.1 None
+0155 ldnull None
+0156 call token(0x0A00000C) op_Inequality
+015B brtrue 441
+0160 ldarg.0 None
+0161 ldfld token(0x0400038C) device_bottom
+0166 stloc.1 None
+0167 ldloc.1 None
+0168 call token(0x0A00000B) op_Implicit
+016D brfalse 404
+0172 ldloc.1 None
+0173 ldarg.1 None
+0174 ldfld token(0x04000473) occupyState
+0179 ldstr string token(0x7000AE84) 'device'
+017E callvirt token(0x06000311) CanBear
+0183 brfalse 441
+0188 ldarg.0 None
+0189 ldfld token(0x04000388) plant_bottom
+018E stloc.0 None
+018F ldloc.0 None
+0190 call token(0x0A00000B) op_Implicit
+0195 brfalse 439
+019A ldloc.0 None
+019B ldarg.1 None
+019C ldfld token(0x04000473) occupyState
+01A1 callvirt token(0x0600035A) CanBear
+01A6 brfalse 441
+01AB ldc.i4.1 None
+01AC ret None
+01AD ldc.i4.0 None
+01AE ret None

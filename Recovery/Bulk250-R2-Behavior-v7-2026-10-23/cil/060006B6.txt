@@ -1,0 +1,71 @@
+0x060006B6 LoadTeam_Card locals=token(0x11000786)
+0000 ldarg.0 None
+0001 ldfld token(0x040008B8) card_ChooseList
+0006 callvirt token(0x0A000426) GetEnumerator
+000B stloc.0 None
+000C br 41
+0011 ldloca.s local(0x0000)
+0013 call token(0x0A0004B3) get_Current
+0018 callvirt token(0x060002F5) Choose_Reset
+001D ldloca.s local(0x0000)
+001F call token(0x0A0004B4) MoveNext
+0024 brtrue 29
+0029 leave 66
+002E ldloca.s local(0x0000)
+0030 call token(0x0A0001DF) Dispose
+0035 endfinally None
+0036 ldc.i4.0 None
+0037 stloc.1 None
+0038 ldloc.1 None
+0039 ldarga.s argument(0x0001)
+003B ldfld token(0x0400064A) ID
+0040 callvirt token(0x0A000144) get_Count
+0045 bge 229
+004A ldarga.s argument(0x0001)
+004C ldfld token(0x0400064A) ID
+0051 ldloc.1 None
+0052 callvirt token(0x0A00006B) get_Item
+0057 stloc.2 None
+0058 ldarg.0 None
+0059 ldfld token(0x040008B8) card_ChooseList
+005E callvirt token(0x0A000426) GetEnumerator
+0063 stloc.0 None
+0064 br 195
+0069 ldloca.s local(0x0000)
+006B call token(0x0A0004B3) get_Current
+0070 stloc.3 None
+0071 ldloc.3 None
+0072 ldfld token(0x04000429) plantID
+0077 ldloc.2 None
+0078 bne.un 195
+007D ldloc.3 None
+007E callvirt token(0x060002F4) Choose_Being
+0083 ldarga.s argument(0x0001)
+0085 ldfld token(0x0400064B) skill
+008A callvirt token(0x0A000144) get_Count
+008F ldloc.1 None
+0090 ble 195
+0095 ldloc.3 None
+0096 ldfld token(0x0400042F) plantSave
+009B stloc.s local(0x0004)
+009D ldloc.3 None
+009E ldloc.s local(0x0004)
+00A0 ldarga.s argument(0x0001)
+00A2 ldfld token(0x0400064B) skill
+00A7 ldloc.1 None
+00A8 callvirt token(0x0A00006B) get_Item
+00AD callvirt token(0x060004CB) GetSkill_ID
+00B2 callvirt token(0x060002F9) Set_Skill
+00B7 ldloca.s local(0x0000)
+00B9 call token(0x0A0004B4) MoveNext
+00BE brtrue 117
+00C3 leave 220
+00C8 ldloca.s local(0x0000)
+00CA call token(0x0A0001DF) Dispose
+00CF endfinally None
+00D0 ldloc.1 None
+00D1 ldc.i4.1 None
+00D2 add None
+00D3 stloc.1 None
+00D4 br 68
+00D9 ret None

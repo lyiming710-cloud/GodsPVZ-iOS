@@ -1,0 +1,85 @@
+0x060002F5 Choose_Reset locals=token(0x1100079A)
+0000 ldarg.0 None
+0001 ldc.i4.0 None
+0002 stfld token(0x04000448) isChosen
+0007 ldarg.0 None
+0008 ldfld token(0x04000436) chosen
+000D callvirt token(0x2B000054)
+0012 stloc.0 None
+0013 ldloc.0 None
+0014 callvirt token(0x0A0001DD) get_color
+0019 stloc.1 None
+001A ldloc.0 None
+001B callvirt token(0x0A0001DD) get_color
+0020 stloc.2 None
+0021 ldloc.0 None
+0022 callvirt token(0x0A0001DD) get_color
+0027 stloc.3 None
+0028 ldloc.0 None
+0029 ldloca.s local(0x0001)
+002B ldfld token(0x0A0000EE) r
+0030 ldloca.s local(0x0002)
+0032 ldfld token(0x0A0000EF) g
+0037 ldloca.s local(0x0003)
+0039 ldfld token(0x0A00021B) b
+003E ldc.r4 0.0020000000949949026
+0043 newobj token(0x0A0000BE) .ctor
+0048 callvirt token(0x0A0001DE) set_color
+004D ldarg.0 None
+004E ldfld token(0x04000436) chosen
+0053 callvirt token(0x0A000001) get_transform
+0058 ldc.i4.0 None
+0059 callvirt token(0x0A000002) GetChild
+005E callvirt token(0x0A000009) get_gameObject
+0063 ldc.i4.0 None
+0064 callvirt token(0x0A000007) SetActive
+0069 ldarg.0 None
+006A ldfld token(0x04000444) serialNumBeChosenText
+006F callvirt token(0x0A000009) get_gameObject
+0074 ldc.i4.0 None
+0075 callvirt token(0x0A000007) SetActive
+007A ldarg.0 None
+007B ldfld token(0x04000445) seedChooserScreen
+0080 ldfld token(0x040008B8) card_ChooseList
+0085 callvirt token(0x0A000426) GetEnumerator
+008A stloc.s local(0x0004)
+008C br 236
+0091 ldloca.s local(0x0004)
+0093 call token(0x0A0004B3) get_Current
+0098 stloc.s local(0x0005)
+009A ldloc.s local(0x0005)
+009C ldfld token(0x04000448) isChosen
+00A1 brfalse 236
+00A6 ldloc.s local(0x0005)
+00A8 ldfld token(0x04000449) serialNumBeChosen
+00AD ldarg.0 None
+00AE ldfld token(0x04000449) serialNumBeChosen
+00B3 ble 236
+00B8 ldloc.s local(0x0005)
+00BA ldloc.s local(0x0005)
+00BC ldfld token(0x04000449) serialNumBeChosen
+00C1 ldc.i4.1 None
+00C2 sub None
+00C3 stfld token(0x04000449) serialNumBeChosen
+00C8 ldloc.s local(0x0005)
+00CA ldfld token(0x04000444) serialNumBeChosenText
+00CF ldloc.s local(0x0005)
+00D1 ldflda token(0x04000449) serialNumBeChosen
+00D6 call token(0x0A00002A) ToString
+00DB callvirt token(0x0A000062) set_text
+00E0 ldloca.s local(0x0004)
+00E2 call token(0x0A0004B4) MoveNext
+00E7 brtrue 157
+00EC leave 261
+00F1 ldloca.s local(0x0004)
+00F3 call token(0x0A0001DF) Dispose
+00F8 endfinally None
+00F9 ldarg.0 None
+00FA ldc.i4.0 None
+00FB stfld token(0x04000449) serialNumBeChosen
+0100 ldarg.0 None
+0101 ldfld token(0x04000445) seedChooserScreen
+0106 ldfld token(0x040008BE) plantDetail
+010B ldnull None
+010C callvirt token(0x060006C2) Awake
+0111 ret None

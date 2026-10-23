@@ -45,6 +45,7 @@ public static partial class CandidateCilTranslator
     public static bool ControlledUnityInequality(MockUnityObject a,MockUnityObject b)=>
         (a==null||a.destroyed)!=(b==null||b.destroyed) ||
         (a!=null&&!a.destroyed&&b!=null&&!b.destroyed&&!ReferenceEquals(a,b));
+    public static bool ControlledUnityImplicit(MockUnityObject value)=>value!=null&&!value.destroyed;
 
     // Read EVERY candidate instruction, branch and properly nested/disjoint finally region.
     // Unknown types, member tokens, operand forms or EH shapes fail closed.
@@ -61,11 +62,18 @@ public static partial class CandidateCilTranslator
             ["Projectile"]=typeof(MockProjectile),["Enemy"]=typeof(MockEnemy),["EnemyPath"]=typeof(MockEnemyPath),
             ["UnityEngine.Vector3"]=typeof(MockVector3),["BoardConfig"]=typeof(MockBoardConfig),
             ["Card_Choose"]=typeof(MockCardChoose),["SeedChooserScreen"]=typeof(MockSeedChooser),
-            ["SeedChooserScreen/PlantDetail"]=typeof(MockPlantDetail)
+            ["SeedChooserScreen/PlantDetail"]=typeof(MockPlantDetail),
+            ["Team"]=typeof(MockTeam),["PlantSave"]=typeof(MockPlantSave),["Skill"]=typeof(MockSkill),
+            ["Grid"]=typeof(MockGrid),["Device"]=typeof(MockDevice),["Plant"]=typeof(MockPlant),
+            ["OccupyState"]=typeof(int),["GridState"]=typeof(int),["PlantType"]=typeof(int),
+            ["UnityEngine.Component"]=typeof(MockUiComponent),["UnityEngine.GameObject"]=typeof(MockUiGameObject),
+            ["UnityEngine.Transform"]=typeof(MockUiTransform),["UnityEngine.Color"]=typeof(MockColor),
+            ["UnityEngine.UI.Image"]=typeof(MockUiImage),["UnityEngine.UI.Graphic"]=typeof(MockUiGraphic),
+            ["TMPro.TMP_Text"]=typeof(MockTmpText),["TMPro.TextMeshProUGUI"]=typeof(MockUiText)
         };
         Type MapType(TypeReference t)
         {
-            if(t.FullName=="BoardEntryType"||t.FullName=="DamageAttribute")
+            if(new[]{"BoardEntryType","DamageAttribute","OccupyState","GridState","PlantType"}.Contains(t.FullName))
             {
                 var def=t.Resolve();
                 if(!def.IsEnum || def.Fields.Single(f=>f.Name=="value__").FieldType.MetadataType!=MetadataType.Int32)
@@ -82,6 +90,8 @@ public static partial class CandidateCilTranslator
         }
         Type CallType(TypeReference t,MethodReference owner)
         {
+            if(t is GenericParameter methodParam && methodParam.Type==GenericParameterType.Method && owner is GenericInstanceMethod gm)
+                return MapType(gm.GenericArguments[methodParam.Position]);
             if(t is GenericParameter p && p.Type==GenericParameterType.Type && owner.DeclaringType is GenericInstanceType g)
                 return MapType(g.GenericArguments[p.Position]);
             if(t is GenericInstanceType instance && instance.GenericArguments.Count==1)
@@ -111,7 +121,7 @@ public static partial class CandidateCilTranslator
         var il=dm.GetILGenerator();
         var locals=method.Body.Variables.Select(v=>il.DeclareLocal(MapType(v.VariableType))).ToArray();
         var labels=method.Body.Instructions.ToDictionary(i=>i,i=>il.DefineLabel());
-        int expectedEH=id=="0600027B"?2:id=="060006BB"?3:1;
+        int expectedEH=id=="06000297"?0:id=="0600027B"||id=="060006B6"?2:id=="060006BB"?3:1;
         if(method.Body.ExceptionHandlers.Count!=expectedEH)throw new NotSupportedException(id+" wrong finally count");
         var handlers=method.Body.ExceptionHandlers.ToArray();
         foreach(var eh in handlers)
@@ -147,7 +157,19 @@ public static partial class CandidateCilTranslator
             [0x040003A8]=(typeof(MockEnemyPath),"waitingTime"),[0x040003AA]=(typeof(MockEnemyPath),"isEnd"),
             [0x040008B8]=(typeof(MockSeedChooser),"card_ChooseList"),[0x040008BE]=(typeof(MockSeedChooser),"plantDetail"),
             [0x04000448]=(typeof(MockCardChoose),"isChosen"),[0x04000429]=(typeof(MockCardChoose),"plantID"),
-            [0x0A000013]=(typeof(string),"Empty")
+            [0x0A000013]=(typeof(string),"Empty"),
+            [0x0400064A]=(typeof(MockTeam),"ID"),[0x0400064B]=(typeof(MockTeam),"skill"),
+            [0x0400042F]=(typeof(MockCardChoose),"plantSave"),[0x04000436]=(typeof(MockCardChoose),"chosen"),
+            [0x04000444]=(typeof(MockCardChoose),"serialNumBeChosenText"),[0x04000445]=(typeof(MockCardChoose),"seedChooserScreen"),
+            [0x04000449]=(typeof(MockCardChoose),"serialNumBeChosen"),
+            [0x0A0000EE]=(typeof(MockColor),"r"),[0x0A0000EF]=(typeof(MockColor),"g"),[0x0A00021B]=(typeof(MockColor),"b"),
+            [0x04000383]=(typeof(MockGrid),"gridState"),[0x04000473]=(typeof(MockDevice),"occupyState"),
+            [0x040004B0]=(typeof(MockPlant),"plantType"),
+            [0x04000388]=(typeof(MockGrid),"plant_bottom"),[0x04000389]=(typeof(MockGrid),"plant_common"),
+            [0x0400038A]=(typeof(MockGrid),"plant_sheath"),[0x0400038B]=(typeof(MockGrid),"plant_top"),
+            [0x0400038C]=(typeof(MockGrid),"device_bottom"),[0x0400038D]=(typeof(MockGrid),"device_common"),
+            [0x0400038E]=(typeof(MockGrid),"device_ladder"),[0x0400038F]=(typeof(MockGrid),"device_sheath"),
+            [0x04000390]=(typeof(MockGrid),"device_top")
         };
         var calls=new Dictionary<int,(string Name,MethodBase Host)>{
             [0x06000191]=(".ctor",typeof(MockDeviceData).GetConstructor(Type.EmptyTypes)),
@@ -171,7 +193,24 @@ public static partial class CandidateCilTranslator
             [0x060002A4]=(".ctor",typeof(MockEnemyPath).GetConstructor(new[]{typeof(int),typeof(int),typeof(float),typeof(MockBoardConfig)})),
             [0x060002F5]=("Choose_Reset",typeof(MockCardChoose).GetMethod("Choose_Reset")),
             [0x060002F4]=("Choose_Being",typeof(MockCardChoose).GetMethod("Choose_Being")),
-            [0x060006C2]=("Awake",typeof(MockPlantDetail).GetMethod("Awake"))
+            [0x060006C2]=("Awake",typeof(MockPlantDetail).GetMethod("Awake")),
+            [0x0A000144]=("get_Count",typeof(List<int>).GetMethod("get_Count")),
+            [0x0A00006B]=("get_Item",typeof(List<int>).GetMethod("get_Item")),
+            [0x060004CB]=("GetSkill_ID",typeof(MockPlantSave).GetMethod("GetSkill_ID")),
+            [0x060002F9]=("Set_Skill",typeof(MockCardChoose).GetMethod("Set_Skill")),
+            [0x2B000054]=("GetComponent",typeof(MockUiComponent).GetMethod("GetImage")),
+            [0x0A0001DD]=("get_color",typeof(MockUiGraphic).GetMethod("get_color")),
+            [0x0A0001DE]=("set_color",typeof(MockUiGraphic).GetMethod("set_color")),
+            [0x0A0000BE]=(".ctor",typeof(MockColor).GetConstructor(new[]{typeof(float),typeof(float),typeof(float),typeof(float)})),
+            [0x0A000001]=("get_transform",typeof(MockUiComponent).GetMethod("get_transform")),
+            [0x0A000002]=("GetChild",typeof(MockUiTransform).GetMethod("GetChild")),
+            [0x0A000009]=("get_gameObject",typeof(MockUiComponent).GetMethod("get_gameObject")),
+            [0x0A000007]=("SetActive",typeof(MockUiGameObject).GetMethod("SetActive")),
+            [0x0A000062]=("set_text",typeof(MockTmpText).GetMethod("set_text")),
+            [0x0A00000B]=("op_Implicit",typeof(CandidateCilTranslator).GetMethod(nameof(ControlledUnityImplicit))),
+            [0x06000312]=("CanPlaceOnWater",typeof(MockDevice).GetMethod("CanPlaceOnWater")),
+            [0x06000311]=("CanBear",typeof(MockDevice).GetMethod("CanBear")),
+            [0x0600035A]=("CanBear",typeof(MockPlant).GetMethod("CanBear"))
         };
         var getEnum=new Dictionary<int,Type>{[0x0A0000E6]=typeof(MockBoardEntry),[0x0A000445]=typeof(MockZombieSelect),
             [0x0A0000D9]=typeof(MockZombie),[0x0A00022A]=typeof(MockEnemyPath),[0x0A000426]=typeof(MockCardChoose)};
@@ -200,9 +239,9 @@ public static partial class CandidateCilTranslator
             Code.Ldarg_0,Code.Ldarg_1,Code.Ldarg_2,Code.Ldarg_3,Code.Ldarga_S,
             Code.Ldloc_0,Code.Ldloc_1,Code.Ldloc_2,Code.Ldloc_3,Code.Ldloc_S,Code.Ldloca_S,
             Code.Stloc_0,Code.Stloc_1,Code.Stloc_2,Code.Stloc_3,Code.Stloc_S,
-            Code.Ldfld,Code.Ldsfld,Code.Stfld,Code.Ldnull,Code.Ldc_I4,Code.Ldc_I4_0,Code.Ldc_I4_1,Code.Ldc_I4_2,Code.Ldc_I4_3,Code.Ldc_I4_4,
+            Code.Ldfld,Code.Ldflda,Code.Ldsfld,Code.Stfld,Code.Ldnull,Code.Ldstr,Code.Ldc_I4,Code.Ldc_I4_0,Code.Ldc_I4_1,Code.Ldc_I4_2,Code.Ldc_I4_3,Code.Ldc_I4_4,Code.Ldc_I4_5,
             Code.Ldc_I4_6,Code.Ldc_R4,Code.Add,Code.Sub,Code.Mul,Code.Div,Code.Rem,Code.Conv_R4,
-            Code.Br,Code.Brfalse,Code.Brtrue,Code.Beq,Code.Bne_Un,Code.Bgt,Code.Ble,
+            Code.Br,Code.Brfalse,Code.Brtrue,Code.Beq,Code.Bne_Un,Code.Bgt,Code.Bge,Code.Ble,
             Code.Call,Code.Callvirt,Code.Newobj,Code.Leave,Code.Endfinally,Code.Ret,Code.Nop,Code.Pop
         };
         foreach(var ins in method.Body.Instructions)
@@ -224,7 +263,7 @@ public static partial class CandidateCilTranslator
                 if(activeEH.Count==0||activeEH.Peek().HandlerEnd.Previous!=ins)throw new NotSupportedException(id+" mismatched endfinally");
                 il.EndExceptionBlock();activeEH.Pop();continue;
             }
-            if(code==COp.Ldfld||code==COp.Stfld||code==COp.Ldsfld)
+            if(code==COp.Ldfld||code==COp.Ldflda||code==COp.Stfld||code==COp.Ldsfld)
             {
                 var f=(FieldReference)ins.Operand;
                 if(!fields.TryGetValue(f.MetadataToken.ToInt32(),out var map) || f.Name!=map.Name)
@@ -233,7 +272,7 @@ public static partial class CandidateCilTranslator
                 if(host.DeclaringType!=MapType(f.DeclaringType)||host.FieldType!=MapType(f.FieldType))
                     throw new InvalidProgramException(id+" field type mismatch "+f.FullName);
                 if((code==COp.Ldsfld)!=host.IsStatic)throw new InvalidProgramException(id+" field staticness mismatch");
-                il.Emit(code==COp.Ldfld?ROp.Ldfld:code==COp.Ldsfld?ROp.Ldsfld:ROp.Stfld,host);continue;
+                il.Emit(code==COp.Ldfld?ROp.Ldfld:code==COp.Ldflda?ROp.Ldflda:code==COp.Ldsfld?ROp.Ldsfld:ROp.Stfld,host);continue;
             }
             if(code==COp.Call||code==COp.Callvirt||code==COp.Newobj)
             {
@@ -258,11 +297,11 @@ public static partial class CandidateCilTranslator
                     throw new NotSupportedException(id+" call binding "+m.FullName);
                 // Unity op_Inequality is deliberately a static controlled adapter;
                 // all other calls retain mapped declaring type, parameters and return.
-                if(token==0x0A00000C)
+                if(token==0x0A00000C||token==0x0A00000B)
                 {
                     if(m.HasThis||m.DeclaringType.FullName!="UnityEngine.Object"||
                         m.ReturnType.MetadataType!=MetadataType.Boolean||
-                        m.Parameters.Count!=2||m.Parameters.Any(p=>p.ParameterType.FullName!="UnityEngine.Object"))
+                        m.Parameters.Count!=(token==0x0A00000C?2:1)||m.Parameters.Any(p=>p.ParameterType.FullName!="UnityEngine.Object"))
                         throw new InvalidProgramException(id+" Unity inequality signature mismatch");
                 }
                 else CheckCall(m,binding.Host);
@@ -278,6 +317,7 @@ public static partial class CandidateCilTranslator
                 case Mono.Cecil.Cil.OperandType.InlineI: il.Emit(op,(int)ins.Operand);break;
                 case Mono.Cecil.Cil.OperandType.ShortInlineI: il.Emit(op,(sbyte)ins.Operand);break;
                 case Mono.Cecil.Cil.OperandType.ShortInlineR: il.Emit(op,(float)ins.Operand);break;
+                case Mono.Cecil.Cil.OperandType.InlineString: il.Emit(op,(string)ins.Operand);break;
                 case Mono.Cecil.Cil.OperandType.InlineBrTarget:
                     il.Emit(op,labels[(Instruction)ins.Operand]);break;
                 case Mono.Cecil.Cil.OperandType.ShortInlineBrTarget:

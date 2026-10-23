@@ -40,11 +40,22 @@ public class MockCardChoose
     public string label;
     public int plantID;
     public bool isChosen;
+    public int serialNumBeChosen;
+    public MockUiImage chosen;
+    public MockUiText serialNumBeChosenText;
+    public MockSeedChooser seedChooserScreen;
+    public MockPlantSave plantSave;
+    public MockSkill currentSkill;
+    public Action<MockSkill> onSetSkill;
+    public Action<MockCardChoose> candidateReset;
     public Action onReset,onChoose;
     public void Choose_Reset()
     {
+        if(candidateReset!=null){candidateReset(this);return;}
         TraceDisposeCollector.Record("reset:"+label);isChosen=false;onReset?.Invoke();
     }
+    public void Set_Skill(MockSkill value)
+    {TraceDisposeCollector.Record("skill.set:"+label+":"+(value?.id.ToString()??"null"));currentSkill=value;onSetSkill?.Invoke(value);}
     public void Choose_Being()
     {
         TraceDisposeCollector.Record("choose:"+label);isChosen=true;onChoose?.Invoke();

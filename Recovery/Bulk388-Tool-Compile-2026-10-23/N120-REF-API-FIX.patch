@@ -1,0 +1,11 @@
+--- a/N120.MethodBodies.cs
++++ b/N120.MethodBodies.cs
+@@ -8,7 +8,7 @@
+         b.Arg(0).Field(0x04000570).Op(0x14).Call(0x0A000012).Branch(0x39, "haveGroup");
+         b.Arg(0).Arg(0).Virtual(0x0A000009).Virtual(0x2B000057).Set(0x04000570);
+         // Reload after AddComponent and after the setter: retain native callback order.
+-        b.Label("haveGroup").Arg(0).Field(0x04000570).Token(0x72, 0x70001E24).Virtual(0x0A00015A);
++        b.Label("haveGroup").Arg(0).Field(0x04000570).Ref(0x72, 0x70001E24).Virtual(0x0A00015A);
+         // mulss / cvttss2si / sub edx,eax: -10 - trunc_i32(fY * 10.0f).
+         // Do not replace this with rounding, double arithmetic or -(10 + fY)*10.
+         b.Arg(0).Field(0x04000570).Integer(-10).Arg(0).Field(0x04000553)
