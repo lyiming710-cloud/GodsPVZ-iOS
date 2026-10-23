@@ -183,10 +183,14 @@ namespace GodsPVZ.Actions.Verification
         public MockSuppliesItem(int id, string name = "") { this.ID = id; this.name = name; }
     }
 
+    public class MockLawnApp
+    {
+        public MockSavesManager savesManager = new();
+    }
+
     public class MockSave
     {
         public List<MockPlantSave> plantSaves = new(); // 0x04000639
-        public MockSavesManager savesManager = new(); // 0x04000166
         public List<MockSuppliesItem> supplies = new(); // 0x0400063D
     }
 
@@ -779,14 +783,14 @@ namespace GodsPVZ.Actions.Verification
                 else if (code == Mono.Cecil.Cil.OpCodes.Ret) il.Emit(OpCodes.Ret);
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldsfld)
                 {
-                    il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("GetGlobalSavesManager"));
+                    il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("GetGlobalLawnApp"));
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Ldfld)
                 {
                     var fr = (FieldReference)ins.Operand;
                     int fTok = fr.MetadataToken.ToInt32();
                     if (fTok == 0x04000639) il.Emit(OpCodes.Ldfld, typeof(MockSave).GetField("plantSaves"));
-                    else if (fTok == 0x04000166) il.Emit(OpCodes.Ldfld, typeof(MockSave).GetField("savesManager"));
+                    else if (fTok == 0x04000166) il.Emit(OpCodes.Ldfld, typeof(MockLawnApp).GetField("savesManager"));
                     else if (fTok == 0x0400063D) il.Emit(OpCodes.Ldfld, typeof(MockSave).GetField("supplies"));
                     else if (fTok == 0x04000678) il.Emit(OpCodes.Ldfld, typeof(MockSuppliesItem).GetField("ID"));
                     else throw new NotSupportedException($"Unmapped field in 0x060004BF: 0x{fTok:X8} {fr.FullName}");
@@ -811,8 +815,8 @@ namespace GodsPVZ.Actions.Verification
             return (Action<MockSave>)dm.CreateDelegate(typeof(Action<MockSave>));
         }
 
-        public static MockSavesManager GlobalSavesManager = new();
-        public static MockSavesManager GetGlobalSavesManager() => GlobalSavesManager;
+        public static MockLawnApp gLawnApp = new();
+        public static MockLawnApp GetGlobalLawnApp() => gLawnApp;
     }
 
     public class Program
@@ -1506,20 +1510,20 @@ namespace GodsPVZ.Actions.Verification
             var m60A = module.LookupToken(0x0600060A) as MethodDefinition;
             var fn60A = CandidateCilTranslator.CompileFindKey60A(m60A);
 
-            var e1 = new MockBoardEntry(24, "flag", must: true, select: false);
-            var e2 = new MockBoardEntry(25, "zombie", must: false, select: true);
-            var e3 = new MockBoardEntry(36, "reward", must: true, select: false);
+            var e1 = new MockBoardEntry(24, "flag", must: true, select: false); // must=true produces _CC
+            var e2 = new MockBoardEntry(25, "zombie", must: false, select: false); // must=false,select=false produces _OE
+            var e3 = new MockBoardEntry(36, "reward", must: true, select: false); // must=true produces _CD
             var e4 = new MockBoardEntry(0, "plain_entry");
             var entryList = new List<MockBoardEntry> { e1, e2, e3, e4 };
 
             TraceDisposeCollector.Clear();
-            var r60A_1 = fn60A(entryList, "flag_OC");
+            var r60A_1 = fn60A(entryList, "flag_CC");
             bool passE2_1 = (ReferenceEquals(r60A_1, e1) && TraceDisposeCollector.Log.Contains("MockBoardEntry_Disposed"));
             casesEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["case_id"] = "E2.1_Type24_MustTrue",
                 ["target"] = "0x0600060A",
-                ["input"] = "key=flag, type=24, must=true -> targetKey=flag_OC",
+                ["input"] = "key=flag, type=24, must=true -> targetKey=flag_CC",
                 ["expected"] = "returns e1 reference, enumerator disposed",
                 ["passed"] = passE2_1
             });
@@ -1529,13 +1533,13 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x0600060A Case E2.1 failed");
             }
 
-            var r60A_2 = fn60A(entryList, "zombie_CE");
+            var r60A_2 = fn60A(entryList, "zombie_OE");
             bool passE2_2 = ReferenceEquals(r60A_2, e2);
             casesEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["case_id"] = "E2.2_Type25_SelectTrue",
                 ["target"] = "0x0600060A",
-                ["input"] = "key=zombie, type=25, select=true -> targetKey=zombie_CE",
+                ["input"] = "key=zombie, type=25, select=true -> targetKey=zombie_OE",
                 ["expected"] = "returns e2 reference",
                 ["passed"] = passE2_2
             });
@@ -1611,6 +1615,7 @@ namespace GodsPVZ.Actions.Verification
             var fn4BF = CandidateCilTranslator.CompileCompletenessTest4BF(m4BF);
 
             TraceDisposeCollector.Clear();
+            CandidateCilTranslator.gLawnApp.savesManager.reloadedList.Clear();
             var saveE3_1 = new MockSave();
             saveE3_1.plantSaves.Add(new MockPlantSave(101));
             saveE3_1.plantSaves.Add(new MockPlantSave(102));
@@ -1623,7 +1628,7 @@ namespace GodsPVZ.Actions.Verification
             var sortedIDs = saveE3_1.supplies.Select(s => s.ID).ToList();
             bool passE3_1 = (sortedIDs.SequenceEqual(new[] { 1, 2, 5, 8 })
                              && ReferenceEquals(saveE3_1.supplies[0], s1)
-                             && saveE3_1.savesManager.reloadedList.Count == 2
+                             && CandidateCilTranslator.gLawnApp.savesManager.reloadedList.Count == 2
                              && TraceDisposeCollector.Log.Contains("MockPlantSave_Disposed"));
             casesEvaluatedList.Add(new Dictionary<string, object>
             {
@@ -1631,7 +1636,7 @@ namespace GodsPVZ.Actions.Verification
                 ["target"] = "0x060004BF",
                 ["input"] = "supplies IDs [5, 2, 8, 1], plantSaves count=2",
                 ["expected"] = "supplies sorted to [1, 2, 5, 8], plantSaves reloaded, enumerator disposed",
-                ["observed"] = $"sorted=[{string.Join(", ", sortedIDs)}], reloaded={saveE3_1.savesManager.reloadedList.Count}",
+                ["observed"] = $"sorted=[{string.Join(", ", sortedIDs)}], reloaded={CandidateCilTranslator.gLawnApp.savesManager.reloadedList.Count}",
                 ["passed"] = passE3_1
             });
             if (!passE3_1)
@@ -1643,7 +1648,7 @@ namespace GodsPVZ.Actions.Verification
             TraceDisposeCollector.Clear();
             var saveFault = new MockSave();
             saveFault.plantSaves.Add(new MockPlantSave(201));
-            saveFault.savesManager.throwOnReload = true;
+            CandidateCilTranslator.gLawnApp.savesManager.throwOnReload = true;
             bool passE3_2 = false;
             try { fn4BF(saveFault); }
             catch (Exception ex)
