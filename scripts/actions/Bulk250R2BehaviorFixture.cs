@@ -14,13 +14,26 @@ using OpCodes = System.Reflection.Emit.OpCodes;
 
 namespace GodsPVZ.Actions.Verification
 {
-    // -----------------------------------------------------------------
-    // Controlled Dependency Stubs (Explicitly Separated from Candidate CIL)
-    // -----------------------------------------------------------------
     public class MockBoardConfig
     {
         public MockMap map; // 0x04000198
         public List<MockEnemy> preEnemies = new(); // 0x0400019D
+    }
+
+    public class MockGrid
+    {
+        public int id;
+        public int col;
+        public int row;
+        public MockGrid(int id = 0, int col = 0, int row = 0)
+        {
+            this.id = id; this.col = col; this.row = row;
+        }
+    }
+
+    public class MockRow
+    {
+        public List<MockGrid> grids = new(); // 0x04000381
     }
 
     public class MockMap
@@ -28,8 +41,9 @@ namespace GodsPVZ.Actions.Verification
         public int x;
         public int y;
         public Action onGetMapX;
+        public List<MockRow> rows = new(); // 0x0400037D
 
-        public MockMap(int x, int y, Action onGetMapX = null)
+        public MockMap(int x = 0, int y = 0, Action onGetMapX = null)
         {
             this.x = x;
             this.y = y;
@@ -42,10 +56,7 @@ namespace GodsPVZ.Actions.Verification
             return x;
         }
 
-        public int GetMapY()
-        {
-            return y;
-        }
+        public int GetMapY() => y;
     }
 
     public class MockEnemy
@@ -131,42 +142,54 @@ namespace GodsPVZ.Actions.Verification
         public bool display_Ban_device; // 0x040001D8
     }
 
-    // Domain Mocks for ZombieManager.KillAll (0x0600027B)
-    public class MockDamage
+    public class MockBoardEntry
     {
-        public float value; // 0x04000123
-        public int attribute; // 0x04000125
-        public bool flag1; // 0x04000129
-        public bool flag2; // 0x0400012A
-        public bool flag3; // 0x0400012B
-    }
+        public int boardEntryType; // 0x040007FA
+        public bool must; // 0x040007FC
+        public bool select; // 0x040007FD
+        public string key; // 0x040007FE
 
-    public class MockZombie
-    {
-        public bool isDying; // 0x040005D2
-        public MockDamage lastDamage;
-        public bool lastDamageSource;
-
-        public void TakeDamage(MockDamage dmg, bool source)
+        public MockBoardEntry(int type = 0, string key = "", bool must = false, bool select = false)
         {
-            lastDamage = dmg;
-            lastDamageSource = source;
+            this.boardEntryType = type;
+            this.key = key;
+            this.must = must;
+            this.select = select;
         }
     }
 
-    public class MockZombieManager
+    public class MockPlantSave
     {
-        public List<MockZombie> zombieList; // 0x04000362
+        public int plantId;
+        public MockPlantSave(int id = 0) { plantId = id; }
     }
 
-    // Domain Mocks for FlagMeter.InitializeFlags (0x0600061A)
-    public class MockFlagMeter
+    public class MockSavesManager
     {
-        public List<float> flagPositions = new(); // 0x04000815
-        public MockGameObject flagBar = new(); // 0x04000814
+        public List<MockPlantSave> reloadedList = new();
+        public bool throwOnReload;
+
+        public void ReloadPlantSaveData(MockPlantSave p)
+        {
+            if (throwOnReload) throw new InvalidOperationException("ReloadPlantSaveData simulated fault");
+            reloadedList.Add(p);
+        }
     }
 
-    // Unified Trace Collector for Exact Disposal Sequence and Chronological Ordering
+    public class MockSuppliesItem
+    {
+        public int ID; // 0x04000678
+        public string name;
+        public MockSuppliesItem(int id, string name = "") { this.ID = id; this.name = name; }
+    }
+
+    public class MockSave
+    {
+        public List<MockPlantSave> plantSaves = new(); // 0x04000639
+        public MockSavesManager savesManager = new(); // 0x04000166
+        public List<MockSuppliesItem> supplies = new(); // 0x0400063D
+    }
+
     public static class TraceDisposeCollector
     {
         public static List<string> Log = new();
@@ -174,7 +197,6 @@ namespace GodsPVZ.Actions.Verification
         public static void Record(string msg) => Log.Add(msg);
     }
 
-    // Value-Type Wrapper around Real BCL List<T>.Enumerator Preserving Value/Address Semantics
     public struct MockTrackedListEnumerator<T> : IDisposable
     {
         private List<T>.Enumerator _inner;
@@ -196,6 +218,7 @@ namespace GodsPVZ.Actions.Verification
             TraceDisposeCollector.Record(_name + "_Disposed");
         }
     }
+
 
     // -----------------------------------------------------------------
     // Candidate CIL Instruction Translator & DynamicMethod Emission
@@ -259,7 +282,6 @@ namespace GodsPVZ.Actions.Verification
             var dm = new DynamicMethod("CIL_0600001C", typeof(void), new[] { typeof(MockAdminSystem2) }, typeof(Program).Module, true);
             var il = dm.GetILGenerator();
 
-            // Validate local variable definitions from candidate
             if (m01c.Body.Variables.Count < 2)
                 throw new NotSupportedException($"0x0600001C must declare at least 2 locals, found {m01c.Body.Variables.Count}");
             if (m01c.Body.Variables[0].VariableType.Name != "Enemy")
@@ -342,10 +364,7 @@ namespace GodsPVZ.Actions.Verification
                     else if (tok == 0x0A000134 && mr.Name == "Add") il.Emit(OpCodes.Callvirt, typeof(List<MockEnemy>).GetMethod("Add"));
                     else throw new NotSupportedException($"Unmapped call token in 0x0600001C: 0x{tok:X8} {mr.FullName}");
                 }
-                else
-                {
-                    throw new NotSupportedException($"Unsupported opcode in 0x0600001C: {code}");
-                }
+                else throw new NotSupportedException($"Unsupported opcode in 0x0600001C: {code}");
             }
 
             return (Action<MockAdminSystem2>)dm.CreateDelegate(typeof(Action<MockAdminSystem2>));
@@ -358,7 +377,6 @@ namespace GodsPVZ.Actions.Verification
             var dm = new DynamicMethod("CIL_06000183", typeof(void), new[] { typeof(MockDeviceManager) }, typeof(Program).Module, true);
             var il = dm.GetILGenerator();
 
-            // Validate local variable definitions from candidate
             if (m183.Body.Variables.Count != 5)
                 throw new NotSupportedException($"0x06000183 must declare exactly 5 locals, found {m183.Body.Variables.Count}");
             if (!m183.Body.Variables[0].VariableType.Name.Contains("Enumerator"))
@@ -390,7 +408,6 @@ namespace GodsPVZ.Actions.Verification
             var innerEH = ehList[0];
             var outerEH = ehList[1];
 
-            // Verify exact EH boundaries and nesting constraints
             if (innerEH.HandlerType != ExceptionHandlerType.Finally || outerEH.HandlerType != ExceptionHandlerType.Finally)
                 throw new InvalidProgramException("Both EH clauses in 0x06000183 must be Finally");
             if (innerEH.TryStart.Offset != 0x35 || innerEH.TryEnd.Offset != 0x92 || innerEH.HandlerStart.Offset != 0x92 || innerEH.HandlerEnd.Offset != 0x9A)
@@ -540,19 +557,13 @@ namespace GodsPVZ.Actions.Verification
                     {
                         il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("ApplySpriteColor"));
                     }
-                    else
-                    {
-                        throw new NotSupportedException($"Unmapped call token in 0x06000183: 0x{tok:X8} {mr.FullName}");
-                    }
+                    else throw new NotSupportedException($"Unmapped call token in 0x06000183: 0x{tok:X8} {mr.FullName}");
                 }
                 else if (code == Mono.Cecil.Cil.OpCodes.Newobj)
                 {
                     il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("PackColor"));
                 }
-                else
-                {
-                    throw new NotSupportedException($"Unsupported opcode in 0x06000183: {code}");
-                }
+                else throw new NotSupportedException($"Unsupported opcode in 0x06000183: {code}");
             }
 
             return (Action<MockDeviceManager>)dm.CreateDelegate(typeof(Action<MockDeviceManager>));
@@ -560,6 +571,248 @@ namespace GodsPVZ.Actions.Verification
 
         public static (float r, float g, float b, float a) PackColor(float r, float g, float b, float a) => (r, g, b, a);
         public static void ApplySpriteColor(MockSpriteRenderer sr, (float r, float g, float b, float a) c) => sr.SetColor(c.r, c.g, c.b, c.a);
+
+        public static Func<MockMap, List<MockGrid>> CompileGetMapGrids287(MethodDefinition m287)
+        {
+            var dm = new DynamicMethod("CIL_06000287", typeof(List<MockGrid>), new[] { typeof(MockMap) }, typeof(Program).Module, true);
+            var il = dm.GetILGenerator();
+
+            var localBuilders = new LocalBuilder[3];
+            localBuilders[0] = il.DeclareLocal(typeof(List<MockGrid>));
+            localBuilders[1] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockRow>));
+            localBuilders[2] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockGrid>));
+
+            var labels = new Dictionary<Instruction, Label>();
+            foreach (var ins in m287.Body.Instructions) labels[ins] = il.DefineLabel();
+
+            var innerEH = m287.Body.ExceptionHandlers.FirstOrDefault(e => e.TryStart.Offset == 0x29);
+            var outerEH = m287.Body.ExceptionHandlers.FirstOrDefault(e => e.TryStart.Offset == 0x12);
+
+            foreach (var ins in m287.Body.Instructions)
+            {
+                if (outerEH != null && ins == outerEH.TryStart) il.BeginExceptionBlock();
+                if (innerEH != null && ins == innerEH.TryStart) il.BeginExceptionBlock();
+                if (innerEH != null && ins == innerEH.HandlerStart) il.BeginFinallyBlock();
+                if (outerEH != null && ins == outerEH.HandlerStart) il.BeginFinallyBlock();
+
+                il.MarkLabel(labels[ins]);
+                var code = ins.OpCode;
+
+                if (code == Mono.Cecil.Cil.OpCodes.Ldarg_0) il.Emit(OpCodes.Ldarg_0);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_0) il.Emit(OpCodes.Stloc, localBuilders[0]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_1) il.Emit(OpCodes.Stloc, localBuilders[1]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_2) il.Emit(OpCodes.Stloc, localBuilders[2]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_0) il.Emit(OpCodes.Ldloc, localBuilders[0]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloca_S)
+                {
+                    var v = (VariableDefinition)ins.Operand;
+                    il.Emit(OpCodes.Ldloca, localBuilders[v.Index]);
+                }
+                else if (code == Mono.Cecil.Cil.OpCodes.Br || code == Mono.Cecil.Cil.OpCodes.Br_S) il.Emit(OpCodes.Br, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Brtrue || code == Mono.Cecil.Cil.OpCodes.Brtrue_S) il.Emit(OpCodes.Brtrue, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Leave || code == Mono.Cecil.Cil.OpCodes.Leave_S) il.Emit(OpCodes.Leave, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Endfinally) il.EndExceptionBlock();
+                else if (code == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
+                else if (code == Mono.Cecil.Cil.OpCodes.Pop) il.Emit(OpCodes.Pop);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ret) il.Emit(OpCodes.Ret);
+                else if (code == Mono.Cecil.Cil.OpCodes.Newobj && ((MethodReference)ins.Operand).MetadataToken.ToInt32() == 0x0A0001BC)
+                {
+                    il.Emit(OpCodes.Newobj, typeof(List<MockGrid>).GetConstructor(Type.EmptyTypes));
+                }
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldfld)
+                {
+                    var fr = (FieldReference)ins.Operand;
+                    int fTok = fr.MetadataToken.ToInt32();
+                    if (fTok == 0x0400037D) il.Emit(OpCodes.Ldfld, typeof(MockMap).GetField("rows"));
+                    else if (fTok == 0x04000381) il.Emit(OpCodes.Ldfld, typeof(MockRow).GetField("grids"));
+                    else throw new NotSupportedException($"Unmapped field in 0x06000287: 0x{fTok:X8} {fr.FullName}");
+                }
+                else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
+                {
+                    var mr = (MethodReference)ins.Operand;
+                    int tok = mr.MetadataToken.ToInt32();
+                    if (tok == 0x0A0001C3) il.Emit(OpCodes.Newobj, typeof(MockTrackedListEnumerator<MockRow>).GetConstructor(new[] { typeof(List<MockRow>) }));
+                    else if (tok == 0x0A000493) il.Emit(OpCodes.Newobj, typeof(MockTrackedListEnumerator<MockGrid>).GetConstructor(new[] { typeof(List<MockGrid>) }));
+                    else if (tok == 0x0A0001C5) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockRow>).GetMethod("get_Current"));
+                    else if (tok == 0x0A000494) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockGrid>).GetMethod("get_Current"));
+                    else if (tok == 0x0A0001B9) il.Emit(OpCodes.Callvirt, typeof(List<MockGrid>).GetMethod("Add"));
+                    else if (tok == 0x0A000495) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockGrid>).GetMethod("MoveNext"));
+                    else if (tok == 0x0A0001BA) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockGrid>).GetMethod("Dispose"));
+                    else if (tok == 0x0A0001C4) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockRow>).GetMethod("MoveNext"));
+                    else if (tok == 0x0A0001BB) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockRow>).GetMethod("Dispose"));
+                    else throw new NotSupportedException($"Unmapped call token in 0x06000287: 0x{tok:X8} {mr.FullName}");
+                }
+                else throw new NotSupportedException($"Unsupported opcode in 0x06000287: {code}");
+            }
+
+            return (Func<MockMap, List<MockGrid>>)dm.CreateDelegate(typeof(Func<MockMap, List<MockGrid>>));
+        }
+
+        public static Func<List<MockBoardEntry>, string, MockBoardEntry> CompileFindKey60A(MethodDefinition m60A)
+        {
+            var dm = new DynamicMethod("CIL_0600060A", typeof(MockBoardEntry), new[] { typeof(List<MockBoardEntry>), typeof(string) }, typeof(Program).Module, true);
+            var il = dm.GetILGenerator();
+
+            var localBuilders = new LocalBuilder[4];
+            localBuilders[0] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockBoardEntry>));
+            localBuilders[1] = il.DeclareLocal(typeof(MockBoardEntry));
+            localBuilders[2] = il.DeclareLocal(typeof(string));
+            localBuilders[3] = il.DeclareLocal(typeof(MockBoardEntry));
+
+            var labels = new Dictionary<Instruction, Label>();
+            foreach (var ins in m60A.Body.Instructions) labels[ins] = il.DefineLabel();
+
+            var eh = m60A.Body.ExceptionHandlers.FirstOrDefault();
+
+            foreach (var ins in m60A.Body.Instructions)
+            {
+                if (eh != null && ins == eh.TryStart) il.BeginExceptionBlock();
+                if (eh != null && ins == eh.HandlerStart) il.BeginFinallyBlock();
+
+                il.MarkLabel(labels[ins]);
+                var code = ins.OpCode;
+
+                if (code == Mono.Cecil.Cil.OpCodes.Ldnull) il.Emit(OpCodes.Ldnull);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_0) il.Emit(OpCodes.Stloc, localBuilders[0]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_1) il.Emit(OpCodes.Stloc, localBuilders[1]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_2) il.Emit(OpCodes.Stloc, localBuilders[2]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_3) il.Emit(OpCodes.Stloc, localBuilders[3]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_0) il.Emit(OpCodes.Ldloc, localBuilders[0]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_1) il.Emit(OpCodes.Ldloc, localBuilders[1]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_2) il.Emit(OpCodes.Ldloc, localBuilders[2]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_3) il.Emit(OpCodes.Ldloc, localBuilders[3]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloca_S) il.Emit(OpCodes.Ldloca, localBuilders[((VariableDefinition)ins.Operand).Index]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldarg_0) il.Emit(OpCodes.Ldarg_0);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldarg_1) il.Emit(OpCodes.Ldarg_1);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldc_I4) il.Emit(OpCodes.Ldc_I4, Convert.ToInt32(ins.Operand));
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldstr) il.Emit(OpCodes.Ldstr, (string)ins.Operand);
+                else if (code == Mono.Cecil.Cil.OpCodes.Beq || code == Mono.Cecil.Cil.OpCodes.Beq_S) il.Emit(OpCodes.Beq, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Bne_Un || code == Mono.Cecil.Cil.OpCodes.Bne_Un_S) il.Emit(OpCodes.Bne_Un, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Br || code == Mono.Cecil.Cil.OpCodes.Br_S) il.Emit(OpCodes.Br, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Brtrue || code == Mono.Cecil.Cil.OpCodes.Brtrue_S) il.Emit(OpCodes.Brtrue, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Brfalse || code == Mono.Cecil.Cil.OpCodes.Brfalse_S) il.Emit(OpCodes.Brfalse, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Leave || code == Mono.Cecil.Cil.OpCodes.Leave_S) il.Emit(OpCodes.Leave, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Endfinally) il.EndExceptionBlock();
+                else if (code == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
+                else if (code == Mono.Cecil.Cil.OpCodes.Pop) il.Emit(OpCodes.Pop);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ret) il.Emit(OpCodes.Ret);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldfld)
+                {
+                    var fr = (FieldReference)ins.Operand;
+                    int fTok = fr.MetadataToken.ToInt32();
+                    if (fTok == 0x040007FA) il.Emit(OpCodes.Ldfld, typeof(MockBoardEntry).GetField("boardEntryType"));
+                    else if (fTok == 0x040007FC) il.Emit(OpCodes.Ldfld, typeof(MockBoardEntry).GetField("must"));
+                    else if (fTok == 0x040007FD) il.Emit(OpCodes.Ldfld, typeof(MockBoardEntry).GetField("select"));
+                    else if (fTok == 0x040007FE) il.Emit(OpCodes.Ldfld, typeof(MockBoardEntry).GetField("key"));
+                    else throw new NotSupportedException($"Unmapped field in 0x0600060A: 0x{fTok:X8} {fr.FullName}");
+                }
+                else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
+                {
+                    var mr = (MethodReference)ins.Operand;
+                    int tok = mr.MetadataToken.ToInt32();
+                    if (tok == 0x0A0000E6) il.Emit(OpCodes.Newobj, typeof(MockTrackedListEnumerator<MockBoardEntry>).GetConstructor(new[] { typeof(List<MockBoardEntry>) }));
+                    else if (tok == 0x0A0000E7) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockBoardEntry>).GetMethod("get_Current"));
+                    else if (tok == 0x0A000051) il.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) }));
+                    else if (tok == 0x0A00003A) il.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new[] { typeof(string), typeof(string) }));
+                    else if (tok == 0x0A0000E8) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockBoardEntry>).GetMethod("MoveNext"));
+                    else if (tok == 0x0A0000A7) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockBoardEntry>).GetMethod("Dispose"));
+                    else throw new NotSupportedException($"Unmapped call in 0x0600060A: 0x{tok:X8} {mr.FullName}");
+                }
+                else throw new NotSupportedException($"Unsupported opcode in 0x0600060A: {code}");
+            }
+
+            return (Func<List<MockBoardEntry>, string, MockBoardEntry>)dm.CreateDelegate(typeof(Func<List<MockBoardEntry>, string, MockBoardEntry>));
+        }
+
+        public static Action<MockSave> CompileCompletenessTest4BF(MethodDefinition m4BF)
+        {
+            var dm = new DynamicMethod("CIL_060004BF", typeof(void), new[] { typeof(MockSave) }, typeof(Program).Module, true);
+            var il = dm.GetILGenerator();
+
+            var localBuilders = new LocalBuilder[7];
+            localBuilders[0] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockPlantSave>));
+            localBuilders[1] = il.DeclareLocal(typeof(MockPlantSave));
+            localBuilders[2] = il.DeclareLocal(typeof(int));
+            localBuilders[3] = il.DeclareLocal(typeof(int));
+            localBuilders[4] = il.DeclareLocal(typeof(int));
+            localBuilders[5] = il.DeclareLocal(typeof(MockSuppliesItem));
+            localBuilders[6] = il.DeclareLocal(typeof(List<MockSuppliesItem>));
+
+            var labels = new Dictionary<Instruction, Label>();
+            foreach (var ins in m4BF.Body.Instructions) labels[ins] = il.DefineLabel();
+
+            var eh = m4BF.Body.ExceptionHandlers.FirstOrDefault();
+
+            foreach (var ins in m4BF.Body.Instructions)
+            {
+                if (eh != null && ins == eh.TryStart) il.BeginExceptionBlock();
+                if (eh != null && ins == eh.HandlerStart) il.BeginFinallyBlock();
+
+                il.MarkLabel(labels[ins]);
+                var code = ins.OpCode;
+
+                if (code == Mono.Cecil.Cil.OpCodes.Ldarg_0) il.Emit(OpCodes.Ldarg_0);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_0) il.Emit(OpCodes.Stloc, localBuilders[0]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_1) il.Emit(OpCodes.Stloc, localBuilders[1]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_2) il.Emit(OpCodes.Stloc, localBuilders[2]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_3) il.Emit(OpCodes.Stloc, localBuilders[3]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Stloc_S) il.Emit(OpCodes.Stloc, localBuilders[((VariableDefinition)ins.Operand).Index]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_0) il.Emit(OpCodes.Ldloc, localBuilders[0]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_1) il.Emit(OpCodes.Ldloc, localBuilders[1]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_2) il.Emit(OpCodes.Ldloc, localBuilders[2]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_3) il.Emit(OpCodes.Ldloc, localBuilders[3]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloc_S) il.Emit(OpCodes.Ldloc, localBuilders[((VariableDefinition)ins.Operand).Index]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldloca_S) il.Emit(OpCodes.Ldloca, localBuilders[((VariableDefinition)ins.Operand).Index]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldc_I4_0) il.Emit(OpCodes.Ldc_I4_0);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldc_I4_1) il.Emit(OpCodes.Ldc_I4_1);
+                else if (code == Mono.Cecil.Cil.OpCodes.Sub) il.Emit(OpCodes.Sub);
+                else if (code == Mono.Cecil.Cil.OpCodes.Add) il.Emit(OpCodes.Add);
+                else if (code == Mono.Cecil.Cil.OpCodes.Blt || code == Mono.Cecil.Cil.OpCodes.Blt_S) il.Emit(OpCodes.Blt, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Bge || code == Mono.Cecil.Cil.OpCodes.Bge_S) il.Emit(OpCodes.Bge, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ble || code == Mono.Cecil.Cil.OpCodes.Ble_S) il.Emit(OpCodes.Ble, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Br || code == Mono.Cecil.Cil.OpCodes.Br_S) il.Emit(OpCodes.Br, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Brtrue || code == Mono.Cecil.Cil.OpCodes.Brtrue_S) il.Emit(OpCodes.Brtrue, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Leave || code == Mono.Cecil.Cil.OpCodes.Leave_S) il.Emit(OpCodes.Leave, labels[(Instruction)ins.Operand]);
+                else if (code == Mono.Cecil.Cil.OpCodes.Endfinally) il.EndExceptionBlock();
+                else if (code == Mono.Cecil.Cil.OpCodes.Nop) il.Emit(OpCodes.Nop);
+                else if (code == Mono.Cecil.Cil.OpCodes.Pop) il.Emit(OpCodes.Pop);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ret) il.Emit(OpCodes.Ret);
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldsfld)
+                {
+                    il.Emit(OpCodes.Call, typeof(CandidateCilTranslator).GetMethod("GetGlobalSavesManager"));
+                }
+                else if (code == Mono.Cecil.Cil.OpCodes.Ldfld)
+                {
+                    var fr = (FieldReference)ins.Operand;
+                    int fTok = fr.MetadataToken.ToInt32();
+                    if (fTok == 0x04000639) il.Emit(OpCodes.Ldfld, typeof(MockSave).GetField("plantSaves"));
+                    else if (fTok == 0x04000166) il.Emit(OpCodes.Ldfld, typeof(MockSave).GetField("savesManager"));
+                    else if (fTok == 0x0400063D) il.Emit(OpCodes.Ldfld, typeof(MockSave).GetField("supplies"));
+                    else if (fTok == 0x04000678) il.Emit(OpCodes.Ldfld, typeof(MockSuppliesItem).GetField("ID"));
+                    else throw new NotSupportedException($"Unmapped field in 0x060004BF: 0x{fTok:X8} {fr.FullName}");
+                }
+                else if (code == Mono.Cecil.Cil.OpCodes.Callvirt || code == Mono.Cecil.Cil.OpCodes.Call)
+                {
+                    var mr = (MethodReference)ins.Operand;
+                    int tok = mr.MetadataToken.ToInt32();
+                    if (tok == 0x0A000431) il.Emit(OpCodes.Newobj, typeof(MockTrackedListEnumerator<MockPlantSave>).GetConstructor(new[] { typeof(List<MockPlantSave>) }));
+                    else if (tok == 0x0A0004B8) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockPlantSave>).GetMethod("get_Current"));
+                    else if (tok == 0x06000249) il.Emit(OpCodes.Callvirt, typeof(MockSavesManager).GetMethod("ReloadPlantSaveData"));
+                    else if (tok == 0x0A0004B9) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockPlantSave>).GetMethod("MoveNext"));
+                    else if (tok == 0x0A000053) il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockPlantSave>).GetMethod("Dispose"));
+                    else if (tok == 0x0A00023A) il.Emit(OpCodes.Callvirt, typeof(List<MockSuppliesItem>).GetMethod("get_Count"));
+                    else if (tok == 0x0A000233) il.Emit(OpCodes.Callvirt, typeof(List<MockSuppliesItem>).GetMethod("get_Item"));
+                    else if (tok == 0x0A0004CA) il.Emit(OpCodes.Callvirt, typeof(List<MockSuppliesItem>).GetMethod("set_Item"));
+                    else throw new NotSupportedException($"Unmapped call in 0x060004BF: 0x{tok:X8} {mr.FullName}");
+                }
+                else throw new NotSupportedException($"Unsupported opcode in 0x060004BF: {code}");
+            }
+
+            return (Action<MockSave>)dm.CreateDelegate(typeof(Action<MockSave>));
+        }
+
+        public static MockSavesManager GlobalSavesManager = new();
+        public static MockSavesManager GetGlobalSavesManager() => GlobalSavesManager;
     }
 
     public class Program
@@ -619,7 +872,6 @@ namespace GodsPVZ.Actions.Verification
                 var m158Bad = module.LookupToken(0x06000158) as MethodDefinition;
                 var mBadClone = CloneMethod(m158Bad, "mBadClone");
                 mBadClone.Body.Instructions.Insert(1, Instruction.Create(Mono.Cecil.Cil.OpCodes.Cpblk));
-                // This triggers real NotSupportedException inside CandidateCilTranslator.CompileGetter158
                 CandidateCilTranslator.CompileGetter158(mBadClone);
                 return 0;
             }
@@ -635,7 +887,8 @@ namespace GodsPVZ.Actions.Verification
                 {
                     "MockBoardConfig", "MockMap", "MockEnemy", "MockTransform", "MockComponent",
                     "MockGameObject", "MockEnemyEditor", "MockEnemyManager", "MockAdminSystem2",
-                    "MockSpriteRenderer", "MockDevice", "MockDeviceManager", "MockTrackedListEnumerator<T>"
+                    "MockSpriteRenderer", "MockDevice", "MockDeviceManager", "MockTrackedListEnumerator<T>",
+                    "MockGrid", "MockRow", "MockBoardEntry", "MockPlantSave", "MockSuppliesItem", "MockSave", "MockSavesManager"
                 },
                 ["getter_executions"] = new Dictionary<string, object>(),
                 ["fifty_methods_behavior"] = new Dictionary<string, object>(),
@@ -659,11 +912,9 @@ namespace GodsPVZ.Actions.Verification
             var fn158 = CandidateCilTranslator.CompileGetter158(m158);
             var fn01c = CandidateCilTranslator.CompileCreateNewEnemy01C(m01c, fn158.Method);
 
-            // Case A.1: Normal execution
-            int normalWaveInput = (runMode == "neg_assertion_failure") ? 999 : 5; // Negative control injection
+            int normalWaveInput = (runMode == "neg_assertion_failure") ? 999 : 5;
             var adminA1 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, waveOnCheck = normalWaveInput };
 
-            // Negative Control Mode: neg_unexpected_exception
             if (runMode == "neg_unexpected_exception")
             {
                 Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting unexpected runtime exception into GetMapX callback...");
@@ -688,7 +939,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x0600001C Normal execution mismatch");
             }
 
-            // Case A.2: Null receiver admin -> NRE
             bool passA2 = false;
             try { fn01c(null); }
             catch (NullReferenceException) { passA2 = true; }
@@ -707,7 +957,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x0600001C Null receiver did not throw NRE");
             }
 
-            // Case A.3: Null boardConfig -> NRE in getter
             bool passA3 = false;
             try { fn01c(new MockAdminSystem2 { boardConfig = null }); }
             catch (NullReferenceException) { passA3 = true; }
@@ -726,7 +975,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x0600001C Null boardConfig did not throw NRE");
             }
 
-            // Case A.4: Null map -> NRE in GetMapX
             bool passA4 = false;
             try { fn01c(new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = null } }); }
             catch (NullReferenceException) { passA4 = true; }
@@ -745,7 +993,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x0600001C Null map did not throw NRE");
             }
 
-            // Case A.5: Field replacement reentrancy (Map replaced during GetMapX callback)
             var adminReentrant = new MockAdminSystem2 { waveOnCheck = 9 };
             var mapInit = new MockMap(100, 200, () =>
             {
@@ -770,12 +1017,8 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x0600001C Reentrancy map swap failed to observe updated map");
             }
 
-            // =================================================================
-            // CHAIN B: CIL Mutants on 0x06000158 & 0x0600001C
-            // =================================================================
+            // Chain B Mutants
             Console.WriteLine("[CHAIN B] Executing Physical CIL Mutants on 0x06000158 & 0x0600001C...");
-
-            // Mutant B.1: Mutate 0x0600001C CIL to div 3 instead of div 2
             var m01c_mutDiv3 = CloneMethod(m01c, "m01c_mutDiv3");
             var insDiv = m01c_mutDiv3.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ldc_I4_2);
             insDiv.OpCode = Mono.Cecil.Cil.OpCodes.Ldc_I4_3;
@@ -785,7 +1028,6 @@ namespace GodsPVZ.Actions.Verification
             var resMutDiv3 = adminMutDiv3.enemyDataEditor.list.FirstOrDefault();
             bool mutDiv3_detected = (resMutDiv3 != null && resMutDiv3.row == 80 && resMutDiv3.row != 120);
 
-            // Negative Control Mode: neg_escaped_mutant simulates an undetected mutant
             if (runMode == "neg_escaped_mutant") mutDiv3_detected = false;
 
             mutantsEvaluatedList.Add(new Dictionary<string, object>
@@ -805,7 +1047,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("Mutant B.1 (div3) was not detected");
             }
 
-            // Mutant B.2: Mutate 0x06000158 CIL to return null
             var m158_mutNull = CloneMethod(m158, "m158_mutNull");
             m158_mutNull.Body.Instructions[0].OpCode = Mono.Cecil.Cil.OpCodes.Ldnull;
             m158_mutNull.Body.Instructions[0].Operand = null;
@@ -834,7 +1075,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("Mutant B.2 (getter null) was not detected");
             }
 
-            // Mutant B.3: Mutate 0x0600001C CIL to cache first map in local 2
             var m01c_mutCache = CloneMethod(m01c, "m01c_mutCache");
             int firstGetterIdx = -1;
             int secondGetterIdx = -1;
@@ -888,10 +1128,8 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("Mutant B.3 (cached map) was not detected");
             }
 
-            // Evaluate 0x0600001C and 0x06000158 method status
-            bool chainAPass = passA1 && passA2 && passA3 && passA4 && passA5 && mutDiv3_detected && mutGetterNull_detected && mutCache_detected;
             methodPassStatus["0x06000158"] = passA1 && passA3 && mutGetterNull_detected;
-            methodPassStatus["0x0600001C"] = chainAPass;
+            methodPassStatus["0x0600001C"] = passA1 && passA2 && passA3 && passA4 && passA5 && mutDiv3_detected && mutGetterNull_detected && mutCache_detected;
 
             // =================================================================
             // CHAIN C: 0x06000303 (Device.get_AnimationSprites) & 0x06000183 (DisplayBan_device)
@@ -953,14 +1191,8 @@ namespace GodsPVZ.Actions.Verification
             var mgrC3 = new MockDeviceManager { deviceList = new List<MockDevice> { null } };
             bool passC3 = false;
             try { fn183(mgrC3); }
-            catch (NullReferenceException)
-            {
-                passC3 = TraceDisposeCollector.Log.SequenceEqual(new[] { "MockDevice_Disposed" });
-            }
-            catch (TargetInvocationException tie) when (tie.InnerException is NullReferenceException)
-            {
-                passC3 = TraceDisposeCollector.Log.SequenceEqual(new[] { "MockDevice_Disposed" });
-            }
+            catch (NullReferenceException) { passC3 = TraceDisposeCollector.Log.SequenceEqual(new[] { "MockDevice_Disposed" }); }
+            catch (TargetInvocationException tie) when (tie.InnerException is NullReferenceException) { passC3 = TraceDisposeCollector.Log.SequenceEqual(new[] { "MockDevice_Disposed" }); }
             casesEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["case_id"] = "C.3_NullDeviceFatFinally",
@@ -1036,12 +1268,8 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("0x06000183 Case C.5 null animationSprites failed");
             }
 
-            // =================================================================
-            // CHAIN C Mutants on 0x06000183
-            // =================================================================
+            // Chain C Mutants
             Console.WriteLine("[CHAIN C Mutants] Executing Physical CIL Mutants on 0x06000183...");
-
-            // Mutant C.1: Invert type 12 filter (bne.un -> beq)
             var m183_mutBeq = CloneMethod(m183, "m183_mutBeq");
             var insBranch = m183_mutBeq.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Bne_Un || i.OpCode == Mono.Cecil.Cil.OpCodes.Bne_Un_S);
             insBranch.OpCode = Mono.Cecil.Cil.OpCodes.Beq;
@@ -1068,7 +1296,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("Mutant C.1 (inverted type12 filter) was not detected");
             }
 
-            // Mutant C.2: Mutate alpha constant (0.5f -> 0.75f)
             var m183_mutAlpha = CloneMethod(m183, "m183_mutAlpha");
             var insAlpha = m183_mutAlpha.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ldc_R4 && (float)i.Operand == 0.5f);
             insAlpha.Operand = 0.75f;
@@ -1094,7 +1321,6 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("Mutant C.2 (alpha constant) was not detected");
             }
 
-            // Mutant C.3: Omit inner finally Dispose call with STACK-BALANCED rewrite (ldloca.s + call -> nop + nop)
             var m183_mutNoInnerDispose = CloneMethod(m183, "m183_mutNoInnerDispose");
             int innerDisposeIdx = -1;
             for (int i = 0; i < m183_mutNoInnerDispose.Body.Instructions.Count; i++)
@@ -1136,10 +1362,337 @@ namespace GodsPVZ.Actions.Verification
                 failedAssertions.Add("Mutant C.3 (omitted inner dispose) was not detected");
             }
 
-            // Evaluate 0x06000183 and 0x06000303 method status
-            bool chainCPass = passC1 && passC2 && passC3 && passC4 && passC5 && mutBeq_detected && mutAlpha_detected && mutNoInnerDispose_detected;
             methodPassStatus["0x06000303"] = passC1 && passC2;
-            methodPassStatus["0x06000183"] = chainCPass;
+            methodPassStatus["0x06000183"] = passC1 && passC2 && passC3 && passC4 && passC5 && mutBeq_detected && mutAlpha_detected && mutNoInnerDispose_detected;
+
+            // =================================================================
+            // CHAIN E1: 0x06000287 Map.GetMapGrids
+            // =================================================================
+            Console.WriteLine("[CHAIN E1] Translating and Executing 0x06000287 Map.GetMapGrids from Candidate CIL...");
+            var m287 = module.LookupToken(0x06000287) as MethodDefinition;
+            var fn287 = CandidateCilTranslator.CompileGetMapGrids287(m287);
+
+            TraceDisposeCollector.Clear();
+            var g1 = new MockGrid(1, 0, 0); var g2 = new MockGrid(2, 1, 0);
+            var g3 = new MockGrid(3, 0, 1); var g4 = new MockGrid(4, 1, 1);
+            var mapE1 = new MockMap();
+            mapE1.rows.Add(new MockRow { grids = new List<MockGrid> { g1, g2 } });
+            mapE1.rows.Add(new MockRow { grids = new List<MockGrid>() });
+            mapE1.rows.Add(new MockRow { grids = new List<MockGrid> { g3, g4 } });
+            var flatGrids = fn287(mapE1);
+            bool passE1_1 = (flatGrids != null && flatGrids.Count == 4
+                             && ReferenceEquals(flatGrids[0], g1) && ReferenceEquals(flatGrids[1], g2)
+                             && ReferenceEquals(flatGrids[2], g3) && ReferenceEquals(flatGrids[3], g4)
+                             && TraceDisposeCollector.Log.Contains("MockRow_Disposed")
+                             && TraceDisposeCollector.Log.Contains("MockGrid_Disposed"));
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E1.1_MultiRowFlattening",
+                ["target"] = "0x06000287",
+                ["input"] = "3 rows (2 with grids, 1 empty)",
+                ["expected"] = "4 grids in exact order, object identities preserved, both enumerators disposed",
+                ["observed"] = $"count={flatGrids?.Count}, trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
+                ["passed"] = passE1_1
+            });
+            if (!passE1_1)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000287 Case E1.1 failed");
+                failedAssertions.Add("0x06000287 Case E1.1 failed");
+            }
+
+            bool passE1_2 = false;
+            try { fn287(null); }
+            catch (NullReferenceException) { passE1_2 = true; }
+            catch (TargetInvocationException tie) when (tie.InnerException is NullReferenceException) { passE1_2 = true; }
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E1.2_NullReceiver",
+                ["target"] = "0x06000287",
+                ["input"] = "map=null",
+                ["expected_exception"] = "System.NullReferenceException",
+                ["passed"] = passE1_2
+            });
+            if (!passE1_2)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000287 Case E1.2 failed");
+                failedAssertions.Add("0x06000287 Case E1.2 failed");
+            }
+
+            TraceDisposeCollector.Clear();
+            var mapNullRowGrids = new MockMap();
+            mapNullRowGrids.rows.Add(new MockRow { grids = null });
+            bool passE1_3 = false;
+            try { fn287(mapNullRowGrids); }
+            catch (Exception ex)
+            {
+                var t = ex is TargetInvocationException tie ? tie.InnerException.GetType() : ex.GetType();
+                passE1_3 = (t == typeof(NullReferenceException)) && TraceDisposeCollector.Log.Contains("MockRow_Disposed");
+            }
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E1.3_NullRowGridsDisposed",
+                ["target"] = "0x06000287",
+                ["input"] = "rows=[grids=null]",
+                ["expected_exception"] = "System.NullReferenceException",
+                ["expected_trace"] = "[MockRow_Disposed]",
+                ["observed_trace"] = $"[{string.Join(", ", TraceDisposeCollector.Log)}]",
+                ["passed"] = passE1_3
+            });
+            if (!passE1_3)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000287 Case E1.3 failed");
+                failedAssertions.Add("0x06000287 Case E1.3 failed");
+            }
+
+            var m287_mutOmitAdd = CloneMethod(m287, "m287_mutOmitAdd");
+            var insAdd = m287_mutOmitAdd.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Callvirt && ((MethodReference)i.Operand).MetadataToken.ToInt32() == 0x0A0001B9);
+            insAdd.OpCode = Mono.Cecil.Cil.OpCodes.Pop;
+            insAdd.Operand = null;
+            m287_mutOmitAdd.Body.Instructions.Insert(m287_mutOmitAdd.Body.Instructions.IndexOf(insAdd), Instruction.Create(Mono.Cecil.Cil.OpCodes.Pop));
+            var fn287_mutOmitAdd = CandidateCilTranslator.CompileGetMapGrids287(m287_mutOmitAdd);
+            var resMutAdd = fn287_mutOmitAdd(mapE1);
+            bool mutAdd_detected = (resMutAdd != null && resMutAdd.Count == 0);
+            mutantsEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["id"] = "MUT_0287_OMIT_ADD",
+                ["target"] = "0x06000287",
+                ["site_offset"] = insAdd.Offset,
+                ["original"] = "callvirt List<Grid>.Add",
+                ["mutated"] = "pop; pop (stack-balanced drop)",
+                ["expected_on_candidate"] = "count=4",
+                ["observed_on_mutant"] = $"count={resMutAdd?.Count}",
+                ["detected"] = mutAdd_detected
+            });
+            if (!mutAdd_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant E1.1 (omit add) was not detected");
+                failedAssertions.Add("Mutant E1.1 (omit add) was not detected");
+            }
+
+            var m287_mutInnerDisp = CloneMethod(m287, "m287_mutInnerDisp");
+            var insInnerDisp = m287_mutInnerDisp.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Call && ((MethodReference)i.Operand).MetadataToken.ToInt32() == 0x0A0001BA);
+            int idxDisp = m287_mutInnerDisp.Body.Instructions.IndexOf(insInnerDisp);
+            m287_mutInnerDisp.Body.Instructions[idxDisp - 1].OpCode = Mono.Cecil.Cil.OpCodes.Nop;
+            m287_mutInnerDisp.Body.Instructions[idxDisp - 1].Operand = null;
+            m287_mutInnerDisp.Body.Instructions[idxDisp].OpCode = Mono.Cecil.Cil.OpCodes.Nop;
+            m287_mutInnerDisp.Body.Instructions[idxDisp].Operand = null;
+            var fn287_mutInnerDisp = CandidateCilTranslator.CompileGetMapGrids287(m287_mutInnerDisp);
+            TraceDisposeCollector.Clear();
+            fn287_mutInnerDisp(mapE1);
+            bool mutInnerDisp_detected = !TraceDisposeCollector.Log.Contains("MockGrid_Disposed") && TraceDisposeCollector.Log.Contains("MockRow_Disposed");
+            mutantsEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["id"] = "MUT_0287_OMIT_INNER_DISPOSE_BALANCED",
+                ["target"] = "0x06000287",
+                ["site_offset"] = insInnerDisp.Offset,
+                ["original"] = "ldloca.s 2; call Dispose",
+                ["mutated"] = "nop; nop (stack balanced, clean finally exit)",
+                ["expected_on_candidate"] = "trace includes MockGrid_Disposed",
+                ["observed_on_mutant"] = $"trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
+                ["detected"] = mutInnerDisp_detected
+            });
+            if (!mutInnerDisp_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant E1.2 (omit inner dispose) was not detected");
+                failedAssertions.Add("Mutant E1.2 (omit inner dispose) was not detected");
+            }
+
+            methodPassStatus["0x06000287"] = passE1_1 && passE1_2 && passE1_3 && mutAdd_detected && mutInnerDisp_detected;
+
+            // =================================================================
+            // CHAIN E2: 0x0600060A BoardEntry.FindKey
+            // =================================================================
+            Console.WriteLine("[CHAIN E2] Translating and Executing 0x0600060A BoardEntry.FindKey from Candidate CIL...");
+            var m60A = module.LookupToken(0x0600060A) as MethodDefinition;
+            var fn60A = CandidateCilTranslator.CompileFindKey60A(m60A);
+
+            var e1 = new MockBoardEntry(24, "flag", must: true, select: false);
+            var e2 = new MockBoardEntry(25, "zombie", must: false, select: true);
+            var e3 = new MockBoardEntry(36, "reward", must: true, select: false);
+            var e4 = new MockBoardEntry(0, "plain_entry");
+            var entryList = new List<MockBoardEntry> { e1, e2, e3, e4 };
+
+            TraceDisposeCollector.Clear();
+            var r60A_1 = fn60A(entryList, "flag_OC");
+            bool passE2_1 = (ReferenceEquals(r60A_1, e1) && TraceDisposeCollector.Log.Contains("MockBoardEntry_Disposed"));
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E2.1_Type24_MustTrue",
+                ["target"] = "0x0600060A",
+                ["input"] = "key=flag, type=24, must=true -> targetKey=flag_OC",
+                ["expected"] = "returns e1 reference, enumerator disposed",
+                ["passed"] = passE2_1
+            });
+            if (!passE2_1)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600060A Case E2.1 failed");
+                failedAssertions.Add("0x0600060A Case E2.1 failed");
+            }
+
+            var r60A_2 = fn60A(entryList, "zombie_CE");
+            bool passE2_2 = ReferenceEquals(r60A_2, e2);
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E2.2_Type25_SelectTrue",
+                ["target"] = "0x0600060A",
+                ["input"] = "key=zombie, type=25, select=true -> targetKey=zombie_CE",
+                ["expected"] = "returns e2 reference",
+                ["passed"] = passE2_2
+            });
+            if (!passE2_2)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600060A Case E2.2 failed");
+                failedAssertions.Add("0x0600060A Case E2.2 failed");
+            }
+
+            var r60A_3 = fn60A(entryList, "plain_entry");
+            bool passE2_3 = ReferenceEquals(r60A_3, e4);
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E2.3_Type0_PlainMatch",
+                ["target"] = "0x0600060A",
+                ["input"] = "key=plain_entry, type=0 -> targetKey=plain_entry",
+                ["expected"] = "returns e4 reference",
+                ["passed"] = passE2_3
+            });
+            if (!passE2_3)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600060A Case E2.3 failed");
+                failedAssertions.Add("0x0600060A Case E2.3 failed");
+            }
+
+            TraceDisposeCollector.Clear();
+            var r60A_4 = fn60A(entryList, "non_existent_key");
+            bool passE2_4 = (r60A_4 == null && TraceDisposeCollector.Log.Contains("MockBoardEntry_Disposed"));
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E2.4_NoMatchNull",
+                ["target"] = "0x0600060A",
+                ["input"] = "targetKey=non_existent_key",
+                ["expected"] = "returns null, enumerator disposed",
+                ["passed"] = passE2_4
+            });
+            if (!passE2_4)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600060A Case E2.4 failed");
+                failedAssertions.Add("0x0600060A Case E2.4 failed");
+            }
+
+            var m60A_mutEq = CloneMethod(m60A, "m60A_mutEq");
+            var insEqBranch = m60A_mutEq.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Brfalse || i.OpCode == Mono.Cecil.Cil.OpCodes.Brfalse_S);
+            insEqBranch.OpCode = Mono.Cecil.Cil.OpCodes.Brtrue_S;
+            var fn60A_mutEq = CandidateCilTranslator.CompileFindKey60A(m60A_mutEq);
+            var resMutEq = fn60A_mutEq(entryList, "non_existent_key");
+            bool mutEq_detected = (resMutEq != null);
+            mutantsEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["id"] = "MUT_060A_INVERT_EQUALITY",
+                ["target"] = "0x0600060A",
+                ["site_offset"] = insEqBranch.Offset,
+                ["original"] = "brfalse (continue on inequality)",
+                ["mutated"] = "brtrue (matches on inequality)",
+                ["expected_on_candidate"] = "returns null for non_existent_key",
+                ["observed_on_mutant"] = $"returned item with key={resMutEq?.key}",
+                ["detected"] = mutEq_detected
+            });
+            if (!mutEq_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant E2.1 was not detected");
+                failedAssertions.Add("Mutant E2.1 was not detected");
+            }
+
+            methodPassStatus["0x0600060A"] = passE2_1 && passE2_2 && passE2_3 && passE2_4 && mutEq_detected;
+
+            // =================================================================
+            // CHAIN E3: 0x060004BF Save.CompletenessTest
+            // =================================================================
+            Console.WriteLine("[CHAIN E3] Translating and Executing 0x060004BF Save.CompletenessTest from Candidate CIL...");
+            var m4BF = module.LookupToken(0x060004BF) as MethodDefinition;
+            var fn4BF = CandidateCilTranslator.CompileCompletenessTest4BF(m4BF);
+
+            TraceDisposeCollector.Clear();
+            var saveE3_1 = new MockSave();
+            saveE3_1.plantSaves.Add(new MockPlantSave(101));
+            saveE3_1.plantSaves.Add(new MockPlantSave(102));
+            var s5 = new MockSuppliesItem(5, "sup5");
+            var s2 = new MockSuppliesItem(2, "sup2");
+            var s8 = new MockSuppliesItem(8, "sup8");
+            var s1 = new MockSuppliesItem(1, "sup1");
+            saveE3_1.supplies = new List<MockSuppliesItem> { s5, s2, s8, s1 };
+            fn4BF(saveE3_1);
+            var sortedIDs = saveE3_1.supplies.Select(s => s.ID).ToList();
+            bool passE3_1 = (sortedIDs.SequenceEqual(new[] { 1, 2, 5, 8 })
+                             && ReferenceEquals(saveE3_1.supplies[0], s1)
+                             && saveE3_1.savesManager.reloadedList.Count == 2
+                             && TraceDisposeCollector.Log.Contains("MockPlantSave_Disposed"));
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E3.1_SortSuppliesAscending",
+                ["target"] = "0x060004BF",
+                ["input"] = "supplies IDs [5, 2, 8, 1], plantSaves count=2",
+                ["expected"] = "supplies sorted to [1, 2, 5, 8], plantSaves reloaded, enumerator disposed",
+                ["observed"] = $"sorted=[{string.Join(", ", sortedIDs)}], reloaded={saveE3_1.savesManager.reloadedList.Count}",
+                ["passed"] = passE3_1
+            });
+            if (!passE3_1)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x060004BF Case E3.1 failed");
+                failedAssertions.Add("0x060004BF Case E3.1 failed");
+            }
+
+            TraceDisposeCollector.Clear();
+            var saveFault = new MockSave();
+            saveFault.plantSaves.Add(new MockPlantSave(201));
+            saveFault.savesManager.throwOnReload = true;
+            bool passE3_2 = false;
+            try { fn4BF(saveFault); }
+            catch (Exception ex)
+            {
+                var t = ex is TargetInvocationException tie ? tie.InnerException.GetType() : ex.GetType();
+                passE3_2 = (t == typeof(InvalidOperationException)) && TraceDisposeCollector.Log.Contains("MockPlantSave_Disposed");
+            }
+            casesEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["case_id"] = "E3.2_ExceptionDuringReloadDisposed",
+                ["target"] = "0x060004BF",
+                ["input"] = "savesManager.throwOnReload=true",
+                ["expected_exception"] = "System.InvalidOperationException",
+                ["expected_trace"] = "[MockPlantSave_Disposed]",
+                ["observed_trace"] = $"[{string.Join(", ", TraceDisposeCollector.Log)}]",
+                ["passed"] = passE3_2
+            });
+            if (!passE3_2)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x060004BF Case E3.2 failed");
+                failedAssertions.Add("0x060004BF Case E3.2 failed");
+            }
+
+            var m4BF_mutSort = CloneMethod(m4BF, "m4BF_mutSort");
+            var insCmp = m4BF_mutSort.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ble || i.OpCode == Mono.Cecil.Cil.OpCodes.Ble_S);
+            insCmp.OpCode = Mono.Cecil.Cil.OpCodes.Bge_S;
+            var fn4BF_mutSort = CandidateCilTranslator.CompileCompletenessTest4BF(m4BF_mutSort);
+            var saveMutSort = new MockSave { supplies = new List<MockSuppliesItem> { new(5), new(2), new(8), new(1) } };
+            fn4BF_mutSort(saveMutSort);
+            var resMutSort = saveMutSort.supplies.Select(s => s.ID).ToList();
+            bool mutSort_detected = !resMutSort.SequenceEqual(new[] { 1, 2, 5, 8 });
+            mutantsEvaluatedList.Add(new Dictionary<string, object>
+            {
+                ["id"] = "MUT_04BF_INVERT_SORT_ORDER",
+                ["target"] = "0x060004BF",
+                ["site_offset"] = insCmp.Offset,
+                ["original"] = "ble (ascending bubble swap)",
+                ["mutated"] = "bge (descending bubble swap)",
+                ["expected_on_candidate"] = "[1, 2, 5, 8]",
+                ["observed_on_mutant"] = $"[{string.Join(", ", resMutSort)}]",
+                ["detected"] = mutSort_detected
+            });
+            if (!mutSort_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant E3.1 was not detected");
+                failedAssertions.Add("Mutant E3.1 was not detected");
+            }
+
+            methodPassStatus["0x060004BF"] = passE3_1 && passE3_2 && mutSort_detected;
 
             // =================================================================
             // Evaluation Status and Detailed Accounting for Native116 (50 methods)
@@ -1228,8 +1781,8 @@ namespace GodsPVZ.Actions.Verification
                     {
                         entry["status"] = "PASS";
                         entry["verification_tier"] = "REAL_CIL_TRANSLATED_EXECUTION";
-                        entry["cases_executed"] = (item.Token == 0x0600001C) ? 5 : 5;
-                        entry["mutants_detected"] = (item.Token == 0x0600001C) ? 3 : 3;
+                        entry["cases_executed"] = casesEvaluatedList.Count(c => (string)c["target"] == tokStr);
+                        entry["mutants_detected"] = mutantsEvaluatedList.Count(m => (string)m["target"] == tokStr && (bool)m["detected"]);
                         genuinelyPassedMethods++;
                     }
                     else
@@ -1258,7 +1811,6 @@ namespace GodsPVZ.Actions.Verification
                 fiftyDict[tokStr] = entry;
             }
 
-            // Record getters
             report["getter_executions"] = new Dictionary<string, object>
             {
                 ["0x06000158"] = new Dictionary<string, object>
@@ -1279,9 +1831,8 @@ namespace GodsPVZ.Actions.Verification
 
             report["fifty_methods_behavior"] = fiftyDict;
 
-            // Accurate Summary
             int totalMethodsFailed = failedAssertions.Count > 0 ? Math.Max(1, genuinelyFailedMethods) : 0;
-            string overallStatus = (totalMethodsFailed == 0) ? "PARTIAL_CHAIN_VERIFIED_STAGE1" : "FAILED_ASSERTIONS";
+            string overallStatus = (totalMethodsFailed == 0) ? "PARTIAL_CHAIN_VERIFIED_STAGE2" : "FAILED_ASSERTIONS";
 
             report["summary"] = new Dictionary<string, object>
             {
@@ -1289,6 +1840,8 @@ namespace GodsPVZ.Actions.Verification
                 ["methods_genuinely_passed"] = genuinelyPassedMethods,
                 ["methods_unsupported_engine_context"] = unsupportedEngineMethods,
                 ["pending_before"] = 26,
+                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF" },
+                ["newly_executed_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF" },
                 ["pending_after"] = notYetExecutedMethods,
                 ["methods_not_yet_executed"] = notYetExecutedMethods,
                 ["methods_failed"] = totalMethodsFailed,
@@ -1304,6 +1857,7 @@ namespace GodsPVZ.Actions.Verification
 
             Console.WriteLine("-----------------------------------------------------------------");
             Console.WriteLine($"EXECUTION SUMMARY: {genuinelyPassedMethods} genuinely passed, {unsupportedEngineMethods} unsupported engine context, {notYetExecutedMethods} not yet executed");
+            Console.WriteLine($"Pending before: 26 -> Pending after: {notYetExecutedMethods}");
             Console.WriteLine($"Total cases executed: {casesEvaluatedList.Count}, Mutants tested: {mutantsEvaluatedList.Count}, Detected: {mutantsEvaluatedList.Count(m => (bool)m["detected"])}");
             Console.WriteLine($"Failed assertions count: {failedAssertions.Count}");
             Console.WriteLine($"Overall Status: {overallStatus}");
