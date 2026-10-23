@@ -1,15 +1,9 @@
-# Bulk401 generic repairs ¡ª 2026-10-24
+# Bulk401 generic repair checkpoint ¡ª 2026-10-24
 
-Current R4's 38 Apple compiler diagnostics in three generated files bind to eleven exact managed definitions. `SwfList<T>.Push` is a twelfth damaged required dependency. This revision constructs all 401 scoped methods directly from Native93 `b0742241¡­`, preserving the prior 389 method bodies byte for byte. It does not modify generated C++ or the frozen checkers.
+See CURRENT-RESULT.json for current gate states and METHODBODY-SPEC.md for exact methods, original-native evidence and remaining limits. The candidate is `6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae`.
 
-Original native generic binding is recovered through CodeRegistration `0x1815e88c0`, MetadataRegistration `0x1818c6d00`, the MethodSpec table, and original Assembly-CSharp RGCTX records. The Map wrapper's indirect call resolves to the untouched four-argument generic overload 0x06000290. The generic address/field/signature evidence and source are in BULK401-SOURCE.zip.
+Completed: twelve scoped reconstructions (11 direct errors + damaged Push dependency); deterministic build; reopened isolation of 1916 non-target methods and byte-identical inherited 389 bodies; legal member access; finite closed-context static checks; actual candidate CIL tests with semantic mutants; fresh Linux IL2CPP plus all 1030 generated C/C++ units and independent complete log/hash readback.
 
-The repair restores real list/dictionary calls and correctly bound generic `!0/!1` arguments; Pop reads its value before clearing the slot to default(T); Push restores allocation/copy/store and mutation order; item bounds are unsigned; Unity GetComponent retains the `op_Implicit` check and optional AddComponent. Add calls the repaired public Push instead of illegally accessing another class's private fields.
+Apple compiler precheck is next. New-candidate Unity export, final Xcode build/link, IPA packaging and game/device acceptance are pending. Native dynamic equivalence is not claimed. Main and prior accepted inputs remain unchanged; full known-bad R4 retries remain blocked.
 
-Reopened isolation: 1916 non-target methods unchanged, all prior 389 repaired bodies identical, original Native93 slots preserved, six MemberRefs/five local signatures/one MethodSpec appended. Two builds produce the same bytes. The independently executed member-access checker reports no rejected or unresolved reference among 401 targets.
-
-The existing static checker cannot model these generic receiver contexts and reference boxing precisely. GENERIC-STATIC-FIRST.json preserves its failures. They are not reported as PASS. Closed-context and actual CLR testing remain pending at this checkpoint.
-
-The new manual-only `bulk401-generic-compiler-check.yml` regenerates C++ for the real damaged R4 as a negative control and for the new fixed candidate, then compiles every generated CPP and metadata C with no error limit. This is a Linux compiler precheck: it does not activate Unity or export/build/package an IPA. Full export remains blocked for the known-bad R4; main is unchanged.
-
-No gameplay semantic qualification or IPA is claimed.
+BULK401-SOURCE.zip contains aggregate construction source and native evidence. RUNTIME-AND-REVIEW-TOOLS.zip contains the executable CLR fixture, independent audit tools, controls and their preserved first failures. MEMBER-ACCESS-RAW.zip preserves the full reopened reference audit; MEMBER-ACCESS.json is its summary. compiler-40012442171 includes the complete compiler report, per-file identities and all raw compiler logs. The 152 MB generated archive stays attached to the named Actions run; its SHA-256 is in COMPILER-READBACK.json.

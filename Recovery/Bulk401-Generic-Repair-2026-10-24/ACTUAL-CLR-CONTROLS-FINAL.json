@@ -1,0 +1,86 @@
+{
+  "controls": [
+    {
+      "name": "positive_candidate",
+      "sha256": "6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae",
+      "exit": 0,
+      "expected_failure": null,
+      "matched_expected": true,
+      "assertions": 269,
+      "error": null
+    },
+    {
+      "name": "pop_returns_default",
+      "sha256": "244d00c41031772128c8021c9fd88faa16a77ffb1352566cf9b7c0a11aeb1757",
+      "exit": 1,
+      "expected_failure": "ASSERT Pop returns previous last",
+      "matched_expected": true,
+      "assertions": 1,
+      "error": "System.InvalidOperationException: ASSERT Pop returns previous last\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunList(Assembly asm, Type valueType, Object a, Object b, Object c) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 44\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 121"
+    },
+    {
+      "name": "index_uses_signed_bounds",
+      "sha256": "f458d01d04c812e433f01f317332d7a7bb4d5643d390a1a61900198b63e156e7",
+      "exit": 1,
+      "expected_failure": "ASSERT unsigned index rejects negative before data null",
+      "matched_expected": true,
+      "assertions": 13,
+      "error": "System.InvalidOperationException: ASSERT unsigned index rejects negative before data null exception=NullReferenceException\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.Throws[T](Action act, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 37\r\n   at Program.RunList(Assembly asm, Type valueType, Object a, Object b, Object c) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 56\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 121"
+    },
+    {
+      "name": "dictionary_getter_returns_zero",
+      "sha256": "5eb2f558a10b429a7ceb7d77da832d147ebc9e3e6f97616fc6ce6f64008f92cd",
+      "exit": 1,
+      "expected_failure": "ASSERT Assoc key query delegates to dictionary",
+      "matched_expected": true,
+      "assertions": 77,
+      "error": "System.InvalidOperationException: ASSERT Assoc key query delegates to dictionary\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunAssoc[T](Assembly asm, T a, T b, T missing) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 80\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 124"
+    },
+    {
+      "name": "assoc_caches_list_before_callback",
+      "sha256": "57e4f85f1850ad24817a0af257a39b66421dcb292f5cd57f59bd6ab7ebcd1163",
+      "exit": 1,
+      "expected_failure": "ASSERT Assoc reload list after Add callback",
+      "matched_expected": true,
+      "assertions": 85,
+      "error": "System.InvalidOperationException: ASSERT Assoc reload list after Add callback\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunAssoc[T](Assembly asm, T a, T b, T missing) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 97\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 124"
+    },
+    {
+      "name": "push_omits_existing_array_copy",
+      "sha256": "3eae2a7f4193a35be1cf7da802c1abb8760ae757ce903c0556ee7af8bd34973b",
+      "exit": 1,
+      "expected_failure": "ASSERT Push copies original items and appends",
+      "matched_expected": true,
+      "assertions": 20,
+      "error": "System.InvalidOperationException: ASSERT Push copies original items and appends\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunList(Assembly asm, Type valueType, Object a, Object b, Object c) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 66\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 121"
+    },
+    {
+      "name": "map_wrong_minimum",
+      "sha256": "842167ffce24e861d896aa7f0a036c98aec40d8987a8396d5c3e6bad77b437e2",
+      "exit": 1,
+      "expected_failure": "ASSERT Map forwards value and inclusive bounds",
+      "matched_expected": true,
+      "assertions": 111,
+      "error": "System.InvalidOperationException: ASSERT Map forwards value and inclusive bounds\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunMapWrapper[T](MethodDefinition method, T value) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Wrappers.cs:line 81\r\n   at Program.RunControlledWrappers(String dll) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Wrappers.cs:line 88\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 125"
+    },
+    {
+      "name": "component_inverts_unity_truthiness",
+      "sha256": "4887d2e20b20ea9331503402765ed6a55e9c3265fb2bf6441517a9635cde8c69",
+      "exit": 1,
+      "expected_failure": "ASSERT GetComponent return identity with fake-null",
+      "matched_expected": true,
+      "assertions": 263,
+      "error": "System.InvalidOperationException: ASSERT GetComponent return identity with fake-null\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunControlledWrappers(String dll) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Wrappers.cs:line 98\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 125"
+    },
+    {
+      "name": "damaged_r4",
+      "sha256": "ef1992326d1ee494a389bc2c78bdfab131721434c0b08ab5f41dbc3e506c4e48",
+      "exit": 1,
+      "expected_failure": "ASSERT Pop returns previous last",
+      "matched_expected": true,
+      "assertions": 1,
+      "error": "System.InvalidOperationException: ASSERT Pop returns previous last\r\n   at Program.Need(Boolean ok, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 14\r\n   at Program.RunList(Assembly asm, Type valueType, Object a, Object b, Object c) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 44\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk400-generic-repair-2026-10-24\\runtime\\Program.cs:line 121"
+    }
+  ],
+  "all_matched": true
+}
