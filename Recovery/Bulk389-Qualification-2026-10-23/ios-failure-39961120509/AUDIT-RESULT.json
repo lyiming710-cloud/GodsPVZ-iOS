@@ -1,0 +1,55 @@
+{
+  "scope": "BROAD_BUILD_PIPELINE_AUDIT_NOT_GAME_SEMANTIC_ACCEPTANCE",
+  "failed_run": 39961120509,
+  "primary_failure": {
+    "unity_exit": 0,
+    "compiler_error_lines": [
+      "error CS2001: Source file '/home/runner/work/_temp/stage9-bulk389-ios/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Editor/GodsPVZPackageReferenceMigrator.cs' could not be found."
+    ],
+    "failure": "STALE_SOURCE_IN_CACHED_BEE_RESPONSE_FILE_REJECTED_BY_LOG_GATE"
+  },
+  "cleanup_failure": {
+    "exit": 28,
+    "message": "ULF file not found",
+    "github_step_green_was_not_return_success": true,
+    "historical_seat_return": "NOT_CONFIRMED"
+  },
+  "actual_candidate_sha256": "ef1992326d1ee494a389bc2c78bdfab131721434c0b08ab5f41dbc3e506c4e48",
+  "game_dll_modified_this_audit": false,
+  "helper_compile_results": [
+    {
+      "name": "baseline",
+      "exit": 0,
+      "cs2001": false
+    },
+    {
+      "name": "candidate",
+      "exit": 0,
+      "cs2001": false
+    },
+    {
+      "name": "deleted_source_negative",
+      "exit": 1,
+      "cs2001": true
+    }
+  ],
+  "helper_compiler_limit": "Local .NET 10 Roslyn against preserved Unity/Mono references; exact Linux Editor compiler is now a CI pre-activation gate",
+  "workflow_checks": {
+    "actionlint_exit": 0,
+    "shellcheck_executed": false,
+    "embedded_python_parsed": 4,
+    "python_scripts_parsed": 5,
+    "workflow_sha256": "f3705c05d70757ae37c6f27868e29284b6f00c2f4fcc8adf87ae8f0442b0ecb6"
+  },
+  "controls_passed": 17,
+  "existing_asset_risks": [
+    "Case-colliding R3 animation/sprite/texture names reported by Unity; preserved, visual selection unverified",
+    "Headless shader fallback warnings retained; no claim of rendering acceptance"
+  ],
+  "historical_reference_issue": "Local 73990144-byte Native18 Xcode tar.zst failed tar listing (truncated); not used as input to the new build",
+  "real_unity_rerun": "NOT_STARTED_AT_AUDIT_ARCHIVE_CREATION",
+  "xcode": "NOT_RUN",
+  "ipa": null,
+  "xcode_archive_preserved_even_if_cleanup_fails": true,
+  "local_cli_help_evidence": "licensing-client-help-local.txt (Hub client 1.18.3; exact CI client support separately gated)"
+}

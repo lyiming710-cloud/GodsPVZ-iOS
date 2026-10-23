@@ -1,3 +1,5 @@
+**最新：真实流程 39961120509 已失败于重新导入的 CS2001 日志门；未进入 Xcode，无 IPA。已做扩大检查并修复构建工作副本切换，候选 DLL 未改。见 [扩大审查记录](ios-failure-39961120509/README.md)。后文启动时的观测按历史保留。**
+
 # Bulk389 R4：候选集成与静态验证检查点，2026-10-23
 
 **最新进展：R4 已通过 [Linux 编译诊断 39957635669](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39957635669)，14 个游戏 TU 全部零错误；[真实 Unity → Xcode → 未签名 IPA 流程 39961120509](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39961120509) 已启动，尚未回收 IPA。以下保留完整验证层次与历史失败。**
