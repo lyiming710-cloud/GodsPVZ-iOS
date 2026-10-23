@@ -6,11 +6,15 @@ from pathlib import Path
 import hashlib
 import json
 import zipfile
+import argparse
 
 repo = Path(__file__).resolve().parents[2]
 root = repo / 'Recovery/Bulk389-Qualification-2026-10-23'
 known = json.loads((root / 'COMBINED-GENERATED-SYNTAX-CENSUS.json').read_text('utf-8'))
-with zipfile.ZipFile(root / 'BULK389-R4-CANDIDATE.zip') as archive:
+parser = argparse.ArgumentParser()
+parser.add_argument('--candidate-zip', default=str(root / 'BULK389-R4-CANDIDATE.zip'))
+args = parser.parse_args()
+with zipfile.ZipFile(args.candidate_zip) as archive:
     dlls = [name for name in archive.namelist() if name.endswith('.dll')]
     if len(dlls) != 1:
         raise ValueError('Exactly one candidate DLL required')

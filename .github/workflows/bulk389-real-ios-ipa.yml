@@ -1,4 +1,4 @@
-name: Bulk389 R4 REAL Unity Xcode unsigned IPA diagnostic gate
+name: Bulk401 REAL Unity Xcode unsigned IPA diagnostic gate
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: bulk389-r4-real-ios-ipa
+  group: bulk401-real-ios-ipa
   cancel-in-progress: false
 
 jobs:
@@ -24,24 +24,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Reject exact candidates with already proven compiler failures before setup
-        run: python3 scripts/actions/reject_known_cpp_failures.py
+        run: python3 scripts/actions/reject_known_cpp_failures.py --candidate-zip Recovery/Bulk401-Generic-Repair-2026-10-24/BULK401-CANDIDATE.zip
       - name: Run license-free pipeline regression controls
-        run: python3 scripts/actions/check_bulk389_pipeline.py > "$RUNNER_TEMP/BULK389-PIPELINE-CONTROLS.json"
-      - uses: actions/download-artifact@v4
-        with:
-          github-token: ${{ github.token }}
-          repository: lyiming710-cloud/GodsPVZ-iOS
-          run-id: 39957635669
-          name: Bulk389-R4-compiler-39957635669-1
-          path: ${{ runner.temp }}/prior-compiler
+        run: python3 scripts/actions/check_bulk401_pipeline.py > "$RUNNER_TEMP/BULK401-PIPELINE-CONTROLS.json"
       - name: Bind exact compiler input; no semantic promotion
         run: |
-          python3 scripts/actions/bind_bulk389_compiler_package.py --prior "$RUNNER_TEMP/prior-compiler" --output "$RUNNER_TEMP/bulk389-package"
-          cp "$RUNNER_TEMP/BULK389-PIPELINE-CONTROLS.json" "$RUNNER_TEMP/bulk389-package/"
+          python3 scripts/actions/bind_bulk401_compiler_package.py --output "$RUNNER_TEMP/bulk401-package"
+          cp "$RUNNER_TEMP/BULK401-PIPELINE-CONTROLS.json" "$RUNNER_TEMP/bulk401-package/"
       - uses: actions/upload-artifact@v4
         with:
-          name: Stage9-bulk389-conversion-qualified
-          path: ${{ runner.temp }}/bulk389-package/
+          name: Stage9-bulk401-conversion-qualified
+          path: ${{ runner.temp }}/bulk401-package/
           if-no-files-found: error
           retention-days: 90
 
@@ -77,7 +70,7 @@ jobs:
       BASE_RUNTIME_SHA256: '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
-      TEST_DLL_SHA256: 'ef1992326d1ee494a389bc2c78bdfab131721434c0b08ab5f41dbc3e506c4e48'
+      TEST_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -95,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           mkdir -p "$E"
           if ! command -v xvfb-run >/dev/null 2>&1 || ! command -v glxinfo >/dev/null 2>&1; then
@@ -126,7 +119,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           mkdir -p "$OUT/evidence" "$OUT/candidate" "$OUT/semantic-gate"
           if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
             echo 'UNITY_EMAIL or UNITY_PASSWORD secret missing' >&2
@@ -142,7 +135,7 @@ jobs:
           base_runtime_run=$BASE_RUNTIME_RUN_ID
           b001_sha256=$B001_SHA256
           test_dll_sha256=$TEST_DLL_SHA256
-          bulk389_semantic_formalization=NO
+          bulk401_semantic_formalization=NO
           editor_run=$EDITOR_RUN_ID
           editor_sha256=$EDITOR_SHA256
           ios_module_run=$IOS_MODULE_RUN_ID
@@ -152,26 +145,27 @@ jobs:
           production_promotion=NO_ISOLATED_GATE_ONLY
           EOF
 
-      - name: Download same-run conversion-qualified bulk389 candidate
+      - name: Download same-run conversion-qualified bulk401 candidate
         uses: actions/download-artifact@v4
         with:
-          name: Stage9-bulk389-conversion-qualified
-          path: ${{ runner.temp }}/stage9-bulk389-ios/bulk389-qualified
+          name: Stage9-bulk401-conversion-qualified
+          path: ${{ runner.temp }}/stage9-bulk401-ios/bulk401-qualified
 
-      - name: Verify bulk389 candidate provenance and exact hash
+      - name: Verify bulk401 candidate provenance and exact hash
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           python3 - "$OUT" "$TEST_DLL_SHA256" "$GITHUB_SHA" <<'PY'
           from pathlib import Path
           import sys,json,hashlib,shutil
-          out=Path(sys.argv[1]);src=out/'bulk389-qualified'
+          out=Path(sys.argv[1]);src=out/'bulk401-qualified'
           p=json.loads((src/'PROVENANCE.json').read_text())
-          assert p['status']=='BULK389_R4_LINUX_COMPILER_PASS'
+          assert p['status']=='BULK401_LINUX_AND_APPLE_CPP_PRECHECK_PASS'
           assert p['linux_compiler']['exit']==0 and p['linux_compiler']['failed_game_tus']==0 and p['linux_compiler']['diagnostics']==0
           assert p['source_commit']==sys.argv[3]
-          dll=src/'Assembly-CSharp-bulk389.dll'
+          assert p['apple_compiler']['all_generated']==1030 and p['apple_compiler']['failed']==0
+          dll=src/'Assembly-CSharp-bulk401.dll'
           assert hashlib.sha256(dll.read_bytes()).hexdigest()==sys.argv[2]
           assert p['outputs']['unlinked']['sha256']==sys.argv[2]
           name=(src/'candidate-assembly-name.txt').read_text().strip()
@@ -180,7 +174,7 @@ jobs:
           for n in ('PROVENANCE.json','candidate-inspection.txt','candidate-assembly-name.txt'):
               shutil.copy2(src/n,out/'evidence'/n)
           PY
-          echo 'BULK389_CONVERSION_QUALIFIED_INPUT_PASS'
+          echo 'BULK401_CONVERSION_QUALIFIED_INPUT_PASS'
 
       - name: Download exact cached R3 archive
         uses: actions/download-artifact@v4
@@ -190,13 +184,13 @@ jobs:
           run-id: ${{ env.R3_ARCHIVE_RUN_ID }}
           pattern: Stage9.1-r3-exact-archive
           merge-multiple: true
-          path: ${{ runner.temp }}/stage9-bulk389-ios/r3-cache
+          path: ${{ runner.temp }}/stage9-bulk401-ios/r3-cache
 
       - name: Reconstruct exact R3 project
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           mapfile -t R3_ARCHIVES < <(find "$OUT/r3-cache" -maxdepth 1 -type f -name '*.tar.zst' | sort)
           [ "${#R3_ARCHIVES[@]}" = '1' ] || exit 45
@@ -260,7 +254,7 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.BASE_RUNTIME_RUN_ID }}
           name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
-          path: ${{ runner.temp }}/stage9-bulk389-ios/base-runtime
+          path: ${{ runner.temp }}/stage9-bulk401-ios/base-runtime
 
       - name: Download package GUID evidence
         uses: actions/download-artifact@v4
@@ -269,7 +263,7 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.PACKAGE_GUID_RUN_ID }}
           name: HF46-package-reference-evidence
-          path: ${{ runner.temp }}/stage9-bulk389-ios/package-guid-evidence
+          path: ${{ runner.temp }}/stage9-bulk401-ios/package-guid-evidence
 
       - name: Download pinned package bundle
         uses: actions/download-artifact@v4
@@ -278,7 +272,7 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.PACKAGE_BUNDLE_RUN_ID }}
           name: Stage9.1-pinned-unity-packages
-          path: ${{ runner.temp }}/stage9-bulk389-ios/package-bundle
+          path: ${{ runner.temp }}/stage9-bulk401-ios/package-bundle
 
       - name: Download package dependency closure
         uses: actions/download-artifact@v4
@@ -287,13 +281,13 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.PACKAGE_CLOSURE_RUN_ID }}
           name: Stage9.1-package-dependency-closure
-          path: ${{ runner.temp }}/stage9-bulk389-ios/package-closure
+          path: ${{ runner.temp }}/stage9-bulk401-ios/package-closure
 
       - name: Integrate baseline and embedded packages
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           PROJECT="$(cat "$OUT/project-path.txt")"
           DLL="$OUT/base-runtime/GodsPVZRuntime1-bgmvolume.dll"
@@ -342,13 +336,13 @@ jobs:
           run-id: ${{ env.EDITOR_RUN_ID }}
           pattern: Stage9.1-unity-china-editor-part-*
           merge-multiple: true
-          path: ${{ runner.temp }}/stage9-bulk389-ios/editor-parts
+          path: ${{ runner.temp }}/stage9-bulk401-ios/editor-parts
 
       - name: Reconstruct exact Unity China Editor
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           PARTS="$OUT/editor-parts"
           ROOT="$OUT/editor-root"
@@ -376,13 +370,13 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.IOS_MODULE_RUN_ID }}
           name: Stage9.1-unity-china-ios-module-c3ae09b9f03c
-          path: ${{ runner.temp }}/stage9-bulk389-ios/ios-module
+          path: ${{ runner.temp }}/stage9-bulk401-ios/ios-module
 
       - name: Overlay validated iOS module
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           ROOT="$OUT/editor-root"
           MOD="$OUT/ios-module/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
@@ -401,7 +395,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -420,7 +414,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
@@ -437,7 +431,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -453,7 +447,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -470,38 +464,38 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_bulk389_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk389.dll" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_bulk401_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
 
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
           PLUGIN="$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           set +e
-          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import-after-bulk389.log"
+          "$UNITY" -batchmode -nographics -quit -projectPath "$PROJECT" -logFile "$E/import-after-bulk401.log"
           RC=$?
           set -e
-          echo "$RC" > "$E/import-after-bulk389-exit.txt"
+          echo "$RC" > "$E/import-after-bulk401-exit.txt"
           [ "$RC" -eq 0 ] || exit 63
-          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import-after-bulk389.log"; then exit 64; fi
+          if grep -Eiq '\berror CS[0-9]+\b|Scripts have compiler errors|Compilation failed' "$E/import-after-bulk401.log"; then exit 64; fi
           GOT="$(sha256sum "$PLUGIN" | awk '{print $1}')"
           echo "$GOT" > "$E/test-dll-after-reimport.sha256"
           [ "$GOT" = "$TEST_DLL_SHA256" ] || exit 65
 
-      - name: Export unsigned iOS Xcode project with bulk389 candidate
+      - name: Export unsigned iOS Xcode project with bulk401 candidate
         shell: bash
         env:
-          GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-bulk389-ios/xcode
+          GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-bulk401-ios/xcode
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -520,12 +514,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           X="$OUT/xcode"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/bulk389_export_binding.py --xcode-dir "$X" --plugin "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
-          cp "$X/bulk389-export-binding.json" "$E/"
+          python3 scripts/actions/bulk401_export_binding.py --xcode-dir "$X" --plugin "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
+          cp "$X/bulk401-export-binding.json" "$E/"
           PBX="$X/Unity-iPhone.xcodeproj/project.pbxproj"
           test -f "$PBX"
           test -d "$X/Classes"
@@ -545,8 +539,8 @@ jobs:
             echo 'IOS_XCODE_EXPORT=PASS'
             echo "unity_version=$UNITY_VERSION"
             echo "test_dll_sha256=$TEST_DLL_SHA256"
-            echo 'bulk389_runtime_qualification=NOT_YET_PERFORMED'
-            echo 'bulk389_direct_il2cpp_conversion=PASS'
+            echo 'bulk401_runtime_qualification=NOT_YET_PERFORMED'
+            echo 'bulk401_direct_il2cpp_conversion=PASS'
             echo 'bundle_id=com.tipsGodsStudio.godsPVZ'
             echo 'deployment_target=12.0'
             echo 'scenes=Assets/Scenes/MainMenu.unity,Assets/Scenes/Board.unity'
@@ -558,15 +552,15 @@ jobs:
           sha256sum "$X/Data/Managed/Metadata/global-metadata.dat" > "$E/generated-global-metadata.sha256"
           sha256sum "$X/Il2CppOutputProject/Source/il2cppOutput/$ASSEMBLY.cpp" > "$E/generated-assembly-csharp-cpp.sha256"
           grep -E 'PRODUCT_BUNDLE_IDENTIFIER|IPHONEOS_DEPLOYMENT_TARGET' "$PBX" | sort -u > "$E/pbx-settings.txt"
-          tar --zstd -cf "$OUT/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst" -C "$OUT" xcode
-          sha256sum "$OUT/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst" > "$E/xcode-archive.sha256"
+          tar --zstd -cf "$OUT/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst" -C "$OUT" xcode
+          sha256sum "$OUT/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst" > "$E/xcode-archive.sha256"
 
       - name: Return Personal seat
         if: always()
         shell: bash
         run: |
           set -uo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk389-ios"
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           E="$OUT/evidence"
           if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
             UNITY="$(cat "$OUT/unity-path.txt")"
@@ -583,14 +577,14 @@ jobs:
         if: always()
         shell: bash
         run: |
-          python3 scripts/actions/sanitize_unity_evidence.py "$RUNNER_TEMP/stage9-bulk389-ios/evidence" "$RUNNER_TEMP/stage9-bulk389-ios/public-evidence"
+          python3 scripts/actions/sanitize_unity_evidence.py "$RUNNER_TEMP/stage9-bulk401-ios/evidence" "$RUNNER_TEMP/stage9-bulk401-ios/public-evidence"
 
       - name: Upload real Unity gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Stage9-bulk389-REAL-UNITY-IOS-EVIDENCE
-          path: ${{ runner.temp }}/stage9-bulk389-ios/public-evidence/
+          name: Stage9-bulk401-REAL-UNITY-IOS-EVIDENCE
+          path: ${{ runner.temp }}/stage9-bulk401-ios/public-evidence/
           if-no-files-found: warn
           retention-days: 90
           include-hidden-files: true
@@ -600,8 +594,8 @@ jobs:
         if: always() && steps.xcode_audit.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: GodsPVZ-Stage9-bulk389-unsigned-Xcode
-          path: ${{ runner.temp }}/stage9-bulk389-ios/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst
+          name: GodsPVZ-Stage9-bulk401-unsigned-Xcode
+          path: ${{ runner.temp }}/stage9-bulk401-ios/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst
           if-no-files-found: error
           retention-days: 90
           compression-level: 0
@@ -621,7 +615,7 @@ jobs:
       - name: Download exported Xcode project archive
         uses: actions/download-artifact@v4
         with:
-          name: GodsPVZ-Stage9-bulk389-unsigned-Xcode
+          name: GodsPVZ-Stage9-bulk401-unsigned-Xcode
           path: ${{ runner.temp }}/xcode-input
 
       - name: Extract Xcode project
@@ -633,7 +627,13 @@ jobs:
           command -v zstd >/dev/null || brew install zstd
           mkdir -p "${{ runner.temp }}/build"
           zstd -dc "$ARCHIVE" | tar -xf - -C "${{ runner.temp }}/build"
-          python3 scripts/actions/bulk389_export_binding.py --xcode-dir "$RUNNER_TEMP/build/xcode"
+          python3 scripts/actions/bulk401_export_binding.py --xcode-dir "$RUNNER_TEMP/build/xcode"
+
+      - name: Check all actual-export generated C and CPP before Xcode build
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/audit_bulk401_real_export.py --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/actual-export-compiler"
 
       - name: Compile iOS ARM64 Binary via Xcode
         shell: bash
@@ -641,7 +641,7 @@ jobs:
           set -euo pipefail
           X="${{ runner.temp }}/build/xcode"
           LOG="${{ runner.temp }}/build/xcodebuild.log"
-          echo "=== Building Xcode Project with Apple Clang (fixed Bulk389 R4 input) ==="
+          echo "=== Building Xcode Project with Apple Clang (fixed Bulk401 input) ==="
           xcodebuild \
             -project "$X/Unity-iPhone.xcodeproj" \
             -scheme Unity-iPhone \
@@ -668,15 +668,16 @@ jobs:
           set -euo pipefail
           APP_FOUND="$(find "$RUNNER_TEMP/build/DerivedData/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' -type d | head -n1)"
           test -d "$APP_FOUND"
-          python3 scripts/actions/package_bulk389_ipa.py --app "$APP_FOUND" --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/ipa-output"
+          python3 scripts/actions/package_bulk401_ipa.py --app "$APP_FOUND" --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/ipa-output"
 
       - name: Preserve Apple build logs even on failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk389-R4-APPLE-BUILD-EVIDENCE
+          name: Bulk401-APPLE-BUILD-EVIDENCE
           path: |
             ${{ runner.temp }}/build/xcodebuild.log
+            ${{ runner.temp }}/actual-export-compiler/
             ${{ runner.temp }}/ipa-output/IPA-VALIDATION.json
           if-no-files-found: warn
           retention-days: 90
@@ -684,7 +685,7 @@ jobs:
       - name: Upload Unsigned IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GodsPVZ_1.0.2_bulk389_unsigned_ipa
+          name: GodsPVZ_1.0.2_bulk401_unsigned_ipa
           path: ${{ runner.temp }}/ipa-output/*.ipa
           retention-days: 90
           if-no-files-found: error
