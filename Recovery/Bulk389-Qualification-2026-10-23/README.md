@@ -1,5 +1,7 @@
 # Bulk389 R4：候选集成与静态验证检查点，2026-10-23
 
+**最新进展：R4 已通过 [Linux 编译诊断 39957635669](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39957635669)，14 个游戏 TU 全部零错误；[真实 Unity → Xcode → 未签名 IPA 流程 39961120509](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39961120509) 已启动，尚未回收 IPA。以下保留完整验证层次与历史失败。**
+
 本轮已从固定 Native93 构造实际候选，并修复集成检查暴露的问题。最终候选包含 **389 个目标方法**（Bulk388 加一个有原版证据的公开伴随入口）；两次构造逐字节一致。独立回读、源发射器绑定、389 方法静态类型检查及成员访问检查均在各自有限范围内通过。**这不是完整游戏行为、Unity、Xcode 或 IPA 验收。**
 
 - 唯一构造父 DLL：`b074224112d46a959de074d3090ab6d0614b036959c66c63b4f49954472e2162`，16,033,792 字节。
@@ -77,3 +79,8 @@ R4 与 R3 的所有 2,297 个有 RVA 方法体逐字节相同；R4 已重新执�
 独立回读了全部 14 个原始日志，并在生成源码压缩包中逐一核验源文件 SHA 和 global-metadata SHA。只编译了全部游戏 TU，没有宣称其余 742 个系统 C++ 也通过，更没有宣称 Apple 链接、设备执行或全方法行为通过。原始报告、日志、逐方法映射和独立回读保存于 compiler-39957635669/。生成全 C++ 压缩包 152,296,115 字节，超过 Git 单文件限制，单独保存到本轮 Release，不塞入 Git blob。
 
 下一流程为 bulk389-real-ios-ipa.yml：把这个固定候选绑定到同次运行的包，经精确 Unity 2022.3.44f1c1 重新导出，再由 macOS-15 / Xcode16.4 构建 ARM64 未签名应用。保留失败日志、归还 Personal 席位，账号日志仅上传脱敏副本。历史 helper 来自固定 64b86ed 提交并独立放在 ios-support/；不替换仓库原 Assets/Editor 工具。历史 workflow 引用的两个 IPA 脚本不存在，已改用新标准库打包器，检查主程序及 UnityFramework 的物理 iOS ARM64、无代码签名／provision、ZIP CRC，以及 IPA metadata 与本次 Xcode 导出逐字节一致。该流程是否真正完成，以后续运行实际产物为准。
+
+
+实际 iOS 流程已经启动：[39961120509](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39961120509)，固定代码提交 `6c33aa4ea57fec1162897026c3ad0e26f00209a6`。`REAL-IOS-RUN-OBSERVATION.json` 是带时间戳的观测，不能当成未来的最终状态。生成 C++、核心历史归档、R4 补充、候选及编译日志已保存至 [本轮预发布归档](https://github.com/lyiming710-cloud/GodsPVZ-iOS/releases/tag/native121-bulk389-r4-compiler-clean-2026-10-23)，6 个资产共 209,086,594 字节，服务器 SHA-256 digest 均与本地匹配（未重复下载 152 MB 资产）。Release 内清单固定于提交 6c33aa4 的归档时刻；仓库后续清单还包含运行回执。最后的审查／编译归属／workflow 准备工具与回执在 POST-COMPILER-TOOLS-AND-RECEIPTS.zip 内，逐文件再次解压校验。
+
+范围补充：归档原 plan 的 explicit_companion_targets 缓存标量仍为 6，实际 companion_tokens 列表已为 7；构造／回读的 389 项范围均包含新入口。SCOPE-COUNT-CORRECTION.json 给出当前 381 + 7 + 1 = 389 的准确分解，保留原输入以免改写执行历史。
