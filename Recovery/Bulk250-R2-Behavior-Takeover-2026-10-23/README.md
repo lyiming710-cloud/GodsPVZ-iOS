@@ -10,6 +10,10 @@
 
 本地完整运行见 local-gate-v5-final.json、local-gate-v5-final-logs/。系统为 Windows x64，实际 CLR 为 .NET 10.0.13。候选在运行前后均核对哈希。
 
+随后在 [GitHub Actions 39934578072](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39934578072) 对提交 09b57a9fe87d2cf4c81cc86c6e793091aaaeed19 真实复现。Ubuntu 24.04.5 LTS x64、实际 CLR .NET 10.0.13 下同样为 154 个用例、16 个被检出变异体、10 个拒绝控制，工作流成功。原始产物保存在 ci-39934578072/；CI-REVIEW.json 核对了 43 个日志文件的大小与哈希、全部发布源码哈希及逐项结果。
+
+CROSS-PLATFORM-COMPARISON.json 对照两个已执行报告：154 个用例和 16 个变异体的完整观测行均一致，10 个实际方法输入和 16 个变异体输入的 canonical CIL 哈希均一致。跨平台一致仍然只属于受控 CLR 范围，不增加原版 native 行为证据。
+
 | 原来 v4 的这批 50 个目标 | 当前检查点 |
 | --- | --- |
 | 有受控 CLR 执行记录 2 个 | 8 个 |
@@ -70,6 +74,8 @@ Bulk388 的源码工作另在 source/native120-bulk388-2026-10-23，提交 60c05
 10 个拒绝控制：断言失败、变异漏检、未知 getter opcode、非预期异常、故意错误的预期 SHA、未知新增 opcode、未知新增成员、未知 local、错误 EH，以及对正常入口提供一个末字节翻转的真实文件。后一个文件由脚本在新输出目录构造，原候选不变；归档保留生成方式、哈希和日志，不重复上传 16 MB 错误文件。
 
 冻结验证器不变。新测试器不是独立 native oracle，不能用它的绿色输出代替高还原证据。
+
+source/ 保存本地实际执行时的源码字节；scripts/actions/ 的发布源码按仓库惯例规范为 LF。SOURCE-PUBLICATION-MAP.json 记录文件名、换行和对应哈希，Linux CI 对发布后的源码重新编译并记录独立运行身份。MANIFEST.json 绑定本归档的文件字节，不用 Git 自动换行转换改写历史日志。
 
 ## 接下来与 Gemini 恢复额度后的交回点
 
