@@ -1,0 +1,901 @@
+{
+  "date": "2026-10-23",
+  "candidate_sha256": "4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903",
+  "candidate_bytes": 16573440,
+  "execution_engine": "MonoCecil_DynamicMethod_CLR_JIT",
+  "run_mode": "normal",
+  "controlled_dependency_stubs": [
+    "MockBoardConfig",
+    "MockMap",
+    "MockEnemy",
+    "MockTransform",
+    "MockComponent",
+    "MockGameObject",
+    "MockEnemyEditor",
+    "MockEnemyManager",
+    "MockAdminSystem2",
+    "MockSpriteRenderer",
+    "MockDevice",
+    "MockDeviceManager",
+    "MockTrackedListEnumerator\u003CT\u003E",
+    "MockGrid",
+    "MockRow",
+    "MockBoardEntry",
+    "MockPlantSave",
+    "MockSuppliesItem",
+    "MockSave",
+    "MockSavesManager"
+  ],
+  "getter_executions": {
+    "0x06000158": {
+      "name": "BoardConfig.get_Map",
+      "status": "PASS",
+      "cil_instructions": 3,
+      "verified_reentrancy": true
+    },
+    "0x06000303": {
+      "name": "Device.get_AnimationSprites",
+      "status": "PASS",
+      "cil_instructions": 3,
+      "verified_nested_dispose": true
+    }
+  },
+  "fifty_methods_behavior": {
+    "0x06000017": {
+      "token": "0x06000017",
+      "name": "CreateDevicePreviews",
+      "declaring_type": "Admin_system2_boardEdior",
+      "code_size": 123,
+      "instructions_count": 40,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Transform / BoardPreview prefab instantiation",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000018": {
+      "token": "0x06000018",
+      "name": "CreateEnemyPreviews",
+      "declaring_type": "Admin_system2_boardEdior",
+      "code_size": 123,
+      "instructions_count": 40,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Transform / EnemyPreview prefab instantiation",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600001C": {
+      "token": "0x0600001C",
+      "name": "CreateNewEnemy",
+      "declaring_type": "Admin_system2_boardEdior",
+      "code_size": 160,
+      "instructions_count": 52,
+      "exception_handlers_count": 0,
+      "status": "PASS",
+      "verification_tier": "REAL_CIL_TRANSLATED_EXECUTION",
+      "cases_executed": 5,
+      "mutants_detected": 2
+    },
+    "0x0600004B": {
+      "token": "0x0600004B",
+      "name": "Initialize",
+      "declaring_type": "Enemy_boardEditor",
+      "code_size": 143,
+      "instructions_count": 48,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.GameObject / Enemy_boardEditor UI binding",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000187": {
+      "token": "0x06000187",
+      "name": "GetBoardEntryData",
+      "declaring_type": "DeviceManager",
+      "code_size": 291,
+      "instructions_count": 91,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600026F": {
+      "token": "0x0600026F",
+      "name": "GetBoardEntryData",
+      "declaring_type": "ZombieManager",
+      "code_size": 327,
+      "instructions_count": 107,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000272": {
+      "token": "0x06000272",
+      "name": "Start_BoardEntry",
+      "declaring_type": "ZombieManager",
+      "code_size": 301,
+      "instructions_count": 98,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.GameObject active state / BoardEntry instantiation",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060001A8": {
+      "token": "0x060001A8",
+      "name": "FillWave",
+      "declaring_type": "EnemySelecter",
+      "code_size": 244,
+      "instructions_count": 95,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000697": {
+      "token": "0x06000697",
+      "name": "Unfold_PropList",
+      "declaring_type": "PropChooseSystem",
+      "code_size": 134,
+      "instructions_count": 43,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.UI.LayoutRebuilder / PropUI",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060006D2": {
+      "token": "0x060006D2",
+      "name": "GenerateLootPieceItemIcons",
+      "declaring_type": "SettlementUIController",
+      "code_size": 128,
+      "instructions_count": 37,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Resources / ItemIcon sprites",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000287": {
+      "token": "0x06000287",
+      "name": "GetMapGrids",
+      "declaring_type": "Map",
+      "code_size": 111,
+      "instructions_count": 33,
+      "exception_handlers_count": 2,
+      "status": "PASS",
+      "verification_tier": "REAL_CIL_TRANSLATED_EXECUTION",
+      "cases_executed": 3,
+      "mutants_detected": 2
+    },
+    "0x0600027B": {
+      "token": "0x0600027B",
+      "name": "KillAll",
+      "declaring_type": "ZombieManager",
+      "code_size": 173,
+      "instructions_count": 59,
+      "exception_handlers_count": 2,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600035C": {
+      "token": "0x0600035C",
+      "name": "DestroyThis",
+      "declaring_type": "Plant",
+      "code_size": 186,
+      "instructions_count": 51,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600061A": {
+      "token": "0x0600061A",
+      "name": "InitializeFlags",
+      "declaring_type": "FlagMeter",
+      "code_size": 160,
+      "instructions_count": 68,
+      "exception_handlers_count": 0,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600069F": {
+      "token": "0x0600069F",
+      "name": "AddNewLevelItem",
+      "declaring_type": "RescueScreen",
+      "code_size": 141,
+      "instructions_count": 46,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.GameObject / RescueLevel prefab",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600052A": {
+      "token": "0x0600052A",
+      "name": "AddNewLevelItem",
+      "declaring_type": "AdventureHardScreen",
+      "code_size": 165,
+      "instructions_count": 54,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.GameObject / HardLevel prefab",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060006BB": {
+      "token": "0x060006BB",
+      "name": "SetPrechooseList",
+      "declaring_type": "SeedChooserScreen",
+      "code_size": 210,
+      "instructions_count": 65,
+      "exception_handlers_count": 3,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060006B6": {
+      "token": "0x060006B6",
+      "name": "LoadTeam_Card",
+      "declaring_type": "SeedChooserScreen",
+      "code_size": 218,
+      "instructions_count": 70,
+      "exception_handlers_count": 2,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600060A": {
+      "token": "0x0600060A",
+      "name": "FindKey",
+      "declaring_type": "BoardEntry",
+      "code_size": 326,
+      "instructions_count": 95,
+      "exception_handlers_count": 1,
+      "status": "PASS",
+      "verification_tier": "REAL_CIL_TRANSLATED_EXECUTION",
+      "cases_executed": 4,
+      "mutants_detected": 1
+    },
+    "0x060001AF": {
+      "token": "0x060001AF",
+      "name": "Start",
+      "declaring_type": "EnemyManager",
+      "code_size": 322,
+      "instructions_count": 107,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000283": {
+      "token": "0x06000283",
+      "name": "AstarProcess",
+      "declaring_type": "Map",
+      "code_size": 187,
+      "instructions_count": 73,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060004BF": {
+      "token": "0x060004BF",
+      "name": "CompletenessTest",
+      "declaring_type": "Save",
+      "code_size": 208,
+      "instructions_count": 78,
+      "exception_handlers_count": 1,
+      "status": "PASS",
+      "verification_tier": "REAL_CIL_TRANSLATED_EXECUTION",
+      "cases_executed": 2,
+      "mutants_detected": 1
+    },
+    "0x0600064B": {
+      "token": "0x0600064B",
+      "name": "WarehouseOnclick",
+      "declaring_type": "MainUIController",
+      "code_size": 217,
+      "instructions_count": 73,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.SceneManagement.SceneManager",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060001BD": {
+      "token": "0x060001BD",
+      "name": "SetPreZombie",
+      "declaring_type": "EnemyManager",
+      "code_size": 263,
+      "instructions_count": 82,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000362": {
+      "token": "0x06000362",
+      "name": "EnemySeeking_plural",
+      "declaring_type": "Plant",
+      "code_size": 203,
+      "instructions_count": 72,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000364": {
+      "token": "0x06000364",
+      "name": "EnemySeeking_Device_plural",
+      "declaring_type": "Plant",
+      "code_size": 430,
+      "instructions_count": 139,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060004E3": {
+      "token": "0x060004E3",
+      "name": "Function",
+      "declaring_type": "Skill",
+      "code_size": 136,
+      "instructions_count": 53,
+      "exception_handlers_count": 0,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000163": {
+      "token": "0x06000163",
+      "name": "LoadReward",
+      "declaring_type": "RewardInBoard",
+      "code_size": 118,
+      "instructions_count": 36,
+      "exception_handlers_count": 2,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000326": {
+      "token": "0x06000326",
+      "name": "GetDamage",
+      "declaring_type": "Device",
+      "code_size": 452,
+      "instructions_count": 148,
+      "exception_handlers_count": 0,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000514": {
+      "token": "0x06000514",
+      "name": "Awake148",
+      "declaring_type": "SkillManager",
+      "code_size": 188,
+      "instructions_count": 60,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060004D9": {
+      "token": "0x060004D9",
+      "name": "CreatSuppliesItem",
+      "declaring_type": "Supplies",
+      "code_size": 303,
+      "instructions_count": 90,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.GameObject / SuppliesItem prefab",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000118": {
+      "token": "0x06000118",
+      "name": "Teleport",
+      "declaring_type": "HoleTeleport",
+      "code_size": 256,
+      "instructions_count": 81,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Physics2D / AudioSource sound play",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000226": {
+      "token": "0x06000226",
+      "name": "Load_deviceInfo_all",
+      "declaring_type": "ResourceManager",
+      "code_size": 95,
+      "instructions_count": 31,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Resources.LoadAll / TextAsset metadata",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000231": {
+      "token": "0x06000231",
+      "name": "Load_zombieInfo_all",
+      "declaring_type": "ResourceManager",
+      "code_size": 95,
+      "instructions_count": 31,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Resources.LoadAll / TextAsset metadata",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060000D3": {
+      "token": "0x060000D3",
+      "name": "ExpandView",
+      "declaring_type": "AttackRange",
+      "code_size": 167,
+      "instructions_count": 51,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Camera / RenderTexture rendering",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000183": {
+      "token": "0x06000183",
+      "name": "DisplayBan_device",
+      "declaring_type": "DeviceManager",
+      "code_size": 180,
+      "instructions_count": 51,
+      "exception_handlers_count": 2,
+      "status": "PASS",
+      "verification_tier": "REAL_CIL_TRANSLATED_EXECUTION",
+      "cases_executed": 5,
+      "mutants_detected": 3
+    },
+    "0x06000011": {
+      "token": "0x06000011",
+      "name": "Update_Mouse",
+      "declaring_type": "Admin_system2_boardEdior",
+      "code_size": 201,
+      "instructions_count": 58,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.Input.mousePosition / ScreenToWorldPoint",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060002F5": {
+      "token": "0x060002F5",
+      "name": "Choose_Reset",
+      "declaring_type": "Card_Choose",
+      "code_size": 274,
+      "instructions_count": 84,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060001A1": {
+      "token": "0x060001A1",
+      "name": ".ctor",
+      "declaring_type": "Enemy",
+      "code_size": 229,
+      "instructions_count": 74,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000384": {
+      "token": "0x06000384",
+      "name": "PC_NutknightTaunt",
+      "declaring_type": "Plant",
+      "code_size": 293,
+      "instructions_count": 98,
+      "exception_handlers_count": 1,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000297": {
+      "token": "0x06000297",
+      "name": "CanPlacing",
+      "declaring_type": "Grid",
+      "code_size": 431,
+      "instructions_count": 147,
+      "exception_handlers_count": 0,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000710": {
+      "token": "0x06000710",
+      "name": "ClickSelectButton",
+      "declaring_type": "Zombie_Select",
+      "code_size": 378,
+      "instructions_count": 133,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.EventSystems / SelectButton UI",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x060006C5": {
+      "token": "0x060006C5",
+      "name": "SkillButton_OnClick",
+      "declaring_type": "PlantDetail",
+      "code_size": 243,
+      "instructions_count": 82,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.UI.Button / PlantDetail screen",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000335": {
+      "token": "0x06000335",
+      "name": "SetUIs",
+      "declaring_type": "Device",
+      "code_size": 277,
+      "instructions_count": 93,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.UI.Slider / DeviceUI components",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000692": {
+      "token": "0x06000692",
+      "name": "CreatPropList",
+      "declaring_type": "PropChooseSystem",
+      "code_size": 252,
+      "instructions_count": 91,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.GameObject / PropItem prefab",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000693": {
+      "token": "0x06000693",
+      "name": "LoadTeam_Prop",
+      "declaring_type": "PropChooseSystem",
+      "code_size": 204,
+      "instructions_count": 66,
+      "exception_handlers_count": 3,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600009D": {
+      "token": "0x0600009D",
+      "name": "InputString",
+      "declaring_type": "System3",
+      "code_size": 392,
+      "instructions_count": 110,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "Unmanaged native string buffer / platform IME",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600062C": {
+      "token": "0x0600062C",
+      "name": "SetState",
+      "declaring_type": "LevelItem",
+      "code_size": 283,
+      "instructions_count": 94,
+      "exception_handlers_count": 0,
+      "status": "NOT_YET_EXECUTED",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x06000572": {
+      "token": "0x06000572",
+      "name": "Button_LevelUp",
+      "declaring_type": "Almanac_PlantDetail",
+      "code_size": 370,
+      "instructions_count": 112,
+      "exception_handlers_count": 1,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "Native unmanaged save encryption / PlayerPrefs bridge",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    },
+    "0x0600035B": {
+      "token": "0x0600035B",
+      "name": "CreateParticleAndSound",
+      "declaring_type": "Plant",
+      "code_size": 213,
+      "instructions_count": 65,
+      "exception_handlers_count": 0,
+      "status": "UNSUPPORTED_ENGINE_CONTEXT",
+      "blocked_dependency": "UnityEngine.ParticleSystem / AudioSource",
+      "cases_executed": 0,
+      "mutants_detected": 0
+    }
+  },
+  "cases_evaluated": [
+    {
+      "case_id": "A.1_Normal",
+      "target": "0x0600001C",
+      "input": "waveOnCheck=5, map=(120, 240)",
+      "expected": "gridX=120, row=120 (240/2), wave=5",
+      "observed": "gridX=120, row=120, wave=5",
+      "passed": true
+    },
+    {
+      "case_id": "A.2_NullReceiver",
+      "target": "0x0600001C",
+      "input": "admin=null",
+      "expected_exception": "System.NullReferenceException",
+      "passed": true
+    },
+    {
+      "case_id": "A.3_NullBoardConfig",
+      "target": "0x0600001C",
+      "input": "boardConfig=null",
+      "expected_exception": "System.NullReferenceException",
+      "passed": true
+    },
+    {
+      "case_id": "A.4_NullMap",
+      "target": "0x0600001C",
+      "input": "map=null",
+      "expected_exception": "System.NullReferenceException",
+      "passed": true
+    },
+    {
+      "case_id": "A.5_ReentrancySwap",
+      "target": "0x0600001C",
+      "input": "map1=(100,200), swapped_during_GetMapX=(999,600)",
+      "expected": "gridX=100 (from map1), row=300 (600/2 from map2)",
+      "observed": "gridX=100, row=300",
+      "passed": true
+    },
+    {
+      "case_id": "C.1_Normal_NotBanned",
+      "target": "0x06000183",
+      "input": "display_Ban_device=false, devices=[ID=1, ID=12, ID=2]",
+      "expected": "dev12.alpha=0.5, non-12 skipped (alpha=0.0), trace=[MockGameObject_Disposed, MockDevice_Disposed]",
+      "observed": "dev12.alpha=0.5, trace=[MockGameObject_Disposed, MockDevice_Disposed]",
+      "passed": true
+    },
+    {
+      "case_id": "C.2_Normal_Banned",
+      "target": "0x06000183",
+      "input": "display_Ban_device=true, devices=[ID=12]",
+      "expected": "devBan.alpha=1.0",
+      "observed": "devBan.alpha=1",
+      "passed": true
+    },
+    {
+      "case_id": "C.3_NullDeviceFatFinally",
+      "target": "0x06000183",
+      "input": "devices=[null]",
+      "expected_exception": "System.NullReferenceException",
+      "expected_trace": "[MockDevice_Disposed]",
+      "observed_trace": "[MockDevice_Disposed]",
+      "passed": true
+    },
+    {
+      "case_id": "C.4_NestedFinallyOrder",
+      "target": "0x06000183",
+      "input": "device[12] throwOnSet=true",
+      "expected_exception": "System.InvalidOperationException",
+      "observed_exception": "System.InvalidOperationException",
+      "expected_trace": "[MockGameObject_Disposed, MockDevice_Disposed]",
+      "observed_trace": "[MockGameObject_Disposed, MockDevice_Disposed]",
+      "passed": true
+    },
+    {
+      "case_id": "C.5_NullAnimationSprites",
+      "target": "0x06000183",
+      "input": "device[12].animationSprites=null",
+      "expected_exception": "System.NullReferenceException",
+      "observed_exception": "System.NullReferenceException",
+      "expected_trace": "[MockDevice_Disposed]",
+      "observed_trace": "[MockDevice_Disposed]",
+      "passed": true
+    },
+    {
+      "case_id": "E1.1_MultiRowFlattening",
+      "target": "0x06000287",
+      "input": "3 rows (2 with grids, 1 empty)",
+      "expected": "4 grids in exact order, object identities preserved, both enumerators disposed",
+      "observed": "count=4, trace=[MockGrid_Disposed, MockGrid_Disposed, MockGrid_Disposed, MockRow_Disposed]",
+      "passed": true
+    },
+    {
+      "case_id": "E1.2_NullReceiver",
+      "target": "0x06000287",
+      "input": "map=null",
+      "expected_exception": "System.NullReferenceException",
+      "passed": true
+    },
+    {
+      "case_id": "E1.3_NullRowGridsDisposed",
+      "target": "0x06000287",
+      "input": "rows=[grids=null]",
+      "expected_exception": "System.NullReferenceException",
+      "expected_trace": "[MockRow_Disposed]",
+      "observed_trace": "[MockRow_Disposed]",
+      "passed": true
+    },
+    {
+      "case_id": "E2.1_Type24_MustTrue",
+      "target": "0x0600060A",
+      "input": "key=flag, type=24, must=true -\u003E targetKey=flag_CC",
+      "expected": "returns e1 reference, enumerator disposed",
+      "passed": true
+    },
+    {
+      "case_id": "E2.2_Type25_SelectTrue",
+      "target": "0x0600060A",
+      "input": "key=zombie, type=25, select=true -\u003E targetKey=zombie_OE",
+      "expected": "returns e2 reference",
+      "passed": true
+    },
+    {
+      "case_id": "E2.3_Type0_PlainMatch",
+      "target": "0x0600060A",
+      "input": "key=plain_entry, type=0 -\u003E targetKey=plain_entry",
+      "expected": "returns e4 reference",
+      "passed": true
+    },
+    {
+      "case_id": "E2.4_NoMatchNull",
+      "target": "0x0600060A",
+      "input": "targetKey=non_existent_key",
+      "expected": "returns null, enumerator disposed",
+      "passed": true
+    },
+    {
+      "case_id": "E3.1_SortSuppliesAscending",
+      "target": "0x060004BF",
+      "input": "supplies IDs [5, 2, 8, 1], plantSaves count=2",
+      "expected": "supplies sorted to [1, 2, 5, 8], plantSaves reloaded, enumerator disposed",
+      "observed": "sorted=[1, 2, 5, 8], reloaded=2",
+      "passed": true
+    },
+    {
+      "case_id": "E3.2_ExceptionDuringReloadDisposed",
+      "target": "0x060004BF",
+      "input": "savesManager.throwOnReload=true",
+      "expected_exception": "System.InvalidOperationException",
+      "expected_trace": "[MockPlantSave_Disposed]",
+      "observed_trace": "[MockPlantSave_Disposed]",
+      "passed": true
+    }
+  ],
+  "mutants_evaluated": [
+    {
+      "id": "MUT_001C_DIV3",
+      "target": "0x0600001C",
+      "site_offset": 45,
+      "original": "ldc.i4.2",
+      "mutated": "ldc.i4.3",
+      "expected_on_candidate": "row=120",
+      "observed_on_mutant": "row=80",
+      "detected": true
+    },
+    {
+      "id": "MUT_0158_NULL_RETURN",
+      "target": "0x06000158",
+      "site_offset": 0,
+      "original": "ldarg.0; ldfld map",
+      "mutated": "ldnull; nop",
+      "expected_on_candidate": "returns map instance",
+      "observed_on_mutant": "throws NullReferenceException at GetMapX call site",
+      "detected": true
+    },
+    {
+      "id": "MUT_001C_CACHED_MAP",
+      "target": "0x0600001C",
+      "site_offset": 29,
+      "original": "ldarg.0; ldfld boardConfig; callvirt get_Map",
+      "mutated": "ldloc.2 (cached first map); nop; nop",
+      "expected_on_candidate": "row=300 (second get_Map reads swapped map)",
+      "observed_on_mutant": "row=100 (used cached map)",
+      "detected": true
+    },
+    {
+      "id": "MUT_0183_INVERT_FILTER",
+      "target": "0x06000183",
+      "site_offset": 36,
+      "original": "bne.un (skips non-12)",
+      "mutated": "beq (skips 12)",
+      "expected_on_candidate": "dev12.a=0.5, dev1.a=0.0",
+      "observed_on_mutant": "dev12.a=0, dev1.a=0.5",
+      "detected": true
+    },
+    {
+      "id": "MUT_0183_ALPHA_VAL",
+      "target": "0x06000183",
+      "site_offset": 77,
+      "original": "ldc.r4 0.5",
+      "mutated": "ldc.r4 0.75",
+      "expected_on_candidate": "alpha=0.5",
+      "observed_on_mutant": "alpha=0.75",
+      "detected": true
+    },
+    {
+      "id": "MUT_0183_OMIT_INNER_FINALLY_BALANCED",
+      "target": "0x06000183",
+      "site_offset": 148,
+      "original": "ldloca.s 2; call Dispose (inner)",
+      "mutated": "nop; nop (stack balanced, clean finally exit)",
+      "expected_on_candidate": "trace includes MockGameObject_Disposed",
+      "observed_on_mutant": "trace=[MockDevice_Disposed]",
+      "detected": true
+    },
+    {
+      "id": "MUT_0287_OMIT_ADD",
+      "target": "0x06000287",
+      "site_offset": 54,
+      "original": "callvirt List\u003CGrid\u003E.Add",
+      "mutated": "pop; pop (stack-balanced drop)",
+      "expected_on_candidate": "count=4",
+      "observed_on_mutant": "count=0",
+      "detected": true
+    },
+    {
+      "id": "MUT_0287_OMIT_INNER_DISPOSE_BALANCED",
+      "target": "0x06000287",
+      "site_offset": 78,
+      "original": "ldloca.s 2; call Dispose",
+      "mutated": "nop; nop (stack balanced, clean finally exit)",
+      "expected_on_candidate": "trace includes MockGrid_Disposed",
+      "observed_on_mutant": "trace=[MockRow_Disposed]",
+      "detected": true
+    },
+    {
+      "id": "MUT_060A_INVERT_EQUALITY",
+      "target": "0x0600060A",
+      "site_offset": 287,
+      "original": "brfalse (continue on inequality)",
+      "mutated": "brtrue (matches on inequality)",
+      "expected_on_candidate": "returns null for non_existent_key",
+      "observed_on_mutant": "returned item with key=flag",
+      "detected": true
+    },
+    {
+      "id": "MUT_04BF_INVERT_SORT_ORDER",
+      "target": "0x060004BF",
+      "site_offset": 129,
+      "original": "bge at IL_0081 (skip swap if next.ID \u003E= current.ID)",
+      "mutated": "ble at IL_0081 (descending order on distinct IDs)",
+      "expected_on_candidate": "[1, 2, 5, 8]",
+      "observed_on_mutant": "[8, 5, 2, 1]",
+      "detected": true
+    }
+  ],
+  "summary": {
+    "total_50_methods": 50,
+    "methods_genuinely_passed": 5,
+    "methods_unsupported_engine_context": 22,
+    "pending_before": 26,
+    "newly_attempted_target_tokens": [
+      "0x06000287",
+      "0x0600060A",
+      "0x060004BF"
+    ],
+    "newly_executed_target_tokens": [
+      "0x06000287",
+      "0x0600060A",
+      "0x060004BF"
+    ],
+    "pending_after": 23,
+    "methods_not_yet_executed": 23,
+    "methods_failed": 0,
+    "failed_assertions": [],
+    "total_cases_executed": 19,
+    "total_mutants_tested": 10,
+    "total_mutants_detected": 10,
+    "overall_status": "PARTIAL_CHAIN_VERIFIED_STAGE2"
+  }
+}

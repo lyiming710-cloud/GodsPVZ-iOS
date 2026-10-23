@@ -140,6 +140,9 @@ namespace GodsPVZ.Actions.Verification
     {
         public List<MockDevice> deviceList; // 0x040001D6
         public bool display_Ban_device; // 0x040001D8
+        public MockUnityObject board;
+        public List<MockBoardEntry> effectBoardEntries;
+        public MockDeviceData boardEntryData;
     }
 
     public class MockBoardEntry
@@ -148,6 +151,8 @@ namespace GodsPVZ.Actions.Verification
         public bool must; // 0x040007FC
         public bool select; // 0x040007FD
         public string key; // 0x040007FE
+        public Func<float> getValue;
+        public float GetValue() => getValue?.Invoke() ?? 0f;
 
         public MockBoardEntry(int type = 0, string key = "", bool must = false, bool select = false)
         {
@@ -168,11 +173,13 @@ namespace GodsPVZ.Actions.Verification
     {
         public List<MockPlantSave> reloadedList = new();
         public bool throwOnReload;
+        public Action<MockPlantSave> onReload;
 
         public void ReloadPlantSaveData(MockPlantSave p)
         {
             if (throwOnReload) throw new InvalidOperationException("ReloadPlantSaveData simulated fault");
             reloadedList.Add(p);
+            onReload?.Invoke(p);
         }
     }
 
@@ -197,6 +204,7 @@ namespace GodsPVZ.Actions.Verification
     public static class TraceDisposeCollector
     {
         public static List<string> Log = new();
+        public static Action<string> BeforeMove;
         public static void Clear() => Log.Clear();
         public static void Record(string msg) => Log.Add(msg);
     }
@@ -214,7 +222,11 @@ namespace GodsPVZ.Actions.Verification
         }
 
         public T get_Current() => _inner.Current;
-        public bool MoveNext() => _inner.MoveNext();
+        public bool MoveNext()
+        {
+            TraceDisposeCollector.BeforeMove?.Invoke(_name);
+            return _inner.MoveNext();
+        }
 
         public void Dispose()
         {
@@ -227,7 +239,7 @@ namespace GodsPVZ.Actions.Verification
     // -----------------------------------------------------------------
     // Candidate CIL Instruction Translator & DynamicMethod Emission
     // -----------------------------------------------------------------
-    public static class CandidateCilTranslator
+    public static partial class CandidateCilTranslator
     {
         public static Func<MockBoardConfig, MockMap> CompileGetter158(MethodDefinition m158)
         {
@@ -819,7 +831,7 @@ namespace GodsPVZ.Actions.Verification
         public static MockLawnApp GetGlobalLawnApp() => gLawnApp;
     }
 
-    public class Program
+    public partial class Program
     {
         public static int Main(string[] args)
         {
@@ -841,6 +853,10 @@ namespace GodsPVZ.Actions.Verification
             {
                 if (arg.StartsWith("--mode=")) runMode = arg.Substring("--mode=".Length).Trim().ToLowerInvariant();
             }
+            var supportedModes = new[] { "normal","neg_wrong_sha","neg_assertion_failure","neg_escaped_mutant",
+                "neg_unsupported_opcode","neg_unexpected_exception","neg_additional_opcode","neg_additional_member",
+                "neg_additional_local","neg_additional_eh" };
+            if(!supportedModes.Contains(runMode)){Console.Error.WriteLine("Unknown fixture mode: "+runMode);return 4;}
 
             string expectedSha = "4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903";
             if (runMode == "neg_wrong_sha")
@@ -868,6 +884,22 @@ namespace GodsPVZ.Actions.Verification
 
             using var asm = AssemblyDefinition.ReadAssembly(candPath, new ReaderParameters { ReadSymbols = false });
             var module = asm.MainModule;
+            if(runMode.StartsWith("neg_additional_"))
+            {
+                var bad=CloneMethod((MethodDefinition)module.LookupToken(0x06000187),runMode);
+                if(runMode=="neg_additional_opcode")
+                    bad.Body.Instructions.Insert(1,Instruction.Create(Mono.Cecil.Cil.OpCodes.Cpblk));
+                if(runMode=="neg_additional_member")
+                {
+                    var call=bad.Body.Instructions.Single(i=>i.Offset==0xC5);
+                    call.Operand=new MethodReference("UnknownCall",module.TypeSystem.Single,
+                        ((MethodReference)call.Operand).DeclaringType){HasThis=true};
+                }
+                if(runMode=="neg_additional_local")bad.Body.Variables[0].VariableType=module.TypeSystem.Object;
+                if(runMode=="neg_additional_eh")bad.Body.ExceptionHandlers[0].HandlerType=ExceptionHandlerType.Fault;
+                CandidateCilTranslator.CompileDeviceData187(bad);
+                return 0; // A rejection control returning normally is a gate failure.
+            }
 
             // Negative Control Mode: neg_unsupported_opcode
             if (runMode == "neg_unsupported_opcode")
@@ -903,6 +935,21 @@ namespace GodsPVZ.Actions.Verification
 
             var casesEvaluatedList = (List<Dictionary<string, object>>)report["cases_evaluated"];
             var mutantsEvaluatedList = (List<Dictionary<string, object>>)report["mutants_evaluated"];
+            report["evidence_scope"] = new {
+                kind="CONTROLLED_DEPENDENCY_CLR_EXECUTION",candidate_cil_is_input=true,
+                native_original_executed=false,native_semantic_equivalence="UNPROVEN",
+                unity_engine_semantics="UNPROVEN",full_assembly_qualification=false,
+                unity_export_executed=false,xcode_build_executed=false,ipa_produced=false,
+                controlled_calls_unproven=new[] {
+                    "UnityEngine.Object.op_Inequality (destroyed-null adapter)",
+                    "DeviceManager/BoardEntryData::.ctor", "ZombieManager/BoardEntryData::.ctor",
+                    "BoardEntry::GetValue", "EnemySelecter::ZombieSelectRandomGet",
+                    "EnemySelecter::AddEnemy","SavesManager::ReloadPlantSaveData",
+                    "existing MockTransform/MockSpriteRenderer/MockEnemyManager adapters"
+                },
+                enumerator_adapter="Tracked wrapper of real BCL List<T>.Enumerator; not Unity's original runtime library",
+                promotion_status="NOT_FORMALLY_PROMOTED"
+            };
             var failedAssertions = new List<string>();
             var methodPassStatus = new Dictionary<string, bool>();
 
@@ -1673,8 +1720,12 @@ namespace GodsPVZ.Actions.Verification
             }
 
             var m4BF_mutSort = CloneMethod(m4BF, "m4BF_mutSort");
-            var insCmp = m4BF_mutSort.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ble || i.OpCode == Mono.Cecil.Cil.OpCodes.Ble_S);
-            insCmp.OpCode = Mono.Cecil.Cil.OpCodes.Bge_S;
+            // The candidate has two bge instructions: 0x54 is the loop bound;
+            // 0x81 skips swapping when next.ID >= current.ID. Mutate only the latter.
+            var insCmp = m4BF_mutSort.Body.Instructions.Single(i => i.Offset == 0x81);
+            if (insCmp.OpCode != Mono.Cecil.Cil.OpCodes.Bge)
+                throw new InvalidProgramException("Pinned supplies comparison must be bge at IL_0081");
+            insCmp.OpCode = Mono.Cecil.Cil.OpCodes.Ble;
             var fn4BF_mutSort = CandidateCilTranslator.CompileCompletenessTest4BF(m4BF_mutSort);
             var saveMutSort = new MockSave { supplies = new List<MockSuppliesItem> { new(5), new(2), new(8), new(1) } };
             fn4BF_mutSort(saveMutSort);
@@ -1685,8 +1736,8 @@ namespace GodsPVZ.Actions.Verification
                 ["id"] = "MUT_04BF_INVERT_SORT_ORDER",
                 ["target"] = "0x060004BF",
                 ["site_offset"] = insCmp.Offset,
-                ["original"] = "ble (ascending bubble swap)",
-                ["mutated"] = "bge (descending bubble swap)",
+                ["original"] = "bge at IL_0081 (skip swap if next.ID >= current.ID)",
+                ["mutated"] = "ble at IL_0081 (descending order on distinct IDs)",
                 ["expected_on_candidate"] = "[1, 2, 5, 8]",
                 ["observed_on_mutant"] = $"[{string.Join(", ", resMutSort)}]",
                 ["detected"] = mutSort_detected
@@ -1698,6 +1749,14 @@ namespace GodsPVZ.Actions.Verification
             }
 
             methodPassStatus["0x060004BF"] = passE3_1 && passE3_2 && mutSort_detected;
+
+            RunAdditionalCases(module, casesEvaluatedList, failedAssertions, methodPassStatus);
+            var executedInputs = new List<MethodDefinition>{ m158,m01c,m303,m183,m287,m60A,m4BF };
+            var mutantInputs = new List<MethodDefinition>{ m01c_mutDiv3,m158_mutNull,m01c_mutCache,m183_mutBeq,m183_mutAlpha,m183_mutNoInnerDispose,m287_mutOmitAdd,m287_mutInnerDisp,m60A_mutEq,m4BF_mutSort };
+            RunAdditionalTargets(module,casesEvaluatedList,mutantsEvaluatedList,failedAssertions,methodPassStatus,executedInputs,mutantInputs);
+            report["execution_input_identities"] = executedInputs.Select(CilIdentity).ToArray();
+            report["mutant_execution_input_identities"] = mutantInputs.Select(CilIdentity).ToArray();
+            report["runtime_identity"] = RuntimeIdentity();
 
             // =================================================================
             // Evaluation Status and Detailed Accounting for Native116 (50 methods)
@@ -1845,8 +1904,8 @@ namespace GodsPVZ.Actions.Verification
                 ["methods_genuinely_passed"] = genuinelyPassedMethods,
                 ["methods_unsupported_engine_context"] = unsupportedEngineMethods,
                 ["pending_before"] = 26,
-                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF" },
-                ["newly_executed_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF" },
+                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF", "0x06000187", "0x0600026F", "0x060001A8" },
+                ["newly_executed_target_tokens"] = executedInputs.Select(m=>$"0x{m.MetadataToken.ToInt32():X8}").Where(t=>t!="0x06000158"&&t!="0x06000303"&&t!="0x0600001C"&&t!="0x06000183").ToArray(),
                 ["pending_after"] = notYetExecutedMethods,
                 ["methods_not_yet_executed"] = notYetExecutedMethods,
                 ["methods_failed"] = totalMethodsFailed,
@@ -1886,7 +1945,9 @@ namespace GodsPVZ.Actions.Verification
 
         private static MethodDefinition CloneMethod(MethodDefinition original, string newName)
         {
-            var clone = new MethodDefinition(newName, original.Attributes, original.ReturnType);
+            // Retain instance signature context without adding the clone to the module.
+            var clone = new MethodDefinition(newName, original.Attributes, original.ReturnType)
+            { DeclaringType = original.DeclaringType };
             foreach (var p in original.Parameters) clone.Parameters.Add(new ParameterDefinition(p.Name, p.Attributes, p.ParameterType));
             clone.Body.InitLocals = original.Body.InitLocals;
             clone.Body.MaxStackSize = original.Body.MaxStackSize;

@@ -1,0 +1,34 @@
+0x06000287 GetMapGrids locals=token(0x1100077F)
+0000 newobj token(0x0A0001BC) .ctor
+0005 stloc.0 None
+0006 ldarg.0 None
+0007 ldfld token(0x0400037D) rows
+000C callvirt token(0x0A0001C3) GetEnumerator
+0011 stloc.1 None
+0012 br 96
+0017 ldloca.s local(0x0001)
+0019 call token(0x0A0001C5) get_Current
+001E ldfld token(0x04000381) grids
+0023 callvirt token(0x0A000493) GetEnumerator
+0028 stloc.2 None
+0029 br 71
+002E ldloc.0 None
+002F ldloca.s local(0x0002)
+0031 call token(0x0A000494) get_Current
+0036 callvirt token(0x0A0001B9) Add
+003B ldloca.s local(0x0002)
+003D call token(0x0A000495) MoveNext
+0042 brtrue 58
+0047 leave 96
+004C ldloca.s local(0x0002)
+004E call token(0x0A0001BA) Dispose
+0053 endfinally None
+0054 ldloca.s local(0x0001)
+0056 call token(0x0A0001C4) MoveNext
+005B brtrue 35
+0060 leave 121
+0065 ldloca.s local(0x0001)
+0067 call token(0x0A0001BB) Dispose
+006C endfinally None
+006D ldloc.0 None
+006E ret None

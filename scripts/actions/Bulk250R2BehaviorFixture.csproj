@@ -5,9 +5,11 @@
     <Nullable>disable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Bulk250R2BehaviorFixture*.cs" />
     <PackageReference Include="Mono.Cecil" Version="0.11.6" Condition="!Exists('Mono.Cecil.dll')" />
     <Reference Include="Mono.Cecil" Condition="Exists('Mono.Cecil.dll')">
       <HintPath>Mono.Cecil.dll</HintPath>

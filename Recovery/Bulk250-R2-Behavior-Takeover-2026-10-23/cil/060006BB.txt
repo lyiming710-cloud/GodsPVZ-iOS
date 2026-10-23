@@ -1,0 +1,66 @@
+0x060006BB SetPrechooseList locals=token(0x11000785)
+0000 ldarg.0 None
+0001 ldfld token(0x040008B8) card_ChooseList
+0006 callvirt token(0x0A000426) GetEnumerator
+000B stloc.0 None
+000C br 54
+0011 ldloca.s local(0x0000)
+0013 call token(0x0A0004B3) get_Current
+0018 stloc.3 None
+0019 ldloc.3 None
+001A ldfld token(0x04000448) isChosen
+001F brfalse 54
+0024 ldloc.3 None
+0025 callvirt token(0x060002F5) Choose_Reset
+002A ldloca.s local(0x0000)
+002C call token(0x0A0004B4) MoveNext
+0031 brtrue 29
+0036 leave 79
+003B ldloca.s local(0x0000)
+003D call token(0x0A0001DF) Dispose
+0042 endfinally None
+0043 ldarg.0 None
+0044 ldfld token(0x040008BE) plantDetail
+0049 ldnull None
+004A callvirt token(0x060006C2) Awake
+004F ldarg.1 None
+0050 callvirt token(0x0A000426) GetEnumerator
+0055 stloc.0 None
+0056 br 196
+005B ldloca.s local(0x0000)
+005D call token(0x0A0004B3) get_Current
+0062 stloc.2 None
+0063 ldarg.0 None
+0064 ldfld token(0x040008B8) card_ChooseList
+0069 callvirt token(0x0A000426) GetEnumerator
+006E stloc.1 None
+006F br 171
+0074 ldloca.s local(0x0001)
+0076 call token(0x0A0004B3) get_Current
+007B stloc.3 None
+007C ldloc.3 None
+007D ldfld token(0x04000429) plantID
+0082 ldloc.2 None
+0083 ldfld token(0x04000429) plantID
+0088 bne.un 171
+008D ldloc.3 None
+008E callvirt token(0x060002F4) Choose_Being
+0093 ldarg.0 None
+0094 ldfld token(0x040008BE) plantDetail
+0099 ldloc.3 None
+009A callvirt token(0x060006C2) Awake
+009F ldloca.s local(0x0001)
+00A1 call token(0x0A0004B4) MoveNext
+00A6 brtrue 128
+00AB leave 196
+00B0 ldloca.s local(0x0001)
+00B2 call token(0x0A0001DF) Dispose
+00B7 endfinally None
+00B8 ldloca.s local(0x0000)
+00BA call token(0x0A0004B4) MoveNext
+00BF brtrue 103
+00C4 leave 221
+00C9 ldloca.s local(0x0000)
+00CB call token(0x0A0001DF) Dispose
+00D0 endfinally None
+00D1 ret None

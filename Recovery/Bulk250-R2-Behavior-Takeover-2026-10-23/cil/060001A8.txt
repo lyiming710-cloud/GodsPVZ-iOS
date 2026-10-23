@@ -1,0 +1,96 @@
+0x060001A8 FillWave locals=token(0x1100077C)
+0000 ldarg.0 None
+0001 ldfld token(0x04000208) enemyPoint_Base
+0006 ldarg.1 None
+0007 mul None
+0008 ldarg.0 None
+0009 ldfld token(0x04000208) enemyPoint_Base
+000E add None
+000F ldarg.0 None
+0010 ldfld token(0x04000208) enemyPoint_Base
+0015 ldarg.2 None
+0016 mul None
+0017 ldc.i4.3 None
+0018 div None
+0019 add None
+001A stloc.0 None
+001B ldarg.2 None
+001C ldc.i4 10
+0021 rem None
+0022 ldc.i4 9
+0027 bne.un 74
+002C ldloc.0 None
+002D ldarg.0 None
+002E ldfld token(0x04000208) enemyPoint_Base
+0033 add None
+0034 ldarg.0 None
+0035 ldfld token(0x04000208) enemyPoint_Base
+003A ldc.i4.2 None
+003B mul None
+003C add None
+003D stloc.0 None
+003E ldloc.0 None
+003F ldc.i4.0 None
+0040 ble 255
+0045 newobj token(0x0A000139) .ctor
+004A stloc.1 None
+004B ldc.r4 0.0
+0050 stloc.2 None
+0051 ldarg.0 None
+0052 ldfld token(0x04000207) zombieSelects
+0057 callvirt token(0x0A000445) GetEnumerator
+005C stloc.3 None
+005D br 177
+0062 ldloca.s local(0x0003)
+0064 call token(0x0A000447) get_Current
+0069 stloc.s local(0x0004)
+006B ldloc.s local(0x0004)
+006D ldfld token(0x04000201) point
+0072 ldloc.0 None
+0073 bgt 177
+0078 ldloc.s local(0x0004)
+007A ldfld token(0x04000204) minWave
+007F ldarg.2 None
+0080 bgt 177
+0085 ldloc.s local(0x0004)
+0087 ldfld token(0x04000203) minFlag
+008C ldarg.1 None
+008D bgt 177
+0092 ldloc.1 None
+0093 ldloc.s local(0x0004)
+0095 callvirt token(0x0A00013A) Add
+009A ldloc.2 None
+009B ldloc.s local(0x0004)
+009D ldfld token(0x04000202) weight
+00A2 add None
+00A3 conv.r4 None
+00A4 stloc.2 None
+00A5 ldloca.s local(0x0003)
+00A7 call token(0x0A000446) MoveNext
+00AC brtrue 110
+00B1 leave 202
+00B6 ldloca.s local(0x0003)
+00B8 call token(0x0A000138) Dispose
+00BD endfinally None
+00BE ldloc.1 None
+00BF callvirt token(0x0A000146) get_Count
+00C4 ldc.i4.0 None
+00C5 ble 255
+00CA ldarg.0 None
+00CB ldloc.1 None
+00CC ldloc.2 None
+00CD call token(0x060001AC) ZombieSelectRandomGet
+00D2 stloc.s local(0x0004)
+00D4 ldloc.s local(0x0004)
+00D6 brfalse 255
+00DB ldarg.0 None
+00DC ldarg.3 None
+00DD ldloc.s local(0x0004)
+00DF call token(0x060001A6) AddEnemy
+00E4 ldloc.0 None
+00E5 ldloc.s local(0x0004)
+00E7 ldfld token(0x04000201) point
+00EC sub None
+00ED stloc.0 None
+00EE br 74
+00F3 ret None

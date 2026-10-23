@@ -1,0 +1,60 @@
+0x0600027B KillAll locals=token(0x11000780)
+0000 newobj token(0x0A0000D8) .ctor
+0005 stloc.0 None
+0006 ldarg.0 None
+0007 ldfld token(0x04000362) zombieList
+000C callvirt token(0x0A0000D9) GetEnumerator
+0011 stloc.1 None
+0012 br 61
+0017 ldloca.s local(0x0001)
+0019 call token(0x0A0000DA) get_Current
+001E stloc.2 None
+001F ldloc.2 None
+0020 ldfld token(0x040005D2) isDied
+0025 brtrue 61
+002A ldloc.0 None
+002B ldloc.2 None
+002C callvirt token(0x0A0000DB) Add
+0031 ldloca.s local(0x0001)
+0033 call token(0x0A0000DC) MoveNext
+0038 brtrue 35
+003D leave 86
+0042 ldloca.s local(0x0001)
+0044 call token(0x0A00015E) Dispose
+0049 endfinally None
+004A ldloc.0 None
+004B callvirt token(0x0A0000D9) GetEnumerator
+0050 stloc.1 None
+0051 br 159
+0056 ldloca.s local(0x0001)
+0058 call token(0x0A0000DA) get_Current
+005D stloc.2 None
+005E newobj token(0x06000112) .ctor
+0063 stloc.3 None
+0064 ldloc.3 None
+0065 ldc.r4 100000000.0
+006A stfld token(0x04000123) damagePoint
+006F ldloc.3 None
+0070 ldc.i4.4 None
+0071 stfld token(0x04000125) damageAttribute
+0076 ldloc.3 None
+0077 ldc.i4.1 None
+0078 stfld token(0x04000129) anti_air_able
+007D ldloc.3 None
+007E ldc.i4.1 None
+007F stfld token(0x0400012A) anti_ground_able
+0084 ldloc.3 None
+0085 ldc.i4.1 None
+0086 stfld token(0x0400012B) anti_submarine_able
+008B ldloc.2 None
+008C ldloc.3 None
+008D ldnull None
+008E callvirt token(0x0600047F) TakeDamage
+0093 ldloca.s local(0x0001)
+0095 call token(0x0A0000DC) MoveNext
+009A brtrue 98
+009F leave 184
+00A4 ldloca.s local(0x0001)
+00A6 call token(0x0A00015E) Dispose
+00AB endfinally None
+00AC ret None

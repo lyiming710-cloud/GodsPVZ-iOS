@@ -1,0 +1,92 @@
+0x06000187 GetBoardEntryData locals=token(0x11000779)
+0000 ldarg.0 None
+0001 ldfld token(0x040001DA) boardEntryData
+0006 stloc.0 None
+0007 newobj token(0x06000191) .ctor
+000C stloc.1 None
+000D ldloc.1 None
+000E ldloc.0 None
+000F ldfld token(0x040001DB) magnification_Atk
+0014 stfld token(0x040001DB) magnification_Atk
+0019 ldloc.1 None
+001A ldloc.0 None
+001B ldfld token(0x040001DC) magnification_Hp
+0020 stfld token(0x040001DC) magnification_Hp
+0025 ldloc.1 None
+0026 ldloc.0 None
+0027 ldfld token(0x040001DD) magnification_Def
+002C stfld token(0x040001DD) magnification_Def
+0031 ldarg.0 None
+0032 ldfld token(0x040001D4) board
+0037 ldnull None
+0038 call token(0x0A00000C) op_Inequality
+003D brfalse 301
+0042 ldarg.0 None
+0043 ldfld token(0x040001D9) effectBoardEntries
+0048 callvirt token(0x0A0000E6) GetEnumerator
+004D stloc.2 None
+004E br 276
+0053 ldloca.s local(0x0002)
+0055 call token(0x0A0000E7) get_Current
+005A stloc.3 None
+005B ldloc.3 None
+005C ldfld token(0x040007FC) must
+0061 brtrue 125
+0066 ldloc.3 None
+0067 ldfld token(0x040007FD) select
+006C brfalse 276
+0071 ldloc.3 None
+0072 ldfld token(0x040007FE) key
+0077 ldarga.s argument(0x0001)
+0079 call token(0x0A00002A) ToString
+007E call token(0x0A00003A) op_Equality
+0083 brfalse 276
+0088 ldloc.3 None
+0089 ldfld token(0x040007FA) boardEntryType
+008E ldc.i4 33
+0093 beq 201
+0098 ldloc.3 None
+0099 ldfld token(0x040007FA) boardEntryType
+009E ldc.i4 34
+00A3 beq 226
+00A8 ldloc.3 None
+00A9 ldfld token(0x040007FA) boardEntryType
+00AE ldc.i4 35
+00B3 beq 251
+00B8 br 276
+00BD ldloc.1 None
+00BE ldloc.1 None
+00BF ldfld token(0x040001DC) magnification_Hp
+00C4 ldloc.3 None
+00C5 callvirt token(0x06000607) GetValue
+00CA add None
+00CB conv.r4 None
+00CC stfld token(0x040001DC) magnification_Hp
+00D1 br 276
+00D6 ldloc.1 None
+00D7 ldloc.1 None
+00D8 ldfld token(0x040001DD) magnification_Def
+00DD ldloc.3 None
+00DE callvirt token(0x06000607) GetValue
+00E3 add None
+00E4 conv.r4 None
+00E5 stfld token(0x040001DD) magnification_Def
+00EA br 276
+00EF ldloc.1 None
+00F0 ldloc.1 None
+00F1 ldfld token(0x040001DB) magnification_Atk
+00F6 ldloc.3 None
+00F7 callvirt token(0x06000607) GetValue
+00FC add None
+00FD conv.r4 None
+00FE stfld token(0x040001DB) magnification_Atk
+0103 br 276
+0108 ldloca.s local(0x0002)
+010A call token(0x0A0000E8) MoveNext
+010F brtrue 95
+0114 leave 301
+0119 ldloca.s local(0x0002)
+011B call token(0x0A0000A7) Dispose
+0120 endfinally None
+0121 ldloc.1 None
+0122 ret None

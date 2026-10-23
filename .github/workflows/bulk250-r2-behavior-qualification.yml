@@ -2,7 +2,7 @@ name: Bulk250-R2 Isolated Behavioral Qualification (CIL / CLR)
 
 on:
   push:
-    branches: [verify/bulk250-r2-behavior-v4]
+    branches: [verify/bulk250-r2-behavior-v4, verify/codex-bulk250-r2-takeover-2026-10-23]
     paths:
       - 'scripts/actions/Bulk250R2BehaviorFixture.**'
       - 'scripts/actions/test_behavior_bulk250_r2.py'
@@ -51,11 +51,17 @@ jobs:
         run: |
           set -euo pipefail
           cand="$RUNNER_TEMP/cand_dl/candidate1.dll"
-          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v4.json"
-          python3 scripts/actions/test_behavior_bulk250_r2.py --candidate-dll "$cand" --output-json "$report"
-      - name: Upload v4 behavioral qualification report
+          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5.json"
+          python3 scripts/actions/test_behavior_bulk250_r2.py \
+            --candidate-dll "$cand" \
+            --output-json "$report" \
+            --fixture-project scripts/actions/Bulk250R2BehaviorFixture.csproj
+      - name: Upload v5 scoped CLR report and full process evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk250-R2-Behavior-v4-${{ github.run_id }}
-          path: BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v4.json
+          name: Bulk250-R2-Behavior-v5-${{ github.run_id }}
+          path: |
+            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5.json
+            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5-logs/**/*.json
+            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5-logs/**/*.log

@@ -1,0 +1,96 @@
+0x0600060A FindKey locals=token(0x11000787)
+0000 ldnull None
+0001 stloc.3 None
+0002 ldarg.0 None
+0003 callvirt token(0x0A0000E6) GetEnumerator
+0008 stloc.0 None
+0009 br 311
+000E ldloca.s local(0x0000)
+0010 call token(0x0A0000E7) get_Current
+0015 stloc.1 None
+0016 ldloc.1 None
+0017 ldfld token(0x040007FA) boardEntryType
+001C ldc.i4 24
+0021 beq 94
+0026 ldloc.1 None
+0027 ldfld token(0x040007FA) boardEntryType
+002C ldc.i4 25
+0031 beq 160
+0036 ldloc.1 None
+0037 ldfld token(0x040007FA) boardEntryType
+003C ldc.i4 36
+0041 beq 226
+0046 ldloc.1 None
+0047 ldfld token(0x040007FE) key
+004C stloc.2 None
+004D br 292
+0052 ldloc.1 None
+0053 ldfld token(0x040007FC) must
+0058 brtrue 138
+005D ldloc.1 None
+005E ldfld token(0x040007FD) select
+0063 brtrue 138
+0068 ldloc.1 None
+0069 ldfld token(0x040007FE) key
+006E ldstr string token(0x7001B7BC) '_OC'
+0073 call token(0x0A000051) Concat
+0078 stloc.2 None
+0079 br 292
+007E ldloc.1 None
+007F ldfld token(0x040007FE) key
+0084 ldstr string token(0x7001B7B4) '_CC'
+0089 call token(0x0A000051) Concat
+008E stloc.2 None
+008F br 292
+0094 ldloc.1 None
+0095 ldfld token(0x040007FC) must
+009A brtrue 204
+009F ldloc.1 None
+00A0 ldfld token(0x040007FD) select
+00A5 brtrue 204
+00AA ldloc.1 None
+00AB ldfld token(0x040007FE) key
+00B0 ldstr string token(0x7001B7CC) '_OE'
+00B5 call token(0x0A000051) Concat
+00BA stloc.2 None
+00BB br 292
+00C0 ldloc.1 None
+00C1 ldfld token(0x040007FE) key
+00C6 ldstr string token(0x7001B7C4) '_CE'
+00CB call token(0x0A000051) Concat
+00D0 stloc.2 None
+00D1 br 292
+00D6 ldloc.1 None
+00D7 ldfld token(0x040007FC) must
+00DC brtrue 270
+00E1 ldloc.1 None
+00E2 ldfld token(0x040007FD) select
+00E7 brtrue 270
+00EC ldloc.1 None
+00ED ldfld token(0x040007FE) key
+00F2 ldstr string token(0x7001B7DC) '_OD'
+00F7 call token(0x0A000051) Concat
+00FC stloc.2 None
+00FD br 292
+0102 ldloc.1 None
+0103 ldfld token(0x040007FE) key
+0108 ldstr string token(0x7001B7D4) '_CD'
+010D call token(0x0A000051) Concat
+0112 stloc.2 None
+0113 br 292
+0118 ldloc.2 None
+0119 ldarg.1 None
+011A call token(0x0A00003A) op_Equality
+011F brfalse 311
+0124 ldloc.1 None
+0125 stloc.3 None
+0126 leave 336
+012B ldloca.s local(0x0000)
+012D call token(0x0A0000E8) MoveNext
+0132 brtrue 26
+0137 leave 336
+013C ldloca.s local(0x0000)
+013E call token(0x0A0000A7) Dispose
+0143 endfinally None
+0144 ldloc.3 None
+0145 ret None

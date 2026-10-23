@@ -1,0 +1,230 @@
+[
+  {
+    "name": "00-build",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "build",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\Fixture.csproj",
+      "-c",
+      "Release"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 180,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 0,
+    "elapsed_seconds": 1.7349999999860302,
+    "stdout_bytes": 295,
+    "stderr_bytes": 0,
+    "stdout_sha256": "4b05168183c1f99ccc5ad7192cccfa484841062aee0c73b71495fdf774d92da0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "01-neg_assertion_failure",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_assertion_failure.report.json",
+      "--mode=neg_assertion_failure"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 10,
+    "elapsed_seconds": 0.3440000000409782,
+    "stdout_bytes": 1676,
+    "stderr_bytes": 0,
+    "stdout_sha256": "5acdfe425e269106c68aab477ce5438d31d2ba2eeb35bde8453bfcf15805f014",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "02-neg_escaped_mutant",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_escaped_mutant.report.json",
+      "--mode=neg_escaped_mutant"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 12,
+    "elapsed_seconds": 0.34299999999348074,
+    "stdout_bytes": 1648,
+    "stderr_bytes": 0,
+    "stdout_sha256": "40b73d2065b7da1b2be8d3d95c197de7748ec7f718d3292b36f0779bb6d4986d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "03-neg_unsupported_opcode",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_unsupported_opcode.report.json",
+      "--mode=neg_unsupported_opcode"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3762504530,
+    "elapsed_seconds": 4.141000000061467,
+    "stdout_bytes": 429,
+    "stderr_bytes": 572,
+    "stdout_sha256": "df960bf4575eec137028ad8ba5170cb747c9ccd8327b000ebf084112edefa5e6",
+    "stderr_sha256": "64fe815a229b08adccf4c3b52bcdbf9e779ffa1da4297f6f3933b8712b7fa490"
+  },
+  {
+    "name": "04-neg_unexpected_exception",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_unexpected_exception.report.json",
+      "--mode=neg_unexpected_exception"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3762504530,
+    "elapsed_seconds": 4.046999999904074,
+    "stdout_bytes": 512,
+    "stderr_bytes": 598,
+    "stdout_sha256": "02b2fbc8ddd4029723ec74f34e0ff56e06aae86cb16fcd8102ee1eb664daf875",
+    "stderr_sha256": "47e764dfcdb40a17e3f89175544d226dcc1f13c6184040a045a7c2325253fdbb"
+  },
+  {
+    "name": "05-neg_wrong_sha",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_wrong_sha.report.json",
+      "--mode=neg_wrong_sha"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3,
+    "elapsed_seconds": 0.10900000005494803,
+    "stdout_bytes": 204,
+    "stderr_bytes": 192,
+    "stdout_sha256": "e0bde3ca1052cd7d957dd1fc1d5fa7124cb901581d8bb02bf19fd159b298ee90",
+    "stderr_sha256": "193bfcee873f9c9d606a61d5b723d5557f9556eb85183431564d43e07b9fa20e"
+  },
+  {
+    "name": "06-neg_additional_opcode",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_additional_opcode.report.json",
+      "--mode=neg_additional_opcode"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3762504530,
+    "elapsed_seconds": 3.890999999945052,
+    "stdout_bytes": 429,
+    "stderr_bytes": 740,
+    "stdout_sha256": "df960bf4575eec137028ad8ba5170cb747c9ccd8327b000ebf084112edefa5e6",
+    "stderr_sha256": "f27e181ba0c2ebbd8cfebc97cef549a1d42c635bd7413753e6a9672f950d7037"
+  },
+  {
+    "name": "07-neg_additional_member",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_additional_member.report.json",
+      "--mode=neg_additional_member"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3762504530,
+    "elapsed_seconds": 4.203000000095926,
+    "stdout_bytes": 429,
+    "stderr_bytes": 761,
+    "stdout_sha256": "df960bf4575eec137028ad8ba5170cb747c9ccd8327b000ebf084112edefa5e6",
+    "stderr_sha256": "b6c2e8c84ae9950c21dfdfa372c86c3cdc75466b6268d8907ad2063c35392633"
+  },
+  {
+    "name": "08-neg_additional_local",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_additional_local.report.json",
+      "--mode=neg_additional_local"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3762504530,
+    "elapsed_seconds": 3.952999999979511,
+    "stdout_bytes": 429,
+    "stderr_bytes": 1384,
+    "stdout_sha256": "df960bf4575eec137028ad8ba5170cb747c9ccd8327b000ebf084112edefa5e6",
+    "stderr_sha256": "4327ce2d1f4facc52cfadb65ea57dca7b02e124d83917b388f117d8870e26edc"
+  },
+  {
+    "name": "09-neg_additional_eh",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\neg_additional_eh.report.json",
+      "--mode=neg_additional_eh"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3762504530,
+    "elapsed_seconds": 4.015999999945052,
+    "stdout_bytes": 429,
+    "stderr_bytes": 728,
+    "stdout_sha256": "df960bf4575eec137028ad8ba5170cb747c9ccd8327b000ebf084112edefa5e6",
+    "stderr_sha256": "df97b970a2173cb19f27dc07b4c14618c109741ca6e02676347405c3c5613192"
+  },
+  {
+    "name": "10-physical-wrong-candidate",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\wrong-candidate.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\physical-wrong.report.json",
+      "--mode=normal"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 3,
+    "elapsed_seconds": 0.2970000000204891,
+    "stdout_bytes": 204,
+    "stderr_bytes": 192,
+    "stdout_sha256": "e0bde3ca1052cd7d957dd1fc1d5fa7124cb901581d8bb02bf19fd159b298ee90",
+    "stderr_sha256": "4be36ba8bae504ea23950c0f261f7e874056ab84b07f775ac3a58c1e1dbcdcbf"
+  },
+  {
+    "name": "11-normal",
+    "argv": [
+      ".local/dotnet10/dotnet.exe",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\source\\bin\\Release\\net10.0\\Fixture.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk250-r2-evidence-39731970762\\bulk250-r2-run\\candidates\\candidate1.dll",
+      "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\codex-behavior-takeover-2026-10-23\\local-gate-v5-logs\\normal.fixture.json",
+      "--mode=normal"
+    ],
+    "cwd": "C:\\Users\\86136\\Desktop\\1.0.2PC",
+    "timeout_seconds": 30,
+    "state": "PROCESS_COMPLETED",
+    "exit_code": 0,
+    "elapsed_seconds": 0.3589999999385327,
+    "stdout_bytes": 1543,
+    "stderr_bytes": 0,
+    "stdout_sha256": "925e875e952ec708282285817d3a4beb6f761ee9e83b10736a95090128644332",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

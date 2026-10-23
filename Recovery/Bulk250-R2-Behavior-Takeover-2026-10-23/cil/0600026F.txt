@@ -1,0 +1,108 @@
+0x0600026F GetBoardEntryData locals=token(0x1100077A)
+0000 ldarg.0 None
+0001 ldfld token(0x04000369) boardEntryData
+0006 stloc.0 None
+0007 newobj token(0x0600027F) .ctor
+000C stloc.1 None
+000D ldloc.1 None
+000E ldloc.0 None
+000F ldfld token(0x0400036A) magnification_Atk
+0014 stfld token(0x0400036A) magnification_Atk
+0019 ldloc.1 None
+001A ldloc.0 None
+001B ldfld token(0x0400036B) magnification_Hp
+0020 stfld token(0x0400036B) magnification_Hp
+0025 ldloc.1 None
+0026 ldloc.0 None
+0027 ldfld token(0x0400036C) magnification_Def
+002C stfld token(0x0400036C) magnification_Def
+0031 ldloc.1 None
+0032 ldloc.0 None
+0033 ldfld token(0x0400036D) toughness
+0038 stfld token(0x0400036D) toughness
+003D ldloc.1 None
+003E ldloc.0 None
+003F ldfld token(0x0400036E) elementalResistance
+0044 stfld token(0x0400036E) elementalResistance
+0049 ldarg.0 None
+004A ldfld token(0x0400035F) board
+004F ldnull None
+0050 call token(0x0A00000C) op_Inequality
+0055 brfalse 337
+005A ldarg.0 None
+005B ldfld token(0x04000368) effectBoardEntries
+0060 callvirt token(0x0A0000E6) GetEnumerator
+0065 stloc.2 None
+0066 br 312
+006B ldloca.s local(0x0002)
+006D call token(0x0A0000E7) get_Current
+0072 stloc.3 None
+0073 ldloc.3 None
+0074 ldfld token(0x040007FC) must
+0079 brtrue 149
+007E ldloc.3 None
+007F ldfld token(0x040007FD) select
+0084 brfalse 312
+0089 ldloc.3 None
+008A ldfld token(0x040007FE) key
+008F ldarga.s argument(0x0001)
+0091 call token(0x0A00002A) ToString
+0096 call token(0x0A00003A) op_Equality
+009B brfalse 312
+00A0 ldloc.3 None
+00A1 ldfld token(0x040007FA) boardEntryType
+00A6 ldc.i4.0 None
+00A7 beq 217
+00AC ldloc.3 None
+00AD ldfld token(0x040007FA) boardEntryType
+00B2 ldc.i4.6 None
+00B3 beq 262
+00B8 ldloc.3 None
+00B9 ldfld token(0x040007FA) boardEntryType
+00BE ldc.i4 32
+00C3 beq 287
+00C8 br 312
+00CD ldloc.1 None
+00CE ldloc.1 None
+00CF ldfld token(0x0400036A) magnification_Atk
+00D4 ldloc.3 None
+00D5 callvirt token(0x06000607) GetValue
+00DA add None
+00DB conv.r4 None
+00DC stfld token(0x0400036A) magnification_Atk
+00E1 ldloc.1 None
+00E2 ldloc.1 None
+00E3 ldfld token(0x0400036B) magnification_Hp
+00E8 ldloc.3 None
+00E9 callvirt token(0x06000607) GetValue
+00EE add None
+00EF conv.r4 None
+00F0 stfld token(0x0400036B) magnification_Hp
+00F5 br 312
+00FA ldloc.1 None
+00FB ldloc.1 None
+00FC ldfld token(0x0400036D) toughness
+0101 ldloc.3 None
+0102 callvirt token(0x06000607) GetValue
+0107 add None
+0108 conv.r4 None
+0109 stfld token(0x0400036D) toughness
+010E br 312
+0113 ldloc.1 None
+0114 ldloc.1 None
+0115 ldfld token(0x0400036E) elementalResistance
+011A ldloc.3 None
+011B callvirt token(0x06000607) GetValue
+0120 add None
+0121 conv.r4 None
+0122 stfld token(0x0400036E) elementalResistance
+0127 br 312
+012C ldloca.s local(0x0002)
+012E call token(0x0A0000E8) MoveNext
+0133 brtrue 119
+0138 leave 337
+013D ldloca.s local(0x0002)
+013F call token(0x0A0000A7) Dispose
+0144 endfinally None
+0145 ldloc.1 None
+0146 ret None
