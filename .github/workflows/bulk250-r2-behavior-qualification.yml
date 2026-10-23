@@ -51,17 +51,17 @@ jobs:
         run: |
           set -euo pipefail
           cand="$RUNNER_TEMP/cand_dl/candidate1.dll"
-          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5.json"
+          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v6.json"
           python3 scripts/actions/test_behavior_bulk250_r2.py \
             --candidate-dll "$cand" \
             --output-json "$report" \
             --fixture-project scripts/actions/Bulk250R2BehaviorFixture.csproj
-      - name: Upload v5 scoped CLR report and full process evidence
+      - name: Upload v6 scoped CLR report and full process evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk250-R2-Behavior-v5-${{ github.run_id }}
+          name: Bulk250-R2-Behavior-v6-${{ github.run_id }}
           path: |
-            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5.json
-            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5-logs/**/*.json
-            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v5-logs/**/*.log
+            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v6.json
+            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v6-logs/**/*.json
+            BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v6-logs/**/*.log

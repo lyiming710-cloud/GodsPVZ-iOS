@@ -5,7 +5,8 @@ import argparse,hashlib,json,os,shutil,subprocess,sys,time
 
 PIN="4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903"
 CECIL="831dca77470d85cb6ffbea3072daa7a3df5b7c9fcfd9c3f43674a9be99d4bfcf"
-TARGETS={"0x0600001C","0x06000183","0x06000287","0x0600060A","0x060004BF","0x06000187","0x0600026F","0x060001A8"}
+TARGETS={"0x0600001C","0x06000183","0x06000287","0x0600060A","0x060004BF","0x06000187","0x0600026F","0x060001A8",
+         "0x0600027B","0x060001A1","0x060006BB"}
 HELPERS={"0x06000158","0x06000303"}
 
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -18,20 +19,20 @@ def validate_report(report):
     passed={k for k,v in rows.items() if v["status"]=="PASS"}
     pending={k for k,v in rows.items() if v["status"]=="NOT_YET_EXECUTED"}
     unsupported={k for k,v in rows.items() if v["status"]=="UNSUPPORTED_ENGINE_CONTEXT"}
-    assert passed==TARGETS and len(pending)==20 and len(unsupported)==22
+    assert passed==TARGETS and len(pending)==17 and len(unsupported)==22
     assert passed|pending|unsupported==set(rows) and not (passed&pending or passed&unsupported or pending&unsupported)
-    assert s["methods_genuinely_passed"]==8 and s["methods_failed"]==0 and s["failed_assertions"]==[]
-    assert s["methods_not_yet_executed"]==s["pending_after"]==20
+    assert s["methods_genuinely_passed"]==11 and s["methods_failed"]==0 and s["failed_assertions"]==[]
+    assert s["methods_not_yet_executed"]==s["pending_after"]==17 and s["v6_pending_before"]==20
     assert s["methods_unsupported_engine_context"]==22
     cases=report["cases_evaluated"];mutants=report["mutants_evaluated"]
-    assert len(cases)==s["total_cases_executed"]==154 and all(c["passed"] is True for c in cases)
+    assert len(cases)==s["total_cases_executed"]==214 and all(c["passed"] is True for c in cases)
     assert len({(c["target"],c["case_id"]) for c in cases})==len(cases)
-    assert len(mutants)==s["total_mutants_tested"]==s["total_mutants_detected"]==16
+    assert len(mutants)==s["total_mutants_tested"]==s["total_mutants_detected"]==27
     assert all(m["detected"] is True and m.get("unexpected_exception") is None for m in mutants)
     assert all(rows[t]["cases_executed"]==sum(c["target"]==t for c in cases) for t in TARGETS)
     assert all(rows[t]["mutants_detected"]==sum(m["target"]==t for m in mutants) for t in TARGETS)
     assert all(report["getter_executions"][t]["status"]=="PASS" for t in HELPERS)
-    assert len(report["execution_input_identities"])==10 and len(report["mutant_execution_input_identities"])==16
+    assert len(report["execution_input_identities"])==13 and len(report["mutant_execution_input_identities"])==27
     assert report["runtime_identity"]["cecil_sha256"]==CECIL
     scope=report["evidence_scope"]
     assert scope["native_original_executed"] is False and scope["full_assembly_qualification"] is False
@@ -83,6 +84,10 @@ def main():
             ("neg_additional_member",None,"call binding"),
             ("neg_additional_local",None,"unmapped candidate type System.Object"),
             ("neg_additional_eh",None,"unmodeled EH layout"),
+            ("neg_v6_crossing_eh",None,"mismatched endfinally"),
+            ("neg_v6_unknown_field",None,"field binding"),
+            ("neg_v6_ctor_signature",None,"candidate signature mismatch"),
+            ("neg_v6_branch_target",None,"branch target outside method"),
         ]
         for n,(mode,expected,needle) in enumerate(modes,1):
             rc,so,se=run(f"{n:02d}-{mode}",[a.dotnet,str(binary),str(candidate),str(logs/(mode+".report.json")),"--mode="+mode],30)
@@ -93,13 +98,13 @@ def main():
         wrong=logs/"wrong-candidate.dll";shutil.copyfile(candidate,wrong)
         with wrong.open("r+b") as stream:
             stream.seek(-1,2);last=stream.read(1);stream.seek(-1,2);stream.write(bytes([last[0]^1]))
-        rc,so,se=run("10-physical-wrong-candidate",[a.dotnet,str(binary),str(wrong),str(logs/"physical-wrong.report.json"),"--mode=normal"],30)
+        rc,so,se=run("14-physical-wrong-candidate",[a.dotnet,str(binary),str(wrong),str(logs/"physical-wrong.report.json"),"--mode=normal"],30)
         controls.append(dict(mode="physical_wrong_candidate",sha256=sha(wrong),mutation="xor last byte with 1",
             observed_exit=rc,passed=rc==3 and "Candidate SHA-256 mismatch" in se))
         save(logs/"gate-negative-controls.json",controls)
         if not all(c["passed"] for c in controls):raise RuntimeError("One or more gate controls failed")
         raw=logs/"normal.fixture.json"
-        rc,so,se=run("11-normal",[a.dotnet,str(binary),str(candidate),str(raw),"--mode=normal"],30)
+        rc,so,se=run("15-normal",[a.dotnet,str(binary),str(candidate),str(raw),"--mode=normal"],30)
         if rc!=0:raise RuntimeError("Normal fixture failed: "+so[-2000:]+se[-2000:])
         report=json.loads(raw.read_text(encoding="utf-8"));validate_report(report)
         if report["runtime_identity"]["fixture_sha256"]!=sha(binary) or sha(candidate)!=PIN:

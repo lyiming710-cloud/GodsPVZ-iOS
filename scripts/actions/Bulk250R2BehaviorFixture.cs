@@ -61,9 +61,14 @@ namespace GodsPVZ.Actions.Verification
 
     public class MockEnemy
     {
+        public int id;
         public int gridX; // 0x040001F9
         public int row; // 0x040001F8
         public int wave; // 0x040001FB
+        public MockVector3 position;
+        public float waitingTime;
+        public string entryKey;
+        public List<MockEnemyPath> myPath;
     }
 
     public class MockTransform
@@ -855,7 +860,8 @@ namespace GodsPVZ.Actions.Verification
             }
             var supportedModes = new[] { "normal","neg_wrong_sha","neg_assertion_failure","neg_escaped_mutant",
                 "neg_unsupported_opcode","neg_unexpected_exception","neg_additional_opcode","neg_additional_member",
-                "neg_additional_local","neg_additional_eh" };
+                "neg_additional_local","neg_additional_eh","neg_v6_crossing_eh",
+                "neg_v6_unknown_field","neg_v6_ctor_signature","neg_v6_branch_target" };
             if(!supportedModes.Contains(runMode)){Console.Error.WriteLine("Unknown fixture mode: "+runMode);return 4;}
 
             string expectedSha = "4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903";
@@ -884,6 +890,28 @@ namespace GodsPVZ.Actions.Verification
 
             using var asm = AssemblyDefinition.ReadAssembly(candPath, new ReaderParameters { ReadSymbols = false });
             var module = asm.MainModule;
+            if(runMode.StartsWith("neg_v6_"))
+            {
+                int token=runMode=="neg_v6_unknown_field"?0x0600027B:runMode=="neg_v6_ctor_signature"?0x060001A1:0x060006BB;
+                var bad=CloneMethod((MethodDefinition)module.LookupToken(token),runMode);
+                if(runMode=="neg_v6_crossing_eh")
+                {
+                    var inner=bad.Body.ExceptionHandlers.Single(e=>e.TryStart.Offset==0x6F);
+                    inner.HandlerEnd=bad.Body.ExceptionHandlers.Single(e=>e.TryStart.Offset==0x56).HandlerEnd;
+                }
+                if(runMode=="neg_v6_unknown_field")
+                {
+                    var ins=bad.Body.Instructions.Single(i=>i.Offset==0x20);
+                    ins.Operand=new FieldReference("unknownField",module.TypeSystem.Boolean,((FieldReference)ins.Operand).DeclaringType);
+                }
+                if(runMode=="neg_v6_ctor_signature")bad.Parameters[0].ParameterType=module.TypeSystem.Int32;
+                if(runMode=="neg_v6_branch_target")
+                    bad.Body.Instructions.Single(i=>i.Offset==0xC).Operand=Instruction.Create(Mono.Cecil.Cil.OpCodes.Ret);
+                if(token==0x0600027B)CandidateCilTranslator.CompileKillAll27B(bad);
+                else if(token==0x060001A1)CandidateCilTranslator.CompileEnemyCtor1A1(bad);
+                else CandidateCilTranslator.CompilePrechoose6BB(bad);
+                return 0;
+            }
             if(runMode.StartsWith("neg_additional_"))
             {
                 var bad=CloneMethod((MethodDefinition)module.LookupToken(0x06000187),runMode);
@@ -945,11 +973,14 @@ namespace GodsPVZ.Actions.Verification
                     "DeviceManager/BoardEntryData::.ctor", "ZombieManager/BoardEntryData::.ctor",
                     "BoardEntry::GetValue", "EnemySelecter::ZombieSelectRandomGet",
                     "EnemySelecter::AddEnemy","SavesManager::ReloadPlantSaveData",
+                    "Damage::.ctor", "Zombie::TakeDamage", "EnemyPath::.ctor",
+                    "Card_Choose::Choose_Reset", "Card_Choose::Choose_Being", "SeedChooserScreen/PlantDetail::Awake",
                     "existing MockTransform/MockSpriteRenderer/MockEnemyManager adapters"
                 },
                 enumerator_adapter="Tracked wrapper of real BCL List<T>.Enumerator; not Unity's original runtime library",
                 promotion_status="NOT_FORMALLY_PROMOTED"
             };
+            report["constructor_execution_boundary"] = "Enemy::.ctor runs its candidate body on a fresh RuntimeHelpers.GetUninitializedObject host instance; BCL Object::.ctor is called, EnemyPath::.ctor is controlled.";
             var failedAssertions = new List<string>();
             var methodPassStatus = new Dictionary<string, bool>();
 
@@ -1754,6 +1785,7 @@ namespace GodsPVZ.Actions.Verification
             var executedInputs = new List<MethodDefinition>{ m158,m01c,m303,m183,m287,m60A,m4BF };
             var mutantInputs = new List<MethodDefinition>{ m01c_mutDiv3,m158_mutNull,m01c_mutCache,m183_mutBeq,m183_mutAlpha,m183_mutNoInnerDispose,m287_mutOmitAdd,m287_mutInnerDisp,m60A_mutEq,m4BF_mutSort };
             RunAdditionalTargets(module,casesEvaluatedList,mutantsEvaluatedList,failedAssertions,methodPassStatus,executedInputs,mutantInputs);
+            RunV6Targets(module,casesEvaluatedList,mutantsEvaluatedList,failedAssertions,methodPassStatus,executedInputs,mutantInputs);
             report["execution_input_identities"] = executedInputs.Select(CilIdentity).ToArray();
             report["mutant_execution_input_identities"] = mutantInputs.Select(CilIdentity).ToArray();
             report["runtime_identity"] = RuntimeIdentity();
@@ -1904,7 +1936,9 @@ namespace GodsPVZ.Actions.Verification
                 ["methods_genuinely_passed"] = genuinelyPassedMethods,
                 ["methods_unsupported_engine_context"] = unsupportedEngineMethods,
                 ["pending_before"] = 26,
-                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF", "0x06000187", "0x0600026F", "0x060001A8" },
+                ["v6_pending_before"] = 20,
+                ["v6_new_targets"] = new[] { "0x0600027B", "0x060001A1", "0x060006BB" },
+                ["newly_attempted_target_tokens"] = new[] { "0x06000287", "0x0600060A", "0x060004BF", "0x06000187", "0x0600026F", "0x060001A8", "0x0600027B", "0x060001A1", "0x060006BB" },
                 ["newly_executed_target_tokens"] = executedInputs.Select(m=>$"0x{m.MetadataToken.ToInt32():X8}").Where(t=>t!="0x06000158"&&t!="0x06000303"&&t!="0x0600001C"&&t!="0x06000183").ToArray(),
                 ["pending_after"] = notYetExecutedMethods,
                 ["methods_not_yet_executed"] = notYetExecutedMethods,

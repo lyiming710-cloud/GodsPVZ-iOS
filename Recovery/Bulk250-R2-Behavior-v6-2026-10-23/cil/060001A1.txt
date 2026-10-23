@@ -1,0 +1,75 @@
+0x060001A1 .ctor locals=token(0x1100079B)
+0000 ldarg.0 None
+0001 ldsfld token(0x0A000013) Empty
+0006 stfld token(0x040001FE) entryKey
+000B ldarg.0 None
+000C call token(0x0A0000B6) .ctor
+0011 ldarg.0 None
+0012 newobj token(0x0A000130) .ctor
+0017 stfld token(0x040001FD) myPath
+001C ldarg.1 None
+001D brfalse 240
+0022 ldarg.0 None
+0023 ldarg.1 None
+0024 ldfld token(0x040001F7) id
+0029 stfld token(0x040001F7) id
+002E ldarg.0 None
+002F ldarg.1 None
+0030 ldfld token(0x040001F8) row
+0035 stfld token(0x040001F8) row
+003A ldarg.0 None
+003B ldarg.1 None
+003C ldfld token(0x040001F9) gridX
+0041 stfld token(0x040001F9) gridX
+0046 ldarg.0 None
+0047 ldarg.1 None
+0048 ldfld token(0x040001FA) position
+004D stfld token(0x040001FA) position
+0052 ldarg.0 None
+0053 ldarg.1 None
+0054 ldfld token(0x040001FB) wave
+0059 stfld token(0x040001FB) wave
+005E ldarg.0 None
+005F ldarg.1 None
+0060 ldfld token(0x040001FC) waitingTime
+0065 stfld token(0x040001FC) waitingTime
+006A ldarg.0 None
+006B ldarg.1 None
+006C ldfld token(0x040001FE) entryKey
+0071 stfld token(0x040001FE) entryKey
+0076 ldarg.0 None
+0077 ldfld token(0x040001FD) myPath
+007C callvirt token(0x0A000224) Clear
+0081 ldarg.1 None
+0082 ldfld token(0x040001FD) myPath
+0087 callvirt token(0x0A00022A) GetEnumerator
+008C stloc.0 None
+008D br 215
+0092 ldloca.s local(0x0000)
+0094 call token(0x0A00022B) get_Current
+0099 stloc.1 None
+009A ldloc.1 None
+009B ldfld token(0x040003A5) gridX
+00A0 ldloc.1 None
+00A1 ldfld token(0x040003A6) gridY
+00A6 ldloc.1 None
+00A7 ldfld token(0x040003A8) waitingTime
+00AC ldnull None
+00AD newobj token(0x060002A4) .ctor
+00B2 stloc.2 None
+00B3 ldloc.2 None
+00B4 ldloc.1 None
+00B5 ldfld token(0x040003AA) isEnd
+00BA stfld token(0x040003AA) isEnd
+00BF ldarg.0 None
+00C0 ldfld token(0x040001FD) myPath
+00C5 ldloc.2 None
+00C6 callvirt token(0x0A000151) Add
+00CB ldloca.s local(0x0000)
+00CD call token(0x0A00022C) MoveNext
+00D2 brtrue 158
+00D7 leave 240
+00DC ldloca.s local(0x0000)
+00DE call token(0x0A000045) Dispose
+00E3 endfinally None
+00E4 ret None
