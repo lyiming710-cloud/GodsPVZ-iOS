@@ -847,6 +847,7 @@ namespace GodsPVZ.Actions.Verification
                 }
             }
 
+            m01c_mutCache.Body.Variables.Add(new VariableDefinition(m01c.Module.TypeSystem.Object));
             m01c_mutCache.Body.Instructions.Insert(firstGetterIdx + 1, Instruction.Create(Mono.Cecil.Cil.OpCodes.Dup));
             m01c_mutCache.Body.Instructions.Insert(firstGetterIdx + 2, Instruction.Create(Mono.Cecil.Cil.OpCodes.Stloc_2));
             secondGetterIdx += 2;
