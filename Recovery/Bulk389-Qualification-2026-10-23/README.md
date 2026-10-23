@@ -68,3 +68,12 @@ R4 与 R3 的所有 2,297 个有 RVA 方法体逐字节相同；R4 已重新执�
 新增与变更的本地证据在 R4-AND-REFERENCE-AUDIT-SUPPLEMENT.zip。先解压 COMPLETE-LOCAL-CHECKPOINT.zip，再覆盖解压该补充包，可恢复最终工具和全部修订；两个清单逐文件记录 SHA 并已实际回读。核心原 ZIP 继续保留 R1–R3 的当时状态。CI 准备脚本是当时生成器，真正执行配置以仓库 workflow 与 check_bulk389_compiler.py 固定的 R4 哈希为准。
 
 32 个边界用例执行于首次编译的 WidthAwareTables；R4 的该源文件逐字节未改。R4 实际候选的每个旧列值与堆内容另外独立回读，没有把前一个补丁器的测试伪称为新二进制执行。
+
+
+## 本轮完整 Linux 编译结果已回收
+
+[Actions 39957635669](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39957635669) 在源码提交 1cc0761d6378c8d00e4d9c67e9c322eba6e52614 上成功结束。R4 SHA 一致，IL2CPP exit=0；此次生成 756 个 C++ 文件，游戏部分为 14 个 TU，14/14 均 Clang18 语法检查 exit=0、error=0。映射方法仍是 2,267，与 R6 相同。旧 38 个报错方法在这个 Linux 门下归零；源码分片从 16 降为 14，不是少检查两个现有文件。
+
+独立回读了全部 14 个原始日志，并在生成源码压缩包中逐一核验源文件 SHA 和 global-metadata SHA。只编译了全部游戏 TU，没有宣称其余 742 个系统 C++ 也通过，更没有宣称 Apple 链接、设备执行或全方法行为通过。原始报告、日志、逐方法映射和独立回读保存于 compiler-39957635669/。生成全 C++ 压缩包 152,296,115 字节，超过 Git 单文件限制，单独保存到本轮 Release，不塞入 Git blob。
+
+下一流程为 bulk389-real-ios-ipa.yml：把这个固定候选绑定到同次运行的包，经精确 Unity 2022.3.44f1c1 重新导出，再由 macOS-15 / Xcode16.4 构建 ARM64 未签名应用。保留失败日志、归还 Personal 席位，账号日志仅上传脱敏副本。历史 helper 来自固定 64b86ed 提交并独立放在 ios-support/；不替换仓库原 Assets/Editor 工具。历史 workflow 引用的两个 IPA 脚本不存在，已改用新标准库打包器，检查主程序及 UnityFramework 的物理 iOS ARM64、无代码签名／provision、ZIP CRC，以及 IPA metadata 与本次 Xcode 导出逐字节一致。该流程是否真正完成，以后续运行实际产物为准。
