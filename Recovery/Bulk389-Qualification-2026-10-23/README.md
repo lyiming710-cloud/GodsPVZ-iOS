@@ -1,3 +1,5 @@
+**无 Unity 的独立 CPP 清查已完成：259/259（含 75 泛型），256 通过、3 失败、38 条诊断，全部日志独立重数；Xcode clean 目录调整真实通过。另 66 个生成 C 文件单独检查中。见 all-generated-cpp-39998642128/README.md。**
+
 **最新纠正：39988665189 已成功真实 Unity 导出，Apple 在未被旧 14 文件检查覆盖的 Generics__63.cpp 中报错。泛型分片包含游戏方法；旧“742 个系统 CPP”表述不准确。现复用导出做全生成 CPP 清查，停止完整流程试错。见 apple-failure-39988665189/README.md。**
 
 **独立 helper 真实验证通过后，完整流程已调度：https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39988665189；固定代码 bc27f5334334601fd56ed4bcd987af55dd84b6be。此条为运行观测，未表示 IPA 已生成。**

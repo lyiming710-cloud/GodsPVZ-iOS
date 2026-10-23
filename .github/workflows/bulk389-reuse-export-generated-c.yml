@@ -1,0 +1,54 @@
+name: Bulk389 frozen export metadata C audit (no Unity)
+
+on:
+  push:
+    branches: [verify/codex-bulk250-r2-takeover-2026-10-23]
+    paths:
+      - '.github/workflows/bulk389-reuse-export-generated-c.yml'
+      - 'scripts/actions/audit_bulk389_generated_c.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  generated_c:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select exact Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          xcodebuild -version
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 39988665189
+          name: GodsPVZ-Stage9-bulk389-unsigned-Xcode
+          path: ${{ runner.temp }}/frozen-xcode-input
+      - name: Restore the same hash-locked export
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARCHIVE="$RUNNER_TEMP/frozen-xcode-input/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst"
+          [ "$(shasum -a 256 "$ARCHIVE" | awk '{print $1}')" = '93d32bb83a6d93b1c9d8a490bf057db7cfe2e35dad1219ab4924b6ec38538e04' ]
+          command -v zstd >/dev/null || brew install zstd
+          mkdir -p "$RUNNER_TEMP/frozen-export"
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$RUNNER_TEMP/frozen-export"
+      - name: Compile all 66 generated C files through the C frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/audit_bulk389_generated_c.py \
+            --xcode-dir "$RUNNER_TEMP/frozen-export/xcode" \
+            --output-dir "$RUNNER_TEMP/generated-c-audit"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Bulk389-ALL-GENERATED-C-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/generated-c-audit/
+          if-no-files-found: warn
+          retention-days: 90
