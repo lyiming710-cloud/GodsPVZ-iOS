@@ -6,6 +6,10 @@
 
 本地 Windows x64 / .NET 10.0.13 已完成 local-gate-v6-final.json 对应的真实执行：
 
+随后 [GitHub Actions 39940181375](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39940181375) 对源码提交 8f037d8db165890930707704d0152f5507a228d3 在 Ubuntu 24.04.5 LTS x64 / .NET 10.0.13 上实际复现并成功。CI-REVIEW.json 绑定原始报告、55 个已核对大小和哈希的日志文件及发布源码哈希；原始下载产物在 ci-39940181375/。
+
+CROSS-PLATFORM-COMPARISON.json 对照两个已执行报告，214 个用例观测行、27 个变异体观测行均完全一致；13 个执行方法输入及 27 个变异体输入的 canonical CIL 哈希也一致。这个一致性结论不包含原版 native 或 Unity 行为。
+
 | 范围 | v5 | v6 |
 | --- | --- | --- |
 | 50 个目标内的受控 CLR 通过方法 | 8 | 11 |
