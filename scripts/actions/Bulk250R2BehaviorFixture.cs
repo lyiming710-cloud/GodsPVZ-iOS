@@ -73,7 +73,9 @@ namespace GodsPVZ.Actions.Verification
     public class MockGameObject
     {
         public MockTransform transform = new();
+        public MockSpriteRenderer spriteRenderer = new();
         public MockTransform get_transform() => transform;
+        public MockSpriteRenderer GetComponent_SpriteRenderer() => spriteRenderer;
     }
 
     public class MockEnemyEditor : MockComponent
@@ -120,7 +122,7 @@ namespace GodsPVZ.Actions.Verification
     public class MockDevice
     {
         public int ID; // 0x0400046F
-        public List<MockSpriteRenderer> animationSprites; // 0x04000488
+        public List<MockGameObject> animationSprites; // 0x04000488
     }
 
     public class MockDeviceManager
@@ -226,9 +228,9 @@ namespace GodsPVZ.Actions.Verification
             return (Func<MockBoardConfig, MockMap>)dm.CreateDelegate(typeof(Func<MockBoardConfig, MockMap>));
         }
 
-        public static Func<MockDevice, List<MockSpriteRenderer>> CompileGetter303(MethodDefinition m303)
+        public static Func<MockDevice, List<MockGameObject>> CompileGetter303(MethodDefinition m303)
         {
-            var dm = new DynamicMethod("CIL_06000303", typeof(List<MockSpriteRenderer>), new[] { typeof(MockDevice) }, typeof(Program).Module, true);
+            var dm = new DynamicMethod("CIL_06000303", typeof(List<MockGameObject>), new[] { typeof(MockDevice) }, typeof(Program).Module, true);
             var il = dm.GetILGenerator();
 
             foreach (var ins in m303.Body.Instructions)
@@ -249,7 +251,7 @@ namespace GodsPVZ.Actions.Verification
                 else throw new NotSupportedException($"Unexpected opcode in 0x06000303: {ins.OpCode}");
             }
 
-            return (Func<MockDevice, List<MockSpriteRenderer>>)dm.CreateDelegate(typeof(Func<MockDevice, List<MockSpriteRenderer>>));
+            return (Func<MockDevice, List<MockGameObject>>)dm.CreateDelegate(typeof(Func<MockDevice, List<MockGameObject>>));
         }
 
         public static Action<MockAdminSystem2> CompileCreateNewEnemy01C(MethodDefinition m01c, MethodInfo getter158Method)
@@ -365,16 +367,16 @@ namespace GodsPVZ.Actions.Verification
                 throw new NotSupportedException($"0x06000183 local 1 must be Device, found {m183.Body.Variables[1].VariableType.FullName}");
             if (!m183.Body.Variables[2].VariableType.Name.Contains("Enumerator"))
                 throw new NotSupportedException($"0x06000183 local 2 must be Enumerator, found {m183.Body.Variables[2].VariableType.FullName}");
-            if (m183.Body.Variables[3].VariableType.Name != "SpriteRenderer")
-                throw new NotSupportedException($"0x06000183 local 3 must be SpriteRenderer, found {m183.Body.Variables[3].VariableType.FullName}");
+            if (m183.Body.Variables[3].VariableType.Name != "GameObject")
+                throw new NotSupportedException($"0x06000183 local 3 must be GameObject, found {m183.Body.Variables[3].VariableType.FullName}");
             if (m183.Body.Variables[4].VariableType.Name != "Single")
                 throw new NotSupportedException($"0x06000183 local 4 must be Single, found {m183.Body.Variables[4].VariableType.FullName}");
 
             var localBuilders = new LocalBuilder[5];
             localBuilders[0] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockDevice>));
             localBuilders[1] = il.DeclareLocal(typeof(MockDevice));
-            localBuilders[2] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockSpriteRenderer>));
-            localBuilders[3] = il.DeclareLocal(typeof(MockSpriteRenderer));
+            localBuilders[2] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockGameObject>));
+            localBuilders[3] = il.DeclareLocal(typeof(MockGameObject));
             localBuilders[4] = il.DeclareLocal(typeof(float));
 
             var labels = new Dictionary<Instruction, Label>();
@@ -504,7 +506,7 @@ namespace GodsPVZ.Actions.Verification
                     }
                     else if (tok == 0x0A0000FD)
                     {
-                        il.Emit(OpCodes.Newobj, typeof(MockTrackedListEnumerator<MockSpriteRenderer>).GetConstructor(new[] { typeof(List<MockSpriteRenderer>) }));
+                        il.Emit(OpCodes.Newobj, typeof(MockTrackedListEnumerator<MockGameObject>).GetConstructor(new[] { typeof(List<MockGameObject>) }));
                     }
                     else if (tok == 0x0A0000CD)
                     {
@@ -512,7 +514,7 @@ namespace GodsPVZ.Actions.Verification
                     }
                     else if (tok == 0x0A0000FE)
                     {
-                        il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockSpriteRenderer>).GetMethod("get_Current"));
+                        il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockGameObject>).GetMethod("get_Current"));
                     }
                     else if (tok == 0x0A0000CF)
                     {
@@ -520,7 +522,7 @@ namespace GodsPVZ.Actions.Verification
                     }
                     else if (tok == 0x0A0000FF)
                     {
-                        il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockSpriteRenderer>).GetMethod("MoveNext"));
+                        il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockGameObject>).GetMethod("MoveNext"));
                     }
                     else if (tok == 0x0A000129)
                     {
@@ -528,11 +530,11 @@ namespace GodsPVZ.Actions.Verification
                     }
                     else if (tok == 0x0A000128)
                     {
-                        il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockSpriteRenderer>).GetMethod("Dispose"));
+                        il.Emit(OpCodes.Call, typeof(MockTrackedListEnumerator<MockGameObject>).GetMethod("Dispose"));
                     }
                     else if (tok == 0x2B000011)
                     {
-                        il.Emit(OpCodes.Callvirt, typeof(MockSpriteRenderer).GetMethod("get_gameObject"));
+                        il.Emit(OpCodes.Callvirt, typeof(MockGameObject).GetMethod("GetComponent_SpriteRenderer"));
                     }
                     else if (tok == 0x0A000097 && mr.Name == "set_color")
                     {
@@ -903,21 +905,21 @@ namespace GodsPVZ.Actions.Verification
 
             // Case C.1: Normal execution (display_Ban_device = false)
             TraceDisposeCollector.Clear();
-            var dev1 = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var dev12 = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var dev2 = new MockDevice { ID = 2, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var dev1 = new MockDevice { ID = 1, animationSprites = new List<MockGameObject> { new MockGameObject() } };
+            var dev12 = new MockDevice { ID = 12, animationSprites = new List<MockGameObject> { new MockGameObject() } };
+            var dev2 = new MockDevice { ID = 2, animationSprites = new List<MockGameObject> { new MockGameObject() } };
             var mgrC1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { dev1, dev12, dev2 } };
             fn183(mgrC1);
-            var expectedLogC1 = new List<string> { "MockSpriteRenderer_Disposed", "MockDevice_Disposed" };
-            bool passC1 = (dev12.animationSprites[0].a == 0.5f && dev1.animationSprites[0].a == 0.0f && dev2.animationSprites[0].a == 0.0f
+            var expectedLogC1 = new List<string> { "MockGameObject_Disposed", "MockDevice_Disposed" };
+            bool passC1 = (dev12.animationSprites[0].spriteRenderer.a == 0.5f && dev1.animationSprites[0].spriteRenderer.a == 0.0f && dev2.animationSprites[0].spriteRenderer.a == 0.0f
                            && TraceDisposeCollector.Log.SequenceEqual(expectedLogC1));
             casesEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["case_id"] = "C.1_Normal_NotBanned",
                 ["target"] = "0x06000183",
                 ["input"] = "display_Ban_device=false, devices=[ID=1, ID=12, ID=2]",
-                ["expected"] = "dev12.alpha=0.5, non-12 skipped (alpha=0.0), trace=[MockSpriteRenderer_Disposed, MockDevice_Disposed]",
-                ["observed"] = $"dev12.alpha={dev12.animationSprites[0].a}, trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
+                ["expected"] = "dev12.alpha=0.5, non-12 skipped (alpha=0.0), trace=[MockGameObject_Disposed, MockDevice_Disposed]",
+                ["observed"] = $"dev12.alpha={dev12.animationSprites[0].spriteRenderer.a}, trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["passed"] = passC1
             });
             if (!passC1)
@@ -927,17 +929,17 @@ namespace GodsPVZ.Actions.Verification
             }
 
             // Case C.2: Normal execution (display_Ban_device = true)
-            var devBan = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devBan = new MockDevice { ID = 12, animationSprites = new List<MockGameObject> { new MockGameObject() } };
             var mgrC2 = new MockDeviceManager { display_Ban_device = true, deviceList = new List<MockDevice> { devBan } };
             fn183(mgrC2);
-            bool passC2 = (devBan.animationSprites[0].a == 1.0f);
+            bool passC2 = (devBan.animationSprites[0].spriteRenderer.a == 1.0f);
             casesEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["case_id"] = "C.2_Normal_Banned",
                 ["target"] = "0x06000183",
                 ["input"] = "display_Ban_device=true, devices=[ID=12]",
                 ["expected"] = "devBan.alpha=1.0",
-                ["observed"] = $"devBan.alpha={devBan.animationSprites[0].a}",
+                ["observed"] = $"devBan.alpha={devBan.animationSprites[0].spriteRenderer.a}",
                 ["passed"] = passC2
             });
             if (!passC2)
@@ -977,7 +979,7 @@ namespace GodsPVZ.Actions.Verification
 
             // Case C.4: Inner rendering exception triggers both nested finally blocks in strict sequence
             TraceDisposeCollector.Clear();
-            var devFault = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer { throwOnSet = true } } };
+            var devFault = new MockDevice { ID = 12, animationSprites = new List<MockGameObject> { new MockGameObject { spriteRenderer = new MockSpriteRenderer { throwOnSet = true } } } };
             var mgrC4 = new MockDeviceManager { deviceList = new List<MockDevice> { devFault } };
             bool passC4 = false;
             Type caughtExType = null;
@@ -985,7 +987,7 @@ namespace GodsPVZ.Actions.Verification
             catch (Exception ex)
             {
                 caughtExType = ex is TargetInvocationException tie ? tie.InnerException.GetType() : ex.GetType();
-                var expectedOrder = new[] { "MockSpriteRenderer_Disposed", "MockDevice_Disposed" };
+                var expectedOrder = new[] { "MockGameObject_Disposed", "MockDevice_Disposed" };
                 passC4 = (caughtExType == typeof(InvalidOperationException)) && TraceDisposeCollector.Log.SequenceEqual(expectedOrder);
             }
             casesEvaluatedList.Add(new Dictionary<string, object>
@@ -995,7 +997,7 @@ namespace GodsPVZ.Actions.Verification
                 ["input"] = "device[12] throwOnSet=true",
                 ["expected_exception"] = "System.InvalidOperationException",
                 ["observed_exception"] = caughtExType?.FullName,
-                ["expected_trace"] = "[MockSpriteRenderer_Disposed, MockDevice_Disposed]",
+                ["expected_trace"] = "[MockGameObject_Disposed, MockDevice_Disposed]",
                 ["observed_trace"] = $"[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["passed"] = passC4
             });
@@ -1044,11 +1046,11 @@ namespace GodsPVZ.Actions.Verification
             var insBranch = m183_mutBeq.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Bne_Un || i.OpCode == Mono.Cecil.Cil.OpCodes.Bne_Un_S);
             insBranch.OpCode = Mono.Cecil.Cil.OpCodes.Beq;
             var fn183_mutBeq = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutBeq, fn303.Method);
-            var devMut1 = new MockDevice { ID = 1, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
-            var devMut12 = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devMut1 = new MockDevice { ID = 1, animationSprites = new List<MockGameObject> { new MockGameObject() } };
+            var devMut12 = new MockDevice { ID = 12, animationSprites = new List<MockGameObject> { new MockGameObject() } };
             var mgrMut1 = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMut1, devMut12 } };
             fn183_mutBeq(mgrMut1);
-            bool mutBeq_detected = (devMut12.animationSprites[0].a == 0.0f && devMut1.animationSprites[0].a == 0.5f);
+            bool mutBeq_detected = (devMut12.animationSprites[0].spriteRenderer.a == 0.0f && devMut1.animationSprites[0].spriteRenderer.a == 0.5f);
             mutantsEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["id"] = "MUT_0183_INVERT_FILTER",
@@ -1057,7 +1059,7 @@ namespace GodsPVZ.Actions.Verification
                 ["original"] = "bne.un (skips non-12)",
                 ["mutated"] = "beq (skips 12)",
                 ["expected_on_candidate"] = "dev12.a=0.5, dev1.a=0.0",
-                ["observed_on_mutant"] = $"dev12.a={devMut12.animationSprites[0].a}, dev1.a={devMut1.animationSprites[0].a}",
+                ["observed_on_mutant"] = $"dev12.a={devMut12.animationSprites[0].spriteRenderer.a}, dev1.a={devMut1.animationSprites[0].spriteRenderer.a}",
                 ["detected"] = mutBeq_detected
             });
             if (!mutBeq_detected)
@@ -1071,10 +1073,10 @@ namespace GodsPVZ.Actions.Verification
             var insAlpha = m183_mutAlpha.Body.Instructions.First(i => i.OpCode == Mono.Cecil.Cil.OpCodes.Ldc_R4 && (float)i.Operand == 0.5f);
             insAlpha.Operand = 0.75f;
             var fn183_mutAlpha = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutAlpha, fn303.Method);
-            var devMutAlpha = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devMutAlpha = new MockDevice { ID = 12, animationSprites = new List<MockGameObject> { new MockGameObject() } };
             var mgrMutAlpha = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMutAlpha } };
             fn183_mutAlpha(mgrMutAlpha);
-            bool mutAlpha_detected = (devMutAlpha.animationSprites[0].a == 0.75f);
+            bool mutAlpha_detected = (devMutAlpha.animationSprites[0].spriteRenderer.a == 0.75f);
             mutantsEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["id"] = "MUT_0183_ALPHA_VAL",
@@ -1083,7 +1085,7 @@ namespace GodsPVZ.Actions.Verification
                 ["original"] = "ldc.r4 0.5",
                 ["mutated"] = "ldc.r4 0.75",
                 ["expected_on_candidate"] = "alpha=0.5",
-                ["observed_on_mutant"] = $"alpha={devMutAlpha.animationSprites[0].a}",
+                ["observed_on_mutant"] = $"alpha={devMutAlpha.animationSprites[0].spriteRenderer.a}",
                 ["detected"] = mutAlpha_detected
             });
             if (!mutAlpha_detected)
@@ -1112,10 +1114,10 @@ namespace GodsPVZ.Actions.Verification
 
             var fn183_mutNoInnerDispose = CandidateCilTranslator.CompileDisplayBanDevice183(m183_mutNoInnerDispose, fn303.Method);
             TraceDisposeCollector.Clear();
-            var devMutNoDisp = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
+            var devMutNoDisp = new MockDevice { ID = 12, animationSprites = new List<MockGameObject> { new MockGameObject() } };
             var mgrMutNoDisp = new MockDeviceManager { display_Ban_device = false, deviceList = new List<MockDevice> { devMutNoDisp } };
             fn183_mutNoInnerDispose(mgrMutNoDisp);
-            bool mutNoInnerDispose_detected = !TraceDisposeCollector.Log.Contains("MockSpriteRenderer_Disposed")
+            bool mutNoInnerDispose_detected = !TraceDisposeCollector.Log.Contains("MockGameObject_Disposed")
                                               && TraceDisposeCollector.Log.Contains("MockDevice_Disposed");
             mutantsEvaluatedList.Add(new Dictionary<string, object>
             {
@@ -1124,7 +1126,7 @@ namespace GodsPVZ.Actions.Verification
                 ["site_offset"] = m183_mutNoInnerDispose.Body.Instructions[innerDisposeIdx].Offset,
                 ["original"] = "ldloca.s 2; call Dispose (inner)",
                 ["mutated"] = "nop; nop (stack balanced, clean finally exit)",
-                ["expected_on_candidate"] = "trace includes MockSpriteRenderer_Disposed",
+                ["expected_on_candidate"] = "trace includes MockGameObject_Disposed",
                 ["observed_on_mutant"] = $"trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["detected"] = mutNoInnerDispose_detected
             });
