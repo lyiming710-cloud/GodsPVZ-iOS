@@ -174,7 +174,9 @@ def main():
                   audit_source_commit=os.environ['GITHUB_SHA'], source_cpp_count=len(sources), compiled_cpp_count=len(results),
                   failed_cpp_count=sum(r['exit_code'] != 0 for r in results), error_diagnostics=sum(r['error_count'] for r in results),
                   unparsed_error_lines=sum(len(r['unparsed_errors']) for r in results),
-                  generic_cpp_count=sum(s.name.startswith('Generics') for s in sources),
+                  generic_cpp_count=sum(s.name.startswith(('Generics', 'GenericMethods')) for s in sources),
+                  generics_named_cpp_count=sum(s.name.startswith('Generics') for s in sources),
+                  generic_methods_named_cpp_count=sum(s.name.startswith('GenericMethods') for s in sources),
                   excluded_generated_c_files=[s.name for s in sorted(cpp.glob('*.c'))],
                   error_limit=0, continue_after_failed_unit=True, unity_started=False, il2cpp_regenerated=False,
                   runtime_sources_or_xcode_objc_compiled=False, linked=False, ipa=None, game_semantics='NOT_PROVEN')

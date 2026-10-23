@@ -1,0 +1,34 @@
+[
+  {
+    "file": "valid_c_mode.c",
+    "bytes": 74,
+    "sha256": "682672bf33a8ed53541a97771eec79dd66d62a553de9cc25dd7f67e74ef759cb",
+    "exit_code": 0,
+    "error_count": 0,
+    "warning_count": 0,
+    "diagnostics": [],
+    "unparsed_errors": [],
+    "duration_seconds": 0.59,
+    "expectation_met": true
+  },
+  {
+    "file": "invalid_c_identifier.c",
+    "bytes": 55,
+    "sha256": "e41970d37cd6c806e2d13a2954162f32cf881349c0d5aa1bb62ce0adc03fd973",
+    "exit_code": 1,
+    "error_count": 1,
+    "warning_count": 0,
+    "diagnostics": [
+      {
+        "file": "/Users/runner/work/_temp/generated-c-audit/invalid_c_identifier.c",
+        "line": 1,
+        "column": 20,
+        "severity": "error",
+        "message": "use of undeclared identifier 'deliberately_undefined_identifier'"
+      }
+    ],
+    "unparsed_errors": [],
+    "duration_seconds": 0.07,
+    "expectation_met": true
+  }
+]

@@ -1,3 +1,5 @@
+**独立生成代码预检完成：259 CPP + 66 C = 325 文件全部检查；322 通过、3 失败、38 条诊断，未重跑 Unity 或完整 Xcode build。CPP 检查 66 秒，C 检查 6 秒，不含下载排队。泛型文件为 75 Generics + 18 GenericMethods。见 COMBINED-GENERATED-SYNTAX-CENSUS.json。**
+
 **无 Unity 的独立 CPP 清查已完成：259/259（含 75 泛型），256 通过、3 失败、38 条诊断，全部日志独立重数；Xcode clean 目录调整真实通过。另 66 个生成 C 文件单独检查中。见 all-generated-cpp-39998642128/README.md。**
 
 **最新纠正：39988665189 已成功真实 Unity 导出，Apple 在未被旧 14 文件检查覆盖的 Generics__63.cpp 中报错。泛型分片包含游戏方法；旧“742 个系统 CPP”表述不准确。现复用导出做全生成 CPP 清查，停止完整流程试错。见 apple-failure-39988665189/README.md。**

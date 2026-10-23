@@ -5,3 +5,5 @@
 4 个实际编译器控制通过：正确指针/整数比较正常编译；指针对整型、整型对 nullptr、object 指针作为数组索引三个错误反例均被拒绝。真实 Generics__63.cpp 的原始阻断也先被重现。新产品目录位于 DerivedData 下的真实 xcodebuild clean 已成功；没有 build / Unity / IL2CPP 重跑 / 链接 / IPA。
 
 全部逐文件源哈希、退出码、日志、归属和失败源 CPP 原文在 ALL-CPP-EVIDENCE.zip，逐文件 ZIP CRC/大小/SHA 已回读，见 EVIDENCE-MANIFEST.json。另列出的 66 个 metadata C 文件将用实际 C 前端单独检查，不能冒充已经覆盖。native runtime / ObjC / 链接及游戏语义仍属于后续门。
+
+计数口径补充：75 是 Generics 命名前缀文件数，另有 18 个 GenericMethods 文件，均在 259/259 中实际检查，总泛型 C++ 文件为 93。旧运行原始 JSON 保留，后续工具显示计数已修正。

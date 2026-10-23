@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   editor_helper_preflight:
+    needs: conversion_binding
     uses: ./.github/workflows/bulk389-editor-helper-preflight.yml
 
   conversion_binding:
@@ -22,6 +23,8 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+      - name: Reject exact candidates with already proven compiler failures before setup
+        run: python3 scripts/actions/reject_known_cpp_failures.py
       - name: Run license-free pipeline regression controls
         run: python3 scripts/actions/check_bulk389_pipeline.py > "$RUNNER_TEMP/BULK389-PIPELINE-CONTROLS.json"
       - uses: actions/download-artifact@v4
@@ -43,6 +46,7 @@ jobs:
           retention-days: 90
 
   apple_preflight:
+    needs: conversion_binding
     runs-on: macos-15
     timeout-minutes: 10
     steps:
