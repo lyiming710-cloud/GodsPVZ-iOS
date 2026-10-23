@@ -1310,16 +1310,16 @@ namespace GodsPVZ.Actions.Verification
             Console.WriteLine($"Report written to: {outJson}");
             Console.WriteLine("-----------------------------------------------------------------");
 
-            if (failedAssertions.Count > 0)
-            {
-                Console.WriteLine("GATE FAILURE: One or more assertions failed during behavioral verification.");
-                return 10;
-            }
-
             if (mutantsEvaluatedList.Any(m => !(bool)m["detected"]))
             {
                 Console.WriteLine("GATE FAILURE: One or more mutants escaped detection.");
                 return 12;
+            }
+
+            if (failedAssertions.Count > 0)
+            {
+                Console.WriteLine("GATE FAILURE: One or more assertions failed during behavioral verification.");
+                return 10;
             }
 
             return 0;
