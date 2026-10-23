@@ -39,35 +39,46 @@ def main():
     print("Executing Isolated Subprocess Gate Controls...")
     print("-----------------------------------------------------------------")
 
-    # 1. Run isolated child process negative controls
     gate_negative_controls = []
     neg_modes = [
-        ("neg_assertion_failure", 10),
-        ("neg_escaped_mutant", 12),
-        ("neg_unsupported_opcode", 13),
-        ("neg_unexpected_exception", 14),
-        ("neg_wrong_sha", 3),
+        ("neg_assertion_failure", 10, None),
+        ("neg_escaped_mutant", 12, None),
+        ("neg_unsupported_opcode", None, "NotSupportedException"),
+        ("neg_unexpected_exception", None, "DivideByZeroException"),
+        ("neg_wrong_sha", 3, "Candidate SHA-256 mismatch"),
     ]
 
-    for mode, expected_exit in neg_modes:
-        cmd_neg = ["dotnet", "run", "--project", str(csproj_path), "--", str(cand_path), str(out_json), f"--mode={mode}"]
+    for mode, expected_exit, expected_stderr_token in neg_modes:
+        dummy_out = out_json.parent / f"report_{mode}.json"
+        cmd_neg = ["dotnet", "run", "--project", str(csproj_path), "--", str(cand_path), str(dummy_out), f"--mode={mode}"]
         p_neg = subprocess.run(cmd_neg, capture_output=True, text=True)
-        is_expected = (p_neg.returncode != 0)  # Verify true non-zero rejection
+
+        passed = False
+        if expected_exit is not None:
+            passed = (p_neg.returncode == expected_exit)
+        elif expected_stderr_token is not None:
+            passed = (p_neg.returncode != 0 and expected_stderr_token in p_neg.stderr)
+
         gate_negative_controls.append({
             "mode": mode,
+            "argv": cmd_neg,
             "expected_exit": expected_exit,
             "observed_exit": p_neg.returncode,
-            "propagated_to_runner": True,
-            "passed": (p_neg.returncode != 0),
-            "stderr_snippet": p_neg.stderr.strip()[:300],
-            "stdout_snippet": p_neg.stdout.strip()[:300]
+            "expected_stderr_token": expected_stderr_token,
+            "passed": passed,
+            "stdout": p_neg.stdout,
+            "stderr": p_neg.stderr
         })
-        print(f"  Negative Control [{mode}]: Exit code {p_neg.returncode} (rejected as required)")
-        if p_neg.returncode == 0:
-            print(f"GATE CONTROL FAILURE: Mode {mode} was accepted with exit code 0!")
+
+        status_str = "PASSED (rejected as required)" if passed else "FAILED TO REJECT"
+        print(f"  Negative Control [{mode}]: Exit code {p_neg.returncode} -> {status_str}")
+        if not passed:
+            print(f"GATE CONTROL FAILURE: Mode {mode} did not satisfy rejection requirements!")
+            print("STDOUT: " + p_neg.stdout)
+            print("STDERR: " + p_neg.stderr)
             sys.exit(20)
 
-    print("All isolated gate controls verified.")
+    print("All isolated gate controls verified successfully.")
 
     print("-----------------------------------------------------------------")
     print("Launching C# Real Cecil / CLR DynamicMethod Behavioral Fixture...")

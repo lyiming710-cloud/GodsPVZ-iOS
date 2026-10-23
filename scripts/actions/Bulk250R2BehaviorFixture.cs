@@ -257,15 +257,21 @@ namespace GodsPVZ.Actions.Verification
             var dm = new DynamicMethod("CIL_0600001C", typeof(void), new[] { typeof(MockAdminSystem2) }, typeof(Program).Module, true);
             var il = dm.GetILGenerator();
 
-            // Map local variables dynamically from candidate VariableDefinition list
-            var localBuilders = new LocalBuilder[Math.Max(m01c.Body.Variables.Count, 3)];
-            for (int i = 0; i < m01c.Body.Variables.Count; i++)
+            // Validate local variable definitions from candidate
+            if (m01c.Body.Variables.Count < 2)
+                throw new NotSupportedException($"0x0600001C must declare at least 2 locals, found {m01c.Body.Variables.Count}");
+            if (m01c.Body.Variables[0].VariableType.Name != "Enemy")
+                throw new NotSupportedException($"0x0600001C local 0 must be Enemy, found {m01c.Body.Variables[0].VariableType.FullName}");
+            if (m01c.Body.Variables[1].VariableType.Name != "Enemy_boardEditor")
+                throw new NotSupportedException($"0x0600001C local 1 must be Enemy_boardEditor, found {m01c.Body.Variables[1].VariableType.FullName}");
+
+            var localBuilders = new LocalBuilder[m01c.Body.Variables.Count];
+            localBuilders[0] = il.DeclareLocal(typeof(MockEnemy));
+            localBuilders[1] = il.DeclareLocal(typeof(MockEnemyEditor));
+            for (int i = 2; i < m01c.Body.Variables.Count; i++)
             {
-                var v = m01c.Body.Variables[i];
-                Type t = (i == 0) ? typeof(MockEnemy) : (i == 1 ? typeof(MockEnemyEditor) : typeof(MockMap));
-                localBuilders[i] = il.DeclareLocal(t);
+                localBuilders[i] = il.DeclareLocal(typeof(MockMap));
             }
-            if (localBuilders[2] == null) localBuilders[2] = il.DeclareLocal(typeof(MockMap));
 
             foreach (var ins in m01c.Body.Instructions)
             {
@@ -350,8 +356,21 @@ namespace GodsPVZ.Actions.Verification
             var dm = new DynamicMethod("CIL_06000183", typeof(void), new[] { typeof(MockDeviceManager) }, typeof(Program).Module, true);
             var il = dm.GetILGenerator();
 
-            // Map local variables dynamically from candidate VariableDefinition list
-            var localBuilders = new LocalBuilder[Math.Max(m183.Body.Variables.Count, 5)];
+            // Validate local variable definitions from candidate
+            if (m183.Body.Variables.Count != 5)
+                throw new NotSupportedException($"0x06000183 must declare exactly 5 locals, found {m183.Body.Variables.Count}");
+            if (!m183.Body.Variables[0].VariableType.Name.Contains("Enumerator"))
+                throw new NotSupportedException($"0x06000183 local 0 must be Enumerator, found {m183.Body.Variables[0].VariableType.FullName}");
+            if (m183.Body.Variables[1].VariableType.Name != "Device")
+                throw new NotSupportedException($"0x06000183 local 1 must be Device, found {m183.Body.Variables[1].VariableType.FullName}");
+            if (!m183.Body.Variables[2].VariableType.Name.Contains("Enumerator"))
+                throw new NotSupportedException($"0x06000183 local 2 must be Enumerator, found {m183.Body.Variables[2].VariableType.FullName}");
+            if (m183.Body.Variables[3].VariableType.Name != "SpriteRenderer")
+                throw new NotSupportedException($"0x06000183 local 3 must be SpriteRenderer, found {m183.Body.Variables[3].VariableType.FullName}");
+            if (m183.Body.Variables[4].VariableType.Name != "Single")
+                throw new NotSupportedException($"0x06000183 local 4 must be Single, found {m183.Body.Variables[4].VariableType.FullName}");
+
+            var localBuilders = new LocalBuilder[5];
             localBuilders[0] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockDevice>));
             localBuilders[1] = il.DeclareLocal(typeof(MockDevice));
             localBuilders[2] = il.DeclareLocal(typeof(MockTrackedListEnumerator<MockSpriteRenderer>));
@@ -363,22 +382,28 @@ namespace GodsPVZ.Actions.Verification
                 labels[ins] = il.DefineLabel();
 
             var ehList = m183.Body.ExceptionHandlers;
-            var outerEH = ehList.FirstOrDefault(e => e.TryStart != null && (e.TryStart.Offset == 0x0C || ehList.IndexOf(e) == 1));
-            var innerEH = ehList.FirstOrDefault(e => e.TryStart != null && (e.TryStart.Offset == 0x35 || ehList.IndexOf(e) == 0));
+            if (ehList.Count != 2)
+                throw new NotSupportedException($"0x06000183 must have exactly 2 ExceptionHandlers, found {ehList.Count}");
 
-            // Validate EH nesting integrity
-            if (innerEH != null && outerEH != null)
-            {
-                if (innerEH.TryStart.Offset < outerEH.TryStart.Offset || innerEH.HandlerEnd.Offset > outerEH.HandlerEnd.Offset)
-                    throw new InvalidProgramException("Corrupt EH nesting: inner block must reside strictly within outer try/handler range");
-            }
+            var innerEH = ehList[0];
+            var outerEH = ehList[1];
+
+            // Verify exact EH boundaries and nesting constraints
+            if (innerEH.HandlerType != ExceptionHandlerType.Finally || outerEH.HandlerType != ExceptionHandlerType.Finally)
+                throw new InvalidProgramException("Both EH clauses in 0x06000183 must be Finally");
+            if (innerEH.TryStart.Offset != 0x35 || innerEH.TryEnd.Offset != 0x92 || innerEH.HandlerStart.Offset != 0x92 || innerEH.HandlerEnd.Offset != 0x9A)
+                throw new InvalidProgramException($"Corrupt inner EH boundaries: Try {innerEH.TryStart.Offset}..{innerEH.TryEnd.Offset}, Handler {innerEH.HandlerStart.Offset}..{innerEH.HandlerEnd.Offset}");
+            if (outerEH.TryStart.Offset != 0x0C || outerEH.TryEnd.Offset != 0xAB || outerEH.HandlerStart.Offset != 0xAB || outerEH.HandlerEnd.Offset != 0xB3)
+                throw new InvalidProgramException($"Corrupt outer EH boundaries: Try {outerEH.TryStart.Offset}..{outerEH.TryEnd.Offset}, Handler {outerEH.HandlerStart.Offset}..{outerEH.HandlerEnd.Offset}");
+            if (innerEH.TryStart.Offset < outerEH.TryStart.Offset || innerEH.HandlerEnd.Offset > outerEH.TryEnd.Offset)
+                throw new InvalidProgramException("Corrupt EH nesting: inner block must reside strictly within outer try range");
 
             foreach (var ins in m183.Body.Instructions)
             {
-                if (outerEH != null && ins == outerEH.TryStart) il.BeginExceptionBlock();
-                if (innerEH != null && ins == innerEH.TryStart) il.BeginExceptionBlock();
-                if (innerEH != null && ins == innerEH.HandlerStart) il.BeginFinallyBlock();
-                if (outerEH != null && ins == outerEH.HandlerStart) il.BeginFinallyBlock();
+                if (ins == outerEH.TryStart) il.BeginExceptionBlock();
+                if (ins == innerEH.TryStart) il.BeginExceptionBlock();
+                if (ins == innerEH.HandlerStart) il.BeginFinallyBlock();
+                if (ins == outerEH.HandlerStart) il.BeginFinallyBlock();
 
                 il.MarkLabel(labels[ins]);
                 var code = ins.OpCode;
@@ -558,21 +583,6 @@ namespace GodsPVZ.Actions.Verification
                 if (arg.StartsWith("--mode=")) runMode = arg.Substring("--mode=".Length).Trim().ToLowerInvariant();
             }
 
-            // Negative Control Mode: neg_unexpected_exception
-            if (runMode == "neg_unexpected_exception")
-            {
-                Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting unhandled DivideByZeroException...");
-                throw new DivideByZeroException("Simulated unexpected crash in test harness");
-            }
-
-            // Negative Control Mode: neg_unsupported_opcode
-            if (runMode == "neg_unsupported_opcode")
-            {
-                Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting unsupported opcode...");
-                throw new NotSupportedException("Unsupported opcode in candidate CIL: 0xFE (illegal prefix)");
-            }
-
-            // Negative Control Mode: neg_wrong_sha
             string expectedSha = "4732b0c1ee64be4224649ee43c88ddd805f5e1ea461e43ecf52febd7a756f903";
             if (runMode == "neg_wrong_sha")
             {
@@ -600,6 +610,18 @@ namespace GodsPVZ.Actions.Verification
             using var asm = AssemblyDefinition.ReadAssembly(candPath, new ReaderParameters { ReadSymbols = false });
             var module = asm.MainModule;
 
+            // Negative Control Mode: neg_unsupported_opcode
+            if (runMode == "neg_unsupported_opcode")
+            {
+                Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting illegal instruction into real getter clone...");
+                var m158Bad = module.LookupToken(0x06000158) as MethodDefinition;
+                var mBadClone = CloneMethod(m158Bad, "mBadClone");
+                mBadClone.Body.Instructions.Insert(1, Instruction.Create(Mono.Cecil.Cil.OpCodes.Cpblk));
+                // This triggers real NotSupportedException inside CandidateCilTranslator.CompileGetter158
+                CandidateCilTranslator.CompileGetter158(mBadClone);
+                return 0;
+            }
+
             var report = new Dictionary<string, object>
             {
                 ["date"] = DateTime.UtcNow.ToString("yyyy-MM-dd"),
@@ -625,21 +647,6 @@ namespace GodsPVZ.Actions.Verification
             var failedAssertions = new List<string>();
             var methodPassStatus = new Dictionary<string, bool>();
 
-            // Negative Control Mode: neg_assertion_failure
-            if (runMode == "neg_assertion_failure")
-            {
-                Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting synthetic assertion failure...");
-                failedAssertions.Add("INJECTED_ASSERTION_FAILURE: Synthetic test condition failed");
-                return 10;
-            }
-
-            // Negative Control Mode: neg_escaped_mutant
-            if (runMode == "neg_escaped_mutant")
-            {
-                Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting undetected mutant escape...");
-                return 12;
-            }
-
             // =================================================================
             // CHAIN A: 0x06000158 (BoardConfig.get_Map) & 0x0600001C (CreateNewEnemy)
             // =================================================================
@@ -651,7 +658,16 @@ namespace GodsPVZ.Actions.Verification
             var fn01c = CandidateCilTranslator.CompileCreateNewEnemy01C(m01c, fn158.Method);
 
             // Case A.1: Normal execution
-            var adminA1 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, waveOnCheck = 5 };
+            int normalWaveInput = (runMode == "neg_assertion_failure") ? 999 : 5; // Negative control injection
+            var adminA1 = new MockAdminSystem2 { boardConfig = new MockBoardConfig { map = new MockMap(120, 240) }, waveOnCheck = normalWaveInput };
+
+            // Negative Control Mode: neg_unexpected_exception
+            if (runMode == "neg_unexpected_exception")
+            {
+                Console.Error.WriteLine("[SUBPROCESS GATE TEST] Injecting unexpected runtime exception into GetMapX callback...");
+                adminA1.boardConfig.map.onGetMapX = () => throw new DivideByZeroException("Simulated unexpected crash during candidate invocation");
+            }
+
             fn01c(adminA1);
             var createdA1 = adminA1.enemyDataEditor.list.FirstOrDefault();
             bool passA1 = (createdA1 != null && createdA1.gridX == 120 && createdA1.row == 120 && createdA1.wave == 5);
@@ -659,12 +675,16 @@ namespace GodsPVZ.Actions.Verification
             {
                 ["case_id"] = "A.1_Normal",
                 ["target"] = "0x0600001C",
-                ["input"] = "waveOnCheck=5, map=(120, 240)",
+                ["input"] = $"waveOnCheck={normalWaveInput}, map=(120, 240)",
                 ["expected"] = "gridX=120, row=120 (240/2), wave=5",
                 ["observed"] = $"gridX={createdA1?.gridX}, row={createdA1?.row}, wave={createdA1?.wave}",
                 ["passed"] = passA1
             });
-            if (!passA1) failedAssertions.Add("0x0600001C Normal execution mismatch");
+            if (!passA1)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600001C Normal execution mismatch");
+                failedAssertions.Add("0x0600001C Normal execution mismatch");
+            }
 
             // Case A.2: Null receiver admin -> NRE
             bool passA2 = false;
@@ -679,7 +699,11 @@ namespace GodsPVZ.Actions.Verification
                 ["expected_exception"] = "System.NullReferenceException",
                 ["passed"] = passA2
             });
-            if (!passA2) failedAssertions.Add("0x0600001C Null receiver did not throw NRE");
+            if (!passA2)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600001C Null receiver did not throw NRE");
+                failedAssertions.Add("0x0600001C Null receiver did not throw NRE");
+            }
 
             // Case A.3: Null boardConfig -> NRE in getter
             bool passA3 = false;
@@ -694,7 +718,11 @@ namespace GodsPVZ.Actions.Verification
                 ["expected_exception"] = "System.NullReferenceException",
                 ["passed"] = passA3
             });
-            if (!passA3) failedAssertions.Add("0x0600001C Null boardConfig did not throw NRE");
+            if (!passA3)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600001C Null boardConfig did not throw NRE");
+                failedAssertions.Add("0x0600001C Null boardConfig did not throw NRE");
+            }
 
             // Case A.4: Null map -> NRE in GetMapX
             bool passA4 = false;
@@ -709,7 +737,11 @@ namespace GodsPVZ.Actions.Verification
                 ["expected_exception"] = "System.NullReferenceException",
                 ["passed"] = passA4
             });
-            if (!passA4) failedAssertions.Add("0x0600001C Null map did not throw NRE");
+            if (!passA4)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600001C Null map did not throw NRE");
+                failedAssertions.Add("0x0600001C Null map did not throw NRE");
+            }
 
             // Case A.5: Field replacement reentrancy (Map replaced during GetMapX callback)
             var adminReentrant = new MockAdminSystem2 { waveOnCheck = 9 };
@@ -730,7 +762,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed"] = $"gridX={createdReentrant?.gridX}, row={createdReentrant?.row}",
                 ["passed"] = passA5
             });
-            if (!passA5) failedAssertions.Add("0x0600001C Reentrancy map swap failed to observe updated map");
+            if (!passA5)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x0600001C Reentrancy map swap failed to observe updated map");
+                failedAssertions.Add("0x0600001C Reentrancy map swap failed to observe updated map");
+            }
 
             // =================================================================
             // CHAIN B: CIL Mutants on 0x06000158 & 0x0600001C
@@ -746,6 +782,10 @@ namespace GodsPVZ.Actions.Verification
             fn01c_mutDiv3(adminMutDiv3);
             var resMutDiv3 = adminMutDiv3.enemyDataEditor.list.FirstOrDefault();
             bool mutDiv3_detected = (resMutDiv3 != null && resMutDiv3.row == 80 && resMutDiv3.row != 120);
+
+            // Negative Control Mode: neg_escaped_mutant simulates an undetected mutant
+            if (runMode == "neg_escaped_mutant") mutDiv3_detected = false;
+
             mutantsEvaluatedList.Add(new Dictionary<string, object>
             {
                 ["id"] = "MUT_001C_DIV3",
@@ -757,7 +797,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_on_mutant"] = $"row={resMutDiv3?.row}",
                 ["detected"] = mutDiv3_detected
             });
-            if (!mutDiv3_detected) failedAssertions.Add("Mutant B.1 (div3) was not detected");
+            if (!mutDiv3_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant B.1 (div3) was not detected");
+                failedAssertions.Add("Mutant B.1 (div3) was not detected");
+            }
 
             // Mutant B.2: Mutate 0x06000158 CIL to return null
             var m158_mutNull = CloneMethod(m158, "m158_mutNull");
@@ -782,13 +826,14 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_on_mutant"] = "throws NullReferenceException at GetMapX call site",
                 ["detected"] = mutGetterNull_detected
             });
-            if (!mutGetterNull_detected) failedAssertions.Add("Mutant B.2 (getter null) was not detected");
+            if (!mutGetterNull_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant B.2 (getter null) was not detected");
+                failedAssertions.Add("Mutant B.2 (getter null) was not detected");
+            }
 
-            // Mutant B.3: Mutate 0x0600001C CIL to cache first map in local 2 (ignoring reentrant swap)
+            // Mutant B.3: Mutate 0x0600001C CIL to cache first map in local 2
             var m01c_mutCache = CloneMethod(m01c, "m01c_mutCache");
-            // Find second get_Map call:
-            // 001d: ldarg.0; 001e: ldfld boardConfig; 0023: callvirt get_Map
-            // Replace first call follow-up with dup; stloc.2; and second call with ldloc.2; nop; nop
             int firstGetterIdx = -1;
             int secondGetterIdx = -1;
             for (int i = 0; i < m01c_mutCache.Body.Instructions.Count; i++)
@@ -802,13 +847,10 @@ namespace GodsPVZ.Actions.Verification
                 }
             }
 
-            // Cache first getter return
             m01c_mutCache.Body.Instructions.Insert(firstGetterIdx + 1, Instruction.Create(Mono.Cecil.Cil.OpCodes.Dup));
             m01c_mutCache.Body.Instructions.Insert(firstGetterIdx + 2, Instruction.Create(Mono.Cecil.Cil.OpCodes.Stloc_2));
-            secondGetterIdx += 2; // adjust for inserted instructions
+            secondGetterIdx += 2;
 
-            // In second getter call, replace ldarg.0 (secondGetterIdx-2), ldfld boardConfig (secondGetterIdx-1), callvirt get_Map (secondGetterIdx)
-            // with ldloc.2, nop, nop
             m01c_mutCache.Body.Instructions[secondGetterIdx - 2].OpCode = Mono.Cecil.Cil.OpCodes.Ldloc_2;
             m01c_mutCache.Body.Instructions[secondGetterIdx - 2].Operand = null;
             m01c_mutCache.Body.Instructions[secondGetterIdx - 1].OpCode = Mono.Cecil.Cil.OpCodes.Nop;
@@ -825,7 +867,6 @@ namespace GodsPVZ.Actions.Verification
             adminMutCache.boardConfig = new MockBoardConfig { map = mapMutInit };
             fn01c_mutCache(adminMutCache);
             var resMutCache = adminMutCache.enemyDataEditor.list.FirstOrDefault();
-            // Cached mutant uses first map (row = 200 / 2 = 100), fails reentrancy check (expected 300)
             bool mutCache_detected = (resMutCache != null && resMutCache.row == 100 && resMutCache.row != 300);
             mutantsEvaluatedList.Add(new Dictionary<string, object>
             {
@@ -838,7 +879,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_on_mutant"] = $"row={resMutCache?.row} (used cached map)",
                 ["detected"] = mutCache_detected
             });
-            if (!mutCache_detected) failedAssertions.Add("Mutant B.3 (cached map) was not detected");
+            if (!mutCache_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant B.3 (cached map) was not detected");
+                failedAssertions.Add("Mutant B.3 (cached map) was not detected");
+            }
 
             // Evaluate 0x0600001C and 0x06000158 method status
             bool chainAPass = passA1 && passA2 && passA3 && passA4 && passA5 && mutDiv3_detected && mutGetterNull_detected && mutCache_detected;
@@ -874,7 +919,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed"] = $"dev12.alpha={dev12.animationSprites[0].a}, trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["passed"] = passC1
             });
-            if (!passC1) failedAssertions.Add("0x06000183 Case C.1 normal isBan=false failed");
+            if (!passC1)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000183 Case C.1 normal isBan=false failed");
+                failedAssertions.Add("0x06000183 Case C.1 normal isBan=false failed");
+            }
 
             // Case C.2: Normal execution (display_Ban_device = true)
             var devBan = new MockDevice { ID = 12, animationSprites = new List<MockSpriteRenderer> { new MockSpriteRenderer() } };
@@ -890,7 +939,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed"] = $"devBan.alpha={devBan.animationSprites[0].a}",
                 ["passed"] = passC2
             });
-            if (!passC2) failedAssertions.Add("0x06000183 Case C.2 normal isBan=true failed");
+            if (!passC2)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000183 Case C.2 normal isBan=true failed");
+                failedAssertions.Add("0x06000183 Case C.2 normal isBan=true failed");
+            }
 
             // Case C.3: Null device in list (fat finally outer dispose executed)
             TraceDisposeCollector.Clear();
@@ -915,7 +968,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_trace"] = $"[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["passed"] = passC3
             });
-            if (!passC3) failedAssertions.Add("0x06000183 Case C.3 null device outer dispose failed");
+            if (!passC3)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000183 Case C.3 null device outer dispose failed");
+                failedAssertions.Add("0x06000183 Case C.3 null device outer dispose failed");
+            }
 
             // Case C.4: Inner rendering exception triggers both nested finally blocks in strict sequence
             TraceDisposeCollector.Clear();
@@ -941,7 +998,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_trace"] = $"[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["passed"] = passC4
             });
-            if (!passC4) failedAssertions.Add("0x06000183 Case C.4 inner fault nested dispose failed");
+            if (!passC4)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000183 Case C.4 inner fault nested dispose failed");
+                failedAssertions.Add("0x06000183 Case C.4 inner fault nested dispose failed");
+            }
 
             // Case C.5: Null animationSprites in device 12
             TraceDisposeCollector.Clear();
@@ -966,7 +1027,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_trace"] = $"[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["passed"] = passC5
             });
-            if (!passC5) failedAssertions.Add("0x06000183 Case C.5 null animationSprites failed");
+            if (!passC5)
+            {
+                Console.WriteLine("ASSERTION_FAIL: 0x06000183 Case C.5 null animationSprites failed");
+                failedAssertions.Add("0x06000183 Case C.5 null animationSprites failed");
+            }
 
             // =================================================================
             // CHAIN C Mutants on 0x06000183
@@ -994,7 +1059,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_on_mutant"] = $"dev12.a={devMut12.animationSprites[0].a}, dev1.a={devMut1.animationSprites[0].a}",
                 ["detected"] = mutBeq_detected
             });
-            if (!mutBeq_detected) failedAssertions.Add("Mutant C.1 (inverted type12 filter) was not detected");
+            if (!mutBeq_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant C.1 (inverted type12 filter) was not detected");
+                failedAssertions.Add("Mutant C.1 (inverted type12 filter) was not detected");
+            }
 
             // Mutant C.2: Mutate alpha constant (0.5f -> 0.75f)
             var m183_mutAlpha = CloneMethod(m183, "m183_mutAlpha");
@@ -1016,7 +1085,11 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_on_mutant"] = $"alpha={devMutAlpha.animationSprites[0].a}",
                 ["detected"] = mutAlpha_detected
             });
-            if (!mutAlpha_detected) failedAssertions.Add("Mutant C.2 (alpha constant) was not detected");
+            if (!mutAlpha_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant C.2 (alpha constant) was not detected");
+                failedAssertions.Add("Mutant C.2 (alpha constant) was not detected");
+            }
 
             // Mutant C.3: Omit inner finally Dispose call with STACK-BALANCED rewrite (ldloca.s + call -> nop + nop)
             var m183_mutNoInnerDispose = CloneMethod(m183, "m183_mutNoInnerDispose");
@@ -1031,7 +1104,6 @@ namespace GodsPVZ.Actions.Verification
                 }
             }
 
-            // In stack-balanced rewrite, replace ldloca.s 2 and call Dispose with nop and nop
             m183_mutNoInnerDispose.Body.Instructions[innerDisposeIdx - 1].OpCode = Mono.Cecil.Cil.OpCodes.Nop;
             m183_mutNoInnerDispose.Body.Instructions[innerDisposeIdx - 1].Operand = null;
             m183_mutNoInnerDispose.Body.Instructions[innerDisposeIdx].OpCode = Mono.Cecil.Cil.OpCodes.Nop;
@@ -1055,24 +1127,16 @@ namespace GodsPVZ.Actions.Verification
                 ["observed_on_mutant"] = $"trace=[{string.Join(", ", TraceDisposeCollector.Log)}]",
                 ["detected"] = mutNoInnerDispose_detected
             });
-            if (!mutNoInnerDispose_detected) failedAssertions.Add("Mutant C.3 (omitted inner dispose) was not detected");
+            if (!mutNoInnerDispose_detected)
+            {
+                Console.WriteLine("ASSERTION_FAIL: Mutant C.3 (omitted inner dispose) was not detected");
+                failedAssertions.Add("Mutant C.3 (omitted inner dispose) was not detected");
+            }
 
             // Evaluate 0x06000183 and 0x06000303 method status
             bool chainCPass = passC1 && passC2 && passC3 && passC4 && passC5 && mutBeq_detected && mutAlpha_detected && mutNoInnerDispose_detected;
             methodPassStatus["0x06000303"] = passC1 && passC2;
             methodPassStatus["0x06000183"] = chainCPass;
-
-            // =================================================================
-            // CHAIN D: Negative Control on Verification Gate Integrity
-            // =================================================================
-            Console.WriteLine("[CHAIN D] Executing Gate Rejection Negative Control...");
-            bool gateNegativeControlPassed = false;
-            {
-                var testFailures = new List<string> { "INJECTED_ASSERTION_FAILURE" };
-                int simulatedExit = testFailures.Count > 0 ? 10 : 0;
-                gateNegativeControlPassed = (simulatedExit == 10);
-            }
-            if (!gateNegativeControlPassed) failedAssertions.Add("Gate negative control failed");
 
             // =================================================================
             // Evaluation Status and Detailed Accounting for Native116 (50 methods)
@@ -1221,6 +1285,8 @@ namespace GodsPVZ.Actions.Verification
                 ["total_50_methods"] = n116Tokens.Length,
                 ["methods_genuinely_passed"] = genuinelyPassedMethods,
                 ["methods_unsupported_engine_context"] = unsupportedEngineMethods,
+                ["pending_before"] = 26,
+                ["pending_after"] = notYetExecutedMethods,
                 ["methods_not_yet_executed"] = notYetExecutedMethods,
                 ["methods_failed"] = totalMethodsFailed,
                 ["failed_assertions"] = failedAssertions,
@@ -1245,6 +1311,12 @@ namespace GodsPVZ.Actions.Verification
             {
                 Console.WriteLine("GATE FAILURE: One or more assertions failed during behavioral verification.");
                 return 10;
+            }
+
+            if (mutantsEvaluatedList.Any(m => !(bool)m["detected"]))
+            {
+                Console.WriteLine("GATE FAILURE: One or more mutants escaped detection.");
+                return 12;
             }
 
             return 0;

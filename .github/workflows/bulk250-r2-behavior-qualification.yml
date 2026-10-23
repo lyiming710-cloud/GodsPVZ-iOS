@@ -2,7 +2,7 @@ name: Bulk250-R2 Isolated Behavioral Qualification (CIL / CLR)
 
 on:
   push:
-    branches: [repair/bulk250-r2-actions-2026-10-22]
+    branches: [verify/bulk250-r2-behavior-v4]
     paths:
       - 'scripts/actions/Bulk250R2BehaviorFixture.**'
       - 'scripts/actions/test_behavior_bulk250_r2.py'
@@ -51,11 +51,11 @@ jobs:
         run: |
           set -euo pipefail
           cand="$RUNNER_TEMP/cand_dl/candidate1.dll"
-          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v3.json"
+          report="$GITHUB_WORKSPACE/BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v4.json"
           python3 scripts/actions/test_behavior_bulk250_r2.py --candidate-dll "$cand" --output-json "$report"
-      - name: Upload v3 behavioral qualification report
+      - name: Upload v4 behavioral qualification report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk250-R2-Behavior-v3-${{ github.run_id }}
-          path: BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v3.json
+          name: Bulk250-R2-Behavior-v4-${{ github.run_id }}
+          path: BULK250-R2-BEHAVIOR-QUALIFICATION-REPORT-v4.json
