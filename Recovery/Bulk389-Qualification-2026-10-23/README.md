@@ -1,3 +1,5 @@
+**独立修复验证已通过：https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39987896838。真实 Linux Roslyn 两套 helper 均成功，重复旧 DLL 反例真实触发 CS0433；游戏与 IPA 尚未因此验收。**
+
 **更新：39984893348 因新增预检查错误引用旧整体 UnityEngine.dll 报 CS0433，未激活或导入 Unity。已修正引用名单，完整导出暂停自动推送触发，先单独验证预检查。详见 preflight-failure-39984893348/README.md。**
 
 **修复后流程：https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39984893348，固定提交 `3cccc3e91170fb9c3b2badc7433f6f8079039b8e`。此处为带时间戳的运行观测；当前不代表已导出 IPA。**
