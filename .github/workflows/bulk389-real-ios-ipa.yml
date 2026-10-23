@@ -638,7 +638,6 @@ jobs:
           X="${{ runner.temp }}/build/xcode"
           LOG="${{ runner.temp }}/build/xcodebuild.log"
           echo "=== Building Xcode Project with Apple Clang (fixed Bulk389 R4 input) ==="
-          mkdir -p "${{ runner.temp }}/build/Release-iphoneos"
           xcodebuild \
             -project "$X/Unity-iPhone.xcodeproj" \
             -scheme Unity-iPhone \
@@ -656,14 +655,14 @@ jobs:
             PROVISIONING_PROFILE="" \
             ENABLE_USER_SCRIPT_SANDBOXING=NO \
             COMPILER_INDEX_STORE_ENABLE=NO \
-            CONFIGURATION_BUILD_DIR="${{ runner.temp }}/build/Release-iphoneos" \
+            CONFIGURATION_BUILD_DIR="${{ runner.temp }}/build/DerivedData/Build/Products/Release-iphoneos" \
             clean build 2>&1 | tee "$LOG"
 
       - name: Package and verify unsigned physical-iOS ARM64 IPA
         shell: bash
         run: |
           set -euo pipefail
-          APP_FOUND="$(find "$RUNNER_TEMP/build/Release-iphoneos" -maxdepth 1 -name '*.app' -type d | head -n1)"
+          APP_FOUND="$(find "$RUNNER_TEMP/build/DerivedData/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' -type d | head -n1)"
           test -d "$APP_FOUND"
           python3 scripts/actions/package_bulk389_ipa.py --app "$APP_FOUND" --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/ipa-output"
 

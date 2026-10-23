@@ -1,3 +1,5 @@
+**最新纠正：39988665189 已成功真实 Unity 导出，Apple 在未被旧 14 文件检查覆盖的 Generics__63.cpp 中报错。泛型分片包含游戏方法；旧“742 个系统 CPP”表述不准确。现复用导出做全生成 CPP 清查，停止完整流程试错。见 apple-failure-39988665189/README.md。**
+
 **独立 helper 真实验证通过后，完整流程已调度：https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39988665189；固定代码 bc27f5334334601fd56ed4bcd987af55dd84b6be。此条为运行观测，未表示 IPA 已生成。**
 
 **独立修复验证已通过：https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39987896838。真实 Linux Roslyn 两套 helper 均成功，重复旧 DLL 反例真实触发 CS0433；游戏与 IPA 尚未因此验收。**
