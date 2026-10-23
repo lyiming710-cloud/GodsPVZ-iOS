@@ -6,6 +6,10 @@
 
 Windows x64 / .NET 10.0.13 的 local-gate-v7-final.json：335 个用例通过，38 个语义变异体实际执行并被检出，17 项独立进程拒绝控制通过。新增 3 个目标、121 个用例、11 个变异体。
 
+随后 [GitHub Actions 39943347184](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39943347184) 对提交 2612c1aa435a06a04dacd70e6e21af6f5aaf910f 在 Ubuntu 24.04.5 LTS / .NET 10.0.13 上实际复现成功。原始产物在 ci-39943347184/；CI-REVIEW.json 已核对 64 个日志文件的大小/哈希、发布源码哈希、335 个用例、38 个变异体及 17 项拒绝控制。
+
+CROSS-PLATFORM-COMPARISON.json 中，335 个用例行与 38 个变异体观测行的 Windows / Linux 差异均为零；16 个实际执行方法输入、38 个变异体输入的 canonical CIL 哈希也全部一致。这不包括 Bulk388 工具的 Linux 构建，也不扩展为原版 native 语义等价。
+
 | 新目标 | Token | 本轮用例 | 本轮变异体 |
 | --- | --- | --- | --- |
 | SeedChooserScreen.LoadTeam_Card | 0x060006B6 | 19 | 3 |

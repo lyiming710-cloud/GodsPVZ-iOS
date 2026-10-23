@@ -18,4 +18,6 @@
 
 以上数字不相加，也不能据源码数 388 推导剩余编译错误为 0。修复并重编 Bulk388 后可能出现新的诊断，届时再按同样方法重新归属、去重。
 
+本轮受控 CLR 套件已在 Windows 本地及 [Linux Actions 39943347184](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39943347184) 实际执行，逐项观测一致。这个新运行不执行游戏 C++ 编译，因此不能用它的绿色状态替换上面的 38 / 1,616 历史计数。
+
 详细证据分别见 Bulk388-Tool-Compile-2026-10-23/ 与 Bulk250-R2-Behavior-v7-2026-10-23/。
