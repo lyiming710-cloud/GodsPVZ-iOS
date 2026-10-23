@@ -1,9 +1,6 @@
 name: Bulk389 R4 REAL Unity Xcode unsigned IPA diagnostic gate
 
 on:
-  push:
-    branches: [verify/codex-bulk250-r2-takeover-2026-10-23]
-    paths: ['.github/workflows/bulk389-real-ios-ipa.yml']
   workflow_dispatch:
 
 permissions:
@@ -15,6 +12,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  editor_helper_preflight:
+    uses: ./.github/workflows/bulk389-editor-helper-preflight.yml
+
   conversion_binding:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -60,7 +60,7 @@ jobs:
           python3 -c 'import plistlib,struct,zipfile,hashlib'
 
   export:
-    needs: [conversion_binding, apple_preflight]
+    needs: [conversion_binding, apple_preflight, editor_helper_preflight]
     runs-on: ubuntu-24.04
     timeout-minutes: 150
     env:

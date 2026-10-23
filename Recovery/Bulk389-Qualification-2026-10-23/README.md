@@ -1,3 +1,5 @@
+**更新：39984893348 因新增预检查错误引用旧整体 UnityEngine.dll 报 CS0433，未激活或导入 Unity。已修正引用名单，完整导出暂停自动推送触发，先单独验证预检查。详见 preflight-failure-39984893348/README.md。**
+
 **修复后流程：https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/39984893348，固定提交 `3cccc3e91170fb9c3b2badc7433f6f8079039b8e`。此处为带时间戳的运行观测；当前不代表已导出 IPA。**
 
 **最新：真实流程 39961120509 已失败于重新导入的 CS2001 日志门；未进入 Xcode，无 IPA。已做扩大检查并修复构建工作副本切换，候选 DLL 未改。见 [扩大审查记录](ios-failure-39961120509/README.md)。后文启动时的观测按历史保留。**
