@@ -1,0 +1,81 @@
+name: Bulk389 R4 fixed-candidate Linux compiler diagnostics
+
+on:
+  push:
+    branches: [verify/codex-bulk250-r2-takeover-2026-10-23]
+    paths: ['.github/workflows/bulk389-root-compiler-check.yml', 'scripts/actions/check_bulk389_compiler.py']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bulk389-r4-root-compiler
+  cancel-in-progress: false
+
+jobs:
+  compiler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+      - name: Select Clang18
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v clang++-18 >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y clang-18
+          fi
+          mkdir -p "$RUNNER_TEMP/compiler-bin"
+          ln -s "$(command -v clang++-18)" "$RUNNER_TEMP/compiler-bin/clang++"
+          echo "$RUNNER_TEMP/compiler-bin" >> "$GITHUB_PATH"
+      - name: Download fixed candidate and authenticated compiler checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/downloads"
+          gh release download bulk152-actions-checkpoint-2026-10-20 --repo "$GITHUB_REPOSITORY" --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz --pattern PORTABLE-MANIFEST.json --dir "$RUNNER_TEMP/downloads"
+          python3 -m zipfile -e Recovery/Bulk389-Qualification-2026-10-23/BULK389-R4-CANDIDATE.zip "$RUNNER_TEMP/downloads"
+          echo 'ef1992326d1ee494a389bc2c78bdfab131721434c0b08ab5f41dbc3e506c4e48  BULK389-R4-CANDIDATE.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
+      - name: Restore and pin common dependency profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/restore_bulk152_checkpoint.py --downloads "$RUNNER_TEMP/downloads" --destination "$RUNNER_TEMP/portable" --receipt .validation/bulk389-restore-receipt.json
+          module=Recovery/Bulk389-Qualification-2026-10-23/ci/UnityEngine.AnimationModule.dll
+          echo "324d1e5ceef2b6fa1d0e3473ce820b451e41f397458afc46708a27aae0aef5e2  $module" | sha256sum -c -
+          cp "$module" "$RUNNER_TEMP/portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped/UnityEngine.AnimationModule.dll"
+      - name: Convert fixed candidate and check every generated game translation unit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/check_bulk389_compiler.py --portable-root "$RUNNER_TEMP/portable" --candidate-dll "$RUNNER_TEMP/downloads/BULK389-R4-CANDIDATE.dll" --output-dir "$GITHUB_WORKSPACE/.validation/bulk389-linux"
+      - name: Preserve generated C++
+        if: always()
+        shell: bash
+        run: |
+          if [ -d .validation/bulk389-linux/il2cpp_stage/il2cppOutput ]; then
+            tar -czf .validation/bulk389-generated-cpp.tar.gz -C .validation/bulk389-linux/il2cpp_stage il2cppOutput
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Bulk389-R4-compiler-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            .validation/bulk389-restore-receipt.json
+            .validation/bulk389-linux/results/
+            .validation/bulk389-linux/*.json
+            .validation/bulk389-generated-cpp.tar.gz

@@ -1,0 +1,265 @@
+internal static partial class Program
+{
+    private const int N118_Popup0 = 0x70004533;
+    private const int N118_Popup1 = 0x70004533;
+    private const int N118_Popup2 = 0x70032F8E;
+    private const int N118_Popup3 = 0x70032FA4;
+    private const int N118_Popup4 = 0x70032FC2;
+    private const int N118_Popup5 = 0x70032FD4;
+    private const int N118_Popup6 = 0x70032FEC;
+    private const int N118_Popup7 = 0x70032FFA;
+    private const int N118_Popup8 = 0x70033008;
+    private const int N118_Popup9 = 0x7003301A;
+    private const int N118_Popup10 = 0x70033026;
+    private const int N118_Popup11 = 0x70033034;
+    private const int N118_Popup12 = 0x7003304A;
+    private const int N118_Popup13 = 0x7003305C;
+    private const int N118_Popup14 = 0x7003306E;
+    private const int N118_ArmorNames0 = 0x70019B58;
+    private const int N118_ArmorNames1 = 0x7003308A;
+    private const int N118_ArmorNames2 = 0x70033090;
+    private const int N118_ArmorNames3 = 0x70033096;
+    private const int N118_ArmorNames4 = 0x7003309C;
+    private const int N118_ArmorNames5 = 0x700330A2;
+    private const int N118_ArmorNames6 = 0x700330AA;
+    private const int N118_ArmorDescriptions0 = 0x70019B58;
+    private const int N118_ArmorDescriptions1 = 0x70019BBE;
+    private const int N118_ArmorDescriptions2 = 0x70019BBE;
+    private const int N118_ArmorDescriptions3 = 0x70019BBE;
+    private const int N118_ArmorDescriptions4 = 0x700330B6;
+    private const int N118_ArmorDescriptions5 = 0x70019BBE;
+    private const int N118_ArmorDescriptions6 = 0x700330DC;
+    private const int N118_Empty = 0x70004533;
+    private const int N118_PopupPrefix = 0x7001BC05;
+    private const int N118_PopupSuffix = 0x7001BC13;
+    private const int N118_Adventure = 0x7001BAD1;
+    private const int N118_Rescue = 0x7001BAC7;
+    private const int N118_HighDifficulty = 0x7001BABD;
+    private const int N118_ArmorPrefix = 0x70019B2A;
+    private const int N118_HpPrefix = 0x700199DE;
+    private const int N118_ToughPrefix = 0x700199E8;
+    private const int N118_DefPrefix = 0x700199F2;
+    private const int N118_PropSelectorEnum = 0x0A00047D;
+    private const int N118_PropSelectorCurrent = 0x0A00047E;
+    private const int N118_PropSelectorMove = 0x0A00047F;
+    private const int N118_PropSelectorDispose = 0x0A00029C;
+    private const int N118_PropChooseCtor = 0x0A0000AA;
+    private const int N118_PropChooseAdd = 0x0A0004CF;
+    private const int N118_PropChooseCount = 0x0A0004EC;
+    private const int N118_PropChooseItem = 0x0A0000AB;
+    private const int N118_PropInsert = 0x0A0004ED;
+    private const int N118_ZombieSelectEnum = 0x0A000445;
+    private const int N118_ZombieSelectCurrent = 0x0A000447;
+    private const int N118_ZombieSelectMove = 0x0A000446;
+    private const int N118_ZombieSelectDispose = 0x0A000138;
+    private const int N118_EnemyEnum = 0x0A000149;
+    private const int N118_EnemyCurrent = 0x0A00014A;
+    private const int N118_EnemyMove = 0x0A00014B;
+    private const int N118_EnemyDispose = 0x0A000035;
+    private const int N118_EntryEnum = 0x0A0000E6;
+    private const int N118_EntryCurrent = 0x0A0000E7;
+    private const int N118_EntryMove = 0x0A0000E8;
+    private const int N118_EntryDispose = 0x0A0000A7;
+    private const int N118_EnemyCtor = 0x0A0000F1;
+    private const int N118_EnemyAdd = 0x0A000134;
+    private const int N118_EnemyCount = 0x0A0004EE;
+    private const int N118_EnemyItem = 0x0A000282;
+    private const int N118_ZombieSelectCount = 0x0A000146;
+    private const int N118_EntryListCtor = 0x0A0000B3;
+    private const int N118_EntryListAdd = 0x0A0000A6;
+    private const int N118_PathEditorCount = 0x0A000453;
+    private const int N118_PathEditorItem = 0x0A00004A;
+    private const int N118_TmpCharType = 0x01000068;
+    private const int N118_TmpMeshType = 0x0100006A;
+    private const int N118_Color32Type = 0x01000069;
+    private const int N118_BlockZombieEnum = 0x0A0000D9;
+    private const int N118_BlockZombieCurrent = 0x0A0000DA;
+    private const int N118_BlockZombieMove = 0x0A0000DC;
+    private const int N118_BlockZombieDispose = 0x0A00015E;
+    private const int N118_BlockZombieCount = 0x0A0000DD;
+    private const int N118_ProjectRemove = 0x0A000405;
+    private const int N118_ProjectSpriteCount = 0x0A000008;
+    private const int N118_ElementEnum = 0x0A0000C5;
+    private const int N118_ElementCurrent = 0x0A0000C6;
+    private const int N118_ElementMove = 0x0A0000C7;
+    private const int N118_ElementDispose = 0x0A0000C8;
+    private const int N118_ElementUiEnum = 0x0A0004EF;
+    private const int N118_ElementUiCurrent = 0x0A0004F0;
+    private const int N118_ElementUiMove = 0x0A0004F1;
+    private const int N118_ElementUiDispose = 0x0A0004F2;
+    private const int N118_Vector2Type = 0x0100004B;
+    private const int N118_MeshIndicesCtor = 0x0A0003F7;
+    private const int N118_MeshVerticesCtor = 0x0A0003F8;
+    private const int N118_MeshUvsCtor = 0x0A0003FC;
+    private const int N118_MeshAddColorsCtor = 0x0A0003FB;
+    private const int N118_MeshMulColorsCtor = 0x0A0003F6;
+    private const int N118_ZombieInfoCount = 0x0A0004F3;
+    private const int N118_ZombieInfoItem = 0x0A00005F;
+    private const int N118_InitialPlantItem = 0x0A000058;
+    private const int N118_CardEnum = 0x0A0004F4;
+    private const int N118_CardCurrent = 0x0A0004F5;
+    private const int N118_CardMove = 0x0A0004F6;
+    private const int N118_CardDispose = 0x0A0004F7;
+    private const int N118_StaticEntriesClear = 0x0A0004F8;
+    private const int N118_StaticEntriesAdd = 0x0A0000A6;
+    private const int N118_PreCardEnum = 0x0A0004F9;
+    private const int N118_PreCardCurrent = 0x0A0004FA;
+    private const int N118_PreCardMove = 0x0A0004FB;
+    private const int N118_PreCardDispose = 0x0A0000B2;
+    private const int N118_PreCardCtor = 0x0A0000AF;
+    private const int N118_PreCardAdd = 0x0A0000B1;
+    private const int N118_CardCount = 0x0A0000A1;
+    private const int N118_CardAdd = 0x0A0002A9;
+    private const int N118_RangeRadiusCount = 0x0A000457;
+    private const int N118_RangeCenterItem = 0x0A000099;
+    private const int N118_RangeCentersAdd = 0x0A000093;
+    private const int N118_RangeDistanceAdd = 0x0A000092;
+    private const int N118_GameObjectEnum = 0x0A0000FD;
+    private const int N118_GameObjectCurrent = 0x0A0000FE;
+    private const int N118_GameObjectMove = 0x0A0000FF;
+    private const int N118_GameObjectDispose = 0x0A000128;
+    private const int N118_SkillTextItem = 0x0A000060;
+    private const int N118_SuppliesItemCount = 0x0A0004EB;
+    private const int N118_SuppliesItemItem = 0x0A000260;
+    private const int N118_SuppliesItemClear = 0x0A00046F;
+    private const int N118_SuppliesItemAdd = 0x0A0002C3;
+    private const int N118_SuppliesEnum = 0x0A000485;
+    private const int N118_SuppliesCurrent = 0x0A000486;
+    private const int N118_SuppliesMove = 0x0A000487;
+    private const int N118_SuppliesDispose = 0x0A00011C;
+    private const int N118_AnimatorFullPathHash = 0x0A0004FC;
+    private const int N118_SaveEnum = 0x0A0004DB;
+    private const int N118_SaveCurrent = 0x0A0004DC;
+    private const int N118_SaveMove = 0x0A0004DD;
+    private const int N118_SaveDispose = 0x0A0002C5;
+    private const int N118_PlantDataItem = 0x0A000059;
+    private const int N118_PlantDataUiItem = 0x0A0002AC;
+    private const int N118_PlantInfoCount = 0x0A0002AE;
+    private const int N118_LadderHead = 0x70032F64;
+    private const int N118_StringEnum = 0x0A000220;
+    private const int N118_StringCurrent = 0x0A000221;
+    private const int N118_StringMove = 0x0A000222;
+    private const int N118_StringDispose = 0x0A000223;
+    private const int N118_StringListCtor = 0x0A00021E;
+    private const int N118_StringListAdd = 0x0A00021F;
+    private const int N118_InitialFullZombie = 0x2B0000C0;
+    private const int N118_InitialFullPlant = 0x2B0000C1;
+    private const int N118_InitialShortPlant = 0x2B000060;
+    private const int N118_BindVfxPlant = 0x2B0000B8;
+    private const int N118_ChildBuffAdd = 0x0A0000BF;
+    private const int N118_TargetZombieEnum = 0x0A0000D9;
+    private const int N118_TargetZombieCurrent = 0x0A0000DA;
+    private const int N118_TargetZombieMove = 0x0A0000DC;
+    private const int N118_TargetZombieDispose = 0x0A00015E;
+    private const int N118_TargetDeviceEnum = 0x0A0000CC;
+    private const int N118_TargetDeviceCurrent = 0x0A0000CD;
+    private const int N118_TargetDeviceMove = 0x0A0000CF;
+    private const int N118_TargetDeviceDispose = 0x0A000129;
+    private const int N118_TargetZombieCount = 0x0A0000DD;
+    private const int N118_TargetDeviceCount = 0x0A0000D1;
+    private const int N118_DeviceDetailPrefabItem = 0x0A000127;
+    private const int N118_ConfigSelectCount = 0x0A0004FD;
+    private const int N118_ConfigSelectItem = 0x0A000067;
+    private const int N118_ConfigSelectClear = 0x0A0004FE;
+    private const int N118_ConfigSelectAdd = 0x0A00006D;
+    private const int N118_ConfigZombieCount = 0x0A0000DD;
+    private const int N118_ConfigZombieItem = 0x0A00006C;
+    private const int N118_ConfigTypeCount = 0x0A000144;
+    private const int N118_ConfigInputCount = 0x0A0004FF;
+    private const int N118_ConfigInputItem = 0x0A000071;
+    private const int N118_ConfigInputAdd = 0x0A000073;
+    private const int N118_ConfigInputRemoveAt = 0x0A000500;
+    private const int N118_ConfigRowCount = 0x0A000147;
+    private const int N118_ConfigRowItem = 0x0A000065;
+    private const int N118_MissingSelectPrefab = 0x700018FB;
+    private const int N118_PathEnum = 0x0A00022A;
+    private const int N118_PathCurrent = 0x0A00022B;
+    private const int N118_PathMove = 0x0A00022C;
+    private const int N118_PathDispose = 0x0A000045;
+    private const int N118_PathCount = 0x0A0001AD;
+    private const int N118_PathItem = 0x0A0001B5;
+    private const int N118_PathRemove = 0x0A000437;
+    private const int N118_PathClear = 0x0A000224;
+    private const int N118_TargetPlantEnum = 0x0A0000D3;
+    private const int N118_TargetPlantCurrent = 0x0A0000D4;
+    private const int N118_TargetPlantMove = 0x0A0000D6;
+    private const int N118_TargetPlantDispose = 0x0A00015D;
+    private const int N118_Locals1 = 0x110007D9;
+    private const int N118_Locals2 = 0x110007DA;
+    private const int N118_Locals3 = 0x110007DB;
+    private const int N118_Locals4 = 0x110007DC;
+    private const int N118_Locals5 = 0x110007DD;
+    private const int N118_Locals6 = 0x110007DE;
+    private const int N118_Locals7 = 0x110007DF;
+    private const int N118_Locals8 = 0x110007E0;
+    private const int N118_Locals9 = 0x110007E1;
+    private const int N118_Locals10 = 0x110007E2;
+    private const int N118_Locals11 = 0x110007E3;
+    private const int N118_Locals12 = 0x110007E4;
+    private const int N118_Locals13 = 0x110007E5;
+    private const int N118_Locals14 = 0x110007E6;
+    private const int N118_Locals15 = 0x110007E7;
+    private const int N118_Locals16 = 0x110007E8;
+    private const int N118_Locals17 = 0x110007E9;
+    private const int N118_Locals18 = 0x110007EA;
+    private const int N118_Locals19 = 0x110007EB;
+    private const int N118_Locals20 = 0x110007EC;
+    private const int N118_Locals21 = 0x110007ED;
+    private const int N118_Locals22 = 0x110007EE;
+    private const int N118_Locals23 = 0x110007EF;
+    private const int N118_Locals24 = 0x110007F0;
+    private const int N118_Locals25 = 0x110007F1;
+    private const int N118_Locals26 = 0x110007F2;
+    private const int N118_Locals27 = 0x110007F3;
+    private const int N118_Locals28 = 0x110007F4;
+    private const int N118_Locals29 = 0x110007F5;
+    private const int N118_Locals30 = 0x110007F6;
+    private const int N118_Locals31 = 0x110007F7;
+    private const int N118_Locals32 = 0x110007F8;
+    private const int N118_Locals33 = 0x110007F9;
+    private const int N118_Locals34 = 0x110007FA;
+    private const int N118_Locals35 = 0x110007FB;
+    private const int N118_Locals36 = 0x110007FC;
+    private const int N118_Locals37 = 0x110007FD;
+    private const int N118_Locals38 = 0x110007FE;
+    private const int N118_Locals39 = 0x110007FF;
+    private const int N118_Locals40 = 0x11000800;
+    private const int N118_Locals41 = 0x11000801;
+    private const int N118_Locals42 = 0x11000802;
+    private const int N118_Locals43 = 0x11000803;
+    private const int N118_Locals44 = 0x11000804;
+    private const int N118_Locals45 = 0x11000805;
+    private const int N118_Locals46 = 0x11000806;
+    private const int N118_Locals47 = 0x11000807;
+    private const int N118_Locals48 = 0x11000808;
+    private const int N118_Locals49 = 0x11000809;
+    private const int N118_Locals50 = 0x1100080A;
+    private static readonly int[] N118_PopupLiterals=[0x70004533,0x70004533,0x70032F8E,0x70032FA4,0x70032FC2,0x70032FD4,0x70032FEC,0x70032FFA,0x70033008,0x7003301A,0x70033026,0x70033034,0x7003304A,0x7003305C,0x7003306E];
+    private static readonly int[] N118_ArmorNamesLiterals=[0x70019B58,0x7003308A,0x70033090,0x70033096,0x7003309C,0x700330A2,0x700330AA];
+    private static readonly int[] N118_ArmorDescriptionsLiterals=[0x70019B58,0x70019BBE,0x70019BBE,0x70019BBE,0x700330B6,0x70019BBE,0x700330DC];
+    private record N118UserString(int Token,string Value,string EncodedBytes);
+    private static readonly N118UserString[] N118UserStrings=[
+        new(0x70032F8E,"\u8e29\u4e0a\u53bb\u4f1a\u53d1\u751f\u4ec0\u4e48\u5462\uff1f","15298e0a4ebb531a4fd1531f75c04e484e62541fff01"),
+        new(0x70032FA4,"\u4e0d\u77e5\u9053\u91cc\u9762\u4f1a\u5f00\u51fa\u4ec0\u4e48\u4e1c\u897f\u5462\uff1f","1d0d4ee5775390cc9162971a4f005ffa51c04e484e1c4e7f8962541fff01"),
+        new(0x70032FC2,"\u62b5\u5fa1\u50f5\u5c38\u7684\u597d\u4f19\u4f34","11b562a15ff550385c84767d59194f344f01"),
+        new(0x70032FD4,"\u96ea\u517d\u8c8c\u4f3c\u5bf9\u5b83\u5f88\u611f\u5174\u8da3\uff1f","17ea967d518c8c3c4ff95b835b885f1f617451a38d1fff01"),
+        new(0x70032FEC,"\u5371\u9669\u7684\u6613\u7206\u7269","0d71536996847613660672697201"),
+        new(0x70032FFA,"\u6b64\u5730\u7981\u6b62\u4f7f\u7528","0d646b30578179626b7f4f287501"),
+        new(0x70033008,"\u50f5\u5c38\u4eec\u5236\u9020\u7684\u6377\u5f84","11f550385cec4e3652209084767763845f01"),
+        new(0x7003301A,"\u6e29\u6696\u7684\u706b\u6e90","0b296e966684766b70906e01"),
+        new(0x70033026,"\u4e3a\u4f60\u9a71\u6563\u5bd2\u51ac","0d3a4e604f719a6365d25bac5101"),
+        new(0x70033034,"\u50f5\u5c38\u4eec\u7684\u8f7b\u578b\u8d8a\u969c\u8bbe\u65bd","15f550385cec4e84767b8f8b578a8d9c96be8bbd6501"),
+        new(0x7003304A,"\u6b64\u5730\u4ec5\u53ef\u79cd\u690d\u690d\u7269","11646b3057c54eef53cd790d690d69697201"),
+        new(0x7003305C,"\u50f5\u5c38\u4eec\u7684\u4f20\u9001\u8bbe\u5907","11f550385cec4e8476204f0190be8b075901"),
+        new(0x7003306E,"\u4f60\u4e0d\u4f1a\u4ee5\u4e3a\u53ea\u6709\u50f5\u5c38\u6709\u961f\u53cb\u5427","1b604f0d4e1a4fe54e3a4eea530967f550385c09671f96cb53275401"),
+        new(0x7003308A,"\u8def\u969c","05ef8d9c9601"),
+        new(0x70033090,"\u94c1\u6876","05c194766801"),
+        new(0x70033096,"\u7816\u5757","051678575701"),
+        new(0x7003309C,"\u51b0\u5757","05b051575701"),
+        new(0x700330A2,"\u91cd\u6218\u76d4","07cd911862d47601"),
+        new(0x700330AA,"\u7a81\u88ad\u8005\u88c5\u7532","0b817aad880580c588327501"),
+        new(0x700330B6,"\u5543\u54ac\u65f6\u9644\u5e261000\u70b9/\u79d2\u7684\u5bd2\u51b7\u5143\u7d20\u503c","254355ac54f6654496265e3100300030003000b9702f00d2798476d25bb7514351207d3c5001"),
+        new(0x700330DC,"\u6bcf\u7834\u635f\u4e00\u4e2a\u9636\u6bb5\uff0c\u5728\u539f\u5730\u7559\u4e0b\u4e00\u4e2a\u5ef6\u8fdf3s\u7206\u70b8\u7684\u5c0f\u578b\u70b8\u836f\uff0c\u9020\u6210\u653b\u51fb\u529b450%\u7684\u8f83\u5c0f\u8303\u56f4\u7070\u70ec\u4f24\u5bb3","5bcf6b34785f63004e2a4e3696b56b0cff28579f53305759750b4e004e2a4ef65edf8f330073000672b87084760f5c8b57b8706f830cff209010623b65fb519b5234003500300025008476838f0f5c0383f4567070ec70244fb35b01"),
+    ];
+    private static readonly HashSet<int> N118_EhTargets=[0x060000E8,0x060001A7,0x060005D3,0x06000396,0x060001DB,0x0600047A,0x060000E5,0x060000ED,0x060003B5,0x0600057B,0x0600057C,0x06000334,0x060006F8,0x06000439,0x06000518,0x0600046B,0x06000490];
+}

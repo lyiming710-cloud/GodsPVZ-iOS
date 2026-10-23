@@ -1,0 +1,92 @@
+{
+  "state": "PASS_SCOPED_NEGATIVE_CONTROLS",
+  "candidate_sha256": "ef1992326d1ee494a389bc2c78bdfab131721434c0b08ab5f41dbc3e506c4e48",
+  "isolation_controls": [
+    {
+      "name": "old-non-target-byte",
+      "detected": true,
+      "reason": "ValueError: unauthorized original-prefix modification",
+      "sha256": "b3c6f1f3775a226c0346a5e3a2c7d9896a04f0d1292ef78c08578015c02aa1a4",
+      "elapsed_seconds": 0.0
+    },
+    {
+      "name": "target-initlocals",
+      "detected": true,
+      "reason": "ValueError: InitLocals",
+      "sha256": "c070fec405d373b1520032a260727efb94e1b6400f49c4ecb99790e1fbba9b96",
+      "elapsed_seconds": 2.625
+    },
+    {
+      "name": "appended-member-owner",
+      "detected": true,
+      "reason": "ValueError: new member owner",
+      "sha256": "18e6453d45293e390a1752913ef2ed3f835d872dca3bf877c1ec21f33a7112fb",
+      "elapsed_seconds": 3.75
+    },
+    {
+      "name": "wide-field-blob-highword",
+      "detected": true,
+      "reason": "ValueError: old numeric columns Field:1",
+      "sha256": "98f5699bc0ef9e91bd9dfcf06ce1f0d9b8650cf23f4a92ae817646e972b08679",
+      "elapsed_seconds": 3.875
+    },
+    {
+      "name": "wide-method-blob-highword",
+      "detected": true,
+      "reason": "ValueError: old numeric columns MethodDef:1",
+      "sha256": "a660d4261455bfb9bc4dc389a6e52f9235f8c444f1504d2ecbe3d0ff202cc5b9",
+      "elapsed_seconds": 3.2339999999385327
+    },
+    {
+      "name": "new-locals-highword",
+      "detected": true,
+      "reason": "ValueError: new locals",
+      "sha256": "0b138cb3c8ee9c11d919ed1263e3ff0113784fdc30c219a5faceb9be79fb91ff",
+      "elapsed_seconds": 3.344000000040978
+    },
+    {
+      "name": "new-typeref-scope",
+      "detected": true,
+      "reason": "ValueError: TypeRef scope",
+      "sha256": "5a7309f39769c9d326041da55fc75e9642e4e9b85c3d96e4a46e17453893249d",
+      "elapsed_seconds": 3.280999999959022
+    },
+    {
+      "name": "wrong-heap-size-flag",
+      "detected": true,
+      "reason": "ValueError: exact Blob HeapSizes widening",
+      "sha256": "20922d5d2c4a4db914be476719f7486c8a2d6cb9e0fdb918cc5289a1f3be567c",
+      "elapsed_seconds": 1.375
+    }
+  ],
+  "construction_controls": [
+    {
+      "name": "wrong-parent",
+      "argv": [
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\.local\\dotnet10\\dotnet.exe",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\bin\\Release\\net10.0\\Bulk388.dll",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk350-root-verification-2026-10-22\\r6-candidate.dll",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\candidates\\rejected-parent.dll",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\candidates\\rejected-parent.json"
+      ],
+      "exit": 3,
+      "outputs_unchanged": true,
+      "stderr": "System.InvalidOperationException: Exact reviewed Native93 input only\r\n   at Program.Require(Boolean value, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\Program.cs:line 409\r\n   at Program.Run(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\Program.cs:line 512\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\Program.cs:line 501\r\n"
+    },
+    {
+      "name": "existing-candidate",
+      "argv": [
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\.local\\dotnet10\\dotnet.exe",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\bin\\Release\\net10.0\\Bulk388.dll",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\native93-codex-2026-10-17\\verification-2026-10-17\\candidates\\candidate1.dll",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\candidates\\candidate1.dll",
+        "C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\candidates\\rejected-existing.json"
+      ],
+      "exit": 3,
+      "outputs_unchanged": true,
+      "stderr": "System.InvalidOperationException: Fresh distinct output paths\r\n   at Program.Require(Boolean value, String why) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\Program.cs:line 409\r\n   at Program.Run(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\Program.cs:line 508\r\n   at Program.Main(String[] args) in C:\\Users\\86136\\Desktop\\1.0.2PC\\audit\\bulk388-qualification-2026-10-23\\revision-r4\\source\\Program.cs:line 501\r\n"
+    }
+  ],
+  "deterministic_second_build": true,
+  "game_behavior": false
+}
