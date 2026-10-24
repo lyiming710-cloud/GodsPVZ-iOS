@@ -21,3 +21,7 @@ R11 Unity/IL2CPP/Apple compilation, a new unsigned IPA and iPad acceptance are i
 ## Reproduction
 
 Use construct.py with fresh output paths and the exact R10 parent, build/run contracts/Contracts.csproj for the read-only inventory, then verify/Verify.csproj and verify_static.py for independent CIL operations/raw isolation/controls. Existing authentic support, SDK10 and Cecil/exporter/access paths are required; the archive is an evidence/source bundle, not a complete Unity/SDK distribution. Native regressions require Windows x64 and original PC GameAssembly/metadata with the established immutable hashes. DRIVER-DERIVATION records input/output-only changes to previous drivers. All ZIP members and top-level checkpoint files have size/SHA manifests. Read CURRENT-RESULT and every per-suite scope before promotion.
+
+## Actual compiler readback: run 40121851208
+
+Fresh exact R11 IL2CPP conversion and all 756 C++/274 C Linux checks pass. Every generated source size/SHA and staged R11 DLL identity is independently verified from raw evidence. The entire generated cpp include tree contains 1030 files, including 0 non-source files; 17 files differ from the separately Apple-tested R10 tree. See APPLE-SOURCE-TREE-COMPARISON.json for the exact evidence-reuse boundary. No new R11 Apple job, Unity export, player link, IPA or device acceptance is claimed.

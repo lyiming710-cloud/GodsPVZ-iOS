@@ -1,0 +1,53 @@
+{
+  "scope": "THREE_COMPLETE_NATIVE_TRAMPOLINES_VS_COMPLETE_ACTUAL_CIL_WITH_CONTROLLED_LOAD_CALLEES",
+  "candidate_sha256": "28946ce7343a4ca7479fb1a3aeb6b191bcc74aae5292a8b0a18f06c5019e1bd5",
+  "cases": 90,
+  "pass_": true,
+  "differences": 0,
+  "controls": [
+    {
+      "name": "wrong-zero-sentinel",
+      "mutant_sha256": "09ec486e6233702b5f7bade0c5cd5aab57ec127b83e413fde7732143269c733a",
+      "runtime_differences": 90,
+      "requires_frozen_width_gate": false
+    },
+    {
+      "name": "early-return",
+      "mutant_sha256": "d5cfb931085b3df8715e2b7ac1f68b74687f34f7992e5398ac0bc9925f2e7657",
+      "runtime_differences": 90,
+      "requires_frozen_width_gate": false
+    },
+    {
+      "name": "original-int64-width",
+      "mutant_sha256": "e101c701802969bffe370841abc92cd01ec75592097d60b2b9e3629c5c107637",
+      "runtime_differences": 0,
+      "requires_frozen_width_gate": true
+    }
+  ],
+  "hidden_native_method_info_null_verified": true,
+  "callee_load_behavior_not_recovered_here": true,
+  "native_exception_unwind": false,
+  "unity_or_ipa": false,
+  "runtime_alone_adequate": false,
+  "frozen_width_control": {
+    "rejected_methods": 3,
+    "checker_sha256": "2bb0a8c229a63fd33269433759a587ff551c6fde19669bafc506033df9b63d14",
+    "results": [
+      {
+        "token": "0x06000064",
+        "status": "FAIL",
+        "error": "System.Void System0::Start0() IL_000A: I8 is not assignable to System.Int32"
+      },
+      {
+        "token": "0x0600007C",
+        "status": "FAIL",
+        "error": "System.Void System1::Start1() IL_000A: I8 is not assignable to System.Int32"
+      },
+      {
+        "token": "0x0600009A",
+        "status": "FAIL",
+        "error": "System.Void System3::Start3() IL_000A: I8 is not assignable to System.Int32"
+      }
+    ]
+  }
+}
