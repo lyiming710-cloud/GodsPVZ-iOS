@@ -1,0 +1,36 @@
+name: Bulk401 startup assets - exact R3 source inspection
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [verify/codex-bulk250-r2-takeover-2026-10-23]
+    paths: [.github/workflows/bulk401-startup-asset-audit.yml]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          name: Stage9.1-r3-exact-archive
+          path: ${{ runner.temp }}/r3-input
+      - name: Extract only source/settings text from the hash-locked archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/extract_bulk401_startup_inputs.py --input-dir "$RUNNER_TEMP/r3-input" --output-dir "$RUNNER_TEMP/startup-inputs"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Bulk401-startup-inputs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/startup-inputs/
+          if-no-files-found: error
+          retention-days: 90
