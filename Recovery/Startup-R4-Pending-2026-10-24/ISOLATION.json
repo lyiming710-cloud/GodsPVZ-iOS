@@ -1,0 +1,51 @@
+{
+  "scope": "FIVE_METHODS_EXACT_BYTE_AND_METADATA_ISOLATION_ONLY",
+  "candidate_sha256": "530550053cfae3d8be6ea886f87ee77b74e5c1cc8c2b96517b5ac18d3cbb4ec9",
+  "target_methods": 5,
+  "untouched_methods": 2312,
+  "zero_rva_methods": 20,
+  "sites": 26,
+  "new_memberrefs": 2,
+  "new_typespecs": 1,
+  "field_visibility_unchanged": true,
+  "method_headers_locals_branches_eh_unchanged": true,
+  "runtime_qualified": false,
+  "negative_controls": [
+    {
+      "name": "unrelated-GameStart-body",
+      "rejected": true,
+      "reason": "Exact method body boundary 0x6000526"
+    },
+    {
+      "name": "integer-bool-zero-wrongly-flipped-to-float",
+      "rejected": true,
+      "reason": "Exact method body boundary 0x60002ad"
+    },
+    {
+      "name": "NaN-unordered-comparison-removed",
+      "rejected": true,
+      "reason": "Exact method body boundary 0x60002ad"
+    },
+    {
+      "name": "Int64-sentinel-restored",
+      "rejected": true,
+      "reason": "Exact method body boundary 0x60005e7"
+    },
+    {
+      "name": "delegate-ctor-wrong-owner",
+      "rejected": true,
+      "reason": "Closed delegate ctor owner"
+    },
+    {
+      "name": "field-flags-changed",
+      "rejected": true,
+      "reason": "Existing metadata rows preserved: table 4"
+    },
+    {
+      "name": "previously-repaired-helper-root-damaged",
+      "rejected": true,
+      "reason": "Existing metadata rows preserved: table 2"
+    }
+  ],
+  "negative_controls_passed": true
+}
