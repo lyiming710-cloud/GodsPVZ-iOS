@@ -8,6 +8,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 from prepare_bulk389_unity import STUB
 
@@ -63,7 +64,8 @@ def main():
         proc = subprocess.run([str(runtime), 'exec', str(compiler), '/noconfig', '@' + str(rsp)], capture_output=True, text=True, encoding='utf-8', errors='replace')
         (out / (name + '.log')).write_text(proc.stdout + proc.stderr, 'utf-8')
         output = proc.stdout + proc.stderr
-        passed = (proc.returncode != 0 and 'error CS0433:' in output and "'Debug'" in output) if name == 'legacy_duplicate_negative' else proc.returncode == 0
+        duplicate = re.search(r"error CS0433: The type '[^']+' exists in both 'UnityEngine.CoreModule, [^']+' and 'UnityEngine, [^']+'", output)
+        passed = (proc.returncode != 0 and duplicate is not None) if name == 'legacy_duplicate_negative' else proc.returncode == 0
         rows.append(dict(stage=name, exit_code=proc.returncode, expectation='REJECT_CS0433' if name == 'legacy_duplicate_negative' else 'COMPILE_SUCCESS', expectation_met=passed,
                          sources=[dict(path=str(s), sha256=hashlib.sha256(s.read_bytes()).hexdigest()) for s in selected]))
     result = dict(scope='EXACT_EDITOR_HELPER_API_COMPILATION_ONLY', reference_count=len(references), results=rows,
