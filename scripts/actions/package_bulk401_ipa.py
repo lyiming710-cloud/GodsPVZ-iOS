@@ -2,10 +2,12 @@
 from pathlib import Path
 import argparse,subprocess,plistlib,zipfile,hashlib,json,struct,os
 from bulk401_export_binding import validate as validate_binding
-p=argparse.ArgumentParser();p.add_argument('--app',required=True);p.add_argument('--xcode-dir',required=True);p.add_argument('--output-dir',required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--app',required=True);p.add_argument('--xcode-dir',required=True);p.add_argument('--output-dir',required=True)
+p.add_argument('--export-workflow-head',default=os.environ.get('GITHUB_SHA'));a=p.parse_args()
 app=Path(a.app).resolve();xcode=Path(a.xcode_dir).resolve();out=Path(a.output_dir).resolve()
 if not app.is_dir() or app.suffix!='.app':raise ValueError('One compiled .app required')
-binding=validate_binding(xcode,os.environ['GITHUB_SHA'])
+if not a.export_workflow_head:p.error('An explicit export workflow head or GITHUB_SHA is required')
+binding=validate_binding(xcode,a.export_workflow_head)
 out.mkdir(parents=True,exist_ok=False);payload=out/'Payload';payload.mkdir();staged=payload/'GodsPVZ.app'
 subprocess.run(['ditto',str(app),str(staged)],check=True)
 ipa=out/'GodsPVZ_1.0.2_bulk401_unsigned.ipa';subprocess.run(['ditto','-c','-k','--keepParent',str(payload),str(ipa)],check=True)
@@ -45,5 +47,5 @@ with zipfile.ZipFile(ipa) as z:
  if len(metadata)!=1:raise ValueError('Exactly one generated global metadata required')
  exported=(xcode/'Data/Managed/Metadata/global-metadata.dat').read_bytes();packaged=z.read(metadata[0])
  if exported!=packaged:raise ValueError('Packaged metadata differs from exact Unity export')
- report=dict(scope='UNSIGNED_IPA_STRUCTURE_ARCHITECTURE_AND_EXPORT_BINDING_ONLY',ipa_sha256=sha(ipa.read_bytes()),ipa_bytes=ipa.stat().st_size,bundle_id=info['CFBundleIdentifier'],main_binary=binary,unity_framework=framework,metadata_sha256=sha(packaged),metadata_bytes=len(packaged),zip_entries=len(names),candidate_sha256=binding['candidate_sha256'],workflow_head=binding['workflow_head'],device_execution='NOT_PERFORMED',gameplay_equivalence='NOT_PROVEN')
+ report=dict(scope='UNSIGNED_IPA_STRUCTURE_ARCHITECTURE_AND_EXPORT_BINDING_ONLY',ipa_sha256=sha(ipa.read_bytes()),ipa_bytes=ipa.stat().st_size,bundle_id=info['CFBundleIdentifier'],main_binary=binary,unity_framework=framework,metadata_sha256=sha(packaged),metadata_bytes=len(packaged),zip_entries=len(names),candidate_sha256=binding['candidate_sha256'],workflow_head=binding['workflow_head'],packaging_workflow_head=os.environ.get('GITHUB_SHA'),device_execution='NOT_PERFORMED',gameplay_equivalence='NOT_PROVEN')
 (out/'IPA-VALIDATION.json').write_text(json.dumps(report,indent=2)+'\n','utf-8');print(json.dumps(report))

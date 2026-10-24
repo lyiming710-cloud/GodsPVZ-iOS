@@ -53,7 +53,10 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--xcode-dir', required=True)
     p.add_argument('--plugin')
+    p.add_argument('--export-workflow-head', default=os.environ.get('GITHUB_SHA'))
     a = p.parse_args()
-    head = os.environ['GITHUB_SHA']
+    head = a.export_workflow_head
+    if not head:
+        p.error('An explicit export workflow head or GITHUB_SHA is required')
     data = create(a.xcode_dir, a.plugin, head) if a.plugin else validate(a.xcode_dir, head)
     print('BULK401_EXPORT_BINDING_PASS', len(data['files']))

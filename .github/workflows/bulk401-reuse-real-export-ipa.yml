@@ -1,0 +1,146 @@
+name: Bulk401 reuse successful real export - unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [verify/codex-bulk250-r2-takeover-2026-10-23]
+    paths: [.github/workflows/bulk401-reuse-real-export-ipa.yml]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: bulk401-reuse-real-export-ipa
+  cancel-in-progress: false
+
+env:
+  EXPORT_RUN: '40016440758'
+  EXPORT_HEAD: '4b42bb841af9b70c44019746037aeccbc4c42d26'
+  EXPORT_ARCHIVE_SHA256: 'f58b147934a199b4f086a2800a3330e40e9345b24137df2399f7739adf9128bd'
+
+jobs:
+  build_ipa:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify source export job and record distinct build provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/reuse-evidence"
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          base='repos/lyiming710-cloud/GodsPVZ-iOS/actions/runs/'+os.environ['EXPORT_RUN']
+          def api(path):return json.loads(subprocess.check_output(['gh','api',path],text=True))
+          run=api(base);jobs=api(base+'/jobs?per_page=100')['jobs']
+          assert run['head_sha']==os.environ['EXPORT_HEAD'] and run['status']=='completed'
+          exported=[j for j in jobs if j['name']=='export']
+          assert len(exported)==1 and exported[0]['conclusion']=='success'
+          artifacts=api(base+'/artifacts')['artifacts']
+          inputs=[a for a in artifacts if a['name']=='GodsPVZ-Stage9-bulk401-unsigned-Xcode']
+          assert len(inputs)==1 and inputs[0]['id']==12529088926 and not inputs[0]['expired']
+          out=Path(os.environ['RUNNER_TEMP'])/'reuse-evidence'
+          for name,data in [('SOURCE-RUN.json',run),('SOURCE-EXPORT-JOB.json',exported[0]),('SOURCE-ARTIFACT.json',inputs[0])]:
+              (out/name).write_text(json.dumps(data,indent=2)+'\n')
+          (out/'BUILD-PROVENANCE.json').write_text(json.dumps(dict(
+              export_run=run['id'],export_head=run['head_sha'],build_run=os.environ['GITHUB_RUN_ID'],
+              build_head=os.environ['GITHUB_SHA'],candidate_changed=False,unity_rerun=False),indent=2)+'\n')
+          PY
+
+      - name: Run same-path and changed-path flag regression controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/check_bulk401_apple_flags.py > "$RUNNER_TEMP/reuse-evidence/FLAG-CONTROLS.json"
+          python3 scripts/actions/check_bulk401_pipeline.py > "$RUNNER_TEMP/reuse-evidence/PIPELINE-CONTROLS.json"
+
+      - name: Select exact Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          xcodebuild -version
+
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: ${{ env.EXPORT_RUN }}
+          name: GodsPVZ-Stage9-bulk401-unsigned-Xcode
+          path: ${{ runner.temp }}/xcode-input
+
+      - name: Verify and restore the unchanged successful Unity export
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/xcode-input/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst"
+          [ "$(shasum -a 256 "$archive" | awk '{print $1}')" = "$EXPORT_ARCHIVE_SHA256" ]
+          shasum -a 256 "$archive" > "$RUNNER_TEMP/reuse-evidence/xcode-archive.sha256"
+          command -v zstd >/dev/null || brew install zstd
+          mkdir -p "$RUNNER_TEMP/build"
+          zstd -dc "$archive" | tar -xf - -C "$RUNNER_TEMP/build"
+          python3 scripts/actions/bulk401_export_binding.py --xcode-dir "$RUNNER_TEMP/build/xcode" --export-workflow-head "$EXPORT_HEAD"
+          cp "$RUNNER_TEMP/build/xcode/bulk401-export-binding.json" "$RUNNER_TEMP/reuse-evidence/"
+
+      - name: Check every actual-export generated C and CPP before Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/audit_bulk401_real_export.py --xcode-dir "$RUNNER_TEMP/build/xcode" --export-workflow-head "$EXPORT_HEAD" --output-dir "$RUNNER_TEMP/actual-export-compiler"
+
+      - name: Build unsigned physical-iOS arm64 app with Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+          X="$RUNNER_TEMP/build/xcode"
+          xcodebuild \
+            -project "$X/Unity-iPhone.xcodeproj" \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/build/DerivedData" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER="" PROVISIONING_PROFILE="" \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO COMPILER_INDEX_STORE_ENABLE=NO \
+            CONFIGURATION_BUILD_DIR="$RUNNER_TEMP/build/DerivedData/Build/Products/Release-iphoneos" \
+            clean build 2>&1 | tee "$RUNNER_TEMP/reuse-evidence/xcodebuild.log"
+
+      - name: Package and verify unsigned physical-iOS arm64 IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          products="$RUNNER_TEMP/build/DerivedData/Build/Products/Release-iphoneos"
+          python3 - "$products" "$RUNNER_TEMP/app-path.txt" <<'PY'
+          from pathlib import Path
+          import sys
+          apps=list(Path(sys.argv[1]).glob('*.app'))
+          assert len(apps)==1,apps
+          Path(sys.argv[2]).write_text(str(apps[0]))
+          PY
+          python3 scripts/actions/package_bulk401_ipa.py --app "$(cat "$RUNNER_TEMP/app-path.txt")" --xcode-dir "$RUNNER_TEMP/build/xcode" --export-workflow-head "$EXPORT_HEAD" --output-dir "$RUNNER_TEMP/ipa-output"
+
+      - name: Preserve compiler, link and packaging evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bulk401-REAL-EXPORT-BUILD-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/reuse-evidence/
+            ${{ runner.temp }}/actual-export-compiler/
+            ${{ runner.temp }}/ipa-output/IPA-VALIDATION.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodsPVZ_1.0.2_bulk401_unsigned_ipa
+          path: ${{ runner.temp }}/ipa-output/*.ipa
+          if-no-files-found: error
+          retention-days: 90

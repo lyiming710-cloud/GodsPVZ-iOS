@@ -1,0 +1,83 @@
+{
+  "scope": "CAPTURED_COMMAND_REBASING_CONTROLS_NO_MAC_COMPILER_EXECUTION",
+  "checks": 13,
+  "pass_": true,
+  "historical_auditor_unchanged": true,
+  "results": [
+    {
+      "name": "reproduce_historical_same_path_false_rejection",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Compiler command not rebound to current export/arm64"
+    },
+    {
+      "name": "valid_export_root_/Users/runner/work/_temp/build/xcode",
+      "expected_rejection": false,
+      "pass_": true
+    },
+    {
+      "name": "valid_export_root_/Users/runner/work/_temp/reused-export/xcode",
+      "expected_rejection": false,
+      "pass_": true
+    },
+    {
+      "name": "valid_export_root_/Users/runner/work/_temp/build/xcode/nested",
+      "expected_rejection": false,
+      "pass_": true
+    },
+    {
+      "name": "wrong_architecture",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Require exactly the arm64 architecture"
+    },
+    {
+      "name": "duplicate_architecture",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Require exactly the arm64 architecture"
+    },
+    {
+      "name": "foreign_include_even_with_same_root",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Compiler include paths do not match the requested export"
+    },
+    {
+      "name": "unrebound_external_include",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Compiler include paths do not match the requested export"
+    },
+    {
+      "name": "missing_source",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Captured source input is missing or duplicated"
+    },
+    {
+      "name": "relative_export",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Require an absolute normalized export root"
+    },
+    {
+      "name": "parent_traversal",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Require an absolute normalized export root"
+    },
+    {
+      "name": "wrong_sdk",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Require exact Apple toolchain/SDK"
+    },
+    {
+      "name": "wrong_toolchain",
+      "expected_rejection": true,
+      "pass_": true,
+      "reason": "Require exact Apple toolchain/SDK"
+    }
+  ]
+}

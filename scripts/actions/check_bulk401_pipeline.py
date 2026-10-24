@@ -121,7 +121,7 @@ def main():
                 cmds += struct.pack('<4I', 0x1d, 16, 0, 1)
             return struct.pack('<8I', 0xfeedfacf, cpu, 0, role, 2 if signed else 1, len(cmds), 0, 0) + cmds
 
-        def package_case(name, mutate=None):
+        def package_case(name, mutate=None, build_head=None, explicit_export_head=None):
             case = tmp / name
             app = case / 'input.app'
             app.mkdir(parents=True)
@@ -147,9 +147,16 @@ def main():
                             if file.is_file():
                                 z.write(file, file.relative_to(payload.parent).as_posix())
             argv = ['package_bulk401_ipa.py', '--app', str(app), '--xcode-dir', str(xcode), '--output-dir', str(case / 'out')]
-            with patch('sys.argv', argv), patch.dict(os.environ, {'GITHUB_SHA': head}), patch('subprocess.run', fake_ditto), contextlib.redirect_stdout(io.StringIO()):
+            if explicit_export_head:
+                argv += ['--export-workflow-head', explicit_export_head]
+            with patch('sys.argv', argv), patch.dict(os.environ, {'GITHUB_SHA': build_head or head}), patch('subprocess.run', fake_ditto), contextlib.redirect_stdout(io.StringIO()):
                 runpy.run_path(str(repo / 'scripts/actions/package_bulk401_ipa.py'), run_name='__main__')
+            report = json.loads((case / 'out/IPA-VALIDATION.json').read_text('utf-8'))
+            assert report['workflow_head'] == head
+            assert report['packaging_workflow_head'] == (build_head or head)
         record('synthetic_unsigned_archive_accepted', lambda: package_case('valid-archive'))
+        record('reused_export_keeps_distinct_build_and_export_heads', lambda: package_case('reused-archive', build_head='2'*40, explicit_export_head=head))
+        record('reused_export_wrong_head_rejected', lambda: must_reject(lambda: package_case('wrong-reuse-head', build_head='2'*40), 'binding mismatch'))
         for name, mutation, error in [
             ('wrong-cpu', lambda p: (p / 'GodsPVZ').write_bytes(macho(cpu=0x1000007)), 'arm64'),
             ('simulator', lambda p: (p / 'GodsPVZ').write_bytes(macho(platform=7)), 'physical iOS'),
