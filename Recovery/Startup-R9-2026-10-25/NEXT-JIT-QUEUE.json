@@ -1,0 +1,22 @@
+{
+  "candidate_sha256": "738ebc37ebdea606011294728ffeaa6a2128d19417905856729efe5947f5577e",
+  "scope": "LAST_CLR_JIT_REJECTION_NOT_LAST_GAME_BUG",
+  "rows": [
+    {
+      "scope": "EXACT_ASSEMBLY_CLR_JIT_VALIDATION_NO_METHOD_EXECUTION",
+      "input_sha256": "738ebc37ebdea606011294728ffeaa6a2128d19417905856729efe5947f5577e",
+      "token": "0x06000383",
+      "status": "REJECTED",
+      "error": "System.InvalidProgramException: Common Language Runtime detected an invalid program.",
+      "il_sha256": "11fb91d2553c565ba0e089d461d346d481b76d7761d36fc7c46dfa3846657fc5",
+      "max_stack": 3,
+      "reference_resolution_extensions": [
+        ".dll",
+        ".exe"
+      ],
+      "method_executed": false,
+      "unity_execution": false
+    }
+  ],
+  "note": "Plant.PC_Nutknight native converts Floor result with CVTTSD2SI before integer clamp. A float-zero substitution would lose overflow/NaN behavior; method needs full dataflow qualification."
+}
