@@ -1,0 +1,29 @@
+# Startup R5 — typed BoardManager dataflow recovery, pending behavior qualification
+
+This extends the separately held R4 candidate by one method: `0x06000009 Administrator.Start_关卡配置文件(Board)`. It is a construction checkpoint and is not an accepted replacement for the R3 DLL used in the Shader workflow.
+
+Candidate SHA-256: `7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296`, 18,863,104 bytes. Parent is the R4 pending candidate `53055005…bb4ec9`. The six cumulative pending targets are Administrator plus the five listed in the R4 checkpoint.
+
+## Native specification and exact repair
+
+The authoritative PC method pointer is `0x1802FD6E0`. Its normal direct CFG contains 199 instructions, no indirect jumps or known method tail targets. This CFG does not model exception unwind. The existing `BoardManager.get_Instance` native class slot `0x181BD1A40` is already bound in the R3 native evidence. Original field metadata binds public BoardManager.challengeType (0x040001AE) to +0x20 and level (0x040001AF) to +0x24.
+
+The native method first applies Unity's null comparison to the Board argument. A live Board supplies path arguments and System2 challenge/level. Otherwise, it captures BoardManager.Instance once in RBX and applies Unity truthiness to that same pointer. A live manager supplies challenge/level; the fallback uses challenge 0 and the current save's adventureLevel. GetBoardConfigPath precedes field assignments. The save is re-read after that call before storing System2.level. JSON loading follows; null/empty JSON logs and constructs BoardConfig(12,7), otherwise FromJson<BoardConfig> supplies the configuration. Existing CIL already retains those branches and ordering.
+
+Damage was four `ldstr/pop/ldc.i4.0/conv.i` placeholders replacing actual +0x20/+0x24 reads, plus a local typed only as UnityEngine.Object. Each eight-byte placeholder becomes a load of captured V17 followed by the correct existing FieldDef read and one NOP. V17 becomes BoardManager in a newly appended, method-private StandAloneSig; the old shared signature and all other 30 local encodings are untouched. The original duplicate singleton field read is replaced by a read of that same captured V17, matching native RBX. The first capture uses the existing legal public singleton getter. No zero-to-integer cast, defensive null check, early return or visibility widening is introduced.
+
+## What passed and what remains
+
+The unchanged frozen stack checker passes the 45-method union (the 40-method R3 set plus six pending targets, with System2 overlapping). The independent member-access checker passes all six targets with zero unresolved/rejected references. The independent raw audit verifies exactly one body plus its LocalVarSig header column against R4, 2,316 untouched methods including all five R4 bodies, one appended StandAloneSig/blob, old metadata rows/heap prefixes unchanged, and six rejected physical boundary mutants. Repeated construction is byte-identical.
+
+These results do not establish runtime equivalence. Next execution must compare the actual restored CIL with original native normal paths, including live/destroyed/null Board and manager combinations, empty/nonempty JSON, callback mutation during path lookup, and save re-read ordering. The constructor/JSON loader/Unity object semantics require explicit controlled contracts. Native exception unwind and log-string equivalence remain separate unresolved scopes. Then compiler/Unity/Board/iPad acceptance must be performed independently. R4's other five methods still need their own runtime comparisons.
+
+Read CURRENT-RESULT.json before using any candidate. The Shader R1 workflow intentionally continues on the already startup-tested R3 DLL.
+
+## Whole-assembly visibility census, beyond the six-target gate
+
+The same unchanged member checker was run over every one of the 2,297 methods with bodies. It resolves all inspected references, but rejects 217 member-access sites across 112 methods. This is a FAIL for that gate, not a total remaining-game-bug count. Categories: 87 game field sites, 75 mscorlib field sites, 22 game method sites, 12 UnityEngine.UI fields, 10 InputLegacyModule methods, 5 CoreModule methods, 4 TMP fields, 1 CoreModule field and 1 mscorlib method. Full original results and the classified method/member roster are archived. Generic/protected receiver/type-flow/runtime semantics are not completely covered by this checker. Future full IPA promotion must not inherit the six-target PASS as a whole-assembly PASS.
+
+The unchanged frozen stack checker was also run over all 2,297 actual CIL bodies: 2,136 PASS and 161 FAIL_OR_UNSUPPORTED. Explicit constrained-call/ldind.r4 limitations and generic-self/interface cases remain labeled separately for independent review; no checker was relaxed or modified. These are first failures, not an exhaustive bug inventory. The union of the access/type gate queues contains 237 methods, with 36 in both. It is not 237 proven behavior bugs. Full CIL export, raw results and classification are archived for batch triage before further full player builds.
+
+An independent read of this exact DLL's InterfaceImpl table confirms that CilExporter omitted implemented-interface edges from its type input. The frozen checker already supports those edges. A separate read-only supplement adds only actual direct nongeneric metadata edges to existing owner nodes, without modifying the DLL, the checker or original export. Generic interface instances remain explicitly unmodeled. The same frozen checker then reports 2,164 PASS / 133 FAIL_OR_UNSUPPORTED; exactly 28 original failures resolve. Both inputs/results remain preserved. This is a verified exporter-input omission, not 28 repaired game methods or a runtime qualification. Generic self-receiver issues remain pending separate validation.
