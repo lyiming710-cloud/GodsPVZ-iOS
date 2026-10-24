@@ -13,6 +13,10 @@ public static class GodsPVZStartupAudit
 {
     private const string Plugin = "Assets/Plugins/GodsPVZRuntime1.dll";
     private const string PluginGuid = "60b84a767c46ced9aacc93f38da4d2f3";
+    private const string ProbeActive = "GodsPVZ.StartupProbe.Active";
+    private const string ProbeStarted = "GodsPVZ.StartupProbe.StartTicks";
+    private static readonly List<string> ProbeErrors = new List<string>();
+    private static readonly List<string> ProbeAudioLimits = new List<string>();
     [Serializable] public class ShaderBinding { public string shader, old_guid, new_guid, target; public int references; }
     [Serializable] public class FontCheck { public string path; public int atlas_count; public bool textures_valid, clear_on_build_disabled; }
     [Serializable] public class Report
@@ -21,10 +25,91 @@ public static class GodsPVZStartupAudit
         public bool pass, gameplay_equivalence_proven = false, device_execution_performed = false;
         public int plugin_scripts, resolved_plugin_scripts, validated_game_script_references, prefab_assets, missing_components;
         public bool game_start_component, game_start_prefab, board_start_component, core_blit_keyword;
+        public bool splash_unity_logo_canonical, splash_game_logo_preserved;
         public List<string> errors = new List<string>();
         public List<string> unresolved_custom_dummy_shaders = new List<string>();
         public List<ShaderBinding> official_shader_bindings = new List<ShaderBinding>();
         public List<FontCheck> fonts = new List<FontCheck>();
+    }
+
+    [Serializable] public class PlayProbeReport
+    {
+        public string scope = "EDITOR_PLAYMODE_ACTUAL_STARTUP_CIL_DISPATCH_ONLY";
+        public bool pass, device_execution = false, pixel_equivalence = false;
+        public int frames, active_canvases, main_ui_components;
+        public string active_scene, audio_scope = "NO_PHYSICAL_AUDIO_DEVICE";
+        public List<string> errors = new List<string>();
+        public List<string> environment_audio_limits = new List<string>();
+    }
+
+    // Called in a separate Editor invocation after the asset audit. This uses
+    // the normal scene Start/Update dispatch and never supplies fake game data,
+    // invokes GameStart manually, or suppresses gameplay exceptions.
+    public static void BeginPlayProbe()
+    {
+        var folder = Environment.GetEnvironmentVariable("GODSPVZ_STARTUP_EVIDENCE");
+        if (String.IsNullOrEmpty(folder)) throw new InvalidOperationException("Explicit startup evidence directory required");
+        if (SessionState.GetBool(ProbeActive, false)) throw new InvalidOperationException("A startup probe is already active");
+        EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity", OpenSceneMode.Single);
+        SessionState.SetString(ProbeStarted, DateTime.UtcNow.Ticks.ToString());
+        SessionState.SetBool(ProbeActive, true);
+        AttachProbe();
+        EditorApplication.isPlaying = true;
+    }
+
+    [InitializeOnLoadMethod]
+    private static void ResumeProbeAfterDomainReload()
+    {
+        if (SessionState.GetBool(ProbeActive, false)) AttachProbe();
+    }
+
+    private static void AttachProbe()
+    {
+        EditorApplication.update -= ProbeTick;
+        EditorApplication.update += ProbeTick;
+        Application.logMessageReceived -= RecordProbeLog;
+        Application.logMessageReceived += RecordProbeLog;
+    }
+
+    private static void RecordProbeLog(string message, string stack, LogType type)
+    {
+        if (!EditorApplication.isPlaying || !(type == LogType.Error || type == LogType.Exception || type == LogType.Assert)) return;
+        if (message.StartsWith("FMOD failed to initialize the output device", StringComparison.Ordinal))
+        {
+            if (ProbeAudioLimits.Count < 10) ProbeAudioLimits.Add(message);
+            return;
+        }
+        if (ProbeErrors.Count < 50) ProbeErrors.Add(message + "\n" + stack);
+    }
+
+    private static void ProbeTick()
+    {
+        if (!SessionState.GetBool(ProbeActive, false)) return;
+        long ticks = Int64.Parse(SessionState.GetString(ProbeStarted, "0"));
+        double elapsed = (DateTime.UtcNow.Ticks - ticks) / (double)TimeSpan.TicksPerSecond;
+        if (elapsed < 20.0) return;
+        if (EditorApplication.isPlaying && Time.frameCount < 3 && elapsed < 90.0) return;
+        var report = new PlayProbeReport();
+        report.errors.AddRange(ProbeErrors); report.environment_audio_limits.AddRange(ProbeAudioLimits);
+        if (EditorApplication.isPlaying)
+        {
+            report.frames = Time.frameCount;
+            report.active_scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            report.active_canvases = UnityEngine.Object.FindObjectsOfType<Canvas>().Count(c => c.isActiveAndEnabled);
+            report.main_ui_components = UnityEngine.Object.FindObjectsOfType<MonoBehaviour>().Count(c => c != null && c.GetType().FullName == "MainUIController");
+        }
+        if (!EditorApplication.isPlaying) report.errors.Add("Editor did not enter Play Mode");
+        if (report.frames < 3) report.errors.Add("Startup did not advance enough player frames");
+        if (report.active_scene != "MainMenu") report.errors.Add("Startup did not retain the MainMenu scene");
+        if (report.main_ui_components < 1 || report.active_canvases < 1) report.errors.Add("Actual startup did not create the main UI and an active Canvas");
+        report.pass = report.errors.Count == 0;
+        string folder = Environment.GetEnvironmentVariable("GODSPVZ_STARTUP_EVIDENCE");
+        File.WriteAllText(Path.Combine(folder, "startup-play-probe.json"), JsonUtility.ToJson(report, true));
+        SessionState.SetBool(ProbeActive, false);
+        EditorApplication.update -= ProbeTick;
+        Application.logMessageReceived -= RecordProbeLog;
+        Debug.Log("GODSPVZ_STARTUP_PLAY_PROBE=" + (report.pass ? "PASS" : "FAIL"));
+        EditorApplication.Exit(report.pass ? 0 : 75);
     }
 
     public static void Run()
@@ -61,6 +146,7 @@ public static class GodsPVZStartupAudit
                     report.validated_game_script_references++;
                 }
             }
+            RestoreCanonicalSplashLogo(report);
             ImportOfficialTmpResources();
             RebindOfficialShaders(report);
             PreserveFontAtlases(report);
@@ -95,6 +181,27 @@ public static class GodsPVZStartupAudit
     {
         var allowed = new HashSet<string>(new [] { ".unity", ".prefab", ".asset", ".mat", ".shadervariants" });
         return Directory.EnumerateFiles("Assets", "*", SearchOption.AllDirectories).Where(p => allowed.Contains(Path.GetExtension(p).ToLowerInvariant()));
+    }
+
+    private static void RestoreCanonicalSplashLogo(Report report)
+    {
+        var logos = PlayerSettings.SplashScreen.logos;
+        if (logos.Length != 2 || logos[0].logo == null || logos[0].logo.texture == null || logos[0].logo.texture.name != "Splash Screen Unity Logo")
+            throw new InvalidOperationException("Unexpected recovered splash logo configuration");
+        var gameLogo = logos[1].logo;
+        float gameDuration = logos[1].duration;
+        // The original PC first entry points to Unity's built-in logo itself.
+        // AssetRipper exported a separate texture/sprite copy, which lost that
+        // identity. Restore the official token while retaining the game logo.
+        logos[0] = PlayerSettings.SplashScreenLogo.CreateWithUnityLogo(logos[0].duration);
+        PlayerSettings.SplashScreen.show = true;
+        PlayerSettings.SplashScreen.showUnityLogo = true;
+        PlayerSettings.SplashScreen.drawMode = PlayerSettings.SplashScreen.DrawMode.AllSequential;
+        PlayerSettings.SplashScreen.logos = logos;
+        var actual = PlayerSettings.SplashScreen.logos;
+        report.splash_unity_logo_canonical = actual[0].logo == PlayerSettings.SplashScreenLogo.CreateWithUnityLogo(actual[0].duration).logo;
+        report.splash_game_logo_preserved = actual[1].logo == gameLogo && actual[1].duration == gameDuration;
+        if (!report.splash_unity_logo_canonical || !report.splash_game_logo_preserved) report.errors.Add("Splash logo identity/preservation failed");
     }
 
     private static void ImportOfficialTmpResources()

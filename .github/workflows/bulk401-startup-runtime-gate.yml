@@ -526,6 +526,28 @@ jobs:
           assert data['core_blit_keyword']
           PY
 
+      - name: Run actual startup in Editor Play Mode before any new IPA export
+        shell: bash
+        env:
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-bulk401-ios/evidence
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          timeout --signal=TERM 180s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZStartupAudit.BeginPlayProbe -logFile "$OUT/evidence/startup-play-probe.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$OUT/evidence/startup-play-probe-exit.txt"
+          [ "$RC" -eq 0 ]
+          python3 - "$OUT/evidence/startup-play-probe.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          assert data['pass'] and data['frames']>=3 and data['main_ui_components']>=1 and data['active_canvases']>=1
+          PY
+
       - name: Export unsigned iOS Xcode project with bulk401 candidate
         if: github.event_name == 'workflow_dispatch' && !inputs.audit_only
         shell: bash
