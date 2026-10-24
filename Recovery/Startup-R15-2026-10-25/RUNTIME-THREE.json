@@ -1,0 +1,119 @@
+{
+  "scope": "THREE_COMPLETE_SHARED_GENERIC_NATIVE_CALLERS_VS_DIRECT_ACTUAL_DLL_CLOSED_CLR_METHODS",
+  "candidate_sha256": "261068dda5af1f6915ea7c2183fa8b2b0d69092db6777e5643a39552669ccba1",
+  "pass_": true,
+  "constructor_cases": 504,
+  "automatic_static_initializer_cases": 3,
+  "total_native_cil_observations": 507,
+  "managed_negative_cases": 9,
+  "closed_contexts": [
+    "System.Int32",
+    "System.String",
+    "24_BYTE_VALUE_TYPE"
+  ],
+  "closed_jit_prepared": 9,
+  "constructor_counts": {
+    "default": 84,
+    "capacity": 420
+  },
+  "differences": [],
+  "negative_controls": [
+    {
+      "name": "cctor-allocates-one",
+      "mutant_sha256": "360da1243d64cbf06bc216e51b43934e2aa35a51bba97e5d88235d3bf250fe1b",
+      "constructor_differences": 504,
+      "automatic_init_differences": 3,
+      "managed_negative_differences": 9,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "cctor-omits-shared-assignment",
+      "mutant_sha256": "9a9ab1ba4b5b71716456ceaff32466dd9b0540d208ee2476a44ca4a8a3fb3ce7",
+      "constructor_differences": 504,
+      "automatic_init_differences": 3,
+      "managed_negative_differences": 9,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "default-allocates-instead-of-sharing",
+      "mutant_sha256": "12ec7353ac222c49b4ec2c05d00d0a69e8c0e6bf6d52106387cf8c7fe4ecff89",
+      "constructor_differences": 84,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 0,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "default-retains-old-data",
+      "mutant_sha256": "2f29e605416a365b6e379b7369bfd69203dddfc646f1a83327e3b9db43a779dd",
+      "constructor_differences": 84,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 0,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "default-size-one",
+      "mutant_sha256": "4d7d6a55eb00f4c97aa029e203669b8eecab1c5b84e990910e0410c8990ef9e4",
+      "constructor_differences": 84,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 0,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "capacity-size-one",
+      "mutant_sha256": "c13057d408fad471cfdd7844db09afe7256ca1e162624eb69bea801d95d7fba4",
+      "constructor_differences": 420,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 0,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "capacity-zero-branch-inverted",
+      "mutant_sha256": "3db4846a33de3c322b9484a0a24a9da29dd9a10366d908f45f1e99760daed804",
+      "constructor_differences": 420,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 0,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "capacity-negative-unsigned-guard",
+      "mutant_sha256": "5ed02ec59e4a38b83f97c3a7962091dd964c374a48d6595dbb808f2ab6d6192e",
+      "constructor_differences": 0,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 9,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "capacity-resets-before-negative-throw",
+      "mutant_sha256": "5ab490f66bdd984cc015328cace8cd1be7dfa36200af0eb8086462748f41f951",
+      "constructor_differences": 0,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 9,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "capacity-exception-arguments-swapped",
+      "mutant_sha256": "e073fc964fd91434ebfbf544cd0d62915c83ce8546a964b089e8d123a8a43e71",
+      "constructor_differences": 0,
+      "automatic_init_differences": 0,
+      "managed_negative_differences": 9,
+      "native_negative_throw_not_executed": true
+    },
+    {
+      "name": "historical-placeholder-initializers-restored",
+      "mutant_sha256": "187cf54663e7e1490d7606d2bae2756f53d2b2b9cf7617ca1ce3f65333338da5",
+      "constructor_differences": 504,
+      "automatic_init_differences": 3,
+      "managed_negative_differences": 9,
+      "native_negative_throw_not_executed": true
+    }
+  ],
+  "readonly_static_field_preserved": true,
+  "reflection_emit_used": false,
+  "source_instructions_removed": false,
+  "initial_fixture_readonly_fieldaccess_failure_preserved": true,
+  "real_gc_allocator_contract": false,
+  "native_class_init_and_seh": false,
+  "real_unity_execution": false,
+  "whole_game": false,
+  "ipa": null
+}

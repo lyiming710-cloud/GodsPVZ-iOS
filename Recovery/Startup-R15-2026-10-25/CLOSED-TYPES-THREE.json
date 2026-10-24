@@ -1,0 +1,89 @@
+{
+  "scope": "UNCHANGED_FROZEN_CHECKER_FINITE_INT32_STRING_CLOSED_MODELS_ONLY",
+  "candidate_sha256": "261068dda5af1f6915ea7c2183fa8b2b0d69092db6777e5643a39552669ccba1",
+  "checker_sha256": "2bb0a8c229a63fd33269433759a587ff551c6fde19669bafc506033df9b63d14",
+  "checker_modified": false,
+  "global_census_not_overwritten": true,
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "method": "System.Void FTRuntime.Internal.SwfList`1::.ctor()",
+      "token": "0x060008E3",
+      "status": "PASS",
+      "reachable": 9,
+      "instructions": 9,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.Int32"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfList`1::.ctor()",
+      "token": "0x060008E3",
+      "status": "PASS",
+      "reachable": 9,
+      "instructions": 9,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.String"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfList`1::.ctor(System.Int32)",
+      "token": "0x060008E4",
+      "status": "PASS",
+      "reachable": 21,
+      "instructions": 21,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.Int32"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfList`1::.ctor(System.Int32)",
+      "token": "0x060008E4",
+      "status": "PASS",
+      "reachable": 21,
+      "instructions": 21,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.String"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfList`1::.cctor()",
+      "token": "0x060008F1",
+      "status": "PASS",
+      "reachable": 4,
+      "instructions": 4,
+      "unreachable": 0,
+      "max_stack": 1,
+      "context": "System.Int32"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfList`1::.cctor()",
+      "token": "0x060008F1",
+      "status": "PASS",
+      "reachable": 4,
+      "instructions": 4,
+      "unreachable": 0,
+      "max_stack": 1,
+      "context": "System.String"
+    }
+  ],
+  "negative_controls": [
+    {
+      "name": "wrong-closed-receiver",
+      "rejected": true,
+      "reason": "System.Void FTRuntime.Internal.SwfList`1::.ctor() IL_0001: receiver FTRuntime.Internal.SwfList`1<System.Int32> incompatible with System.Object (write=False, call=True)"
+    },
+    {
+      "name": "wrong-newarr-element",
+      "rejected": true,
+      "reason": "System.Void FTRuntime.Internal.SwfList`1::.cctor() IL_0006: System.Int32[] is not assignable to System.String[]"
+    },
+    {
+      "name": "wrong-size-width",
+      "rejected": true,
+      "reason": "System.Void FTRuntime.Internal.SwfList`1::.ctor() IL_0013: I8 is not assignable to System.Int32"
+    }
+  ],
+  "universal_generic_proof": false
+}
