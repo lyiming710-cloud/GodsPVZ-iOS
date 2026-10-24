@@ -1,5 +1,15 @@
 # Recovery status
 
+## Latest checkpoint — 2026-10-24
+
+[Startup R6](Startup-R6-2026-10-24/README.md) archives actual original-PC-caller versus actual-CIL execution for six targets in 2,475 controlled cases. Twenty-three fault controls are detected by execution; one Int64 sentinel defect is invisible to permissive CLR truncation and is rejected separately by the unchanged frozen width checker. R6 also fixes four proven unreachable unterminated warning tails discovered by actual execution. All other file bytes remain identical to its R5 parent. This is scoped caller qualification, not whole-game acceptance.
+
+The exact R6 DLL still has whole-assembly gate queues: 217 rejected access sites across 112 methods; 133 type failures or unsupported cases after supplementing exact interface metadata facts; 141 unterminated lexical tails, of which 132 are unreachable void warning tails and nine require separate specifications. These categories overlap and are not a total gameplay-bug count. Full player export remains held while batch form repairs and wider qualification proceed.
+
+The separate [custom shader checkpoint](Custom-Shaders-2026-10-24/README.md), actual run [40094204567](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40094204567), passed 76 Unity shader stage compilations (38 Metal / 38 OpenGLCore), 20 controlled Editor pixel readbacks and a normal R3 MainMenu startup probe. This does not establish iPad execution. No updated IPA has been accepted for the reported iPad black-screen/flicker issue.
+
+The earlier strategy and reconstruction notes below are retained as historical context; use the dated checkpoints above for current results.
+
 ## Current strategy
 
 Use the PC x86-64 IL2CPP build as the primary gameplay-logic source because Cpp2IL recovers it substantially more accurately, while retaining the Android/mobile asset export and using the Android build as the reference for touch/mobile-specific behavior.

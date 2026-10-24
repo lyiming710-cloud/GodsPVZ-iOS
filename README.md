@@ -28,6 +28,6 @@ Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by
 
 ## Current phase
 
-The game assembly is recovered and the Unity resources/scenes have been exported locally. The current task is replacing recovered package-DLL script references with the original Unity package script GUIDs, then running an iOS IL2CPP build. The repository intentionally does not claim a working IPA until the Unity build and device launch are verified.
+Recovery now includes compiler repair, actual Editor startup diagnosis, restored original serialization markers and two custom shaders. The latest [Startup R6 checkpoint](Recovery/Startup-R6-2026-10-24/README.md) records six scoped caller suites with 2,475 controlled native/CIL cases; broader type, access and method-form queues remain open. The [shader checkpoint](Recovery/Custom-Shaders-2026-10-24/README.md) has actual Metal compilation and controlled Editor pixel evidence. An updated unsigned IPA and iPad acceptance for the reported black screen/flicker remain pending.
 
 See `Recovery/STATUS.md` for the detailed recovery state.

@@ -1,0 +1,238 @@
+{
+  "scope": "SIX_TARGETS_CONTROLLED_CALLER_SEMANTICS_PLUS_FROZEN_WIDTH_ONLY",
+  "candidate_sha256": "c36092b5326687112adfa8c285bb3cf5e8ad46d3b3de8ebcd84daf598041465d",
+  "methods": 6,
+  "total_cases": 2475,
+  "runtime_detected_controls": 23,
+  "runtime_undetected_controls": 1,
+  "independent_frozen_width_rejects_remaining_control": true,
+  "suites": [
+    {
+      "suite": "admin",
+      "cases": 22,
+      "tokens": [
+        "0x06000009"
+      ],
+      "scope": "ADMIN_CONFIG_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+      "runtime_equivalence_pass": true,
+      "negative_controls": [
+        {
+          "name": "wrong-manager-challenge-field",
+          "mutant_sha256": "3af187afd7dcdae28b8f6266a6597b43176e020720f53550577e4558c7eab37e",
+          "detected_cases": 8,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "early-return",
+          "mutant_sha256": "6ecb9145d08726ac2b82a95d5998e46ac4fa35d96291d2435248ae151f5747e8",
+          "detected_cases": 22,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "config-assignment-omitted",
+          "mutant_sha256": "fcf2264c691f4eb97eb175927394955ae99adcf77c5cad081517809f324784ea",
+          "detected_cases": 22,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "damaged-parent-native-pointer-placeholders",
+          "detected_cases": 16,
+          "baseline_pass": true,
+          "pass_": true
+        }
+      ]
+    },
+    {
+      "suite": "board",
+      "cases": 769,
+      "tokens": [
+        "0x060002AD"
+      ],
+      "scope": "BOARD_UPDATE_ISWON_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+      "runtime_equivalence_pass": true,
+      "negative_controls": [
+        {
+          "name": "ordered-comparison-NaN-regression",
+          "mutant_sha256": "80872f998552949f7a3882a80833599548dccc055adaeaaa93d86ff6f260265b",
+          "detected_cases": 60,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "early-return",
+          "mutant_sha256": "595731bb2fa18a386abbab460abb3be7176be3cfce233bb180bfcfcc22969362",
+          "detected_cases": 349,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "volume-write-omitted",
+          "mutant_sha256": "64d9cc7f4041c91506bc3cce4ca72724047bbe7e740239567f89420891bf9538",
+          "detected_cases": 121,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "fade-factor-doubled",
+          "mutant_sha256": "64e7c3fb3013fb9324669800c98acef78524a850a4193e0dfd1aaed1d3f7f9bd",
+          "detected_cases": 61,
+          "baseline_pass": true,
+          "pass_": true
+        }
+      ]
+    },
+    {
+      "suite": "system",
+      "cases": 112,
+      "tokens": [
+        "0x06000089"
+      ],
+      "scope": "SYSTEM2_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+      "runtime_equivalence_pass": true,
+      "negative_controls": [
+        {
+          "name": "name-used-instead-of-text",
+          "mutant_sha256": "aea50469dc7e6d67c46f9d5ccb213db7deb0ddf7d3d0c8d37f6381c2550a682d",
+          "detected_cases": 64,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "row-index-used-instead-of-value",
+          "mutant_sha256": "7eed75441aab8700da3a055a44ed0b1f923d2a086622a4b0cf8c0191ca1e5eb0",
+          "detected_cases": 35,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "early-return",
+          "mutant_sha256": "ba60850d4969b47b74ed3af9caa67417a221a071a20c12665bc1d1af2e99a02b",
+          "detected_cases": 112,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "row-write-omitted",
+          "mutant_sha256": "c30be894c7790d897f45f429fbbb2ca9e276968cce112946f7da94dd1f432b54",
+          "detected_cases": 39,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "damaged-parent-private-text-read",
+          "mutant_sha256": "752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f",
+          "detected_cases": 64,
+          "baseline_pass": true,
+          "pass_": true
+        }
+      ]
+    },
+    {
+      "suite": "buff",
+      "cases": 1452,
+      "tokens": [
+        "0x060005E7"
+      ],
+      "scope": "BUFF_COMBINED_RUNTIME_AND_UNCHANGED_FROZEN_WIDTH_GATE_CONTROLLED_CALLEES_ONLY",
+      "runtime_equivalence_pass": true,
+      "negative_controls": [
+        {
+          "name": "attack-ratio-multiplied",
+          "mutant_sha256": "a29a6ce2508b5df6e3e1303313390a91f1e1fcef0ab0cb83519e90bc550669f3",
+          "detected_cases": 192,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "integer-zero-restored",
+          "mutant_sha256": "768c7dd52c89a340b7155a760f4a679ad559fb9d95e46bbb490da07b3356319e",
+          "detected_cases": 728,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "int64-sentinel-restored",
+          "mutant_sha256": "f0fa544edee876db3137e5acbc4279a4fa87196efc1f11600a7d1e258b87cc86",
+          "detected_cases": 0,
+          "baseline_pass": true,
+          "pass_": false,
+          "runtime_status": "NOT_DETECTED_BY_CLR_PERMISSIVE_TRUNCATION",
+          "required_independent_gate": "UNCHANGED_FROZEN_WIDTH_GATE"
+        },
+        {
+          "name": "early-return",
+          "mutant_sha256": "be83d8b389b9725c066ea6492ae1e3caa2fc6ae36dafae2e0416af2f22862124",
+          "detected_cases": 1452,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "parent-unterminated-tail",
+          "mutant_sha256": "7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296",
+          "detected_cases": 1452,
+          "baseline_pass": true,
+          "pass_": true
+        }
+      ]
+    },
+    {
+      "suite": "events",
+      "cases": 120,
+      "tokens": [
+        "0x060007B7",
+        "0x060007B8"
+      ],
+      "scope": "TWO_EVENT_CALLERS_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_EVENT_SYSTEM_ONLY",
+      "runtime_equivalence_pass": true,
+      "negative_controls": [
+        {
+          "name": "character-registered-on-sprite-event",
+          "mutant_sha256": "f8bb3e29be742401d9db0b4b2c4fa4cf59435183a3e5af533fdf89e88c1d83c0",
+          "detected_cases": 39,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "disable-adds-instead-of-removes-character",
+          "mutant_sha256": "7ad522dfdec681190d7b6ce2855a7b311704ab70d5e457afc39c282f0e89bc28",
+          "detected_cases": 45,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "text-component-write-omitted",
+          "mutant_sha256": "a6b810375f3f05201b901e56f471bea5b034f5eaf2efe6160c56bd706fe54591",
+          "detected_cases": 39,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "enable-early-return",
+          "mutant_sha256": "cf2d65fa5f185150bb074ebc79e7c1e21466ae7bc7b91980862b45507123f025",
+          "detected_cases": 105,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "disable-early-return",
+          "mutant_sha256": "f290ae813ae55214b417c663ea2335167a6f5aaa956c0a2b078ba385f6000dfc",
+          "detected_cases": 105,
+          "baseline_pass": true,
+          "pass_": true
+        },
+        {
+          "name": "parent-unterminated-tails",
+          "mutant_sha256": "7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296",
+          "detected_cases": 120,
+          "baseline_pass": true,
+          "pass_": true
+        }
+      ]
+    }
+  ],
+  "unity_execution": false,
+  "whole_game_acceptance": false
+}
