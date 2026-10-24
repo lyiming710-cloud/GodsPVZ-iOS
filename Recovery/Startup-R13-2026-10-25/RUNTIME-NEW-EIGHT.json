@@ -1,0 +1,136 @@
+{
+  "scope": "EIGHT_COMPLETE_ACTUAL_CIL_VS_ORIGINAL_PC_CALLERS_WITH_ORIGINAL_MATH_HELPERS_CONTROLLED_CALLEES",
+  "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+  "cases": 13167,
+  "counts": {
+    "device": 213,
+    "board": 1066,
+    "rate-controller": 92,
+    "rate-manager": 92,
+    "stats": 4704,
+    "clip": 336,
+    "damage": 1344,
+    "tou": 5320
+  },
+  "pass_": true,
+  "differences": [],
+  "negative_controls": [
+    {
+      "name": "device-cd-always-zero",
+      "mutant_sha256": "8bfe73b6abd050853c4e9bba77cc9504cc759032b9d0678fdc05217b459cc259",
+      "runtime_differences": 6,
+      "runtime_exit": 0
+    },
+    {
+      "name": "board-value-always-zero",
+      "mutant_sha256": "c30175ce0e1b09c81ba52eeb439dc2f01543a330a268c04aaebb9ed25dffcef8",
+      "runtime_differences": 93,
+      "runtime_exit": 0
+    },
+    {
+      "name": "board-level-read-from-type",
+      "mutant_sha256": "6780b431d20ee488ed40edbb3f3d53dce5da99edc434d099b95908f58e1c149c",
+      "runtime_differences": 112,
+      "runtime_exit": 0
+    },
+    {
+      "name": "board-level-factor-nine",
+      "mutant_sha256": "b3c852dba558efadf58bcb48292b171fff829be803c9637837ad626f92363268",
+      "runtime_differences": 24,
+      "runtime_exit": 0
+    },
+    {
+      "name": "rate-unordered-low-clamp",
+      "mutant_sha256": "05ed040ad622505f8da8c8d9e27f2b4c77b8beaee3164deebe45c06f1ca4748d",
+      "runtime_differences": 4,
+      "runtime_exit": 0
+    },
+    {
+      "name": "rate-upper-clamp-one",
+      "mutant_sha256": "5c7e2e6b1c8ff90735ab41881ac01aa1d0b9daef6a7f9c787f255501789f8f0f",
+      "runtime_differences": 50,
+      "runtime_exit": 0
+    },
+    {
+      "name": "clip-truth-branch-inverted",
+      "mutant_sha256": "fefe01818c5c960e2bb05abac5fd5d05031b01a9d09d9ebb52da18571eca9d4c",
+      "runtime_differences": 334,
+      "runtime_exit": 0
+    },
+    {
+      "name": "stats-multiply-replaced-add",
+      "mutant_sha256": "95eab70cf4e1cddf3a8c04877dd09c43ced002d3d55ba5657d2eb90e62468ba1",
+      "runtime_differences": 636,
+      "runtime_exit": 0
+    },
+    {
+      "name": "stats-integer-zero-restored",
+      "mutant_sha256": "144e4e89b8e72aee4a61df109eaef698bfd3f70bbfcdf3a87f9a8eeea9f84bd6",
+      "runtime_differences": 0,
+      "runtime_exit": 0,
+      "runtime_alone_adequate": false,
+      "frozen_width_rejected": true,
+      "frozen_result": {
+        "status": "FAIL",
+        "error": "System.Single StatsIncreased::ComputingIncrementS(System.Single,System.String) IL_0070: I4 is not assignable to System.Single"
+      }
+    },
+    {
+      "name": "animator-reloaded-after-time2",
+      "mutant_sha256": "9b2f058927c71d8906d56855c8adb541639deb8b4778b064bbd628716e1746b4",
+      "runtime_differences": 312,
+      "runtime_exit": 0
+    },
+    {
+      "name": "hash-reloaded-after-time2",
+      "mutant_sha256": "3db81a44dbe78a26278b4cfaa2a91fcd6b5eb080ac29416aa38c2cac2f664202",
+      "runtime_differences": 312,
+      "runtime_exit": 0
+    },
+    {
+      "name": "tou-round-omitted",
+      "mutant_sha256": "6dc657c6286d5de9f4da49608ee1c5156cea3c92041383e0a8bd253f67977093",
+      "runtime_differences": 1650,
+      "runtime_exit": 0
+    },
+    {
+      "name": "tou-ideal-mathf-round-substituted",
+      "mutant_sha256": "66e8bc9a89cf9ce923ece721cfb9c46320fa2c65876e2967e03a93d8798e62bc",
+      "runtime_differences": 38,
+      "runtime_exit": 0
+    },
+    {
+      "name": "tou-ties-always-even-integerpart",
+      "mutant_sha256": "5e0b2f8550a9469b2bac2791882b855a7dd571db0418d5975b946694fbf5052c",
+      "runtime_differences": 475,
+      "runtime_exit": 0
+    }
+  ],
+  "managed_null_controls": {
+    "clip": {
+      "error": "System.NullReferenceException",
+      "trace": [
+        "Truth:clip:1"
+      ]
+    },
+    "damage": {
+      "error": "System.NullReferenceException",
+      "trace": [
+        "Time:1:3F800000",
+        "Time:2:40000000"
+      ]
+    },
+    "buff": {
+      "error": "System.NullReferenceException",
+      "trace": []
+    }
+  },
+  "original_round_modf_ceil_floor_max_code_executed": true,
+  "host_math_replacement_of_original_helpers": false,
+  "real_unity_callees": false,
+  "real_buff_and_string_callees": false,
+  "native_exception_unwind": false,
+  "nan_payload_or_fp_status_equivalence": false,
+  "full_game_acceptance": false,
+  "ipa": null
+}

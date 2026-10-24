@@ -1,0 +1,582 @@
+{
+  "scope": "TWENTY_FOUR_SEPARATE_CONTROLLED_ORIGINAL_PC_CALLER_SCOPES_NOT_FULL_GAME",
+  "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+  "methods": 24,
+  "cases": 18840,
+  "new_eight_methods": {
+    "scope": "EIGHT_COMPLETE_ACTUAL_CIL_VS_ORIGINAL_PC_CALLERS_WITH_ORIGINAL_MATH_HELPERS_CONTROLLED_CALLEES",
+    "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+    "cases": 13167,
+    "counts": {
+      "device": 213,
+      "board": 1066,
+      "rate-controller": 92,
+      "rate-manager": 92,
+      "stats": 4704,
+      "clip": 336,
+      "damage": 1344,
+      "tou": 5320
+    },
+    "pass_": true,
+    "differences": [],
+    "negative_controls": [
+      {
+        "name": "device-cd-always-zero",
+        "mutant_sha256": "8bfe73b6abd050853c4e9bba77cc9504cc759032b9d0678fdc05217b459cc259",
+        "runtime_differences": 6,
+        "runtime_exit": 0
+      },
+      {
+        "name": "board-value-always-zero",
+        "mutant_sha256": "c30175ce0e1b09c81ba52eeb439dc2f01543a330a268c04aaebb9ed25dffcef8",
+        "runtime_differences": 93,
+        "runtime_exit": 0
+      },
+      {
+        "name": "board-level-read-from-type",
+        "mutant_sha256": "6780b431d20ee488ed40edbb3f3d53dce5da99edc434d099b95908f58e1c149c",
+        "runtime_differences": 112,
+        "runtime_exit": 0
+      },
+      {
+        "name": "board-level-factor-nine",
+        "mutant_sha256": "b3c852dba558efadf58bcb48292b171fff829be803c9637837ad626f92363268",
+        "runtime_differences": 24,
+        "runtime_exit": 0
+      },
+      {
+        "name": "rate-unordered-low-clamp",
+        "mutant_sha256": "05ed040ad622505f8da8c8d9e27f2b4c77b8beaee3164deebe45c06f1ca4748d",
+        "runtime_differences": 4,
+        "runtime_exit": 0
+      },
+      {
+        "name": "rate-upper-clamp-one",
+        "mutant_sha256": "5c7e2e6b1c8ff90735ab41881ac01aa1d0b9daef6a7f9c787f255501789f8f0f",
+        "runtime_differences": 50,
+        "runtime_exit": 0
+      },
+      {
+        "name": "clip-truth-branch-inverted",
+        "mutant_sha256": "fefe01818c5c960e2bb05abac5fd5d05031b01a9d09d9ebb52da18571eca9d4c",
+        "runtime_differences": 334,
+        "runtime_exit": 0
+      },
+      {
+        "name": "stats-multiply-replaced-add",
+        "mutant_sha256": "95eab70cf4e1cddf3a8c04877dd09c43ced002d3d55ba5657d2eb90e62468ba1",
+        "runtime_differences": 636,
+        "runtime_exit": 0
+      },
+      {
+        "name": "stats-integer-zero-restored",
+        "mutant_sha256": "144e4e89b8e72aee4a61df109eaef698bfd3f70bbfcdf3a87f9a8eeea9f84bd6",
+        "runtime_differences": 0,
+        "runtime_exit": 0,
+        "runtime_alone_adequate": false,
+        "frozen_width_rejected": true,
+        "frozen_result": {
+          "status": "FAIL",
+          "error": "System.Single StatsIncreased::ComputingIncrementS(System.Single,System.String) IL_0070: I4 is not assignable to System.Single"
+        }
+      },
+      {
+        "name": "animator-reloaded-after-time2",
+        "mutant_sha256": "9b2f058927c71d8906d56855c8adb541639deb8b4778b064bbd628716e1746b4",
+        "runtime_differences": 312,
+        "runtime_exit": 0
+      },
+      {
+        "name": "hash-reloaded-after-time2",
+        "mutant_sha256": "3db81a44dbe78a26278b4cfaa2a91fcd6b5eb080ac29416aa38c2cac2f664202",
+        "runtime_differences": 312,
+        "runtime_exit": 0
+      },
+      {
+        "name": "tou-round-omitted",
+        "mutant_sha256": "6dc657c6286d5de9f4da49608ee1c5156cea3c92041383e0a8bd253f67977093",
+        "runtime_differences": 1650,
+        "runtime_exit": 0
+      },
+      {
+        "name": "tou-ideal-mathf-round-substituted",
+        "mutant_sha256": "66e8bc9a89cf9ce923ece721cfb9c46320fa2c65876e2967e03a93d8798e62bc",
+        "runtime_differences": 38,
+        "runtime_exit": 0
+      },
+      {
+        "name": "tou-ties-always-even-integerpart",
+        "mutant_sha256": "5e0b2f8550a9469b2bac2791882b855a7dd571db0418d5975b946694fbf5052c",
+        "runtime_differences": 475,
+        "runtime_exit": 0
+      }
+    ],
+    "managed_null_controls": {
+      "clip": {
+        "error": "System.NullReferenceException",
+        "trace": [
+          "Truth:clip:1"
+        ]
+      },
+      "damage": {
+        "error": "System.NullReferenceException",
+        "trace": [
+          "Time:1:3F800000",
+          "Time:2:40000000"
+        ]
+      },
+      "buff": {
+        "error": "System.NullReferenceException",
+        "trace": []
+      }
+    },
+    "original_round_modf_ceil_floor_max_code_executed": true,
+    "host_math_replacement_of_original_helpers": false,
+    "real_unity_callees": false,
+    "real_buff_and_string_callees": false,
+    "native_exception_unwind": false,
+    "nan_payload_or_fp_status_equivalence": false,
+    "full_game_acceptance": false,
+    "ipa": null
+  },
+  "prior_thirteen_methods": {
+    "scope": "THIRTEEN_METHODS_IN_SEPARATE_CONTROLLED_CALLER_SCOPES_NOT_FULL_GAME",
+    "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+    "methods": 13,
+    "prior_cases": 3467,
+    "new_cases": 2116,
+    "total_cases": 5583,
+    "prior_suites": [
+      {
+        "suite": "admin",
+        "cases": 22,
+        "result": {
+          "scope": "ADMIN_CONFIG_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+          "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+          "method_token": "0x06000009",
+          "cases": 22,
+          "pass_": true,
+          "differences": [],
+          "negative_controls": [
+            {
+              "name": "wrong-manager-challenge-field",
+              "mutant_sha256": "2c1d0d9703e04410e1037ce43efbe2bfa4d791ea94ee369b236cf6ec2b334627",
+              "detected_cases": 8,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "early-return",
+              "mutant_sha256": "821198fa607d743d2fd3f4f9fd0f7a27dd222602a437ee89ac4fb75f568ba5bf",
+              "detected_cases": 22,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "config-assignment-omitted",
+              "mutant_sha256": "e82ebd1dbc4de6a2a0b66f4b23d090025ba1f3dbc70c43627153762ea2f7fae1",
+              "detected_cases": 22,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "damaged-parent-native-pointer-placeholders",
+              "detected_cases": 16,
+              "baseline_pass": true,
+              "pass_": true
+            }
+          ],
+          "exceptions_native_unwind_modeled": false,
+          "log_text_equivalence": false,
+          "unity_execution": false,
+          "whole_six_method_acceptance": false
+        }
+      },
+      {
+        "suite": "board",
+        "cases": 769,
+        "result": {
+          "scope": "BOARD_UPDATE_ISWON_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+          "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+          "method_token": "0x060002AD",
+          "cases": 769,
+          "pass_": true,
+          "differences": [],
+          "negative_controls": [
+            {
+              "name": "ordered-comparison-NaN-regression",
+              "mutant_sha256": "917bb407f46f86a758b74284f53672f75f04611255b01b2eb10bbd364cd23c9e",
+              "detected_cases": 60,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "early-return",
+              "mutant_sha256": "37a8ca757d328d069033d65a53399b269d51ed9fb32c7a9239d24c8d5e02b022",
+              "detected_cases": 349,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "volume-write-omitted",
+              "mutant_sha256": "c929912d8b93d5d8e7c38691c94c5242a7a211a3677f78724f65c6bb492689fd",
+              "detected_cases": 121,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "fade-factor-doubled",
+              "mutant_sha256": "03377587ea6223066d684fd3da1c3403d2e1f1b9b3c621c0ed768aa2529eeccf",
+              "detected_cases": 61,
+              "baseline_pass": true,
+              "pass_": true
+            }
+          ],
+          "exceptions_native_unwind_modeled": false,
+          "unity_execution": false,
+          "whole_six_method_acceptance": false
+        }
+      },
+      {
+        "suite": "system",
+        "cases": 112,
+        "result": {
+          "scope": "SYSTEM2_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+          "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+          "method_token": "0x06000089",
+          "cases": 112,
+          "pass_": true,
+          "differences": [],
+          "negative_controls": [
+            {
+              "name": "name-used-instead-of-text",
+              "mutant_sha256": "f26bf137bdaaae7bec3ec8539acc562dc96d416020accbc1d63dcc42f9cb1cf5",
+              "detected_cases": 64,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "row-index-used-instead-of-value",
+              "mutant_sha256": "e8d2404a1db70865f7624ad41c3a22f08fe91bb8b4df53e127a45a2ffd3b79e3",
+              "detected_cases": 35,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "early-return",
+              "mutant_sha256": "5f6a02f45ef4f6cdff3dd268f3485220296fa39fb4660741058bbf13e5bc9082",
+              "detected_cases": 112,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "row-write-omitted",
+              "mutant_sha256": "a93eda5c0c9b210d91f0fc69f2ae70dddf0faa258cef62306261919a96f2ca7f",
+              "detected_cases": 39,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "damaged-parent-private-text-read",
+              "mutant_sha256": "752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f",
+              "detected_cases": 64,
+              "baseline_pass": true,
+              "pass_": true
+            }
+          ],
+          "exceptions_native_unwind_modeled": false,
+          "log_text_equivalence": false,
+          "unity_execution": false,
+          "whole_six_method_acceptance": false
+        }
+      },
+      {
+        "suite": "buff",
+        "cases": 1452,
+        "result": {
+          "scope": "BUFF_COMBINED_RUNTIME_AND_UNCHANGED_FROZEN_WIDTH_GATE_CONTROLLED_CALLEES_ONLY",
+          "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+          "method_token": "0x060005E7",
+          "cases": 1452,
+          "pass_": true,
+          "runtime_equivalence_pass": true,
+          "runtime_alone_adequate": false,
+          "width_negative_control": {
+            "scope": "UNCHANGED_FROZEN_WIDTH_GATE_ON_PHYSICAL_INT64_MUTANT",
+            "baseline_passed": true,
+            "mutant_sha256": "264e8da9cc4b77a2f365a169840c19317120ad78a66ed9336962dbd1fd72c813",
+            "checker_sha256": "2bb0a8c229a63fd33269433759a587ff551c6fde19669bafc506033df9b63d14",
+            "runtime_did_not_distinguish": true,
+            "rejected": true,
+            "result": {
+              "status": "FAIL",
+              "error": "System.Void BuffUIController_Zombie::FixedUpdate() IL_0125: I8 is not assignable to System.Int32"
+            }
+          },
+          "differences": [],
+          "negative_controls": [
+            {
+              "name": "attack-ratio-multiplied",
+              "mutant_sha256": "daeb67bcdca6e93e71aa8e29eefca2bca20d191dde967fdadf0b019875af495c",
+              "detected_cases": 192,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "integer-zero-restored",
+              "mutant_sha256": "e4b7b953a3c03ab8b28475b6ec6a405c8d2136b96ff8749541b7d34d69aa9159",
+              "detected_cases": 728,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "int64-sentinel-restored",
+              "mutant_sha256": "264e8da9cc4b77a2f365a169840c19317120ad78a66ed9336962dbd1fd72c813",
+              "detected_cases": 0,
+              "baseline_pass": true,
+              "pass_": false,
+              "runtime_status": "NOT_DETECTED_BY_CLR_PERMISSIVE_TRUNCATION",
+              "required_independent_gate": "UNCHANGED_FROZEN_WIDTH_GATE"
+            },
+            {
+              "name": "early-return",
+              "mutant_sha256": "32a9fbce68d42570b7d34f895ee8962d8608a15e47b208fc5b8f24351d3cbbb5",
+              "detected_cases": 1452,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "parent-unterminated-tail",
+              "mutant_sha256": "7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296",
+              "detected_cases": 1452,
+              "baseline_pass": true,
+              "pass_": true
+            }
+          ],
+          "exceptions_native_unwind_modeled": false,
+          "unity_execution": false,
+          "whole_six_method_acceptance": false
+        }
+      },
+      {
+        "suite": "events",
+        "cases": 120,
+        "result": {
+          "scope": "TWO_EVENT_CALLERS_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_EVENT_SYSTEM_ONLY",
+          "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+          "method_tokens": [
+            "0x060007B7",
+            "0x060007B8"
+          ],
+          "cases": 120,
+          "pass_": true,
+          "differences": [],
+          "negative_controls": [
+            {
+              "name": "character-registered-on-sprite-event",
+              "mutant_sha256": "77db07aca04b8693a84d6b9ed8bfd4a13c53725ac4e4f13e578ee3e1f0ce4101",
+              "detected_cases": 39,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "disable-adds-instead-of-removes-character",
+              "mutant_sha256": "2671246dc070fced7f6e89e7d7b957e831bcd3779c8ecbcd88c5eef2525a45a3",
+              "detected_cases": 45,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "text-component-write-omitted",
+              "mutant_sha256": "b5310fb9fcb4dc3b16848604ee7eba78f3fe00fd17d477bb0fc9b55cb6df7fc9",
+              "detected_cases": 39,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "enable-early-return",
+              "mutant_sha256": "4ff00e9cd8e7e916fe2ed7428d2a17940631dc65940940afdf2510c32312dd89",
+              "detected_cases": 105,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "disable-early-return",
+              "mutant_sha256": "81fc5f6b99b23329ec91d4cbe350028ac57e4340fa7ffc43ad452d97aae8f8c4",
+              "detected_cases": 105,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "parent-unterminated-tails",
+              "mutant_sha256": "7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296",
+              "detected_cases": 120,
+              "baseline_pass": true,
+              "pass_": true
+            }
+          ],
+          "exceptions_native_unwind_modeled": false,
+          "unity_event_implementation_executed": false,
+          "original_event_handlers_executed": false,
+          "unity_execution": false,
+          "whole_six_method_acceptance": false
+        }
+      },
+      {
+        "suite": "r9",
+        "cases": 992,
+        "result": {
+          "scope": "FIVE_ORIGINAL_PC_CONSTANT_METHODS_AND_SIMPLE_CALLER_VALUE_TRACE_EQUIVALENCE_CONTROLLED_TEXT_TIME",
+          "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+          "constant_methods": 5,
+          "constant_cases": 80,
+          "simple_cases": 912,
+          "pass_": true,
+          "differences": [],
+          "negative_controls": [
+            {
+              "name": "all-five-native-bools-inverted",
+              "mutant_sha256": "c89029916dab775a395fa634538c8da0f2ce5fb57321303fdd43fa3aa08c77b7",
+              "detected_cases": 80,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "remainder-replaced-by-addition",
+              "mutant_sha256": "feb7f158161dd6af52fe3ac0ba32cdefb82897e4e0d2d48df5a7ada91f470942",
+              "detected_cases": 864,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "frame-reloaded-after-delta-callback",
+              "mutant_sha256": "39f0545e0e164365acc420db1e217af6cde432669209a6dd7617c89dcd435436",
+              "detected_cases": 153,
+              "baseline_pass": true,
+              "pass_": true
+            },
+            {
+              "name": "frame-write-omitted",
+              "mutant_sha256": "3143df9ac48d7e90e6aab07b74abe94d2268d809e49a8c99a5185b3737477824",
+              "detected_cases": 630,
+              "baseline_pass": true,
+              "pass_": true
+            }
+          ],
+          "original_fmod_helper_executed": true,
+          "managed_null_text_control": {
+            "error": "System.NullReferenceException",
+            "frame": "3F800000",
+            "native_exception_execution": false
+          },
+          "native_exception_unwind": false,
+          "crt_errno_domain_behavior": false,
+          "actual_tmp_formatting": false,
+          "nan_payload_equivalence": false,
+          "unity_execution": false,
+          "whole_game_acceptance": false
+        }
+      }
+    ],
+    "new_suite": {
+      "scope": "ACTUAL_PC_CALLER_AND_FLOOR_VS_COMPLETE_CANDIDATE_CIL_CONTROLLED_LIST_SPRITE_CONTRACTS",
+      "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+      "cases": 2116,
+      "differences": [],
+      "mode_counts": {
+        "none": 1876,
+        "false-result": 16,
+        "alternating-result": 16,
+        "get-replaces-parameters": 16,
+        "get-mutates-health": 16,
+        "set-replaces-animation": 16,
+        "sprite-get-replaces-animation": 128,
+        "change-replaces-animation": 16,
+        "change-replaces-sprites": 16
+      },
+      "frame_counts": {
+        "2": 1791,
+        "1": 99,
+        "0": 222,
+        "99": 4
+      },
+      "change_count_distribution": {
+        "8": 1681,
+        "0": 435
+      },
+      "native_exception_unwind": false,
+      "actual_unity_rendering": false,
+      "pass_": true,
+      "negative_controls": [
+        {
+          "name": "invalid-conversion-positive-sentinel",
+          "mutant_sha256": "eca44140e88511b5b46c298b0ad9032bdb5862a0ddc2d1e145184b85455db060",
+          "detected_runtime_cases": 1015
+        },
+        {
+          "name": "integer-clamp-saturation-value-one",
+          "mutant_sha256": "27bdaf3b10a887b1b9aed852b4e3e5fe1e7967f198cfd26856a427a2b1126a6a",
+          "detected_runtime_cases": 149
+        },
+        {
+          "name": "conversion-lower-guard-reversed",
+          "mutant_sha256": "b1d76095f546e8f213105e1a8a337ff68dcb5f72810d9b88a139a33af2ce0d23",
+          "detected_runtime_cases": 324
+        },
+        {
+          "name": "middle-frame-dispatch-stale-clamp-bool",
+          "mutant_sha256": "4dfed4612b5f8fe23e140a498d6ee25444f812d40494e7b00b28ea6160c06bfd",
+          "detected_runtime_cases": 77
+        },
+        {
+          "name": "parameter-write-omitted",
+          "mutant_sha256": "558f290874e123e3e78ac794453a098bb9769b672d2176fb5df976d62e6273af",
+          "detected_runtime_cases": 1681
+        },
+        {
+          "name": "one-sprite-change-omitted",
+          "mutant_sha256": "94a5e9ef9a27f21802d8eddf60b14eaa1d10dca0190fe8442df5b6670fa6e4c1",
+          "detected_runtime_cases": 1431
+        },
+        {
+          "name": "body-string-replaced-by-shield",
+          "mutant_sha256": "28e77e06dd732a00efb39f7ad4ac205765ca8ad961be84bd25e346df01476532",
+          "detected_runtime_cases": 1681
+        },
+        {
+          "name": "early-return",
+          "mutant_sha256": "fd528687a471c81238f1d8d6ce2e64563eb92a52a5800f641d772e5ad277d679",
+          "detected_runtime_cases": 2116
+        },
+        {
+          "name": "portable-guard-omitted",
+          "mutant_sha256": "bbe946766b561bb8d55c883063e2a5f9182eaa5ef98f986d195cef4ab6d5b9ce",
+          "detected_runtime_cases": 392,
+          "runtime_status": "DETECTED_ON_THIS_RUNTIME",
+          "required_independent_gate": "EXACT_NATIVE_BOUND_PORTABLE_CONVERSION_GUARD_SPEC",
+          "guard_spec_rejected": true
+        }
+      ],
+      "runtime_alone_adequate_for_portability": false,
+      "pc_caller_and_floor_executed": true,
+      "candidate_has_guarded_only_in_range_conv_i4": true,
+      "whole_assembly_pass": false,
+      "unity_or_ipa": false
+    },
+    "whole_game_acceptance": false
+  },
+  "prior_three_initializers": {
+    "scope": "EXACT_R13_REPLAY_OF_THREE_R12_NATIVE_INITIALIZER_CALLERS_CONTROLLED_LOADS",
+    "candidate_sha256": "e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b",
+    "methods": 3,
+    "cases": 90,
+    "pass_": true,
+    "differences": 0,
+    "actual_loader_behavior": false,
+    "native_unwind": false,
+    "whole_game": false
+  },
+  "actual_unity_callee_implementation": false,
+  "native_exception_unwind": false,
+  "whole_game": false
+}
