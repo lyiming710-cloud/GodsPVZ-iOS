@@ -1,4 +1,4 @@
-name: Startup R3 exact Editor helper compilation only
+name: Startup R3 and custom shader exact Editor helper compilation only
 
 on:
   workflow_dispatch:
@@ -66,6 +66,15 @@ jobs:
             --editor "$TOOLS/Editor/Unity" \
             --project "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support" \
             --output "$RUNNER_TEMP/helper-compilation"
+          RC=$?
+          set -e
+          find "$RUNNER_TEMP/helper-compilation" -maxdepth 1 -type f \( -name '*.json' -o -name '*.log' -o -name '*.rsp' \) -exec cp '{}' "$E/" \;
+          [ "$RC" -eq 0 ]
+          set +e
+          python3 scripts/actions/preflight_custom_shader_editor.py \
+            --editor "$TOOLS/Editor/Unity" \
+            --prior "$RUNNER_TEMP/helper-compilation" \
+            --source "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs"
           RC=$?
           set -e
           find "$RUNNER_TEMP/helper-compilation" -maxdepth 1 -type f \( -name '*.json' -o -name '*.log' -o -name '*.rsp' \) -exec cp '{}' "$E/" \;

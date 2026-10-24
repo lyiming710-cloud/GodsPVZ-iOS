@@ -1,4 +1,4 @@
-name: Startup R3 helper type root and actual Editor startup diagnostic
+name: Custom Shader R1 actual Metal compile and Editor render diagnostic
 
 on:
   workflow_dispatch:
@@ -287,6 +287,7 @@ jobs:
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZStartupAudit.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/"
           python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" <<'PY'
           import shutil,sys
@@ -466,6 +467,7 @@ jobs:
           PROJECT="$(cat "$OUT/project-path.txt")"
           python3 scripts/actions/prepare_startup_r3_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_custom_shaders_r1.py --project "$PROJECT" --evidence "$OUT/evidence"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
 
@@ -510,6 +512,32 @@ jobs:
           assert data['pass'] and data['missing_components']==0
           assert data['game_start_component'] and data['game_start_prefab'] and data['board_start_component']
           assert data['core_blit_keyword']
+          assert data['unresolved_custom_dummy_shaders']==[]
+          PY
+
+      - name: Compile all custom shader variants for Metal and OpenGL and read rendered pixels
+        shell: bash
+        env:
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
+          GODSPVZ_SHADER_BINARY_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/shader-output
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -quit -projectPath "$PROJECT" -executeMethod GodsPVZCustomShaderAudit.Run -logFile "$OUT/evidence/custom-shader-audit.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$OUT/evidence/custom-shader-audit-exit.txt"
+          [ "$RC" -eq 0 ]
+          python3 - "$OUT/evidence/custom-shader-audit.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          assert data['pass'] and len(data['compilations'])==76 and all(r['success'] and r['bytes']>0 for r in data['compilations'])
+          assert len(data['pixels'])==20 and all(r['pass'] for r in data['pixels']) and data['negative_compile_control']
+          assert not data['metal_device_execution'] and not data['game_pixel_equivalence']
           PY
 
       - name: Run actual startup in Editor Play Mode before any new IPA export
@@ -567,4 +595,13 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
           include-hidden-files: true
+          compression-level: 6
+      - name: Upload byte-preserved shader programs and controlled render images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CUSTOM-SHADER-R1-COMPILED-AND-RENDERED
+          path: ${{ runner.temp }}/stage9-startup-r2/shader-output/
+          if-no-files-found: warn
+          retention-days: 90
           compression-level: 6
