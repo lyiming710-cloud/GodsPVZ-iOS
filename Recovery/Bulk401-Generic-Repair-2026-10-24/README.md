@@ -1,5 +1,7 @@
 # Bulk401: unsigned IPA delivered - 2026-10-24
 
+**Device update:** the user reports black screen/flickering after splash. Compilation/package delivery remains verified, but startup runtime acceptance has failed. See [the startup investigation](../iPad-Startup-2026-10-24/README.md); no corrected IPA or on-device fix is claimed yet.
+
 The requested unsigned physical-iOS arm64 IPA has been built, packaged, uploaded, downloaded and checked against its exact bytes. The completed Mac run is [40060399225](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40060399225), source `769f4fc720cb79c4fd90e7aceda709f7f13250fa`; the successful original Unity export is run 40016440758, source `4b42bb841af9b70c44019746037aeccbc4c42d26`.
 
 [Download the unsigned IPA artifact](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40060399225/artifacts/12547243098). The artifact ZIP contains `GodsPVZ_1.0.2_bulk401_unsigned.ipa`, 187,371,396 bytes (178.7 MiB), SHA-256 `13cd203c01cddca272e5245761168b6f383701102ef1442d4a8843186a674013`. GitHub artifact availability follows its 90-day retention, subject to repository deletion or policy.

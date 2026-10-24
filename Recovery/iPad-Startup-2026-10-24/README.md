@@ -1,0 +1,13 @@
+# iPad startup failure investigation - 2026-10-24
+
+The delivered Bulk401 IPA is a real unsigned arm64 build, but the user reports a black screen followed by flickering without process exit, repeated splash or audio on an iPad Pro M5 / iPadOS 27.0 (user-provided hardware/OS). Device runtime acceptance has failed. No fix is claimed on-device yet.
+
+The original export log contains missing-script warnings for GameStart, BoardStart and many prefabs, plus a dummy CoreBlit keyword error and a TMP atlas MissingReferenceException. Its BuildReport returned Succeeded with 6 errors and 382 warnings. Earlier delivery acceptance checked compilation/linking and package bytes but missed the scene-binding failures. Original evidence and counts remain preserved.
+
+Actual IPA readback found 148 MonoScript definitions naming Assembly-CSharp.dll while the unchanged candidate's internal assembly identity is GodsPVZRuntime1. R3 scenes reference the plugin GUID 60b84a767c46ced9aacc93f38da4d2f3 with original class local IDs. The work-copy fix renames the DLL and its .meta to GodsPVZRuntime1.dll, preserving both files byte-for-byte and all serialized GUID/fileID references. Six portable controls verify preservation and reject bad input/destination states; real Unity GetClass, scene and prefab checks are still required.
+
+All 42 restored asset Shader files are marked DummyShaderTextExporter. CoreBlit returns constant white and lacks the real copy passes/keywords. The new Editor helper rebinds exact shader-name matches to non-dummy shaders from the pinned packages and official TMP Essential Resources, keeps original font atlases, then opens both scenes and checks every prefab for missing scripts. Unmatched custom shaders are reported explicitly rather than claimed restored. The game DLL and frozen CIL validators are unchanged.
+
+The new iOS exporter rejects nonzero BuildReport.totalErrors even when result is Succeeded. The startup workflow defaults to audit-only, compiles all three real helper sources against the exact 210-reference Editor set before acquiring a seat, and does not export an IPA during its initial audit. Full export remains a separate manual operation after evidence readback. This audit does not establish gameplay or device equivalence.
+
+The source text came from exact R3 through read-only run 40067634181. Its artifact is bound by INPUT-IDENTITY.json/TEXT-MANIFEST.json. Local full-archive transfer ended with unexpected EOF; extracting the Linux text artifact directly on Windows hit case-colliding names, so the verified ZIP was read without overwriting colliding paths. Those transport limitations did not become game or tool PASS results.
