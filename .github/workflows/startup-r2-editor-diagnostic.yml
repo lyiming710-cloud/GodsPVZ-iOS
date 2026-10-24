@@ -1,4 +1,4 @@
-name: Custom Shader R1 actual Metal compile and Editor render diagnostic
+name: Startup R8 restricted real Editor and shader diagnostic
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: startup-r2-editor-diagnostic
+  group: startup-r8-editor-diagnostic
   cancel-in-progress: false
 
 jobs:
@@ -53,7 +53,7 @@ jobs:
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
       PARENT_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
-      TEST_DLL_SHA256: '752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f'
+      TEST_DLL_SHA256: '6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08'
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -163,7 +163,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/bind_startup_r3_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
+          python3 scripts/actions/bind_startup_r8_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
 
       - name: Download exact cached R3 archive
         uses: actions/download-artifact@v4
@@ -456,7 +456,7 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_startup_r3_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r8_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
 
       - name: Align unchanged plugin filename with its assembly identity and preserve its GUID
         shell: bash
@@ -464,7 +464,7 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_startup_r3_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r8_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_custom_shaders_r1.py --project "$PROJECT" --evidence "$OUT/evidence"
           cp "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs" "$PROJECT/Assets/Editor/"
@@ -590,7 +590,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: STARTUP-R3-EDITOR-DIAGNOSTIC-EVIDENCE
+          name: STARTUP-R8-EDITOR-DIAGNOSTIC-EVIDENCE
           path: ${{ runner.temp }}/stage9-startup-r2/public-evidence/
           if-no-files-found: warn
           retention-days: 90
@@ -600,7 +600,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: CUSTOM-SHADER-R1-COMPILED-AND-RENDERED
+          name: STARTUP-R8-SHADERS-COMPILED-AND-RENDERED
           path: ${{ runner.temp }}/stage9-startup-r2/shader-output/
           if-no-files-found: warn
           retention-days: 90
