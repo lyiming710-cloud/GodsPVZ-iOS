@@ -482,6 +482,8 @@ jobs:
           OUT="$RUNNER_TEMP/stage9-bulk401-ios"
           PROJECT="$(cat "$OUT/project-path.txt")"
           python3 scripts/actions/prepare_bulk401_startup.py --project "$PROJECT" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
+          cp "$GITHUB_WORKSPACE/Recovery/iPad-Startup-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
 
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash

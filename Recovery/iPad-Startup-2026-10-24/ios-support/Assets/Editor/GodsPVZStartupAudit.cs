@@ -18,7 +18,12 @@ public static class GodsPVZStartupAudit
     private static readonly List<string> ProbeErrors = new List<string>();
     private static readonly List<string> ProbeAudioLimits = new List<string>();
     [Serializable] public class ShaderBinding { public string shader, old_guid, new_guid, target; public int references; }
-    [Serializable] public class FontCheck { public string path; public int atlas_count; public bool textures_valid, clear_on_build_disabled; }
+    [Serializable] public class FontCheck { public string path; public int atlas_count; public bool textures_valid, clear_on_build_disabled, original_empty_dynamic_atlas; }
+    [Serializable] public class AtlasSampler { public int m_FilterMode, m_Aniso, m_WrapU, m_WrapV, m_WrapW; public float m_MipBias; }
+    [Serializable] public class EmptyAtlasSource { public int width, height, texture_format, image_data_bytes, stream_size, mip_count; public bool is_readable; public AtlasSampler texture_settings; }
+    [Serializable] public class EmptyAtlasPlan { public string font_path, missing_atlas_guid, texture_name; public EmptyAtlasSource original_atlas; }
+    [Serializable] public class EmptyAtlasEvidence { public EmptyAtlasPlan[] fonts; }
+    [Serializable] public class EmptyAtlasRestoration { public string font_path, old_guid, new_guid; public int width, height; }
     [Serializable] public class Report
     {
         public string scope = "REAL_UNITY_SCENE_SCRIPT_AND_OFFICIAL_SHADER_BINDING_ONLY";
@@ -30,6 +35,7 @@ public static class GodsPVZStartupAudit
         public List<string> unresolved_custom_dummy_shaders = new List<string>();
         public List<ShaderBinding> official_shader_bindings = new List<ShaderBinding>();
         public List<FontCheck> fonts = new List<FontCheck>();
+        public List<EmptyAtlasRestoration> restored_original_empty_atlases = new List<EmptyAtlasRestoration>();
     }
 
     [Serializable] public class PlayProbeReport
@@ -149,6 +155,7 @@ public static class GodsPVZStartupAudit
             RestoreCanonicalSplashLogo(report);
             ImportOfficialTmpResources();
             RebindOfficialShaders(report);
+            RestoreOriginalEmptyFontAtlases(report);
             PreserveFontAtlases(report);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
@@ -206,9 +213,9 @@ public static class GodsPVZStartupAudit
 
     private static void ImportOfficialTmpResources()
     {
-        string path = "Packages/com.unity.textmeshpro/Package Resources/TMP Essential Resources.unitypackage";
-        if (!File.Exists(path)) throw new FileNotFoundException("Exact package TMP essential shaders unavailable", path);
-        if (!File.Exists("Assets/TextMesh Pro/Shaders/TMP_SDF.shader")) AssetDatabase.ImportPackage(path, false);
+        string path = "Assets/Recovery/TMP-Official-Shaders";
+        if (!Directory.Exists(path) || Directory.GetFiles(path, "*.shader", SearchOption.AllDirectories).Length < 7)
+            throw new InvalidOperationException("Pinned TMP shader sources were not restored before Editor import");
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
     }
 
@@ -218,7 +225,7 @@ public static class GodsPVZStartupAudit
         var official = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         foreach (string path in AssetDatabase.GetAllAssetPaths())
         {
-            if (!(path.StartsWith("Packages/", StringComparison.Ordinal) || path.StartsWith("Assets/TextMesh Pro/Shaders/", StringComparison.Ordinal)) || !path.EndsWith(".shader", StringComparison.OrdinalIgnoreCase) || !File.Exists(path)) continue;
+            if (!(path.StartsWith("Packages/", StringComparison.Ordinal) || path.StartsWith("Assets/Recovery/TMP-Official-Shaders/", StringComparison.Ordinal)) || !path.EndsWith(".shader", StringComparison.OrdinalIgnoreCase) || !File.Exists(path)) continue;
             string text = File.ReadAllText(path); var match = declarations.Match(text);
             if (!match.Success || text.Contains("DummyShaderTextExporter")) continue;
             string name = match.Groups[1].Value;
@@ -250,6 +257,69 @@ public static class GodsPVZStartupAudit
         }
     }
 
+    private static void RestoreOriginalEmptyFontAtlases(Report report)
+    {
+        string evidencePath = "Recovery/empty-dynamic-font-atlas-evidence.json";
+        var plan = JsonUtility.FromJson<EmptyAtlasEvidence>(File.ReadAllText(evidencePath));
+        if (plan.fonts == null || plan.fonts.Length != 6) throw new InvalidOperationException("Six original empty-atlas proofs required");
+        string directory = "Assets/Recovery/OriginalEmptyDynamicAtlases";
+        Directory.CreateDirectory(directory); AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        foreach (var row in plan.fonts)
+        {
+            var source = row.original_atlas;
+            if (source == null || source.width != 0 || source.height != 0 || source.texture_format != 1 || source.image_data_bytes != 0 || source.stream_size != 0)
+                throw new InvalidOperationException("Atlas proof does not describe an empty Alpha8 texture: " + row.font_path);
+            if (!String.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(row.missing_atlas_guid)))
+                throw new InvalidOperationException("The expected missing atlas GUID is already bound: " + row.font_path);
+            if (!File.ReadAllText(row.font_path).Contains(row.missing_atlas_guid))
+                throw new InvalidOperationException("Original missing-atlas pointer changed: " + row.font_path);
+            var font = AssetDatabase.LoadMainAssetAtPath(row.font_path);
+            if (font == null) throw new InvalidOperationException("Original empty-atlas font missing: " + row.font_path);
+            var serialized = new SerializedObject(font);
+            if (serialized.FindProperty("m_AtlasPopulationMode").intValue != 1 || serialized.FindProperty("m_GlyphTable").arraySize != 0 || serialized.FindProperty("m_CharacterTable").arraySize != 0)
+                throw new InvalidOperationException("Refuse to replace nonempty font glyph data: " + row.font_path);
+            var atlas = new Texture2D(0, 0, TextureFormat.Alpha8, false);
+            atlas.name = row.texture_name;
+            if (source.texture_settings == null || source.mip_count != 1 || !source.is_readable) throw new InvalidOperationException("Empty-atlas sampler/readability proof missing");
+            atlas.filterMode = (FilterMode)source.texture_settings.m_FilterMode;
+            atlas.anisoLevel = source.texture_settings.m_Aniso;
+            atlas.mipMapBias = source.texture_settings.m_MipBias;
+            atlas.wrapModeU = (TextureWrapMode)source.texture_settings.m_WrapU;
+            atlas.wrapModeV = (TextureWrapMode)source.texture_settings.m_WrapV;
+            atlas.wrapModeW = (TextureWrapMode)source.texture_settings.m_WrapW;
+            string path = directory + "/" + Path.GetFileNameWithoutExtension(row.font_path) + " Atlas.asset";
+            if (File.Exists(path)) throw new InvalidOperationException("Do not overwrite prior atlas restoration");
+            AssetDatabase.CreateAsset(atlas, path);
+            string guid; long id;
+            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(atlas, out guid, out id) || id != 2800000)
+                throw new InvalidOperationException("Unexpected native Texture2D local identifier");
+            var atlasReferences = serialized.FindProperty("m_AtlasTextures");
+            if (atlasReferences == null || atlasReferences.arraySize != 1) throw new InvalidOperationException("Expected original single-atlas field");
+            atlasReferences.GetArrayElementAtIndex(0).objectReferenceValue = atlas;
+            serialized.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(font);
+            var materialProperty = serialized.FindProperty("material");
+            var material = materialProperty == null ? null : materialProperty.objectReferenceValue as Material;
+            if (material != null && material.HasProperty("_MainTex") && material.GetTexture("_MainTex") == null)
+            {
+                string materialPath = AssetDatabase.GetAssetPath(material);
+                if (!String.IsNullOrEmpty(materialPath) && File.ReadAllText(materialPath).Contains(row.missing_atlas_guid))
+                {
+                    material.SetTexture("_MainTex", atlas); EditorUtility.SetDirty(material);
+                }
+            }
+            report.restored_original_empty_atlases.Add(new EmptyAtlasRestoration { font_path=row.font_path,old_guid=row.missing_atlas_guid,new_guid=guid,width=atlas.width,height=atlas.height });
+        }
+        AssetDatabase.SaveAssets();
+        foreach (string path in SerializedFiles())
+        {
+            string text=File.ReadAllText(path),original=text;
+            foreach (var change in report.restored_original_empty_atlases)
+                text=Regex.Replace(text,@"\{fileID:\s*2800000,\s*guid:\s*"+change.old_guid+@",\s*type:\s*3\}","{fileID: 2800000, guid: "+change.new_guid+", type: 2}");
+            if (text!=original) File.WriteAllText(path,text);
+        }
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+    }
+
     private static void PreserveFontAtlases(Report report)
     {
         foreach (string guid in AssetDatabase.FindAssets("t:TMP_FontAsset", new [] { "Assets" }))
@@ -257,6 +327,7 @@ public static class GodsPVZStartupAudit
             string path = AssetDatabase.GUIDToAssetPath(guid);
             var font = AssetDatabase.LoadMainAssetAtPath(path);
             var check = new FontCheck { path=path, textures_valid=true };
+            check.original_empty_dynamic_atlas = report.restored_original_empty_atlases.Any(x => x.font_path == path);
             if (font == null) { report.errors.Add("Unreadable font: " + path); continue; }
             var serialized = new SerializedObject(font);
             var atlases = serialized.FindProperty("m_AtlasTextures");
@@ -265,7 +336,8 @@ public static class GodsPVZStartupAudit
             for (int i=0;i<atlases.arraySize;i++)
             {
                 var texture = atlases.GetArrayElementAtIndex(i).objectReferenceValue as Texture2D;
-                if (texture == null || texture.width <= 0 || texture.height <= 0) check.textures_valid = false;
+                bool originalEmpty = check.original_empty_dynamic_atlas && texture != null && texture.width == 0 && texture.height == 0 && texture.format == TextureFormat.Alpha8;
+                if (texture == null || (!originalEmpty && (texture.width <= 0 || texture.height <= 0))) check.textures_valid = false;
             }
             if (atlases.arraySize == 0) check.textures_valid = false;
             if (!check.textures_valid) report.errors.Add("Original font atlas reference invalid: " + path);
