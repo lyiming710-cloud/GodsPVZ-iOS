@@ -1,0 +1,170 @@
+{
+  "scope": "FIVE_COMPLETE_ORIGINAL_PC_CALLERS_VS_ACTUAL_CANDIDATE_CIL_CONTROLLED_CALLEES",
+  "candidate_sha256": "9b53867fb47378190f147f9b474ed24525b15dde44ce753143e56934aaf2c491",
+  "pass_": true,
+  "cases": 450,
+  "counts": {
+    "prop-drop": 70,
+    "prop-cancel": 70,
+    "prop-fold": 70,
+    "selector-a": 120,
+    "selector-b": 120
+  },
+  "differences": [],
+  "negative_controls": [
+    {
+      "name": "selector-a-missing-middle",
+      "mutant_sha256": "47d8dd48491f19432b2fdce0e97d62a425bbe59642f4d61459084a0625ecadd8",
+      "runtime_exit": 0,
+      "runtime_differences": 114
+    },
+    {
+      "name": "selector-a-first-zero",
+      "mutant_sha256": "366fae0a24b094c24dea95531dea4b74e12be69f2b89fe280502c18a0c9991dd",
+      "runtime_exit": 0,
+      "runtime_differences": 120
+    },
+    {
+      "name": "selector-a-omitted-base-call",
+      "mutant_sha256": "b5a2acb097948c969de1903e652f28d4512310630a952b65b21751574d045259",
+      "runtime_exit": 0,
+      "runtime_differences": 120
+    },
+    {
+      "name": "selector-a-base-before-fields",
+      "mutant_sha256": "6b13f919feb1d84de491d613b273cb3214ab44099d126bc9c5fd28ebb6294761",
+      "runtime_exit": 0,
+      "runtime_differences": 118
+    },
+    {
+      "name": "selector-b-missing-middle",
+      "mutant_sha256": "a4ccdcee1316adcb79b16488a903f952d4472b1d2f77199f730dfaa743d15c9d",
+      "runtime_exit": 0,
+      "runtime_differences": 114
+    },
+    {
+      "name": "selector-b-first-zero",
+      "mutant_sha256": "f35f40305f56349a0bae93607bf734bdfac2c1611f20b538c5d4ae8f031f4220",
+      "runtime_exit": 0,
+      "runtime_differences": 120
+    },
+    {
+      "name": "selector-b-omitted-base-call",
+      "mutant_sha256": "b683ed54165428965f7b8dcdd7b893a4223e090709b7423d5ca11cdb7482f903",
+      "runtime_exit": 0,
+      "runtime_differences": 120
+    },
+    {
+      "name": "selector-b-base-before-fields",
+      "mutant_sha256": "161bce90d934fde2a8ab8bfaf175d5c66c18a952d08b4a651365694aee5155a9",
+      "runtime_exit": 0,
+      "runtime_differences": 118
+    },
+    {
+      "name": "prop-drop-reset-zero",
+      "mutant_sha256": "c185306b136967ca6f7ba3f065f2a9faf48bae57dcd66dbc8b4e56f218c04be6",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-drop-activate-instead-of-hide",
+      "mutant_sha256": "05c12cdcb593bc8e9357fe7bb14de6da89bb953d5aa119bf6ad367ceb38540f7",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-drop-reset-after-active",
+      "mutant_sha256": "7c8ab719243af58edb41d52309ce024fd31e479c0e561000c8f8162d6b7a805c",
+      "runtime_exit": 0,
+      "runtime_differences": 67
+    },
+    {
+      "name": "prop-cancel-reset-zero",
+      "mutant_sha256": "4e26c34d9e0c449caf16f13f4a7edcbd882cf8eca63187c02055f1c9f1413009",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-cancel-activate-instead-of-hide",
+      "mutant_sha256": "6140a63eb96cb46cc369bc81eabd768364cc2bcf558f5c347eb1b5f8f7313bdb",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-cancel-reset-after-active",
+      "mutant_sha256": "02c0b9ff0392e20f55f23a38645508a6d16ddb9e1d36dc9fc8191aad8d88f318",
+      "runtime_exit": 0,
+      "runtime_differences": 66
+    },
+    {
+      "name": "prop-fold-reset-zero",
+      "mutant_sha256": "795184ef9ae831b6d7d07e274b959998b7038566b9a8d1c8119b03139728257b",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-fold-activate-instead-of-hide",
+      "mutant_sha256": "8dd33e0fa65985feebb3157caecca03bfe09e5c04c372c2e740572e7017f4ea8",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-fold-reset-after-active",
+      "mutant_sha256": "b973ba7f91aa8da5696bcdc1b418ffc594f2509d931988854b536dc9b7c14220",
+      "runtime_exit": 0,
+      "runtime_differences": 66
+    },
+    {
+      "name": "prop-drop-wrong-select-id",
+      "mutant_sha256": "e118a6b26999ee7f891446b6c9cf682451e28c5d940c837d81d685a1c180fb42",
+      "runtime_exit": 0,
+      "runtime_differences": 65
+    },
+    {
+      "name": "prop-drop-omitted-select",
+      "mutant_sha256": "fd0b718b8ac11555f80fc026760c709c5c3a5bb6288e2b16920697317c7b016a",
+      "runtime_exit": 0,
+      "runtime_differences": 70
+    },
+    {
+      "name": "prop-cancel-parent-int64-reset",
+      "mutant_sha256": "9f6b9f6e3287979913d6fa16f4fa81dd5e67853f37804db3ba94f75c9828479d",
+      "runtime_exit": 0,
+      "runtime_differences": 0,
+      "runtime_alone_adequate": false,
+      "frozen_width_rejected": true,
+      "frozen_result": {
+        "status": "FAIL_OR_UNSUPPORTED",
+        "error": "System.Void PropChooseSystem::Cancle() IL_000A: I8 is not assignable to System.Int32"
+      }
+    }
+  ],
+  "managed_null_controls": [
+    {
+      "kind": "prop-drop",
+      "error": "System.NullReferenceException",
+      "id": -1,
+      "trace": [
+        "Select:123"
+      ]
+    },
+    {
+      "kind": "prop-cancel",
+      "error": "System.NullReferenceException",
+      "id": -1,
+      "trace": []
+    },
+    {
+      "kind": "prop-fold",
+      "error": "System.NullReferenceException",
+      "id": -1,
+      "trace": []
+    }
+  ],
+  "original_caller_bytes_preserved": true,
+  "real_unity_callees": false,
+  "real_select_side_effects": false,
+  "native_null_throw_and_seh": false,
+  "full_game_acceptance": false,
+  "ipa": null
+}

@@ -1,4 +1,4 @@
-name: Startup R13 fresh IL2CPP and all generated C C++ compiler census
+name: Startup R14 fresh IL2CPP and all generated C C++ compiler census
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: startup-r13-generic-compiler
+  group: startup-r14-generic-compiler
   cancel-in-progress: false
 
 jobs:
@@ -40,40 +40,40 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/downloads"
           gh release download bulk152-actions-checkpoint-2026-10-20 --repo "$GITHUB_REPOSITORY" --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz --pattern PORTABLE-MANIFEST.json --dir "$RUNNER_TEMP/downloads"
-          python3 -m zipfile -e Recovery/Startup-R13-2026-10-25/STARTUP-R13-CANDIDATE.zip "$RUNNER_TEMP/downloads"
-          echo 'e6452513ce3c5a3d9449d8c7287aae39a8458cdc8e4eec09d199769aa1794b4b  STARTUP-R13.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
+          python3 -m zipfile -e Recovery/Startup-R14-2026-10-25/STARTUP-R14-CANDIDATE.zip "$RUNNER_TEMP/downloads"
+          echo '9b53867fb47378190f147f9b474ed24525b15dde44ce753143e56934aaf2c491  STARTUP-R14.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
       - name: Authenticate and restore compiler-only inputs
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/restore_bulk152_checkpoint.py --downloads "$RUNNER_TEMP/downloads" --destination "$RUNNER_TEMP/portable" --receipt .validation/startup-r13-restore-receipt.json
+          python3 scripts/actions/restore_bulk152_checkpoint.py --downloads "$RUNNER_TEMP/downloads" --destination "$RUNNER_TEMP/portable" --receipt .validation/startup-r14-restore-receipt.json
           module=Recovery/Bulk389-Qualification-2026-10-23/ci/UnityEngine.AnimationModule.dll
           echo "324d1e5ceef2b6fa1d0e3473ce820b451e41f397458afc46708a27aae0aef5e2  $module" | sha256sum -c -
           cp "$module" "$RUNNER_TEMP/portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped/UnityEngine.AnimationModule.dll"
-      - name: Fresh R4 negative control and exact R13 all-source census
+      - name: Fresh R4 negative control and exact R14 all-source census
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/check_startup_r13_compiler.py --portable-root "$RUNNER_TEMP/portable" --candidate-dll "$RUNNER_TEMP/downloads/STARTUP-R13.dll" --output-dir "$GITHUB_WORKSPACE/.validation/startup-r13"
+          python3 scripts/actions/check_startup_r14_compiler.py --portable-root "$RUNNER_TEMP/portable" --candidate-dll "$RUNNER_TEMP/downloads/STARTUP-R14.dll" --output-dir "$GITHUB_WORKSPACE/.validation/startup-r14"
       - name: Archive generated sources and raw logs
         if: always()
         shell: bash
         run: |
-          if [ -d .validation/startup-r13/candidate/il2cpp_stage/il2cppOutput ]; then
-            tar -czf .validation/startup-r13-generated.tar.gz -C .validation/startup-r13/candidate/il2cpp_stage il2cppOutput
+          if [ -d .validation/startup-r14/candidate/il2cpp_stage/il2cppOutput ]; then
+            tar -czf .validation/startup-r14-generated.tar.gz -C .validation/startup-r14/candidate/il2cpp_stage il2cppOutput
           fi
-          if [ -d .validation/startup-r13 ]; then
-            find .validation/startup-r13 -name '*.json' -o -name '*.log' -o -path '*/il2cpp_conversion/*' | tar -czf .validation/startup-r13-evidence.tar.gz -T -
+          if [ -d .validation/startup-r14 ]; then
+            find .validation/startup-r14 -name '*.json' -o -name '*.log' -o -path '*/il2cpp_conversion/*' | tar -czf .validation/startup-r14-evidence.tar.gz -T -
           fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Startup-R13-compiler-${{ github.run_id }}-${{ github.run_attempt }}
+          name: Startup-R14-compiler-${{ github.run_id }}-${{ github.run_attempt }}
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: warn
           path: |
-            .validation/startup-r13-restore-receipt.json
-            .validation/startup-r13-evidence.tar.gz
-            .validation/startup-r13-generated.tar.gz
-            .validation/startup-r13/*.json
+            .validation/startup-r14-restore-receipt.json
+            .validation/startup-r14-evidence.tar.gz
+            .validation/startup-r14-generated.tar.gz
+            .validation/startup-r14/*.json
