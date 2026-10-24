@@ -1,0 +1,79 @@
+{
+  "scope": "FINITE_INT32_STRING_CLOSED_MODELS_WITH_RAW_AUTHENTIC_SDK_INTERFACE_EDGES",
+  "candidate_sha256": "5454887dc125cf56b7de5fc6079441075b91972e64db40e52f70d1129a87c73f",
+  "checker_sha256": "2bb0a8c229a63fd33269433759a587ff551c6fde19669bafc506033df9b63d14",
+  "checker_modified": false,
+  "mscorlib_sha256": "184fffba9c4229ce9337e223b3aa1ab7d35f3d1f0602ed0837e9ca836eb43b68",
+  "interface_metadata_rows": [
+    {
+      "interfaceimpl_row": 1279,
+      "owner": "System.Collections.Generic.EqualityComparer`1<T>",
+      "interface": "System.Collections.IEqualityComparer",
+      "signature": null
+    },
+    {
+      "interfaceimpl_row": 1280,
+      "owner": "System.Collections.Generic.EqualityComparer`1<T>",
+      "interface": "System.Collections.Generic.IEqualityComparer`1<T>",
+      "signature": "1512aac4011300"
+    }
+  ],
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "method": "System.Void FTRuntime.Internal.SwfAssocList`1::.ctor()",
+      "token": "0x060008D2",
+      "status": "PASS",
+      "reachable": 12,
+      "instructions": 12,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.Int32"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfAssocList`1::.ctor()",
+      "token": "0x060008D2",
+      "status": "PASS",
+      "reachable": 12,
+      "instructions": 12,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.String"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfAssocList`1::.ctor(System.Int32)",
+      "token": "0x060008D3",
+      "status": "PASS",
+      "reachable": 14,
+      "instructions": 14,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.Int32"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfAssocList`1::.ctor(System.Int32)",
+      "token": "0x060008D3",
+      "status": "PASS",
+      "reachable": 14,
+      "instructions": 14,
+      "unreachable": 0,
+      "max_stack": 2,
+      "context": "System.String"
+    }
+  ],
+  "negative_controls": [
+    {
+      "name": "wrong-list-argument-width",
+      "rejected": true,
+      "reason": "System.Void FTRuntime.Internal.SwfAssocList`1::.ctor(System.Int32) IL_0008: I4 is not assignable to System.Int64"
+    },
+    {
+      "name": "wrong-default-return",
+      "rejected": true,
+      "reason": "System.Void FTRuntime.Internal.SwfAssocList`1::.ctor() IL_0022: System.String is not assignable to System.Collections.Generic.IEqualityComparer`1<System.Int32>"
+    }
+  ],
+  "global_census_not_overwritten": true,
+  "universal_generic_proof": false
+}
