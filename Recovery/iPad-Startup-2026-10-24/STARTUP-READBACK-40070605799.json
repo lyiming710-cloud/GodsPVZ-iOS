@@ -1,0 +1,93 @@
+{
+  "run_id": 40070605799,
+  "source_commit": "fed0d3cecdafbe07c4010f1c8afe7d46ba2c440a",
+  "candidate_sha256": "6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae",
+  "state": "ASSET_BINDING_PASS_EDITOR_STARTUP_FAIL_NO_NEW_IPA",
+  "asset_check": {
+    "pass": true,
+    "plugin_scripts": 148,
+    "resolved_plugin_scripts": 148,
+    "validated_game_script_references": 263,
+    "prefab_assets": 186,
+    "missing_components": 0,
+    "game_start_component": true,
+    "game_start_prefab": true,
+    "board_start_component": true,
+    "core_blit_keyword": true,
+    "splash_unity_logo_canonical": true,
+    "splash_game_logo_preserved": true,
+    "official_shader_bindings": 40,
+    "fonts_checked": 21,
+    "restored_original_empty_atlases": 6,
+    "unresolved_custom_dummy_shaders": [
+      "Shader Graphs/Brightness",
+      "Unlit/GameUnitShader"
+    ]
+  },
+  "editor_play_probe": {
+    "scope": "EDITOR_PLAYMODE_ACTUAL_STARTUP_CIL_DISPATCH_ONLY",
+    "pass": false,
+    "frames": 1702,
+    "active_scene": "MainMenu",
+    "active_canvases": 2,
+    "main_ui_components": 1,
+    "device_execution": false,
+    "pixel_equivalence": false,
+    "audio_scope": "NO_PHYSICAL_AUDIO_DEVICE",
+    "distinct_captured_traces": [
+      {
+        "count_in_capped_report": 1,
+        "trace": "NullReferenceException: Object reference not set to an instance of an object.\nAdministrator.Start () (at <fdcf3f07811141b38240087184183dde>:0)\n"
+      },
+      {
+        "count_in_capped_report": 25,
+        "trace": "NullReferenceException: Object reference not set to an instance of an object\nTMPro.TMP_TextUtilities.FindIntersectingLink (TMPro.TMP_Text text, UnityEngine.Vector3 position, UnityEngine.Camera camera) (at ./Packages/com.unity.textmeshpro/Scripts/Runtime/TMP_TextUtilities.cs:1348)\nTextLink.Update () (at <fdcf3f07811141b38240087184183dde>:0)\n"
+      },
+      {
+        "count_in_capped_report": 24,
+        "trace": "FieldAccessException: Field `BoardManager:<Instance>k__BackingField' is inaccessible from method `GlobalStaticVars:IsOnBoard ()'\n\nAdministrator.Update () (at <fdcf3f07811141b38240087184183dde>:0)\n"
+      }
+    ],
+    "report_error_cap": 50,
+    "full_log_exception_header_counts": {
+      "NullReferenceException: Object reference not set to an instance of an object.": 1,
+      "NullReferenceException: Object reference not set to an instance of an object": 1702,
+      "FieldAccessException: Field `BoardManager:<Instance>k__BackingField' is inaccessible from method `GlobalStaticVars:IsOnBoard ()'": 1702
+    },
+    "exception_counts_are_occurrences_not_distinct_method_defects": true
+  },
+  "broader_private_field_census": {
+    "scope": "READ_ONLY_CIL_INACCESSIBLE_PRIVATE_FIELD_CENSUS_ONLY",
+    "methods_with_body_scanned": 2297,
+    "sites": 143,
+    "methods": 56,
+    "private_fields": 29,
+    "prior_target_count": 401,
+    "intersecting_prior_target_methods": 0,
+    "unresolved_own_field_references": 0,
+    "status": "STATIC_FINDINGS_NOT_56_OBSERVED_RUNTIME_FAILURES",
+    "all_possible_access_defects_exhaustively_audited": false
+  },
+  "serialization_lead": {
+    "status": "STATIC_METADATA_AND_PREFAB_MISMATCH_CAUSAL_RUNTIME_BINDING_NOT_YET_INSTRUMENTED",
+    "prefab": "Assets/Resources/prefabs/ui/MainMenu.prefab",
+    "component_file_id": "114739268104783211",
+    "script_file_id": "-1435929971",
+    "field": "TMPro.TMP_Text TextLink::TMP_Text",
+    "serialized_reference_file_id": "114249237965167194",
+    "candidate_field_token": "0x040008E1",
+    "candidate_access": "Private",
+    "candidate_custom_attributes": [],
+    "reference_rules": "https://docs.unity3d.com/2022.3/Documentation/Manual/script-Serialization.html"
+  },
+  "device_startup": "PREVIOUS_IPA_FAILED_USER_OBSERVATION_NO_REPAIRED_DEVICE_RESULT",
+  "new_unity_export": "NOT_EXECUTED_BLOCKED_BY_PLAY_PROBE",
+  "new_xcode_and_ipa": "NOT_EXECUTED_BLOCKED_BY_PLAY_PROBE",
+  "candidate_changed": false,
+  "next_work": [
+    "Bind restored serialization metadata to original PC evidence and audit other serialized game fields.",
+    "Classify cross-type private field accesses and restore source-equivalent legal access from native evidence without widening field visibility globally.",
+    "Restore the two original custom shaders from preserved source/state evidence and verify their rendering separately.",
+    "Require error-free actual startup before another Unity export, Apple build and device retest."
+  ]
+}
