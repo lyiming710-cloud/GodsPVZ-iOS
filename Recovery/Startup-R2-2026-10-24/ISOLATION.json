@@ -1,0 +1,51 @@
+{
+  "scope": "SCOPED_BYTE_AND_METADATA_ISOLATION_NOT_GAMEPLAY_QUALIFICATION",
+  "candidate_sha256": "81815f178e1de70e1e2e5088afd856bb5292801c3ccdc1ffc60b9c24ba223823",
+  "new_body_targets": 40,
+  "unchanged_methods_against_bulk401": 2277,
+  "zero_rva_methods": 20,
+  "inherited_401_bodies_identical": 401,
+  "cumulative_body_targets": 441,
+  "cumulative_untargeted_methods_against_native93": 1876,
+  "original_serialize_field_markers": 130,
+  "restored_marker_rows": 111,
+  "other_tables_and_heaps_unchanged": true,
+  "field_visibility_unchanged": true,
+  "device_execution": false,
+  "status": "PASS_SCOPED_ISOLATION_ONLY",
+  "deterministic": true,
+  "negative_controls": [
+    {
+      "name": "wrong_getter_target",
+      "rejected": true,
+      "reason": "Exact target body 0x6000089"
+    },
+    {
+      "name": "skip_required_getter_call",
+      "rejected": true,
+      "reason": "Exact target body 0x6000089"
+    },
+    {
+      "name": "inherited_body_header_mutation",
+      "rejected": true,
+      "reason": "Non-target raw body 0x600000b"
+    },
+    {
+      "name": "private_field_made_public",
+      "rejected": true,
+      "reason": "Unchanged metadata table 4"
+    },
+    {
+      "name": "marker_on_unproven_original_field",
+      "rejected": true,
+      "reason": "Exact original SerializeField membership"
+    },
+    {
+      "name": "original_metadata_slot_modified",
+      "rejected": true,
+      "reason": "Whole original-prefix byte isolation"
+    }
+  ],
+  "full_game_semantics": "UNPROVEN",
+  "remaining_private_field_sites": 77
+}
