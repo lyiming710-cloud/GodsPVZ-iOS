@@ -287,7 +287,6 @@ jobs:
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZStartupAudit.cs" "$PROJECT/Assets/Editor/"
-          cp "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/"
           python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" <<'PY'
           import shutil,sys
@@ -468,6 +467,7 @@ jobs:
           python3 scripts/actions/prepare_startup_r3_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_custom_shaders_r1.py --project "$PROJECT" --evidence "$OUT/evidence"
+          cp "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
 
