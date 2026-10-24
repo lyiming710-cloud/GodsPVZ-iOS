@@ -1,0 +1,127 @@
+{
+  "scope": "ACTUAL_THREE_METHOD_CIL_REHOSTED_IN_CONCRETE_CLASSES_WITH_CONTROLLED_UNITY_TRUTHINESS_ONLY",
+  "status": "PASS_SCOPED_FIXTURE",
+  "candidate_sha256": "752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f",
+  "runtime": "10.0.13",
+  "access_check_override": false,
+  "earlier_dynamic_method_false_accept_preserved": true,
+  "source_methods": [
+    "0x06000146",
+    "0x06000169",
+    "0x0600016F"
+  ],
+  "normal_and_callback_cases": 10,
+  "assertions": 17,
+  "callback_null_exception_preserved": true,
+  "negative_controls": [
+    {
+      "name": "actual_parent_private_field_CIL",
+      "rejected": true
+    },
+    {
+      "name": "type_correct_getter_returns_null",
+      "rejected": true
+    },
+    {
+      "name": "type_correct_successful_return_zero",
+      "rejected": true
+    }
+  ],
+  "cases": [
+    {
+      "kind": "normal",
+      "manager_alive": false,
+      "board_kind": -1,
+      "result": false,
+      "trace": [
+        "Truth:manager"
+      ]
+    },
+    {
+      "kind": "normal",
+      "manager_alive": true,
+      "board_kind": -1,
+      "result": false,
+      "trace": [
+        "Truth:manager",
+        "Truth:null"
+      ]
+    },
+    {
+      "kind": "normal",
+      "manager_alive": false,
+      "board_kind": 0,
+      "result": false,
+      "trace": [
+        "Truth:manager"
+      ]
+    },
+    {
+      "kind": "normal",
+      "manager_alive": true,
+      "board_kind": 0,
+      "result": false,
+      "trace": [
+        "Truth:manager",
+        "Truth:board"
+      ]
+    },
+    {
+      "kind": "normal",
+      "manager_alive": false,
+      "board_kind": 1,
+      "result": false,
+      "trace": [
+        "Truth:manager"
+      ]
+    },
+    {
+      "kind": "normal",
+      "manager_alive": true,
+      "board_kind": 1,
+      "result": true,
+      "trace": [
+        "Truth:manager",
+        "Truth:board"
+      ]
+    },
+    {
+      "kind": "null_manager",
+      "result": false,
+      "trace": [
+        "Truth:null"
+      ]
+    },
+    {
+      "kind": "replace_after_first_truth",
+      "board_kind": -1,
+      "result": false,
+      "trace": [
+        "Truth:manager",
+        "Truth:null"
+      ]
+    },
+    {
+      "kind": "replace_after_first_truth",
+      "board_kind": 0,
+      "result": false,
+      "trace": [
+        "Truth:manager",
+        "Truth:board2"
+      ]
+    },
+    {
+      "kind": "replace_after_first_truth",
+      "board_kind": 1,
+      "result": true,
+      "trace": [
+        "Truth:manager",
+        "Truth:board2"
+      ]
+    }
+  ],
+  "unity_engine_executed": false,
+  "native_exception_unwind_modeled": false,
+  "device_execution": false,
+  "full_game_behavior_proven": false
+}

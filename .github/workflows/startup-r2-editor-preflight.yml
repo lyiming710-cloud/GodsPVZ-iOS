@@ -1,4 +1,4 @@
-name: Startup R2 exact Editor helper compilation only
+name: Startup R3 exact Editor helper compilation only
 
 on:
   workflow_dispatch:
@@ -64,7 +64,7 @@ jobs:
           set +e
           python3 scripts/actions/preflight_bulk401_startup_editor.py \
             --editor "$TOOLS/Editor/Unity" \
-            --project "$GITHUB_WORKSPACE/Recovery/Startup-R2-2026-10-24/ios-support" \
+            --project "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support" \
             --output "$RUNNER_TEMP/helper-compilation"
           RC=$?
           set -e
@@ -83,7 +83,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: STARTUP-R2-EXACT-EDITOR-HELPER-PREFLIGHT-${{ github.run_id }}-${{ github.run_attempt }}
+          name: STARTUP-R3-EXACT-EDITOR-HELPER-PREFLIGHT-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/helper-preflight-evidence/
           if-no-files-found: warn
           retention-days: 90

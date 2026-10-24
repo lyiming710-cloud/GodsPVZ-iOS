@@ -1,5 +1,5 @@
 {
-  "state": "PREPARED_FOR_EDITOR_DIAGNOSTIC_NOT_GAMEPLAY_OR_COMPILER_QUALIFIED",
+  "state": "EDITOR_ASSET_GATE_FAILED_ON_INVALID_INJECTED_HELPER_ROOT",
   "candidate_sha256": "81815f178e1de70e1e2e5088afd856bb5292801c3ccdc1ffc60b9c24ba223823",
   "parent_sha256": "6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae",
   "restored_original_markers": 111,
@@ -9,9 +9,28 @@
   "prior_401_bodies_unchanged": true,
   "first_stack_flow_failed_methods_quarantined": 5,
   "remaining_private_field_sites": 77,
-  "editor_runtime": "PENDING",
+  "editor_runtime": "NOT_REACHED_PLAYMODE",
   "child_cpp_compilation": "NOT_EXECUTED",
   "child_unity_ios_export": "NOT_EXECUTED",
   "child_ipa": null,
-  "device_execution": false
+  "device_execution": false,
+  "run_id": 40078830715,
+  "run_source": "516a35c3307c17051809f18fd2836b0e75e2ad5f",
+  "member_access": {
+    "pass": false,
+    "target_methods": 40,
+    "rejected": 43,
+    "unresolved": 0,
+    "scope": "Read-only member visibility checks against exact candidate and supplied assembly metadata. Unknown resolution fails. Public members, same-type private members, assembly and family access checked. Does not replace full CLR/ECMA verification, protected receiver verification, engine or compiler acceptance.",
+    "methods_with_rejections": 9,
+    "private_method_references": 6,
+    "formal_promotion": false,
+    "raw_report_in_source_archive": "startup-r2/MEMBER-ACCESS-40.json"
+  },
+  "run_conclusion": "failure",
+  "observed_original_serialization_markers": 130,
+  "type_loader_error": "System.Reflection.ReflectionTypeLoadException: Exception of type 'System.Reflection.ReflectionTypeLoadException' was thrown.\nCould not load type 'Cpp2ILInjected.Cpp2ILHelpers' from assembly ''.\n  at (wrapper managed-to-native) System.Reflection.Assembly.GetTypes(System.Reflection.Assembly,bool)\n  at System.Reflection.Assembly.GetTypes () [0x00000] in <f98723dd4586469db5213ec59da723ca>:0 \n  at GodsPVZStartupAudit.Run () [0x00173] in /home/runner/work/_temp/stage9-startup-r2/r3/UnityProject-AssetRipper-2.0.0/ExportedProject/Assets/Editor/GodsPVZStartupAudit.cs:163 \nSystem.TypeLoadException: Could not load type 'Cpp2ILInjected.Cpp2ILHelpers' from assembly ''.",
+  "helper_root_fix_candidate_sha256": "752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f",
+  "controlled_is_on_board_native_cases": 10,
+  "controlled_is_on_board_native_differences": 0
 }

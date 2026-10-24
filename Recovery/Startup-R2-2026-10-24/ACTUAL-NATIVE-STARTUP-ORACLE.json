@@ -1,0 +1,190 @@
+{
+  "scope": "ORIGINAL_PC_NATIVE_VS_REHOSTED_CANDIDATE_CIL_WITH_CONTROLLED_UNITY_CALLEES",
+  "status": "PASS_SCOPED_NORMAL_AND_CALLBACK_PATHS",
+  "original_gameassembly_sha256": "9ebd7ca996a5b03fb4a766f7a2502b660d581ddbbb36af4d7bf2f06a211da39d",
+  "candidate_sha256": "81815f178e1de70e1e2e5088afd856bb5292801c3ccdc1ffc60b9c24ba223823",
+  "cases": 10,
+  "differences": 0,
+  "actual_original_method_tokens": [
+    "0x06000146",
+    "0x06000169",
+    "0x0600016F"
+  ],
+  "controlled_callees": [
+    "0x18024FEF0 metadata initializer",
+    "0x1802501E0 class initializer",
+    "0x18131F870 UnityEngine.Object truthiness"
+  ],
+  "native_throw_unwind": "UNSUPPORTED_NOT_EXECUTED",
+  "unity_engine_behavior": "CONTROLLED_NOT_PROVEN",
+  "device_execution": false,
+  "results": [
+    {
+      "input": {
+        "kind": "normal",
+        "manager_alive": false,
+        "board_kind": -1,
+        "result": false,
+        "trace": [
+          "Truth:manager"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "normal",
+        "manager_alive": true,
+        "board_kind": -1,
+        "result": false,
+        "trace": [
+          "Truth:manager",
+          "Truth:null"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager",
+        "Truth:null"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "normal",
+        "manager_alive": false,
+        "board_kind": 0,
+        "result": false,
+        "trace": [
+          "Truth:manager"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "normal",
+        "manager_alive": true,
+        "board_kind": 0,
+        "result": false,
+        "trace": [
+          "Truth:manager",
+          "Truth:board"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager",
+        "Truth:board"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "normal",
+        "manager_alive": false,
+        "board_kind": 1,
+        "result": false,
+        "trace": [
+          "Truth:manager"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "normal",
+        "manager_alive": true,
+        "board_kind": 1,
+        "result": true,
+        "trace": [
+          "Truth:manager",
+          "Truth:board"
+        ]
+      },
+      "original_native_result": true,
+      "original_native_trace": [
+        "Truth:manager",
+        "Truth:board"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "null_manager",
+        "result": false,
+        "trace": [
+          "Truth:null"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:null"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "replace_after_first_truth",
+        "board_kind": -1,
+        "result": false,
+        "trace": [
+          "Truth:manager",
+          "Truth:null"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager",
+        "Truth:null"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "replace_after_first_truth",
+        "board_kind": 0,
+        "result": false,
+        "trace": [
+          "Truth:manager",
+          "Truth:board2"
+        ]
+      },
+      "original_native_result": false,
+      "original_native_trace": [
+        "Truth:manager",
+        "Truth:board2"
+      ],
+      "match": true
+    },
+    {
+      "input": {
+        "kind": "replace_after_first_truth",
+        "board_kind": 1,
+        "result": true,
+        "trace": [
+          "Truth:manager",
+          "Truth:board2"
+        ]
+      },
+      "original_native_result": true,
+      "original_native_trace": [
+        "Truth:manager",
+        "Truth:board2"
+      ],
+      "match": true
+    }
+  ]
+}

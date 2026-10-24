@@ -1,9 +1,6 @@
-name: Startup R2 original serialization and actual Editor startup diagnostic
+name: Startup R3 helper type root and actual Editor startup diagnostic
 
 on:
-  push:
-    branches: [verify/codex-bulk250-r2-takeover-2026-10-23]
-    paths: ['.github/workflows/startup-r2-editor-diagnostic.yml']
   workflow_dispatch:
 
 permissions:
@@ -56,7 +53,7 @@ jobs:
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
       PARENT_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
-      TEST_DLL_SHA256: '81815f178e1de70e1e2e5088afd856bb5292801c3ccdc1ffc60b9c24ba223823'
+      TEST_DLL_SHA256: '752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f'
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -166,7 +163,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/bind_startup_r2_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
+          python3 scripts/actions/bind_startup_r3_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
 
       - name: Download exact cached R3 archive
         uses: actions/download-artifact@v4
@@ -288,8 +285,8 @@ jobs:
           cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/"
-          cp "$GITHUB_WORKSPACE/Recovery/Startup-R2-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
-          cp "$GITHUB_WORKSPACE/Recovery/Startup-R2-2026-10-24/ios-support/Assets/Editor/GodsPVZStartupAudit.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZStartupAudit.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/"
           python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" <<'PY'
           import shutil,sys
@@ -459,7 +456,7 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_startup_r2_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r3_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
 
       - name: Align unchanged plugin filename with its assembly identity and preserve its GUID
         shell: bash
@@ -467,10 +464,10 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_startup_r2_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r3_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
-          cp "$GITHUB_WORKSPACE/Recovery/Startup-R2-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
-          cp "$GITHUB_WORKSPACE/Recovery/Startup-R2-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
 
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash
@@ -565,7 +562,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: STARTUP-R2-EDITOR-DIAGNOSTIC-EVIDENCE
+          name: STARTUP-R3-EDITOR-DIAGNOSTIC-EVIDENCE
           path: ${{ runner.temp }}/stage9-startup-r2/public-evidence/
           if-no-files-found: warn
           retention-days: 90
