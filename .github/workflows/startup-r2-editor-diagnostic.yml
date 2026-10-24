@@ -527,7 +527,7 @@ jobs:
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
           set +e
-          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -quit -projectPath "$PROJECT" -executeMethod GodsPVZCustomShaderAudit.Run -logFile "$OUT/evidence/custom-shader-audit.log"
+          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZCustomShaderAudit.BeginAfterStartup -logFile "$OUT/evidence/custom-shader-audit.log"
           RC=$?
           set -e
           echo "$RC" > "$OUT/evidence/custom-shader-audit-exit.txt"

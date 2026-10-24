@@ -6,11 +6,59 @@ using System.Linq;
 using System.Security.Cryptography;
 using UnityEditor;
 using UnityEditor.Rendering;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public static class GodsPVZCustomShaderAudit
 {
+    private const string AwaitActive = "GodsPVZ.CustomShaderAwait.Active";
+    private const string AwaitStarted = "GodsPVZ.CustomShaderAwait.Started";
+    private static readonly List<string> StartupErrors = new List<string>();
+    private static readonly List<string> StartupAudioLimits = new List<string>();
+    public static void BeginAfterStartup()
+    {
+        if (SessionState.GetBool(AwaitActive,false)) throw new InvalidOperationException("Custom shader startup probe already active");
+        EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity",OpenSceneMode.Single);
+        SessionState.SetBool(AwaitActive,true);
+        SessionState.SetString(AwaitStarted,DateTime.UtcNow.Ticks.ToString());
+        AttachAwait();
+        EditorApplication.isPlaying=true;
+    }
+    [InitializeOnLoadMethod]
+    private static void ResumeAwait()
+    {
+        if (SessionState.GetBool(AwaitActive,false)) AttachAwait();
+    }
+    private static void AttachAwait()
+    {
+        EditorApplication.update-=AwaitTick;EditorApplication.update+=AwaitTick;
+        Application.logMessageReceived-=StartupLog;Application.logMessageReceived+=StartupLog;
+    }
+    private static void StartupLog(string message,string stack,LogType type)
+    {
+        if (!(type==LogType.Exception || type==LogType.Error || type==LogType.Assert)) return;
+        if (message.StartsWith("FMOD failed to initialize the output device",StringComparison.Ordinal))
+        {
+            if (StartupAudioLimits.Count<10) StartupAudioLimits.Add(message);
+        }
+        else if (StartupErrors.Count<50) StartupErrors.Add(message+"\n"+stack);
+    }
+    private static void AwaitTick()
+    {
+        double elapsed=(DateTime.UtcNow.Ticks-Int64.Parse(SessionState.GetString(AwaitStarted,"0")))/(double)TimeSpan.TicksPerSecond;
+        if (elapsed<20) return;
+        if ((!EditorApplication.isPlaying || Time.frameCount<3) && elapsed<90) return;
+        SessionState.SetBool(AwaitActive,false);
+        EditorApplication.update-=AwaitTick;
+        // Close the normal startup observation before intentional shader compiler
+        // controls. Those controls have their own explicit outcome below.
+        Application.logMessageReceived-=StartupLog;
+        int exit=1;
+        try { Run();exit=0; }
+        catch (Exception error) { Debug.LogException(error); }
+        EditorApplication.Exit(exit);
+    }
     [Serializable] public class CompileRow
     {
         public string shader, platform, stage, keywords, sha256;
@@ -29,7 +77,8 @@ public static class GodsPVZCustomShaderAudit
     {
         public string scope = "REAL_UNITY_CUSTOM_SHADER_CROSS_COMPILATION_AND_CONTROLLED_OPENGL_RENDER";
         public bool pass, metal_device_execution = false, game_pixel_equivalence = false, negative_compile_control;
-        public string graphics_api, renderer;
+        public string graphics_api, renderer, color_space, pipeline_asset_type, pipeline_asset_guid, pipeline_instance_type, render_pipeline_tag;
+        public int normal_startup_frames;
         public List<CompileRow> compilations = new List<CompileRow>();
         public List<PixelRow> pixels = new List<PixelRow>();
         public List<string> errors = new List<string>();
@@ -50,9 +99,19 @@ public static class GodsPVZCustomShaderAudit
         string folder = Environment.GetEnvironmentVariable("GODSPVZ_STARTUP_EVIDENCE");
         if (String.IsNullOrEmpty(folder)) throw new InvalidOperationException("Explicit evidence directory required");
         Directory.CreateDirectory(folder);
-        var report = new Report { graphics_api = SystemInfo.graphicsDeviceType.ToString(), renderer = SystemInfo.graphicsDeviceName };
+        var report = new Report { graphics_api = SystemInfo.graphicsDeviceType.ToString(), renderer = SystemInfo.graphicsDeviceName,
+            color_space=QualitySettings.activeColorSpace.ToString(),normal_startup_frames=Time.frameCount,
+            pipeline_asset_type=GraphicsSettings.currentRenderPipeline==null ? "null" : GraphicsSettings.currentRenderPipeline.GetType().FullName,
+            pipeline_asset_guid=GraphicsSettings.currentRenderPipeline==null ? "" : AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(GraphicsSettings.currentRenderPipeline)),
+            pipeline_instance_type=RenderPipelineManager.currentPipeline==null ? "null" : RenderPipelineManager.currentPipeline.GetType().FullName,
+            render_pipeline_tag=Shader.globalRenderPipeline };
         try
         {
+            report.errors.AddRange(StartupErrors);
+            if (!EditorApplication.isPlaying || Time.frameCount<3 || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name!="MainMenu")
+                throw new InvalidOperationException("Require normally running MainMenu before shader rendering");
+            if (report.pipeline_asset_guid!="22c2bf3291e4d8f4db5d66a87a6f8123" || RenderPipelineManager.currentPipeline==null || report.render_pipeline_tag!="UniversalPipeline")
+                throw new InvalidOperationException("Original configured URP must start normally; probe may not substitute a pipeline or force a shader tag");
             Shader game = AssetDatabase.LoadAssetAtPath<Shader>(GamePath);
             Shader bright = AssetDatabase.LoadAssetAtPath<Shader>(BrightPath);
             if (game == null || game.name != "Unlit/GameUnitShader" || bright == null || bright.name != "Shader Graphs/Brightness")
@@ -165,9 +224,13 @@ public static class GodsPVZCustomShaderAudit
         {
             Shader.SetGlobalVector("_RendererColor", Vector4.one);
             Shader.SetGlobalVector("_GlobalMipBias", new Vector4(0,1,0,0));
-            materialGame.SetTexture("_MainTex",main); materialGame.SetColor("_Color",new Color(.7f,.8f,.9f,.6f));
+            Color propertyColor=new Color(.7f,.8f,.9f,.6f);
+            materialGame.SetTexture("_MainTex",main); materialGame.SetColor("_Color",propertyColor);
             materialGame.SetFloat("_Alpha",.8f); materialGame.SetFloat("_Exposure",1.5f);
-            Color fragment = new Color(.3f*.8f*.7f*1.5f,.4f*.7f*.8f*1.5f,.6f*.6f*.9f*1.5f,.5f*.75f*.6f*.8f);
+            // Color properties are uploaded in linear space in this original
+            // Linear project. This belongs to the Unity adapter, not HLSL math.
+            Color uploadedColor=QualitySettings.activeColorSpace==ColorSpace.Linear ? propertyColor.linear : propertyColor;
+            Color fragment = new Color(.3f*.8f*uploadedColor.r*1.5f,.4f*.7f*uploadedColor.g*1.5f,.6f*.6f*uploadedColor.b*1.5f,.5f*.75f*uploadedColor.a*.8f);
             ReadPixel(report,folder,"game-visible",mesh,materialGame,0,clear,Blend(fragment,clear,false));
             materialGame.SetFloat("_IsVisible",-1);
             ReadPixel(report,folder,"game-hidden",mesh,materialGame,0,clear,clear);
