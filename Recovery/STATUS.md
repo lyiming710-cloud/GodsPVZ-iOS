@@ -1,6 +1,8 @@
 # Recovery status
 
-## Latest checkpoint — 2026-10-24
+## Latest checkpoint — 2026-10-25
+
+[Startup R10](Startup-R10-2026-10-25/README.md) restores `0x06000383 Plant.PC_Nutknight` from the original 592-instruction caller and actual 49-instruction Floor helper. It restores portable PC integer-conversion behavior, missing middle-state sprite dispatch, and 21 animation-list captures before sprite callbacks. The initial numeric-only trial passed type/JIT but failed 65 runtime comparisons; that failed candidate and evidence are retained. Final 2,116 new comparisons match, nine fault variants are detected, and all 3,467 prior records rerun successfully on exact R10: 5,583 controlled cases across 13 methods. Only one MethodDef changes; the other 2,316 and all old code/metadata bytes remain intact except bounded PE/CLI append headers. Fresh full JIT has 2,247 prepared, zero rejected and 50 unsupported open generics. Frozen types still retain 131 failures or unsupported cases after exact interface facts; access audit exits 2 and rejects 216 sites across 111 methods. There are zero unterminated lexical tails. A separate license-free IL2CPP/all-generated-C/C++ diagnostic is prepared before another licensed export. No R10 Unity/Apple/IPA/device success is claimed.
 
 2026-10-25 live readback: exact R8 real Editor diagnostic [40115001552](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40115001552) passed: normal MainMenu 2,113 frames, two active Canvases, one MainUIController, zero errors; 76 shader compilations (38 Metal), 20 controlled OpenGL pixel readbacks and all 96 raw program/PNG files verified. This is not an iPad test or IPA export.
 
