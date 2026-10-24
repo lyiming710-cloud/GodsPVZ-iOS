@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using UnityEditor;
 using UnityEditor.Rendering;
@@ -78,6 +79,8 @@ public static class GodsPVZCustomShaderAudit
         public string scope = "REAL_UNITY_CUSTOM_SHADER_CROSS_COMPILATION_AND_CONTROLLED_OPENGL_RENDER";
         public bool pass, metal_device_execution = false, game_pixel_equivalence = false, negative_compile_control;
         public string graphics_api, renderer, color_space, pipeline_asset_type, pipeline_asset_guid, pipeline_instance_type, render_pipeline_tag;
+        public string pipeline_instance_before, render_pipeline_tag_before;
+        public bool initialized_original_pipeline_for_headless_render;
         public int normal_startup_frames;
         public List<CompileRow> compilations = new List<CompileRow>();
         public List<PixelRow> pixels = new List<PixelRow>();
@@ -110,8 +113,30 @@ public static class GodsPVZCustomShaderAudit
             report.errors.AddRange(StartupErrors);
             if (!EditorApplication.isPlaying || Time.frameCount<3 || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name!="MainMenu")
                 throw new InvalidOperationException("Require normally running MainMenu before shader rendering");
-            if (report.pipeline_asset_guid!="22c2bf3291e4d8f4db5d66a87a6f8123" || RenderPipelineManager.currentPipeline==null || report.render_pipeline_tag!="UniversalPipeline")
-                throw new InvalidOperationException("Original configured URP must start normally; probe may not substitute a pipeline or force a shader tag");
+            if (report.pipeline_asset_guid!="22c2bf3291e4d8f4db5d66a87a6f8123")
+                throw new InvalidOperationException("Exact original configured URP asset required; probe may not substitute a pipeline");
+            report.pipeline_instance_before=report.pipeline_instance_type;
+            report.render_pipeline_tag_before=report.render_pipeline_tag;
+            if (RenderPipelineManager.currentPipeline==null)
+            {
+                // The batch Editor advances player logic without a GameView
+                // camera render. Unity's DoRenderLoop_Internal itself calls this
+                // exact initializer before rendering; initialize the SAME asset.
+                var prepare=typeof(RenderPipelineManager).GetMethod("PrepareRenderPipeline",BindingFlags.NonPublic|BindingFlags.Static);
+                if (prepare==null) throw new NotSupportedException("Exact Editor pipeline initializer unavailable");
+                Application.LogCallback record=(message,stack,type)=>
+                {
+                    if (type==LogType.Error || type==LogType.Exception || type==LogType.Assert) report.errors.Add(message+"\n"+stack);
+                };
+                Application.logMessageReceived+=record;
+                try { prepare.Invoke(null,new object[] { GraphicsSettings.currentRenderPipeline }); }
+                finally { Application.logMessageReceived-=record; }
+                report.initialized_original_pipeline_for_headless_render=true;
+            }
+            report.pipeline_instance_type=RenderPipelineManager.currentPipeline==null ? "null" : RenderPipelineManager.currentPipeline.GetType().FullName;
+            report.render_pipeline_tag=Shader.globalRenderPipeline;
+            if (RenderPipelineManager.currentPipeline==null || report.render_pipeline_tag!="UniversalPipeline")
+                throw new InvalidOperationException("Original URP initialization failed; a substitute pipeline or forced shader tag is forbidden");
             Shader game = AssetDatabase.LoadAssetAtPath<Shader>(GamePath);
             Shader bright = AssetDatabase.LoadAssetAtPath<Shader>(BrightPath);
             if (game == null || game.name != "Unlit/GameUnitShader" || bright == null || bright.name != "Shader Graphs/Brightness")
