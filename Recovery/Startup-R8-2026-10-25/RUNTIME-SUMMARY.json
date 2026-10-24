@@ -1,0 +1,280 @@
+{
+  "scope": "SIX_PRIOR_CONTROLLED_CALLER_SCOPES_REEXECUTED_ON_R8",
+  "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+  "cases": 2475,
+  "methods": 6,
+  "suites": [
+    {
+      "suite": "admin",
+      "result": {
+        "scope": "ADMIN_CONFIG_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+        "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+        "method_token": "0x06000009",
+        "cases": 22,
+        "pass_": true,
+        "differences": [],
+        "negative_controls": [
+          {
+            "name": "wrong-manager-challenge-field",
+            "mutant_sha256": "fe25adeb5281b4f644bad7a6fefa44a28ae6134c393efb3857fcefdd5490b440",
+            "detected_cases": 8,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "early-return",
+            "mutant_sha256": "7cfdc98c2828fadebe02dbbe25d198c8189c782f154778670c0fb77990428f8c",
+            "detected_cases": 22,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "config-assignment-omitted",
+            "mutant_sha256": "3943641eb425df7709586540f02293758b173bbe27bbb8601132d41649d6ec01",
+            "detected_cases": 22,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "damaged-parent-native-pointer-placeholders",
+            "detected_cases": 16,
+            "baseline_pass": true,
+            "pass_": true
+          }
+        ],
+        "exceptions_native_unwind_modeled": false,
+        "log_text_equivalence": false,
+        "unity_execution": false,
+        "whole_six_method_acceptance": false
+      }
+    },
+    {
+      "suite": "board",
+      "result": {
+        "scope": "BOARD_UPDATE_ISWON_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+        "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+        "method_token": "0x060002AD",
+        "cases": 769,
+        "pass_": true,
+        "differences": [],
+        "negative_controls": [
+          {
+            "name": "ordered-comparison-NaN-regression",
+            "mutant_sha256": "fbafa28339c913819339056d3e080e7b8815f16f220035afc859fc84c885b9a2",
+            "detected_cases": 60,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "early-return",
+            "mutant_sha256": "2f38ebaa94a262500b96974d0bd91c0ca4703ef73c4ee59637f98fa6e0a74af9",
+            "detected_cases": 349,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "volume-write-omitted",
+            "mutant_sha256": "d0bbb6c28f446ee26f43e73ca70299f10aefe8483f813cdeb7963893b18ab8e6",
+            "detected_cases": 121,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "fade-factor-doubled",
+            "mutant_sha256": "cf1c13087aef7947bd31724a7b34f42f0e133da66df14d716aed6e0e45f2d778",
+            "detected_cases": 61,
+            "baseline_pass": true,
+            "pass_": true
+          }
+        ],
+        "exceptions_native_unwind_modeled": false,
+        "unity_execution": false,
+        "whole_six_method_acceptance": false
+      }
+    },
+    {
+      "suite": "system",
+      "result": {
+        "scope": "SYSTEM2_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_NORMAL_PATHS_ONLY",
+        "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+        "method_token": "0x06000089",
+        "cases": 112,
+        "pass_": true,
+        "differences": [],
+        "negative_controls": [
+          {
+            "name": "name-used-instead-of-text",
+            "mutant_sha256": "6795007beeb911f895a410ce16b7ba94761a82278aefcb208f20b69d62a9e17a",
+            "detected_cases": 64,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "row-index-used-instead-of-value",
+            "mutant_sha256": "3d9ca2d231bee5ba3954db4ddb2122365fd9dc7554e2e47a45b646cf7cc4d56e",
+            "detected_cases": 35,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "early-return",
+            "mutant_sha256": "187bfeb39f5f1c7b8bc6417affb9adce06b0532eb26412f7a1bb08f9d078f5c6",
+            "detected_cases": 112,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "row-write-omitted",
+            "mutant_sha256": "28a479d196c15d342874b781ec3d689b677aa5843f4083ddaabeaeb3b2ad6243",
+            "detected_cases": 39,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "damaged-parent-private-text-read",
+            "mutant_sha256": "752939d1ae69877ef457945f6e0dfe61c749e8d4657e720075adcbcc76cc2e7f",
+            "detected_cases": 64,
+            "baseline_pass": true,
+            "pass_": true
+          }
+        ],
+        "exceptions_native_unwind_modeled": false,
+        "log_text_equivalence": false,
+        "unity_execution": false,
+        "whole_six_method_acceptance": false
+      }
+    },
+    {
+      "suite": "buff",
+      "result": {
+        "scope": "BUFF_COMBINED_RUNTIME_AND_UNCHANGED_FROZEN_WIDTH_GATE_CONTROLLED_CALLEES_ONLY",
+        "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+        "method_token": "0x060005E7",
+        "cases": 1452,
+        "pass_": true,
+        "runtime_equivalence_pass": true,
+        "runtime_alone_adequate": false,
+        "width_negative_control": {
+          "scope": "UNCHANGED_FROZEN_WIDTH_GATE_ON_PHYSICAL_INT64_MUTANT",
+          "baseline_passed": true,
+          "mutant_sha256": "3b522cac28e636a4ff86564052402ff8439ab082a47263d2b1681b8c94068882",
+          "checker_sha256": "2bb0a8c229a63fd33269433759a587ff551c6fde19669bafc506033df9b63d14",
+          "runtime_did_not_distinguish": true,
+          "rejected": true,
+          "result": {
+            "token": "0x060005E7",
+            "status": "FAIL",
+            "error": "System.Void BuffUIController_Zombie::FixedUpdate() IL_0125: I8 is not assignable to System.Int32"
+          }
+        },
+        "differences": [],
+        "negative_controls": [
+          {
+            "name": "attack-ratio-multiplied",
+            "mutant_sha256": "a99a47c8cde38ca27bba716239e7ce783952699b1a0d4dd2a0ff371e11104fc7",
+            "detected_cases": 192,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "integer-zero-restored",
+            "mutant_sha256": "b2b914ed9b604d94abe7b4600d1a682e928d03bab7db96cdfac211701abe1133",
+            "detected_cases": 728,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "int64-sentinel-restored",
+            "mutant_sha256": "3b522cac28e636a4ff86564052402ff8439ab082a47263d2b1681b8c94068882",
+            "detected_cases": 0,
+            "baseline_pass": true,
+            "pass_": false,
+            "runtime_status": "NOT_DETECTED_BY_CLR_PERMISSIVE_TRUNCATION",
+            "required_independent_gate": "UNCHANGED_FROZEN_WIDTH_GATE"
+          },
+          {
+            "name": "early-return",
+            "mutant_sha256": "6d63fe346b61b2ad34e2fc88bbf3193d40ca9628ff01c93e8a3b5f6f3a69384c",
+            "detected_cases": 1452,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "parent-unterminated-tail",
+            "mutant_sha256": "7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296",
+            "detected_cases": 1452,
+            "baseline_pass": true,
+            "pass_": true
+          }
+        ],
+        "exceptions_native_unwind_modeled": false,
+        "unity_execution": false,
+        "whole_six_method_acceptance": false
+      }
+    },
+    {
+      "suite": "events",
+      "result": {
+        "scope": "TWO_EVENT_CALLERS_ACTUAL_CIL_VS_ORIGINAL_PC_NATIVE_CONTROLLED_EVENT_SYSTEM_ONLY",
+        "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+        "method_tokens": [
+          "0x060007B7",
+          "0x060007B8"
+        ],
+        "cases": 120,
+        "pass_": true,
+        "differences": [],
+        "negative_controls": [
+          {
+            "name": "character-registered-on-sprite-event",
+            "mutant_sha256": "5027e57a55ada7cffdd3b65524cbf0ba381f677ad7a8fe318ee8282c5ffaebac",
+            "detected_cases": 39,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "disable-adds-instead-of-removes-character",
+            "mutant_sha256": "076acdda9bc1685d4e0471a636ecd09d177e756136d9f845b9aad0637896b14f",
+            "detected_cases": 45,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "text-component-write-omitted",
+            "mutant_sha256": "c569686590e7f30b4a739d13c95250b9643c87eef8cda2d52e2fcb44fd78e69f",
+            "detected_cases": 39,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "enable-early-return",
+            "mutant_sha256": "b7718baba9506a2c427411e5df496dfd87d248f85cf40f87eabeda256c192871",
+            "detected_cases": 105,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "disable-early-return",
+            "mutant_sha256": "8bb1aaa64493b8ef66f04e8e742fb4ca3300f54fce67a4977e2497c4884fbd62",
+            "detected_cases": 105,
+            "baseline_pass": true,
+            "pass_": true
+          },
+          {
+            "name": "parent-unterminated-tails",
+            "mutant_sha256": "7fa02b81d4d1af579a18eea103f776493f012565e64d5b38fd885cf40718a296",
+            "detected_cases": 120,
+            "baseline_pass": true,
+            "pass_": true
+          }
+        ],
+        "exceptions_native_unwind_modeled": false,
+        "unity_event_implementation_executed": false,
+        "original_event_handlers_executed": false,
+        "unity_execution": false,
+        "whole_six_method_acceptance": false
+      }
+    }
+  ],
+  "whole_game_acceptance": false
+}

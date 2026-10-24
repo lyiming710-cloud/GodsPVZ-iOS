@@ -1,0 +1,94 @@
+{
+  "scope": "FOUR_NONVOID_UNREACHABLE_CODE_SIZE_TRIMS_AND_TWO_EH_FORM_REPAIRS_ONLY",
+  "parent_sha256": "22d6aa537bfb71e40dcfa0fdd8776566278cf8fd9a4d4212a93fb7d49d3a8655",
+  "candidate_sha256": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+  "bytes": 18863104,
+  "direct_method_targets": 6,
+  "untouched_methoddefs": 2311,
+  "metadata_and_rvas_unchanged": true,
+  "all_other_file_bytes_identical": true,
+  "no_default_return_or_exception_suppression": true,
+  "changes": [
+    {
+      "token": "0x06000144",
+      "kind": "TRIM_UNREACHABLE_NONVOID_WARNING_CODE_SIZE",
+      "file_offset": 87104,
+      "before": "41000000",
+      "after": "3b000000",
+      "details": {
+        "old_size": 65,
+        "new_size": 59,
+        "header_kind": "fat",
+        "no_return_value_synthesized": true
+      }
+    },
+    {
+      "token": "0x060004D0",
+      "kind": "TRIM_UNREACHABLE_NONVOID_WARNING_CODE_SIZE",
+      "file_offset": 412364,
+      "before": "de000000",
+      "after": "d8000000",
+      "details": {
+        "old_size": 222,
+        "new_size": 216,
+        "header_kind": "fat",
+        "no_return_value_synthesized": true
+      }
+    },
+    {
+      "token": "0x06000609",
+      "kind": "TRIM_UNREACHABLE_NONVOID_WARNING_CODE_SIZE",
+      "file_offset": 525904,
+      "before": "5a000000",
+      "after": "54000000",
+      "details": {
+        "old_size": 90,
+        "new_size": 84,
+        "header_kind": "fat",
+        "no_return_value_synthesized": true
+      }
+    },
+    {
+      "token": "0x06000728",
+      "kind": "TRIM_UNREACHABLE_NONVOID_WARNING_CODE_SIZE",
+      "file_offset": 599360,
+      "before": "32000000",
+      "after": "2c000000",
+      "details": {
+        "old_size": 50,
+        "new_size": 44,
+        "header_kind": "fat",
+        "no_return_value_synthesized": true
+      }
+    },
+    {
+      "token": "0x06000004",
+      "kind": "SEAL_UNREACHABLE_TRY_GAP",
+      "file_offset": 805,
+      "before": "0000",
+      "after": "de0a",
+      "details": {
+        "il_offset": 101,
+        "target": 113,
+        "original_reachable_leave": 98,
+        "exception_clause_bytes_unchanged": true,
+        "finally_body_unchanged": true
+      }
+    },
+    {
+      "token": "0x0600047A",
+      "kind": "ORDER_NESTED_FINALLY_CLAUSES_INNER_FIRST",
+      "file_offset": 17484168,
+      "before": "02000000010100006b0000006c0100000800000000000000020000001a01000039000000530100000800000000000000",
+      "after": "020000001a0100003900000053010000080000000000000002000000010100006b0000006c0100000800000000000000",
+      "details": {
+        "cil_bytes_unchanged": true,
+        "clauses_unchanged_as_multiset": true,
+        "inner_dispose_and_outer_dispose_retained": true
+      }
+    }
+  ],
+  "gameplay_qualification": false,
+  "unity_export": false,
+  "ipa": null
+}

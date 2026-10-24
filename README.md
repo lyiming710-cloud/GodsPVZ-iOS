@@ -28,6 +28,6 @@ Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by
 
 ## Current phase
 
-Recovery now includes compiler repair, actual Editor startup diagnosis, restored original serialization markers and two custom shaders. The latest [Startup R7 checkpoint](Recovery/Startup-R7-2026-10-24/README.md) repairs 132 proven unreachable method tails, verifies actual CLR preparation before/after, and repeats six scoped caller suites with 2,475 controlled native/CIL cases. Broader type, access and method-form queues remain open. The [shader checkpoint](Recovery/Custom-Shaders-2026-10-24/README.md) has actual Metal compilation and controlled Editor pixel evidence. An updated unsigned IPA and iPad acceptance for the reported black screen/flicker remain pending.
+Recovery now includes compiler repair, actual Editor startup diagnosis, restored original serialization markers and two custom shaders. After [R7's 132 batch tail repairs](Recovery/Startup-R7-2026-10-24/README.md), [Startup R8](Recovery/Startup-R8-2026-10-25/README.md) fixes six more method/exception form defects, freshly checks all 2,297 real methods and reruns 2,475 controlled native/CIL cases. Seven CLR rejections, open-generic cases and broader frozen type/access queues remain. The [shader checkpoint](Recovery/Custom-Shaders-2026-10-24/README.md) has actual Metal compilation and controlled Editor pixel evidence. An updated unsigned IPA and iPad acceptance for the reported black screen/flicker remain pending.
 
 See `Recovery/STATUS.md` for the detailed recovery state.
