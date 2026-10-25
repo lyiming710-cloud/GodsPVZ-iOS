@@ -1,0 +1,61 @@
+name: Startup R17 Batch50 fresh code - independent Apple arm64 compiler precheck
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  compiler:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select exact Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          xcodebuild -version
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 39988665189
+          name: GodsPVZ-Stage9-bulk389-unsigned-Xcode
+          path: ${{ runner.temp }}/frozen-xcode-input
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 40166633598
+          name: Startup-R17-Batch50-compiler-40166633598-1
+          path: ${{ runner.temp }}/fresh-compiler-input
+      - name: Restore hash-bound runtime headers and newly generated code
+        shell: bash
+        run: |
+          set -euo pipefail
+          old="$RUNNER_TEMP/frozen-xcode-input/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst"
+          fresh="$RUNNER_TEMP/fresh-compiler-input/startup-r17-generated.tar.gz"
+          [ "$(shasum -a 256 "$old" | awk '{print $1}')" = '93d32bb83a6d93b1c9d8a490bf057db7cfe2e35dad1219ab4924b6ec38538e04' ]
+          [ "$(shasum -a 256 "$fresh" | awk '{print $1}')" = 'b38320c3110d1766fbad0fe55818a7731feeb29e41f726bc76dc38e89dd6f9bd' ]
+          command -v zstd >/dev/null || brew install zstd
+          mkdir -p "$RUNNER_TEMP/frozen-export" "$RUNNER_TEMP/fresh-generated"
+          zstd -dc "$old" | tar -xf - -C "$RUNNER_TEMP/frozen-export"
+          tar -xzf "$fresh" -C "$RUNNER_TEMP/fresh-generated"
+      - name: Compile every fresh CPP and C with physical-iOS Apple flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/check_startup_r17_apple.py \
+            --xcode-dir "$RUNNER_TEMP/frozen-export/xcode" \
+            --fresh-root "$RUNNER_TEMP/fresh-generated/il2cppOutput/cpp" \
+            --compiler-input "$RUNNER_TEMP/fresh-compiler-input" \
+            --output-dir "$RUNNER_TEMP/startup-r17-apple"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Startup-R17-Batch50-Apple-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/startup-r17-apple/
+          retention-days: 30
+          if-no-files-found: warn
