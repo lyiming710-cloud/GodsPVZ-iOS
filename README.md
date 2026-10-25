@@ -2,6 +2,8 @@
 
 Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by the repository owner.
 
+Next-batch cadence: **100 actual distinct method changes before shared testing**, effective for R19 from the fixed R18 candidate. See [batch policy](Recovery/BATCH-POLICY.json); historical fifty-method reports retain their original scope.
+
 ## Confirmed source build
 
 - Unity: `2022.3.44f1c1`
