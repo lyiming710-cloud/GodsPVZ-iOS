@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+Current R20: **104 authored positions/eight methods; 768 normal full-CIL/native records match; eight physical omissions detected**. Exact SHA d887b370 passes fresh Linux IL2CPP and all 755 C++/274 C units in run 40219580971; every returned source/log is independently rechecked. Preserved Card-chain predecessor has 27 mismatches. Apple is prepared, with no new Unity export/link/IPA/device promotion. Historical checkpoint-specific statuses follow below.
+
 R20 Card-chain correction: only DeviceManager.Update changes relative to initial R20. Corrected authored3 has seven finite native/CIL profiles /552 matching normal records, versus 27 mismatches in the preserved predecessor. Initial native-harness null-Card process failures are retained as failures. 104 positions/eight targets remain unchanged. Save-list runtime, current-SHA compiler and product gates remain pending.
 
 [R20 Sites104](Startup-R20-Sites104-2026-10-26/README.md): 104 native-backed operation positions in eight restored manager/save-list methods were authored before shared tests. Eight target type/access/JIT-preparation checks pass; 2,309 other MethodDefs and shared old ret slots are unchanged. Runtime/compiler/current Unity export/IPA/iPad acceptance remain pending. This supersedes the cadence counting unit for R20 only; original R19 history remains intact.

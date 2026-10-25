@@ -2,7 +2,7 @@
 
 Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by the repository owner.
 
-Latest [R20 Sites104](Recovery/Startup-R20-Sites104-2026-10-26/README.md) authors 104 native-backed operation positions across eight previously empty methods before shared testing. Isolation/type/access/JIT checks pass at their stated scope; runtime/compiler/Unity/IPA/device qualification remains pending. Counts are positions and methods separately.
+Latest [R20 Sites104](Recovery/Startup-R20-Sites104-2026-10-26/README.md) restores 104 native-backed positions across eight methods before shared tests. Eight finite full-CIL/original-native profiles match 768 normal records; eight physical omission controls are detected. Exact current-SHA IL2CPP plus all 1,029 Linux source checks pass with every returned source/log independently verified. Apple is prepared; no new Unity export, linked IPA or iPad acceptance. Counts remain positions and methods separately.
 
 Latest [whole managed-code census](Recovery/Whole-Program-Census-2026-10-26/README.md) covers all 2,297 bodies. It identifies eight empty CIL bodies with nonempty original callers outside R19, retains five ordinary semantic-marker leads, and separates 156 deduplicated repair/validation/tool-context work items from a game-bug count. R19 remains 65 finite profiles/35 pending; new Editor/IPA/device acceptance is pending.
 
