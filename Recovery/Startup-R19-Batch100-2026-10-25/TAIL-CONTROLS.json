@@ -1,0 +1,4850 @@
+{
+  "scope": "SIX_PHYSICAL_TAIL_DISPATCH_SHADER_BEHAVIOR_FAULTS",
+  "candidate_sha256": "0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2",
+  "variants": 6,
+  "runtime_detected": 6,
+  "process_failures": 0,
+  "results": [
+    {
+      "token": "0x06000038",
+      "fault": "omit-device-load",
+      "physical_sha256": "2fdbaaedf9956d0e30cb216ebae70352578de45a0292877c3aa4a52e34862fcc",
+      "status": "RUNTIME_DIFFERENCE_DETECTED",
+      "different_records": 4,
+      "differences": [
+        {
+          "original": {
+            "name": "t0000",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [
+              "DeviceLoad:null"
+            ],
+            "state": {
+              "item": "null"
+            }
+          },
+          "actual": {
+            "name": "t0000",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "null"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0001",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [
+              "DeviceLoad:null"
+            ],
+            "state": {
+              "item": "other"
+            }
+          },
+          "actual": {
+            "name": "t0001",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "null"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0002",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [
+              "DeviceLoad:input"
+            ],
+            "state": {
+              "item": "input"
+            }
+          },
+          "actual": {
+            "name": "t0002",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "input"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0003",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [
+              "DeviceLoad:input"
+            ],
+            "state": {
+              "item": "other"
+            }
+          },
+          "actual": {
+            "name": "t0003",
+            "token": "0x06000038",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "input"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "token": "0x0600005F",
+      "fault": "omit-path-load",
+      "physical_sha256": "899ba40912af1e9f6683b0e2891655821c6d6b491bf29dcf6b8adb7dea48d81f",
+      "status": "RUNTIME_DIFFERENCE_DETECTED",
+      "different_records": 4,
+      "differences": [
+        {
+          "original": {
+            "name": "t0004",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [
+              "PathLoad:null"
+            ],
+            "state": {
+              "item": "null"
+            }
+          },
+          "actual": {
+            "name": "t0004",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "null"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0005",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [
+              "PathLoad:null"
+            ],
+            "state": {
+              "item": "other"
+            }
+          },
+          "actual": {
+            "name": "t0005",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "null"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0006",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [
+              "PathLoad:input"
+            ],
+            "state": {
+              "item": "input"
+            }
+          },
+          "actual": {
+            "name": "t0006",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "input"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0007",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [
+              "PathLoad:input"
+            ],
+            "state": {
+              "item": "other"
+            }
+          },
+          "actual": {
+            "name": "t0007",
+            "token": "0x0600005F",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "input"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "token": "0x06000377",
+      "fault": "heal-wrong-receiver",
+      "physical_sha256": "cc8bf66e7d40c21598b76a044483ca66e3282e1186df5343f1c913e100b69d4b",
+      "status": "RUNTIME_DIFFERENCE_DETECTED",
+      "different_records": 32,
+      "differences": [
+        {
+          "original": {
+            "name": "t0008",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:00000000:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:00000000:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0008",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0009",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:80000000:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:80000000:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0009",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0010",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:3F000000:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:3F000000:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0010",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0011",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:BF800000:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:BF800000:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0011",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0012",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:7F7FFFFF:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:7F7FFFFF:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0012",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0013",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:7F800000:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:7F800000:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0013",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0014",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:FF800000:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:FF800000:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0014",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0015",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:NaN:null"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:NaN:null",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0015",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0016",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:00000000:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:00000000:null"
+            }
+          },
+          "actual": {
+            "name": "t0016",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0017",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:80000000:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:80000000:null"
+            }
+          },
+          "actual": {
+            "name": "t0017",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0018",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:3F000000:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:3F000000:null"
+            }
+          },
+          "actual": {
+            "name": "t0018",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0019",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:BF800000:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:BF800000:null"
+            }
+          },
+          "actual": {
+            "name": "t0019",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0020",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:7F7FFFFF:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:7F7FFFFF:null"
+            }
+          },
+          "actual": {
+            "name": "t0020",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0021",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:7F800000:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:7F800000:null"
+            }
+          },
+          "actual": {
+            "name": "t0021",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0022",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:FF800000:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:FF800000:null"
+            }
+          },
+          "actual": {
+            "name": "t0022",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0023",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:NaN:null"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:NaN:null"
+            }
+          },
+          "actual": {
+            "name": "t0023",
+            "token": "0x06000377",
+            "error": "System.NullReferenceException",
+            "trace": [],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0032",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:00000000:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:00000000:a"
+            }
+          },
+          "actual": {
+            "name": "t0032",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:00000000:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:00000000:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0033",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:80000000:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:80000000:a"
+            }
+          },
+          "actual": {
+            "name": "t0033",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:80000000:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:80000000:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0034",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:3F000000:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:3F000000:a"
+            }
+          },
+          "actual": {
+            "name": "t0034",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:3F000000:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:3F000000:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0035",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:BF800000:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:BF800000:a"
+            }
+          },
+          "actual": {
+            "name": "t0035",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:BF800000:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:BF800000:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0036",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:7F7FFFFF:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:7F7FFFFF:a"
+            }
+          },
+          "actual": {
+            "name": "t0036",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:7F7FFFFF:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:7F7FFFFF:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0037",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:7F800000:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:7F800000:a"
+            }
+          },
+          "actual": {
+            "name": "t0037",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:7F800000:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:7F800000:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0038",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:FF800000:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:FF800000:a"
+            }
+          },
+          "actual": {
+            "name": "t0038",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:FF800000:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:FF800000:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0039",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:NaN:a"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:NaN:a"
+            }
+          },
+          "actual": {
+            "name": "t0039",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:NaN:a"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:NaN:a",
+              "b_hits": 0,
+              "b_last": null
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0040",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:00000000:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:00000000:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0040",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:00000000:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:00000000:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0041",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:80000000:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:80000000:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0041",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:80000000:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:80000000:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0042",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:3F000000:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:3F000000:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0042",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:3F000000:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:3F000000:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0043",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:BF800000:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:BF800000:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0043",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:BF800000:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:BF800000:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0044",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:7F7FFFFF:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:7F7FFFFF:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0044",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:7F7FFFFF:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:7F7FFFFF:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0045",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:7F800000:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:7F800000:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0045",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:7F800000:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:7F800000:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0046",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:FF800000:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:FF800000:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0046",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:FF800000:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:FF800000:b"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0047",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:a:NaN:b"
+            ],
+            "state": {
+              "a_hits": 1,
+              "a_last": "a:NaN:b",
+              "b_hits": 0,
+              "b_last": null
+            }
+          },
+          "actual": {
+            "name": "t0047",
+            "token": "0x06000377",
+            "error": null,
+            "trace": [
+              "Healed:b:NaN:b"
+            ],
+            "state": {
+              "a_hits": 0,
+              "a_last": null,
+              "b_hits": 1,
+              "b_last": "b:NaN:b"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "token": "0x060006F0",
+      "fault": "omit-page-setinfo",
+      "physical_sha256": "ef43983a235f649f4121b1371b5af6b7eaa64c070573738ef607090261792bfe",
+      "status": "RUNTIME_DIFFERENCE_DETECTED",
+      "different_records": 56,
+      "differences": [
+        {
+          "original": {
+            "name": "t0059",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0059",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0060",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:other:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0060",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0061",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0061",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0062",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0062",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0063",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:other:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0063",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0064",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0064",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0065",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0065",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0066",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:other:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0066",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0067",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0067",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-2147483648"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0068",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0068",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0069",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:other:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0069",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0070",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0070",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0071",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0071",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0072",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:other:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0072",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0073",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0073",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0074",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0074",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0075",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:other:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0075",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0076",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0076",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:-1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0077",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0077",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0078",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:other:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0078",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0079",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0079",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0080",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0080",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0081",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:other:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0081",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0082",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0082",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0083",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0083",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0084",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:other:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0084",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0085",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0085",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:0"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0086",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0086",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0087",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:other:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0087",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0088",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0088",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0089",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0089",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0090",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:other:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0090",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0091",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0091",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0092",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0092",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0093",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:other:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0093",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0094",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0094",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:1"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0095",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0095",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0096",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:other:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0096",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0097",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0097",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0098",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0098",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0099",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:other:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0099",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0100",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0100",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0101",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0101",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0102",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:other:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0102",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0103",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0103",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:49"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0104",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0104",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0105",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:other:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0105",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "other",
+              "info": "null",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0106",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:input:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0106",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "input",
+              "info": "null",
+              "input_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0107",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0107",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0108",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:other:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0108",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "other",
+              "info": "info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0109",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:input:info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0109",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "input",
+              "info": "info",
+              "input_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0110",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0110",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0111",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:other:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          },
+          "actual": {
+            "name": "t0111",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": -999
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0112",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647",
+              "SetInfo:input:other-info"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0112",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "Lookup:2147483647"
+            ],
+            "state": {
+              "item": "input",
+              "info": "other-info",
+              "input_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0113",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "SetInfo:null:null"
+            ],
+            "state": {
+              "item": "null",
+              "info": "null",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0113",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "null",
+              "info": "null",
+              "input_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0114",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [
+              "SetInfo:null:null"
+            ],
+            "state": {
+              "item": "other",
+              "info": "other-info",
+              "input_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0114",
+            "token": "0x060006F0",
+            "error": null,
+            "trace": [],
+            "state": {
+              "item": "null",
+              "info": "null",
+              "input_id": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "token": "0x0600056D",
+      "fault": "settext-wrong-force",
+      "physical_sha256": "2114b5fcfe26f5e0bad94fed4060702f98267b91739d232df7ac702130ccecb2",
+      "status": "RUNTIME_DIFFERENCE_DETECTED",
+      "different_records": 48,
+      "differences": [
+        {
+          "original": {
+            "name": "t0115",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0115",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0116",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0116",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0117",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -2147483648
+            }
+          },
+          "actual": {
+            "name": "t0117",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -2147483648
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0118",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0118",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0119",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0119",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0120",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -1
+            }
+          },
+          "actual": {
+            "name": "t0120",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": -1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0121",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0121",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0122",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0122",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0123",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 0
+            }
+          },
+          "actual": {
+            "name": "t0123",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 0
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0124",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5609\u73ae\u541b",
+              "SetText:text:\u7f8e\u672f\uff1a\u5609\u73ae\u541b:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u5609\u73ae\u541b",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0124",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5609\u73ae\u541b",
+              "SetText:text:\u7f8e\u672f\uff1a\u5609\u73ae\u541b:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u5609\u73ae\u541b",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0125",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5609\u73ae\u541b",
+              "SetText:text:\u7f8e\u672f\uff1a\u5609\u73ae\u541b:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5609\u73ae\u541b",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0125",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5609\u73ae\u541b",
+              "SetText:text:\u7f8e\u672f\uff1a\u5609\u73ae\u541b:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5609\u73ae\u541b",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0126",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5609\u73ae\u541b",
+              "SetText:text:\u7f8e\u672f\uff1a\u5609\u73ae\u541b:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5609\u73ae\u541b",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 1
+            }
+          },
+          "actual": {
+            "name": "t0126",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5609\u73ae\u541b",
+              "SetText:text:\u7f8e\u672f\uff1a\u5609\u73ae\u541b:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5609\u73ae\u541b",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 1
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0127",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u592d\u4e3b\u5be6\u672b",
+              "SetText:text:\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2
+            }
+          },
+          "actual": {
+            "name": "t0127",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u592d\u4e3b\u5be6\u672b",
+              "SetText:text:\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0128",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u592d\u4e3b\u5be6\u672b",
+              "SetText:text:\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0128",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u592d\u4e3b\u5be6\u672b",
+              "SetText:text:\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0129",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u592d\u4e3b\u5be6\u672b",
+              "SetText:text:\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2
+            }
+          },
+          "actual": {
+            "name": "t0129",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u592d\u4e3b\u5be6\u672b",
+              "SetText:text:\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u592d\u4e3b\u5be6\u672b",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0130",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 3
+            }
+          },
+          "actual": {
+            "name": "t0130",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 3
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0131",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0131",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0132",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 3
+            }
+          },
+          "actual": {
+            "name": "t0132",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 3
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0133",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 4
+            }
+          },
+          "actual": {
+            "name": "t0133",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 4
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0134",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0134",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0135",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 4
+            }
+          },
+          "actual": {
+            "name": "t0135",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 4
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0136",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5fc3\u6249\u521d\u6aac",
+              "SetText:text:\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 5
+            }
+          },
+          "actual": {
+            "name": "t0136",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5fc3\u6249\u521d\u6aac",
+              "SetText:text:\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 5
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0137",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5fc3\u6249\u521d\u6aac",
+              "SetText:text:\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0137",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5fc3\u6249\u521d\u6aac",
+              "SetText:text:\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0138",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5fc3\u6249\u521d\u6aac",
+              "SetText:text:\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 5
+            }
+          },
+          "actual": {
+            "name": "t0138",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5fc3\u6249\u521d\u6aac",
+              "SetText:text:\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5fc3\u6249\u521d\u6aac",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 5
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0139",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 6
+            }
+          },
+          "actual": {
+            "name": "t0139",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 6
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0140",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0140",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0141",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 6
+            }
+          },
+          "actual": {
+            "name": "t0141",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u8292\u679c\u76ae\u76ae\u867e",
+              "SetText:text:\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u8292\u679c\u76ae\u76ae\u867e",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 6
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0142",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "SetText:text:\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 7
+            }
+          },
+          "actual": {
+            "name": "t0142",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "SetText:text:\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 7
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0143",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "SetText:text:\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0143",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "SetText:text:\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0144",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "SetText:text:\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 7
+            }
+          },
+          "actual": {
+            "name": "t0144",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "SetText:text:\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u5929\u8fb9\u7684\u672a\u77e5\u6570",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 7
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0145",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 8
+            }
+          },
+          "actual": {
+            "name": "t0145",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 8
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0146",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0146",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0147",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 8
+            }
+          },
+          "actual": {
+            "name": "t0147",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 8
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0148",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 9
+            }
+          },
+          "actual": {
+            "name": "t0148",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 9
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0149",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0149",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0150",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 9
+            }
+          },
+          "actual": {
+            "name": "t0150",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 9
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0151",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 48
+            }
+          },
+          "actual": {
+            "name": "t0151",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 48
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0152",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0152",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0153",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 48
+            }
+          },
+          "actual": {
+            "name": "t0153",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 48
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0154",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0154",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0155",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0155",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0156",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0156",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|\u673a\u9c7c\u5410\u53f8",
+              "SetText:text:\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a\u673a\u9c7c\u5410\u53f8",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0157",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 50
+            }
+          },
+          "actual": {
+            "name": "t0157",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 50
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0158",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0158",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0159",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 50
+            }
+          },
+          "actual": {
+            "name": "t0159",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 50
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0160",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0160",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2147483647
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0161",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          },
+          "actual": {
+            "name": "t0161",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 49
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0162",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:1"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": true,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2147483647
+            }
+          },
+          "actual": {
+            "name": "t0162",
+            "token": "0x0600056D",
+            "error": null,
+            "trace": [
+              "Concat:\u7f8e\u672f\uff1a|",
+              "SetText:text:\u7f8e\u672f\uff1a:0"
+            ],
+            "state": {
+              "painter": "other-text",
+              "text": "\u7f8e\u672f\uff1a",
+              "force": false,
+              "other_text": null,
+              "other_force": false,
+              "save_id": 2147483647
+            }
+          }
+        }
+      ]
+    },
+    {
+      "token": "0x06000762",
+      "fault": "omit-material-cache",
+      "physical_sha256": "b39876bd93e59d596b647e8e83186b127de5699c51ad68a4da20538cfa7ba12e",
+      "status": "RUNTIME_DIFFERENCE_DETECTED",
+      "different_records": 12,
+      "differences": [
+        {
+          "original": {
+            "name": "t0167",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "null"
+            }
+          },
+          "actual": {
+            "name": "t0167",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0168",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "null"
+            }
+          },
+          "actual": {
+            "name": "t0168",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0169",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "null"
+            }
+          },
+          "actual": {
+            "name": "t0169",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0170",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "material"
+            }
+          },
+          "actual": {
+            "name": "t0170",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0171",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "material"
+            }
+          },
+          "actual": {
+            "name": "t0171",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0172",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "material"
+            }
+          },
+          "actual": {
+            "name": "t0172",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0173",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "other-material"
+            }
+          },
+          "actual": {
+            "name": "t0173",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0174",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "other-material"
+            }
+          },
+          "actual": {
+            "name": "t0174",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0175",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "other-material"
+            }
+          },
+          "actual": {
+            "name": "t0175",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0176",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "other-material"
+            }
+          },
+          "actual": {
+            "name": "t0176",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0177",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "other-material"
+            }
+          },
+          "actual": {
+            "name": "t0177",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        },
+        {
+          "original": {
+            "name": "t0178",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "other-material"
+            }
+          },
+          "actual": {
+            "name": "t0178",
+            "token": "0x06000762",
+            "error": null,
+            "trace": [
+              "GetComponent:Renderer",
+              "Material:other-renderer"
+            ],
+            "state": {
+              "renderer": "other-renderer",
+              "material": "stale-material"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "formal_or_product_acceptance": false
+}
