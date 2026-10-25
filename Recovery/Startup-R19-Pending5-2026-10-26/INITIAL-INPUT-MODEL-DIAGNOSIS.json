@@ -1,0 +1,13 @@
+{
+  "scope": "TEST_INPUT_BASELINE_LIST_VERSION_MISMATCH_NOT_CANDIDATE_FAILURE",
+  "differences": 252,
+  "paths": [
+    ".state.initial.version",
+    ".state.other.version"
+  ],
+  "trace_differences": 0,
+  "cause": "Enumerable.Select.ToList created nonempty CLR list version 1; native test input assumed version 0",
+  "correction": "Use actual public List<T>(T[]) construction and assert pre-call capacity/count/version contract",
+  "candidate_changed": false,
+  "original_failure_preserved": true
+}

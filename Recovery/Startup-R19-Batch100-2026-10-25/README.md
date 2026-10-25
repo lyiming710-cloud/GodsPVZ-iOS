@@ -92,3 +92,7 @@ The exact DLL and frozen validators/emitter remain unchanged. Current union: **6
 ## Whole-program debt discovered after this batch
 
 The [2026-10-26 whole managed-code census](../Whole-Program-Census-2026-10-26/README.md) checks every one of 2,297 bodies and identifies eight empty current methods with nonempty original callers outside this batch. The R19 pending count remains 35; it is not the whole-project remaining bug count. A deduplicated 156-method work queue separates source gaps, pending profiles, semantic markers and validator/Reset context. It does not promote this candidate or change the 100-target construction scope.
+
+## 五个待对照调用方补充
+
+[独立补充目录](../Startup-R19-Pending5-2026-10-26/README.md) 保存五个完整调用方的 861 条正常原版对照、两个精确候选的868条实际CIL记录、七条CLR-only异常和五个检测到的物理故障。初版252条列表输入版本差异及工具输入修正均保留。有限方法联合数70、原版记录18,938，30个profile仍待完成；候选/冻结工具不变，无新Unity/IPA/真机提升。

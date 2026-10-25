@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[R19 pending-five supplement](Startup-R19-Pending5-2026-10-26/README.md): five more complete original callers match861 normal records on both unchanged R19/R20 candidates. Five one-site physical faults are detected; seven CLR-only exceptions and initial252 input-version mismatches are preserved. R19 finite union70 /18,938 records,30 pending. No game code change, new compiler run, Unity export, IPA or device result.
+
 R20 finite batch evidence is complete: 104 positions/eight methods, 768 native normal comparisons, eight detected omission controls, exact Linux and Apple 1,029-unit syntax passes. The control-only replay 40221471927 preserves and independently verifies all 34 damaged-source errors/28 warnings with unchanged Apple flags; normal compiler job skipped. No new game bytes, Editor export, link, IPA or device result. Per-method matrix and current audit-work states are archived.
 
 R20 exact Apple run 40220652002: all 1,029 source/log records rechecked, zero errors and 10,572 retained warnings. Six compiler controls meet their expectations. A historical damaged/normal basename collision overwrote the damaged raw log while preserving its 34-error JSON; evidence is saved before a log-directory fix and control-only replay. This does not alter the candidate or the valid normal-source result. Product/IPA/device gates remain open.
