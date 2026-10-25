@@ -1,0 +1,30 @@
+{
+  "updated_on": "2026-10-26",
+  "instruction": "User requested more than one hundred repair positions before testing",
+  "effective_batch": "R20",
+  "baseline_checkpoint": "Startup-R19-Batch100-2026-10-25",
+  "baseline_candidate_sha256": "0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2",
+  "counting_unit": "Distinct native-backed semantic operation positions; changed MethodDefs reported separately",
+  "threshold_positions": 100,
+  "comparison": "strictly_greater_than",
+  "authored_positions": 104,
+  "changed_methoddefs": 8,
+  "repair_kind_counts": {
+    "CALL": 35,
+    "FIELD_WRITE": 15,
+    "FIELD_READ": 41,
+    "CONTROL_FLOW": 11,
+    "LOOP_STATE": 2
+  },
+  "position_identity": [
+    "MethodDef",
+    "original native instruction VA"
+  ],
+  "count_each_position_once": true,
+  "exclude_argument_stack_instructions_metadata_helpers_gc_barriers_whitespace_and_repeat_edits": true,
+  "do_not_count_as_independent_game_bug_total": true,
+  "source_inspection_and_construction_guards_remain_enabled": true,
+  "shared_test_started_only_after_threshold": true,
+  "unsupported_or_correct_code_must_not_be_changed_to_fill_count": true,
+  "historical_R19_policy_and_counts_preserved": "PARENT-BATCH-POLICY.json"
+}

@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[R20 Sites104](Startup-R20-Sites104-2026-10-26/README.md): 104 native-backed operation positions in eight restored manager/save-list methods were authored before shared tests. Eight target type/access/JIT-preparation checks pass; 2,309 other MethodDefs and shared old ret slots are unchanged. Runtime/compiler/current Unity export/IPA/iPad acceptance remain pending. This supersedes the cadence counting unit for R20 only; original R19 history remains intact.
+
 [Whole managed-code census](Whole-Program-Census-2026-10-26/README.md): all 2,297 method bodies freshly exported/type-checked and scanned for control flow, placeholders and tiny bodies; cached exact JIT IL hashes rechecked. Eight current empty bodies have nonempty original callers outside R19. 145 original-empty and five constant body shapes match direct native bytes. The unified 156-method queue distinguishes eight source gaps, 35 R19 pending profiles, four additional semantic-marker reviews, 92 validator/JIT reviews and seventeen Reset contexts. These are work items, not a bug total. No game DLL, frozen verifier, Unity/IPA/device promotion changed.
 
 2026-10-26 selection supplement: **65 finite R19 method profiles /18,077 native comparisons; 35 remain pending**. Shovel/card complete-CIL callers add 1,672 matching normal records with explicit pseudo-null/engine leaf contracts. Fifty-seven CLR-only null exceptions remain separate. Wrong audio ID and wrong choose action physical controls differ at runtime. Across all supplements, 71 controls comprise 67 runtime differences, three retained non-detections and one source-only EH guard. Exact candidate9 and frozen validators are unchanged; no new Editor/IPA/device claim.

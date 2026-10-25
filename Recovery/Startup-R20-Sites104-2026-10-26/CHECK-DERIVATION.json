@@ -1,0 +1,89 @@
+{
+  "candidate_sha256": "92d0fc67a0c6afb0aa08ed18b4ad6316968a0381b998ade1eb1fe59a23ba01cb",
+  "repair_positions": 104,
+  "shared_tests_after_threshold": true,
+  "files": [
+    {
+      "file": "run_static.py",
+      "source": "C:/Users/86136/Desktop/1.0.2PC/audit/ipad-startup-2026-10-24/startup-r19-batch100/run_static.py",
+      "source_sha256": "2a1835409ca9f979f67be1d6c693c8bb428f2a568769291042bac8b213c2aa74",
+      "bound_sha256": "b2164e2da3a68fee29132203755d18b03701dd3b674001ddeef766a790754f5d",
+      "changes": [
+        {
+          "before": "report['new_unique_methods']==100",
+          "after": "report['new_unique_methods']==8 and report['new_unique_repair_positions']>100",
+          "occurrences": 1
+        }
+      ],
+      "algorithm_changes": false
+    },
+    {
+      "file": "supplement_interface_facts.py",
+      "source": "C:/Users/86136/Desktop/1.0.2PC/audit/ipad-startup-2026-10-24/startup-r19-batch100/supplement_interface_facts.py",
+      "source_sha256": "e87ba2c4bfd4176741646d0a2e06c5f67302980625cd4a1f13a8c6c200eddfca",
+      "bound_sha256": "80a2f275e6dfd950448d30593d1fac266029faf5e3c699e804c29a38ee9dbf10",
+      "changes": [
+        {
+          "before": "Q=W/'startup-r19-batch100'/",
+          "after": "Q=W/'startup-r20-sites100'/",
+          "occurrences": 1
+        }
+      ],
+      "algorithm_changes": false
+    },
+    {
+      "file": "run_exact_jit.py",
+      "source": "C:/Users/86136/Desktop/1.0.2PC/audit/ipad-startup-2026-10-24/startup-r19-batch100/run_exact_jit.py",
+      "source_sha256": "00b923a77acdc94b186369f7fe2629462550657d7ee4cee28c5b80d49bc14c64",
+      "bound_sha256": "638248cb0adda807743cba430876a9498bba6bbef3051f18f9920870ba36786b",
+      "changes": [
+        {
+          "before": "report['new_unique_methods']==100",
+          "after": "report['new_unique_methods']==8 and report['new_unique_repair_positions']>100",
+          "occurrences": 1
+        },
+        {
+          "before": "EXACT_CANDIDATE_HUNDRED_JIT_PREPARATION",
+          "after": "EXACT_CANDIDATE_EIGHT_METHOD_104_POSITION_JIT_PREPARATION",
+          "occurrences": 1
+        }
+      ],
+      "algorithm_changes": false
+    },
+    {
+      "file": "verify_isolation.py",
+      "source": "C:/Users/86136/Desktop/1.0.2PC/audit/ipad-startup-2026-10-24/startup-r19-batch100/verify_isolation.py",
+      "source_sha256": "356b6db4fb81fd167ff52e06e465385904653b37e21dc5df423e97424c71516c",
+      "bound_sha256": "1d04bd478719323533c7cb1e4cbd9467b821680d63e08eb5703b0e81f7debd46",
+      "changes": [
+        {
+          "before": "W/'startup-r18-batch50/candidate1.dll'",
+          "after": "W/'startup-r19-batch100/candidate9.dll'",
+          "occurrences": 1
+        },
+        {
+          "before": "a6aa9f91087db194251c4c989fd80ffd982b3b7a59413b0745592bc43b548abb",
+          "after": "0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2",
+          "occurrences": 1
+        },
+        {
+          "before": "len(report['changes'])==100",
+          "after": "len(report['changes'])==8 and report['new_unique_repair_positions']>100",
+          "occurrences": 1
+        },
+        {
+          "before": "len(targets)==100",
+          "after": "len(targets)==8",
+          "occurrences": 1
+        },
+        {
+          "before": "changed_methods=100,unchanged_methoddefs=2217",
+          "after": "changed_methods=8,unchanged_methoddefs=2309",
+          "occurrences": 1
+        }
+      ],
+      "algorithm_changes": false
+    }
+  ],
+  "frozen_checker_modified": false
+}
