@@ -9,7 +9,7 @@ here=Path(__file__).resolve().parent
 s=importlib.util.spec_from_file_location('portable',here/'verify_bulk152_portable.py')
 p=importlib.util.module_from_spec(s);s.loader.exec_module(p)
 args=p.parse_args();root=Path(args.output_dir).resolve();candidate=Path(args.candidate_dll).resolve()
-expected='92d0fc67a0c6afb0aa08ed18b4ad6316968a0381b998ade1eb1fe59a23ba01cb'
+expected='d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37'
 assert p.sha256_file(candidate)==expected,'Fixed Startup R20 Sites104 input'
 root.mkdir(parents=True,exist_ok=False)
 report=dict(scope='STARTUP_R20_FRESH_LINUX_ALL_GENERATED_SOURCE_COMPILER_ONLY',candidate_sha256=expected,

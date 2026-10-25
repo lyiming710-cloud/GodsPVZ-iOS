@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+R20 Card-chain correction: only DeviceManager.Update changes relative to initial R20. Corrected authored3 has seven finite native/CIL profiles /552 matching normal records, versus 27 mismatches in the preserved predecessor. Initial native-harness null-Card process failures are retained as failures. 104 positions/eight targets remain unchanged. Save-list runtime, current-SHA compiler and product gates remain pending.
+
 [R20 Sites104](Startup-R20-Sites104-2026-10-26/README.md): 104 native-backed operation positions in eight restored manager/save-list methods were authored before shared tests. Eight target type/access/JIT-preparation checks pass; 2,309 other MethodDefs and shared old ret slots are unchanged. Runtime/compiler/current Unity export/IPA/iPad acceptance remain pending. This supersedes the cadence counting unit for R20 only; original R19 history remains intact.
 
 [Whole managed-code census](Whole-Program-Census-2026-10-26/README.md): all 2,297 method bodies freshly exported/type-checked and scanned for control flow, placeholders and tiny bodies; cached exact JIT IL hashes rechecked. Eight current empty bodies have nonempty original callers outside R19. 145 original-empty and five constant body shapes match direct native bytes. The unified 156-method queue distinguishes eight source gaps, 35 R19 pending profiles, four additional semantic-marker reviews, 92 validator/JIT reviews and seventeen Reset contexts. These are work items, not a bug total. No game DLL, frozen verifier, Unity/IPA/device promotion changed.

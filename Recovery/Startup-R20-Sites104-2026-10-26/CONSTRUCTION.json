@@ -1,6 +1,6 @@
 {
   "parent_sha256": "0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2",
-  "candidate_sha256": "92d0fc67a0c6afb0aa08ed18b4ad6316968a0381b998ade1eb1fe59a23ba01cb",
+  "candidate_sha256": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
   "bytes": 22777856,
   "new_unique_methods": 8,
   "changes": [
@@ -37,9 +37,9 @@
       "new_maxstack": 8,
       "local_sig": "0x11000847",
       "old_code_sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
-      "new_code_sha256": "e61779b2a9251cbd43004e8609e448023226dd17a2e2d677fe931b74dbb3805e",
-      "new_code": "027bd4010004280b00000a3971000000027bd40100047bd9030004130011007b330200042001000000592001000000431b000000027bd801000439420000000220000000007dd8010004382c000000027bd80100043a2700000011007b450200047b7a05000420ffffffff3b110000000220010000007dd80100040228830100062a",
-      "reason": "Restore native board predicate/reload, captured mouse, unsigned hand partition, prop sentinel and transition-only display callback. Natural CLR receiver exceptions replace native null-throw scaffolding.",
+      "new_code_sha256": "4f161ea772e959c3a20def32e9ddd7b940fda33cc8a03eba6ea83c4a2d1eccdc",
+      "new_code": "027bd4010004280b00000a3971000000027bd40100047bd9030004130011007b330200042001000000592001000000431b000000027bd801000439420000000220000000007dd8010004382c000000027bd80100043a2700000011007b3b0200047bfd03000420ffffffff3b110000000220010000007dd80100040228830100062a",
+      "reason": "Restore native board predicate/reload, captured mouse, unsigned hand partition, Card.cardDeviceType sentinel and transition-only display callback. Mouse+0x68 is Card; Prop+0xB0 must not be substituted. Natural CLR receiver exceptions replace native null-throw scaffolding.",
       "group": "missing-manager-lifecycle",
       "native_evidence_sha256": "c594cb8261117d941f865973aa0e0630eb51eaa190312312b600822552a959f5",
       "qualification": "AUTHORED_UNTESTED"
@@ -466,7 +466,7 @@
         "bytes": "488b4168"
       },
       "kind": "FIELD_READ",
-      "description": "Use captured MouseManager.propOnHand",
+      "description": "Read captured MouseManager.cardOfBankOnHand at native +0x68",
       "new_cil_start": 92,
       "new_cil_end": 97,
       "qualification": "AUTHORED_UNTESTED"
@@ -481,7 +481,7 @@
         "bytes": "83782cff"
       },
       "kind": "FIELD_READ",
-      "description": "Read native Prop.propType",
+      "description": "Read Card.cardDeviceType at native +0x2C",
       "new_cil_start": 97,
       "new_cil_end": 102,
       "qualification": "AUTHORED_UNTESTED"
@@ -496,7 +496,7 @@
         "bytes": "74e2"
       },
       "kind": "CONTROL_FLOW",
-      "description": "Retain state for propType == -1",
+      "description": "Retain state for cardDeviceType == -1",
       "new_cil_start": 107,
       "new_cil_end": 112,
       "qualification": "AUTHORED_UNTESTED"
