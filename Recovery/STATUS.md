@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+R20 exact Apple run 40220652002: all 1,029 source/log records rechecked, zero errors and 10,572 retained warnings. Six compiler controls meet their expectations. A historical damaged/normal basename collision overwrote the damaged raw log while preserving its 34-error JSON; evidence is saved before a log-directory fix and control-only replay. This does not alter the candidate or the valid normal-source result. Product/IPA/device gates remain open.
+
 Current R20: **104 authored positions/eight methods; 768 normal full-CIL/native records match; eight physical omissions detected**. Exact SHA d887b370 passes fresh Linux IL2CPP and all 755 C++/274 C units in run 40219580971; every returned source/log is independently rechecked. Preserved Card-chain predecessor has 27 mismatches. Apple is prepared, with no new Unity export/link/IPA/device promotion. Historical checkpoint-specific statuses follow below.
 
 R20 Card-chain correction: only DeviceManager.Update changes relative to initial R20. Corrected authored3 has seven finite native/CIL profiles /552 matching normal records, versus 27 mismatches in the preserved predecessor. Initial native-harness null-Card process failures are retained as failures. 104 positions/eight targets remain unchanged. Save-list runtime, current-SHA compiler and product gates remain pending.

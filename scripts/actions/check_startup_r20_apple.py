@@ -24,7 +24,8 @@ for key,suffix in [('ALL-CPP-RESULTS.json','.cpp'),('ALL-C-RESULTS.json','.c')]:
 assert len(sources)==1029
 old_flags=compile_flags(root);controls(old_flags,root,out)
 oldcpp=root/'Il2CppOutputProject/Source/il2cppOutput'
-known=run_one(oldcpp/'Generics__63.cpp',old_flags,root,out)
+control_out=out/'damaged-r4-control';control_out.mkdir();(control_out/'logs').mkdir()
+known=run_one(oldcpp/'Generics__63.cpp',old_flags,root,control_out)
 assert known['exit_code'] and known['error_count']==34,'Real damaged Apple R4 control'
 (out/'DAMAGED-R4-CONTROL.json').write_text(json.dumps(known,indent=2)+'\n')
 # Change only the generated include directory. Runtime include directories,

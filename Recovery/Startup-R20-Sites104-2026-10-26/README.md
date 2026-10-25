@@ -28,3 +28,11 @@ DeviceManager.Start/Update、ProjectManager.Start/Update、SunManager.Start/Upda
 Unity 生命周期、资源/游戏叶函数内部、实例化/销毁调度、UI 渲染和 Windows SEH 均不由上述受控叶函数证明。有限输入无差异不能推出普遍语义等价。全程序集仍保留 70 条失败或不支持项，R19 仍有 35 个运行 profile 待完成；其他语义标记/工具覆盖审查队列继续开放。
 
 本批没有新的持证 Unity Editor 导入/导出、播放器链接、未签名 IPA 或 iPad 实测。qualified_methods=0 表示没有推进产品资格，并不抹掉明确列出的有限测试成果。iPad 黑屏/闪烁是否解决仍待新包和真机验收。
+
+## 当前候选 Apple 实测和日志保存纠正
+
+[Apple run 40220652002](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40220652002) 的 755 C++/274 C arm64 语法单元全部通过。逐一核对 1,029 个返回源文件身份与原始日志，0 错误，保留 10,572 条警告；Xcode 16.4/iPhoneOS18.5/arm64 参数、六个编译控制均核对。没有新 Unity 导出或播放器链接。
+
+回读时发现历史 Apple driver 的 run_one 只按 basename 保存日志：损坏的历史 Generics__63.cpp 先产生 34 条错误，随后同名正常文件覆盖其 raw log。JSON 中原始 34 条错误及非零进程结果仍保存；正常源码的 1,029 个日志有效，损坏控制 raw log 单列为缺项。这个问题在历史 R19 原始证据中也存在。本次先保存覆盖前 driver/两份 JSON 与现存日志，再为损坏控制增加独立日志目录，并只补跑该一个控制单元，未修改候选、编译参数、解析或判定规则。补跑未完成前不把 raw log 记作已保留。
+
+完整生成源码包（152,239,861 字节）另外上传到仓库 Release，远端资产大小与 SHA-256 元数据已匹配，避免仅依赖短期 Actions artifact。见 GENERATED-SOURCE-RELEASE-RECEIPT.json。

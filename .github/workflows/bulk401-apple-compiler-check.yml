@@ -2,6 +2,11 @@ name: Startup R20 Sites104 fresh code - independent Apple arm64 compiler prechec
 
 on:
   workflow_dispatch:
+    inputs:
+      damage_control_only:
+        description: Replay only the real damaged unit after a raw-log collision
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -9,6 +14,7 @@ permissions:
 
 jobs:
   compiler:
+    if: ${{ !inputs.damage_control_only }}
     runs-on: macos-15
     timeout-minutes: 30
     steps:
@@ -59,3 +65,44 @@ jobs:
           path: ${{ runner.temp }}/startup-r20-apple/
           retention-days: 30
           if-no-files-found: warn
+
+  damage_control_replay:
+    if: ${{ inputs.damage_control_only }}
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select exact Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          xcodebuild -version
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 39988665189
+          name: GodsPVZ-Stage9-bulk389-unsigned-Xcode
+          path: ${{ runner.temp }}/frozen-xcode-input
+      - name: Restore the unchanged damaged diagnostic source and headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          old="$RUNNER_TEMP/frozen-xcode-input/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst"
+          [ "$(shasum -a 256 "$old" | awk '{print $1}')" = '93d32bb83a6d93b1c9d8a490bf057db7cfe2e35dad1219ab4924b6ec38538e04' ]
+          command -v zstd >/dev/null || brew install zstd
+          mkdir -p "$RUNNER_TEMP/frozen-export"
+          zstd -dc "$old" | tar -xf - -C "$RUNNER_TEMP/frozen-export"
+      - name: Replay one damaged Apple unit with separately preserved raw log
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/check_startup_r20_apple_damage_control.py \
+            --xcode-dir "$RUNNER_TEMP/frozen-export/xcode" \
+            --output-dir "$RUNNER_TEMP/r20-damage-control-only"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Startup-R20-Apple-Damage-Control-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r20-damage-control-only/
+          retention-days: 30
+          if-no-files-found: error
