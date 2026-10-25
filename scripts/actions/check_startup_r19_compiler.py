@@ -9,7 +9,7 @@ here=Path(__file__).resolve().parent
 s=importlib.util.spec_from_file_location('portable',here/'verify_bulk152_portable.py')
 p=importlib.util.module_from_spec(s);s.loader.exec_module(p)
 args=p.parse_args();root=Path(args.output_dir).resolve();candidate=Path(args.candidate_dll).resolve()
-expected='342907d528a76906750bc0d83d5be8996474d91e98078938b366038bae4b0b66'
+expected='0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2'
 assert p.sha256_file(candidate)==expected,'Fixed Startup R19 Batch100 input'
 root.mkdir(parents=True,exist_ok=False)
 report=dict(scope='STARTUP_R19_FRESH_LINUX_ALL_GENERATED_SOURCE_COMPILER_ONLY',candidate_sha256=expected,

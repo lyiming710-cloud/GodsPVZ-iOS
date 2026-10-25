@@ -41,7 +41,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/downloads"
           gh release download bulk152-actions-checkpoint-2026-10-20 --repo "$GITHUB_REPOSITORY" --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz --pattern PORTABLE-MANIFEST.json --dir "$RUNNER_TEMP/downloads"
           python3 -m zipfile -e Recovery/Startup-R19-Batch100-2026-10-25/STARTUP-R19-BATCH100-CANDIDATE.zip "$RUNNER_TEMP/downloads"
-          echo '342907d528a76906750bc0d83d5be8996474d91e98078938b366038bae4b0b66  STARTUP-R19-BATCH100.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
+          echo '0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2  STARTUP-R19-BATCH100.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
       - name: Authenticate and restore compiler-only inputs
         shell: bash
         run: |
