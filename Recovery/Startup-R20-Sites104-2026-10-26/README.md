@@ -15,7 +15,7 @@ DeviceManager.Start/Update、ProjectManager.Start/Update、SunManager.Start/Upda
 - 存档 UI 覆盖旧项为空/存活/销毁/空引用、0/1/3 个存档、Instantiate 返回空、销毁或 Start0 回调替换列表/管理器/数量/父级内容，以及最终特殊项；真实 CLR List 的元素、容量、版本与原版内联 Clear/Add 效果一并观察。
 - 8 个物理 DLL 故障变体逐一将目标 RVA 退回父版本 tiny-ret。全部进程正常完成，8/8 都出现目标行为差异，其他方法没有差异。差异不是靠 InvalidProgram 或崩溃计数。完整变体可由候选和 DELTA-RECONSTRUCTION 重建并校验 SHA。
 - [当前 Linux run 40219580971](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40219580971)：新 IL2CPP 转换退出 0，755 个 C++/274 个 C 源文件全部语法检查 0 错误。1,029 份返回源码与原始日志均独立回读并校验大小/SHA；保留 2,597 条警告、六个编译控制和真实损坏 R4 的 37 条错误。运行器 DLL 身份由原始输入清单回读支持，未返回物理 staged DLL。
-- 当前候选 Apple 检查已使用精确 Linux 生成包准备；编译参数、1,029 源文件检查、六个控制和损坏 R4 34-error 控制沿用原算法。实际结果见后续 ACTUAL-APPLE 文件，未执行前不记通过。
+- 当前候选 Apple run 40220652002 的 1,029 个单元及其全部源码身份/原始日志均通过回读；六个编译控制符合预期。损坏 R4 的原始日志覆盖问题另由 run 40221471927 单独补跑，真实 34-error 日志已完整保存，未重跑正常源码，也未修改候选。
 
 ## 实测纠错和失败证据
 
@@ -36,3 +36,11 @@ Unity 生命周期、资源/游戏叶函数内部、实例化/销毁调度、UI 
 回读时发现历史 Apple driver 的 run_one 只按 basename 保存日志：损坏的历史 Generics__63.cpp 先产生 34 条错误，随后同名正常文件覆盖其 raw log。JSON 中原始 34 条错误及非零进程结果仍保存；正常源码的 1,029 个日志有效，损坏控制 raw log 单列为缺项。这个问题在历史 R19 原始证据中也存在。本次先保存覆盖前 driver/两份 JSON 与现存日志，再为损坏控制增加独立日志目录，并只补跑该一个控制单元，未修改候选、编译参数、解析或判定规则。补跑未完成前不把 raw log 记作已保留。
 
 完整生成源码包（152,239,861 字节）另外上传到仓库 Release，远端资产大小与 SHA-256 元数据已匹配，避免仅依赖短期 Actions artifact。见 GENERATED-SOURCE-RELEASE-RECEIPT.json。
+
+## 本批有限证据收尾
+
+[控制补跑 40221471927](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40221471927) 只运行一个历史损坏编译单元，正常源码 job 明确 skipped。独立回读物理源文件（SHA 11427c29…）、原始日志（SHA ea1198d1…）和完整 flags：34 条错误、28 条警告与非零进程结果全部一致；参数与先前损坏控制完全相同。目录隔离解决日志覆盖，初始缺项仍原样保留在历史证据中。
+
+PER-METHOD-STATUS.json/CSV 提供八方法逐项位置数、运行对照、故障差异、类型/访问/JIT 和 Linux/Apple 状态。CURRENT-WORK-QUEUE.json 只更新历史 156 个方法工作项中本批八个的当前状态；其余 148 个是不同类别的后续审查/验证工作，不是 148 个已确认 bug。原 R19 的 35 个完整运行 profile、四个其他语义标记、92 个工具覆盖审查及17 个 Reset 上下文保持各自状态。下一批新源码仍先累计超过 100 个有原版依据的位置再集中检测。
+
+本批有限运行/编译证据已收尾；新的持证 Editor 场景/资源验收、链接、IPA 和真机门仍未完成。
