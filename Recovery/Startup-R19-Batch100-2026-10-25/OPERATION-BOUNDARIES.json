@@ -1,0 +1,588 @@
+{
+  "scope": "TWENTY_TWO_CALLER_EXACT_OPERATION_AND_BRANCH_BOUNDARY_AUDIT_NOT_FULL_BODY_BEHAVIOR",
+  "candidate_sha256": "0ba5bc7ec9603d14a1c0bde6d784d232aa78efaa1700304e75e4f2b56ef7dec2",
+  "methods": 22,
+  "operation_kinds": {
+    "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT": 7,
+    "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64": 11,
+    "FLOAT32_ZERO_REPLACES_INT32_ZERO": 30,
+    "PUBLIC_TRANSFORM_PARENT": 2,
+    "PUBLIC_ZOMBIE_PREVIOUS_POSITION": 2,
+    "PUBLIC_IMAGE_FILL_AMOUNT": 3,
+    "PUBLIC_QUATERNION_IDENTITY": 1
+  },
+  "rows": [
+    {
+      "token": "0x0600006F",
+      "name": "System.Void System0::GetAllPlantSaves()",
+      "code_bytes": 301,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 59,
+          "end": 193,
+          "owner": "System.Collections.Generic.List`1<PlantSave>",
+          "receiver_local": 3,
+          "exit": 214
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060000B8",
+      "name": "System.Void PlantAnimationEvent::PC_SSI_Chop3()",
+      "code_bytes": 306,
+      "classified_operation_sites": [
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 232,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060000C3",
+      "name": "System.Void VFXAnimationEvent::Update()",
+      "code_bytes": 415,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 138,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 202,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060001C6",
+      "name": "System.Void MouseManager::Update_SkillOnHand()",
+      "code_bytes": 231,
+      "classified_operation_sites": [
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 96,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x0600030A",
+      "name": "System.Void Device::Update_Brightness()",
+      "code_bytes": 363,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 11,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 84,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 273,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000315",
+      "name": "System.Void Device::DC_ArtillerySupportGuidingCore()",
+      "code_bytes": 299,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 124,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 188,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000319",
+      "name": "System.Void Device::DC_Portal()",
+      "code_bytes": 426,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 75,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 139,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 249,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 329,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000333",
+      "name": "System.Void Device::SetPrefabState_onHand(Card,MouseManager)",
+      "code_bytes": 312,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_TRANSFORM_PARENT",
+          "offset": 219,
+          "old_opcode": "call",
+          "new_opcode": "callvirt"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060003A5",
+      "name": "System.Void Plant::SetPrefabState_Glove(MouseManager)",
+      "code_bytes": 321,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 188,
+          "end": 304,
+          "owner": "System.Collections.Generic.List`1<UnityEngine.GameObject>",
+          "receiver_local": 4,
+          "exit": 304
+        },
+        {
+          "kind": "PUBLIC_TRANSFORM_PARENT",
+          "offset": 83,
+          "old_opcode": "call",
+          "new_opcode": "callvirt"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060003AB",
+      "name": "System.Void Plant::ST_Peasniper()",
+      "code_bytes": 499,
+      "classified_operation_sites": [
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 164,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        },
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 324,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060003E4",
+      "name": "System.Boolean Projectile::CollisionDetect_Zombie(System.Boolean)",
+      "code_bytes": 727,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_ZOMBIE_PREVIOUS_POSITION",
+          "offset": 537,
+          "old_opcode": "ldflda",
+          "new_opcode": "callvirt"
+        },
+        {
+          "kind": "PUBLIC_ZOMBIE_PREVIOUS_POSITION",
+          "offset": 570,
+          "old_opcode": "ldflda",
+          "new_opcode": "callvirt"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000423",
+      "name": "System.Void Zombie::Update_Brightness()",
+      "code_bytes": 637,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 11,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 84,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 265,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 329,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 504,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 609,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x0600048D",
+      "name": "System.Void Zombie::ZC_ImperialVanguardHarbinger()",
+      "code_bytes": 714,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 326,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 407,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 617,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 645,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000578",
+      "name": "System.Void Almanac_PlantDetail::CloseOrderUpPage()",
+      "code_bytes": 407,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 285,
+          "end": 401,
+          "owner": "System.Collections.Generic.List`1<SuppliesItem>",
+          "receiver_local": 7,
+          "exit": 401
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000579",
+      "name": "System.Void Almanac_PlantDetail::CloseSkillUpPage()",
+      "code_bytes": 413,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 250,
+          "end": 366,
+          "owner": "System.Collections.Generic.List`1<SuppliesItem>",
+          "receiver_local": 7,
+          "exit": 366
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000584",
+      "name": "System.Void Almanac_PlantDetail::SetSkillUpPreview(System.Int32)",
+      "code_bytes": 497,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 266,
+          "end": 382,
+          "owner": "System.Collections.Generic.List`1<SuppliesItem>",
+          "receiver_local": 9,
+          "exit": 382
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000598",
+      "name": "System.Void Almanac_TalentSystem::PreviewOrderUp(System.Boolean)",
+      "code_bytes": 591,
+      "classified_operation_sites": [
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 254,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060005CF",
+      "name": "System.Void BoardPreview::Initialize()",
+      "code_bytes": 1354,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 380,
+          "end": 496,
+          "owner": "System.Collections.Generic.List`1<Zombie>",
+          "receiver_local": 26,
+          "exit": 496
+        },
+        {
+          "kind": "PUBLIC_CLEAR_WITH_CAPTURED_RECEIVER_AND_EXACT_EXIT",
+          "offset": 871,
+          "end": 987,
+          "owner": "System.Collections.Generic.List`1<Device>",
+          "receiver_local": 28,
+          "exit": 987
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x060005E8",
+      "name": "System.Void BuffUIController_Zombie::SetStatsImageSet(System.Int32,System.Single)",
+      "code_bytes": 463,
+      "classified_operation_sites": [
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 43,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 63,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 360,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        },
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 385,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        },
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 410,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        },
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 425,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000626",
+      "name": "System.Void HPUIController_Zombie::Update()",
+      "code_bytes": 1755,
+      "classified_operation_sites": [
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 368,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 526,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "PUBLIC_IMAGE_FILL_AMOUNT",
+          "offset": 585,
+          "old_opcode": "ldfld",
+          "new_opcode": "callvirt"
+        },
+        {
+          "kind": "PUBLIC_IMAGE_FILL_AMOUNT",
+          "offset": 717,
+          "old_opcode": "ldfld",
+          "new_opcode": "callvirt"
+        },
+        {
+          "kind": "PUBLIC_IMAGE_FILL_AMOUNT",
+          "offset": 752,
+          "old_opcode": "ldfld",
+          "new_opcode": "callvirt"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 880,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 903,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 1111,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 1385,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 1460,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        },
+        {
+          "kind": "FLOAT32_ZERO_REPLACES_INT32_ZERO",
+          "offset": 1554,
+          "old_opcode": "ldc.i4",
+          "new_opcode": "ldc.r4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x06000686",
+      "name": "System.Void PrepareUIController::SeedChoose()",
+      "code_bytes": 243,
+      "classified_operation_sites": [
+        {
+          "kind": "INT32_MINUS_ONE_REPLACES_POSITIVE_INT64",
+          "offset": 228,
+          "old_opcode": "ldc.i8",
+          "new_opcode": "ldc.i4"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    },
+    {
+      "token": "0x0600070F",
+      "name": "System.Void Zombie_Select::UpdateSelectButtonImage()",
+      "code_bytes": 451,
+      "classified_operation_sites": [
+        {
+          "kind": "PUBLIC_QUATERNION_IDENTITY",
+          "offset": 441,
+          "old_opcode": "ldsfld",
+          "new_opcode": "call"
+        }
+      ],
+      "all_other_code_bytes_identical": true,
+      "all_external_branch_switch_entries_checked": true,
+      "full_caller_runtime_acceptance": false
+    }
+  ],
+  "member_legality_evidence": "Separate exact actual all-assembly member audit; this audit does not bypass visibility",
+  "native_semantics_or_product_acceptance": false
+}
