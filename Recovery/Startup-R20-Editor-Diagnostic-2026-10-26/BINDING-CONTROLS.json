@@ -1,0 +1,49 @@
+{
+  "scope": "DIAGNOSTIC_INPUT_BINDING_GUARDS_ONLY_NOT_GAME_TESTS",
+  "normal_candidate_sha256": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
+  "normal_validation_pass": true,
+  "actual_binder_sha256": "d890ae0b5d52eede8c0372c4d136286533867d8504eadf45b2dd693c57af2ce6",
+  "physical_negative_controls": 3,
+  "rejected": 3,
+  "controls": [
+    {
+      "name": "wrong_dll",
+      "rejected": true,
+      "actual_error": "Wrong R20 candidate bytes",
+      "mutation": {
+        "candidate_byte_offset": 0,
+        "before": 77,
+        "after": 76,
+        "variant_dll_sha256": "0fdec2ece3540fe65d756b6416addff17fbff6450a9d0bda13886c014825855e",
+        "inner_zip_manifest_updated": true
+      },
+      "outer_manifest_updated": true
+    },
+    {
+      "name": "failed_target_type",
+      "rejected": true,
+      "actual_error": "A target type check failed",
+      "mutation": {
+        "file": "FROZEN-WITH-INTERFACE-FACTS.json",
+        "target": "0x0600017E",
+        "replaced_status": "FAIL_OR_UNSUPPORTED"
+      },
+      "outer_manifest_updated": true
+    },
+    {
+      "name": "missing_runtime_record",
+      "rejected": true,
+      "actual_error": "Native/CIL finite profile missing: NATIVE-SAVE-UI.json",
+      "mutation": {
+        "file": "NATIVE-SAVE-UI.json",
+        "normal_records_before": 216,
+        "normal_records_after": 215
+      },
+      "outer_manifest_updated": true
+    }
+  ],
+  "game_dll_changed": false,
+  "frozen_game_verifiers_changed": false,
+  "unity_started": false,
+  "ipa": null
+}

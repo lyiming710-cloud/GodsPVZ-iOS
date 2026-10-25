@@ -1,0 +1,62 @@
+{
+  "scope": "R20_CANDIDATE_AND_EVIDENCE_BINDING_TO_PREVIOUSLY_EXECUTED_R8_EDITOR_DIAGNOSTIC",
+  "candidate_sha256": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
+  "script_derivations": [
+    {
+      "parent": "scripts/actions/prepare_startup_r8_unity.py",
+      "parent_sha256": "285f751f152dec3996c7a13e4351712ef07a620cdf833154a1a020276bf575e7",
+      "derived": "scripts/actions/prepare_startup_r20_unity.py",
+      "derived_sha256": "0763612f481ca740350b24ac6576e9427791250fa03a72180be977f77d530645",
+      "change": "Only expected candidate SHA-256"
+    },
+    {
+      "parent": "scripts/actions/prepare_startup_r8_plugin.py",
+      "parent_sha256": "de5c727d20d2af7e437ca6d2f4756bbf1e6fc8fc50618c6249fc03c27e2306ad",
+      "derived": "scripts/actions/prepare_startup_r20_plugin.py",
+      "derived_sha256": "b20d5b3d46711d35d687438f07da81f79266da0cb507109b64006ba8773a781c",
+      "change": "Only expected candidate SHA-256"
+    }
+  ],
+  "parent_workflow_sha256": "fece8dffa8633544a480bc20ec2c01c4462723d82239ee8fd01b8889a7820d61",
+  "current_workflow_sha256": "921411cef0de99f1fba2b08490d9519ca13806446ce7d405df85256475f4df60",
+  "workflow_replacements": [
+    {
+      "before": "6189387c6af11108eba9a9855bfd6d6af567ec000a4999d1ed1b0328ba0e1d08",
+      "after": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37"
+    },
+    {
+      "before": "Startup R8",
+      "after": "Startup R20"
+    },
+    {
+      "before": "startup-r8",
+      "after": "startup-r20"
+    },
+    {
+      "before": "STARTUP-R8",
+      "after": "STARTUP-R20"
+    },
+    {
+      "before": "bind_startup_r8_diagnostic.py",
+      "after": "bind_startup_r20_diagnostic.py"
+    },
+    {
+      "before": "prepare_startup_r8_unity.py",
+      "after": "prepare_startup_r20_unity.py"
+    },
+    {
+      "before": "prepare_startup_r8_plugin.py",
+      "after": "prepare_startup_r20_plugin.py"
+    },
+    {
+      "before": "Recovery/Bulk401-Generic-Repair-2026-10-24/BULK401-CANDIDATE.zip",
+      "after": "Recovery/Startup-R20-Sites104-2026-10-26/STARTUP-R20-SITES104-CANDIDATE.zip"
+    }
+  ],
+  "unity_version": "2022.3.44f1c1",
+  "baseline_migration_package_guid_shader_controls_licensing_and_seat_return_unchanged": true,
+  "all_existing_helper_and_editor_assertions_retained": true,
+  "game_dll_changes": 0,
+  "formal_or_product_promotion": false,
+  "additional_fail_fast_step": "Validate current R20 checkpoint and inner candidate archive before helper/Editor setup"
+}
