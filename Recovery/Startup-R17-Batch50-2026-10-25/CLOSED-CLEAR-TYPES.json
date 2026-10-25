@@ -1,0 +1,35 @@
+{
+  "scope": "FINITE_INT32_STRING_GENERIC_CLEAR_MODELS_FROZEN_CHECKER_UNCHANGED",
+  "candidate_sha256": "d2a645ad0d8164af5fbdcbd9fcaa578d5a28b27e7b13f3012cdb51e63a256091",
+  "passed": 2,
+  "total": 2,
+  "results": [
+    {
+      "method": "System.Void FTRuntime.Internal.SwfAssocList`1::Clear()",
+      "token": "0x060008DA",
+      "status": "PASS",
+      "reachable": 7,
+      "instructions": 7,
+      "unreachable": 0,
+      "max_stack": 1,
+      "context": "System.Int32"
+    },
+    {
+      "method": "System.Void FTRuntime.Internal.SwfAssocList`1::Clear()",
+      "token": "0x060008DA",
+      "status": "PASS",
+      "reachable": 7,
+      "instructions": 7,
+      "unreachable": 0,
+      "max_stack": 1,
+      "context": "System.String"
+    }
+  ],
+  "negative_control": {
+    "name": "wrong-closed-receiver",
+    "rejected": true,
+    "reason": "System.Void FTRuntime.Internal.SwfAssocList`1::Clear() IL_0001: receiver FTRuntime.Internal.SwfAssocList`1<System.Int32> incompatible with FTRuntime.Internal.SwfAssocList`1<System.String> (write=False, call=False)"
+  },
+  "global_raw_census_preserved": true,
+  "universal_generic_proof": false
+}

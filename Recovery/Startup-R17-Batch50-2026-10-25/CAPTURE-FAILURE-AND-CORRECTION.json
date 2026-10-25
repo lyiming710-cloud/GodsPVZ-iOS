@@ -1,0 +1,230 @@
+{
+  "scope": "PRESERVED_REAL_ORIGINAL_NATIVE_VS_INITIAL_FIFTY_CANDIDATE_DISCREPANCY",
+  "initial_candidate_sha256": "ab8340847a34b687523694c0ef237e0f5030c4f175769c04c3664b532eb04416",
+  "corrected_candidate_sha256": "d2a645ad0d8164af5fbdcbd9fcaa578d5a28b27e7b13f3012cdb51e63a256091",
+  "method": "0x06000784 TextConsoleSimulator.Start",
+  "failures": 6,
+  "original_behavior": "Read m_TextComponent into RSI before metadata/heap allocation",
+  "initial_behavior": "Read m_TextComponent after allocation while initializing the new state object",
+  "controlled_callee_case": "Allocation changes owner text component",
+  "correction": "Append one method-private TMP_Text local and capture before allocating",
+  "target_scope_stays_fifty": true,
+  "full_initial_counterexamples": [
+    {
+      "native": {
+        "name": "case-0198",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": null,
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      },
+      "cil": {
+        "name": "case-0198",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-allocated",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      }
+    },
+    {
+      "native": {
+        "name": "case-0199",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": null,
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      },
+      "cil": {
+        "name": "case-0199",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-allocated",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      }
+    },
+    {
+      "native": {
+        "name": "case-0200",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-old",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      },
+      "cil": {
+        "name": "case-0200",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-allocated",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      }
+    },
+    {
+      "native": {
+        "name": "case-0201",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-old",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      },
+      "cil": {
+        "name": "case-0201",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-allocated",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      }
+    },
+    {
+      "native": {
+        "name": "case-0202",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-other",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      },
+      "cil": {
+        "name": "case-0202",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-allocated",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      }
+    },
+    {
+      "native": {
+        "name": "case-0203",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-other",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      },
+      "cil": {
+        "name": "case-0203",
+        "token": "0x06000784",
+        "kind": "factory",
+        "trace": [
+          "Allocate",
+          "Start"
+        ],
+        "state": {
+          "state": 0,
+          "current": null,
+          "text": "text-allocated",
+          "owner": "host"
+        },
+        "host_text": "text-allocated",
+        "error": null
+      }
+    }
+  ]
+}

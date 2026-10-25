@@ -1,0 +1,876 @@
+{
+  "scope": "FIFTY_NEW_SOURCE_REPAIR_PLAN_NOT_TESTED_OR_ACCEPTED",
+  "parent_sha256": "5454887dc125cf56b7de5fc6079441075b91972e64db40e52f70d1129a87c73f",
+  "new_unique_methods": 50,
+  "groups": {
+    "ASSOC_CLEAR_CALL_OWN_PUBLIC_LIST_CLEAR": 1,
+    "CAMERA_AWAKE_NATIVE_INT32_SENTINELS": 1,
+    "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR": 17,
+    "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE": 27,
+    "WAIT_FACTORY_CALL_PUBLIC_CTOR_WITH_ACTUAL_CONTROLLER": 4
+  },
+  "plans": [
+    {
+      "token": "0x0600071C",
+      "name": "System.Collections.IEnumerator EnvMapAnimator::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600071E",
+      "state_field": "System.Int32 EnvMapAnimator/<Start>d__4::<>1__state",
+      "state_field_token": "0x4000922",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d22090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b4c90",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000743",
+      "name": "System.Collections.IEnumerator TMPro.Examples.Benchmark01::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000745",
+      "state_field": "System.Int32 TMPro.Examples.Benchmark01/<Start>d__10::<>1__state",
+      "state_field_token": "0x4000941",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d41090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b2170",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600074B",
+      "name": "System.Collections.IEnumerator TMPro.Examples.Benchmark01_UGUI::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600074D",
+      "state_field": "System.Int32 TMPro.Examples.Benchmark01_UGUI/<Start>d__10::<>1__state",
+      "state_field_token": "0x400094f",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d4f090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b21e0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000763",
+      "name": "System.Void TMPro.Examples.ShaderPropAnimator::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000766",
+      "state_field": "System.Int32 TMPro.Examples.ShaderPropAnimator/<AnimateProperties>d__6::<>1__state",
+      "state_field_token": "0x4000994",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d94090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b51e0",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803b524c",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x06000764",
+      "name": "System.Collections.IEnumerator TMPro.Examples.ShaderPropAnimator::AnimateProperties()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000766",
+      "state_field": "System.Int32 TMPro.Examples.ShaderPropAnimator/<AnimateProperties>d__6::<>1__state",
+      "state_field_token": "0x4000994",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d94090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b5100",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000770",
+      "name": "System.Void TMPro.Examples.SkewTextExample::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000774",
+      "state_field": "System.Int32 TMPro.Examples.SkewTextExample/<WarpText>d__7::<>1__state",
+      "state_field_token": "0x400099e",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d9e090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b5480",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803b54ec",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x06000772",
+      "name": "System.Collections.IEnumerator TMPro.Examples.SkewTextExample::WarpText()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000774",
+      "state_field": "System.Int32 TMPro.Examples.SkewTextExample/<WarpText>d__7::<>1__state",
+      "state_field_token": "0x400099e",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d9e090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b5500",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600077B",
+      "name": "System.Collections.IEnumerator TMPro.Examples.TeleType::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600077D",
+      "state_field": "System.Int32 TMPro.Examples.TeleType/<Start>d__4::<>1__state",
+      "state_field_token": "0x40009a7",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007da7090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bb6f0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000784",
+      "name": "System.Void TMPro.Examples.TextConsoleSimulator::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600078B",
+      "state_field": "System.Int32 TMPro.Examples.TextConsoleSimulator/<RevealCharacters>d__7::<>1__state",
+      "state_field_token": "0x40009ae",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 55,
+        "end": 69,
+        "bytes": "fe0c010020000000007dae090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bbb80",
+      "native_instructions": 34,
+      "native_boundaries": [
+        {
+          "source": "0x1803bbc0a",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x06000788",
+      "name": "System.Collections.IEnumerator TMPro.Examples.TextConsoleSimulator::RevealCharacters(TMPro.TMP_Text)",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600078B",
+      "state_field": "System.Int32 TMPro.Examples.TextConsoleSimulator/<RevealCharacters>d__7::<>1__state",
+      "state_field_token": "0x40009ae",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 38,
+        "end": 52,
+        "bytes": "fe0c020020000000007dae090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bba80",
+      "native_instructions": 32,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000789",
+      "name": "System.Collections.IEnumerator TMPro.Examples.TextConsoleSimulator::RevealWords(TMPro.TMP_Text)",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000791",
+      "state_field": "System.Int32 TMPro.Examples.TextConsoleSimulator/<RevealWords>d__8::<>1__state",
+      "state_field_token": "0x40009b5",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007db5090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bbb10",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000799",
+      "name": "System.Collections.IEnumerator TMPro.Examples.TextMeshProFloatingText::DisplayTextMeshProFloatingText()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007A3",
+      "state_field": "System.Int32 TMPro.Examples.TextMeshProFloatingText/<DisplayTextMeshProFloatingText>d__15::<>1__state",
+      "state_field_token": "0x40009d3",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007dd3090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bbd60",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600079A",
+      "name": "System.Collections.IEnumerator TMPro.Examples.TextMeshProFloatingText::DisplayTextMeshFloatingText()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600079D",
+      "state_field": "System.Int32 TMPro.Examples.TextMeshProFloatingText/<DisplayTextMeshFloatingText>d__16::<>1__state",
+      "state_field_token": "0x40009c9",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007dc9090004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bbcf0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007D6",
+      "name": "System.Void TMPro.Examples.VertexColorCycler::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007D9",
+      "state_field": "System.Int32 TMPro.Examples.VertexColorCycler/<AnimateVertexColors>d__3::<>1__state",
+      "state_field_token": "0x4000a28",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d280a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c3270",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803c32dc",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x060007D7",
+      "name": "System.Collections.IEnumerator TMPro.Examples.VertexColorCycler::AnimateVertexColors()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007D9",
+      "state_field": "System.Int32 TMPro.Examples.VertexColorCycler/<AnimateVertexColors>d__3::<>1__state",
+      "state_field_token": "0x4000a28",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d280a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c31b0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007E2",
+      "name": "System.Void TMPro.Examples.VertexJitter::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007E6",
+      "state_field": "System.Int32 TMPro.Examples.VertexJitter/<AnimateVertexColors>d__11::<>1__state",
+      "state_field_token": "0x4000a35",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d350a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c35c0",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803c362c",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x060007E4",
+      "name": "System.Collections.IEnumerator TMPro.Examples.VertexJitter::AnimateVertexColors()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007E6",
+      "state_field": "System.Int32 TMPro.Examples.VertexJitter/<AnimateVertexColors>d__11::<>1__state",
+      "state_field_token": "0x4000a35",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d350a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c32f0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007EF",
+      "name": "System.Void TMPro.Examples.VertexShakeA::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007F3",
+      "state_field": "System.Int32 TMPro.Examples.VertexShakeA/<AnimateVertexColors>d__11::<>1__state",
+      "state_field_token": "0x4000a42",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d420a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c3920",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803c398c",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x060007F1",
+      "name": "System.Collections.IEnumerator TMPro.Examples.VertexShakeA::AnimateVertexColors()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x060007F3",
+      "state_field": "System.Int32 TMPro.Examples.VertexShakeA/<AnimateVertexColors>d__11::<>1__state",
+      "state_field_token": "0x4000a42",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d420a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c3660",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007FC",
+      "name": "System.Void TMPro.Examples.VertexShakeB::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000800",
+      "state_field": "System.Int32 TMPro.Examples.VertexShakeB/<AnimateVertexColors>d__10::<>1__state",
+      "state_field_token": "0x4000a4c",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d4c0a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c3c90",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803c3cfc",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x060007FE",
+      "name": "System.Collections.IEnumerator TMPro.Examples.VertexShakeB::AnimateVertexColors()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000800",
+      "state_field": "System.Int32 TMPro.Examples.VertexShakeB/<AnimateVertexColors>d__10::<>1__state",
+      "state_field_token": "0x4000a4c",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d4c0a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c39d0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000809",
+      "name": "System.Void TMPro.Examples.VertexZoom::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600080F",
+      "state_field": "System.Int32 TMPro.Examples.VertexZoom/<AnimateVertexColors>d__10::<>1__state",
+      "state_field_token": "0x4000a58",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d580a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803ce200",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803ce26c",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x0600080B",
+      "name": "System.Collections.IEnumerator TMPro.Examples.VertexZoom::AnimateVertexColors()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600080F",
+      "state_field": "System.Int32 TMPro.Examples.VertexZoom/<AnimateVertexColors>d__10::<>1__state",
+      "state_field_token": "0x4000a58",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d580a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803cdf30",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000816",
+      "name": "System.Void TMPro.Examples.WarpTextExample::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600081A",
+      "state_field": "System.Int32 TMPro.Examples.WarpTextExample/<WarpText>d__8::<>1__state",
+      "state_field_token": "0x4000a64",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 35,
+        "end": 49,
+        "bytes": "fe0c010020000000007d640a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803ce360",
+      "native_instructions": 27,
+      "native_boundaries": [
+        {
+          "source": "0x1803ce3cc",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x06000818",
+      "name": "System.Collections.IEnumerator TMPro.Examples.WarpTextExample::WarpText()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x0600081A",
+      "state_field": "System.Int32 TMPro.Examples.WarpTextExample/<WarpText>d__8::<>1__state",
+      "state_field_token": "0x4000a64",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 25,
+        "end": 39,
+        "bytes": "fe0c010020000000007d640a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803ce3e0",
+      "native_instructions": 25,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000901",
+      "name": "System.Void FlashTools.Examples.PurpleFlowerLogic::Start()",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000906",
+      "state_field": "System.Int32 FlashTools.Examples.PurpleFlowerLogic/<StartCoro>d__4::<>1__state",
+      "state_field_token": "0x4000aea",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 68,
+        "end": 82,
+        "bytes": "fe0c020020000000007dea0a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c59e0",
+      "native_instructions": 42,
+      "native_boundaries": [
+        {
+          "source": "0x1803c5a94",
+          "target": "0x18131dbe0",
+          "kind": "EXTERNAL_TAIL_OR_SEPARATE_FUNCLET_REVIEW"
+        }
+      ]
+    },
+    {
+      "token": "0x06000902",
+      "name": "System.Collections.IEnumerator FlashTools.Examples.PurpleFlowerLogic::StartCoro(FTRuntime.SwfClipController)",
+      "group": "COROUTINE_FACTORY_DUPLICATE_PRIVATE_STATE_WRITE",
+      "ctor_token": "0x06000906",
+      "state_field": "System.Int32 FlashTools.Examples.PurpleFlowerLogic/<StartCoro>d__4::<>1__state",
+      "state_field_token": "0x4000aea",
+      "native_state_offset": 16,
+      "remove_span": {
+        "start": 38,
+        "end": 52,
+        "bytes": "fe0c020020000000007dea0a0004"
+      },
+      "reason": "Public constructor writes its Int32 argument to the state once; native factory inlines that same single write. Remove duplicated inaccessible caller write, preserving all offsets.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803c5950",
+      "native_instructions": 32,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600071E",
+      "name": "System.Void EnvMapAnimator/<Start>d__4::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x600071f",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000745",
+      "name": "System.Void TMPro.Examples.Benchmark01/<Start>d__10::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000746",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600074D",
+      "name": "System.Void TMPro.Examples.Benchmark01_UGUI/<Start>d__10::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x600074e",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000766",
+      "name": "System.Void TMPro.Examples.ShaderPropAnimator/<AnimateProperties>d__6::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000767",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000774",
+      "name": "System.Void TMPro.Examples.SkewTextExample/<WarpText>d__7::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000775",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600077D",
+      "name": "System.Void TMPro.Examples.TeleType/<Start>d__4::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x600077e",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600078B",
+      "name": "System.Void TMPro.Examples.TextConsoleSimulator/<RevealCharacters>d__7::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x600078c",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000791",
+      "name": "System.Void TMPro.Examples.TextConsoleSimulator/<RevealWords>d__8::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000792",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007A3",
+      "name": "System.Void TMPro.Examples.TextMeshProFloatingText/<DisplayTextMeshProFloatingText>d__15::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x60007a4",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600079D",
+      "name": "System.Void TMPro.Examples.TextMeshProFloatingText/<DisplayTextMeshFloatingText>d__16::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x600079e",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007D9",
+      "name": "System.Void TMPro.Examples.VertexColorCycler/<AnimateVertexColors>d__3::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x60007da",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007E6",
+      "name": "System.Void TMPro.Examples.VertexJitter/<AnimateVertexColors>d__11::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x60007e7",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060007F3",
+      "name": "System.Void TMPro.Examples.VertexShakeA/<AnimateVertexColors>d__11::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x60007f4",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000800",
+      "name": "System.Void TMPro.Examples.VertexShakeB/<AnimateVertexColors>d__10::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000801",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600080F",
+      "name": "System.Void TMPro.Examples.VertexZoom/<AnimateVertexColors>d__10::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000810",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x0600081A",
+      "name": "System.Void TMPro.Examples.WarpTextExample/<WarpText>d__8::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x600081b",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x06000906",
+      "name": "System.Void FlashTools.Examples.PurpleFlowerLogic/<StartCoro>d__4::.ctor(System.Int32)",
+      "group": "COROUTINE_CORRECT_OBJECT_BASE_CONSTRUCTOR",
+      "call_offset": 1,
+      "old_call_token": "0x6000907",
+      "native_old_alias_va": "0x180302170",
+      "reason": "The native empty Object constructor shares a pointer with empty Dispose; managed reconstruction incorrectly bound the alias to IDisposable.Dispose. Restore the actual Object base constructor contract.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803bd090",
+      "native_instructions": 12,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060008A6",
+      "name": "FTRuntime.Yields.SwfWaitStopPlaying FTRuntime.Yields.SwfWaitExtensions::WaitForStopPlaying(FTRuntime.SwfClipController)",
+      "group": "WAIT_FACTORY_CALL_PUBLIC_CTOR_WITH_ACTUAL_CONTROLLER",
+      "ctor_token": "0x060008CC",
+      "private_subscription_token": "0x60008cf",
+      "reason": "Public constructor already performs Subscribe. Replace ctor(null)+second inaccessible Subscribe(controller) with one constructor(controller), preserving the original single subscription path.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803cb3f0",
+      "native_instructions": 24,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060008A7",
+      "name": "FTRuntime.Yields.SwfWaitRewindPlaying FTRuntime.Yields.SwfWaitExtensions::WaitForRewindPlaying(FTRuntime.SwfClipController)",
+      "group": "WAIT_FACTORY_CALL_PUBLIC_CTOR_WITH_ACTUAL_CONTROLLER",
+      "ctor_token": "0x060008C0",
+      "private_subscription_token": "0x60008c3",
+      "reason": "Public constructor already performs Subscribe. Replace ctor(null)+second inaccessible Subscribe(controller) with one constructor(controller), preserving the original single subscription path.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803cb330",
+      "native_instructions": 24,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060008A8",
+      "name": "FTRuntime.Yields.SwfWaitStopOrRewindPlaying FTRuntime.Yields.SwfWaitExtensions::WaitForStopOrRewindPlaying(FTRuntime.SwfClipController)",
+      "group": "WAIT_FACTORY_CALL_PUBLIC_CTOR_WITH_ACTUAL_CONTROLLER",
+      "ctor_token": "0x060008C6",
+      "private_subscription_token": "0x60008c9",
+      "reason": "Public constructor already performs Subscribe. Replace ctor(null)+second inaccessible Subscribe(controller) with one constructor(controller), preserving the original single subscription path.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803cb390",
+      "native_instructions": 24,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060008A9",
+      "name": "FTRuntime.Yields.SwfWaitPlayStopped FTRuntime.Yields.SwfWaitExtensions::WaitForPlayStopped(FTRuntime.SwfClipController)",
+      "group": "WAIT_FACTORY_CALL_PUBLIC_CTOR_WITH_ACTUAL_CONTROLLER",
+      "ctor_token": "0x060008BA",
+      "private_subscription_token": "0x60008bd",
+      "reason": "Public constructor already performs Subscribe. Replace ctor(null)+second inaccessible Subscribe(controller) with one constructor(controller), preserving the original single subscription path.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803cb2d0",
+      "native_instructions": 24,
+      "native_boundaries": []
+    },
+    {
+      "token": "0x060008DA",
+      "name": "System.Void FTRuntime.Internal.SwfAssocList`1::Clear()",
+      "group": "ASSOC_CLEAR_CALL_OWN_PUBLIC_LIST_CLEAR",
+      "reason": "Restore legal list.Clear then reloaded dictionary.Clear; native reference variant inlines list clearing and the fully-shared variant calls the same RGCTX list method.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED"
+    },
+    {
+      "token": "0x0600075A",
+      "name": "System.Void TMPro.Examples.CameraController::Awake()",
+      "group": "CAMERA_AWAKE_NATIVE_INT32_SENTINELS",
+      "reason": "Recover original Int32 Application.targetFrameRate=-1 on the vSyncCount<=0 path, retaining platform/transform ordering.",
+      "test_status": "NOT_RUN_BATCH_THRESHOLD_NOT_REACHED",
+      "native_entry": "0x1803b3560",
+      "native_instructions": 55,
+      "native_boundaries": []
+    }
+  ],
+  "tests_run": false,
+  "batch_test_trigger": "After 50 new distinct method bodies are concretely constructed",
+  "ipa": null
+}
