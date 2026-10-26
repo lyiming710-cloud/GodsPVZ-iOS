@@ -18,6 +18,11 @@ on:
         type: boolean
         default: false
         required: true
+      gameplay_audit:
+        description: Try original complex Adventure 19 in a visible real Editor with X11 mouse input; requires both audits
+        type: boolean
+        default: false
+        required: true
 
 permissions:
   contents: read
@@ -91,9 +96,13 @@ jobs:
           INTERACTION: ${{ inputs.interaction_audit }}
           AUDIT: ${{ inputs.audit_only }}
           ASSETS: ${{ inputs.assets_only }}
+          GAMEPLAY: ${{ inputs.gameplay_audit }}
         run: |
           if [ "$INTERACTION" = true ]; then
             [ "$AUDIT" = true ] && [ "$ASSETS" = false ] || exit 81
+          fi
+          if [ "$GAMEPLAY" = true ]; then
+            [ "$AUDIT" = true ] && [ "$ASSETS" = false ] && [ "$INTERACTION" = true ] || exit 82
           fi
       - name: Keep R21 restricted to actual UI diagnosis until its new Editor result is reviewed
         if: ${{ !inputs.assets_only }}
@@ -180,6 +189,10 @@ jobs:
           if ! command -v xvfb-run >/dev/null 2>&1 || ! command -v glxinfo >/dev/null 2>&1; then
             sudo apt-get update -qq
             sudo apt-get install -y --no-install-recommends xvfb mesa-utils libgl1-mesa-dri
+          fi
+          if [ '${{ inputs.gameplay_audit }}' = true ] && ! command -v xdotool >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends xdotool
           fi
           export LIBGL_ALWAYS_SOFTWARE=1
           xvfb-run -a -s '-screen 0 1280x720x24' glxinfo -B > "$E/software-gl-renderer.txt" 2>&1
@@ -696,6 +709,7 @@ jobs:
           PY
 
       - name: Run actual startup in Editor Play Mode before any new IPA export
+        id: actual_startup_probe
         shell: bash
         env:
           GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
@@ -749,6 +763,35 @@ jobs:
           assert r['candidate_sha256']=='75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
           print(json.dumps(dict(collection_complete=True,checks=r['checks'],runtime_errors=r['runtime_errors'])))
           assert r['all_observed_checks_pass'], 'Actual R21 interaction failures retained; no IPA export requested'
+          PY
+
+      - name: Try real complex Adventure 19 with visible GameView and external OS mouse input
+        if: always() && inputs.gameplay_audit && inputs.audit_only && steps.actual_startup_probe.outcome == 'success'
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAudit.cs" "$PROJECT/Assets/Editor/"
+          set +e
+          timeout --signal=TERM 550s xvfb-run -a -s '-screen 0 1600x1000x24' python3 scripts/actions/run_startup_r21_gameplay.py --unity "$UNITY" --project "$PROJECT" --output "$OUT/gameplay-output"
+          RC=$?
+          set -e
+          echo "$RC" > "$OUT/evidence/r21-gameplay-host-exit.txt"
+          [ "$RC" -eq 0 ]
+          python3 - "$OUT/gameplay-output/GAMEPLAY-RESULT.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))
+          assert r['candidate_sha256']=='75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
+          assert not any(r[k] for k in ('device_execution','game_fields_assigned','game_dll_changed','save_unlock_modified','level_data_modified','units_spawned_by_probe','unit_update_or_damage_called_by_probe'))
+          assert r['collection_complete'] and r['os_input_calibrated'] and r['board_started']
+          assert r['plant_count_increased_after_input'] and r['projectiles_with_live_plant_source']>0 and len(r['zombie_types_observed'])>=3
+          assert not r['runtime_errors'], 'Real gameplay errors retained; a collected report is not a gameplay pass'
+          print('REAL_GAMEPLAY_OBSERVATIONS_COLLECTED_MANUAL_TRAJECTORY_AND_DAMAGE_REVIEW_STILL_REQUIRED')
           PY
 
       - name: Export unsigned iOS Xcode project with exact R20 candidate
@@ -855,6 +898,38 @@ jobs:
         shell: bash
         run: |
           python3 scripts/actions/sanitize_unity_evidence.py "$RUNNER_TEMP/stage9-startup-r2/evidence" "$RUNNER_TEMP/stage9-startup-r2/public-evidence"
+
+      - name: Preserve complex gameplay text and binary images separately
+        if: always() && inputs.gameplay_audit
+        shell: bash
+        run: |
+          python3 - "$RUNNER_TEMP/stage9-startup-r2" <<'PY'
+          from pathlib import Path
+          import sys,shutil,hashlib,json,subprocess
+          out=Path(sys.argv[1]);src=out/'gameplay-output';text=out/'gameplay-text';dst=out/'public-gameplay'
+          text.mkdir(exist_ok=False)
+          if src.is_dir():
+              for p in src.rglob('*'):
+                  if p.is_file() and p.suffix!='.png':
+                      q=text/p.relative_to(src);q.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,q)
+          subprocess.run([sys.executable,'scripts/actions/sanitize_unity_evidence.py',str(text),str(dst)],check=True)
+          if src.is_dir():
+              for p in src.rglob('*.png'):
+                  b=p.read_bytes();assert b.startswith(b'\x89PNG\r\n\x1a\n'),p
+                  q=dst/p.relative_to(src);q.parent.mkdir(parents=True,exist_ok=True);q.write_bytes(b)
+          rows=[dict(path=p.relative_to(dst).as_posix(),size=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest())for p in sorted(dst.rglob('*'))if p.is_file()]
+          (dst/'DELIVERY-MANIFEST.json').write_text(json.dumps(dict(scope='COLLECTED_GAMEPLAY_EVIDENCE_NOT_PRODUCT_PASS',files=rows),indent=2)+'\n','utf-8')
+          PY
+
+      - name: Upload actual complex gameplay observations even when blocked
+        if: always() && inputs.gameplay_audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: STARTUP-R21-ACTUAL-COMPLEX-GAMEPLAY
+          path: ${{ runner.temp }}/stage9-startup-r2/public-gameplay/
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
 
       - name: Upload real Unity gate evidence
         if: always()
