@@ -314,6 +314,7 @@ jobs:
           test -f "$PROJECT/Assets/Scenes/Board.unity"
           [ "$(sha256sum "$PROJECT/Assets/Plugins/Assembly-CSharp.dll" | awk '{print $1}')" = 'dc205a40dc2478b3aacbb3a7d6bb1ca96ffb0a964648d34062b4ddc75f3b3655' ] || exit 48
           printf '%s\n' "$PROJECT" > "$OUT/project-path.txt"
+          python3 scripts/actions/normalize_startup_r20_asset_case.py --project "$PROJECT" --apply-plan "$GITHUB_WORKSPACE/Recovery/Startup-R20-Asset-Case-2026-10-26/ASSET-CASE-PLAN.json" --output "$E"
           rm -rf "$OUT/r3-cache" "$ARCHIVE"
           df -h "$RUNNER_TEMP" > "$E/disk-after-r3.txt"
 
@@ -571,6 +572,30 @@ jobs:
           GOT="$(sha256sum "$PLUGIN" | awk '{print $1}')"
           echo "$GOT" > "$E/test-dll-after-reimport.sha256"
           [ "$GOT" = "$TEST_DLL_SHA256" ] || exit 65
+
+      - name: Verify every relocated resource GUID, path and original imported name
+        shell: bash
+        env:
+          GODSPVZ_ASSET_CASE_IMPORT_NAMES: ${{ github.workspace }}/Recovery/Startup-R20-Asset-Case-2026-10-26/ASSET-CASE-IMPORT-NAMES.json
+          GODSPVZ_ASSET_CASE_AUDIT_OUTPUT: ${{ runner.temp }}/stage9-startup-r2/evidence/asset-case-import-audit.json
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          E="$OUT/evidence"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZAssetCaseAudit.cs" "$PROJECT/Assets/Editor/"
+          set +e
+          xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -buildTarget iOS -projectPath "$PROJECT" -executeMethod GodsPVZAssetCaseAudit.Run -logFile "$E/asset-case-import-audit.log" > "$E/asset-case-import-audit.stdout" 2> "$E/asset-case-import-audit.stderr"
+          RC=$?
+          set -e
+          echo "$RC" > "$E/asset-case-import-audit-exit.txt"
+          [ "$RC" -eq 0 ] || exit 73
+          python3 - "$E/asset-case-import-audit.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]));assert r['assets']==12 and r['failed']==0 and all(row['pass'] for row in r['rows'])
+          PY
 
       - name: Repair official shader bindings and audit all startup scenes and prefabs
         shell: bash

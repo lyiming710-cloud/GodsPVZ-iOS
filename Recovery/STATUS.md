@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[Exact R3 asset case fix](Startup-R20-Asset-Case-2026-10-26/README.md) passes Linux source-only run40262106436: all6,842 file hashes preserved,24 file paths moved with12 original basenames/GUIDs,0 remaining case collisions,4 bad plans rejected before moving. Integrated before first Unity import; fresh actual Unity/Apple/IPA results pending. [Three marker methods](Startup-R20-Marker3-Review-2026-10-26/README.md) separately match768 normal records across two original native bodies with no code changes.
+
 [Actual export errors identified](Startup-R20-Asset-Case-2026-10-26/README.md): all4 BuildReport errors are repeated reports of six asset casing pairs (24 files with meta). Source-only path repair is prepared; 329 actual export files including258cpp+66c have been independently hash-read. No Mac or newIPA acceptance.
 
 [ICEUI.Update profile](Startup-R19-Pending1-ICEUI-2026-10-26/README.md) matches5,040 normal original records and detects two physical faults. R19 finite union81 /31,812 normal records,19 profiles pending including two known float differences. No new gameplay DLL changes.

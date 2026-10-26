@@ -1,0 +1,9 @@
+# 三个语义标记方法的完整调用方：当前无需为JP标记改代码
+
+0x060002B3 Board.ButtonDown_Z、0x060002B6 Board.ChangeTimeSlowDownState、0x060005F6 Button_TimeSlow.ClickThis在两个固定R19/R20候选均执行完整CIL，768条记录相同，全部正常记录与未改原版一致。前两个MethodDef原版共享同一个0x180325FC0入口，所以是三个方法、两个独立原生body，不虚算三个原生实现。
+
+覆盖正负零、0.25相邻float、Infinity/NaN，以及Time getter/setter后更新gameSpeed、image或观察到的timeScale。Button子调用在CLR中继续执行实际发射的Board body；原生也执行未改的真实Board子方法，没有用猜测的C#或stub替掉这一层。Unity Time/Component/SetActive为受控边界，未宣称实际引擎行为或设备验收。
+
+这些JP/JNE表达的是非相等（含unordered），当前ceq后取反已经实现该路径；保留所有原生分支和当前marker字符串。UI正分支active=true误为false的单站点物理变体被检测为170条正常行为差异；其他方法没有差异，没有异常或崩溃算通过。没有新增游戏修改。
+
+这三个方法在R19百方法以外，不加入R19的81方法/31,812记录联合数；它们单独作为三个既有marker线索的有限审查。归档中另含0x060005E7 BuffUI.FixedUpdate的只读source提取，其完整运行尚未执行，不能据本报告声称该方法通过或无缺陷。0x060005E8的已知NaN差异仍在失败档案中。
