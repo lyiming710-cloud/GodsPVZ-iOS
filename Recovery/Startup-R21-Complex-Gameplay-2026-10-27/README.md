@@ -13,3 +13,13 @@
 source a56d0fa…，候选未变，实际Unity完成Editor辅助程序集编译后，图形启动未执行到Begin；宿主525秒超时，鼠标请求0，轨迹0，无GAMEPLAY-RESULT。不能归因为植物/僵尸行为错误，也不能算复杂关卡运行。完整原始日志和宿主记录已读回校验，席位归还exit0。
 
 重试增加Openbox/D-Bus、真实桌面截图和窗口列表；90秒未达到helper即提前终止。先在batch模式编译相同helper，在一次性Editor工具GodsPVZIOSBuild中精确改名唯一过时symlinkLibraries属性为symlinkSources，保存前后哈希，不改游戏DLL。非batch启动禁止更新GodsPVZRuntime1程序集。原日志只能支持API updater/GUI启动疑点，未确证具体模态窗口。另恢复原版九个Plant组件缺失的序列化数据，见相邻Plant-Serialization检查点；本次历史失败不改写。
+
+## 实际重试40404766623：成功进入原版19关，战斗尚未验收
+
+固定source2c6a6f2…、游戏DLL未变。桌面服务和提前编译修正后，真实GameView正常运行，实际Input.mousePosition校准成功；OS鼠标完成选植物、确定和开始，三次点击均观察到真实GetMouseButton及对应UI状态转换，实际Board.level=19且gameStart=true。
+
+九植物在AssetDatabase/Resources两路合计18个实际资源实例路由，原始846字段展开3040项实际标量/数组/持久引用比对全部通过，无缺项/未决引用。真实旧损坏报告58项失败；对当前报告副本篡改ID、动画引用、Sprite GUID及owner身份四种控制均拒绝，属于读回验证器控制，不冒充物理行为负控制。
+
+第135帧、开局约1.95游戏秒，工具在点击卡槽前错误要求CardTemplate根为RectTransform而停止；根实际普通Transform，cardBackground子对象才是RectTransform。没有种植尝试、没有单位轨迹，不能评价正常攻击/轨迹。已保留PNG、所有原始JSON/日志、输入回执和完整失败。图鉴仍有LoadPlant IL_0099空引用，Plant.animationGroup未赋值错误已消失；不将工具问题和游戏问题混同。席位归还exit0，无新IPA。
+
+后续修正卡槽点击使用原cardBackground、记录真实可见范围/Canvas/位置及Ready状态；卡槽不可操作时仍继续自然刷怪观察。另一个只读资源扫描发现26个Zombie根同类数据缺失，已构建2990字段恢复，见相邻Zombie-Serialization检查点。下一轮先验证全部35资源70个路由的实际字段值再进入UI/复杂战斗。

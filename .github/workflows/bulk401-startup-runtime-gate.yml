@@ -166,6 +166,8 @@ jobs:
       PARENT_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
       TEST_DLL_SHA256: '75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
       GODSPVZ_ORIGINAL_AUDIO_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Actual-UI-2026-10-27/ORIGINAL-ZOMBIE-MANAGER-AUDIO-PLAN.json
+      GODSPVZ_ORIGINAL_ZOMBIE_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json
+      GODSPVZ_RUNTIME_SUPPORT_OUTPUT: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -589,7 +591,7 @@ jobs:
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
 
-      - name: Restore 846 original serialized Plant fields before their actual import and gameplay test
+      - name: Restore 3836 original serialized fields in nine Plants and 26 Zombies before actual import and gameplay
         if: inputs.gameplay_audit
         shell: bash
         run: |
@@ -597,6 +599,7 @@ jobs:
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
           python3 scripts/actions/restore_startup_r21_plant_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --output "$OUT/evidence/plant-source-restoration"
+          python3 scripts/actions/restore_startup_r21_zombie_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json --output "$OUT/evidence/zombie-source-restoration"
 
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash
@@ -643,6 +646,14 @@ jobs:
           assert not r['source_references_rewritten'] and not r['game_fields_assigned'] and not r['device_execution'] and not r['exceptions']
           print('IMPORT_PROBE_COLLECTED_NO_RESOURCE_OR_GAME_ACCEPTANCE',r['import_count'])
           PY
+
+      - name: Compare all actual loaded Plant and Zombie serialized values to fixed original source data
+        if: inputs.gameplay_audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          python3 scripts/actions/verify_startup_r21_resource_values.py --probe "$OUT/evidence/r21-serialization-reimport-probe.json" --plant-plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --plant-identities Recovery/Startup-R21-Plant-Serialization-2026-10-27/PLANT-SOURCE-IDENTITIES.json --zombie-plan Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json --output "$OUT/evidence/r21-actual-original-resource-values.json"
 
       - name: Verify every relocated resource GUID, path and original imported name
         shell: bash
@@ -949,6 +960,16 @@ jobs:
         with:
           name: STARTUP-R21-ACTUAL-COMPLEX-GAMEPLAY
           path: ${{ runner.temp }}/stage9-startup-r2/public-gameplay/
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 6
+
+      - name: Upload byte-preserved actual loaded runtime support for independent inspection
+        if: always() && inputs.gameplay_audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: STARTUP-R21-ACTUAL-LOADED-RUNTIME-SUPPORT
+          path: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output/
           if-no-files-found: warn
           retention-days: 90
           compression-level: 6

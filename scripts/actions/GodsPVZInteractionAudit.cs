@@ -166,7 +166,7 @@ public static class GodsPVZInteractionAudit
     }
     [InitializeOnLoadMethod] static void Resume() { if(SessionState.GetBool(Active,false)){report=File.Exists(Output)?JsonUtility.FromJson<Report>(File.ReadAllText(Output)):new Report();Attach();} }
     static void Attach() { EditorApplication.update-=Tick;EditorApplication.update+=Tick;Application.logMessageReceived-=Log;Application.logMessageReceived+=Log; }
-    static void Finish(bool complete) { report.collection_complete=complete;report.all_observed_checks_pass=complete&&report.checks.Count>0&&report.checks.All(c=>c.pass)&&report.runtime_errors.Count==0;Save();SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Log;EditorApplication.Exit(complete?0:79); }
+    static void Finish(bool complete) {try{GodsPVZSerializedReferenceProbe.CaptureLoadedSupportAfterUI();}catch(Exception e){report.environment_limits.Add("Actual loaded support code observation failed: "+e);}report.collection_complete=complete;report.all_observed_checks_pass=complete&&report.checks.Count>0&&report.checks.All(c=>c.pass)&&report.runtime_errors.Count==0;Save();SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Log;EditorApplication.Exit(complete?0:79); }
     static void Tick() {
         if(!SessionState.GetBool(Active,false))return;
         long now=DateTime.UtcNow.Ticks;if(now-Int64.Parse(SessionState.GetString(Start,"0"))>TimeSpan.FromSeconds(210).Ticks){report.runtime_errors.Add("Interaction diagnostic timeout");Finish(false);return;}
