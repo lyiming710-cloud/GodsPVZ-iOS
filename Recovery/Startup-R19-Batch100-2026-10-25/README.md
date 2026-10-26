@@ -100,3 +100,7 @@ The [2026-10-26 whole managed-code census](../Whole-Program-Census-2026-10-26/RE
 ## 再补四个待对照调用方
 
 [独立四方法补充](../Startup-R19-Pending4-2026-10-26/README.md) 记录790条正常原版对照、两个精确候选的794条CIL执行、四条CLR-only异常和四个已检测物理故障。有限联合数74、原版记录19,728，26个profile仍待完成。游戏候选和冻结工具不变。
+
+## 天赋升级预览完整调用方补充
+
+[独立浮点/Vector3补充](../Startup-R19-Pending1-Talent-2026-10-26/README.md) 保存1,728条正常原版对照、两个固定候选重放、两个CLR-only异常与两个检出的物理故障。R19有限联合75 /21,456条记录，25个profile待完成。

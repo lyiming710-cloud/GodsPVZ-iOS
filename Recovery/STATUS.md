@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[R19 talent-order supplement](Startup-R19-Pending1-Talent-2026-10-26/README.md): one additional complete caller matches1,728 normal original records on both exact candidates, including actual comiss/unsigned branches and Vector3 sret/CLR value flow. Both physical faults are detected; two CLR-only exceptions stay separate. R19 finite union75 /21,456 records,25 pending. R20 real Editor diagnostic40224994102 is running after binding/helper preflight pass; no current Editor/IPA/device success inferred.
+
 [R19 pending-four supplement](Startup-R19-Pending4-2026-10-26/README.md): four more unchanged complete callers match790 normal original records, with both exact DLLs replayed. Four one-site physical faults are detected, four CLR-only exceptions remain separate. R19 finite union74 /19,728 records,26 pending. Across R19 supplements:80 controls comprise76 runtime differences,3 retained non-detections and1 source-EH guard. No game code/Unity/IPA/device promotion.
 
 [R19 pending-five supplement](Startup-R19-Pending5-2026-10-26/README.md): five more complete original callers match861 normal records on both unchanged R19/R20 candidates. Five one-site physical faults are detected; seven CLR-only exceptions and initial252 input-version mismatches are preserved. R19 finite union70 /18,938 records,30 pending. No game code change, new compiler run, Unity export, IPA or device result.
