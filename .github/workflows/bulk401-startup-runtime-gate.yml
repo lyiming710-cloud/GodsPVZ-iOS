@@ -64,6 +64,7 @@ jobs:
           PY
           python3 scripts/actions/normalize_startup_r20_asset_case.py --project "$PROJECT" --candidate "$OUT/current.dll" --output "$OUT/evidence"
           python3 scripts/actions/check_startup_r20_asset_case.py --project "$PROJECT" --plan "$OUT/evidence/ASSET-CASE-PLAN.json" --output "$OUT/evidence"
+          python3 scripts/actions/capture_startup_r21_source_data.py --project "$PROJECT" --output "$OUT/evidence"
           echo 'ASSET_SOURCE_ONLY_NO_UNITY_NO_XCODE_NO_IPA' > "$OUT/evidence/SCOPE.txt"
       - uses: actions/upload-artifact@v4
         if: always()
