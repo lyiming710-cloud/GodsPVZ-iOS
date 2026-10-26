@@ -1,0 +1,72 @@
+{
+  "scope": "EXACT_R20_REAL_EDITOR_EXPORT_AND_UNSIGNED_TEST_IPA_COMPOSITION",
+  "candidate_sha256": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
+  "script_derivations": [
+    {
+      "parent": "bulk401_export_binding.py",
+      "parent_sha256": "82cab517e5b5e725f0188358857409e695c0692019c09d831a2aba0ab8c7dfe5",
+      "derived": "startup_r20_export_binding.py",
+      "derived_sha256": "81c293203902331cf5bcd5ae1dea1d114e741936ba74553d487bb1320a56225a",
+      "replacements": [
+        {
+          "before": "from prepare_bulk401_unity import CANDIDATE",
+          "after": "from prepare_startup_r20_unity import CANDIDATE"
+        },
+        {
+          "before": "bulk401-export-binding.json",
+          "after": "startup-r20-export-binding.json"
+        },
+        {
+          "before": "BULK401_EXPORT_BINDING_PASS",
+          "after": "STARTUP_R20_EXPORT_BINDING_PASS"
+        }
+      ],
+      "newlines_normalized_to_lf": true,
+      "algorithm_and_assertions_unchanged": true
+    },
+    {
+      "parent": "audit_bulk401_real_export.py",
+      "parent_sha256": "d590b73841548d5efc4b8927cf40eb6c0ae07334c6fa0e9a88ea9830447a70e2",
+      "derived": "audit_startup_r20_real_export.py",
+      "derived_sha256": "1f305fd31fb9b4f86fadd19b2ff7d225c428ee8d7091cd7e5e41a62b3cec604d",
+      "replacements": [
+        {
+          "before": "from bulk401_export_binding import validate",
+          "after": "from startup_r20_export_binding import validate"
+        }
+      ],
+      "newlines_normalized_to_lf": true,
+      "algorithm_and_assertions_unchanged": true
+    },
+    {
+      "parent": "package_bulk401_ipa.py",
+      "parent_sha256": "29cfd9d494cf0a92f0bf6c53ecebc40707f0e092b2c2576af4333c9b79cc22c1",
+      "derived": "package_startup_r20_ipa.py",
+      "derived_sha256": "93659f5b5707cbe9b66bf929981bd96b021d6b65b8bd3cebfe59fefab0e4087b",
+      "replacements": [
+        {
+          "before": "from bulk401_export_binding import validate as validate_binding",
+          "after": "from startup_r20_export_binding import validate as validate_binding"
+        },
+        {
+          "before": "GodsPVZ_1.0.2_bulk401_unsigned.ipa",
+          "after": "GodsPVZ_1.0.2_startup_r20_unsigned.ipa"
+        }
+      ],
+      "newlines_normalized_to_lf": true,
+      "algorithm_and_assertions_unchanged": true
+    }
+  ],
+  "parent_full_workflow_sha256": "0811dae88df1531a1c0370d35bc5afeb7686c6f6d4e580bbf6e5d7067d3a05a9",
+  "diagnostic_workflow_sha256": "921411cef0de99f1fba2b08490d9519ca13806446ce7d405df85256475f4df60",
+  "workflow_sha256": "08cbc276137d91ca45a7f425a0619261434c5437992681cc4600f7e17311bc8f",
+  "original_full_export_apple_compile_package_assertions_preserved": true,
+  "existing_r20_editor_shader_and_playmode_checks_retained": true,
+  "actual_export_source_inventory_dynamic_all_c_and_cpp_no_exclusions": true,
+  "compiler_flags_six_controls_and_macho_metadata_checks_unchanged": true,
+  "code_signing_allowed": false,
+  "new_game_code_changes": 0,
+  "remaining_method_profiles": 25,
+  "product_acceptance": false,
+  "display_label_clarifies_separate_parent_and_child_proofs": true
+}

@@ -1,10 +1,10 @@
-name: Bulk401 iPad startup binding and rendering gate
+name: Startup R20 exact candidate - unsigned iOS test build
 
 on:
   workflow_dispatch:
     inputs:
       audit_only:
-        description: Repair work-copy references and audit scenes without exporting another IPA
+        description: Run actual Editor diagnosis without exporting or linking an IPA
         type: boolean
         default: true
         required: true
@@ -14,13 +14,13 @@ permissions:
   actions: read
 
 concurrency:
-  group: bulk401-startup-real-ios-ipa
+  group: startup-r20-real-ios-test-build
   cancel-in-progress: false
 
 jobs:
   editor_helper_preflight:
     needs: conversion_binding
-    uses: ./.github/workflows/bulk401-startup-editor-preflight.yml
+    uses: ./.github/workflows/startup-r2-editor-preflight.yml
 
   conversion_binding:
     runs-on: ubuntu-24.04
@@ -30,16 +30,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Reject exact candidates with already proven compiler failures before setup
-        run: python3 scripts/actions/reject_known_cpp_failures.py --candidate-zip Recovery/Bulk401-Generic-Repair-2026-10-24/BULK401-CANDIDATE.zip
+        run: python3 scripts/actions/reject_known_cpp_failures.py --candidate-zip Recovery/Startup-R20-Sites104-2026-10-26/STARTUP-R20-SITES104-CANDIDATE.zip
+      - name: Require exact current candidate and actual Editor proof for test build
+        run: python3 scripts/actions/validate_startup_r20_build_inputs.py > "$RUNNER_TEMP/R20-BUILD-INPUTS.json"
+      - name: Validate current R20 byte and evidence binding before large setup
+        run: python3 scripts/actions/bind_startup_r20_diagnostic.py --validate-only > "$RUNNER_TEMP/R20-EARLY-BINDING.json"
       - name: Run license-free pipeline regression controls
         run: python3 scripts/actions/check_bulk401_pipeline.py > "$RUNNER_TEMP/BULK401-PIPELINE-CONTROLS.json"
-      - name: Bind exact compiler input; no semantic promotion
+      - name: Bind immutable parent package separately from exact child compiler proofs
         run: |
           python3 scripts/actions/bind_bulk401_compiler_package.py --output "$RUNNER_TEMP/bulk401-package"
           cp "$RUNNER_TEMP/BULK401-PIPELINE-CONTROLS.json" "$RUNNER_TEMP/bulk401-package/"
       - uses: actions/upload-artifact@v4
         with:
-          name: Stage9-bulk401-conversion-qualified
+          name: Startup-R2-PARENT-Bulk401-compiler-input
           path: ${{ runner.temp }}/bulk401-package/
           if-no-files-found: error
           retention-days: 90
@@ -63,7 +67,7 @@ jobs:
           python3 -c 'import plistlib,struct,zipfile,hashlib'
 
   export:
-    needs: [conversion_binding, apple_preflight, editor_helper_preflight]
+    needs: [conversion_binding, editor_helper_preflight, apple_preflight]
     runs-on: ubuntu-24.04
     timeout-minutes: 150
     env:
@@ -76,7 +80,8 @@ jobs:
       BASE_RUNTIME_SHA256: '047054e0db594b6e3385fe4d2555c5932dcd4c28e4b2cb6fb39acbc4336d43ee'
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
-      TEST_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
+      PARENT_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
+      TEST_DLL_SHA256: 'd887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37'
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -94,7 +99,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           mkdir -p "$E"
           if ! command -v xvfb-run >/dev/null 2>&1 || ! command -v glxinfo >/dev/null 2>&1; then
@@ -125,7 +130,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           mkdir -p "$OUT/evidence" "$OUT/candidate" "$OUT/semantic-gate"
           if [ -z "${UNITY_EMAIL:-}" ] || [ -z "${UNITY_PASSWORD:-}" ]; then
             echo 'UNITY_EMAIL or UNITY_PASSWORD secret missing' >&2
@@ -151,18 +156,18 @@ jobs:
           production_promotion=NO_ISOLATED_GATE_ONLY
           EOF
 
-      - name: Download same-run conversion-qualified bulk401 candidate
+      - name: Download hash-qualified parent input; not child compiler qualification
         uses: actions/download-artifact@v4
         with:
-          name: Stage9-bulk401-conversion-qualified
-          path: ${{ runner.temp }}/stage9-bulk401-ios/bulk401-qualified
+          name: Startup-R2-PARENT-Bulk401-compiler-input
+          path: ${{ runner.temp }}/stage9-startup-r2/bulk401-qualified
 
-      - name: Verify bulk401 candidate provenance and exact hash
+      - name: Verify Bulk401 parent provenance and exact hash
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
-          python3 - "$OUT" "$TEST_DLL_SHA256" "$GITHUB_SHA" <<'PY'
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          python3 - "$OUT" "$PARENT_DLL_SHA256" "$GITHUB_SHA" <<'PY'
           from pathlib import Path
           import sys,json,hashlib,shutil
           out=Path(sys.argv[1]);src=out/'bulk401-qualified'
@@ -182,6 +187,12 @@ jobs:
           PY
           echo 'BULK401_CONVERSION_QUALIFIED_INPUT_PASS'
 
+      - name: Bind diagnostic child separately from parent compiler results
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/bind_startup_r20_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
+
       - name: Download exact cached R3 archive
         uses: actions/download-artifact@v4
         with:
@@ -190,13 +201,13 @@ jobs:
           run-id: ${{ env.R3_ARCHIVE_RUN_ID }}
           pattern: Stage9.1-r3-exact-archive
           merge-multiple: true
-          path: ${{ runner.temp }}/stage9-bulk401-ios/r3-cache
+          path: ${{ runner.temp }}/stage9-startup-r2/r3-cache
 
       - name: Reconstruct exact R3 project
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           mapfile -t R3_ARCHIVES < <(find "$OUT/r3-cache" -maxdepth 1 -type f -name '*.tar.zst' | sort)
           [ "${#R3_ARCHIVES[@]}" = '1' ] || exit 45
@@ -260,7 +271,7 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.BASE_RUNTIME_RUN_ID }}
           name: Stage9.1-BGMVOLUME-STATIC-QUALIFIED
-          path: ${{ runner.temp }}/stage9-bulk401-ios/base-runtime
+          path: ${{ runner.temp }}/stage9-startup-r2/base-runtime
 
       - name: Download package GUID evidence
         uses: actions/download-artifact@v4
@@ -269,7 +280,7 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.PACKAGE_GUID_RUN_ID }}
           name: HF46-package-reference-evidence
-          path: ${{ runner.temp }}/stage9-bulk401-ios/package-guid-evidence
+          path: ${{ runner.temp }}/stage9-startup-r2/package-guid-evidence
 
       - name: Download pinned package bundle
         uses: actions/download-artifact@v4
@@ -278,7 +289,7 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.PACKAGE_BUNDLE_RUN_ID }}
           name: Stage9.1-pinned-unity-packages
-          path: ${{ runner.temp }}/stage9-bulk401-ios/package-bundle
+          path: ${{ runner.temp }}/stage9-startup-r2/package-bundle
 
       - name: Download package dependency closure
         uses: actions/download-artifact@v4
@@ -287,13 +298,13 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.PACKAGE_CLOSURE_RUN_ID }}
           name: Stage9.1-package-dependency-closure
-          path: ${{ runner.temp }}/stage9-bulk401-ios/package-closure
+          path: ${{ runner.temp }}/stage9-startup-r2/package-closure
 
       - name: Integrate baseline and embedded packages
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           PROJECT="$(cat "$OUT/project-path.txt")"
           DLL="$OUT/base-runtime/GodsPVZRuntime1-bgmvolume.dll"
@@ -302,8 +313,8 @@ jobs:
           cp "$DLL" "$PROJECT/Assets/Plugins/Assembly-CSharp.dll"
           mkdir -p "$PROJECT/Assets/Editor" "$PROJECT/Recovery"
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Assets/Editor/GodsPVZPackageReferenceMigrator.cs" "$PROJECT/Assets/Editor/"
-          cp "$GITHUB_WORKSPACE/Recovery/iPad-Startup-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
-          cp "$GITHUB_WORKSPACE/Recovery/iPad-Startup-2026-10-24/ios-support/Assets/Editor/GodsPVZStartupAudit.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZStartupAudit.cs" "$PROJECT/Assets/Editor/"
           cp "$GITHUB_WORKSPACE/Recovery/Bulk389-Qualification-2026-10-23/ios-support/Recovery/package-script-map-editor.json" "$PROJECT/Recovery/"
           python3 - "$OUT/package-bundle/Packages" "$OUT/package-closure/Packages" "$PROJECT/Packages" <<'PY'
           import shutil,sys
@@ -343,13 +354,13 @@ jobs:
           run-id: ${{ env.EDITOR_RUN_ID }}
           pattern: Stage9.1-unity-china-editor-part-*
           merge-multiple: true
-          path: ${{ runner.temp }}/stage9-bulk401-ios/editor-parts
+          path: ${{ runner.temp }}/stage9-startup-r2/editor-parts
 
       - name: Reconstruct exact Unity China Editor
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           PARTS="$OUT/editor-parts"
           ROOT="$OUT/editor-root"
@@ -377,13 +388,13 @@ jobs:
           repository: lyiming710-cloud/GodsPVZ-iOS
           run-id: ${{ env.IOS_MODULE_RUN_ID }}
           name: Stage9.1-unity-china-ios-module-c3ae09b9f03c
-          path: ${{ runner.temp }}/stage9-bulk401-ios/ios-module
+          path: ${{ runner.temp }}/stage9-startup-r2/ios-module
 
       - name: Overlay validated iOS module
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           ROOT="$OUT/editor-root"
           MOD="$OUT/ios-module/UnitySetup-iOS-Support-for-Editor-2022.3.44f1.tar.xz"
@@ -402,7 +413,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -421,7 +432,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           CLIENT="$(dirname "$UNITY")/Data/Resources/Licensing/Client/Unity.Licensing.Client"
@@ -438,7 +449,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -454,7 +465,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -471,25 +482,28 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_bulk401_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r20_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
 
       - name: Align unchanged plugin filename with its assembly identity and preserve its GUID
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_bulk401_startup.py --project "$PROJECT" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r20_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
-          cp "$GITHUB_WORKSPACE/Recovery/iPad-Startup-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
+          python3 scripts/actions/prepare_custom_shaders_r1.py --project "$PROJECT" --evidence "$OUT/evidence"
+          cp "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
+          cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
 
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -508,10 +522,10 @@ jobs:
       - name: Repair official shader bindings and audit all startup scenes and prefabs
         shell: bash
         env:
-          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-bulk401-ios/evidence
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
           set +e
@@ -526,16 +540,42 @@ jobs:
           assert data['pass'] and data['missing_components']==0
           assert data['game_start_component'] and data['game_start_prefab'] and data['board_start_component']
           assert data['core_blit_keyword']
+          assert data['unresolved_custom_dummy_shaders']==[]
+          PY
+
+      - name: Compile all custom shader variants for Metal and OpenGL and read rendered pixels
+        shell: bash
+        env:
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
+          GODSPVZ_SHADER_BINARY_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/shader-output
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          set +e
+          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZCustomShaderAudit.BeginAfterStartup -logFile "$OUT/evidence/custom-shader-audit.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$OUT/evidence/custom-shader-audit-exit.txt"
+          [ "$RC" -eq 0 ]
+          python3 - "$OUT/evidence/custom-shader-audit.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          assert data['pass'] and len(data['compilations'])==76 and all(r['success'] and r['bytes']>0 for r in data['compilations'])
+          assert len(data['pixels'])==20 and all(r['pass'] for r in data['pixels']) and data['negative_compile_control']
+          assert not data['metal_device_execution'] and not data['game_pixel_equivalence']
           PY
 
       - name: Run actual startup in Editor Play Mode before any new IPA export
         shell: bash
         env:
-          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-bulk401-ios/evidence
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
           set +e
@@ -550,15 +590,15 @@ jobs:
           assert data['pass'] and data['frames']>=3 and data['main_ui_components']>=1 and data['active_canvases']>=1
           PY
 
-      - name: Export unsigned iOS Xcode project with bulk401 candidate
+      - name: Export unsigned iOS Xcode project with exact R20 candidate
         if: github.event_name == 'workflow_dispatch' && !inputs.audit_only
         shell: bash
         env:
-          GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-bulk401-ios/xcode
+          GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-startup-r2/xcode
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
@@ -578,12 +618,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           X="$OUT/xcode"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/bulk401_export_binding.py --xcode-dir "$X" --plugin "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"
-          cp "$X/bulk401-export-binding.json" "$E/"
+          python3 scripts/actions/startup_r20_export_binding.py --xcode-dir "$X" --plugin "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"
+          cp "$X/startup-r20-export-binding.json" "$E/"
           PBX="$X/Unity-iPhone.xcodeproj/project.pbxproj"
           test -f "$PBX"
           test -d "$X/Classes"
@@ -603,8 +643,8 @@ jobs:
             echo 'IOS_XCODE_EXPORT=PASS'
             echo "unity_version=$UNITY_VERSION"
             echo "test_dll_sha256=$TEST_DLL_SHA256"
-            echo 'bulk401_runtime_qualification=NOT_YET_PERFORMED'
-            echo 'bulk401_direct_il2cpp_conversion=PASS'
+            echo 'r20_full_game_qualification=NOT_YET_PERFORMED'
+            echo 'r20_portable_il2cpp_conversion=PASS'
             echo 'bundle_id=com.tipsGodsStudio.godsPVZ'
             echo 'deployment_target=12.0'
             echo 'scenes=Assets/Scenes/MainMenu.unity,Assets/Scenes/Board.unity'
@@ -616,15 +656,15 @@ jobs:
           sha256sum "$X/Data/Managed/Metadata/global-metadata.dat" > "$E/generated-global-metadata.sha256"
           sha256sum "$X/Il2CppOutputProject/Source/il2cppOutput/$ASSEMBLY.cpp" > "$E/generated-assembly-csharp-cpp.sha256"
           grep -E 'PRODUCT_BUNDLE_IDENTIFIER|IPHONEOS_DEPLOYMENT_TARGET' "$PBX" | sort -u > "$E/pbx-settings.txt"
-          tar --zstd -cf "$OUT/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst" -C "$OUT" xcode
-          sha256sum "$OUT/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst" > "$E/xcode-archive.sha256"
+          tar --zstd -cf "$OUT/GodsPVZ-Startup-R20-unsigned-Xcode.tar.zst" -C "$OUT" xcode
+          sha256sum "$OUT/GodsPVZ-Startup-R20-unsigned-Xcode.tar.zst" > "$E/xcode-archive.sha256"
 
       - name: Return Personal seat
         if: always()
         shell: bash
         run: |
           set -uo pipefail
-          OUT="$RUNNER_TEMP/stage9-bulk401-ios"
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
           E="$OUT/evidence"
           if [ -f "$OUT/seat-acquired.flag" ] && [ -f "$OUT/unity-path.txt" ]; then
             UNITY="$(cat "$OUT/unity-path.txt")"
@@ -641,25 +681,34 @@ jobs:
         if: always()
         shell: bash
         run: |
-          python3 scripts/actions/sanitize_unity_evidence.py "$RUNNER_TEMP/stage9-bulk401-ios/evidence" "$RUNNER_TEMP/stage9-bulk401-ios/public-evidence"
+          python3 scripts/actions/sanitize_unity_evidence.py "$RUNNER_TEMP/stage9-startup-r2/evidence" "$RUNNER_TEMP/stage9-startup-r2/public-evidence"
 
       - name: Upload real Unity gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk401-STARTUP-UNITY-EVIDENCE
-          path: ${{ runner.temp }}/stage9-bulk401-ios/public-evidence/
+          name: STARTUP-R20-EDITOR-DIAGNOSTIC-EVIDENCE
+          path: ${{ runner.temp }}/stage9-startup-r2/public-evidence/
           if-no-files-found: warn
           retention-days: 90
           include-hidden-files: true
+          compression-level: 6
+      - name: Upload byte-preserved shader programs and controlled render images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STARTUP-R20-SHADERS-COMPILED-AND-RENDERED
+          path: ${{ runner.temp }}/stage9-startup-r2/shader-output/
+          if-no-files-found: warn
+          retention-days: 90
           compression-level: 6
 
       - name: Upload unsigned Xcode project archive
         if: always() && steps.xcode_audit.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: GodsPVZ-Stage9-bulk401-unsigned-Xcode
-          path: ${{ runner.temp }}/stage9-bulk401-ios/GodsPVZ-Stage9-bulk401-unsigned-Xcode.tar.zst
+          name: GodsPVZ-Startup-R20-unsigned-Xcode
+          path: ${{ runner.temp }}/stage9-startup-r2/GodsPVZ-Startup-R20-unsigned-Xcode.tar.zst
           if-no-files-found: error
           retention-days: 90
           compression-level: 0
@@ -680,7 +729,7 @@ jobs:
       - name: Download exported Xcode project archive
         uses: actions/download-artifact@v4
         with:
-          name: GodsPVZ-Stage9-bulk401-unsigned-Xcode
+          name: GodsPVZ-Startup-R20-unsigned-Xcode
           path: ${{ runner.temp }}/xcode-input
 
       - name: Extract Xcode project
@@ -692,13 +741,13 @@ jobs:
           command -v zstd >/dev/null || brew install zstd
           mkdir -p "${{ runner.temp }}/build"
           zstd -dc "$ARCHIVE" | tar -xf - -C "${{ runner.temp }}/build"
-          python3 scripts/actions/bulk401_export_binding.py --xcode-dir "$RUNNER_TEMP/build/xcode"
+          python3 scripts/actions/startup_r20_export_binding.py --xcode-dir "$RUNNER_TEMP/build/xcode"
 
       - name: Check all actual-export generated C and CPP before Xcode build
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/audit_bulk401_real_export.py --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/actual-export-compiler"
+          python3 scripts/actions/audit_startup_r20_real_export.py --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/actual-export-compiler"
 
       - name: Compile iOS ARM64 Binary via Xcode
         shell: bash
@@ -706,7 +755,7 @@ jobs:
           set -euo pipefail
           X="${{ runner.temp }}/build/xcode"
           LOG="${{ runner.temp }}/build/xcodebuild.log"
-          echo "=== Building Xcode Project with Apple Clang (fixed Bulk401 input) ==="
+          echo "=== Building Xcode Project with Apple Clang (fixed R20 input) ==="
           xcodebuild \
             -project "$X/Unity-iPhone.xcodeproj" \
             -scheme Unity-iPhone \
@@ -733,13 +782,13 @@ jobs:
           set -euo pipefail
           APP_FOUND="$(find "$RUNNER_TEMP/build/DerivedData/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' -type d | head -n1)"
           test -d "$APP_FOUND"
-          python3 scripts/actions/package_bulk401_ipa.py --app "$APP_FOUND" --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/ipa-output"
+          python3 scripts/actions/package_startup_r20_ipa.py --app "$APP_FOUND" --xcode-dir "$RUNNER_TEMP/build/xcode" --output-dir "$RUNNER_TEMP/ipa-output"
 
       - name: Preserve Apple build logs even on failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bulk401-APPLE-BUILD-EVIDENCE
+          name: Startup-R20-APPLE-BUILD-EVIDENCE
           path: |
             ${{ runner.temp }}/build/xcodebuild.log
             ${{ runner.temp }}/actual-export-compiler/
@@ -750,7 +799,7 @@ jobs:
       - name: Upload Unsigned IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GodsPVZ_1.0.2_bulk401_unsigned_ipa
+          name: GodsPVZ_1.0.2_startup_r20_unsigned_ipa
           path: ${{ runner.temp }}/ipa-output/*.ipa
           retention-days: 90
           if-no-files-found: error

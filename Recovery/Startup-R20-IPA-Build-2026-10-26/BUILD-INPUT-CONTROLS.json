@@ -1,0 +1,65 @@
+{
+  "scope": "BUILD_INPUT_AND_BYTE_BINDING_GUARDS_ONLY_NO_UNITY_OR_GAME_TEST",
+  "positive_actual_evidence": {
+    "scope": "EXACT_R20_TEST_IPA_BUILD_INPUT_ONLY_NOT_GAME_ACCEPTANCE",
+    "candidate_sha256": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
+    "bytes": 22777856,
+    "compiler_linux_run": 40219580971,
+    "compiler_apple_run": 40220652002,
+    "actual_editor_run": 40224994102,
+    "editor_frames": 2049,
+    "retained_failed_or_unsupported_type_entries": 70,
+    "remaining_runtime_profiles": 25,
+    "test_build_allowed": true,
+    "game_semantics": "NOT_PROVEN",
+    "device_execution": "NOT_PERFORMED",
+    "ipa": null
+  },
+  "negative_controls": 6,
+  "rejected": 6,
+  "controls": [
+    {
+      "name": "wrong_editor_candidate",
+      "kind": "PHYSICAL_REHASHED_EDITOR_EVIDENCE",
+      "rejected": true,
+      "error": "Wrong actual Editor candidate/run",
+      "outer_manifest_recomputed": true
+    },
+    {
+      "name": "zero_frames",
+      "kind": "PHYSICAL_REHASHED_EDITOR_EVIDENCE",
+      "rejected": true,
+      "error": "Real startup probe did not pass",
+      "outer_manifest_recomputed": true
+    },
+    {
+      "name": "missing_component",
+      "kind": "PHYSICAL_REHASHED_EDITOR_EVIDENCE",
+      "rejected": true,
+      "error": "Real asset binding audit did not pass",
+      "outer_manifest_recomputed": true
+    },
+    {
+      "name": "changed_generated_source",
+      "kind": "SYNTHETIC_EXPORT_BINDING_ONLY",
+      "rejected": true,
+      "error": "Changed export file: Il2CppOutputProject/Source/il2cppOutput/GenericMethods.cpp"
+    },
+    {
+      "name": "unlisted_generated_source",
+      "kind": "SYNTHETIC_EXPORT_BINDING_ONLY",
+      "rejected": true,
+      "error": "Incomplete/duplicate exported file binding"
+    },
+    {
+      "name": "wrong_export_workflow_head",
+      "kind": "SYNTHETIC_EXPORT_BINDING_ONLY",
+      "rejected": true,
+      "error": "Export candidate/workflow binding mismatch"
+    }
+  ],
+  "synthetic_export_never_compiled": true,
+  "no_game_dll_changed": true,
+  "unchanged_real_compiler_flags": true,
+  "ipa": null
+}
