@@ -1,6 +1,6 @@
 # GodsPVZ iOS recovery
 
-[R21 UI139 construction and finite checks](Recovery/Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Fresh compiler and actual UI checks pending; zombie-almanac null receiver unresolved, no new IPA or device acceptance.
+[R21 UI139 construction and finite checks](Recovery/Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Linux and Apple fresh compiler checks pass all 1029 sources/logs; six lost zombie-prefab links are mapped to original components. Actual UI checks remain pending; no new IPA or device acceptance.
 
 
 Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by the repository owner.

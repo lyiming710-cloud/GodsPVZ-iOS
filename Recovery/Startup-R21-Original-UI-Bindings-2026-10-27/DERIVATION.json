@@ -1,0 +1,107 @@
+{
+  "candidate_sha256": "75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15",
+  "previous_workflow_sha256": "a2c9751f4b2e1c6f41c03ad799b496ff245806a4454b40f23fe7d46e9af74ba9",
+  "current_workflow_sha256": "251ebcbc57d43a4da6dc1e7d52d54d1a98f9576845076ceac530b062d2adfc01",
+  "script_derivations": [
+    {
+      "source": "prepare_startup_r20_unity.py",
+      "source_sha256": "0763612f481ca740350b24ac6576e9427791250fa03a72180be977f77d530645",
+      "derived": "prepare_startup_r21_unity.py",
+      "derived_sha256": "af2d55ab353b97aa24f57c8f91791febd81d6bef14c3973b6e435dd0e99c4a0b",
+      "only_changed_expected_candidate_hash": true
+    },
+    {
+      "source": "prepare_startup_r20_plugin.py",
+      "source_sha256": "b20d5b3d46711d35d687438f07da81f79266da0cb507109b64006ba8773a781c",
+      "derived": "prepare_startup_r21_plugin.py",
+      "derived_sha256": "75600a2a1f7d3b674ea9ba7c2946f869725cebf7689cd3eb364065a8106d2f4e",
+      "only_changed_expected_candidate_hash": true
+    }
+  ],
+  "workflow_replacements": [
+    {
+      "before": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
+      "after": "75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15",
+      "occurrences": 3
+    },
+    {
+      "before": "Startup R20 exact candidate - unsigned iOS test build",
+      "after": "Startup R21 UI139 - actual interaction diagnosis",
+      "occurrences": 1
+    },
+    {
+      "before": "Diagnose unchanged R20 plant choice, almanac and Board callbacks; requires audit_only",
+      "after": "Exercise R21 actual UI paths and original zombie prefab bindings; requires audit_only",
+      "occurrences": 1
+    },
+    {
+      "before": "Recovery/Startup-R20-Sites104-2026-10-26",
+      "after": "Recovery/Startup-R21-UI139-2026-10-27",
+      "occurrences": 2
+    },
+    {
+      "before": "STARTUP-R20-SITES104",
+      "after": "STARTUP-R21-UI139",
+      "occurrences": 2
+    },
+    {
+      "before": "python3 scripts/actions/validate_startup_r20_build_inputs.py",
+      "after": "python3 scripts/actions/bind_startup_r21_diagnostic.py --validate-only",
+      "occurrences": 1
+    },
+    {
+      "before": "bind_startup_r20_diagnostic.py",
+      "after": "bind_startup_r21_diagnostic.py",
+      "occurrences": 2
+    },
+    {
+      "before": "prepare_startup_r20_unity.py",
+      "after": "prepare_startup_r21_unity.py",
+      "occurrences": 1
+    },
+    {
+      "before": "prepare_startup_r20_plugin.py",
+      "after": "prepare_startup_r21_plugin.py",
+      "occurrences": 1
+    },
+    {
+      "before": "Diagnose unchanged R20 UI paths",
+      "after": "Diagnose R21 actual UI paths",
+      "occurrences": 1
+    },
+    {
+      "before": "r20-interaction-audit",
+      "after": "r21-interaction-audit",
+      "occurrences": 3
+    },
+    {
+      "before": "r20-after-interaction-dll",
+      "after": "r21-after-interaction-dll",
+      "occurrences": 1
+    },
+    {
+      "before": "Actual R20 interaction failures",
+      "after": "Actual R21 interaction failures",
+      "occurrences": 1
+    },
+    {
+      "before": "      - name: Reject exact candidates with already proven compiler failures before setup\n",
+      "after": "      - name: Keep R21 restricted to actual UI diagnosis until its new Editor result is reviewed\n        if: ${{ !inputs.assets_only }}\n        env:\n          AUDIT: ${{ inputs.audit_only }}\n          INTERACTION: ${{ inputs.interaction_audit }}\n        run: '[ \"$AUDIT\" = true ] && [ \"$INTERACTION\" = true ]'\n      - name: Reject exact candidates with already proven compiler failures before setup\n",
+      "occurrences": 1
+    },
+    {
+      "before": "      - name: Verify every relocated resource GUID, path and original imported name\n",
+      "after": "      - name: Restore six original serialized zombie-window component references after candidate reimport\n        shell: bash\n        run: |\n          set -euo pipefail\n          OUT=\"$RUNNER_TEMP/stage9-startup-r2\"\n          PROJECT=\"$(cat \"$OUT/project-path.txt\")\"\n          python3 scripts/actions/restore_startup_r21_zombie_bindings.py --project \"$PROJECT\" --plan \"$GITHUB_WORKSPACE/Recovery/Startup-R21-Original-UI-Bindings-2026-10-27/ZOMBIE-WINDOW-BINDING-PLAN.json\" --output \"$OUT/evidence\"\n      - name: Verify every relocated resource GUID, path and original imported name\n",
+      "occurrences": 1
+    }
+  ],
+  "diagnostic_only_guard_added": true,
+  "source_binding_patch_after_actual_candidate_reimport": true,
+  "original_script_guids_and_unrelated_prefab_bytes_preserved": true,
+  "extra_method_repairs": 0,
+  "source_bindings": 6,
+  "real_source_patch_not_executed_yet": true,
+  "unity_licensing_return_shader_and_original_assertions_preserved": true,
+  "source_parser_preflight_before_license_added": true,
+  "current_sources": "FINAL-DIAGNOSTIC-SOURCES.zip"
+}

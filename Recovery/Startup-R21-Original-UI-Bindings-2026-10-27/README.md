@@ -1,0 +1,9 @@
+# R21：僵尸图鉴原始资源绑定与真实界面复测
+
+原版PC resources.assets中的Almanac_ZombieWindow组件208字节，头部之后至136字节的标量/嵌套数据与实际R20 IPA一致；136–208六个序列化PPtr在原版分别指向Portrait.Image、QMark.Image、CMark.Image、EMark.Image、BMark.Image、Portrait.Button，在实际R20 IPA中全部为0。两侧同名层级与六个目标组件均仍存在；globalgamemanagers.assets的MonoScript独立确认实际类为Almanac_ZombieWindow、UnityEngine.UI.Image、UnityEngine.UI.Button。原始二进制与层级/脚本身份报告已保存。不能把只读base类型树或候选指针扫描当成完整自定义类型树解析。
+
+修复工具仅在隔离工作副本、实际候选重新导入后，按原版根相对路径恢复六个本地fileID数字。保留其余所有预制体字节、全部其他Assets文件、meta/GUID及原UnityEvents；拒绝不同非空目标、重复路径、丢失字段、类型特征不匹配与越界路径。不创建占位对象、不隐藏异常、不改Awake控制流、不在运行时填游戏字段。局部解析/逆变换/重复读回和五个错误输入负控制已过；真实R3文件上的执行、重新导入和游戏效果尚待工作流。
+
+更新的Editor诊断补上正常OpenPlantHome，跟踪同一个被点击卡片，读取真实gameStart/senarioState字段、全部音效列表和图鉴组件引用，增加选卡确认后界面关闭断言，并从实际显示的主菜单文字沿父级查找正常指针处理组件。仍通过EventSystem.RaycastAll判断遮挡并ExecuteHierarchy投递指针，直接公开回调作为单独诊断。预制体加载后会独立核对六个字段的实际类型/目标。helper已用精确Editor API编译，运行时SHA由实际插件读取并与工作流参数核对。
+
+已登记入口沿用bulk401-startup-runtime-gate.yml，并限制audit_only=true、interaction_audit=true才可执行Editor模式。资格绑定须验证R21自己的139处/7方法、344条有限对照、15物理语义负控制和新Linux/Apple完整源码结果；R20父证据分开保留，不把父编译成绩移植给子候选。已有着色器、脚本/资源、席位归还和失败保存检查保持。本轮准备不等于真实UI、iPad或新IPA通过。

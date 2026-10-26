@@ -1,4 +1,4 @@
-// Diagnostics for the unchanged, already batch-tested R20 game DLL.
+// Actual Editor UI diagnostic for the hash-bound, batch-tested candidate.
 // Public game callbacks and real EventSystem raycasts only. No fixture data,
 // game-field assignments, replacement resources, or exception suppression.
 using System;
@@ -20,10 +20,10 @@ public static class GodsPVZInteractionAudit
     [Serializable] public class Check { public string name, detail; public bool pass; }
     [Serializable] public class ActionRow { public int stage, frame; public string action, scene, exception; public List<FieldRow> fields=new List<FieldRow>(); }
     [Serializable] public class Report {
-        public string scope="UNCHANGED_R20_ACTUAL_EDITOR_UI_PATH_DIAGNOSTIC_NOT_DEVICE_OR_GAME_ACCEPTANCE";
+        public string scope="HASH_BOUND_ACTUAL_EDITOR_UI_PATH_DIAGNOSTIC_NOT_DEVICE_OR_GAME_ACCEPTANCE";
         public bool collection_complete, all_observed_checks_pass, device_execution=false, game_fields_seeded=false, replacement_game_code=false;
         public string save_scenario="FRESH_CI_SANDBOX_GAME_SAVE_CREATED_ONLY_BY_PUBLIC_GAME_API_IF_NEEDED", save_creation_route="Existing game state", candidate_sha256, workflow_head;
-        public int first_plant_id=-1, dialogue_clicks;
+        public int first_plant_id=-1, first_selection_card_instance, dialogue_clicks;
         public List<ActionRow> actions=new List<ActionRow>();
         public List<Check> checks=new List<Check>();
         public List<EventRow> registered_ui_events=new List<EventRow>();
@@ -31,7 +31,7 @@ public static class GodsPVZInteractionAudit
     }
     static Report report;
     static string Folder { get { var f=Environment.GetEnvironmentVariable("GODSPVZ_STARTUP_EVIDENCE"); if(String.IsNullOrEmpty(f))throw new InvalidOperationException("Evidence path required");return f; } }
-    static string Output { get { return Path.Combine(Folder,"r20-interaction-audit.json"); } }
+    static string Output { get { string prefix=Environment.GetEnvironmentVariable("GODSPVZ_INTERACTION_PREFIX");if(String.IsNullOrEmpty(prefix))prefix="r20";if(prefix!="r20"&&prefix!="r21")throw new InvalidOperationException("Unexpected interaction evidence prefix");return Path.Combine(Folder,prefix+"-interaction-audit.json"); } }
     static Type TypeNamed(string name) { return AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType(name,false)).FirstOrDefault(t=>t!=null); }
     static object Read(object value,string field) { if(value==null)return null;var f=value.GetType().GetField(field,Fields);return f==null?null:f.GetValue(value); }
     static object Property(object value,string name) { if(value==null)return null;var p=value.GetType().GetProperty(name,BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static);return p==null?null:p.GetValue(value,null); }
@@ -60,10 +60,19 @@ public static class GodsPVZInteractionAudit
         Observe(row,Find("Almanac_ZombieHome"),"Almanac_ZombieHome","zombieWindowList","zombiePortraits_Window");
         Observe(row,Find("PrepareUIController"),"PrepareUIController","playerSave","card_ChooseList","seedChooserScreen");
         Observe(row,Find("SeedChooserScreen"),"SeedChooserScreen","playerSave","prepareUIController","card_ChooseList");
-        Observe(row,Find("Board"),"Board","gamePause","gameRunning","gameSpeed","menuOpen","menu","scenarioState","enemyManager","zombieManager","mouseManager");
+        Observe(row,Find("Board"),"Board","gamePause","gameStart","gameSpeed","menuOpen","menu","senarioState","enemyManager","zombieManager","mouseManager");
         Observe(row,Find("DialogueManager_OnBoard"),"DialogueManager_OnBoard","isRunning","dialogueIndex","dialogueTriggerType");
         Observe(row,Find("MouseManager"),"MouseManager","onBoard","operationCD","board","prepareUIController");
         foreach(var card in SceneComponents().Where(c=>c.GetType().FullName=="Card_Choose"&&c.gameObject.activeInHierarchy).Take(6))Observe(row,card,PathOf(card.gameObject),"plantID","isChosen","serialNumBeChosen","seedChooserScreen","almanacUIController");
+        foreach(var window in SceneComponents().Where(c=>c.GetType().FullName=="Almanac_ZombieWindow"&&c.gameObject.activeInHierarchy).Take(3))Observe(row,window,PathOf(window.gameObject),"zombieID","zombiePortrait","questionMark","checkMark","eliteMark","bossMark","button");
+        foreach(var c in SceneComponents().Where(c=>c.GetType().FullName=="Almanac_PlantDetail"||c.GetType().FullName=="Almanac_ZombieHome")){
+            foreach(var f in c.GetType().GetFields(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly)){
+                var value=f.GetValue(c);if(value==null||value is UnityEngine.Object||value is IList)row.fields.Add(new FieldRow{owner="DECLARED_REFERENCE_OBSERVATION",instance=Describe(c),field=f.Name,type=f.FieldType.FullName,value=Describe(value)});
+            }
+        }
+        var resources=TypeNamed("ResourceManager");if(resources!=null)foreach(string name in new[]{"BGMs","boardClips","buttonClips","plantClips","deviceClips","zombieClips","projectClips","particleClips","mouseClips","dialogueClips"}){
+            var f=resources.GetField(name,Fields);if(f!=null)row.fields.Add(new FieldRow{owner="ResourceManager",instance="static",field=name,type=f.FieldType.FullName,value=Describe(f.GetValue(null))});
+        }
         foreach(var text in SceneComponents().Where(c=>c.gameObject.activeInHierarchy&&c.GetType().FullName=="TMPro.TextMeshProUGUI")){
             string value=Property(text,"text") as string;if(value!=null&&(value.Contains("NaN")||value.Contains("Infinity")))row.fields.Add(new FieldRow{owner="VISIBLE_NUMERIC_TEXT_ANOMALY",instance=PathOf(text.gameObject),field="text",type="System.String",value=value});
         }
@@ -100,6 +109,13 @@ public static class GodsPVZInteractionAudit
         }
         return null;
     }
+    static GameObject VisiblePointerTarget(string text) {
+        var labels=SceneComponents().Where(c=>c.gameObject.activeInHierarchy&&System.Object.Equals(Property(c,"text"),text)).ToArray();
+        if(labels.Length!=1)throw new InvalidOperationException("Visible label is missing/ambiguous: "+text);
+        var click=TypeNamed("UnityEngine.EventSystems.IPointerClickHandler");var down=TypeNamed("UnityEngine.EventSystems.IPointerDownHandler");
+        for(var t=labels[0].transform;t!=null;t=t.parent)if(t.GetComponents<MonoBehaviour>().Any(c=>c!=null&&((click!=null&&click.IsInstanceOfType(c))||(down!=null&&down.IsInstanceOfType(c)))))return t.gameObject;
+        throw new InvalidOperationException("Visible label has no normal pointer handler: "+text);
+    }
     static void RaycastClick(GameObject target,string label) {
         if(target==null)throw new InvalidOperationException("No live click target: "+label);
         var rect=target.GetComponent<RectTransform>();if(rect==null)throw new InvalidOperationException("Click target has no RectTransform");
@@ -127,10 +143,24 @@ public static class GodsPVZInteractionAudit
         if(report.runtime_errors.Count<120)report.runtime_errors.Add(message+"\n"+stack);
     }
     static void Save() { Directory.CreateDirectory(Folder);File.WriteAllText(Output,JsonUtility.ToJson(report,true)); }
+    static void ObserveOriginalZombieBindings() {
+        var prefab=Resources.Load<GameObject>("Prefabs/UI/SmallObjects/ZombieWindow");
+        if(prefab==null){CheckNow("original_zombie_prefab_exists",false,"Missing normal Resource path");return;}
+        var owner=prefab.GetComponents<MonoBehaviour>().SingleOrDefault(c=>c!=null&&c.GetType().FullName=="Almanac_ZombieWindow");
+        if(owner==null){CheckNow("original_zombie_owner_exists",false,PathOf(prefab));return;}
+        foreach(var binding in new[]{new[]{"zombiePortrait","Portrait","UnityEngine.UI.Image"},new[]{"questionMark","QMark","UnityEngine.UI.Image"},new[]{"checkMark","CMark","UnityEngine.UI.Image"},new[]{"eliteMark","EMark","UnityEngine.UI.Image"},new[]{"bossMark","BMark","UnityEngine.UI.Image"},new[]{"button","Portrait","UnityEngine.UI.Button"}}){
+            var type=TypeNamed(binding[2]);var child=prefab.transform.Find(binding[1]);var expected=child==null||type==null?null:child.GetComponent(type);var field=owner.GetType().GetField(binding[0],Fields);var actual=field==null?null:field.GetValue(owner) as UnityEngine.Object;
+            CheckNow("original_zombie_prefab_"+binding[0],field!=null&&field.FieldType==type&&expected!=null&&actual==expected,"actual="+Describe(actual)+" expected="+Describe(expected));
+        }
+    }
     public static void Begin() {
         if(SessionState.GetBool(Active,false))throw new InvalidOperationException("Existing interaction diagnostic active");
         if(File.Exists(Output))throw new InvalidOperationException("Never overwrite an earlier interaction report");
-        report=new Report{candidate_sha256="d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",workflow_head=Environment.GetEnvironmentVariable("GITHUB_SHA")};
+        string expected=Environment.GetEnvironmentVariable("GODSPVZ_INTERACTION_CANDIDATE_SHA256");if(String.IsNullOrEmpty(expected))expected="d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37";
+        var plugin=Path.Combine(Application.dataPath,"Plugins/GodsPVZRuntime1.dll");string actual;using(var h=System.Security.Cryptography.SHA256.Create())actual=BitConverter.ToString(h.ComputeHash(File.ReadAllBytes(plugin))).Replace("-","").ToLowerInvariant();
+        if(actual!=expected)throw new InvalidOperationException("Interaction candidate hash mismatch");
+        report=new Report{candidate_sha256=actual,workflow_head=Environment.GetEnvironmentVariable("GITHUB_SHA")};
+        ObserveOriginalZombieBindings();
         Save();EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity",OpenSceneMode.Single);SessionState.SetBool(Active,true);SessionState.SetInt(Stage,0);SessionState.SetString(Start,DateTime.UtcNow.Ticks.ToString());SessionState.SetString(Next,DateTime.UtcNow.AddSeconds(8).Ticks.ToString());Attach();EditorApplication.isPlaying=true;
     }
     [InitializeOnLoadMethod] static void Resume() { if(SessionState.GetBool(Active,false)){report=File.Exists(Output)?JsonUtility.FromJson<Report>(File.ReadAllText(Output)):new Report();Attach();} }
@@ -146,7 +176,7 @@ public static class GodsPVZInteractionAudit
             case 0:row.action="Observe actual startup and persistent UI registrations";RecordEvents();break;
             case 1:row.action="Use current save or normal public game save-creation path in fresh CI only";if(Read(Saves(),"playerSave")==null){var popup=Find("Window_I",true);if(popup!=null&&(System.Object.Equals(Read(popup,"I"),1)||System.Object.Equals(Read(popup,"I"),2))){report.save_creation_route="Actual Window_I.Input and Yes public callbacks";Call(popup,"Input","R20-Interaction-CI");Call(popup,"Yes");}else{report.save_creation_route="Separate real SavesManager.CreateNewPlayerSave public API diagnostic";Call(Saves(),"CreateNewPlayerSave","R20-Interaction-CI");}}break;
             case 2:row.action="Observe save initialization";CheckNow("live_player_save",Read(Saves(),"playerSave")!=null,Describe(Read(Saves(),"playerSave")));Call(Find("MainUIController"),"LoadData");break;
-            case 3:row.action="Public MainUIController.AlmanacOnclick";Call(Find("MainUIController"),"AlmanacOnclick");break;
+            case 3:row.action="Public MainUIController.AlmanacOnclick then normal OpenPlantHome";Call(Find("MainUIController"),"AlmanacOnclick");Call(Find("AlmanacUIController"),"OpenPlantHome");break;
             case 4:row.action="Real EventSystem raycast and pointer click on first live almanac card";RecordEvents();var card=Card(true);if(card==null)throw new InvalidOperationException("No live almanac card");report.first_plant_id=Convert.ToInt32(Read(card,"plantID"));RaycastClick(card.gameObject,"almanac");break;
             case 5:row.action="Observe almanac detail after pointer delivery";CheckNow("almanac_plant_detail_visible_after_pointer",ActiveObject(Find("Almanac_PlantDetail")),Describe(Find("Almanac_PlantDetail")));break;
             case 6:row.action="Separate public OpenPlant callback diagnostic with same observed plant ID";if(report.first_plant_id<0)throw new InvalidOperationException("No observed plant ID");Call(Find("AlmanacUIController"),"OpenPlant",report.first_plant_id);break;
@@ -156,14 +186,14 @@ public static class GodsPVZInteractionAudit
             case 10:row.action="Public MainUIController.AdventureButtonOnClick";Call(Find("MainUIController"),"AdventureButtonOnClick");break;
             case 11:row.action="Public AdventureScreen.Enter_Adventure";Call(Find("AdventureScreen"),"Enter_Adventure");break;
             case 12:row.action="Observe actual preparation UI, then public SeedChoose";CheckNow("prepare_screen_visible",ActiveObject(Find("PrepareUIController")),Describe(Find("PrepareUIController")));Call(Find("PrepareUIController"),"SeedChoose");break;
-            case 13:row.action="Real EventSystem pointer click on first selection card";RecordEvents();var seed=Card(false);if(seed==null)throw new InvalidOperationException("No live seed-selection card");RaycastClick(seed.gameObject,"seed_selection");break;
-            case 14:row.action="Observe isChosen then separate public ChooseThis diagnostic";var current=Card(false);CheckNow("seed_selected_after_pointer",current!=null&&System.Object.Equals(Read(current,"isChosen"),true),Describe(Read(current,"isChosen")));if(current==null)throw new InvalidOperationException("No live seed card");if(!System.Object.Equals(Read(current,"isChosen"),true))Call(current,"ChooseThis");break;
+            case 13:row.action="Real EventSystem pointer click on first selection card";RecordEvents();var seed=Card(false);if(seed==null)throw new InvalidOperationException("No live seed-selection card");report.first_selection_card_instance=seed.GetInstanceID();RaycastClick(seed.gameObject,"seed_selection");break;
+            case 14:row.action="Observe same clicked card isChosen then separate public ChooseThis diagnostic";var current=SceneComponents().FirstOrDefault(c=>c.GetInstanceID()==report.first_selection_card_instance);CheckNow("seed_selected_after_pointer",current!=null&&System.Object.Equals(Read(current,"isChosen"),true),Describe(Read(current,"isChosen")));if(current==null)throw new InvalidOperationException("Clicked seed card no longer exists");if(!System.Object.Equals(Read(current,"isChosen"),true))Call(current,"ChooseThis");break;
             case 15:row.action="Real EventSystem pointer click on registered Determine button";RaycastClick(CallbackObject("Determine"),"determine");break;
-            case 16:row.action="Observe confirmation transition, separate public Determine if selection stayed visible";CheckNow("prepare_visible_after_pointer_confirmation",ActiveObject(Find("PrepareUIController")),Describe(Find("PrepareUIController")));if(ActiveObject(Find("SeedChooserScreen")))Call(Find("SeedChooserScreen"),"Determine");break;
+            case 16:row.action="Observe confirmation transition, separate public Determine if selection stayed visible";CheckNow("prepare_visible_after_pointer_confirmation",ActiveObject(Find("PrepareUIController")),Describe(Find("PrepareUIController")));CheckNow("selection_closed_after_pointer_confirmation",!ActiveObject(Find("SeedChooserScreen")),Describe(Find("SeedChooserScreen")));if(ActiveObject(Find("SeedChooserScreen")))Call(Find("SeedChooserScreen"),"Determine");break;
             case 17:row.action="Public PrepareUIController.GameStart";Call(Find("PrepareUIController"),"GameStart");break;
             case 18:row.action="Observe board initialization and real dialogue progression";CheckNow("board_exists_after_start",Find("Board",true)!=null,Describe(Find("Board",true)));break;
             case 19:row.action="Public NextDialogue for actual running dialogue, bounded normal advancement";var dialogue=Find("DialogueManager_OnBoard");if(dialogue!=null&&System.Object.Equals(Read(dialogue,"isRunning"),true)&&report.dialogue_clicks<30){Call(dialogue,"NextDialogue");report.dialogue_clicks++;next=19;}break;
-            case 20:row.action="Real EventSystem pointer click on registered Board.ButtonDown_Menu";RecordEvents();RaycastClick(CallbackObject("ButtonDown_Menu"),"board_menu");break;
+            case 20:row.action="Real EventSystem pointer click on registered or visible normal Board menu handler";RecordEvents();RaycastClick(CallbackObject("ButtonDown_Menu")??VisiblePointerTarget("主菜单"),"board_menu");break;
             case 21:row.action="Observe pointer menu result; separate public callback if menu stayed hidden";CheckNow("board_menu_visible_after_pointer",ActiveObject(Read(Find("Board"),"menu")),Describe(Read(Find("Board"),"menu")));if(!ActiveObject(Read(Find("Board"),"menu")))Call(Find("Board"),"ButtonDown_Menu");break;
             case 22:row.action="Observe direct menu result and request normal return-main confirmation";CheckNow("board_menu_visible_after_callback",ActiveObject(Read(Find("Board"),"menu")),Describe(Read(Find("Board"),"menu")));Call(Find("Board"),"ReturnMain");break;
             case 23:row.action="Public active Window_Q.Yes for game-created return confirmation";Call(Find("Window_Q",true),"Yes");break;

@@ -1,0 +1,33 @@
+{
+  "scope": "SYNTHETIC_PARSER_AND_BYTE_ISOLATION_CONTROLS_NOT_UNITY_OR_ACTUAL_ASSET_ACCEPTANCE",
+  "six_value_patch_and_inverse": true,
+  "idempotent_readback": true,
+  "other_asset_and_meta_bytes_preserved": true,
+  "negative_controls": [
+    {
+      "name": "different_nonnull",
+      "rejected": true,
+      "reason": "Refuse to replace a different non-null reference zombiePortrait"
+    },
+    {
+      "name": "missing_component",
+      "rejected": true,
+      "reason": "Ambiguous/missing original UnityEngine.UI.Image at Portrait"
+    },
+    {
+      "name": "ambiguous_path",
+      "rejected": true,
+      "reason": "Ambiguous root-relative hierarchy path"
+    },
+    {
+      "name": "missing_field",
+      "rejected": true,
+      "reason": "Unique original field-bearing owner required"
+    },
+    {
+      "name": "changed_scope",
+      "rejected": true,
+      "reason": "Wrong binding plan scope"
+    }
+  ]
+}

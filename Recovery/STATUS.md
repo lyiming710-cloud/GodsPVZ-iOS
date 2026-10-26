@@ -2,7 +2,7 @@
 
 ## Latest checkpoint - 2026-10-26
 
-[R21 UI139 construction and finite checks](Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Fresh compiler and actual UI checks pending; zombie-almanac null receiver unresolved, no new IPA or device acceptance.
+[R21 UI139 construction and finite checks](Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Linux and Apple fresh compiler checks pass all 1029 sources/logs; six lost zombie-prefab links are mapped to original components. Actual UI checks remain pending; no new IPA or device acceptance.
 
 [Device UI failure report and unchanged-R20 diagnostic](Startup-R20-Interaction-Diagnostic-2026-10-26/README.md): selection/confirm, almanac detail and Board/menu interactions reported broken; speed works; NaN visible. Added actual EventSystem/public-callback observation helper, exact API compilation and mode guards. No game DLL change or new IPA, real diagnostic not dispatched yet.
 
