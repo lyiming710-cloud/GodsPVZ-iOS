@@ -1,5 +1,8 @@
 # GodsPVZ iOS recovery
 
+[R21 UI139 construction and finite checks](Recovery/Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Fresh compiler and actual UI checks pending; zombie-almanac null receiver unresolved, no new IPA or device acceptance.
+
+
 Reverse-recovery workspace for the GodsPVZ 1.0.2 Unity IL2CPP builds supplied by the repository owner.
 
 Latest device feedback: menus and terrain render, but plant selection/confirmation, almanac details and Board interactions fail. [Unchanged-R20 interaction diagnosis](Recovery/Startup-R20-Interaction-Diagnostic-2026-10-26/README.md) is prepared; game DLL remains fixed and no gameplay acceptance is claimed.

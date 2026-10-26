@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[R21 UI139 construction and finite checks](Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Fresh compiler and actual UI checks pending; zombie-almanac null receiver unresolved, no new IPA or device acceptance.
+
 [Device UI failure report and unchanged-R20 diagnostic](Startup-R20-Interaction-Diagnostic-2026-10-26/README.md): selection/confirm, almanac detail and Board/menu interactions reported broken; speed works; NaN visible. Added actual EventSystem/public-callback observation helper, exact API compilation and mode guards. No game DLL change or new IPA, real diagnostic not dispatched yet.
 
 [R20 unsigned iPad IPA](https://github.com/lyiming710-cloud/GodsPVZ-iOS/releases/tag/startup-r20-ipad-test-2026-10-26) has completed actual [Unity/Xcode run 40263428409](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40263428409). Unity export: Succeeded / 0 errors / 1,364 warnings. All actual 258 C++ / 66 C source hashes and raw Apple logs: 0 errors / 3,584 warnings; Xcode BUILD SUCCEEDED. IPA: 192,091,143 bytes, arm64 / physical iOS / unsigned, SHA-256 f7334b1b330cdc7dc2cbeeb0c9851c8c233bc0fc923c69e6de36f38aeda56c75. Its metadata exactly matches this export. All asset hashes/GUIDs/names preserved; all 12 relocated assets pass actual Unity identity checks. [Independent readback and preserved raw files](Startup-R20-IPA-2026-10-26/README.md). **Device black screen/flicker, physical audio, Board and full-game acceptance remain pending.**
