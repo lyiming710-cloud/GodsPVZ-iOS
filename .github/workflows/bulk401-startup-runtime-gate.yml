@@ -190,9 +190,9 @@ jobs:
             sudo apt-get update -qq
             sudo apt-get install -y --no-install-recommends xvfb mesa-utils libgl1-mesa-dri
           fi
-          if [ '${{ inputs.gameplay_audit }}' = true ] && ! command -v xdotool >/dev/null 2>&1; then
+          if [ '${{ inputs.gameplay_audit }}' = true ]; then
             sudo apt-get update -qq
-            sudo apt-get install -y --no-install-recommends xdotool
+            sudo apt-get install -y --no-install-recommends xdotool openbox imagemagick dbus-x11
           fi
           export LIBGL_ALWAYS_SOFTWARE=1
           xvfb-run -a -s '-screen 0 1280x720x24' glxinfo -B > "$E/software-gl-renderer.txt" 2>&1
@@ -589,6 +589,15 @@ jobs:
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/EMPTY-DYNAMIC-FONT-ATLAS-EVIDENCE.json" "$PROJECT/Recovery/empty-dynamic-font-atlas-evidence.json"
           cp "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ORIGINAL-ATTRIBUTE-ROSTERS.json" "$PROJECT/Recovery/original-serialization-marker-proof.json"
 
+      - name: Restore 846 original serialized Plant fields before their actual import and gameplay test
+        if: inputs.gameplay_audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          python3 scripts/actions/restore_startup_r21_plant_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --output "$OUT/evidence/plant-source-restoration"
+
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash
         run: |
@@ -747,6 +756,9 @@ jobs:
           PLUGIN="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"
           [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
           cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZInteractionAudit.cs" "$PROJECT/Assets/Editor/"
+          if [ '${{ inputs.gameplay_audit }}' = true ]; then
+            cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAudit.cs" "$PROJECT/Assets/Editor/"
+          fi
           set +e
           timeout --signal=TERM 300s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZInteractionAudit.Begin -logFile "$OUT/evidence/r21-interaction-audit.log"
           RC=$?
@@ -777,8 +789,18 @@ jobs:
           PROJECT="$(cat "$OUT/project-path.txt")"
           [ "$(sha256sum "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
           cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAudit.cs" "$PROJECT/Assets/Editor/"
+          python3 - "$PROJECT" "$OUT/evidence/r21-editor-tool-api-rename.json" <<'PY'
+          from pathlib import Path
+          import sys,hashlib,json
+          root=Path(sys.argv[1]);p=root/'Assets/Editor/GodsPVZIOSBuild.cs';before=p.read_bytes();old=b'EditorUserBuildSettings.symlinkLibraries';new=b'EditorUserBuildSettings.symlinkSources'
+          assert before.count(old)==1, 'Only the previously observed obsolete Editor build-tool property may be renamed'
+          after=before.replace(old,new);p.write_bytes(after);assert p.read_bytes()==after
+          Path(sys.argv[2]).write_text(json.dumps(dict(scope='DISPOSABLE_EDITOR_BUILD_TOOL_API_RENAME_ONLY_NOT_GAME_CODE',file='Assets/Editor/GodsPVZIOSBuild.cs',before_sha256=hashlib.sha256(before).hexdigest(),after_sha256=hashlib.sha256(after).hexdigest(),replacements=1,game_dll_changed=False),indent=2)+'\n','utf-8')
+          PY
+          timeout --signal=TERM 180s xvfb-run -a -s '-screen 0 1600x1000x24' "$UNITY" -batchmode -quit -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZGameplayAudit.Prepare -logFile "$OUT/evidence/r21-gameplay-precompile.log"
+          [ "$(sha256sum "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
           set +e
-          timeout --signal=TERM 550s xvfb-run -a -s '-screen 0 1600x1000x24' python3 scripts/actions/run_startup_r21_gameplay.py --unity "$UNITY" --project "$PROJECT" --output "$OUT/gameplay-output"
+          timeout --signal=TERM 550s xvfb-run -a -s '-screen 0 1600x1000x24' dbus-run-session -- python3 scripts/actions/run_startup_r21_gameplay.py --unity "$UNITY" --project "$PROJECT" --output "$OUT/gameplay-output"
           RC=$?
           set -e
           echo "$RC" > "$OUT/evidence/r21-gameplay-host-exit.txt"

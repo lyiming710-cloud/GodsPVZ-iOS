@@ -26,7 +26,7 @@ def main():
     expected = '75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
     assert hashlib.sha256(plugin.read_bytes()).hexdigest() == expected
     env = dict(os.environ, GODSPVZ_GAMEPLAY_OUTPUT=str(output))
-    command = [args.unity, '-force-glcore', '-projectPath', args.project,
+    command = [args.unity, '-force-glcore', '-disable-assembly-updater', 'GodsPVZRuntime1.dll', '-projectPath', args.project,
                '-executeMethod', 'GodsPVZGameplayAudit.Begin',
                '-logFile', str(output / 'gameplay-unity.log')]
     assert '-batchmode' not in command and '-quit' not in command
@@ -54,12 +54,39 @@ def main():
     timeout = False
     exception = None
     start = time.monotonic()
+    last_desktop = -100.0
+    manager = None
     try:
+        # Provide actual desktop services for the non-batch Editor. The earlier
+        # bare-Xvfb attempt never reached executeMethod and is retained as FAIL.
+        manager_log = (output / 'openbox.log').open('wb')
+        manager = subprocess.Popen(['openbox', '--sm-disable'], env=env,
+                                   stdout=manager_log, stderr=subprocess.STDOUT)
+        time.sleep(.8)
         with (output / 'gameplay-process.stdout.log').open('wb') as stdout, \
              (output / 'gameplay-process.stderr.log').open('wb') as stderr:
             process = subprocess.Popen(command, env=env, stdout=stdout, stderr=stderr,
                                        start_new_session=True)
             while process.poll() is None:
+                elapsed = time.monotonic() - start
+                if elapsed - last_desktop >= 15:
+                    last_desktop = elapsed
+                    # Preserve a real screen even when executeMethod is blocked
+                    # by an Editor dialog before any helper report is created.
+                    image = output / 'screens' / f'desktop-{int(elapsed):04d}.png'
+                    image.parent.mkdir(exist_ok=True)
+                    shot = subprocess.run(['import', '-window', 'root', str(image)],
+                                          env=env, capture_output=True, timeout=15)
+                    windows = subprocess.run(['xdotool', 'search', '--onlyvisible', '--pid', str(process.pid)],
+                                             env=env, capture_output=True, text=True, timeout=10)
+                    titles = []
+                    for window in windows.stdout.split():
+                        title = subprocess.run(['xdotool', 'getwindowname', window],env=env,capture_output=True,text=True,timeout=5)
+                        titles.append(dict(window=window,title=title.stdout.strip()))
+                    logs.append(dict(kind='DESKTOP_OBSERVATION',elapsed_seconds=round(elapsed,3),screenshot_exit=shot.returncode,windows=titles))
+                if elapsed > 90 and not (output / 'GAMEPLAY-RESULT.json').exists():
+                    exception = 'EDITOR_BOOTSTRAP_DID_NOT_REACH_HELPER_WITHIN_90_SECONDS'
+                    break
                 if time.monotonic() - start > 500:
                     timeout = True
                     break
@@ -96,7 +123,7 @@ def main():
                 atomic_json(output / 'INPUT-ACK.json', dict(
                     sequence=last_sequence, phase='complete', exit_code=0,
                     detail=detail + '\n' + location))
-            if timeout:
+            if timeout or exception:
                 process.terminate()
             try:
                 process.wait(timeout=25)
@@ -118,6 +145,10 @@ def main():
             xdo('mouseup', 1)
         except Exception as release_error:
             logs.append(dict(cleanup_error=repr(release_error)))
+        if manager is not None:
+            manager.terminate()
+            manager.wait(timeout=10)
+            manager_log.close()
         (output / 'OS-INPUT-COMMANDS.json').write_text(json.dumps(logs, indent=2) + '\n', 'utf-8')
         unchanged = hashlib.sha256(plugin.read_bytes()).hexdigest() == expected
         (output / 'HOST-RESULT.json').write_text(json.dumps(dict(

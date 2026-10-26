@@ -1,0 +1,11 @@
+# 九个Plant原始序列化组件恢复
+
+原版resources.assets固定b84c445e…b9472317，逐一解出九个带Plant组件的植物资源，完整原始字节反写一致；每个94个可序列化游戏字段。当前R3对应YAML只保留组件头，缺少全部846项，包含ID、HP、攻击参数、Animation、UI与音源引用。两个PuffShroom资源根没有Plant组件，保留非适用/未建模记录，不凑成11个修复目标。
+
+只在独立副本对九个已证明owner追加原值。PPtr按原版子树路径+组件类+同类序号映射到已捕获源localID，游戏类身份来自同候选真实Unity观察；跨预制体Sprite还要求原名、精确f32矩形/offset/border/pivot、逐字节index/vertex buffers、顶点数、源纹理名/GUID及Sprite的实际meta/mainObjectFileID一致。未独立比较PNG像素，不改任何Sprite/Texture资产。所有非目标资产字节、GUID、m_Script、其他文档与游戏DLL保持不变；不是按名字猜引用。
+
+映射计划SHA固定82e46ff8…92ba3e5b，补丁器拒绝篡改。独立副本中九个源文件追加后重新YAML解析的846项与计划一致；错误owner、错误owner body SHA、少字段、篡改原始ID计划四个对照均被拒绝。完整前后源、原版数据、类型树适配和工具失败都归档。当前属于源恢复构建与边界检查；尚未由本次真实Unity导入/复杂战斗验收，不增加正式合格方法数。
+
+类型树来自已核对原版字段声明的75160a32…同一程序集。保留生成器原始不适用schema，只修正enabled头对齐及string[]被写成string的wrapper；每一个原版组件都必须完整消费并反写同一字节。另一个生成器后端StackOverflow与YAML数值型hex误解析属工具失败，不算游戏失败，不声称验证器万能。
+
+重试工作流在候选注入后、重新导入前应用九文件恢复。扩大真实AssetDatabase/Resources的前后观测到九个植物全部实例字段，保存EditorJson和引用身份；然后实际UI和复杂关卡输入。游戏程序集仍是75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15，零方法变更，无新IPA。

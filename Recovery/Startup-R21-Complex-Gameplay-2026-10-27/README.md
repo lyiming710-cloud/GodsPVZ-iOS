@@ -7,3 +7,9 @@
 不调用单位Update/Attack/TakeDamage，不直接生成植物或僵尸，不赋值HP/坐标/阳光/波次/地图，不为凑结果修改DLL或源配置。预置装置也会伤害僵尸，因此HP下降只记为来源未证明；植物来源弹丸、命中计数与具体目标/伤害归属分开判断。轨迹采样与已有Path字段只是运行观察，不冒充原生语义等价。测试不会自动把complex_gameplay_pass置真，需要读回轨迹/图像和攻击证据再评估。
 
 真实UI前置已有Plant.animationGroup未赋值错误；本轮尝试可能在自然创建植物时被阻断，必须保存真实失败、未达路径和原始异常，不能视为通过。独立Editor API编译与工作流负控制属于工具预检；当前文档创建时尚未运行本轮游戏。实际证据以之后固定source/run与artifact读回为准。
+
+## 首次真实桌面尝试40380298774：未进入游戏
+
+source a56d0fa…，候选未变，实际Unity完成Editor辅助程序集编译后，图形启动未执行到Begin；宿主525秒超时，鼠标请求0，轨迹0，无GAMEPLAY-RESULT。不能归因为植物/僵尸行为错误，也不能算复杂关卡运行。完整原始日志和宿主记录已读回校验，席位归还exit0。
+
+重试增加Openbox/D-Bus、真实桌面截图和窗口列表；90秒未达到helper即提前终止。先在batch模式编译相同helper，在一次性Editor工具GodsPVZIOSBuild中精确改名唯一过时symlinkLibraries属性为symlinkSources，保存前后哈希，不改游戏DLL。非batch启动禁止更新GodsPVZRuntime1程序集。原日志只能支持API updater/GUI启动疑点，未确证具体模态窗口。另恢复原版九个Plant组件缺失的序列化数据，见相邻Plant-Serialization检查点；本次历史失败不改写。
