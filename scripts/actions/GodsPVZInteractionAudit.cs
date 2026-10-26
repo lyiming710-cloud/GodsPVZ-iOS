@@ -23,7 +23,7 @@ public static class GodsPVZInteractionAudit
         public string scope="HASH_BOUND_ACTUAL_EDITOR_UI_PATH_DIAGNOSTIC_NOT_DEVICE_OR_GAME_ACCEPTANCE";
         public bool collection_complete, all_observed_checks_pass, device_execution=false, game_fields_seeded=false, replacement_game_code=false;
         public string save_scenario="FRESH_CI_SANDBOX_GAME_SAVE_CREATED_ONLY_BY_PUBLIC_GAME_API_IF_NEEDED", save_creation_route="Existing game state", candidate_sha256, workflow_head;
-        public int first_plant_id=-1, first_selection_card_instance, dialogue_clicks;
+        public int first_plant_id=-1, first_selection_card_instance, dialogue_clicks, board_start_waits;
         public List<ActionRow> actions=new List<ActionRow>();
         public List<Check> checks=new List<Check>();
         public List<EventRow> registered_ui_events=new List<EventRow>();
@@ -60,7 +60,7 @@ public static class GodsPVZInteractionAudit
         Observe(row,Find("Almanac_ZombieHome"),"Almanac_ZombieHome","zombieWindowList","zombiePortraits_Window");
         Observe(row,Find("PrepareUIController"),"PrepareUIController","playerSave","card_ChooseList","seedChooserScreen");
         Observe(row,Find("SeedChooserScreen"),"SeedChooserScreen","playerSave","prepareUIController","card_ChooseList");
-        Observe(row,Find("Board"),"Board","gamePause","gameStart","gameSpeed","menuOpen","menu","senarioState","enemyManager","zombieManager","mouseManager");
+        Observe(row,Find("Board"),"Board","gamePause","gameStart","gameSpeed","menuOpen","menu","enemyManager","zombieManager","mouseManager");
         Observe(row,Find("DialogueManager_OnBoard"),"DialogueManager_OnBoard","isRunning","dialogueIndex","dialogueTriggerType");
         Observe(row,Find("MouseManager"),"MouseManager","onBoard","operationCD","board","prepareUIController");
         foreach(var card in SceneComponents().Where(c=>c.GetType().FullName=="Card_Choose"&&c.gameObject.activeInHierarchy).Take(6))Observe(row,card,PathOf(card.gameObject),"plantID","isChosen","serialNumBeChosen","seedChooserScreen","almanacUIController");
@@ -152,6 +152,7 @@ public static class GodsPVZInteractionAudit
             var type=TypeNamed(binding[2]);var child=prefab.transform.Find(binding[1]);var expected=child==null||type==null?null:child.GetComponent(type);var field=owner.GetType().GetField(binding[0],Fields);var actual=field==null?null:field.GetValue(owner) as UnityEngine.Object;
             CheckNow("original_zombie_prefab_"+binding[0],field!=null&&field.FieldType==type&&expected!=null&&actual==expected,"actual="+Describe(actual)+" expected="+Describe(expected));
         }
+        var manager=Resources.Load<GameObject>("prefabs/managers/ZombieManager");var ownerManager=manager==null?null:manager.GetComponents<MonoBehaviour>().FirstOrDefault(c=>c!=null&&c.GetType().FullName=="ZombieManager");string detail;bool audio=GodsPVZSerializedReferenceProbe.AudioMatches(Read(ownerManager,"audioClip_zombie"),out detail);CheckNow("original_zombie_manager_76_ordered_audio_slots",audio,detail);
     }
     public static void Begin() {
         if(SessionState.GetBool(Active,false))throw new InvalidOperationException("Existing interaction diagnostic active");
@@ -191,9 +192,9 @@ public static class GodsPVZInteractionAudit
             case 15:row.action="Real EventSystem pointer click on registered Determine button";RaycastClick(CallbackObject("Determine"),"determine");break;
             case 16:row.action="Observe confirmation transition, separate public Determine if selection stayed visible";CheckNow("prepare_visible_after_pointer_confirmation",ActiveObject(Find("PrepareUIController")),Describe(Find("PrepareUIController")));CheckNow("selection_closed_after_pointer_confirmation",!ActiveObject(Find("SeedChooserScreen")),Describe(Find("SeedChooserScreen")));if(ActiveObject(Find("SeedChooserScreen")))Call(Find("SeedChooserScreen"),"Determine");break;
             case 17:row.action="Public PrepareUIController.GameStart";Call(Find("PrepareUIController"),"GameStart");break;
-            case 18:row.action="Observe board initialization and real dialogue progression";CheckNow("board_exists_after_start",Find("Board",true)!=null,Describe(Find("Board",true)));break;
+            case 18:row.action="Wait for actual board start or real running intro dialogue, without setting game fields";var boardReady=Find("Board",true);if(report.board_start_waits==0)CheckNow("board_exists_after_start",boardReady!=null,Describe(boardReady));var intro=Find("DialogueManager_OnBoard");bool began=System.Object.Equals(Read(boardReady,"gameStart"),true)||System.Object.Equals(Read(intro,"isRunning"),true);if(!began&&report.board_start_waits++<20)next=18;else CheckNow("board_start_or_dialogue_began",began,"waits="+report.board_start_waits);break;
             case 19:row.action="Public NextDialogue for actual running dialogue, bounded normal advancement";var dialogue=Find("DialogueManager_OnBoard");if(dialogue!=null&&System.Object.Equals(Read(dialogue,"isRunning"),true)&&report.dialogue_clicks<30){Call(dialogue,"NextDialogue");report.dialogue_clicks++;next=19;}break;
-            case 20:row.action="Real EventSystem pointer click on registered or visible normal Board menu handler";RecordEvents();RaycastClick(CallbackObject("ButtonDown_Menu")??VisiblePointerTarget("主菜单"),"board_menu");break;
+            case 20:row.action="Real EventSystem pointer click at original source-bound Board menu path";RecordEvents();var boardMenu=Find("Board",true);var sourceButton=boardMenu==null?null:boardMenu.transform.Find("Windows/Button/MenuButton");CheckNow("board_game_started_before_menu",System.Object.Equals(Read(boardMenu,"gameStart"),true),Describe(Read(boardMenu,"gameStart")));RaycastClick(sourceButton==null?CallbackObject("ButtonDown_Menu"):sourceButton.gameObject,"board_menu");break;
             case 21:row.action="Observe pointer menu result; separate public callback if menu stayed hidden";CheckNow("board_menu_visible_after_pointer",ActiveObject(Read(Find("Board"),"menu")),Describe(Read(Find("Board"),"menu")));if(!ActiveObject(Read(Find("Board"),"menu")))Call(Find("Board"),"ButtonDown_Menu");break;
             case 22:row.action="Observe direct menu result and request normal return-main confirmation";CheckNow("board_menu_visible_after_callback",ActiveObject(Read(Find("Board"),"menu")),Describe(Read(Find("Board"),"menu")));Call(Find("Board"),"ReturnMain");break;
             case 23:row.action="Public active Window_Q.Yes for game-created return confirmation";Call(Find("Window_Q",true),"Yes");break;

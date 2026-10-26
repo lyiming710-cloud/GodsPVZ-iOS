@@ -156,6 +156,7 @@ jobs:
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
       PARENT_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
       TEST_DLL_SHA256: '75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
+      GODSPVZ_ORIGINAL_AUDIO_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Actual-UI-2026-10-27/ORIGINAL-ZOMBIE-MANAGER-AUDIO-PLAN.json
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -595,13 +596,32 @@ jobs:
           echo "$GOT" > "$E/test-dll-after-reimport.sha256"
           [ "$GOT" = "$TEST_DLL_SHA256" ] || exit 65
 
-      - name: Restore six original serialized zombie-window component references after candidate reimport
+      - name: Observe real serialized objects and force import original prefabs without editing source bytes
         shell: bash
+        env:
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
+          LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
+          UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/restore_startup_r21_zombie_bindings.py --project "$PROJECT" --plan "$GITHUB_WORKSPACE/Recovery/Startup-R21-Original-UI-Bindings-2026-10-27/ZOMBIE-WINDOW-BINDING-PLAN.json" --output "$OUT/evidence"
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZSerializedReferenceProbe.cs" "$PROJECT/Assets/Editor/"
+          set +e
+          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZSerializedReferenceProbe.Run -logFile "$OUT/evidence/r21-serialization-reimport-probe.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$OUT/evidence/r21-serialization-reimport-probe-exit.txt"
+          [ "$RC" -eq 0 ]
+          python3 - "$OUT/evidence/r21-serialization-reimport-probe.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))
+          assert r['candidate_sha256']=='75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
+          assert r['collection_complete'] and r['import_count']>=100 and r['source_bytes_unchanged'] and r['game_dll_unchanged']
+          assert not r['source_references_rewritten'] and not r['game_fields_assigned'] and not r['device_execution'] and not r['exceptions']
+          print('IMPORT_PROBE_COLLECTED_NO_RESOURCE_OR_GAME_ACCEPTANCE',r['import_count'])
+          PY
+
       - name: Verify every relocated resource GUID, path and original imported name
         shell: bash
         env:

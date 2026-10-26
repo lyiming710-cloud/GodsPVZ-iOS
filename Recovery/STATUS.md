@@ -1,5 +1,8 @@
 # Recovery status
 
+R21 actual Editor UI run 40365525028: selection and confirmation pass, Board public menu callback works, but almanac references/Plant.animationGroup still fail. Original source bindings and 76 audio slots are already correct; [serialization/import investigation](Startup-R21-Reimport-Probe-2026-10-27/README.md) is prepared with the same DLL. No new IPA or iPad acceptance.
+
+
 ## Latest checkpoint - 2026-10-26
 
 [R21 UI139 construction and finite checks](Startup-R21-UI139-2026-10-27/README.md): 139 native-backed positions in 7 methods, 344 finite caller comparisons and 15 physical semantic controls; 2310 other MethodDefs preserved. Linux and Apple fresh compiler checks pass all 1029 sources/logs; six lost zombie-prefab links are mapped to original components. Actual UI checks remain pending; no new IPA or device acceptance.

@@ -15,8 +15,9 @@ if __name__=='__main__':
             found+=1;args.append('"'+str(derived)+'"')
         else:args.append(line)
     assert found==1,'Exactly one original build helper must be replaced in preflight input'
-    args+=['"'+str(capture)+'"','"'+str(caseaudit)+'"','"'+str(interaction)+'"'];rsp=prior/'build-capture.rsp';rsp.write_text('\n'.join(args)+'\n','utf-8')
+    serialization=Path(__file__).parent/'GodsPVZSerializedReferenceProbe.cs'
+    args+=['"'+str(capture)+'"','"'+str(caseaudit)+'"','"'+str(interaction)+'"','"'+str(serialization)+'"'];rsp=prior/'build-capture.rsp';rsp.write_text('\n'.join(args)+'\n','utf-8')
     proc=subprocess.run([str(data/'NetCoreRuntime/dotnet'),'exec',str(data/'DotNetSdkRoslyn/csc.dll'),'/noconfig','@'+str(rsp)],capture_output=True)
     (prior/'build-capture.log').write_bytes(proc.stdout+proc.stderr)
-    result=dict(scope='EXACT_EDITOR_CAPTURE_ASSET_NAMES_AND_INTERACTION_DIAGNOSTIC_API_COMPILATION_ONLY',exit_code=proc.returncode,sources=[dict(file=p.name,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in [original,derived,capture,caseaudit,interaction]],unity_started=False,old_error_gate_changed=False)
+    result=dict(scope='EXACT_EDITOR_CAPTURE_ASSET_NAMES_INTERACTION_AND_SERIALIZATION_PROBE_API_COMPILATION_ONLY',exit_code=proc.returncode,sources=[dict(file=p.name,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in [original,derived,capture,caseaudit,interaction,serialization]],unity_started=False,old_error_gate_changed=False)
     (prior/'BUILD-CAPTURE-HELPER-COMPILATION.json').write_text(json.dumps(result,indent=2)+'\n','utf-8');print(json.dumps(result));raise SystemExit(proc.returncode)
