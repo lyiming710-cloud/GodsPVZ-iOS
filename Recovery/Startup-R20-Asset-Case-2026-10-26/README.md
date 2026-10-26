@@ -1,21 +1,13 @@
-# 四条实际 Unity 构建错误已定位：六组大小写路径冲突
+# 六组资源大小写冲突：保留原资源，真实导入和 IPA 构建通过
 
-带完整报告的复现40259026509（提交0457c907）再次保持失败。实际BuildReport含4条Error，逐条都是同一组24个路径（12份资源及其meta）的大小写冲突，分别在Prebuild Cleanup/Prepare assets多个阶段重报。不是从summary或1221条序列化提示猜出的根因。
+[实际工作流 40263428409](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40263428409) 已验证修复：Unity 导出 0 errors，12 份资源的 GUID→新路径→LoadMainAsset.name 均符合原始名称；全部实际 324 个 C/C++ 和后续 Xcode 构建通过，并生成未签名 IPA。[成功证据及下载](../Startup-R20-IPA-2026-10-26/README.md)。
 
-资源组为AnimationClip的Enter/enter、Exit/exit、Idle/idle，Sprite的Background/background、Background_0/background_0，以及Texture2D的Background.png/background.png。Unity明确提示将忽略这些文件。原错误门、候选和签名策略保持，Mac跳过，没有新IPA；席位已归还。
+原版 R3 内 AnimationClip 的 Enter/enter、Exit/exit、Idle/idle，Sprite 的 Background/background、Background_0/background_0，以及 Texture2D 的 Background.png/background.png，共六组大小写路径冲突。40259026509 的真实 BuildReport 分四条 Error 重复报告这些路径，原错误门拒绝，Mac 跳过；全部失败证据仍保留。本次没有将错误降级或忽略。
 
-拟在精确R3副本首次导入前把每个冲突资源及meta移到各自GUID命名的子文件夹，保留原文件名。这样PNG默认导入名也能保留；不改资源内容、meta、GUID、动画/精灵内部名称和游戏DLL。旧显式路径引用、Resources/StreamingAssets路径、无meta/重复GUID等会先阻止移动；完整输入/输出文件清单和hash、四个变坏计划控制在Linux源码预检执行。此检查点仅准备source-only模式，尚未取得实际R3计划，不能宣称资源修复通过。
+精确源检查 40262106436 核对全部 6,842 个 Assets 文件。12 份资源和 12 份 meta 各移入其 GUID 命名子文件夹，原 basename、原始字节/hash、GUID 保持；其他 6,818 份文件路径和字节不变。大小写冲突归零。旧路径引用、特殊 Resources/StreamingAssets 路径、丢 meta/重复 GUID 会阻止操作；四个错误计划在第一次移动前被拒绝。第一次源码预检查因 epoch 日期无法写传统 ZIP 而停止的证据仍保留，修复仅钳制 ZIP 元数据日期。
 
-这轮也保存了真正的失败导出源码：258个C++、66个C，全部329个归档文件SHA及ZIP完整性已本机回读。它与此前可移植转换的1029单元不是同一套输入。当前实际导出源码尚未进行Apple编译，绝不继承历史1029条成功作为此导出通过。原始完整报告及完整源码归档SHA为53b73734f7edc2ed64134c86e7b7ee584aebea12a33ace2f100876d47ee7e80e（不合格诊断输入）。
+冻结计划和原始导入名称表在本目录。路径修复在 R3 解开后、第一次 Unity 导入前执行。GodsPVZAssetCaseAudit 真实读取 Unity GUIDToAssetPath、AssetPathToGUID、LoadMainAsset.name；Sprite 的内部名称和 PNG 默认 Texture2D 名称均按原版检查。游戏候选 SHA-256 保持 d887b370…095b37。
 
-资源/Unity工程修复继续完成已经超过100位置的R20测试批次；不会把12份路径调整算成12个新CIL修复，也不会把原有四个浮点修复提案偷偷写入当前游戏DLL。真实M5设备的黑屏原因和改善仍需新包实测。
+失败导出的完整源归档 SHA-256 53b73734f7edc2ed64134c86e7b7ee584aebea12a33ace2f100876d47ee7e80e，继续保存在旧 Release 的 Startup-R20-UNQUALIFIED-40259026509-generated-and-report.zip；新成功导出归档 SHA-256 c6cba5a27d9ce2151366a5f0db56ef1cf12c6107f8b171c46e301893bc8bfbe2，独立保存。每次 329 个原始文件均已字节回读，不能互相借用结论。PRE-IPA-SUCCESS 文件保留本目录先前状态。
 
-## 精确Linux源码预检已完成，完整构建修复已接入
-
-源码预检40262106436（ca746368）实际解开固定R3归档，核对6,842个Assets文件。6组冲突中12份资源及12个meta全部移入各自GUID目录，文件名、每个文件的字节/hash和GUID保留，其他6,818个文件的内容与路径不变，大小写冲突归零。四个变坏计划（错误SHA、遗漏after行、越界目标、改文件名）均在第一次移动前拒绝。Source及候选DLL的完整旧路径字面量扫描没有发现需另行处理的直接引用。
-
-第一次源码预检40261884357仅因原归档Unix-epoch时间早于ZIP的1980年限制而在证据打包时失败，尚未移动资源；部分产物保留。改动只钳制ZIP时间元数据，源文件时间/内容不动，随后真实源码预检通过。该失败不是Unity构建或资源语义故障。
-
-固定计划已接入R3解开后、基线/Editor第一次导入前。另提取12个原始导入名称（YAML m_Name及PNG原文件名），新增真实Unity GUID→新路径→LoadMainAsset.name核验；新helper已用精确本机Unity API编译通过，并加入持证启动前的cached API预检。完整Unity尚未重跑，不能提前标四错误消失或IPA通过。冻结游戏候选仍d887b370，不含四个浮点提案。
-
-完整不合格导出源码已永久保存在Release：Startup-R20-UNQUALIFIED-40259026509-generated-and-report.zip。GitHub远端digest与本机相同53b73734…，大小54,575,278字节，329个原始文件均单独校验。
+这是既有 R20 超过 100 位置批次的资源/导出修复，不把 24 个文件路径计作新游戏语义修复。新 IPA 尚无 iPad Pro M5 上的启动、持续画面、声音或 Board 结果，不能据构建成功声称黑屏已经解决。

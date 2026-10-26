@@ -1,0 +1,21 @@
+# 四条实际 Unity 构建错误已定位：六组大小写路径冲突
+
+带完整报告的复现40259026509（提交0457c907）再次保持失败。实际BuildReport含4条Error，逐条都是同一组24个路径（12份资源及其meta）的大小写冲突，分别在Prebuild Cleanup/Prepare assets多个阶段重报。不是从summary或1221条序列化提示猜出的根因。
+
+资源组为AnimationClip的Enter/enter、Exit/exit、Idle/idle，Sprite的Background/background、Background_0/background_0，以及Texture2D的Background.png/background.png。Unity明确提示将忽略这些文件。原错误门、候选和签名策略保持，Mac跳过，没有新IPA；席位已归还。
+
+拟在精确R3副本首次导入前把每个冲突资源及meta移到各自GUID命名的子文件夹，保留原文件名。这样PNG默认导入名也能保留；不改资源内容、meta、GUID、动画/精灵内部名称和游戏DLL。旧显式路径引用、Resources/StreamingAssets路径、无meta/重复GUID等会先阻止移动；完整输入/输出文件清单和hash、四个变坏计划控制在Linux源码预检执行。此检查点仅准备source-only模式，尚未取得实际R3计划，不能宣称资源修复通过。
+
+这轮也保存了真正的失败导出源码：258个C++、66个C，全部329个归档文件SHA及ZIP完整性已本机回读。它与此前可移植转换的1029单元不是同一套输入。当前实际导出源码尚未进行Apple编译，绝不继承历史1029条成功作为此导出通过。原始完整报告及完整源码归档SHA为53b73734f7edc2ed64134c86e7b7ee584aebea12a33ace2f100876d47ee7e80e（不合格诊断输入）。
+
+资源/Unity工程修复继续完成已经超过100位置的R20测试批次；不会把12份路径调整算成12个新CIL修复，也不会把原有四个浮点修复提案偷偷写入当前游戏DLL。真实M5设备的黑屏原因和改善仍需新包实测。
+
+## 精确Linux源码预检已完成，完整构建修复已接入
+
+源码预检40262106436（ca746368）实际解开固定R3归档，核对6,842个Assets文件。6组冲突中12份资源及12个meta全部移入各自GUID目录，文件名、每个文件的字节/hash和GUID保留，其他6,818个文件的内容与路径不变，大小写冲突归零。四个变坏计划（错误SHA、遗漏after行、越界目标、改文件名）均在第一次移动前拒绝。Source及候选DLL的完整旧路径字面量扫描没有发现需另行处理的直接引用。
+
+第一次源码预检40261884357仅因原归档Unix-epoch时间早于ZIP的1980年限制而在证据打包时失败，尚未移动资源；部分产物保留。改动只钳制ZIP时间元数据，源文件时间/内容不动，随后真实源码预检通过。该失败不是Unity构建或资源语义故障。
+
+固定计划已接入R3解开后、基线/Editor第一次导入前。另提取12个原始导入名称（YAML m_Name及PNG原文件名），新增真实Unity GUID→新路径→LoadMainAsset.name核验；新helper已用精确本机Unity API编译通过，并加入持证启动前的cached API预检。完整Unity尚未重跑，不能提前标四错误消失或IPA通过。冻结游戏候选仍d887b370，不含四个浮点提案。
+
+完整不合格导出源码已永久保存在Release：Startup-R20-UNQUALIFIED-40259026509-generated-and-report.zip。GitHub远端digest与本机相同53b73734…，大小54,575,278字节，329个原始文件均单独校验。

@@ -1,0 +1,11 @@
+# 两个亮度更新方法：普通到期路径漏清剩余时间
+
+0x0600030A Device.Update_Brightness和0x06000423 Zombie.Update_Brightness的完整既有CIL与完整未改原版调用方共2,932条记录；两个固定R19/R20候选CIL全部结果相同。共946条差异，其中228条为正常有限非负delta、无额外回调副作用的输入；不是只在NaN或人为getter改字段下才出现。
+
+原版到期路径以qword零写同时清brightEffectTime与brightTime，再将相应intensity设为1。当前CIL只清effectTime，留下更新后的负brightTime。Device、Zombie body、Zombie armor2三处均缺该剩余时间清零；普通到期样本字段快照可独立观察。正常样本的SetBrightness数值未据此泛化为全部视觉差异，也没有证明它导致当前iPad主菜单黑屏。
+
+其余558条来自受控Time getter写回字段、144条来自受控亮度回调字段、16条来自扩展NaN/Infinity delta。分别保留标签，未把真实Time getter副作用或NaN delta当成已证事实。原版还在Time getter前捕获三个剩余时间值；三处inverted clt与原版ordered JAE的unordered语义不同。共九个源位置拟恢复，尚未改游戏候选。
+
+原版Math.Max(0x180CA5FC0)整段机器码真实执行且保持原字节，未用Python/C#猜写它。CLR侧执行真实Math.Max；观察范围内未以它的替代掩盖差异。显式模型仅控制Time与最终SetBrightness边界。此前fixture在首轮原生对照前调整观察schema，只保留Device实际字段并将armor字段限定Zombie，初始CIL/source版本也保留。
+
+这两个方法继续留在R19的19个待验收中，不加入已通过的81方法/31,812正常记录。四个已知差异R19方法、另一个百方法外Buff捕获顺序方法以及后续队列分开保存。当前发布的R20测试IPA仍保持原游戏候选d887b370；这些后续提案等待新批次累计超过100位置后集中检测。

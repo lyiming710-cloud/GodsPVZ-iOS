@@ -2,6 +2,12 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[R20 unsigned iPad IPA](https://github.com/lyiming710-cloud/GodsPVZ-iOS/releases/tag/startup-r20-ipad-test-2026-10-26) has completed actual [Unity/Xcode run 40263428409](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40263428409). Unity export: Succeeded / 0 errors / 1,364 warnings. All actual 258 C++ / 66 C source hashes and raw Apple logs: 0 errors / 3,584 warnings; Xcode BUILD SUCCEEDED. IPA: 192,091,143 bytes, arm64 / physical iOS / unsigned, SHA-256 f7334b1b330cdc7dc2cbeeb0c9851c8c233bc0fc923c69e6de36f38aeda56c75. Its metadata exactly matches this export. All asset hashes/GUIDs/names preserved; all 12 relocated assets pass actual Unity identity checks. [Independent readback and preserved raw files](Startup-R20-IPA-2026-10-26/README.md). **Device black screen/flicker, physical audio, Board and full-game acceptance remain pending.**
+
+[Next source queue](Startup-R21-Source-Queue-2026-10-26/README.md): 16 proposals across five methods / 0 constructed positions. [Brightness review](Startup-R19-Brightness-Differences-2026-10-26/README.md) preserves 228 ordinary finite differences from three missing expiry field-zero sites, plus separately labelled expanded-input/callback differences. The R19 finite union stays 81 methods / 31,812 normal records, 19 pending, including four methods with observed differences. These proposals are not in the current IPA.
+
+## Earlier checkpoints (historical status at each observation)
+
 [Next source queue](Startup-R21-Source-Queue-2026-10-26/README.md) records7 proposals /0 constructed positions across3 methods. [Buff capture review](Startup-R20-Buff-Capture-Review-2026-10-26/README.md) retains864 controlled-field-mutation differences without claiming an actual callee trigger. Full build40263428409 remains bound to c22560e and the unchanged d887b370 game candidate.
 
 [Exact R3 asset case fix](Startup-R20-Asset-Case-2026-10-26/README.md) passes Linux source-only run40262106436: all6,842 file hashes preserved,24 file paths moved with12 original basenames/GUIDs,0 remaining case collisions,4 bad plans rejected before moving. Integrated before first Unity import; fresh actual Unity/Apple/IPA results pending. [Three marker methods](Startup-R20-Marker3-Review-2026-10-26/README.md) separately match768 normal records across two original native bodies with no code changes.
