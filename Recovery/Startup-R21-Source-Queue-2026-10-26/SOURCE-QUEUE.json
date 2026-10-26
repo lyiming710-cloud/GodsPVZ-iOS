@@ -1,0 +1,199 @@
+{
+  "scope": "NEXT_BATCH_SOURCE_PROPOSALS_ONLY_NOT_A_REPAIR_CANDIDATE",
+  "parent_candidate_sha256": "d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37",
+  "proposed_positions": 7,
+  "constructed_positions": 0,
+  "methoddefs": 3,
+  "test_threshold": "MORE_THAN_100_ACTUAL_CONSTRUCTED_NATIVE_BACKED_POSITIONS",
+  "no_game_dll_written": true,
+  "new_shared_tests_started": false,
+  "do_not_modify_correct_code_to_reach_count": true,
+  "rows": [
+    {
+      "kind": "FLOAT_UNORDERED_CONTROL_FLOW",
+      "token": "0x060005E8",
+      "native_va": "0x18039aa91",
+      "evidence": "../Startup-R19-Float-Differences-2026-10-26",
+      "spec": {
+        "token": "0x060005E8",
+        "cil_offset": 72,
+        "old": "clt",
+        "proposed": "clt.un",
+        "old_opcode_hex": "fe04",
+        "proposed_opcode_hex": "fe05",
+        "native_ordered_branch": {
+          "va": "0x18039aa91",
+          "op": "jae",
+          "operands": "0x18039ab86",
+          "bytes": "0f83ef000000"
+        },
+        "evidence": "COMISS+JAE is false for unordered operands; inverted CLT is true; inverted CLT.UN is false",
+        "source_proposal_only": true,
+        "game_candidate_modified": false
+      },
+      "constructed": false
+    },
+    {
+      "kind": "FLOAT_UNORDERED_CONTROL_FLOW",
+      "token": "0x060005E8",
+      "native_va": "0x18039aaa2",
+      "evidence": "../Startup-R19-Float-Differences-2026-10-26",
+      "spec": {
+        "token": "0x060005E8",
+        "cil_offset": 104,
+        "old": "clt",
+        "proposed": "clt.un",
+        "old_opcode_hex": "fe04",
+        "proposed_opcode_hex": "fe05",
+        "native_ordered_branch": {
+          "va": "0x18039aaa2",
+          "op": "jae",
+          "operands": "0x18039ab67",
+          "bytes": "0f83bf000000"
+        },
+        "evidence": "COMISS+JAE is false for unordered operands; inverted CLT is true; inverted CLT.UN is false",
+        "source_proposal_only": true,
+        "game_candidate_modified": false
+      },
+      "constructed": false
+    },
+    {
+      "kind": "FLOAT_UNORDERED_CONTROL_FLOW",
+      "token": "0x060005E8",
+      "native_va": "0x18039aab3",
+      "evidence": "../Startup-R19-Float-Differences-2026-10-26",
+      "spec": {
+        "token": "0x060005E8",
+        "cil_offset": 136,
+        "old": "clt",
+        "proposed": "clt.un",
+        "old_opcode_hex": "fe04",
+        "proposed_opcode_hex": "fe05",
+        "native_ordered_branch": {
+          "va": "0x18039aab3",
+          "op": "jae",
+          "operands": "0x18039ab48",
+          "bytes": "0f838f000000"
+        },
+        "evidence": "COMISS+JAE is false for unordered operands; inverted CLT is true; inverted CLT.UN is false",
+        "source_proposal_only": true,
+        "game_candidate_modified": false
+      },
+      "constructed": false
+    },
+    {
+      "kind": "FLOAT_UNORDERED_CONTROL_FLOW",
+      "token": "0x060000C3",
+      "native_va": "0x18030de74",
+      "evidence": "../Startup-R19-Float-Differences-2026-10-26",
+      "spec": {
+        "token": "0x060000C3",
+        "cil_offset": 211,
+        "old": "clt",
+        "proposed": "clt.un",
+        "old_opcode_hex": "fe04",
+        "proposed_opcode_hex": "fe05",
+        "native_ordered_branch": {
+          "va": "0x18030de74",
+          "op": "jae",
+          "operands": "0x18030dec9",
+          "bytes": "7353"
+        },
+        "evidence": "COMISS+JAE is false for unordered operands; inverted CLT is true; inverted CLT.UN is false",
+        "source_proposal_only": true,
+        "game_candidate_modified": false
+      },
+      "constructed": false
+    },
+    {
+      "kind": "PRE_CALL_FLOAT_CAPTURE",
+      "token": "0x060005E7",
+      "native_va": "0x18039a64f",
+      "evidence": "../Startup-R20-Buff-Capture-Review-2026-10-26",
+      "spec": {
+        "token": "0x060005E7",
+        "field": "defense",
+        "native_pre_call_capture": {
+          "va": "0x18039a64f",
+          "op": "movss",
+          "operands": "xmm6, dword ptr [rax + 0x78]",
+          "bytes": "f30f107078"
+        },
+        "current_cil_post_call_re_read": {
+          "offset": 435,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "Zombie",
+            "type": "System.Single",
+            "identity": "System.Single Zombie::defense"
+          }
+        },
+        "proposed": "Capture the float operand in a new local before GetIncrement and reuse it after the call; preserve separate fresh receiver/base-defense reads",
+        "source_semantic_position_count": 1,
+        "candidate_modified": false,
+        "actual_buff_callee_trigger_proven": false
+      },
+      "constructed": false
+    },
+    {
+      "kind": "PRE_CALL_FLOAT_CAPTURE",
+      "token": "0x060005E7",
+      "native_va": "0x18039a69a",
+      "evidence": "../Startup-R20-Buff-Capture-Review-2026-10-26",
+      "spec": {
+        "token": "0x060005E7",
+        "field": "armor1Defense",
+        "native_pre_call_capture": {
+          "va": "0x18039a69a",
+          "op": "movss",
+          "operands": "xmm8, dword ptr [rax + 0x94]",
+          "bytes": "f3440f108094000000"
+        },
+        "current_cil_post_call_re_read": {
+          "offset": 549,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "Zombie",
+            "type": "System.Single",
+            "identity": "System.Single Zombie::armor1Defense"
+          }
+        },
+        "proposed": "Capture the float operand in a new local before GetIncrement and reuse it after the call; preserve separate fresh receiver/base-defense reads",
+        "source_semantic_position_count": 1,
+        "candidate_modified": false,
+        "actual_buff_callee_trigger_proven": false
+      },
+      "constructed": false
+    },
+    {
+      "kind": "PRE_CALL_FLOAT_CAPTURE",
+      "token": "0x060005E7",
+      "native_va": "0x18039a70b",
+      "evidence": "../Startup-R20-Buff-Capture-Review-2026-10-26",
+      "spec": {
+        "token": "0x060005E7",
+        "field": "armor2Defense",
+        "native_pre_call_capture": {
+          "va": "0x18039a70b",
+          "op": "movss",
+          "operands": "xmm8, dword ptr [rax + 0xac]",
+          "bytes": "f3440f1080ac000000"
+        },
+        "current_cil_post_call_re_read": {
+          "offset": 726,
+          "opcode": "ldfld",
+          "operand": {
+            "owner": "Zombie",
+            "type": "System.Single",
+            "identity": "System.Single Zombie::armor2Defense"
+          }
+        },
+        "proposed": "Capture the float operand in a new local before GetIncrement and reuse it after the call; preserve separate fresh receiver/base-defense reads",
+        "source_semantic_position_count": 1,
+        "candidate_modified": false,
+        "actual_buff_callee_trigger_proven": false
+      },
+      "constructed": false
+    }
+  ]
+}

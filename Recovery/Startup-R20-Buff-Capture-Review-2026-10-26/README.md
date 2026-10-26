@@ -1,0 +1,9 @@
+# BuffUI.FixedUpdate：三个字段捕获顺序差异，保留触发范围
+
+0x060005E7既有完整CIL与未改原版调用方，在两个固定R19/R20候选共执行1,732条输入。868条无字段写回的受控返回/接收者替换/早退出记录一致；864条受控GetIncrement回写接收者字段的记录不同。没有异常、进程崩溃或原生回调错误。两候选CIL结果完全相同，游戏DLL不变。
+
+原版在GetIncrement之前保存defense、armor1Defense、armor2Defense作为稍后累加的基值；当前CIL在调用后又从捕获对象读取这些字段。三个原生加载位置、当前CIL重读位置和拟用float local捕获的方案在JSON中。输入控制让GetIncrement回写字段，能观测调用方顺序差异；尚未证明真实BuffManager.GetIncrement会这样回写，因此不宣称实际游戏必定发生864个bug、也不据此解释iPad黑屏。
+
+实际CIL中的AttackPoint是无子调用的纯字段getter，fixture公开getter仅复现该边界；原版该getter已内联为字段读取。GetATK、GetIncrement和SetStats两种重载为声明的受控叶函数。本报告没有执行有已知NaN问题的SetStats(float)真实子body，也不覆盖它的内部正确性。不能把父方法的无写回样本当作子方法修复通过。
+
+三个拟恢复位置尚未写入任何新候选。与先前四个浮点提案合计七个待构造语义位置；不会为凑超过100的位置数修改正确代码，后续新代码仍按批次阈值集中检测。该方法不在R19百方法内，R19已归档81有限profile/19待验收不变。

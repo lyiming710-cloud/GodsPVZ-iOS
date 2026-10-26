@@ -1,0 +1,71 @@
+[
+  {
+    "token": "0x060005E7",
+    "field": "defense",
+    "native_pre_call_capture": {
+      "va": "0x18039a64f",
+      "op": "movss",
+      "operands": "xmm6, dword ptr [rax + 0x78]",
+      "bytes": "f30f107078"
+    },
+    "current_cil_post_call_re_read": {
+      "offset": 435,
+      "opcode": "ldfld",
+      "operand": {
+        "owner": "Zombie",
+        "type": "System.Single",
+        "identity": "System.Single Zombie::defense"
+      }
+    },
+    "proposed": "Capture the float operand in a new local before GetIncrement and reuse it after the call; preserve separate fresh receiver/base-defense reads",
+    "source_semantic_position_count": 1,
+    "candidate_modified": false,
+    "actual_buff_callee_trigger_proven": false
+  },
+  {
+    "token": "0x060005E7",
+    "field": "armor1Defense",
+    "native_pre_call_capture": {
+      "va": "0x18039a69a",
+      "op": "movss",
+      "operands": "xmm8, dword ptr [rax + 0x94]",
+      "bytes": "f3440f108094000000"
+    },
+    "current_cil_post_call_re_read": {
+      "offset": 549,
+      "opcode": "ldfld",
+      "operand": {
+        "owner": "Zombie",
+        "type": "System.Single",
+        "identity": "System.Single Zombie::armor1Defense"
+      }
+    },
+    "proposed": "Capture the float operand in a new local before GetIncrement and reuse it after the call; preserve separate fresh receiver/base-defense reads",
+    "source_semantic_position_count": 1,
+    "candidate_modified": false,
+    "actual_buff_callee_trigger_proven": false
+  },
+  {
+    "token": "0x060005E7",
+    "field": "armor2Defense",
+    "native_pre_call_capture": {
+      "va": "0x18039a70b",
+      "op": "movss",
+      "operands": "xmm8, dword ptr [rax + 0xac]",
+      "bytes": "f3440f1080ac000000"
+    },
+    "current_cil_post_call_re_read": {
+      "offset": 726,
+      "opcode": "ldfld",
+      "operand": {
+        "owner": "Zombie",
+        "type": "System.Single",
+        "identity": "System.Single Zombie::armor2Defense"
+      }
+    },
+    "proposed": "Capture the float operand in a new local before GetIncrement and reuse it after the call; preserve separate fresh receiver/base-defense reads",
+    "source_semantic_position_count": 1,
+    "candidate_modified": false,
+    "actual_buff_callee_trigger_proven": false
+  }
+]

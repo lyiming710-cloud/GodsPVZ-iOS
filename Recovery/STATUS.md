@@ -2,6 +2,8 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[Next source queue](Startup-R21-Source-Queue-2026-10-26/README.md) records7 proposals /0 constructed positions across3 methods. [Buff capture review](Startup-R20-Buff-Capture-Review-2026-10-26/README.md) retains864 controlled-field-mutation differences without claiming an actual callee trigger. Full build40263428409 remains bound to c22560e and the unchanged d887b370 game candidate.
+
 [Exact R3 asset case fix](Startup-R20-Asset-Case-2026-10-26/README.md) passes Linux source-only run40262106436: all6,842 file hashes preserved,24 file paths moved with12 original basenames/GUIDs,0 remaining case collisions,4 bad plans rejected before moving. Integrated before first Unity import; fresh actual Unity/Apple/IPA results pending. [Three marker methods](Startup-R20-Marker3-Review-2026-10-26/README.md) separately match768 normal records across two original native bodies with no code changes.
 
 [Actual export errors identified](Startup-R20-Asset-Case-2026-10-26/README.md): all4 BuildReport errors are repeated reports of six asset casing pairs (24 files with meta). Source-only path repair is prepared; 329 actual export files including258cpp+66c have been independently hash-read. No Mac or newIPA acceptance.
