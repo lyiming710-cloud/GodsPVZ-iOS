@@ -3,6 +3,11 @@ name: Startup R20 exact candidate - unsigned iOS test build
 on:
   workflow_dispatch:
     inputs:
+      assets_only:
+        description: Inspect exact R3 resource case collisions without Unity or Xcode
+        type: boolean
+        default: false
+        required: true
       audit_only:
         description: Run actual Editor diagnosis without exporting or linking an IPA
         type: boolean
@@ -18,7 +23,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  asset_case_preflight:
+    if: inputs.assets_only
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34747460206
+          name: Stage9.1-r3-exact-archive
+          path: ${{ runner.temp }}/r20-case-source/archive
+      - name: Read actual colliding assets and references without an Editor or license
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/r20-case-source"
+          mkdir -p "$OUT/project" "$OUT/evidence"
+          mapfile -t FILES < <(find "$OUT/archive" -maxdepth 1 -type f -name '*.tar.zst')
+          [ "${#FILES[@]}" = '1' ]
+          ARCHIVE="${FILES[0]}"
+          [ "$(sha256sum "$ARCHIVE" | awk '{print $1}')" = 'd4264f12a00e86b6149d20ecf04caa9761af510aece6107bcceb155ea4ab0bbc' ]
+          zstd -dc "$ARCHIVE" | tar -xf - -C "$OUT/project"
+          PROJECT="$OUT/project/UnityProject-AssetRipper-2.0.0/ExportedProject"
+          python3 - "$GITHUB_WORKSPACE" "$OUT/current.dll" <<'PY'
+          import sys,zipfile,hashlib
+          from pathlib import Path
+          archive=Path(sys.argv[1])/'Recovery/Startup-R20-Sites104-2026-10-26/STARTUP-R20-SITES104-CANDIDATE.zip'
+          with zipfile.ZipFile(archive) as z:
+              names=[n for n in z.namelist() if n.endswith('.dll')];assert len(names)==1;data=z.read(names[0])
+          assert hashlib.sha256(data).hexdigest()=='d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37'
+          Path(sys.argv[2]).write_bytes(data)
+          PY
+          python3 scripts/actions/normalize_startup_r20_asset_case.py --project "$PROJECT" --candidate "$OUT/current.dll" --output "$OUT/evidence"
+          python3 scripts/actions/check_startup_r20_asset_case.py --project "$PROJECT" --plan "$OUT/evidence/ASSET-CASE-PLAN.json" --output "$OUT/evidence"
+          echo 'ASSET_SOURCE_ONLY_NO_UNITY_NO_XCODE_NO_IPA' > "$OUT/evidence/SCOPE.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Startup-R20-ASSET-CASE-SOURCE-ONLY
+          path: ${{ runner.temp }}/r20-case-source/evidence/
+          if-no-files-found: warn
+          retention-days: 90
+
   editor_helper_preflight:
+    if: ${{ !inputs.assets_only }}
     needs: conversion_binding
     uses: ./.github/workflows/startup-r2-editor-preflight.yml
 
@@ -49,6 +100,7 @@ jobs:
           retention-days: 90
 
   apple_preflight:
+    if: ${{ !inputs.assets_only }}
     needs: conversion_binding
     runs-on: macos-15
     timeout-minutes: 10
@@ -67,6 +119,7 @@ jobs:
           python3 -c 'import plistlib,struct,zipfile,hashlib'
 
   export:
+    if: ${{ !inputs.assets_only }}
     needs: [conversion_binding, editor_helper_preflight, apple_preflight]
     runs-on: ubuntu-24.04
     timeout-minutes: 150

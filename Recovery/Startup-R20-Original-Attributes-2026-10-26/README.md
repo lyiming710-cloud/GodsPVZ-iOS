@@ -1,0 +1,9 @@
+# 当前字段/类型属性与原版 PC 原始字节：没有属性偏差
+
+只读解析原版GameAssembly.dll的MetadataRegistration 0x1818C6D00：27,557个Il2CppType、7,696个TypeDefinition。通过global-metadata.dat的Assembly-CSharp.dll image（起始5088、类型319个），逐个类型token/名称/命名空间以及字段token/所属类型/名称绑定，再从每个原始FieldDefinition的typeIndex进入PC类型指针，读取Il2CppType attrs低16位。没有仅依赖跨程序集可能重号的token。
+
+当前R20固定d887b370 DLL的2,802个游戏字段属性与原版完全相同，NotSerialized位0差异；319个TypeDefinition flags也0差异。每个映射保留原始metadata文件偏移、字段定义12字节、native Il2CppType VA及16字节、两侧flags。额外核对System0、System1、System3、HPUIController_Zombie四个类型的原版父类型，均本来就继承UnityEngine.MonoBehaviour，与当前一致。
+
+因此，不能凭循环序列化或new MonoBehaviour提示就批量给字段加NonSerialized、移除Serializable、换掉上述类型的MonoBehaviour父类来清屏。这些做法会偏离目前已读到的原版属性。此项排除了属性位缺失这一假设；没有证明所有custom attribute、字段类型、资源序列化内容、构造方法行为或引擎兼容性均正确。Element.manager/ElementManager的关联字段在原版也为public且无NotSerialized，这同样不等于它们的实际资源状态无问题。
+
+本项不执行任何新游戏候选或Unity构建，没有写游戏DLL，没有计入新修复位置或已修复bug数。真实导出四条BuildReport错误的根因仍待单独报告，未把1221处深度提示和56处new提示当成四条错误本身。

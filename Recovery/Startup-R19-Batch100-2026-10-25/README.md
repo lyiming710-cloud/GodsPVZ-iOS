@@ -108,3 +108,7 @@ The [2026-10-26 whole managed-code census](../Whole-Program-Census-2026-10-26/RE
 ## 五个投射物调用方补充
 
 [完整投射物对照](../Startup-R19-Pending5-Projectiles-2026-10-26/README.md) 保存5,316条正常原版对照、28个CLR-only异常、五个检出的物理故障和首次fixture签名拒绝。R19有限联合80 /26,772条记录，20个profile待完成，包含两处浮点差异方法。
+
+## ICEUI.Update补充
+
+[ICEUI完整调用方](../Startup-R19-Pending1-ICEUI-2026-10-26/README.md) 保存5,040条正常原版对照及两个检出的物理故障。R19有限联合81 /31,812条记录，19个profile待完成，包含两处浮点差异方法。

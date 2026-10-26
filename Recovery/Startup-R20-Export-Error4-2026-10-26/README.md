@@ -11,3 +11,11 @@
 本机精确Unity模块API编译通过；本地修正了两个在真正Unity启动前已检出的API兼容问题（internal GetLatestReport不可调用、计数字段应为int），失败源与日志都保留，最终方案只用公开API与显式传入report。五个工具canary覆盖原helper篡改、重复注入、Succeeded+4 errors仍保持unqualified、报告缺失仍不接受；合成内容只测试记录/状态保真，未冒充游戏构建。此处准备一次带完整证据的复现，尚未启动。
 
 游戏DLL没有新改动。R20仍是104处/8方法已构造的启动测试候选；R19有限profile80/26,772正常记录，另20个profile待完成，包含两处已发现的浮点差异。设备黑屏未验收，未达到全游戏高还原验收。
+
+## 原始属性假设排查
+
+[原版字段/类型属性](../Startup-R20-Original-Attributes-2026-10-26/README.md)逐字节核对2,802字段与319类型flags，当前与原版0差异；四个相关MonoBehaviour父类型也一致。未据警告盲目新增NonSerialized或改继承。
+
+## 完整报告复现已定位
+
+[40259026509逐项错误及资源修复准备](../Startup-R20-Asset-Case-2026-10-26/README.md)保存4条同类case冲突错误、24路径和329个实际导出文件清单。源码预检准备中，尚未宣称修复或IPA通过。

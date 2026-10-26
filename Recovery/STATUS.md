@@ -2,6 +2,10 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[Actual export errors identified](Startup-R20-Asset-Case-2026-10-26/README.md): all4 BuildReport errors are repeated reports of six asset casing pairs (24 files with meta). Source-only path repair is prepared; 329 actual export files including258cpp+66c have been independently hash-read. No Mac or newIPA acceptance.
+
+[ICEUI.Update profile](Startup-R19-Pending1-ICEUI-2026-10-26/README.md) matches5,040 normal original records and detects two physical faults. R19 finite union81 /31,812 normal records,19 profiles pending including two known float differences. No new gameplay DLL changes.
+
 [R20 actual export failure](Startup-R20-Export-Error4-2026-10-26/README.md): run40255311794 produced summary Succeeded with4 errors; original gate rejected it and Mac was skipped. No newIPA. A complete BuildReport/source capture is prepared; error decisions and gameDLL are unchanged.
 
 [Five projectile caller profiles](Startup-R19-Pending5-Projectiles-2026-10-26/README.md) match5,316 normal original-PC records with both exact candidates and detect five physical faults. R19 finite union80 /26,772 normal records,20 profiles pending including two known float differences. No new gameplay DLL changes.
