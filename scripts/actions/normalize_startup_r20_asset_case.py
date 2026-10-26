@@ -86,6 +86,13 @@ if __name__=='__main__':
         except Exception as ex:
             write(out/'ASSET-CASE-BLOCKER.json',dict(scope='SOURCE_ONLY_BLOCKER_NO_UNITY_BUILD',error=repr(ex),new_game_changes=0));raise
         write(out/'ASSET-CASE-PLAN.json',result)
-        with zipfile.ZipFile(out/'ORIGINAL-COLLIDING-ASSETS.zip','w',zipfile.ZIP_DEFLATED) as z:
+        archive=out/'ORIGINAL-COLLIDING-ASSETS.zip'
+        # The historical tar has Unix-epoch mtimes. Clamp ZIP metadata only;
+        # do not alter the source files or their preserved contents/timestamps.
+        with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,strict_timestamps=False) as z:
             for row in result['renames']:z.write(Path(a.project)/row['before'],row['before'])
+        with zipfile.ZipFile(archive) as z:
+            assert z.testzip() is None and set(z.namelist())=={r['before'] for r in result['renames']}
+            for row in result['renames']:
+                data=z.read(row['before']);assert len(data)==row['bytes'] and hashlib.sha256(data).hexdigest()==row['sha256']
         print(json.dumps({k:v for k,v in result.items() if k not in ['before_inventory','after_inventory','renames']}))
