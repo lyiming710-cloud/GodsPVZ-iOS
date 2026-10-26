@@ -8,6 +8,24 @@ CHECKPOINT=Path(__file__).resolve().parents[2]/'Recovery/Startup-R20-Sites104-20
 def sha(data):return hashlib.sha256(data).hexdigest()
 def require(condition,message):
     if not condition:raise ValueError(message)
+def validate_completed_ipa_if_present(ipa, artifact_checkpoint=None):
+    """An exported test IPA is not device/semantic acceptance or a UI test."""
+    if ipa is None:return None
+    root=Path(artifact_checkpoint or CHECKPOINT.parent/'Startup-R20-IPA-2026-10-26').resolve()
+    rows=json.loads((root/'MANIFEST.json').read_bytes())
+    names={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file() and p!=root/'MANIFEST.json'}
+    require(len(rows)==len({r['file'] for r in rows}) and names=={r['file'] for r in rows},'Actual IPA evidence inventory mismatch')
+    for row in rows:
+        path=root/row['file'];require(path.resolve().is_relative_to(root) and not path.is_symlink(),'Unsafe actual IPA evidence path')
+        data=path.read_bytes();require(len(data)==row['bytes'] and sha(data)==row['sha256'],'Actual IPA evidence bytes differ: '+row['file'])
+    raw=json.loads((root/'INDEPENDENT-IPA-READBACK.json').read_bytes());run=json.loads((root/'RUN.json').read_bytes())
+    require(raw['run_id']==run['databaseId']==40263428409 and raw['source_commit']==run['headSha']=='c22560ed9e025f04d4e58bc38ba0f23df8b9feb4' and run['status']=='completed' and run['conclusion']=='success','Actual IPA run/source binding differs')
+    require(raw['candidate_sha256']==CANDIDATE and raw['unity_errors']==raw['actual_apple_errors']==0 and raw['actual_xcode_build_succeeded'] and raw['packaged_metadata_exactly_equals_actual_export'],'Actual IPA build/readback missing')
+    require(ipa['sha256']==raw['ipa_sha256']=='f7334b1b330cdc7dc2cbeeb0c9851c8c233bc0fc923c69e6de36f38aeda56c75' and ipa['bytes']==raw['ipa_bytes']==192091143,'Wrong prior test IPA identity')
+    require(ipa['unsigned'] and ipa['platform']=='physical_iOS' and ipa['architecture']=='arm64','Wrong prior test IPA platform/signature')
+    require(not raw['device_execution'] and not raw['physical_audio'] and not raw['full_game_semantic_acceptance'],'Prior IPA must not imply unperformed device/game acceptance')
+    return dict(run=40263428409,ipa_sha256=ipa['sha256'],scope='PRIOR_TEST_PACKAGE_ONLY_NOT_CURRENT_INTERACTION_RESULTS')
+
 def validate_checkpoint(checkpoint=CHECKPOINT):
     root=Path(checkpoint).resolve();rows=json.loads((root/'MANIFEST.json').read_bytes())
     names={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file() and p!=root/'MANIFEST.json'}
@@ -33,13 +51,14 @@ def validate_checkpoint(checkpoint=CHECKPOINT):
     linux=read('ACTUAL-COMPILER-40219580971.json');require(linux['candidate_sha256']==CANDIDATE and linux['pass_'] and linux['raw_generated_sources_rehashed']==linux['raw_source_logs_rechecked']==1029,'Exact Linux readback missing')
     apple=read('ACTUAL-APPLE-40220652002.json');require(apple['pass_'] and apple['actual']['candidate_sha256']==CANDIDATE and apple['actual']['source_conversion_run']==40219580971 and apple['source_records_rechecked']==apple['raw_source_logs_rechecked']==1029,'Exact Apple readback missing')
     replay=read('ACTUAL-APPLE-CONTROL-40221471927.json');require(replay['expectation_met'] and replay['raw_errors']==34 and replay['flags_identical_to_prior_damaged_control'],'Apple damaged-control raw replay missing')
-    current=read('PROGRESS.json');require(current['candidate_sha256']==CANDIDATE and current['whole_type_counts']['FAIL_OR_UNSUPPORTED']==70 and current['qualified_methods']==0 and current['ipa'] is None and not current['ipad_acceptance'],'Diagnostic must preserve product hold')
+    current=read('PROGRESS.json');require(current['candidate_sha256']==CANDIDATE and current['whole_type_counts']['FAIL_OR_UNSUPPORTED']==70 and current['qualified_methods']==0 and not current['ipad_acceptance'] and not current['whole_game_accepted'],'Diagnostic must preserve product hold')
+    prior_test_ipa=validate_completed_ipa_if_present(current['ipa'])
     with zipfile.ZipFile(root/'STARTUP-R20-SITES104-CANDIDATE.zip') as z:
         require(set(z.namelist())=={'STARTUP-R20-SITES104.dll','MANIFEST.json'} and z.testzip() is None,'Unexpected candidate archive')
         data=z.read('STARTUP-R20-SITES104.dll');inside=json.loads(z.read('MANIFEST.json'))
         require(inside==[dict(file='STARTUP-R20-SITES104.dll',bytes=len(data),sha256=sha(data))],'Inner candidate manifest differs')
     require(len(data)==22777856 and sha(data)==CANDIDATE,'Wrong R20 candidate bytes')
-    return data,dict(current=current,whole_type_counts=frozen['counts'],targets=sorted(targets),finite_normal_records=normal,
+    return data,dict(current=current,prior_test_ipa=prior_test_ipa,whole_type_counts=frozen['counts'],targets=sorted(targets),finite_normal_records=normal,
         linux_run=linux['run_id'],linux_source_commit=linux['source_commit'],apple_run=apple['run_id'],apple_source_commit=apple['actual']['apple_audit_source_commit'],apple_raw_control_run=replay['run_id'])
 def bind(output,source):
     out=Path(output).resolve();e=out/'evidence';target=out/'candidate/Assembly-CSharp-bulk401.dll';provenance=e/'PROVENANCE.json'

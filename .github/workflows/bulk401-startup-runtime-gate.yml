@@ -13,6 +13,11 @@ on:
         type: boolean
         default: true
         required: true
+      interaction_audit:
+        description: Diagnose unchanged R20 plant choice, almanac and Board callbacks; requires audit_only
+        type: boolean
+        default: false
+        required: true
 
 permissions:
   contents: read
@@ -80,6 +85,15 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+      - name: Reject interaction diagnostics combined with asset-only or IPA builds
+        env:
+          INTERACTION: ${{ inputs.interaction_audit }}
+          AUDIT: ${{ inputs.audit_only }}
+          ASSETS: ${{ inputs.assets_only }}
+        run: |
+          if [ "$INTERACTION" = true ]; then
+            [ "$AUDIT" = true ] && [ "$ASSETS" = false ] || exit 81
+          fi
       - name: Reject exact candidates with already proven compiler failures before setup
         run: python3 scripts/actions/reject_known_cpp_failures.py --candidate-zip Recovery/Startup-R20-Sites104-2026-10-26/STARTUP-R20-SITES104-CANDIDATE.zip
       - name: Require exact current candidate and actual Editor proof for test build
@@ -666,6 +680,38 @@ jobs:
           import json,sys
           data=json.load(open(sys.argv[1]))
           assert data['pass'] and data['frames']>=3 and data['main_ui_components']>=1 and data['active_canvases']>=1
+          PY
+
+      - name: Diagnose unchanged R20 UI paths and retain every observed failure
+        if: inputs.interaction_audit && inputs.audit_only
+        shell: bash
+        env:
+          GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          UNITY="$(cat "$OUT/unity-path.txt")"
+          PROJECT="$(cat "$OUT/project-path.txt")"
+          PLUGIN="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"
+          [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZInteractionAudit.cs" "$PROJECT/Assets/Editor/"
+          set +e
+          timeout --signal=TERM 300s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZInteractionAudit.Begin -logFile "$OUT/evidence/r20-interaction-audit.log"
+          RC=$?
+          set -e
+          echo "$RC" > "$OUT/evidence/r20-interaction-audit-exit.txt"
+          sha256sum "$PLUGIN" > "$OUT/evidence/r20-after-interaction-dll.sha256"
+          [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
+          [ "$RC" -eq 0 ]
+          python3 - "$OUT/evidence/r20-interaction-audit.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))
+          assert r['collection_complete'] and len(r['actions'])>=25
+          assert not r['device_execution'] and not r['game_fields_seeded'] and not r['replacement_game_code']
+          assert r['candidate_sha256']=='d887b370c95c2966dc40d80648d85c286bb42d85004c32d095f64f004e095b37'
+          print(json.dumps(dict(collection_complete=True,checks=r['checks'],runtime_errors=r['runtime_errors'])))
+          assert r['all_observed_checks_pass'], 'Actual R20 interaction failures retained; no IPA export requested'
           PY
 
       - name: Export unsigned iOS Xcode project with exact R20 candidate
