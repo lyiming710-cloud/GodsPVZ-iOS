@@ -167,7 +167,6 @@ jobs:
       TEST_DLL_SHA256: '75160a3233f1e1ab13a44f712efb4b47fdeb9b57bd38fa25f180276bb7b50e15'
       GODSPVZ_ORIGINAL_AUDIO_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Actual-UI-2026-10-27/ORIGINAL-ZOMBIE-MANAGER-AUDIO-PLAN.json
       GODSPVZ_ORIGINAL_ZOMBIE_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json
-      GODSPVZ_RUNTIME_SUPPORT_OUTPUT: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output
       PACKAGE_GUID_RUN_ID: '35238895838'
       PACKAGE_CLOSURE_RUN_ID: '35239319822'
       PACKAGE_BUNDLE_RUN_ID: '35239547918'
@@ -625,6 +624,7 @@ jobs:
         shell: bash
         env:
           GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
+          GODSPVZ_RUNTIME_SUPPORT_OUTPUT: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
@@ -756,6 +756,7 @@ jobs:
         shell: bash
         env:
           GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
+          GODSPVZ_RUNTIME_SUPPORT_OUTPUT: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output
           GODSPVZ_INTERACTION_CANDIDATE_SHA256: ${{ env.TEST_DLL_SHA256 }}
           GODSPVZ_INTERACTION_PREFIX: 'r21'
           LIBGL_ALWAYS_SOFTWARE: '1'
