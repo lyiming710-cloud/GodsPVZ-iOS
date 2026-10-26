@@ -2,6 +2,12 @@
 
 ## Latest checkpoint - 2026-10-26
 
+[R20 actual export failure](Startup-R20-Export-Error4-2026-10-26/README.md): run40255311794 produced summary Succeeded with4 errors; original gate rejected it and Mac was skipped. No newIPA. A complete BuildReport/source capture is prepared; error decisions and gameDLL are unchanged.
+
+[Five projectile caller profiles](Startup-R19-Pending5-Projectiles-2026-10-26/README.md) match5,316 normal original-PC records with both exact candidates and detect five physical faults. R19 finite union80 /26,772 normal records,20 profiles pending including two known float differences. No new gameplay DLL changes.
+
+[Float difference review](Startup-R19-Float-Differences-2026-10-26/README.md) retains 228 native/CIL mismatches in two inherited methods. Both exact R19/R20 candidates reproduce them; no repair DLL was created. These methods stay among the 25 pending; the existing75 finite profiles are unchanged. NaN deltaTime has no established real Unity trigger.
+
 [R20 actual Editor readback](Startup-R20-Editor-Diagnostic-2026-10-26/README.md): exact d887b370 passes real MainMenu startup for2,049 frames, two Canvases/one MainUI/zero errors; all148 plugin scripts/130 markers resolve and no components are missing. All76 shader stages and20 controlled pixel checks pass;96 raw program/PNG files rechecked. Seat returned exit0. This is Editor/controlled-render scope, not iPad Metal/Board/physical audio/IPA acceptance.
 
 [R19 talent-order supplement](Startup-R19-Pending1-Talent-2026-10-26/README.md): one additional complete caller matches1,728 normal original records on both exact candidates, including actual comiss/unsigned branches and Vector3 sret/CLR value flow. Both physical faults are detected; two CLR-only exceptions stay separate. R19 finite union75 /21,456 records,25 pending. R20 real Editor diagnostic40224994102 is running after binding/helper preflight pass; no current Editor/IPA/device success inferred.

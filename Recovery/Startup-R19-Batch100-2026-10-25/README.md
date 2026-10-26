@@ -104,3 +104,7 @@ The [2026-10-26 whole managed-code census](../Whole-Program-Census-2026-10-26/RE
 ## 天赋升级预览完整调用方补充
 
 [独立浮点/Vector3补充](../Startup-R19-Pending1-Talent-2026-10-26/README.md) 保存1,728条正常原版对照、两个固定候选重放、两个CLR-only异常与两个检出的物理故障。R19有限联合75 /21,456条记录，25个profile待完成。
+
+## 五个投射物调用方补充
+
+[完整投射物对照](../Startup-R19-Pending5-Projectiles-2026-10-26/README.md) 保存5,316条正常原版对照、28个CLR-only异常、五个检出的物理故障和首次fixture签名拒绝。R19有限联合80 /26,772条记录，20个profile待完成，包含两处浮点差异方法。

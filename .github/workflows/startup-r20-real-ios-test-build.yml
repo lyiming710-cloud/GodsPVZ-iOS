@@ -595,6 +595,7 @@ jobs:
         shell: bash
         env:
           GODSPVZ_IOS_BUILD_PATH: ${{ runner.temp }}/stage9-startup-r2/xcode
+          GODSPVZ_BUILD_EVIDENCE_DIR: ${{ runner.temp }}/stage9-startup-r2/evidence
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
@@ -604,8 +605,9 @@ jobs:
           PROJECT="$(cat "$OUT/project-path.txt")"
           PLUGIN="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"
           [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ] || exit 68
+          python3 scripts/actions/instrument_startup_r20_build_helper.py --source "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support/Assets/Editor/GodsPVZIOSBuild.cs" --project "$PROJECT" --evidence "$E"
           set +e
-          xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -buildTarget iOS -projectPath "$PROJECT" -executeMethod GodsPVZIOSBuild.BuildIOS -logFile "$E/ios-export.log" > "$E/ios-export.stdout" 2> "$E/ios-export.stderr"
+          xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -buildTarget iOS -projectPath "$PROJECT" -executeMethod GodsPVZBuildReportCapture.ExportIOS -logFile "$E/ios-export.log" > "$E/ios-export.stdout" 2> "$E/ios-export.stderr"
           RC=$?
           set -e
           echo "$RC" > "$E/ios-export-exit.txt"
@@ -677,6 +679,16 @@ jobs:
             [ "$RC" -eq 0 ] || exit 71
           fi
 
+      - name: Preserve actual report and unqualified generated sources even if export is rejected
+        if: always() && github.event_name == 'workflow_dispatch' && !inputs.audit_only
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/stage9-startup-r2"
+          if [ -f "$OUT/project-path.txt" ]; then
+            python3 scripts/actions/capture_startup_r20_export_forensics.py --out "$OUT" --project "$(cat "$OUT/project-path.txt")"
+          fi
+
       - name: Prepare sanitized Unity evidence
         if: always()
         shell: bash
@@ -702,6 +714,16 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
           compression-level: 6
+
+      - name: Upload unqualified source and report for diagnosis
+        if: always() && github.event_name == 'workflow_dispatch' && !inputs.audit_only
+        uses: actions/upload-artifact@v4
+        with:
+          name: Startup-R20-UNQUALIFIED-EXPORT-FORENSICS
+          path: ${{ runner.temp }}/stage9-startup-r2/unqualified-export-forensics/
+          if-no-files-found: warn
+          retention-days: 90
+          compression-level: 0
 
       - name: Upload unsigned Xcode project archive
         if: always() && steps.xcode_audit.outcome == 'success'

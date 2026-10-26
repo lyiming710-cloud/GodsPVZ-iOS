@@ -1,0 +1,13 @@
+# R20 真实 iOS 导出被四条 BuildReport 错误阻止
+
+运行40255311794（提交8d9f91486d973c6d63e0a2fea145366060e05970）使用精确d887b370候选完成重导入、资产/着色器/PlayMode检查后执行真实iOS BuildPipeline。日志报告result=Succeeded，但totalErrors=4、warnings=1370、输出大小1,652,996,032字节。原有helper据此抛异常，Unity退出1、工作流step退出69，export失败、build_ipa跳过；没有新IPA。席位已实际归还，退出0。
+
+旧helper只打印summary，未序列化report.steps.messages。原始日志包含1221处序列化深度提示和56处new MonoBehaviour提示，但这些计数不是那四条BuildReport错误的逐项证明；不从数量反推根因。源工程和已生成C++没有在失败后保留，所以本次实际导出的源码也不能拿此前可移植编译/Apple语法检查替代验收。
+
+新增观察工具只在原始BuildIOS的BuildPlayer返回后插入一条Record(report)调用；移除该唯一调用后，整个原helper字节完全相同（SHA a6b85524…），原result/totalErrors判定和异常保持。新wrapper通过finally保存真实report全部steps/messages及Error/Exception/Assert日志，即使helper抛异常也保留。安装在原来三个helper源的预编译结束之后，额外helper使用缓存的精确Editor API在授权和完整setup之前独立编译。原始R3 helper文件没有覆盖。
+
+实际导出失败时将另外保存完整生成源码、metadata、pbx与实际裁剪runtime清单，全部SHA/ZIP回读，不贴export成功标签，也不自动进入Mac。原来的成功Xcode/签名禁用/arm64/候选绑定/实际全量源码编译规则、错误门和always席位归还保持。
+
+本机精确Unity模块API编译通过；本地修正了两个在真正Unity启动前已检出的API兼容问题（internal GetLatestReport不可调用、计数字段应为int），失败源与日志都保留，最终方案只用公开API与显式传入report。五个工具canary覆盖原helper篡改、重复注入、Succeeded+4 errors仍保持unqualified、报告缺失仍不接受；合成内容只测试记录/状态保真，未冒充游戏构建。此处准备一次带完整证据的复现，尚未启动。
+
+游戏DLL没有新改动。R20仍是104处/8方法已构造的启动测试候选；R19有限profile80/26,772正常记录，另20个profile待完成，包含两处已发现的浮点差异。设备黑屏未验收，未达到全游戏高还原验收。

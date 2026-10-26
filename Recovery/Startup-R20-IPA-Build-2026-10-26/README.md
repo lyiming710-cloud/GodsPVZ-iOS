@@ -7,3 +7,7 @@
 两个输入相关模块仅替换候选来源/绑定模块名/产物名称；源码审核算法、Apple arm64/iPhoneOS18.5参数、六个编译控制、无签名Xcode参数、Mach-O/metadata/ZIP验证不变。注册入口bulk401-startup-runtime-gate.yml指向本次定义；audit_only默认true，实际测试包请求需明确false。不会启用签名。
 
 本目录初始状态为准备完成，运行、导出、链接、IPA哈希与设备结论以真实回读更新。没有产物前不声称已生成IPA，构建成功也不等于iPad黑屏已解决。
+
+## 实际导出结果
+
+[40255311794失败回读及记录器](../Startup-R20-Export-Error4-2026-10-26/README.md)：Unity summary=Succeeded但4 errors，原门判失败，Mac跳过，没有IPA。已补完整逐项报告和失败生成源码留存，尚待复现定位；未忽略错误或改游戏候选。
