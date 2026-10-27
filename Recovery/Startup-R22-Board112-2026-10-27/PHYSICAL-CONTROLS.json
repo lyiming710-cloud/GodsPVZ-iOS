@@ -1,0 +1,1275 @@
+{
+  "scope": "TYPE_VALID_PHYSICAL_CANDIDATE_BYTE_MUTANTS_VS_EXECUTED_NATIVE_NORMAL_PROFILES",
+  "candidate_sha256": "15e0150337a14f1613321385af2d9b1997abd1bc255d56abe4a4ce2c5f7ac2cf",
+  "controls": 8,
+  "rejected": 8,
+  "process_failures_counted_as_semantic_controls": 0,
+  "rows": [
+    {
+      "name": "start-omitted-manager-component",
+      "token": "0x060002A8",
+      "mutant_sha256": "5f1a57b2bf4b31834219fb7d0a9c59143b3d84b3eb619af8edf912e2193bf37f",
+      "physical_byte_deltas": 3,
+      "file_offset": 23219441,
+      "before": "6fc500002b",
+      "after": "2614000000",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 14,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "2a8-44",
+          "token": "0x060002A8",
+          "error": null,
+          "trace": [
+            "resetMouse:mouse",
+            "load:GameObject:prefabs/Managers/EnemyManager",
+            "instantiate:enemy-prefab",
+            "component:enemy-clone:EnemyManager",
+            "transform:enemy",
+            "transform:board",
+            "parent:enemy-go-tr:board-go-tr:0",
+            "createMap",
+            "main",
+            "cameraSize:camera:43870000",
+            "item:AudioClip:9",
+            "clip:bgm:bgm-9",
+            "sunFall:sun",
+            "preDevices:devices",
+            "preCards",
+            "entryEffects",
+            "debug:\u52a0\u8f7d\u914d\u7f6e\u6587\u4ef6\u6210\u529f",
+            "load:Sprite:sprites/Board/Background/Daytime",
+            "sprite:background:background-sprite"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 1500,
+            "enemy": "enemy",
+            "enemyBoard": "board",
+            "enemyFlags": 3,
+            "enemyWaves": 30,
+            "enemyPoint": 12,
+            "enemyTypes": [
+              1,
+              2,
+              3
+            ],
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "background-sprite",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "enemy-go-tr",
+                "parent": "board-go-tr",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "2a8-44",
+          "token": "0x060002A8",
+          "error": "System.NullReferenceException",
+          "trace": [
+            "resetMouse:mouse",
+            "load:GameObject:prefabs/Managers/EnemyManager",
+            "instantiate:enemy-prefab"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "null",
+            "enemyBoard": "null",
+            "enemyFlags": null,
+            "enemyWaves": null,
+            "enemyPoint": null,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "start-wrong-manager-flags-target",
+      "token": "0x060002A8",
+      "mutant_sha256": "efb01f813a8ecd14fa456a6e36e09c5677a15274505631b5a6281d330068231a",
+      "physical_byte_deltas": 1,
+      "file_offset": 23219695,
+      "before": "10020004",
+      "after": "11020004",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 13,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "2a8-44",
+          "token": "0x060002A8",
+          "error": null,
+          "trace": [
+            "resetMouse:mouse",
+            "load:GameObject:prefabs/Managers/EnemyManager",
+            "instantiate:enemy-prefab",
+            "component:enemy-clone:EnemyManager",
+            "transform:enemy",
+            "transform:board",
+            "parent:enemy-go-tr:board-go-tr:0",
+            "createMap",
+            "main",
+            "cameraSize:camera:43870000",
+            "item:AudioClip:9",
+            "clip:bgm:bgm-9",
+            "sunFall:sun",
+            "preDevices:devices",
+            "preCards",
+            "entryEffects",
+            "debug:\u52a0\u8f7d\u914d\u7f6e\u6587\u4ef6\u6210\u529f",
+            "load:Sprite:sprites/Board/Background/Daytime",
+            "sprite:background:background-sprite"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 1500,
+            "enemy": "enemy",
+            "enemyBoard": "board",
+            "enemyFlags": 3,
+            "enemyWaves": 30,
+            "enemyPoint": 12,
+            "enemyTypes": [
+              1,
+              2,
+              3
+            ],
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "background-sprite",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "enemy-go-tr",
+                "parent": "board-go-tr",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "2a8-44",
+          "token": "0x060002A8",
+          "error": null,
+          "trace": [
+            "resetMouse:mouse",
+            "load:GameObject:prefabs/Managers/EnemyManager",
+            "instantiate:enemy-prefab",
+            "component:enemy-clone:EnemyManager",
+            "transform:enemy",
+            "transform:board",
+            "parent:enemy-go-tr:board-go-tr:0",
+            "createMap",
+            "main",
+            "cameraSize:camera:43870000",
+            "item:AudioClip:9",
+            "clip:bgm:bgm-9",
+            "sunFall:sun",
+            "preDevices:devices",
+            "preCards",
+            "entryEffects",
+            "debug:\u52a0\u8f7d\u914d\u7f6e\u6587\u4ef6\u6210\u529f",
+            "load:Sprite:sprites/Board/Background/Daytime",
+            "sprite:background:background-sprite"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 1500,
+            "enemy": "enemy",
+            "enemyBoard": "board",
+            "enemyFlags": 0,
+            "enemyWaves": 30,
+            "enemyPoint": 12,
+            "enemyTypes": [
+              1,
+              2,
+              3
+            ],
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "background-sprite",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "enemy-go-tr",
+                "parent": "board-go-tr",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "update-wrong-ready-threshold",
+      "token": "0x060002AB",
+      "mutant_sha256": "a697889c88123bb8c2028792afad59a76b312bb512c59452465ab9c4dffe9965",
+      "physical_byte_deltas": 1,
+      "file_offset": 23220006,
+      "before": "0000e03f",
+      "after": "0000803f",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 3,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "2ab-84",
+          "token": "0x060002AB",
+          "error": null,
+          "trace": [
+            "popups",
+            "deltaTime",
+            "trigger:bank-anim:hide",
+            "item:AudioClip:6",
+            "main",
+            "transform:camera",
+            "position:camera-go-tr",
+            "audioVolume",
+            "audioAt:board-clip-6:40E00000,41000000,41100000:3F400000",
+            "instantiate:ready-prefab",
+            "goTransform:ready-clone",
+            "goTransform:ready-clone",
+            "getScale:ready-clone-tr",
+            "setScale:ready-clone-tr:40000000,40400000,40800000"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "3FD33334",
+            "cardHidden": false,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "2ab-84",
+          "token": "0x060002AB",
+          "error": null,
+          "trace": [
+            "popups",
+            "deltaTime",
+            "trigger:bank-anim:hide"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "3FD33334",
+            "cardHidden": false,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "update-wrong-NaN-branch",
+      "token": "0x060002AB",
+      "mutant_sha256": "8cd5cddec69d218c6fce2de1ca649ce214355bd800ad943b577e3672c96039c5",
+      "physical_byte_deltas": 1,
+      "file_offset": 23219966,
+      "before": "41",
+      "after": "3c",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 3,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "2ab-106",
+          "token": "0x060002AB",
+          "error": null,
+          "trace": [
+            "popups",
+            "deltaTime"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "NaN",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "2ab-106",
+          "token": "0x060002AB",
+          "error": null,
+          "trace": [
+            "popups",
+            "deltaTime",
+            "trigger:bank-anim:hide"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "NaN",
+            "cardHidden": false,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "game-start-wrong-meter-visibility",
+      "token": "0x060002C2",
+      "mutant_sha256": "90725bdf9b10967663fc05fc0650afbd1714ceb7f4d46fff23e748a221817f6b",
+      "physical_byte_deltas": 1,
+      "file_offset": 23220357,
+      "before": "00000000",
+      "after": "01000000",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 4,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "2c2-127",
+          "token": "0x060002C2",
+          "error": null,
+          "trace": [
+            "ne:bottom-buttons:null:1",
+            "active:bottom-buttons:1",
+            "ne:banks:null:1",
+            "bankStart",
+            "instantiate:meter-prefab",
+            "meterInit:meter-clone:enemy",
+            "transform:meter-clone",
+            "goTransform:meter-parent",
+            "parent:meter-clone-go-tr:meter-parent-tr:0",
+            "transform:meter-clone",
+            "localPosition:meter-clone-go-tr:C3430000,00000000,00000000",
+            "gameObject:meter-clone",
+            "active:meter-clone-go:0",
+            "volume:bgm:3E800000",
+            "play:bgm"
+          ],
+          "state": {
+            "gameStart": true,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "meter-clone",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "meter-parent-tr",
+                "position": "C3430000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "2c2-127",
+          "token": "0x060002C2",
+          "error": null,
+          "trace": [
+            "ne:bottom-buttons:null:1",
+            "active:bottom-buttons:1",
+            "ne:banks:null:1",
+            "bankStart",
+            "instantiate:meter-prefab",
+            "meterInit:meter-clone:enemy",
+            "transform:meter-clone",
+            "goTransform:meter-parent",
+            "parent:meter-clone-go-tr:meter-parent-tr:0",
+            "transform:meter-clone",
+            "localPosition:meter-clone-go-tr:C3430000,00000000,00000000",
+            "gameObject:meter-clone",
+            "active:meter-clone-go:1",
+            "volume:bgm:3E800000",
+            "play:bgm"
+          ],
+          "state": {
+            "gameStart": true,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "meter-clone",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "meter-parent-tr",
+                "position": "C3430000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "bank-wrong-card-spacing",
+      "token": "0x060000E7",
+      "mutant_sha256": "add58e3f80007cfbf1afd0fd4bf43416d9c699f635f6765b0ac391bcb4d553f2",
+      "physical_byte_deltas": 1,
+      "file_offset": 23219118,
+      "before": "0000b842",
+      "after": "0000b642",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 22,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "e7-8",
+          "token": "0x060000E7",
+          "error": null,
+          "trace": [
+            "item:Card:1",
+            "ne:card-1:null:1",
+            "compare:0:1",
+            "getEnum",
+            "move:1",
+            "transform:card-0",
+            "goTransform:card-parent",
+            "parent:card-0-go-tr:card-parent-tr:0",
+            "gameObject:card-0",
+            "goTransform:card-0-go",
+            "localPosition:card-0-go-tr:C4294000,41B00000,00000000",
+            "move:1",
+            "transform:card-1",
+            "goTransform:card-parent",
+            "parent:card-1-go-tr:card-parent-tr:0",
+            "gameObject:card-1",
+            "goTransform:card-1-go",
+            "localPosition:card-1-go-tr:C4124000,41B00000,00000000",
+            "move:0",
+            "dispose",
+            "active:last-page:0",
+            "active:next-page:0"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 2,
+            "page": 0,
+            "maxPage": 1,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "card-0-go-tr",
+                "parent": "card-parent-tr",
+                "position": "C4294000,41B00000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "card-1-go-tr",
+                "parent": "card-parent-tr",
+                "position": "C4124000,41B00000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 0,
+                "onBank": true
+              },
+              {
+                "tag": "card-1",
+                "ordinal": 1,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "e7-8",
+          "token": "0x060000E7",
+          "error": null,
+          "trace": [
+            "item:Card:1",
+            "ne:card-1:null:1",
+            "compare:0:1",
+            "getEnum",
+            "move:1",
+            "transform:card-0",
+            "goTransform:card-parent",
+            "parent:card-0-go-tr:card-parent-tr:0",
+            "gameObject:card-0",
+            "goTransform:card-0-go",
+            "localPosition:card-0-go-tr:C4294000,41B00000,00000000",
+            "move:1",
+            "transform:card-1",
+            "goTransform:card-parent",
+            "parent:card-1-go-tr:card-parent-tr:0",
+            "gameObject:card-1",
+            "goTransform:card-1-go",
+            "localPosition:card-1-go-tr:C4128000,41B00000,00000000",
+            "move:0",
+            "dispose",
+            "active:last-page:0",
+            "active:next-page:0"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 2,
+            "page": 0,
+            "maxPage": 1,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "card-0-go-tr",
+                "parent": "card-parent-tr",
+                "position": "C4294000,41B00000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "card-1-go-tr",
+                "parent": "card-parent-tr",
+                "position": "C4128000,41B00000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 0,
+                "onBank": true
+              },
+              {
+                "tag": "card-1",
+                "ordinal": 1,
+                "onBank": true
+              }
+            ],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "bank-omitted-finally-dispose",
+      "token": "0x060000E7",
+      "mutant_sha256": "7c4189f05ed4165019d53601cab3ecce4d81a8c81eb2c0357f5974a1cbbb504e",
+      "physical_byte_deltas": 4,
+      "file_offset": 23219184,
+      "before": "28f704000a",
+      "after": "2600000000",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 31,
+      "managed_exception_differences": 3,
+      "example": {
+        "original": {
+          "name": "e7-0",
+          "token": "0x060000E7",
+          "error": null,
+          "trace": [
+            "getEnum",
+            "move:0",
+            "dispose",
+            "active:last-page:0",
+            "active:next-page:0"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 0,
+            "page": 0,
+            "maxPage": 1,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [],
+            "props": []
+          }
+        },
+        "actual": {
+          "name": "e7-0",
+          "token": "0x060000E7",
+          "error": null,
+          "trace": [
+            "getEnum",
+            "move:0",
+            "active:last-page:0",
+            "active:next-page:0"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 0,
+            "page": 0,
+            "maxPage": 1,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [],
+            "props": []
+          }
+        }
+      },
+      "native_exception_execution": false
+    },
+    {
+      "name": "bank-wrong-prop-key-index",
+      "token": "0x060000E4",
+      "mutant_sha256": "feba3d4fc7e704fb21c604a581f25888c1c791edb1f3c797f419f35effbc7318",
+      "physical_byte_deltas": 1,
+      "file_offset": 23218901,
+      "before": "1100",
+      "after": "1600",
+      "process_exit": 0,
+      "invalid_program_cases": 0,
+      "native_normal_differences": 2,
+      "managed_exception_differences": 0,
+      "example": {
+        "original": {
+          "name": "e4-39",
+          "token": "0x060000E4",
+          "error": null,
+          "trace": [
+            "item:Card:0",
+            "eq:card-0:null:0",
+            "item:Card:0",
+            "cardStart:card-0:1",
+            "ne:prop-bank:null:1",
+            "active:prop-bank:1",
+            "item:Prop:0",
+            "implicit:prop-0:1",
+            "propKey:prop-0:0",
+            "item:Prop:1",
+            "implicit:prop-1:1",
+            "propKey:prop-1:1",
+            "item:Prop:2",
+            "implicit:prop-2:1",
+            "propKey:prop-2:2"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": [
+              {
+                "tag": "prop-0",
+                "key": 0
+              },
+              {
+                "tag": "prop-1",
+                "key": 1
+              },
+              {
+                "tag": "prop-2",
+                "key": 2
+              }
+            ]
+          }
+        },
+        "actual": {
+          "name": "e4-39",
+          "token": "0x060000E4",
+          "error": null,
+          "trace": [
+            "item:Card:0",
+            "eq:card-0:null:0",
+            "item:Card:0",
+            "cardStart:card-0:1",
+            "ne:prop-bank:null:1",
+            "active:prop-bank:1",
+            "item:Prop:0",
+            "implicit:prop-0:1",
+            "propKey:prop-0:0",
+            "item:Prop:1",
+            "implicit:prop-1:1",
+            "propKey:prop-1:0",
+            "item:Prop:2",
+            "implicit:prop-2:1",
+            "propKey:prop-2:0"
+          ],
+          "state": {
+            "gameStart": false,
+            "countdown": "40A00000",
+            "cardHidden": true,
+            "sun": 0,
+            "enemy": "enemy",
+            "enemyBoard": "null",
+            "enemyFlags": 0,
+            "enemyWaves": 0,
+            "enemyPoint": 0,
+            "enemyTypes": null,
+            "cardNum": 1,
+            "page": 0,
+            "maxPage": 88,
+            "background": "background",
+            "originalSprite": "null",
+            "otherSprite": "null",
+            "meter": "null",
+            "objects": [
+              {
+                "tag": "meter-clone-go-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              },
+              {
+                "tag": "other-transform",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40A00000,40C00000,40E00000"
+              },
+              {
+                "tag": "ready-clone-tr",
+                "parent": "null",
+                "position": "00000000,00000000,00000000",
+                "scale": "40000000,40400000,40800000"
+              }
+            ],
+            "cards": [
+              {
+                "tag": "card-0",
+                "ordinal": 77,
+                "onBank": true
+              }
+            ],
+            "props": [
+              {
+                "tag": "prop-0",
+                "key": 0
+              },
+              {
+                "tag": "prop-1",
+                "key": 0
+              },
+              {
+                "tag": "prop-2",
+                "key": 0
+              }
+            ]
+          }
+        }
+      },
+      "native_exception_execution": false
+    }
+  ],
+  "managed_exception_checks_do_not_claim_native_unwind_execution": true
+}
