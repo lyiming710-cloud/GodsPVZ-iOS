@@ -13,3 +13,9 @@
 当前26僵尸恢复仅源构建/组合隔离/解析/工具API门通过，实际导入和正常轨迹/攻击均待测，正式新增合格方法0，无新IPA。
 
 后续dispatch在启动runner前因job级env误用runner.temp被GitHub422拒绝，没有实际新run/许可占用。已移到两个实际执行步骤的step env，并由actionlint 1.7.12检查当前完整工作流通过；同工具对84f024e旧配置控制明确拒绝。拒绝原因与修正源已保留，不修改游戏DLL、原始计划或已经完成的运行结果。
+
+## 实测40413139415：全部资源值正确，复杂关卡仍停滞
+
+固定source b945553、游戏DLL75160a32未变。9植物及26僵尸合计3836源字段，在AssetDatabase/Resources两路70个实际资源实例路由展开9902项标量/数组/持久引用比对，全部通过，0失败/0未决。实际桌面鼠标完成选卡、确定和开始，Board.level=19且gameStart=true；继续观察153.6877游戏秒/1614帧后仍没有任何单位轨迹或植物弹丸。Ready卡牌根世界位置一直(0,0,0)，背景无父Canvas，种植尝试0。真实游戏游玩验收失败；不将无异常日志当作成功。席位归还exit0。
+
+实际UI进程加载的Unity.VisualScripting.Core.dll SHA dc1b51cc…7c8f9，ComponentHolderProtocol.GameObject的IL为142a，AddComponent<T>为1200fe156900001b062a，确认为空值/默认值返回；先前参考DLL线索已由实际加载二进制闭合。图鉴仍失败。原版PC对照另证当前Board.Start省略出怪管理器创建及配置、Banks.Initialize省略真实父节点/位置设置，后续按整条开局调用链恢复，不能给探针直接注入单位或强改显示状态。完整真实失败和二进制保存在Complex-Gameplay相邻目录。无新IPA。
