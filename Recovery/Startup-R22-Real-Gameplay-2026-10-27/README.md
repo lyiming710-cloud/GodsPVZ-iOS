@@ -11,3 +11,5 @@
 每2秒只读记录Board暂停/倒计时、出怪管理器是否存在/激活、配置旗帜/波数、当前旗帜/波次、波次计时、预置敌人数及单位列表数。卡槽记录真实cardList成员，避免isOnBank错误导致证据被过滤；保留未激活单位及active/enabled标记。只有激活的僵尸类型、激活且已在场植物生成的激活弹丸进入进展计数。设备也能造成伤害，因此HP下降仍标记来源未证明，不用它冒充植物正常攻击。全关、iPad输入、普遍语义等价和IPA均不由收集完成自动推出。
 
 Unity测试和Apple语法检查可并行：前者执行Linux Editor，后者检验物理iOS arm64编译。当前入口强制audit_only+interaction+gameplay，禁止导出/链接IPA；成功游戏观测仍须人工回读轨迹、事件和截图。已确认的VisualScripting Core默认返回问题保留，尚未在本批修改SDK。
+
+两项真实任务已从固定d707440源码启动：[Unity复杂关卡40456165422](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40456165422)，[同一新源码Apple检查40456172986](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40456172986)。Unity输入绑定、实际Editor工具编译及Xcode环境预检通过，正在准备运行环境，尚未读到新战斗结果；Apple已进入全部C/C++编译，尚未读到最终结果。
