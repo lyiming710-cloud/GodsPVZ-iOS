@@ -1,4 +1,4 @@
-name: Startup R21 UI139 fresh code - independent Apple arm64 compiler precheck
+name: Startup R22 BOARD112 fresh code - independent Apple arm64 compiler precheck
 
 on:
   workflow_dispatch:
@@ -34,17 +34,17 @@ jobs:
         with:
           github-token: ${{ github.token }}
           repository: lyiming710-cloud/GodsPVZ-iOS
-          run-id: 40361033961
-          name: Startup-R21-UI139-compiler-40361033961-1
+          run-id: 40452784098
+          name: Startup-R22-Board112-compiler-40452784098-1
           path: ${{ runner.temp }}/fresh-compiler-input
       - name: Restore hash-bound runtime headers and newly generated code
         shell: bash
         run: |
           set -euo pipefail
           old="$RUNNER_TEMP/frozen-xcode-input/GodsPVZ-Stage9-bulk389-unsigned-Xcode.tar.zst"
-          fresh="$RUNNER_TEMP/fresh-compiler-input/startup-r21-generated.tar.gz"
+          fresh="$RUNNER_TEMP/fresh-compiler-input/startup-r22-generated.tar.gz"
           [ "$(shasum -a 256 "$old" | awk '{print $1}')" = '93d32bb83a6d93b1c9d8a490bf057db7cfe2e35dad1219ab4924b6ec38538e04' ]
-          [ "$(shasum -a 256 "$fresh" | awk '{print $1}')" = '9a24bf25afa3e57c294f82c042c6c40f32ff747d19411bea62978f8441343c94' ]
+          [ "$(shasum -a 256 "$fresh" | awk '{print $1}')" = 'ed3f18d433df06168b09cb54446651ec1f4eadbb6e98cb2a088a743cea8cc001' ]
           command -v zstd >/dev/null || brew install zstd
           mkdir -p "$RUNNER_TEMP/frozen-export" "$RUNNER_TEMP/fresh-generated"
           zstd -dc "$old" | tar -xf - -C "$RUNNER_TEMP/frozen-export"
@@ -53,16 +53,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/check_startup_r21_apple.py \
+          python3 scripts/actions/check_startup_r22_apple.py \
             --xcode-dir "$RUNNER_TEMP/frozen-export/xcode" \
             --fresh-root "$RUNNER_TEMP/fresh-generated/il2cppOutput/cpp" \
             --compiler-input "$RUNNER_TEMP/fresh-compiler-input" \
-            --output-dir "$RUNNER_TEMP/startup-r21-apple"
+            --output-dir "$RUNNER_TEMP/startup-r22-apple"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Startup-R21-UI139-Apple-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/startup-r21-apple/
+          name: Startup-R22-BOARD112-Apple-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/startup-r22-apple/
           retention-days: 30
           if-no-files-found: warn
 
