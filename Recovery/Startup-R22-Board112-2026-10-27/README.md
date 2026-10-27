@@ -13,3 +13,5 @@
 新EH执行器是独立工具，历史禁止EH的执行器与冻结验证器未改变。早期工具编译缺少PEReader扩展命名空间、未映射嵌套LawnApp，以及负控制驱动把ldloc.s误称ldloc，都属于工具问题，未计为游戏缺陷或语义拒绝控制。当前正常执行及8个语义控制均已实际完成。源码包保留依赖、原生证据、原始执行结果、所有负控制日志和字节变体位置。
 
 下一门为固定子候选的全新IL2CPP转换及全部生成C/C++编译，再验证Apple输入并回到真实Unity复杂关卡种植/轨迹/攻击。实际加载的VisualScripting Core默认返回问题另行保留；本批尚未改SDK。当前不宣称子候选Unity导入、复杂关卡、iPad或IPA通过，正式新增合格方法0。
+
+固定ba78423源码的全新Linux IL2CPP/全部生成代码编译已启动：[40452784098](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40452784098)。当前只观察到运行中，不预记为PASS；该任务不消耗Unity授权，不导出IPA。
