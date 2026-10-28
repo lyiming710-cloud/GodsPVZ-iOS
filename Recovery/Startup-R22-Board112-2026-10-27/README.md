@@ -17,3 +17,5 @@
 固定ba78423源码的全新Linux IL2CPP/全部生成代码编译已启动：[40452784098](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40452784098)。当前只观察到运行中，不预记为PASS；该任务不消耗Unity授权，不导出IPA。
 
 实际Linux运行40452784098已成功结束，固定ba78423源码及15e01503候选。逐一重算755个CPP+274个C的源码大小/SHA，并回读全部1029份原始日志，0错误；编译器负控制仍检出真实损坏。全量生成源码tar的SHA及所有游戏分片保留，不能代指真实Unity导入、Apple链接或IPA。
+
+Actual follow-up: Unity40456165422 failed gameplay; Apple40456172986 passes all1029 raw source/log checks. Original AnimationModule identifies 0x1812dba00 as SetBool(string,bool), not the SetTrigger leaf used by the original finite harness. The corrected ABI/state oracle finds 24 normal differences in this R22 candidate. Preserve the old report as history; do not use its Board.Update zero-difference claim as sufficient semantic proof. See ACTUAL-RUNTIME-VERDICT.json and the separate R23 correction.

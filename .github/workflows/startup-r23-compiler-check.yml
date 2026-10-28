@@ -1,0 +1,79 @@
+name: Startup R23 Correction fresh IL2CPP and all generated C C++ compiler census
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: startup-r23-generic-compiler
+  cancel-in-progress: false
+
+jobs:
+  compiler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+      - name: Select Clang18
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v clang++-18
+          mkdir -p "$RUNNER_TEMP/compiler-bin"
+          ln -s "$(command -v clang++-18)" "$RUNNER_TEMP/compiler-bin/clang++"
+          ln -s "$(command -v clang-18)" "$RUNNER_TEMP/compiler-bin/clang"
+          echo "$RUNNER_TEMP/compiler-bin" >> "$GITHUB_PATH"
+      - name: Download compiler checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/downloads"
+          gh release download bulk152-actions-checkpoint-2026-10-20 --repo "$GITHUB_REPOSITORY" --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz --pattern PORTABLE-MANIFEST.json --dir "$RUNNER_TEMP/downloads"
+          python3 -m zipfile -e Recovery/Startup-R23-Runtime-Correction-2026-10-28/STARTUP-R23-CORRECTION-CANDIDATE.zip "$RUNNER_TEMP/downloads"
+          echo '1d244776ee85083c2ed298c4f749f96b6c5ae820a78d50b0ce47480691775122  STARTUP-R23-CORRECTION.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
+      - name: Authenticate and restore compiler-only inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/restore_bulk152_checkpoint.py --downloads "$RUNNER_TEMP/downloads" --destination "$RUNNER_TEMP/portable" --receipt .validation/startup-r23-restore-receipt.json
+          module=Recovery/Bulk389-Qualification-2026-10-23/ci/UnityEngine.AnimationModule.dll
+          echo "324d1e5ceef2b6fa1d0e3473ce820b451e41f397458afc46708a27aae0aef5e2  $module" | sha256sum -c -
+          cp "$module" "$RUNNER_TEMP/portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped/UnityEngine.AnimationModule.dll"
+      - name: Fresh R4 negative control and exact R23 Correction all-source census
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/actions/check_startup_r23_compiler.py --portable-root "$RUNNER_TEMP/portable" --candidate-dll "$RUNNER_TEMP/downloads/STARTUP-R23-CORRECTION.dll" --output-dir "$GITHUB_WORKSPACE/.validation/startup-r23"
+      - name: Archive generated sources and raw logs
+        if: always()
+        shell: bash
+        run: |
+          if [ -d .validation/startup-r23/candidate/il2cpp_stage/il2cppOutput ]; then
+            tar -czf .validation/startup-r23-generated.tar.gz -C .validation/startup-r23/candidate/il2cpp_stage il2cppOutput
+          fi
+          if [ -d .validation/startup-r23 ]; then
+            find .validation/startup-r23 -name '*.json' -o -name '*.log' -o -path '*/il2cpp_conversion/*' | tar -czf .validation/startup-r23-evidence.tar.gz -T -
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Startup-R23-Correction-compiler-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            .validation/startup-r23-restore-receipt.json
+            .validation/startup-r23-evidence.tar.gz
+            .validation/startup-r23-generated.tar.gz
+            .validation/startup-r23/*.json

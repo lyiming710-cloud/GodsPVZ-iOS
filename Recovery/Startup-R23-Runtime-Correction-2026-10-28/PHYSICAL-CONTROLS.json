@@ -1,0 +1,81 @@
+{
+  "scope": "PHYSICAL_CORRECTION_CONTROLS_SEPARATING_SEMANTIC_DIFFERENCES_AND_STRICT_TYPE_REJECTION",
+  "candidate_sha256": "1d244776ee85083c2ed298c4f749f96b6c5ae820a78d50b0ce47480691775122",
+  "controls": 8,
+  "semantic_controls": 7,
+  "strict_type_controls": 1,
+  "all_detected": true,
+  "results": [
+    {
+      "name": "late-inline-time-snapshot",
+      "sha256": "ec11985843af2283028f0c921722c8bf43b82667ad6265fa4d12baeb6d82c4b2",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 12,
+      "semantic_execution": true
+    },
+    {
+      "name": "late-standalone-time-snapshot",
+      "sha256": "72a469e7e2675ea439cff31ca177172eed369f7e7e661b95e315f4c7c7cbfa37",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 12,
+      "semantic_execution": true
+    },
+    {
+      "name": "missing-inline-time-reset",
+      "sha256": "1e85245f014c46bf088e8bc5b8d4ead8ed543ba0b32c2b5ccf621046606af80e",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 8,
+      "semantic_execution": true
+    },
+    {
+      "name": "missing-standalone-time-reset",
+      "sha256": "eeefbbb0a085e0e640dc0c4ad3f3764cfbd9c5142866244781b6d7ec96d7f796",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 8,
+      "semantic_execution": true
+    },
+    {
+      "name": "wrong-animator-api",
+      "sha256": "5036283fd96c594c7fe0dbd9bdd29f0dea750e76259a4c5f0df505c95e154ab8",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 24,
+      "semantic_execution": true
+    },
+    {
+      "name": "wrong-inline-nan-expiration",
+      "sha256": "545d23a4f1ce340b49fe94dd831790da350e965dce37d1d842be7d16739cdebc",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 4,
+      "semantic_execution": true
+    },
+    {
+      "name": "wrong-standalone-nan-expiration",
+      "sha256": "cefae635a48a7102e75ba83b93be39d64d41656b9bb5bcf34200752dd9623264",
+      "detected": true,
+      "kind": "SEMANTIC",
+      "normal_execution_differences": 4,
+      "semantic_execution": true
+    },
+    {
+      "name": "mixed-float-integer-zero",
+      "sha256": "acfe2ff1d5895066535bf551be5a138e764a5fc2ea7a51b182ea354e19678e83",
+      "detected": true,
+      "kind": "STRICT_TYPE",
+      "semantic_execution": false,
+      "stock_clr_rejected": false,
+      "strict_type_result": {
+        "status": "REJECTED",
+        "error": "System.Void Device::Update() IL_017C: invalid comparison F, I4"
+      }
+    }
+  ],
+  "clr_permissiveness_observed": true,
+  "unity_execution": false,
+  "malformed_runtime_execution_not_claimed_as_semantic_success": true
+}
