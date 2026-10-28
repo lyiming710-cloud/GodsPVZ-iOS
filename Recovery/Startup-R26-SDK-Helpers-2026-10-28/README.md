@@ -9,3 +9,5 @@ Both changed methods pass the unchanged strict checker and scoped member-access 
 These are controlled contracts, not actual Unity AddComponent success. The next restricted Editor run must first verify the loaded SDK hash and run real engine-object helper probes, then attempt complex Adventure 19 with OS input. It must stop on actual Board.isFailed and require a complete hand state before counting a card grab. No IPA, real complex-level pass or iPad acceptance exists for this pair yet.
 
 Real diagnostic [40709087573](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40709087573), fixed source `9ec1bc461d2c50172e8861191eaa1b0d7d63d92b`, is running. Actual early input binding and Editor helper preflight pass; the export job is still in environment setup. No real SDK engine-probe or gameplay result has been observed yet. Audit-only inputs keep IPA export disabled.
+
+实际运行40709087573已结束：SDK两方法通过真实Unity对象的10项检查，两份实际Core DLL均回读为51f72bcd。复杂关卡仍失败：真实OS点击拿卡通过，但种植未产生场上植物，42.29游戏秒后原版败北界面出现；6251条单位观测、570条设备观测及21次原始异常完整保留。植物来源投射物为0，不能判定正常攻击通过。当前异常为血条Start、TryPlanting和HeadDrop；当前子版本未执行Apple编译，未生成IPA。
