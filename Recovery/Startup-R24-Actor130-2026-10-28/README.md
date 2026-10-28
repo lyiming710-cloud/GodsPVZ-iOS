@@ -1,0 +1,13 @@
+# R24 actor catalog and plant grab recovery
+
+Parent R23 game `1d244776…75122`; candidate `4b5349946ee57d368002cdc1c358334efd43d4b9764657556e057148934927f3`. Five complete callers / 130 distinct original native operation positions: ResourceManager.Load_devicePrefabs (0x228), Load_plantPrefabs (0x229), Load_projectPrefabs (0x22B), Load_zombiePrefabs (0x234), Plant.SetPrefabState_onHand (0x3A4). These are authored positions, not 130 independent game bugs.
+
+Device/Zombie/Project catalogs enumerate their original enum, preserve null slots and assign by loaded prefab.ID. Plant's distinct original algorithm checks BoardManager.Instance and Board_OnPlay(), loads only actual bank-selected cards, pads and assigns by Card.PlantData.plantID, names the resource by cardPlantType, and retains live cached entries. All original finally regions are restored. No list Clear, global path enumeration, fallback load or exception suppression is added.
+
+On-hand setup restores conditional cardOnBank, genuine Unity Object equality, GameObject.AddComponent<SortingGroup>, sorting UI/10000, the one-argument Transform.SetParent overload, animator speed float zero, required shadow and attack range calls. It removes the invented Plant.board assignment. Original null prefab fields are not rewritten.
+
+An initial candidate was rejected locally for three private BoardManager field accesses generated from inlined native getters. Its exact reports remain archived. The corrected image calls the unchanged original public getter methods. Full isolation checks preserve the other 2,312 MethodDefs, all old metadata rows/heaps and old code slots; method flags/section permissions are unchanged. Two MemberRefs and five local signatures are appended. Frozen stack/type checker: all five changed methods pass; whole assembly 2,200 PASS and 97 FAIL_OR_UNSUPPORTED remains explicit. All 2,297 executable methods' member access passes. Five actual-image JIT preparations do not execute gameplay.
+
+Actual raw CIL runs 140 finite cases against controlled engine/resource contracts. The five byte-rechecked original PC callers match all 138 supported normal cases. Two injected exception-unwind cases retain the honest Windows SEH UNSUPPORTED boundary. Six physical, type-valid wrong-behavior variants produce real state differences; trace omission alone is not counted as state proof. This is finite caller evidence, not Unity, iOS, Xcode or normal game acceptance.
+
+Complete prior failed real Unity run: [R23 actual evidence](../Startup-R23-Actual-Gameplay-2026-10-28/README.md). Do not launch another full Editor run before addressing the already confirmed Plant preview/layer setup blockers. Fresh compiler work is separate and pending. No new IPA or formally qualified gameplay methods.

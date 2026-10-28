@@ -1,3 +1,5 @@
+> 2026-10-28: [R24 actor catalog / plant-grab recovery](Recovery/Startup-R24-Actor130-2026-10-28/README.md): 130 native operation positions across five callers; 138 finite native/CIL comparisons pass, 2 Windows unwind cases remain unsupported. Full real Unity R23 failure is archived. R24 compiler is pending; known plant preview/layer blockers prevent a new gameplay claim. No new IPA.
+
 # GodsPVZ iOS recovery
 
 Latest actual Unity run [40456165422](https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40456165422) starts original Adventure 19 through OS input. It observes 35 zombies, including three that move, but no planting or plant-origin projectile. A normal path-warning modal pauses the game; the probe leaves it open and times out. Device.Update also raises invalid-IL exceptions. All 9,902 original resource checks still pass. [Full byte-checked actual evidence, all trajectories, original screenshots and Apple logs](Recovery/Startup-R22-Actual-Gameplay-2026-10-28/README.md). This is a failed gameplay result; no new IPA.

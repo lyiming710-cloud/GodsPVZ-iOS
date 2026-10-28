@@ -52,3 +52,5 @@ and generic AddComponent have distinct handling of unsupported holders; no guess
 shared-null fallback was applied. The actual loaded runtime SDK remains unchanged.
 
 Actual corrected Unity diagnostic 40614900915 is dispatched at a98851f, with binding and exact Editor-helper preflight passing. At observation it is preparing software graphics; no actual corrected battle outcome has been read. The Linux compiler source is independently fixed at 8df1d5a. R23 Apple syntax/link/IPA and iPad acceptance remain unperformed.
+
+Actual run 40614900915 completed with failure: bank bool correction is observed, but plant setup throws, catalog IDs select wrong Device prefabs and the game reaches its loss dialog. [Complete original failure evidence](../Startup-R23-Actual-Gameplay-2026-10-28/README.md). No new IPA.

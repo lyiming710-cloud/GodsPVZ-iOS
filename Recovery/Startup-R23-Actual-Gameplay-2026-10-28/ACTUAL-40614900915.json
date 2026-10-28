@@ -1,0 +1,129 @@
+{
+  "scope": "ACTUAL_R23_UNITY_RUNTIME_FAILURE_READBACK_NOT_GAMEPLAY_PASS",
+  "run": 40614900915,
+  "candidate_sha256": "1d244776ee85083c2ed298c4f749f96b6c5ae820a78d50b0ce47480691775122",
+  "source_commit": "a98851f970269f45ae762442bbe06cf07ff7eb3f",
+  "delivery_files_verified": 80,
+  "all_trajectory_records_read": 60703,
+  "records_by_kind": {
+    "Zombie": 56934,
+    "Projectile": 2363,
+    "Plant": 1406
+  },
+  "unique_by_kind": {
+    "Zombie": 41,
+    "Projectile": 1000,
+    "Plant": 1
+  },
+  "active_moving_zombies": 18,
+  "actual_resource_leaf_checks": 9902,
+  "resource_failures": 0,
+  "seat_return_exit": 0,
+  "host": {
+    "scope": "HOST_COLLECTION_ONLY_NOT_GAMEPLAY_PASS",
+    "unity_exit": 79,
+    "timeout": false,
+    "exception": null,
+    "candidate_unchanged": true,
+    "last_input_sequence": 8,
+    "elapsed_seconds": 439.085
+  },
+  "observed_game_seconds": 26.027498245239258,
+  "board_started": true,
+  "planting_attempts": 1,
+  "plant_on_field": false,
+  "plant_sourced_projectiles": 0,
+  "bank_visible_observations": 296,
+  "bank_hide_states": [
+    "False"
+  ],
+  "device_rows": 4068,
+  "actual_errors": [
+    {
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stack": "Device.EnemySeeking_Zombie () (at <fdcf3f07811141b38240087184183dde>:0)\nDevice.Update_Characteristic () (at <fdcf3f07811141b38240087184183dde>:0)\nDevice.Update () (at <fdcf3f07811141b38240087184183dde>:0)\n",
+      "count": 7100
+    },
+    {
+      "message": "UnassignedReferenceException: The variable animationSortingGroup of Plant has not been assigned.\nYou probably need to assign the animationSortingGroup variable of the Plant script in the inspector.",
+      "stack": "Plant.SetPrefabState_onHand (Card card, MouseManager mouseManager) (at <fdcf3f07811141b38240087184183dde>:0)\nMouseManager.GetPlantFromCardbank (Card card) (at <fdcf3f07811141b38240087184183dde>:0)\nCard.CardOnClick () (at <fdcf3f07811141b38240087184183dde>:0)\nUnityEngine.Events.InvokableCall.Invoke () (at /home/bokken/sharedspace/ra_2022.3/Runtime/Export/UnityEvent/UnityEvent.cs:178)\nUnityEngine.Events.UnityEvent.Invoke () (at /home/bokken/sharedspace/ra_2022.3/artifacts/generated/UnityEvent/UnityEvent_0.cs:57)\nUnityEngine.UI.Button.Press () (at ./Packages/com.unity.ugui/Runtime/UI/Core/Button.cs:70)\nUnityEngine.UI.Button.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) (at ./Packages/com.unity.ugui/Runtime/UI/Core/Button.cs:114)\nUnityEngine.EventSystems.ExecuteEvents.Execute (UnityEngine.EventSystems.IPointerClickHandler handler, UnityEngine.EventSystems.BaseEventData eventData) (at ./Packages/com.unity.ugui/Runtime/EventSystem/ExecuteEvents.cs:57)\nUnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) (at ./Packages/com.unity.ugui/Runtime/EventSystem/ExecuteEvents.cs:272)\nUnityEngine.EventSystems.EventSystem:Update() (at ./Packages/com.unity.ugui/Runtime/EventSystem/EventSystem.cs:530)\n",
+      "count": 1
+    },
+    {
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stack": "Device.InjuryStatusUpdate () (at <fdcf3f07811141b38240087184183dde>:0)\nDevice.TakeDamage (Damage damage, Projectile projectile) (at <fdcf3f07811141b38240087184183dde>:0)\nProjectile.Collision_Device (Device device) (at <fdcf3f07811141b38240087184183dde>:0)\nProjectile.CollisionDetect_Device (System.Boolean sameCamp) (at <fdcf3f07811141b38240087184183dde>:0)\nProjectile.CollisionDetect () (at <fdcf3f07811141b38240087184183dde>:0)\nProjectile.Update () (at <fdcf3f07811141b38240087184183dde>:0)\n",
+      "count": 4
+    }
+  ],
+  "checks": [
+    {
+      "name": "actual_game_player_save_exists",
+      "detail": "No unlock, inventory or combat fields assigned",
+      "pass": true
+    },
+    {
+      "name": "actual_unity_input_mouse_coordinates_match_os_move",
+      "detail": "wanted=680,419.5 actual=(680.00, 419.00, 0.00)",
+      "pass": true
+    },
+    {
+      "name": "os_click_observed_3",
+      "detail": "choose plant ID 0 observed=(125.00, 611.00, 0.00) button=True",
+      "pass": true
+    },
+    {
+      "name": "plant_selected_by_os_input",
+      "detail": "plantID=0",
+      "pass": true
+    },
+    {
+      "name": "os_click_observed_4",
+      "detail": "confirm selected plants observed=(669.00, 674.00, 0.00) button=True",
+      "pass": true
+    },
+    {
+      "name": "selection_confirmed_by_os_input",
+      "detail": "No Determine fallback called",
+      "pass": true
+    },
+    {
+      "name": "os_click_observed_5",
+      "detail": "start normal configured complex level observed=(1281.00, 155.00, 0.00) button=True",
+      "pass": true
+    },
+    {
+      "name": "os_click_observed_6",
+      "detail": "take real bank plant card ID 0 observed=(188.00, 782.00, 0.00) button=True",
+      "pass": true
+    },
+    {
+      "name": "plant_prefab_on_hand_after_os_bank_click",
+      "detail": "itemType=None plant=Null",
+      "pass": true
+    },
+    {
+      "name": "os_click_observed_7",
+      "detail": "normal planting click observed=(191.00, 483.00, 0.00) button=True",
+      "pass": true
+    },
+    {
+      "name": "plant_count_increased_after_os_planting",
+      "detail": "before=0 now=0",
+      "pass": false
+    },
+    {
+      "name": "os_click_observed_8",
+      "detail": "close actual original Window_T warning with OS input observed=(680.00, 385.00, 0.00) button=True",
+      "pass": true
+    }
+  ],
+  "complex_gameplay_pass": false,
+  "ipa": null,
+  "findings": [
+    "Actual bank hide bool is false and cards are visible; original SetBool correction is confirmed in real Unity.",
+    "Actual OS card and grass clicks occurred, but Plant.SetPrefabState_onHand threw before hand state completed; a live prefab reference was an insufficient hand-state check.",
+    "Final original screenshot shows the loss dialog. The helper waited to wall timeout because it did not detect actual defeat; no restart or forced resume is accepted.",
+    "Device rows show Roadblock instances initialized as ID2 and TNT as ID4. Native Load_devicePrefabs pads and assigns by the loaded prefab.ID; current CIL appends and compresses the index space.",
+    "Original thirteen Device resource components decode and round-trip exactly; do not alter their correct original IDs or add null checks to mask selection of the wrong prefab."
+  ]
+}
