@@ -50,3 +50,5 @@ Official Visual Scripting 1.9.4 package source and license are retained in the
 prepared-tools archive only as investigation evidence. Its GameObject extension
 and generic AddComponent have distinct handling of unsupported holders; no guessed
 shared-null fallback was applied. The actual loaded runtime SDK remains unchanged.
+
+Actual corrected Unity diagnostic 40614900915 is dispatched at a98851f, with binding and exact Editor-helper preflight passing. At observation it is preparing software graphics; no actual corrected battle outcome has been read. The Linux compiler source is independently fixed at 8df1d5a. R23 Apple syntax/link/IPA and iPad acceptance remain unperformed.
