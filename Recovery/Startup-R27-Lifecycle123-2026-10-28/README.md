@@ -19,3 +19,7 @@ Current-child full IL2CPP/Clang, actual Unity gameplay, Apple compilation and iP
 R27实际Unity运行40722007191已启动，固定源码189a571。输入绑定及Editor helper预检已过，仍处于环境恢复阶段，暂无关卡结论。另准备独立的全量Linux编译：显式使用当前游戏eef6c35a与实际Editor SDK 51f72bcd，先复制认证过的portable support，仅替换SDK并重核其余文件字节；旧portable保持不变。当前子版本不能继承R25的编译结果。
 
 全量Linux编译40723256900已启动，固定源码b504fa7；与Unity运行40722007191分别记录。回读R25原始转换输入证实旧SDK为Unity.VisualScripting.Core.exe（330240字节，16cabf56…a4fb），并非本轮实际Editor的51f72bcd SDK。新编译显式替换该唯一SDK槽并保留其他输入字节，结果尚未返回；不能用前置绑定成功代替转换或编译成功。
+
+实际Linux运行40723256900已成功结束，固定3bdd831源码及9490c184候选。逐一重算755个CPP+274个C的源码大小/SHA，并回读全部1029份原始日志，0错误；编译器负控制仍检出真实损坏。全量生成源码tar的SHA及所有游戏分片保留，不能代指真实Unity导入、Apple链接或IPA。
+
+实际Unity运行40722007191已回读：OS点击种下一株真实场上豌豆狙击手，board与血条plant引用一致，6826条单位观测且运行时异常0；47.25游戏秒后原版败北界面出现。观察到三次攻击计时重置及对应目标护甲变化。原版ST_Peasniper直接调用TakeDamage、不创建Projectile，旧的强制投射物条件不适用于该植物；当前没有完整伤害来源归因，不能把护甲下降单独作为植物攻击验收。所有原始失败结果、14幅图片和SDK实际加载证据保留。未执行Apple编译，未生成IPA。
