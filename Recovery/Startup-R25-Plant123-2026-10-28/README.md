@@ -1,0 +1,13 @@
+# R25 original Plant visual lifecycle and position recovery
+
+Parent R24 `4b534994…27f3`; child `9490c1845298fa5afda04fc8dfba915ce2a939eaebe96be83e3311b39557bc4c`. Three complete original callers, 123 distinct original native operation positions. This follows the separately completed R24 130-position cohort; the total 253 positions is not a count of independent bugs or formally qualified methods.
+
+- Plant.SetLayer (0x060003A2): original Unity group presence, Entity layer, single-precision depth/occupy-state sorting and total-plant offset; original HP/element/buff and characteristic UI reparenting, preserving one-argument SetParent semantics and finally.
+- Plant.SetPrefabState_previewOnField (0x060003A6): original mouse.board assignment, two separate SpriteRenderer lookups and copied RGBA with alpha * 0.2f, Unity-null group creation, UI/9000, two-argument SetParent(false), range view, UI hiding, both finally regions, captured animator state hash / Play(hash,0,1f/60f) and speed zero. On-hand and preview intentionally use different original parenting overloads.
+- Plant.SetTransformPosition (0x060003A3): calculate desired-minus-shadow offset and add it to the plant root, then re-read actual shadow separately for logical fX/fY. The former reconstructed body directly set the root to the requested shadow position.
+
+Append-only relocation preserves the other 2,314 MethodDefs and all old code slots, metadata rows/heaps, visibility and section permissions. Three local signatures are appended; no new MemberRef or MethodSpec. All three targets pass the unchanged frozen checker; whole assembly remains 2,200 PASS / 97 FAIL_OR_UNSUPPORTED. The all-2,297-method member access census passes and three real-image JIT preparations succeed, without gameplay invocation.
+
+Actual raw CIL executed 163 finite controlled cases. Three original byte-rechecked PC callers match all 162 normal cases, including fake-null groups, depth states, different sprite renderer per lookup, callback-induced animator replacement, UI-parent replacement and root/shadow offset cases. One injected Windows exception-unwind case remains UNSUPPORTED. Six physically changed, type-valid candidates each create observable final-state differences. Controlled callees are not proof of original nested Unity/game behavior.
+
+No Editor or iPad gameplay acceptance, Xcode link or IPA is claimed. The actual VisualScripting default-return defect is still recorded; do not ignore it in a new real complex-level attempt. R24's fresh Linux run 40643198045 passes 755 C++ + 274 C sources with raw read-back and does not qualify this different R25 child.

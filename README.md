@@ -1,3 +1,5 @@
+> 2026-10-28 continued: [R25 Plant preview, layering and shadow position](Recovery/Startup-R25-Plant123-2026-10-28/README.md) adds 123 source positions / three callers; 162 finite original-native comparisons pass, one Windows unwind case remains unsupported. R24 fresh Linux run 40643198045 has all 1,029 sources/logs independently read with zero errors. New R25 compiler and real gameplay remain separate.
+
 > 2026-10-28: [R24 actor catalog / plant-grab recovery](Recovery/Startup-R24-Actor130-2026-10-28/README.md): 130 native operation positions across five callers; 138 finite native/CIL comparisons pass, 2 Windows unwind cases remain unsupported. Full real Unity R23 failure is archived. R24 compiler is pending; known plant preview/layer blockers prevent a new gameplay claim. No new IPA.
 
 # GodsPVZ iOS recovery

@@ -11,3 +11,5 @@ An initial candidate was rejected locally for three private BoardManager field a
 Actual raw CIL runs 140 finite cases against controlled engine/resource contracts. The five byte-rechecked original PC callers match all 138 supported normal cases. Two injected exception-unwind cases retain the honest Windows SEH UNSUPPORTED boundary. Six physical, type-valid wrong-behavior variants produce real state differences; trace omission alone is not counted as state proof. This is finite caller evidence, not Unity, iOS, Xcode or normal game acceptance.
 
 Complete prior failed real Unity run: [R23 actual evidence](../Startup-R23-Actual-Gameplay-2026-10-28/README.md). Do not launch another full Editor run before addressing the already confirmed Plant preview/layer setup blockers. Fresh compiler work is separate and pending. No new IPA or formally qualified gameplay methods.
+
+实际Linux运行40643198045已成功结束，固定1892c0a源码及4b534994候选。逐一重算755个CPP+274个C的源码大小/SHA，并回读全部1029份原始日志，0错误；编译器负控制仍检出真实损坏。全量生成源码tar的SHA及所有游戏分片保留，不能代指真实Unity导入、Apple链接或IPA。
