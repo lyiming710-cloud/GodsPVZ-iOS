@@ -11,3 +11,5 @@ Append-only relocation preserves the other 2,314 MethodDefs and all old code slo
 Actual raw CIL executed 163 finite controlled cases. Three original byte-rechecked PC callers match all 162 normal cases, including fake-null groups, depth states, different sprite renderer per lookup, callback-induced animator replacement, UI-parent replacement and root/shadow offset cases. One injected Windows exception-unwind case remains UNSUPPORTED. Six physically changed, type-valid candidates each create observable final-state differences. Controlled callees are not proof of original nested Unity/game behavior.
 
 No Editor or iPad gameplay acceptance, Xcode link or IPA is claimed. The actual VisualScripting default-return defect is still recorded; do not ignore it in a new real complex-level attempt. R24's fresh Linux run 40643198045 passes 755 C++ + 274 C sources with raw read-back and does not qualify this different R25 child.
+
+实际Linux运行40645188536已成功结束，固定3bdd831源码及9490c184候选。逐一重算755个CPP+274个C的源码大小/SHA，并回读全部1029份原始日志，0错误；编译器负控制仍检出真实损坏。全量生成源码tar的SHA及所有游戏分片保留，不能代指真实Unity导入、Apple链接或IPA。
