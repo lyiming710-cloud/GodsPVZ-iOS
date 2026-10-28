@@ -1,0 +1,104 @@
+name: Startup R27 exact Editor helper compilation only
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  helper_compilation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache/restore@v4
+        id: tools_cache
+        with:
+          path: ${{ runner.temp }}/bulk389-helper-tools
+          key: bulk389-exact-helper-tools-v2-0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14
+      - uses: actions/download-artifact@v4
+        if: steps.tools_cache.outputs.cache-hit != 'true'
+        with:
+          github-token: ${{ github.token }}
+          repository: lyiming710-cloud/GodsPVZ-iOS
+          run-id: 34668863583
+          pattern: Stage9.1-unity-china-editor-part-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/helper-editor-parts
+      - name: Restore only compiler, APIs and licensing client from hash-locked Editor
+        if: steps.tools_cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          PARTS="$RUNNER_TEMP/helper-editor-parts"
+          TOOLS="$RUNNER_TEMP/bulk389-helper-tools"
+          ROOT="$RUNNER_TEMP/helper-editor-source"
+          mkdir -p "$ROOT"
+          mapfile -t FILES < <(find "$PARTS" -maxdepth 1 -type f -name 'Unity-China-2022.3.44f1c1.tar.xz.part-*' | sort)
+          [ "${#FILES[@]}" = '15' ]
+          SHA="$({ for part in "${FILES[@]}"; do cat "$part"; done; } | sha256sum | awk '{print $1}')"
+          [ "$SHA" = '0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14' ]
+          { for part in "${FILES[@]}"; do cat "$part"; rm -f "$part"; done; } | tar -xJf - -C "$ROOT"
+          python3 - "$ROOT" "$TOOLS" <<'PY'
+          from pathlib import Path
+          import shutil,sys
+          src=Path(sys.argv[1]);dst=Path(sys.argv[2]);dst.mkdir(parents=True,exist_ok=False)
+          for relative in ('NetCoreRuntime','DotNetSdkRoslyn','UnityReferenceAssemblies/unity-4.8-api','Managed/UnityEngine','Resources/Licensing/Client'):
+              source=src/'Editor/Data'/relative;target=dst/'Editor/Data'/relative
+              shutil.copytree(source,target,symlinks=False)
+          for relative in ('Managed/UnityEditor.Graphs.dll','Managed/UnityEngine.dll'):
+              shutil.copy2(src/'Editor/Data'/relative,dst/'Editor/Data'/relative)
+          PY
+          python3 scripts/actions/check_bulk389_helper_tools.py create "$TOOLS"
+      - name: Verify cached subset and compile both real helper states
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOOLS="$RUNNER_TEMP/bulk389-helper-tools"
+          E="$RUNNER_TEMP/helper-preflight-evidence"
+          mkdir -p "$E"
+          python3 scripts/actions/check_bulk389_helper_tools.py verify "$TOOLS"
+          set +e
+          python3 scripts/actions/preflight_bulk401_startup_editor.py \
+            --editor "$TOOLS/Editor/Unity" \
+            --project "$GITHUB_WORKSPACE/Recovery/Startup-R3-2026-10-24/ios-support" \
+            --output "$RUNNER_TEMP/helper-compilation"
+          RC=$?
+          set -e
+          find "$RUNNER_TEMP/helper-compilation" -maxdepth 1 -type f \( -name '*.json' -o -name '*.log' -o -name '*.rsp' \) -exec cp '{}' "$E/" \;
+          [ "$RC" -eq 0 ]
+          set +e
+          python3 scripts/actions/preflight_custom_shader_editor.py \
+            --editor "$TOOLS/Editor/Unity" \
+            --prior "$RUNNER_TEMP/helper-compilation" \
+            --source "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs"
+          RC=$?
+          set -e
+          find "$RUNNER_TEMP/helper-compilation" -maxdepth 1 -type f \( -name '*.json' -o -name '*.log' -o -name '*.rsp' \) -exec cp '{}' "$E/" \;
+          [ "$RC" -eq 0 ]
+          set +e
+          python3 scripts/actions/preflight_startup_r27_capture_editor.py --editor "$TOOLS/Editor/Unity" --prior "$RUNNER_TEMP/helper-compilation"
+          RC=$?
+          set -e
+          find "$RUNNER_TEMP/helper-compilation" -maxdepth 1 -type f \( -name '*.json' -o -name '*.log' -o -name '*.rsp' \) -exec cp '{}' "$E/" \;
+          [ "$RC" -eq 0 ]
+          CLIENT="$TOOLS/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client"
+          "$CLIENT" --help > "$E/licensing-client-help.txt" 2>&1
+          grep -q -- '--activate-all' "$E/licensing-client-help.txt"
+          grep -q -- '--deactivate-all' "$E/licensing-client-help.txt"
+          cp "$TOOLS/HELPER-TOOLS-MANIFEST.json" "$E/"
+      - uses: actions/cache/save@v4
+        if: success() && steps.tools_cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/bulk389-helper-tools
+          key: bulk389-exact-helper-tools-v2-0008115c785784baddb19e2b13b384ac845438239f293efb0c2e8b1379a1fe14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: STARTUP-R27-EXACT-EDITOR-HELPER-PREFLIGHT-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/helper-preflight-evidence/
+          if-no-files-found: warn
+          retention-days: 90

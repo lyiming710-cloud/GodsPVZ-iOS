@@ -1,4 +1,4 @@
-name: Startup R26 runtime correction - actual interaction diagnosis
+name: Startup R27 runtime correction - actual interaction diagnosis
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
         default: true
         required: true
       interaction_audit:
-        description: Exercise R26 actual UI paths and original zombie prefab bindings; requires audit_only
+        description: Exercise R27 actual UI paths and original zombie prefab bindings; requires audit_only
         type: boolean
         default: false
         required: true
@@ -61,10 +61,10 @@ jobs:
           python3 - "$GITHUB_WORKSPACE" "$OUT/current.dll" <<'PY'
           import sys,zipfile,hashlib
           from pathlib import Path
-          archive=Path(sys.argv[1])/'Recovery/Startup-R25-Plant123-2026-10-28/STARTUP-R25-PLANT123-CANDIDATE.zip'
+          archive=Path(sys.argv[1])/'Recovery/Startup-R27-Lifecycle123-2026-10-28/STARTUP-R27-LIFECYCLE123-CANDIDATE.zip'
           with zipfile.ZipFile(archive) as z:
               names=[n for n in z.namelist() if n.endswith('.dll')];assert len(names)==1;data=z.read(names[0])
-          assert hashlib.sha256(data).hexdigest()=='9490c1845298fa5afda04fc8dfba915ce2a939eaebe96be83e3311b39557bc4c'
+          assert hashlib.sha256(data).hexdigest()=='eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293'
           Path(sys.argv[2]).write_bytes(data)
           PY
           python3 scripts/actions/normalize_startup_r20_asset_case.py --project "$PROJECT" --candidate "$OUT/current.dll" --output "$OUT/evidence"
@@ -82,7 +82,7 @@ jobs:
   editor_helper_preflight:
     if: ${{ !inputs.assets_only }}
     needs: conversion_binding
-    uses: ./.github/workflows/startup-r26-editor-preflight.yml
+    uses: ./.github/workflows/startup-r27-editor-preflight.yml
 
   conversion_binding:
     runs-on: ubuntu-24.04
@@ -104,18 +104,18 @@ jobs:
           if [ "$GAMEPLAY" = true ]; then
             [ "$AUDIT" = true ] && [ "$ASSETS" = false ] && [ "$INTERACTION" = true ] || exit 82
           fi
-      - name: Keep R26 restricted to actual UI diagnosis until its new Editor result is reviewed
+      - name: Keep R27 restricted to actual UI diagnosis until its new Editor result is reviewed
         if: ${{ !inputs.assets_only }}
         env:
           AUDIT: ${{ inputs.audit_only }}
           INTERACTION: ${{ inputs.interaction_audit }}
         run: '[ "$AUDIT" = true ] && [ "$INTERACTION" = true ]'
       - name: Reject exact candidates with already proven compiler failures before setup
-        run: python3 scripts/actions/reject_known_cpp_failures.py --candidate-zip Recovery/Startup-R25-Plant123-2026-10-28/STARTUP-R25-PLANT123-CANDIDATE.zip
+        run: python3 scripts/actions/reject_known_cpp_failures.py --candidate-zip Recovery/Startup-R27-Lifecycle123-2026-10-28/STARTUP-R27-LIFECYCLE123-CANDIDATE.zip
       - name: Require exact current candidate and actual Editor proof for test build
-        run: python3 scripts/actions/bind_startup_r26_diagnostic.py --validate-only > "$RUNNER_TEMP/R20-BUILD-INPUTS.json"
+        run: python3 scripts/actions/bind_startup_r27_diagnostic.py --validate-only > "$RUNNER_TEMP/R20-BUILD-INPUTS.json"
       - name: Validate current R20 byte and evidence binding before large setup
-        run: python3 scripts/actions/bind_startup_r26_diagnostic.py --validate-only > "$RUNNER_TEMP/R20-EARLY-BINDING.json"
+        run: python3 scripts/actions/bind_startup_r27_diagnostic.py --validate-only > "$RUNNER_TEMP/R20-EARLY-BINDING.json"
       - name: Run license-free pipeline regression controls
         run: python3 scripts/actions/check_bulk401_pipeline.py > "$RUNNER_TEMP/BULK401-PIPELINE-CONTROLS.json"
       - name: Bind immutable parent package separately from exact child compiler proofs
@@ -164,7 +164,7 @@ jobs:
       BASE_RUNTIME_RUN_ID: '35236211080'
       B001_SHA256: 'f144dd624d2b0c05b5ff01fc12ff455ac394c87852a4fc3c87e8c3611582a433'
       PARENT_DLL_SHA256: '6de4db6c94b80a43876aea060b573ed60c1fa7170cff485103d2c808b94762ae'
-      TEST_DLL_SHA256: '9490c1845298fa5afda04fc8dfba915ce2a939eaebe96be83e3311b39557bc4c'
+      TEST_DLL_SHA256: 'eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293'
       GODSPVZ_ORIGINAL_AUDIO_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Actual-UI-2026-10-27/ORIGINAL-ZOMBIE-MANAGER-AUDIO-PLAN.json
       GODSPVZ_ORIGINAL_ZOMBIE_PLAN: ${{ github.workspace }}/Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json
       PACKAGE_GUID_RUN_ID: '35238895838'
@@ -280,7 +280,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/bind_startup_r26_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
+          python3 scripts/actions/bind_startup_r27_diagnostic.py --output "$RUNNER_TEMP/stage9-startup-r2" --source "$GITHUB_SHA"
 
       - name: Download exact cached R3 archive
         uses: actions/download-artifact@v4
@@ -575,7 +575,7 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_startup_r26_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
+          python3 scripts/actions/prepare_startup_r27_unity.py --project "$PROJECT" --candidate "$OUT/candidate/Assembly-CSharp-bulk401.dll" --evidence "$OUT/evidence"
 
       - name: Align unchanged plugin filename with its assembly identity and preserve its GUID
         shell: bash
@@ -583,9 +583,9 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/prepare_startup_r26_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
-          python3 scripts/actions/apply_startup_r26_sdk.py --project "$PROJECT" --evidence "$OUT/evidence"
-          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZSdkHolderAuditR26.cs" "$PROJECT/Assets/Editor/"
+          python3 scripts/actions/prepare_startup_r27_plugin.py --project "$PROJECT" --evidence "$OUT/evidence"
+          python3 scripts/actions/apply_startup_r27_sdk.py --project "$PROJECT" --evidence "$OUT/evidence"
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZSdkHolderAuditR27.cs" "$PROJECT/Assets/Editor/"
           python3 scripts/actions/prepare_bulk401_startup_resources.py --project "$PROJECT" --evidence "$OUT/evidence"
           python3 scripts/actions/prepare_custom_shaders_r1.py --project "$PROJECT" --evidence "$OUT/evidence"
           cp "$GITHUB_WORKSPACE/Recovery/Custom-Shaders-2026-10-24/ios-support/Assets/Editor/GodsPVZCustomShaderAudit.cs" "$PROJECT/Assets/Editor/"
@@ -599,8 +599,8 @@ jobs:
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          python3 scripts/actions/restore_startup_r26_plant_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --output "$OUT/evidence/plant-source-restoration"
-          python3 scripts/actions/restore_startup_r26_zombie_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json --output "$OUT/evidence/zombie-source-restoration"
+          python3 scripts/actions/restore_startup_r27_plant_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --output "$OUT/evidence/plant-source-restoration"
+          python3 scripts/actions/restore_startup_r27_zombie_fields.py --project "$PROJECT" --plan Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json --output "$OUT/evidence/zombie-source-restoration"
 
       - name: Reimport fixed candidate with inert migrator and rebuilt script caches
         shell: bash
@@ -633,17 +633,17 @@ jobs:
           OUT="$RUNNER_TEMP/stage9-startup-r2"
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
-          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZSerializedReferenceProbeR26.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZSerializedReferenceProbeR27.cs" "$PROJECT/Assets/Editor/"
           set +e
-          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZSerializedReferenceProbeR26.Run -logFile "$OUT/evidence/r26-serialization-reimport-probe.log"
+          timeout --signal=TERM 600s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -quit -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZSerializedReferenceProbeR27.Run -logFile "$OUT/evidence/r27-serialization-reimport-probe.log"
           RC=$?
           set -e
-          echo "$RC" > "$OUT/evidence/r26-serialization-reimport-probe-exit.txt"
+          echo "$RC" > "$OUT/evidence/r27-serialization-reimport-probe-exit.txt"
           [ "$RC" -eq 0 ]
-          python3 - "$OUT/evidence/r26-serialization-reimport-probe.json" <<'PY'
+          python3 - "$OUT/evidence/r27-serialization-reimport-probe.json" <<'PY'
           import json,sys
           r=json.load(open(sys.argv[1]))
-          assert r['candidate_sha256']=='9490c1845298fa5afda04fc8dfba915ce2a939eaebe96be83e3311b39557bc4c'
+          assert r['candidate_sha256']=='eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293'
           assert r['collection_complete'] and r['import_count']>=100 and r['source_bytes_unchanged'] and r['game_dll_unchanged']
           assert not r['source_references_rewritten'] and not r['game_fields_assigned'] and not r['device_execution'] and not r['exceptions']
           print('IMPORT_PROBE_COLLECTED_NO_RESOURCE_OR_GAME_ACCEPTANCE',r['import_count'])
@@ -655,7 +655,7 @@ jobs:
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/stage9-startup-r2"
-          python3 scripts/actions/verify_startup_r26_resource_values.py --probe "$OUT/evidence/r26-serialization-reimport-probe.json" --plant-plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --plant-identities Recovery/Startup-R21-Plant-Serialization-2026-10-27/PLANT-SOURCE-IDENTITIES.json --zombie-plan Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json --output "$OUT/evidence/r26-actual-original-resource-values.json"
+          python3 scripts/actions/verify_startup_r27_resource_values.py --probe "$OUT/evidence/r27-serialization-reimport-probe.json" --plant-plan Recovery/Startup-R21-Plant-Serialization-2026-10-27/ORIGINAL-PLANT-BINDING-PLAN.json --plant-identities Recovery/Startup-R21-Plant-Serialization-2026-10-27/PLANT-SOURCE-IDENTITIES.json --zombie-plan Recovery/Startup-R21-Zombie-Serialization-2026-10-27/ORIGINAL-ZOMBIE-BINDING-PLAN.json --output "$OUT/evidence/r27-actual-original-resource-values.json"
 
       - name: Verify every relocated resource GUID, path and original imported name
         shell: bash
@@ -753,14 +753,14 @@ jobs:
           assert data['pass'] and data['frames']>=3 and data['main_ui_components']>=1 and data['active_canvases']>=1
           PY
 
-      - name: Diagnose R26 actual UI paths and retain every observed failure
+      - name: Diagnose R27 actual UI paths and retain every observed failure
         if: inputs.interaction_audit && inputs.audit_only
         shell: bash
         env:
           GODSPVZ_STARTUP_EVIDENCE: ${{ runner.temp }}/stage9-startup-r2/evidence
           GODSPVZ_RUNTIME_SUPPORT_OUTPUT: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output
           GODSPVZ_INTERACTION_CANDIDATE_SHA256: ${{ env.TEST_DLL_SHA256 }}
-          GODSPVZ_INTERACTION_PREFIX: 'r26'
+          GODSPVZ_INTERACTION_PREFIX: 'r27'
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -euo pipefail
@@ -769,26 +769,26 @@ jobs:
           PROJECT="$(cat "$OUT/project-path.txt")"
           PLUGIN="$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll"
           [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
-          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZInteractionAuditR26.cs" "$PROJECT/Assets/Editor/"
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZInteractionAuditR27.cs" "$PROJECT/Assets/Editor/"
           if [ '${{ inputs.gameplay_audit }}' = true ]; then
-            cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAuditR26.cs" "$PROJECT/Assets/Editor/"
+            cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAuditR27.cs" "$PROJECT/Assets/Editor/"
           fi
           set +e
-          timeout --signal=TERM 300s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZInteractionAuditR26.Begin -logFile "$OUT/evidence/r26-interaction-audit.log"
+          timeout --signal=TERM 300s xvfb-run -a -s '-screen 0 1280x720x24' "$UNITY" -batchmode -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZInteractionAuditR27.Begin -logFile "$OUT/evidence/r27-interaction-audit.log"
           RC=$?
           set -e
-          echo "$RC" > "$OUT/evidence/r26-interaction-audit-exit.txt"
-          sha256sum "$PLUGIN" > "$OUT/evidence/r26-after-interaction-dll.sha256"
+          echo "$RC" > "$OUT/evidence/r27-interaction-audit-exit.txt"
+          sha256sum "$PLUGIN" > "$OUT/evidence/r27-after-interaction-dll.sha256"
           [ "$(sha256sum "$PLUGIN" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
           [ "$RC" -eq 0 ]
-          python3 - "$OUT/evidence/r26-interaction-audit.json" <<'PY'
+          python3 - "$OUT/evidence/r27-interaction-audit.json" <<'PY'
           import json,sys
           r=json.load(open(sys.argv[1]))
           assert r['collection_complete'] and len(r['actions'])>=25
           assert not r['device_execution'] and not r['game_fields_seeded'] and not r['replacement_game_code']
-          assert r['candidate_sha256']=='9490c1845298fa5afda04fc8dfba915ce2a939eaebe96be83e3311b39557bc4c'
+          assert r['candidate_sha256']=='eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293'
           print(json.dumps(dict(collection_complete=True,checks=r['checks'],runtime_errors=r['runtime_errors'])))
-          assert r['all_observed_checks_pass'], 'Actual R26 interaction failures retained; no IPA export requested'
+          assert r['all_observed_checks_pass'], 'Actual R27 interaction failures retained; no IPA export requested'
           PY
 
       - name: Try real complex Adventure 19 with visible GameView and external OS mouse input
@@ -802,8 +802,8 @@ jobs:
           UNITY="$(cat "$OUT/unity-path.txt")"
           PROJECT="$(cat "$OUT/project-path.txt")"
           [ "$(sha256sum "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
-          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAuditR26.cs" "$PROJECT/Assets/Editor/"
-          python3 - "$PROJECT" "$OUT/evidence/r26-editor-tool-api-rename.json" <<'PY'
+          cp "$GITHUB_WORKSPACE/scripts/actions/GodsPVZGameplayAuditR27.cs" "$PROJECT/Assets/Editor/"
+          python3 - "$PROJECT" "$OUT/evidence/r27-editor-tool-api-rename.json" <<'PY'
           from pathlib import Path
           import sys,hashlib,json
           root=Path(sys.argv[1]);p=root/'Assets/Editor/GodsPVZIOSBuild.cs';before=p.read_bytes();old=b'EditorUserBuildSettings.symlinkLibraries';new=b'EditorUserBuildSettings.symlinkSources'
@@ -811,18 +811,18 @@ jobs:
           after=before.replace(old,new);p.write_bytes(after);assert p.read_bytes()==after
           Path(sys.argv[2]).write_text(json.dumps(dict(scope='DISPOSABLE_EDITOR_BUILD_TOOL_API_RENAME_ONLY_NOT_GAME_CODE',file='Assets/Editor/GodsPVZIOSBuild.cs',before_sha256=hashlib.sha256(before).hexdigest(),after_sha256=hashlib.sha256(after).hexdigest(),replacements=1,game_dll_changed=False),indent=2)+'\n','utf-8')
           PY
-          timeout --signal=TERM 180s xvfb-run -a -s '-screen 0 1600x1000x24' "$UNITY" -batchmode -quit -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZGameplayAuditR26.Prepare -logFile "$OUT/evidence/r26-gameplay-precompile.log"
+          timeout --signal=TERM 180s xvfb-run -a -s '-screen 0 1600x1000x24' "$UNITY" -batchmode -quit -force-glcore -projectPath "$PROJECT" -executeMethod GodsPVZGameplayAuditR27.Prepare -logFile "$OUT/evidence/r27-gameplay-precompile.log"
           [ "$(sha256sum "$PROJECT/Assets/Plugins/GodsPVZRuntime1.dll" | awk '{print $1}')" = "$TEST_DLL_SHA256" ]
           set +e
-          timeout --signal=TERM 550s xvfb-run -a -s '-screen 0 1600x1000x24' dbus-run-session -- python3 scripts/actions/run_startup_r26_gameplay.py --unity "$UNITY" --project "$PROJECT" --output "$OUT/gameplay-output"
+          timeout --signal=TERM 550s xvfb-run -a -s '-screen 0 1600x1000x24' dbus-run-session -- python3 scripts/actions/run_startup_r27_gameplay.py --unity "$UNITY" --project "$PROJECT" --output "$OUT/gameplay-output"
           RC=$?
           set -e
-          echo "$RC" > "$OUT/evidence/r26-gameplay-host-exit.txt"
+          echo "$RC" > "$OUT/evidence/r27-gameplay-host-exit.txt"
           [ "$RC" -eq 0 ]
           python3 - "$OUT/gameplay-output/GAMEPLAY-RESULT.json" <<'PY'
           import json,sys
           r=json.load(open(sys.argv[1]))
-          assert r['candidate_sha256']=='9490c1845298fa5afda04fc8dfba915ce2a939eaebe96be83e3311b39557bc4c'
+          assert r['candidate_sha256']=='eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293'
           assert not any(r[k] for k in ('device_execution','game_fields_assigned','game_dll_changed','save_unlock_modified','level_data_modified','units_spawned_by_probe','unit_update_or_damage_called_by_probe'))
           assert r['collection_complete'] and r['os_input_calibrated'] and r['board_started']
           assert r['plant_count_increased_after_input'] and r['projectiles_with_live_plant_source']>0 and len(r['active_zombie_types_observed'])>=3
@@ -961,7 +961,7 @@ jobs:
         if: always() && inputs.gameplay_audit
         uses: actions/upload-artifact@v4
         with:
-          name: STARTUP-R26-ACTUAL-COMPLEX-GAMEPLAY
+          name: STARTUP-R27-ACTUAL-COMPLEX-GAMEPLAY
           path: ${{ runner.temp }}/stage9-startup-r2/public-gameplay/
           if-no-files-found: warn
           retention-days: 90
@@ -971,7 +971,7 @@ jobs:
         if: always() && inputs.gameplay_audit
         uses: actions/upload-artifact@v4
         with:
-          name: STARTUP-R26-ACTUAL-LOADED-RUNTIME-SUPPORT
+          name: STARTUP-R27-ACTUAL-LOADED-RUNTIME-SUPPORT
           path: ${{ runner.temp }}/stage9-startup-r2/runtime-support-output/
           if-no-files-found: warn
           retention-days: 90
