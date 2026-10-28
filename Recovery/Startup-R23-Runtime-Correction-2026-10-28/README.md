@@ -31,3 +31,22 @@ Device.InjuryStatusUpdate NRE remain open. Official Visual Scripting 1.9.4 sourc
 was retrieved for investigation only; no SDK or resource binary was patched here.
 Fresh IL2CPP/all-source compiler checks and actual Unity input/play remain pending.
 No IPA or device acceptance is claimed.
+
+实际Linux运行40612953895已成功结束，固定ba78423源码及15e01503候选。逐一重算755个CPP+274个C的源码大小/SHA，并回读全部1029份原始日志，0错误；编译器负控制仍检出真实损坏。全量生成源码tar的SHA及所有游戏分片保留，不能代指真实Unity导入、Apple链接或IPA。
+
+
+The corrected diagnostic helper compiles against the exact captured Editor APIs.
+The complete bootstrap-to-child fixture preserves all four provenance records;
+four false-admission controls reject wrong API arity, invented semantic detection,
+invented strict-CLR rejection and premature product promotion. Workflow syntax and
+42 literal repository inputs were checked before dispatch. The new helper sends
+OS clicks to the original warning-close and ResumeGame buttons, records complete
+current paths, Device sprite-list/hierarchy details and actual bank hide state,
+and batches writes. Unchanged inactive rows are suppressed with an explicit count;
+their first sight/state changes remain, while active sampling stays at 0.2 seconds.
+All of these are prepared diagnostics. No new actual Unity result is implied.
+
+Official Visual Scripting 1.9.4 package source and license are retained in the
+prepared-tools archive only as investigation evidence. Its GameObject extension
+and generic AddComponent have distinct handling of unsupported holders; no guessed
+shared-null fallback was applied. The actual loaded runtime SDK remains unchanged.
