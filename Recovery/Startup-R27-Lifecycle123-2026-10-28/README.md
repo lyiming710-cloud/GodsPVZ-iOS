@@ -17,3 +17,5 @@ The exact candidate raw CIL was actually executed in 269 finite cases, and the t
 Current-child full IL2CPP/Clang, actual Unity gameplay, Apple compilation and iPad testing remain pending. The old R25 Linux compiler result is parent evidence. The last IPA is R20; this checkpoint provides no new IPA and adds zero formally qualified methods.
 
 R27实际Unity运行40722007191已启动，固定源码189a571。输入绑定及Editor helper预检已过，仍处于环境恢复阶段，暂无关卡结论。另准备独立的全量Linux编译：显式使用当前游戏eef6c35a与实际Editor SDK 51f72bcd，先复制认证过的portable support，仅替换SDK并重核其余文件字节；旧portable保持不变。当前子版本不能继承R25的编译结果。
+
+全量Linux编译40723256900已启动，固定源码b504fa7；与Unity运行40722007191分别记录。回读R25原始转换输入证实旧SDK为Unity.VisualScripting.Core.exe（330240字节，16cabf56…a4fb），并非本轮实际Editor的51f72bcd SDK。新编译显式替换该唯一SDK槽并保留其他输入字节，结果尚未返回；不能用前置绑定成功代替转换或编译成功。
