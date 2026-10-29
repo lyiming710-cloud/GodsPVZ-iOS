@@ -44,3 +44,5 @@ Workflow: `.github/workflows/startup-r28-diagnostic-ipa.yml`, also installed at
 the already-registered `bulk401-startup-runtime-gate.yml` for dispatch on this
 isolated branch. The original R28 gameplay workflow remains separately saved.
 No new IPA exists until the actual workflow produces and validates it.
+
+Actual test-IPA workflow 40800918671 has been dispatched at source 7625352d818c5401324cccef76e7c596e0d8de13. Exact input admission, remote Editor helper compilation and Xcode/iOS SDK setup preflights passed. The export job is running. These setup results are not Apple source compilation/linking or an IPA. Source and failed/partial gameplay evidence remain unchanged; see DISPATCH-40800918671.json for this observed status snapshot.
