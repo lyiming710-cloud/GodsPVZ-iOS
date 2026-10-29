@@ -1,0 +1,180 @@
+{
+  "scope": "INDEPENDENT_READBACK_OF_REAL_UNITY_R28_FAILURE_AND_SEPARATE_SDK_ENGINE_PASS",
+  "run": {
+    "conclusion": "failure",
+    "headSha": "8a0c2b0823739e87f9dc55062afc4430a511469e",
+    "status": "completed",
+    "url": "https://github.com/lyiming710-cloud/GodsPVZ-iOS/actions/runs/40794439817"
+  },
+  "candidate_sha256": "9081408a2226a79e23991355108540a0260a3966a500cecf4524f3cba9dfb364",
+  "sdk_sha256": "51f72bcd146c5571f642f3c4149f0545eb704fd325d83eb0f7c4ca2deec14c2b",
+  "delivery_files_rehashed": 44,
+  "raw_stream_records": {
+    "UNIT-TRAJECTORIES": 5288,
+    "DEVICE-OBSERVATIONS": 817,
+    "COMBAT-EVENTS": 7,
+    "BANK-OBSERVATIONS": 44,
+    "BATTLE-STATE": 36
+  },
+  "raw_runtime_error_occurrences": 0,
+  "runtime_errors": [],
+  "sdk_engine_checks": 10,
+  "actual_loaded_sdk_copies_rehashed": 2,
+  "sdk_real_engine": "PASS",
+  "resource_report_leaf_records_reread": 9902,
+  "resource_routes": 70,
+  "resource_record_kinds": {
+    "scalar": 3134,
+    "scalar_f32": 4020,
+    "array_length": 914,
+    "reference": 1834
+  },
+  "resource_array_length_limit": "One returned count only; expected/actual pair not independently recomputed",
+  "ui_callback_checks": 25,
+  "ui_callback_check_result": "PASS",
+  "unity_license_return_exit": 0,
+  "active_device_name_id_counts": [
+    {
+      "name": "Ban_device(Clone)",
+      "ID": 12,
+      "rows": 221
+    },
+    {
+      "name": "Ban_grid(Clone)",
+      "ID": 7,
+      "rows": 13
+    },
+    {
+      "name": "Hole(Clone)",
+      "ID": 8,
+      "rows": 39
+    },
+    {
+      "name": "Ladder(Clone)",
+      "ID": 11,
+      "rows": 63
+    },
+    {
+      "name": "Rake(Clone)",
+      "ID": 2,
+      "rows": 56
+    },
+    {
+      "name": "Roadblock(Clone)",
+      "ID": 4,
+      "rows": 221
+    },
+    {
+      "name": "TNT(Clone)",
+      "ID": 6,
+      "rows": 191
+    }
+  ],
+  "gameplay_status": "ACTUAL_GAME_LOSS_OBSERVED",
+  "gameplay_pass": false,
+  "board_started": true,
+  "hand_after_os_click": {
+    "name": "plant_prefab_on_hand_after_os_bank_click",
+    "detail": "itemType=CardOnCardbank plant=Peasniper liveSceneAndParent=True",
+    "pass": true
+  },
+  "planting_attempts": 1,
+  "onfield_plants": 1,
+  "plant_sourced_projectiles": 0,
+  "direct_damage_attribution": "ONE_ACTUAL_PLANT_TO_ZOMBIE_CALL_STACK_OBSERVED_ARGUMENT_AND_NUMERIC_EQUIVALENCE_UNPROVEN",
+  "required_projectile_gate_for_selected_Peasniper": "INVALID_ORIGINAL_NATIVE_ST_PEASNIPER_DIRECT_DAMAGE_PATH",
+  "attack_timer_resets": [
+    {
+      "frame": 86,
+      "time": "20.2821522",
+      "target": -50456
+    },
+    {
+      "frame": 106,
+      "time": "26.3897552",
+      "target": -50456
+    },
+    {
+      "frame": 125,
+      "time": "32.5235825",
+      "target": -50786
+    },
+    {
+      "frame": 145,
+      "time": "38.9962234",
+      "target": -50786
+    }
+  ],
+  "observed_game_seconds": 48.14940643310547,
+  "host_result": {
+    "scope": "HOST_COLLECTION_ONLY_NOT_GAMEPLAY_PASS",
+    "unity_exit": 79,
+    "timeout": false,
+    "exception": null,
+    "candidate_unchanged": true,
+    "last_input_sequence": 7,
+    "elapsed_seconds": 148.966
+  },
+  "current_child_actual_apple_compilation": false,
+  "ipa": null,
+  "ipad_acceptance": false,
+  "qualified_methods_added": 0,
+  "independent_raw_attack_readback": {
+    "scope": "INDEPENDENT_RAW_UNITY_CALL_TREE_READBACK_NOT_DAMAGE_RESULT_OR_IPA",
+    "candidate_sha256": "9081408a2226a79e23991355108540a0260a3966a500cecf4524f3cba9dfb364",
+    "plant_damage_call_stack_observed": true,
+    "raw_frame_count_consistent": true,
+    "helper_reported_plant_damage_stacks": 1,
+    "raw_saved_plant_damage_stacks": 1,
+    "summary_positive_without_raw_support": false,
+    "frames": [
+      {
+        "frame": 1,
+        "thread": 0,
+        "samples": 8591,
+        "valid": true,
+        "plant_damage_stacks": 0
+      },
+      {
+        "frame": 86,
+        "thread": 0,
+        "samples": 242672,
+        "valid": true,
+        "plant_damage_stacks": 1
+      }
+    ],
+    "rows": [
+      {
+        "frame": 86,
+        "thread": 0,
+        "sample_index": 221635,
+        "target_method": "Zombie.TakeDamage",
+        "sample_name": "GodsPVZRuntime1.dll!::Zombie.TakeDamage()",
+        "ancestors": [
+          "Main Thread",
+          "PlayerLoop",
+          "PreLateUpdate.DirectorUpdateAnimationBegin",
+          "Director.ProcessFrame",
+          "Animators.Update",
+          "Animators.FireAnimationEventsAndBehaviours",
+          "Animator.FireAnimationEvents",
+          "GodsPVZRuntime1.dll!::PlantAnimationEvent.Animation_Shooting()",
+          "GodsPVZRuntime1.dll!::Plant.Shooting()",
+          "GodsPVZRuntime1.dll!::Plant.ST_Peasniper()"
+        ],
+        "target_argument_identity_captured": false
+      }
+    ],
+    "profiler_error": "",
+    "target_argument_identity_captured": false,
+    "damage_calculation_accepted": false,
+    "whole_level_accepted": false,
+    "whole_game_accepted": false,
+    "ipad_accepted": false,
+    "raw_file_sha256": "77df870742b4c0cbb0479aadbf51baa219a5d09ac83f6ca002ddaffd328c118e"
+  },
+  "profiler_frames_lost": 162,
+  "profiler_frames_read": 62,
+  "profiler_performance_acceptance": false,
+  "whole_level_completed": false
+}
