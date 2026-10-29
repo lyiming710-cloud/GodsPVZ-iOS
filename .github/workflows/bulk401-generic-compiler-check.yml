@@ -1,4 +1,4 @@
-name: Startup R27 Lifecycle123 fresh IL2CPP and all generated C C++ compiler census
+name: Startup R28 Attack115 fresh IL2CPP and all generated C C++ compiler census
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: startup-r27-generic-compiler
+  group: startup-r28-generic-compiler
   cancel-in-progress: false
 
 jobs:
@@ -20,8 +20,8 @@ jobs:
       PYTHONUNBUFFERED: '1'
     steps:
       - uses: actions/checkout@v4
-      - name: Bind exact R27 scoped evidence and SDK before compiler setup
-        run: python3 scripts/actions/bind_startup_r27_diagnostic.py --validate-only
+      - name: Bind exact R28 scoped evidence and SDK before compiler setup
+        run: python3 scripts/actions/bind_startup_r28_diagnostic.py --validate-only
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.402'
@@ -42,40 +42,40 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/downloads"
           gh release download bulk152-actions-checkpoint-2026-10-20 --repo "$GITHUB_REPOSITORY" --pattern PORTABLE-BULK152-CHECKPOINT.tar.gz --pattern PORTABLE-MANIFEST.json --dir "$RUNNER_TEMP/downloads"
-          python3 -m zipfile -e Recovery/Startup-R27-Lifecycle123-2026-10-28/STARTUP-R27-LIFECYCLE123-CANDIDATE.zip "$RUNNER_TEMP/downloads"
-          echo 'eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293  STARTUP-R27-LIFECYCLE123.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
+          python3 -m zipfile -e Recovery/Startup-R28-Attack115-2026-10-29/STARTUP-R28-ATTACK115-CANDIDATE.zip "$RUNNER_TEMP/downloads"
+          echo '9081408a2226a79e23991355108540a0260a3966a500cecf4524f3cba9dfb364  STARTUP-R28-ATTACK115.dll' | (cd "$RUNNER_TEMP/downloads" && sha256sum -c -)
       - name: Authenticate and restore compiler-only inputs
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/restore_bulk152_checkpoint.py --downloads "$RUNNER_TEMP/downloads" --destination "$RUNNER_TEMP/portable" --receipt .validation/startup-r27-restore-receipt.json
+          python3 scripts/actions/restore_bulk152_checkpoint.py --downloads "$RUNNER_TEMP/downloads" --destination "$RUNNER_TEMP/portable" --receipt .validation/startup-r28-restore-receipt.json
           module=Recovery/Bulk389-Qualification-2026-10-23/ci/UnityEngine.AnimationModule.dll
           echo "324d1e5ceef2b6fa1d0e3473ce820b451e41f397458afc46708a27aae0aef5e2  $module" | sha256sum -c -
           cp "$module" "$RUNNER_TEMP/portable/work/il2cpp_stage_coherent/Library/Bee/artifacts/iOS/ManagedStripped/UnityEngine.AnimationModule.dll"
-      - name: Fresh R4 negative control and exact R27 Lifecycle123 all-source census
+      - name: Fresh R4 negative control and exact R28 Attack115 all-source census
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/actions/check_startup_r27_compiler.py --portable-root "$RUNNER_TEMP/portable" --candidate-dll "$RUNNER_TEMP/downloads/STARTUP-R27-LIFECYCLE123.dll" --output-dir "$GITHUB_WORKSPACE/.validation/startup-r27"
+          python3 scripts/actions/check_startup_r28_compiler.py --portable-root "$RUNNER_TEMP/portable" --candidate-dll "$RUNNER_TEMP/downloads/STARTUP-R28-ATTACK115.dll" --output-dir "$GITHUB_WORKSPACE/.validation/startup-r28"
       - name: Archive generated sources and raw logs
         if: always()
         shell: bash
         run: |
-          if [ -d .validation/startup-r27/candidate/il2cpp_stage/il2cppOutput ]; then
-            tar -czf .validation/startup-r27-generated.tar.gz -C .validation/startup-r27/candidate/il2cpp_stage il2cppOutput
+          if [ -d .validation/startup-r28/candidate/il2cpp_stage/il2cppOutput ]; then
+            tar -czf .validation/startup-r28-generated.tar.gz -C .validation/startup-r28/candidate/il2cpp_stage il2cppOutput
           fi
-          if [ -d .validation/startup-r27 ]; then
-            find .validation/startup-r27 -name '*.json' -o -name '*.log' -o -path '*/il2cpp_conversion/*' | tar -czf .validation/startup-r27-evidence.tar.gz -T -
+          if [ -d .validation/startup-r28 ]; then
+            find .validation/startup-r28 -name '*.json' -o -name '*.log' -o -path '*/il2cpp_conversion/*' | tar -czf .validation/startup-r28-evidence.tar.gz -T -
           fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Startup-R27-Lifecycle123-compiler-${{ github.run_id }}-${{ github.run_attempt }}
+          name: Startup-R28-Attack115-compiler-${{ github.run_id }}-${{ github.run_attempt }}
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: warn
           path: |
-            .validation/startup-r27-restore-receipt.json
-            .validation/startup-r27-evidence.tar.gz
-            .validation/startup-r27-generated.tar.gz
-            .validation/startup-r27/*.json
+            .validation/startup-r28-restore-receipt.json
+            .validation/startup-r28-evidence.tar.gz
+            .validation/startup-r28-generated.tar.gz
+            .validation/startup-r28/*.json

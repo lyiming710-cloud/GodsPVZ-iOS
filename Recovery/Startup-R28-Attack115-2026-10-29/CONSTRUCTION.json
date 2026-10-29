@@ -1,0 +1,1867 @@
+{
+  "parent_sha256": "eef6c35a2dceb0c38d1032837204abaff56f3a4c4d029ca47d76ff496fd69293",
+  "candidate_sha256": "9081408a2226a79e23991355108540a0260a3966a500cecf4524f3cba9dfb364",
+  "bytes": 25848320,
+  "new_unique_methods": 4,
+  "changes": [
+    {
+      "token": "0x060003A8",
+      "name": "System.Void Plant::Shooting()",
+      "old_rva": "0x14e8250",
+      "new_rva": "0x1840800",
+      "old_rva_alias_count": 1,
+      "kind": "APPENDED_TARGET_BODY_SHARED_OLD_SLOT_UNCHANGED",
+      "old_code_size": 1280,
+      "new_code_size": 605,
+      "old_maxstack": 11,
+      "new_maxstack": 11,
+      "local_sig": "0x1100085d",
+      "old_code_sha256": "4e38ad6389368e50d54533466719e4a37201585730bbab031ea1deb3e6793da7",
+      "new_code_sha256": "47b055dc70a81e0f53ad9565dde391cf57ffe89d1dc8b028492fa160344a15b7",
+      "new_code": "027bd1040004132a112a7b9a060004163e1f000000112a7b920600043a13000000112a7b910600041840060000000228b8030006027bd10400047b9006000417400b00000002220000803f28af030006027bb104000439fb010000027bb1040004193b84010000027bb10400041a40060000000228ac030006027bb10400041b40b2000000027bd50400043a6e000000027bf30400047bd6030004176ff6010006132b027bdf04000472f8e500702841010006132d02112b1716286d030006132c112b112d2233930b4422000000002200000000739c00000a28fc00000a2200008c4216026f6000002b112b112c027bc80400046ff70300063839000000027bd1040004132a112a7b8e060004174024000000112a0214146fe2040006027bd1040004132a02167dd5040004112a021414146fe4040006027bb1040004200600000040060000000228a9030006027bb1040004200700000040060000000228ad030006027bb1040004203100000040e9000000027bd10400047b8e06000417401d000000021420ffffffff17286d030006132c027bd104000402112c6fe1040006027bd204000439b0000000027bd1040004132a112a7b8e060004184008000000112a026fe0040006027bd1040004132a112a7b8e06000419407e000000112a026fe00400063871000000027bdb04000414280c00000a3960000000021420ffffffff16286d030006132c027bd5040004392d000000027bd1040004132a112a7b8e060004184018000000112a02027bdb04000414112c6fe304000602167dd5040004027bdb040004112c146f7f04000638060000000228ab0300062a",
+      "new_eh": null,
+      "reason": "Restore complete original skill-aware shooting dispatch and correctly pass newly computed Damage to empowered ID-three zombie skill; preserve normal direct sniper and genuine projectile paths",
+      "group": "native-source-reconstruction",
+      "native_evidence_sha256": "d9bdda0b4d1e5830ff6c1ea72f23b6eb0c8ce9d3c7b94750c519475ea2209d39",
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "token": "0x060003AB",
+      "name": "System.Void Plant::ST_Peasniper()",
+      "old_rva": "0x4a944",
+      "new_rva": "0x1840a6c",
+      "old_rva_alias_count": 1,
+      "kind": "APPENDED_TARGET_BODY_SHARED_OLD_SLOT_UNCHANGED",
+      "old_code_size": 499,
+      "new_code_size": 238,
+      "old_maxstack": 8,
+      "new_maxstack": 8,
+      "local_sig": "0x1100085e",
+      "old_code_sha256": "2405373eba26e0f8018071e560c6a69b3ea5332e29eaa57563160e2d015cd8a7",
+      "new_code_sha256": "edbfcb830bfd4d919dfebb42d7ff960e3d43829fd5a1658b7ece564fe7e543ed",
+      "new_code": "027bf1040004179a1310111028380100066ff500000a027bf1040004179a6ff800000a027bdb04000414280c00000a3a64000000027bdc04000414280c00000a39a8000000021420ffffffff16286d0300061311027bd50400043926000000027bd1040004131211127b8e06000417401100000011120211116fe104000602167dd5040004027bdc0400041111146f360300063855000000021420ffffffff16286d0300061311027bd5040004392d000000027bd1040004131211127b8e060004174018000000111202027bdb0400041411116fe304000602167dd5040004027bdb0400041111146f7f0400062a",
+      "new_eh": null,
+      "reason": "Restore original direct sniper damage, audio capture order, current target reloads and actual Damage passed to empowered zombie skill",
+      "group": "native-source-reconstruction",
+      "native_evidence_sha256": "0033a75caab99f20eb014f8b4cdbaf7131b82136b8d731dc388b7abe541935dc",
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "token": "0x060004E1",
+      "name": "System.Void Skill::Function(Plant,Damage)",
+      "old_rva": "0x67648",
+      "new_rva": "0x1840b68",
+      "old_rva_alias_count": 1,
+      "kind": "APPENDED_TARGET_BODY_SHARED_OLD_SLOT_UNCHANGED",
+      "old_code_size": 17,
+      "new_code_size": 11,
+      "old_maxstack": 5,
+      "new_maxstack": 8,
+      "local_sig": "0x110003c6",
+      "old_code_sha256": "d404540f46550a6ec9d1f6ccdb5e5065266b1da1ec7384592ce31ae917fcb8a1",
+      "new_code_sha256": "80d70741b5898a3520df93ec66ad29ca5f77c56f0fa6c7b775bea9b18ee9cf90",
+      "new_code": "020314140428e30400062a",
+      "new_eh": null,
+      "reason": "Restore original Damage argument forwarding to Skill.Function(Plant,Zombie,Projectile,Damage)",
+      "group": "native-source-reconstruction",
+      "native_evidence_sha256": "2145af42cf2ddb812430c6c641c17bb7760f346c06f68e1c297ce64a2105c4bf",
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "token": "0x060004E2",
+      "name": "System.Void Skill::Function(Plant,Projectile,Damage)",
+      "old_rva": "0x67668",
+      "new_rva": "0x1840b80",
+      "old_rva_alias_count": 1,
+      "kind": "APPENDED_TARGET_BODY_SHARED_OLD_SLOT_UNCHANGED",
+      "old_code_size": 20,
+      "new_code_size": 11,
+      "old_maxstack": 5,
+      "new_maxstack": 8,
+      "local_sig": "0x110003c7",
+      "old_code_sha256": "8f370e3729762741a43f368a6f3c4886ef413472e7eae15ef876ff4a27fa3837",
+      "new_code_sha256": "96ce32164cca18701b58d8977758a71bc100717cbd13834b9bd225404bb2c8a0",
+      "new_code": "020314040528e30400062a",
+      "new_eh": null,
+      "reason": "Restore original Damage argument forwarding to Skill.Function(Plant,Zombie,Projectile,Damage)",
+      "group": "native-source-reconstruction",
+      "native_evidence_sha256": "c09e985722aad7171919d0f5e367dafb3c3b27c1a6ec88e650ad8af9f259feff",
+      "qualification": "AUTHORED_UNTESTED"
+    }
+  ],
+  "new_memberrefs": [],
+  "new_local_signatures": [
+    {
+      "method": "0x060003A8",
+      "old_token": "0x110002dd",
+      "new_token": "0x1100085d",
+      "old": "072a1281e0128244021282441281a412824412824412809412824412824412809412824402020202020202020202020202020202020212809402021281f41c114d1280941c1c1c1c1c",
+      "new": "072e1281e0128244021282441281a412824412824412809412824412824412809412824402020202020202020202020202020202020212809402021281f41c114d1280941c1c1c1c1c1282441281f4128094114d"
+    },
+    {
+      "method": "0x060003AB",
+      "old_token": "0x110002e0",
+      "new_token": "0x1100085e",
+      "old": "07101281e01d1280b90c1d1280b912809412809412824412824402128094020202020202",
+      "new": "07131281e01d1280b90c1d1280b9128094128094128244128244021280940202020202021280b9128094128244"
+    }
+  ],
+  "new_methodspecs": [],
+  "header_updates": {
+    "464": 24712847,
+    "472": 24713216,
+    "160": 24713728,
+    "208": 25870336,
+    "216": 0,
+    "528": 25430936,
+    "532": 436983
+  },
+  "tests_run": false,
+  "qualified_methods": 0,
+  "unity_or_ipa": false,
+  "batch": "R28",
+  "counting_unit": "DISTINCT_NATIVE_BACKED_SEMANTIC_OPERATION_POSITIONS",
+  "new_unique_repair_positions": 115,
+  "distinct_changed_methods": 4,
+  "shared_test_threshold": 100,
+  "threshold_comparison": "strictly_greater_than_100_positions",
+  "threshold_met": true,
+  "shared_tests_started": false,
+  "repair_sites": [
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803597b8",
+      "native_instruction": {
+        "va": "0x1803597b8",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0xe0]",
+        "bytes": "488b83e0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Capture original skill for charged-layer trigger decision",
+      "new_cil_start": 0,
+      "new_cil_end": 8,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803597f5",
+      "native_instruction": {
+        "va": "0x1803597f5",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x48], 0",
+        "bytes": "83784800"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original chargedLayer > zero gate",
+      "new_cil_start": 8,
+      "new_cil_end": 21,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803597fb",
+      "native_instruction": {
+        "va": "0x1803597fb",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x30], 0",
+        "bytes": "83783000"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original manual skill trigger type zero",
+      "new_cil_start": 21,
+      "new_cil_end": 33,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359801",
+      "native_instruction": {
+        "va": "0x180359801",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x2c], 2",
+        "bytes": "83782c02"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original skill type two trigger",
+      "new_cil_start": 33,
+      "new_cil_end": 46,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035980c",
+      "native_instruction": {
+        "va": "0x18035980c",
+        "op": "call",
+        "operands": "0x18035b150",
+        "bytes": "e83f190000"
+      },
+      "kind": "CALL",
+      "description": "Original Trigger_Skill callback",
+      "new_cil_start": 46,
+      "new_cil_end": 52,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359811",
+      "native_instruction": {
+        "va": "0x180359811",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0xe0]",
+        "bytes": "488b83e0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload actual skill after possible trigger callback",
+      "new_cil_start": 52,
+      "new_cil_end": 58,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359821",
+      "native_instruction": {
+        "va": "0x180359821",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x28], 1",
+        "bytes": "83782801"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ChargeType one gate",
+      "new_cil_start": 58,
+      "new_cil_end": 69,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359835",
+      "native_instruction": {
+        "va": "0x180359835",
+        "op": "call",
+        "operands": "0x180359e00",
+        "bytes": "e8c6050000"
+      },
+      "kind": "CALL",
+      "description": "Original SkillTryCharging(1f)",
+      "new_cil_start": 69,
+      "new_cil_end": 80,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035983a",
+      "native_instruction": {
+        "va": "0x18035983a",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 0",
+        "bytes": "837b7c00"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID zero selects direct sniper body",
+      "new_cil_start": 80,
+      "new_cil_end": 91,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359844",
+      "native_instruction": {
+        "va": "0x180359844",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 3",
+        "bytes": "837b7c03"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID three direct zombie hit",
+      "new_cil_start": 91,
+      "new_cil_end": 103,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035984e",
+      "native_instruction": {
+        "va": "0x18035984e",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 4",
+        "bytes": "837b7c04"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID four special shot",
+      "new_cil_start": 103,
+      "new_cil_end": 115,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359859",
+      "native_instruction": {
+        "va": "0x180359859",
+        "op": "call",
+        "operands": "0x180357880",
+        "bytes": "e822e0ffff"
+      },
+      "kind": "CALL",
+      "description": "Original ST_Potatomortar; preserve subsequent ID rereads",
+      "new_cil_start": 115,
+      "new_cil_end": 121,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359860",
+      "native_instruction": {
+        "va": "0x180359860",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 5",
+        "bytes": "837b7c05"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Reload original ID five after prior callback",
+      "new_cil_start": 121,
+      "new_cil_end": 133,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035989e",
+      "native_instruction": {
+        "va": "0x18035989e",
+        "op": "cmp",
+        "operands": "byte ptr [rbx + 0xf4], dil",
+        "bytes": "4038bbf4000000"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID-five empowered versus projectile branch",
+      "new_cil_start": 133,
+      "new_cil_end": 144,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803598ab",
+      "native_instruction": {
+        "va": "0x1803598ab",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0x1e8]",
+        "bytes": "488b83e8010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original board for normal projectile creation",
+      "new_cil_start": 144,
+      "new_cil_end": 150,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803598c2",
+      "native_instruction": {
+        "va": "0x1803598c2",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rax + 0xf8]",
+        "bytes": "488b88f8000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original board projectile manager",
+      "new_cil_start": 150,
+      "new_cil_end": 155,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803598da",
+      "native_instruction": {
+        "va": "0x1803598da",
+        "op": "call",
+        "operands": "0x180324150",
+        "bytes": "e871a8fcff"
+      },
+      "kind": "CALL",
+      "description": "Create original projectile ID one",
+      "new_cil_start": 155,
+      "new_cil_end": 163,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803598e9",
+      "native_instruction": {
+        "va": "0x1803598e9",
+        "op": "mov",
+        "operands": "r14, qword ptr [rbx + 0x148]",
+        "bytes": "4c8bb348010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original animation sprite list",
+      "new_cil_start": 163,
+      "new_cil_end": 169,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035990b",
+      "native_instruction": {
+        "va": "0x18035990b",
+        "op": "call",
+        "operands": "0x18031b680",
+        "bytes": "e8701dfcff"
+      },
+      "kind": "CALL",
+      "description": "Capture actual PeaShooter_mouth position by value before GetDamage",
+      "new_cil_start": 169,
+      "new_cil_end": 181,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035991e",
+      "native_instruction": {
+        "va": "0x18035991e",
+        "op": "mov",
+        "operands": "rdx, rsi",
+        "bytes": "488bd6"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original projectile damage receives the actual created projectile",
+      "new_cil_start": 182,
+      "new_cil_end": 184,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359918",
+      "native_instruction": {
+        "va": "0x180359918",
+        "op": "mov",
+        "operands": "r8d, 1",
+        "bytes": "41b801000000"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original projectile damage type selector one",
+      "new_cil_start": 184,
+      "new_cil_end": 185,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359910",
+      "native_instruction": {
+        "va": "0x180359910",
+        "op": "xor",
+        "operands": "r9d, r9d",
+        "bytes": "4533c9"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original projectile damage flags zero",
+      "new_cil_start": 185,
+      "new_cil_end": 186,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x18035992b",
+      "native_instruction": {
+        "va": "0x18035992b",
+        "op": "call",
+        "operands": "0x180350e40",
+        "bytes": "e81075ffff"
+      },
+      "kind": "CALL",
+      "description": "Original projectile Damage(p,1,0)",
+      "new_cil_start": 186,
+      "new_cil_end": 193,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359985",
+      "native_instruction": {
+        "va": "0x180359985",
+        "op": "movss",
+        "operands": "xmm0, dword ptr [rip + 0x124e30f]",
+        "bytes": "f30f10050fe32401"
+      },
+      "kind": "LOOP_STATE",
+      "description": "Preserve original velocity x bits 0x440b9333, with zero y/z",
+      "new_cil_start": 193,
+      "new_cil_end": 217,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359969",
+      "native_instruction": {
+        "va": "0x180359969",
+        "op": "movsd",
+        "operands": "xmm0, qword ptr [rax]",
+        "bytes": "f20f1000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Use public Vector3.zero value for the original readonly zero vector",
+      "new_cil_start": 217,
+      "new_cil_end": 222,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803599d0",
+      "native_instruction": {
+        "va": "0x1803599d0",
+        "op": "call",
+        "operands": "0x1804a25f0",
+        "bytes": "e81b8c1400"
+      },
+      "kind": "CALL",
+      "description": "Original Initial<Plant>(position,velocity,zero,70f,0,this)",
+      "new_cil_start": 222,
+      "new_cil_end": 234,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803599d5",
+      "native_instruction": {
+        "va": "0x1803599d5",
+        "op": "mov",
+        "operands": "r8d, dword ptr [rbx + 0xbc]",
+        "bytes": "448b83bc000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Read actual camp after projectile initialization callback",
+      "new_cil_start": 234,
+      "new_cil_end": 244,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803599e5",
+      "native_instruction": {
+        "va": "0x1803599e5",
+        "op": "call",
+        "operands": "0x18037c0f0",
+        "bytes": "e806270200"
+      },
+      "kind": "CALL",
+      "description": "Original projectile SetDamage with actual camp",
+      "new_cil_start": 244,
+      "new_cil_end": 254,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803599ec",
+      "native_instruction": {
+        "va": "0x1803599ec",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0xe0]",
+        "bytes": "488b83e0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original skill for empowered ID-five path",
+      "new_cil_start": 254,
+      "new_cil_end": 262,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x1803599fc",
+      "native_instruction": {
+        "va": "0x1803599fc",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x18], 1",
+        "bytes": "83781801"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Only skill ID one executes original empowered ID-five callbacks",
+      "new_cil_start": 262,
+      "new_cil_end": 275,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a13",
+      "native_instruction": {
+        "va": "0x180359a13",
+        "op": "call",
+        "operands": "0x180386570",
+        "bytes": "e858cb0200"
+      },
+      "kind": "CALL",
+      "description": "Original Function(Plant,null Projectile,null Damage)",
+      "new_cil_start": 275,
+      "new_cil_end": 285,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a18",
+      "native_instruction": {
+        "va": "0x180359a18",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0xe0]",
+        "bytes": "488b8be0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload actual skill after first empowered callback",
+      "new_cil_start": 285,
+      "new_cil_end": 293,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a1f",
+      "native_instruction": {
+        "va": "0x180359a1f",
+        "op": "mov",
+        "operands": "byte ptr [rbx + 0xf4], dil",
+        "bytes": "4088bbf4000000"
+      },
+      "kind": "FIELD_WRITE",
+      "description": "Original empowered flag clear before End",
+      "new_cil_start": 293,
+      "new_cil_end": 300,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a42",
+      "native_instruction": {
+        "va": "0x180359a42",
+        "op": "call",
+        "operands": "0x180386040",
+        "bytes": "e8f9c50200"
+      },
+      "kind": "CALL",
+      "description": "Original End(Plant,null Zombie,null Projectile,null Damage)",
+      "new_cil_start": 300,
+      "new_cil_end": 311,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a47",
+      "native_instruction": {
+        "va": "0x180359a47",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 6",
+        "bytes": "837b7c06"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original independent ID six check after prior callbacks",
+      "new_cil_start": 311,
+      "new_cil_end": 327,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a52",
+      "native_instruction": {
+        "va": "0x180359a52",
+        "op": "call",
+        "operands": "0x180356d90",
+        "bytes": "e839d3ffff"
+      },
+      "kind": "CALL",
+      "description": "Original ST_Chomperviking",
+      "new_cil_start": 327,
+      "new_cil_end": 333,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a57",
+      "native_instruction": {
+        "va": "0x180359a57",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 7",
+        "bytes": "837b7c07"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original independent ID seven check",
+      "new_cil_start": 333,
+      "new_cil_end": 349,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a62",
+      "native_instruction": {
+        "va": "0x180359a62",
+        "op": "call",
+        "operands": "0x180357c50",
+        "bytes": "e8e9e1ffff"
+      },
+      "kind": "CALL",
+      "description": "Original ST_Repearbalester",
+      "new_cil_start": 349,
+      "new_cil_end": 355,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a67",
+      "native_instruction": {
+        "va": "0x180359a67",
+        "op": "cmp",
+        "operands": "dword ptr [rbx + 0x7c], 0x31",
+        "bytes": "837b7c31"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID forty-nine special skill dispatch",
+      "new_cil_start": 355,
+      "new_cil_end": 371,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a71",
+      "native_instruction": {
+        "va": "0x180359a71",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0xe0]",
+        "bytes": "488b83e0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original current skill on ID forty-nine branch",
+      "new_cil_start": 371,
+      "new_cil_end": 377,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a81",
+      "native_instruction": {
+        "va": "0x180359a81",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x18], 1",
+        "bytes": "83781801"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID forty-nine skill ID one gate",
+      "new_cil_start": 377,
+      "new_cil_end": 388,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a87",
+      "native_instruction": {
+        "va": "0x180359a87",
+        "op": "xor",
+        "operands": "edx, edx",
+        "bytes": "33d2"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original ID-forty-nine skill damage has no Projectile",
+      "new_cil_start": 389,
+      "new_cil_end": 390,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a94",
+      "native_instruction": {
+        "va": "0x180359a94",
+        "op": "mov",
+        "operands": "r8d, 0xffffffff",
+        "bytes": "41b8ffffffff"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original ID-forty-nine damage type selector minus one",
+      "new_cil_start": 390,
+      "new_cil_end": 395,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a8e",
+      "native_instruction": {
+        "va": "0x180359a8e",
+        "op": "mov",
+        "operands": "r9d, 1",
+        "bytes": "41b901000000"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original ID-forty-nine damage flags one",
+      "new_cil_start": 395,
+      "new_cil_end": 396,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359a9d",
+      "native_instruction": {
+        "va": "0x180359a9d",
+        "op": "call",
+        "operands": "0x180350e40",
+        "bytes": "e89e73ffff"
+      },
+      "kind": "CALL",
+      "description": "Original GetDamage(null,-1,1)",
+      "new_cil_start": 396,
+      "new_cil_end": 403,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359aa2",
+      "native_instruction": {
+        "va": "0x180359aa2",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0xe0]",
+        "bytes": "488b8be0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload actual skill after damage construction",
+      "new_cil_start": 403,
+      "new_cil_end": 409,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359abb",
+      "native_instruction": {
+        "va": "0x180359abb",
+        "op": "call",
+        "operands": "0x1803865a0",
+        "bytes": "e8e0ca0200"
+      },
+      "kind": "CALL",
+      "description": "Pass actual Damage to original ID-forty-nine skill",
+      "new_cil_start": 409,
+      "new_cil_end": 417,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359ac0",
+      "native_instruction": {
+        "va": "0x180359ac0",
+        "op": "cmp",
+        "operands": "byte ptr [rbx + 0xe8], dil",
+        "bytes": "4038bbe8000000"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ongoing skill gate",
+      "new_cil_start": 417,
+      "new_cil_end": 428,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359ac9",
+      "native_instruction": {
+        "va": "0x180359ac9",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0xe0]",
+        "bytes": "488b83e0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original current skill for ID-two ongoing callback",
+      "new_cil_start": 428,
+      "new_cil_end": 436,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359ad9",
+      "native_instruction": {
+        "va": "0x180359ad9",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x18], 2",
+        "bytes": "83781802"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original skill ID two condition",
+      "new_cil_start": 436,
+      "new_cil_end": 449,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359ae8",
+      "native_instruction": {
+        "va": "0x180359ae8",
+        "op": "call",
+        "operands": "0x180386550",
+        "bytes": "e863ca0200"
+      },
+      "kind": "CALL",
+      "description": "Original ongoing Function(Plant) for ID two",
+      "new_cil_start": 449,
+      "new_cil_end": 457,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359aed",
+      "native_instruction": {
+        "va": "0x180359aed",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0xe0]",
+        "bytes": "488b83e0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload skill after possible ID-two callback",
+      "new_cil_start": 457,
+      "new_cil_end": 465,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359afd",
+      "native_instruction": {
+        "va": "0x180359afd",
+        "op": "cmp",
+        "operands": "dword ptr [rax + 0x18], 3",
+        "bytes": "83781803"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original separate skill ID three condition",
+      "new_cil_start": 465,
+      "new_cil_end": 478,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b0c",
+      "native_instruction": {
+        "va": "0x180359b0c",
+        "op": "call",
+        "operands": "0x180386550",
+        "bytes": "e83fca0200"
+      },
+      "kind": "CALL",
+      "description": "Original ongoing Function(Plant) for ID three",
+      "new_cil_start": 478,
+      "new_cil_end": 491,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b4e",
+      "native_instruction": {
+        "va": "0x180359b4e",
+        "op": "mov",
+        "operands": "rdi, qword ptr [rbx + 0x120]",
+        "bytes": "488bbb20010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original ID-three zombie target",
+      "new_cil_start": 491,
+      "new_cil_end": 497,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b6b",
+      "native_instruction": {
+        "va": "0x180359b6b",
+        "op": "call",
+        "operands": "0x18131f900",
+        "bytes": "e8905dfc00"
+      },
+      "kind": "CALL",
+      "description": "Original Unity inequality for ID-three target",
+      "new_cil_start": 497,
+      "new_cil_end": 508,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b79",
+      "native_instruction": {
+        "va": "0x180359b79",
+        "op": "xor",
+        "operands": "edx, edx",
+        "bytes": "33d2"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original ID-three direct damage has no Projectile",
+      "new_cil_start": 509,
+      "new_cil_end": 510,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b80",
+      "native_instruction": {
+        "va": "0x180359b80",
+        "op": "mov",
+        "operands": "r8d, 0xffffffff",
+        "bytes": "41b8ffffffff"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original ID-three damage type selector minus one",
+      "new_cil_start": 510,
+      "new_cil_end": 515,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b76",
+      "native_instruction": {
+        "va": "0x180359b76",
+        "op": "xor",
+        "operands": "r9d, r9d",
+        "bytes": "4533c9"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original ID-three damage flags zero",
+      "new_cil_start": 515,
+      "new_cil_end": 516,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b89",
+      "native_instruction": {
+        "va": "0x180359b89",
+        "op": "call",
+        "operands": "0x180350e40",
+        "bytes": "e8b272ffff"
+      },
+      "kind": "CALL",
+      "description": "Original ID-three GetDamage(null,-1,0)",
+      "new_cil_start": 516,
+      "new_cil_end": 523,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b91",
+      "native_instruction": {
+        "va": "0x180359b91",
+        "op": "cmp",
+        "operands": "byte ptr [rbx + 0xf4], dil",
+        "bytes": "4038bbf4000000"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original ID-three empowered flag gate",
+      "new_cil_start": 523,
+      "new_cil_end": 534,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b9a",
+      "native_instruction": {
+        "va": "0x180359b9a",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0xe0]",
+        "bytes": "488b8be0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original skill after damage construction on ID-three path",
+      "new_cil_start": 534,
+      "new_cil_end": 542,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359ba6",
+      "native_instruction": {
+        "va": "0x180359ba6",
+        "op": "cmp",
+        "operands": "dword ptr [rcx + 0x18], 2",
+        "bytes": "83791802"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Only original skill ID two receives ID-three empowered hit",
+      "new_cil_start": 542,
+      "new_cil_end": 555,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359bac",
+      "native_instruction": {
+        "va": "0x180359bac",
+        "op": "mov",
+        "operands": "r8, qword ptr [rbx + 0x120]",
+        "bytes": "4c8b8320010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Original current zombie argument after GetDamage",
+      "new_cil_start": 555,
+      "new_cil_end": 564,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359bc3",
+      "native_instruction": {
+        "va": "0x180359bc3",
+        "op": "call",
+        "operands": "0x180386210",
+        "bytes": "e848c60200"
+      },
+      "kind": "CALL",
+      "description": "Restore actual Damage instead of default V30 null in ID-three skill",
+      "new_cil_start": 564,
+      "new_cil_end": 572,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359bc8",
+      "native_instruction": {
+        "va": "0x180359bc8",
+        "op": "mov",
+        "operands": "byte ptr [rbx + 0xf4], dil",
+        "bytes": "4088bbf4000000"
+      },
+      "kind": "FIELD_WRITE",
+      "description": "Clear original ID-three empowered flag after supported skill callback",
+      "new_cil_start": 572,
+      "new_cil_end": 579,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359bcf",
+      "native_instruction": {
+        "va": "0x180359bcf",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0x120]",
+        "bytes": "488b8b20010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload actual zombie after possible skill target change",
+      "new_cil_start": 579,
+      "new_cil_end": 585,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359be4",
+      "native_instruction": {
+        "va": "0x180359be4",
+        "op": "call",
+        "operands": "0x180369aa0",
+        "bytes": "e8b7fe0000"
+      },
+      "kind": "CALL",
+      "description": "Apply cached real Damage to the actual zombie",
+      "new_cil_start": 585,
+      "new_cil_end": 598,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359bf3",
+      "native_instruction": {
+        "va": "0x180359bf3",
+        "op": "call",
+        "operands": "0x180357650",
+        "bytes": "e858daffff"
+      },
+      "kind": "CALL",
+      "description": "Preserve ID-zero direct sniper dispatch",
+      "new_cil_start": 598,
+      "new_cil_end": 604,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003A8",
+      "native_va": "0x180359b46",
+      "native_instruction": {
+        "va": "0x180359b46",
+        "op": "ret",
+        "operands": "",
+        "bytes": "c3"
+      },
+      "kind": "RETURN_VALUE",
+      "description": "Original shooting return",
+      "new_cil_start": 604,
+      "new_cil_end": 605,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357681",
+      "native_instruction": {
+        "va": "0x180357681",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0x1d8]",
+        "bytes": "488b83d8010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Read original audioSource array before the volume getter",
+      "new_cil_start": 0,
+      "new_cil_end": 6,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803576ac",
+      "native_instruction": {
+        "va": "0x1803576ac",
+        "op": "mov",
+        "operands": "rdi, qword ptr [rax + 0x28]",
+        "bytes": "488b7828"
+      },
+      "kind": "LOOP_STATE",
+      "description": "Capture original audio source at index one",
+      "new_cil_start": 6,
+      "new_cil_end": 10,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803576c0",
+      "native_instruction": {
+        "va": "0x1803576c0",
+        "op": "call",
+        "operands": "0x18031aea0",
+        "bytes": "e8db37fcff"
+      },
+      "kind": "CALL",
+      "description": "Get original volume after capturing the receiver",
+      "new_cil_start": 10,
+      "new_cil_end": 17,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803576d7",
+      "native_instruction": {
+        "va": "0x1803576d7",
+        "op": "call",
+        "operands": "0x1812dc4b0",
+        "bytes": "e8d44df800"
+      },
+      "kind": "CALL",
+      "description": "Set captured source volume",
+      "new_cil_start": 17,
+      "new_cil_end": 22,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803576dc",
+      "native_instruction": {
+        "va": "0x1803576dc",
+        "op": "mov",
+        "operands": "rax, qword ptr [rbx + 0x1d8]",
+        "bytes": "488b83d8010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload audioSource after the volume callback",
+      "new_cil_start": 22,
+      "new_cil_end": 28,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803576f6",
+      "native_instruction": {
+        "va": "0x1803576f6",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rax + 0x28]",
+        "bytes": "488b4828"
+      },
+      "kind": "LOOP_STATE",
+      "description": "Reload original index-one source for Play",
+      "new_cil_start": 28,
+      "new_cil_end": 30,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357705",
+      "native_instruction": {
+        "va": "0x180357705",
+        "op": "call",
+        "operands": "0x1812dc300",
+        "bytes": "e8f64bf800"
+      },
+      "kind": "CALL",
+      "description": "Play original sniper sound",
+      "new_cil_start": 30,
+      "new_cil_end": 35,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357711",
+      "native_instruction": {
+        "va": "0x180357711",
+        "op": "mov",
+        "operands": "rdi, qword ptr [rbx + 0x120]",
+        "bytes": "488bbb20010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Read original zombie target",
+      "new_cil_start": 35,
+      "new_cil_end": 41,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035772e",
+      "native_instruction": {
+        "va": "0x18035772e",
+        "op": "call",
+        "operands": "0x18131f900",
+        "bytes": "e8cd81fc00"
+      },
+      "kind": "CALL",
+      "description": "Use original Unity inequality to choose zombie before device",
+      "new_cil_start": 41,
+      "new_cil_end": 52,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357742",
+      "native_instruction": {
+        "va": "0x180357742",
+        "op": "mov",
+        "operands": "rdi, qword ptr [rbx + 0x128]",
+        "bytes": "488bbb28010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Read original device target only after zombie branch fails",
+      "new_cil_start": 52,
+      "new_cil_end": 58,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035775f",
+      "native_instruction": {
+        "va": "0x18035775f",
+        "op": "call",
+        "operands": "0x18131f900",
+        "bytes": "e89c81fc00"
+      },
+      "kind": "CALL",
+      "description": "Original Unity inequality on device target",
+      "new_cil_start": 58,
+      "new_cil_end": 69,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035776d",
+      "native_instruction": {
+        "va": "0x18035776d",
+        "op": "xor",
+        "operands": "edx, edx",
+        "bytes": "33d2"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original device damage has a null Projectile argument",
+      "new_cil_start": 70,
+      "new_cil_end": 71,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357774",
+      "native_instruction": {
+        "va": "0x180357774",
+        "op": "mov",
+        "operands": "r8d, 0xffffffff",
+        "bytes": "41b8ffffffff"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original device damage type selector is minus one",
+      "new_cil_start": 71,
+      "new_cil_end": 76,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035776a",
+      "native_instruction": {
+        "va": "0x18035776a",
+        "op": "xor",
+        "operands": "r9d, r9d",
+        "bytes": "4533c9"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original device damage flags zero",
+      "new_cil_start": 76,
+      "new_cil_end": 77,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035777d",
+      "native_instruction": {
+        "va": "0x18035777d",
+        "op": "call",
+        "operands": "0x180350e40",
+        "bytes": "e8be96ffff"
+      },
+      "kind": "CALL",
+      "description": "Original direct device GetDamage(null,-1,0)",
+      "new_cil_start": 77,
+      "new_cil_end": 84,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357782",
+      "native_instruction": {
+        "va": "0x180357782",
+        "op": "cmp",
+        "operands": "byte ptr [rbx + 0xf4], 0",
+        "bytes": "80bbf400000000"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original empowered-hit gate on device branch",
+      "new_cil_start": 84,
+      "new_cil_end": 95,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035778e",
+      "native_instruction": {
+        "va": "0x18035778e",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0xe0]",
+        "bytes": "488b8be0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Capture current skill for device hit",
+      "new_cil_start": 95,
+      "new_cil_end": 103,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035779e",
+      "native_instruction": {
+        "va": "0x18035779e",
+        "op": "cmp",
+        "operands": "dword ptr [rcx + 0x18], 1",
+        "bytes": "83791801"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Only original skill ID one handles this empowered hit",
+      "new_cil_start": 103,
+      "new_cil_end": 116,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577ad",
+      "native_instruction": {
+        "va": "0x1803577ad",
+        "op": "call",
+        "operands": "0x1803865a0",
+        "bytes": "e8eeed0200"
+      },
+      "kind": "CALL",
+      "description": "Pass the actual freshly computed Damage to Skill.Function(Plant,Damage)",
+      "new_cil_start": 116,
+      "new_cil_end": 126,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577b2",
+      "native_instruction": {
+        "va": "0x1803577b2",
+        "op": "mov",
+        "operands": "byte ptr [rbx + 0xf4], 0",
+        "bytes": "c683f400000000"
+      },
+      "kind": "FIELD_WRITE",
+      "description": "Clear original empowered flag after supported skill function",
+      "new_cil_start": 126,
+      "new_cil_end": 133,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577b9",
+      "native_instruction": {
+        "va": "0x1803577b9",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0x128]",
+        "bytes": "488b8b28010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload actual device after possible skill callback",
+      "new_cil_start": 133,
+      "new_cil_end": 139,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577d2",
+      "native_instruction": {
+        "va": "0x1803577d2",
+        "op": "call",
+        "operands": "0x18034b8e0",
+        "bytes": "e80941ffff"
+      },
+      "kind": "CALL",
+      "description": "Apply cached Damage with no Projectile to actual device",
+      "new_cil_start": 139,
+      "new_cil_end": 147,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577ec",
+      "native_instruction": {
+        "va": "0x1803577ec",
+        "op": "xor",
+        "operands": "edx, edx",
+        "bytes": "33d2"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original sniper zombie damage has no Projectile",
+      "new_cil_start": 153,
+      "new_cil_end": 154,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577f3",
+      "native_instruction": {
+        "va": "0x1803577f3",
+        "op": "mov",
+        "operands": "r8d, 0xffffffff",
+        "bytes": "41b8ffffffff"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original sniper damage type selector minus one",
+      "new_cil_start": 154,
+      "new_cil_end": 159,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577e9",
+      "native_instruction": {
+        "va": "0x1803577e9",
+        "op": "xor",
+        "operands": "r9d, r9d",
+        "bytes": "4533c9"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original sniper damage flags zero",
+      "new_cil_start": 159,
+      "new_cil_end": 160,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577fc",
+      "native_instruction": {
+        "va": "0x1803577fc",
+        "op": "call",
+        "operands": "0x180350e40",
+        "bytes": "e83f96ffff"
+      },
+      "kind": "CALL",
+      "description": "Original direct zombie GetDamage(null,-1,0)",
+      "new_cil_start": 160,
+      "new_cil_end": 167,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357804",
+      "native_instruction": {
+        "va": "0x180357804",
+        "op": "cmp",
+        "operands": "byte ptr [rbx + 0xf4], dil",
+        "bytes": "4038bbf4000000"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Original empowered-hit gate on zombie branch",
+      "new_cil_start": 167,
+      "new_cil_end": 178,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035780d",
+      "native_instruction": {
+        "va": "0x18035780d",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0xe0]",
+        "bytes": "488b8be0000000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Capture actual skill after damage construction",
+      "new_cil_start": 178,
+      "new_cil_end": 186,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357819",
+      "native_instruction": {
+        "va": "0x180357819",
+        "op": "cmp",
+        "operands": "dword ptr [rcx + 0x18], 1",
+        "bytes": "83791801"
+      },
+      "kind": "CONTROL_FLOW",
+      "description": "Only original sniper skill ID one consumes empowered flag",
+      "new_cil_start": 186,
+      "new_cil_end": 199,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035781f",
+      "native_instruction": {
+        "va": "0x18035781f",
+        "op": "mov",
+        "operands": "r8, qword ptr [rbx + 0x120]",
+        "bytes": "4c8b8320010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload current zombie for skill after damage construction",
+      "new_cil_start": 199,
+      "new_cil_end": 208,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357836",
+      "native_instruction": {
+        "va": "0x180357836",
+        "op": "call",
+        "operands": "0x180386210",
+        "bytes": "e8d5e90200"
+      },
+      "kind": "CALL",
+      "description": "Restore actual Damage argument instead of uninitialized V9 null",
+      "new_cil_start": 208,
+      "new_cil_end": 216,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x18035783b",
+      "native_instruction": {
+        "va": "0x18035783b",
+        "op": "mov",
+        "operands": "byte ptr [rbx + 0xf4], dil",
+        "bytes": "4088bbf4000000"
+      },
+      "kind": "FIELD_WRITE",
+      "description": "Clear empowered flag only after original function call",
+      "new_cil_start": 216,
+      "new_cil_end": 223,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357842",
+      "native_instruction": {
+        "va": "0x180357842",
+        "op": "mov",
+        "operands": "rcx, qword ptr [rbx + 0x120]",
+        "bytes": "488b8b20010000"
+      },
+      "kind": "FIELD_READ",
+      "description": "Reload actual target zombie after skill callback",
+      "new_cil_start": 223,
+      "new_cil_end": 229,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x180357866",
+      "native_instruction": {
+        "va": "0x180357866",
+        "op": "jmp",
+        "operands": "0x180369aa0",
+        "bytes": "e935220100"
+      },
+      "kind": "CALL",
+      "description": "Keep native tail-call direct Zombie.TakeDamage(damage,null)",
+      "new_cil_start": 229,
+      "new_cil_end": 237,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060003AB",
+      "native_va": "0x1803577e6",
+      "native_instruction": {
+        "va": "0x1803577e6",
+        "op": "ret",
+        "operands": "",
+        "bytes": "c3"
+      },
+      "kind": "RETURN_VALUE",
+      "description": "Return without creating any projectile",
+      "new_cil_start": 237,
+      "new_cil_end": 238,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E1",
+      "native_va": "0x1803865b5",
+      "native_instruction": {
+        "va": "0x1803865b5",
+        "op": "xor",
+        "operands": "r8d, r8d",
+        "bytes": "4533c0"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original short Skill.Function forwards a null Zombie",
+      "new_cil_start": 2,
+      "new_cil_end": 3,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E1",
+      "native_va": "0x1803865ad",
+      "native_instruction": {
+        "va": "0x1803865ad",
+        "op": "xor",
+        "operands": "r9d, r9d",
+        "bytes": "4533c9"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original short overload has no Projectile",
+      "new_cil_start": 3,
+      "new_cil_end": 4,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E1",
+      "native_va": "0x1803865b0",
+      "native_instruction": {
+        "va": "0x1803865b0",
+        "op": "mov",
+        "operands": "qword ptr [rsp + 0x20], r8",
+        "bytes": "4c89442420"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Restore actual Damage argument; do not load uninitialized default local",
+      "new_cil_start": 4,
+      "new_cil_end": 5,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E1",
+      "native_va": "0x1803865b8",
+      "native_instruction": {
+        "va": "0x1803865b8",
+        "op": "call",
+        "operands": "0x180386210",
+        "bytes": "e853fcffff"
+      },
+      "kind": "CALL",
+      "description": "Forward original receiver, Plant, Zombie, Projectile and Damage",
+      "new_cil_start": 5,
+      "new_cil_end": 10,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E1",
+      "native_va": "0x1803865c1",
+      "native_instruction": {
+        "va": "0x1803865c1",
+        "op": "ret",
+        "operands": "",
+        "bytes": "c3"
+      },
+      "kind": "RETURN_VALUE",
+      "description": "Original forwarding return",
+      "new_cil_start": 10,
+      "new_cil_end": 11,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E2",
+      "native_va": "0x180386585",
+      "native_instruction": {
+        "va": "0x180386585",
+        "op": "xor",
+        "operands": "r8d, r8d",
+        "bytes": "4533c0"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Original short Skill.Function forwards a null Zombie",
+      "new_cil_start": 2,
+      "new_cil_end": 3,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E2",
+      "native_va": "0x180386582",
+      "native_instruction": {
+        "va": "0x180386582",
+        "op": "mov",
+        "operands": "r9, r8",
+        "bytes": "4d8bc8"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Forward original Projectile argument",
+      "new_cil_start": 3,
+      "new_cil_end": 4,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E2",
+      "native_va": "0x18038657d",
+      "native_instruction": {
+        "va": "0x18038657d",
+        "op": "mov",
+        "operands": "qword ptr [rsp + 0x20], r9",
+        "bytes": "4c894c2420"
+      },
+      "kind": "ARGUMENT_VALUE",
+      "description": "Restore actual Damage argument; do not load uninitialized default local",
+      "new_cil_start": 4,
+      "new_cil_end": 5,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E2",
+      "native_va": "0x180386588",
+      "native_instruction": {
+        "va": "0x180386588",
+        "op": "call",
+        "operands": "0x180386210",
+        "bytes": "e883fcffff"
+      },
+      "kind": "CALL",
+      "description": "Forward original receiver, Plant, Zombie, Projectile and Damage",
+      "new_cil_start": 5,
+      "new_cil_end": 10,
+      "qualification": "AUTHORED_UNTESTED"
+    },
+    {
+      "method": "0x060004E2",
+      "native_va": "0x180386591",
+      "native_instruction": {
+        "va": "0x180386591",
+        "op": "ret",
+        "operands": "",
+        "bytes": "c3"
+      },
+      "kind": "RETURN_VALUE",
+      "description": "Original forwarding return",
+      "new_cil_start": 10,
+      "new_cil_end": 11,
+      "qualification": "AUTHORED_UNTESTED"
+    }
+  ],
+  "repair_kind_counts": {
+    "FIELD_READ": 26,
+    "CONTROL_FLOW": 23,
+    "CALL": 34,
+    "ARGUMENT_VALUE": 21,
+    "LOOP_STATE": 3,
+    "FIELD_WRITE": 4,
+    "RETURN_VALUE": 4
+  },
+  "not_a_count_of_independent_game_bugs": true
+}
